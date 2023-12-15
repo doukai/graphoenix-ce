@@ -1,0 +1,7 @@
+schemaDefinition(schema) ::= <<
+schema {
+  query: <schema.query>
+  <if(schema.mutation)>mutation: <schema.mutation><endif>
+  <if(schema.subscription)>subscription: <schema.subscription><endif>
+}
+>>

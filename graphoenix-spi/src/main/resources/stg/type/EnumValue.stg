@@ -1,0 +1,4 @@
+enumValueDefinition(enumValue) ::= <<
+<if(enumValue.description)>"<enumValue.description>"<endif>
+<enumValue.name><if(enumValue.directives)> <enumValue.directives:{directive|<directive>};separator=" "><endif>
+>>

@@ -1,0 +1,3 @@
+documentDefinition(document) ::= <<
+<if(document.definitions)><document.definitions:{definition|<definition>};separator="\n"><endif>
+>>

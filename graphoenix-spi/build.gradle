@@ -24,6 +24,7 @@ dependencies {
         exclude group: 'org.glassfish', module: 'javax.json'
     }
     implementation 'org.antlr:ST4:4.3.2'
+    implementation 'com.google.guava:guava:31.1-jre'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'

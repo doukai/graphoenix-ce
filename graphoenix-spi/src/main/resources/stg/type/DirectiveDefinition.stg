@@ -1,0 +1,3 @@
+directiveDefinitionDefinition(directiveDefinition) ::= <<
+<if(directiveDefinition.description)>"<directiveDefinition.description>" <endif>directive @<directiveDefinition.name><if(directiveDefinition.arguments)>(<directiveDefinition.arguments:{argument|<argument>};separator=" ">)<endif> on <if(directiveDefinition.directiveLocations)><directiveDefinition.directiveLocations:{directiveLocation|<directiveLocation>};separator=" | "><endif>
+>>

@@ -1,0 +1,5 @@
+operationDefinition(operation) ::= <<
+<if(operation.operationType)><operation.operationType> <endif><if(operation.name)><operation.name><endif><if(operation.variables)>(<operation.variables:{variable|<variable>};separator=", ">)<endif><if(operation.directives)> <operation.directives:{directive|<directive>};separator=" "><endif> {
+    <operation.fields:{field|<field>};separator="\n">
+}
+>>

@@ -1,0 +1,4 @@
+fieldDefinitionDefinition(filedDefinition) ::= <<
+<if(filedDefinition.description)>"<filedDefinition.description>"<endif>
+<filedDefinition.name><if(filedDefinition.arguments)>(<filedDefinition.arguments:{argument|<argument>};separator=", ">)<endif>: <filedDefinition.type><if(filedDefinition.directives)> <filedDefinition.directives:{directive|<directive>};separator=" "><endif>
+>>
