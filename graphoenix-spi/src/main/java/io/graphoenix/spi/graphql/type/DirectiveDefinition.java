@@ -1,6 +1,7 @@
 package io.graphoenix.spi.graphql.type;
 
 import graphql.parser.antlr.GraphqlParser;
+import io.graphoenix.spi.graphql.Definition;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
@@ -10,7 +11,7 @@ import java.util.stream.Collectors;
 
 import static io.graphoenix.spi.utils.DocumentUtil.getStringValue;
 
-public class DirectiveDefinition {
+public class DirectiveDefinition implements Definition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/DirectiveDefinition.stg");
     private String name;
@@ -83,6 +84,11 @@ public class DirectiveDefinition {
     public DirectiveDefinition setDescription(String description) {
         this.description = description;
         return this;
+    }
+
+    @Override
+    public boolean isDirective() {
+        return true;
     }
 
     @Override

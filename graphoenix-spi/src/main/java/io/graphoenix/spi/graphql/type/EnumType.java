@@ -1,6 +1,7 @@
 package io.graphoenix.spi.graphql.type;
 
 import graphql.parser.antlr.GraphqlParser;
+import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.common.Directive;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
@@ -13,7 +14,7 @@ import java.util.stream.Stream;
 import static io.graphoenix.spi.utils.DocumentUtil.getStringValue;
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
-public class EnumType {
+public class EnumType implements Definition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/EnumType.stg");
     private String name;
@@ -51,17 +52,17 @@ public class EnumType {
 
     public EnumType merge(EnumType... enumTypes) {
         directives = Stream.concat(
-                        Stream.ofNullable(directives),
-                        Stream.of(enumTypes).flatMap(item -> Stream.ofNullable(item.getDirectives()))
-                )
+                Stream.ofNullable(directives),
+                Stream.of(enumTypes).flatMap(item -> Stream.ofNullable(item.getDirectives()))
+        )
                 .flatMap(Collection::stream)
                 .filter(distinctByKey(Directive::getName))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
         enumValues = Stream.concat(
-                        Stream.ofNullable(enumValues),
-                        Stream.of(enumTypes).flatMap(item -> Stream.ofNullable(item.getEnumValues()))
-                )
+                Stream.ofNullable(enumValues),
+                Stream.of(enumTypes).flatMap(item -> Stream.ofNullable(item.getEnumValues()))
+        )
                 .flatMap(Collection::stream)
                 .filter(distinctByKey(EnumValue::getName))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -120,6 +121,11 @@ public class EnumType {
     public EnumType setDescription(String description) {
         this.description = description;
         return this;
+    }
+
+    @Override
+    public boolean isEnum() {
+        return true;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package io.graphoenix.spi.graphql.type;
 
 import graphql.parser.antlr.GraphqlParser;
+import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.common.Directive;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
@@ -14,7 +15,7 @@ import static io.graphoenix.spi.utils.DocumentUtil.getImplementsInterfaces;
 import static io.graphoenix.spi.utils.DocumentUtil.getStringValue;
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
-public class InterfaceType {
+public class InterfaceType implements Definition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/InterfaceType.stg");
     private String name;
@@ -57,24 +58,24 @@ public class InterfaceType {
 
     public InterfaceType merge(InterfaceType... interfaceTypes) {
         directives = Stream.concat(
-                        Stream.ofNullable(directives),
-                        Stream.of(interfaceTypes).flatMap(item -> Stream.ofNullable(item.getDirectives()))
-                )
+                Stream.ofNullable(directives),
+                Stream.of(interfaceTypes).flatMap(item -> Stream.ofNullable(item.getDirectives()))
+        )
                 .flatMap(Collection::stream)
                 .filter(distinctByKey(Directive::getName))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
         interfaces = Stream.concat(
-                        Stream.ofNullable(interfaces),
-                        Stream.of(interfaceTypes).flatMap(item -> Stream.ofNullable(item.getInterfaces()))
-                )
+                Stream.ofNullable(interfaces),
+                Stream.of(interfaceTypes).flatMap(item -> Stream.ofNullable(item.getInterfaces()))
+        )
                 .flatMap(Collection::stream)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
         fieldDefinitions = Stream.concat(
-                        Stream.ofNullable(fieldDefinitions),
-                        Stream.of(interfaceTypes).flatMap(item -> Stream.ofNullable(item.getFields()))
-                )
+                Stream.ofNullable(fieldDefinitions),
+                Stream.of(interfaceTypes).flatMap(item -> Stream.ofNullable(item.getFields()))
+        )
                 .flatMap(Collection::stream)
                 .filter(distinctByKey(FieldDefinition::getName))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -150,6 +151,11 @@ public class InterfaceType {
     public InterfaceType setDescription(String description) {
         this.description = description;
         return this;
+    }
+
+    @Override
+    public boolean isInterface() {
+        return true;
     }
 
     @Override

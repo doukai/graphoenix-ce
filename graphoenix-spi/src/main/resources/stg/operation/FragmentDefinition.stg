@@ -1,0 +1,5 @@
+fragmentDefinitionDefinition(fragmentDefinition) ::= <<
+fragment <fragmentDefinition.fragmentName> on <fragmentDefinition.typeName><if(fragmentDefinition.directives)> <fragmentDefinition.directives:{directive|<directive>};separator=" "><endif> {
+    <fragmentDefinition.selections:{selection|<selection>};separator="\n">
+}
+>>

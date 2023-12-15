@@ -9,7 +9,7 @@ import java.util.ServiceLoader;
 import static io.graphoenix.spi.error.BaseErrorInfo.UNKNOWN_CODE;
 import static io.graphoenix.spi.error.BaseErrorInfo.UNKNOWN_MESSAGE;
 
-public class ErrorInfoUtil {
+public final class ErrorInfoUtil {
 
     private static final Map<String, Integer> errorCodeMap = new HashMap<>();
 

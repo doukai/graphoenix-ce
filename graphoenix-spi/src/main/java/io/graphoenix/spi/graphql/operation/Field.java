@@ -16,15 +16,14 @@ import java.util.stream.Stream;
 
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
-public class Field {
+public class Field implements Selection {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/operation/Field.stg");
     private String name;
     private String alias;
     private Arguments arguments;
+    private Collection<Selection> selections;
     private Collection<Directive> directives;
-    private Collection<Field> fields;
-    private String selections;
 
     public Field() {
     }
@@ -46,8 +45,8 @@ public class Field {
             this.arguments = new Arguments(fieldContext.arguments());
         }
         if (fieldContext.selectionSet() != null) {
-            this.fields = fieldContext.selectionSet().selection().stream()
-                    .map(Field::new)
+            this.selections = fieldContext.selectionSet().selection().stream()
+                    .map(Selection::of)
                     .collect(Collectors.toCollection(LinkedHashSet::new));
         }
         if (fieldContext.directives() != null) {
@@ -58,11 +57,14 @@ public class Field {
     }
 
     public Field mergeSelection(Collection<Field> fields) {
-        this.fields = Stream.concat(
-                        Stream.ofNullable(this.fields),
-                        Stream.ofNullable(fields)
-                )
-                .flatMap(Collection::stream)
+        this.selections = Stream.concat(
+                Stream.ofNullable(this.selections)
+                        .flatMap(Collection::stream)
+                        .filter(Selection::isField)
+                        .map(selection -> (Field) selection),
+                Stream.ofNullable(fields)
+                        .flatMap(Collection::stream)
+        )
                 .filter(distinctByKey(Field::getName))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         return this;
@@ -154,45 +156,43 @@ public class Field {
         return this;
     }
 
-    public Collection<Field> getFields() {
-        return fields;
+    public Collection<Selection> getSelections() {
+        return selections;
     }
 
     public Field getField(String name) {
-        return this.fields.stream()
+        return this.selections.stream()
+                .filter(Selection::isField)
+                .map(selection -> (Field) selection)
                 .filter(field -> field.getAlias() != null && field.getAlias().equals(name) || field.getName().equals(name))
                 .findFirst()
                 .orElse(null);
     }
 
-    public Field setFields(Collection<Field> fields) {
-        this.fields = fields;
-        return this;
-    }
-
-    public Field addField(Field field) {
-        if (this.fields == null) {
-            this.fields = new LinkedHashSet<>();
-        }
-        this.fields.add(field);
-        return this;
-    }
-
-    public Field addFields(Collection<Field> fields) {
-        if (this.fields == null) {
-            this.fields = new LinkedHashSet<>();
-        }
-        this.fields.addAll(fields);
-        return this;
-    }
-
-    public String getSelections() {
-        return selections;
-    }
-
-    public Field setSelections(String selections) {
+    public Field setSelections(Collection<Selection> selections) {
         this.selections = selections;
         return this;
+    }
+
+    public Field addSelection(Selection selection) {
+        if (this.selections == null) {
+            this.selections = new LinkedHashSet<>();
+        }
+        this.selections.add(selection);
+        return this;
+    }
+
+    public Field addSelections(Collection<Selection> selections) {
+        if (this.selections == null) {
+            this.selections = new LinkedHashSet<>();
+        }
+        this.selections.addAll(selections);
+        return this;
+    }
+
+    @Override
+    public boolean isField() {
+        return true;
     }
 
     @Override

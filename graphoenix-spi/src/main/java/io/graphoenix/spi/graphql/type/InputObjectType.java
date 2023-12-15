@@ -1,6 +1,7 @@
 package io.graphoenix.spi.graphql.type;
 
 import graphql.parser.antlr.GraphqlParser;
+import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.common.Directive;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
@@ -13,7 +14,7 @@ import java.util.stream.Stream;
 import static io.graphoenix.spi.utils.DocumentUtil.getStringValue;
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
-public class InputObjectType {
+public class InputObjectType implements Definition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/InputObjectType.stg");
     private String name;
@@ -55,17 +56,17 @@ public class InputObjectType {
 
     public InputObjectType merge(InputObjectType... inputObjectTypes) {
         directives = Stream.concat(
-                        Stream.ofNullable(directives),
-                        Stream.of(inputObjectTypes).flatMap(item -> Stream.ofNullable(item.getDirectives()))
-                )
+                Stream.ofNullable(directives),
+                Stream.of(inputObjectTypes).flatMap(item -> Stream.ofNullable(item.getDirectives()))
+        )
                 .flatMap(Collection::stream)
                 .filter(distinctByKey(Directive::getName))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
         inputValues = Stream.concat(
-                        Stream.ofNullable(inputValues),
-                        Stream.of(inputObjectTypes).flatMap(item -> Stream.ofNullable(item.getInputValues()))
-                )
+                Stream.ofNullable(inputValues),
+                Stream.of(inputObjectTypes).flatMap(item -> Stream.ofNullable(item.getInputValues()))
+        )
                 .flatMap(Collection::stream)
                 .filter(distinctByKey(InputValue::getName))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -140,6 +141,11 @@ public class InputObjectType {
     public InputObjectType setDescription(String description) {
         this.description = description;
         return this;
+    }
+
+    @Override
+    public boolean isInputObject() {
+        return true;
     }
 
     @Override

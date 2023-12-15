@@ -1,6 +1,7 @@
 package io.graphoenix.spi.graphql.operation;
 
 import graphql.parser.antlr.GraphqlParser;
+import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.common.Directive;
 import io.graphoenix.spi.graphql.type.VariableDefinition;
 import org.stringtemplate.v4.ST;
@@ -11,14 +12,14 @@ import java.util.LinkedHashSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Operation {
+public class Operation implements Definition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/operation/Operation.stg");
     private String operationType;
     private String name;
     private Collection<VariableDefinition> variableDefinitions;
+    private Collection<Selection> selections;
     private Collection<Directive> directives;
-    private Collection<Field> fields;
 
     public Operation() {
     }
@@ -42,8 +43,8 @@ public class Operation {
                     .map(Directive::new)
                     .collect(Collectors.toCollection(LinkedHashSet::new));
         }
-        this.fields = operationDefinitionContext.selectionSet().selection().stream()
-                .map(Field::new)
+        this.selections = operationDefinitionContext.selectionSet().selection().stream()
+                .map(Selection::of)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
@@ -115,36 +116,43 @@ public class Operation {
         return this;
     }
 
-    public Collection<Field> getFields() {
-        return fields;
+    public Collection<Selection> getSelections() {
+        return selections;
     }
 
-    public Operation setFields(Collection<Field> fields) {
-        this.fields = fields;
+    public Operation setSelections(Collection<Selection> selections) {
+        this.selections = selections;
         return this;
     }
 
-    public Operation addFields(Collection<Field> fields) {
-        if (this.fields == null) {
-            this.fields = new LinkedHashSet<>();
+    public Operation addSelections(Collection<Selection> selections) {
+        if (this.selections == null) {
+            this.selections = new LinkedHashSet<>();
         }
-        this.fields.addAll(fields);
+        this.selections.addAll(selections);
         return this;
     }
 
     public Field getField(String name) {
-        return this.fields.stream()
+        return this.selections.stream()
+                .filter(Selection::isField)
+                .map(selection -> (Field) selection)
                 .filter(field -> field.getAlias() != null && field.getAlias().equals(name) || field.getName().equals(name))
                 .findFirst()
                 .orElse(null);
     }
 
-    public Operation addField(Field field) {
-        if (this.fields == null) {
-            this.fields = new LinkedHashSet<>();
+    public Operation addSelection(Selection selection) {
+        if (this.selections == null) {
+            this.selections = new LinkedHashSet<>();
         }
-        this.fields.add(field);
+        this.selections.add(selection);
         return this;
+    }
+
+    @Override
+    public boolean isOperation() {
+        return true;
     }
 
     @Override

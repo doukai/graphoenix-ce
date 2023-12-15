@@ -1,6 +1,7 @@
 package io.graphoenix.spi.graphql.type;
 
 import graphql.parser.antlr.GraphqlParser;
+import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.common.Directive;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 
 import static io.graphoenix.spi.utils.DocumentUtil.getStringValue;
 
-public class ScalarType {
+public class ScalarType implements Definition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/ScalarType.stg");
     private String name;
@@ -68,6 +69,11 @@ public class ScalarType {
     public ScalarType setDescription(String description) {
         this.description = description;
         return this;
+    }
+
+    @Override
+    public boolean isScalar() {
+        return true;
     }
 
     @Override

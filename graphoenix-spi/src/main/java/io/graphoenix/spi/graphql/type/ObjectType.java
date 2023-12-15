@@ -1,6 +1,7 @@
 package io.graphoenix.spi.graphql.type;
 
 import graphql.parser.antlr.GraphqlParser;
+import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.common.Directive;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
@@ -14,7 +15,7 @@ import static io.graphoenix.spi.utils.DocumentUtil.getImplementsInterfaces;
 import static io.graphoenix.spi.utils.DocumentUtil.getStringValue;
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
-public class ObjectType {
+public class ObjectType implements Definition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/ObjectType.stg");
     private String name;
@@ -61,24 +62,24 @@ public class ObjectType {
 
     public ObjectType merge(ObjectType... objectTypes) {
         directives = Stream.concat(
-                        Stream.ofNullable(directives),
-                        Stream.of(objectTypes).flatMap(item -> Stream.ofNullable(item.getDirectives()))
-                )
+                Stream.ofNullable(directives),
+                Stream.of(objectTypes).flatMap(item -> Stream.ofNullable(item.getDirectives()))
+        )
                 .flatMap(Collection::stream)
                 .filter(distinctByKey(Directive::getName))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
         interfaces = Stream.concat(
-                        Stream.ofNullable(interfaces),
-                        Stream.of(objectTypes).flatMap(item -> Stream.ofNullable(item.getInterfaces()))
-                )
+                Stream.ofNullable(interfaces),
+                Stream.of(objectTypes).flatMap(item -> Stream.ofNullable(item.getInterfaces()))
+        )
                 .flatMap(Collection::stream)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
         fieldDefinitions = Stream.concat(
-                        Stream.ofNullable(fieldDefinitions),
-                        Stream.of(objectTypes).flatMap(item -> Stream.ofNullable(item.getFields()))
-                )
+                Stream.ofNullable(fieldDefinitions),
+                Stream.of(objectTypes).flatMap(item -> Stream.ofNullable(item.getFields()))
+        )
                 .flatMap(Collection::stream)
                 .filter(distinctByKey(FieldDefinition::getName))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -172,6 +173,11 @@ public class ObjectType {
     public ObjectType setDescription(String description) {
         this.description = description;
         return this;
+    }
+
+    @Override
+    public boolean isObject() {
+        return true;
     }
 
     @Override
