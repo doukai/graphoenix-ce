@@ -1,0 +1,3 @@
+rootProject.name = 'graphoenix-ce'
+include 'graphoenix-spi'
+
