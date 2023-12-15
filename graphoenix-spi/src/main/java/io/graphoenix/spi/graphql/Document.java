@@ -7,9 +7,15 @@ import io.graphoenix.spi.graphql.type.*;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.stream.Collectors;
+
+import static io.graphoenix.spi.utils.DocumentUtil.graphqlToDocument;
 
 public class Document {
 
@@ -19,6 +25,22 @@ public class Document {
 
     public Collection<Definition> getDefinitions() {
         return definitions;
+    }
+
+    public Document(String graphql) {
+        this(graphqlToDocument(graphql));
+    }
+
+    public Document(InputStream inputStream) throws IOException {
+        this(graphqlToDocument(inputStream));
+    }
+
+    public Document(File file) throws IOException {
+        this(graphqlToDocument(file));
+    }
+
+    public Document(Path path) throws IOException {
+        this(graphqlToDocument(path));
     }
 
     public Document(GraphqlParser.DocumentContext documentContext) {
