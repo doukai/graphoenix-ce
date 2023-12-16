@@ -43,35 +43,46 @@ public class Document {
         this(graphqlToDocument(path));
     }
 
+    public Document addDefinitions(String graphql) {
+        if (this.definitions == null) {
+            this.definitions = new LinkedHashSet<>();
+        }
+        this.definitions.addAll(
+                graphqlToDocument(graphql).definition().stream()
+                        .map(Definition::of)
+                        .collect(Collectors.toList())
+        );
+        return this;
+    }
+
+    public Document addDefinitions(InputStream inputStream) {
+        if (this.definitions == null) {
+            this.definitions = new LinkedHashSet<>();
+        }
+        this.definitions.addAll(
+                graphqlToDocument(graphql).definition().stream()
+                        .map(Definition::of)
+                        .collect(Collectors.toList())
+        );
+        return this;
+    }
+
+    public Document addDefinitions(String graphql) {
+        if (this.definitions == null) {
+            this.definitions = new LinkedHashSet<>();
+        }
+        this.definitions.addAll(
+                graphqlToDocument(graphql).definition().stream()
+                        .map(Definition::of)
+                        .collect(Collectors.toList())
+        );
+        return this;
+    }
+
+
     public Document(GraphqlParser.DocumentContext documentContext) {
         this.definitions = documentContext.definition().stream()
-                .map(definitionContext -> {
-                            if (definitionContext.operationDefinition() != null) {
-                                return new Operation(definitionContext.operationDefinition());
-                            } else if (definitionContext.fragmentDefinition() != null) {
-                                return new FragmentDefinition(definitionContext.fragmentDefinition());
-                            } else if (definitionContext.typeSystemDefinition() != null) {
-                                if (definitionContext.typeSystemDefinition().schemaDefinition() != null) {
-                                    return new Schema(definitionContext.typeSystemDefinition().schemaDefinition());
-                                } else if (definitionContext.typeSystemDefinition().typeDefinition() != null) {
-                                    if (definitionContext.typeSystemDefinition().typeDefinition().scalarTypeDefinition() != null) {
-                                        return new ScalarType(definitionContext.typeSystemDefinition().typeDefinition().scalarTypeDefinition());
-                                    } else if (definitionContext.typeSystemDefinition().typeDefinition().enumTypeDefinition() != null) {
-                                        return new EnumType(definitionContext.typeSystemDefinition().typeDefinition().enumTypeDefinition());
-                                    } else if (definitionContext.typeSystemDefinition().typeDefinition().objectTypeDefinition() != null) {
-                                        return new ObjectType(definitionContext.typeSystemDefinition().typeDefinition().objectTypeDefinition());
-                                    } else if (definitionContext.typeSystemDefinition().typeDefinition().interfaceTypeDefinition() != null) {
-                                        return new InterfaceType(definitionContext.typeSystemDefinition().typeDefinition().interfaceTypeDefinition());
-                                    } else if (definitionContext.typeSystemDefinition().typeDefinition().inputObjectTypeDefinition() != null) {
-                                        return new InputObjectType(definitionContext.typeSystemDefinition().typeDefinition().inputObjectTypeDefinition());
-                                    }
-                                } else if (definitionContext.typeSystemDefinition().directiveDefinition() != null) {
-                                    return new DirectiveDefinition(definitionContext.typeSystemDefinition().directiveDefinition());
-                                }
-                            }
-                            throw new RuntimeException("unsupported document definition: " + definitionContext.getText());
-                        }
-                )
+                .map(Definition::of)
                 .collect(Collectors.toList());
     }
 
