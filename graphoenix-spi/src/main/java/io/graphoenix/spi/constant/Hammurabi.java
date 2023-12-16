@@ -27,6 +27,7 @@ public class Hammurabi {
     public static final String CONNECTION_DIRECTIVE_NAME = "connection";
     public static final String MAP_DIRECTIVE_NAME = "map";
     public static final String DATA_TYPE_DIRECTIVE_NAME = "dataType";
+    public static final String DATA_TYPE_DIRECTIVE_TYPE_NAME = "type";
     public static final String VALIDATION_DIRECTIVE_NAME = "validation";
     public static final String FETCH_DIRECTIVE_NAME = "fetch";
     public static final String CONTAINER_TYPE_DIRECTIVE_NAME = "containerType";

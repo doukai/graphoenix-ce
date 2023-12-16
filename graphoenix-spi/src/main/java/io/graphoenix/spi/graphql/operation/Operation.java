@@ -1,47 +1,55 @@
 package io.graphoenix.spi.graphql.operation;
 
 import graphql.parser.antlr.GraphqlParser;
+import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
-import io.graphoenix.spi.graphql.common.Directive;
 import io.graphoenix.spi.graphql.type.VariableDefinition;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class Operation implements Definition {
+public class Operation extends AbstractDefinition implements Definition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/operation/Operation.stg");
     private String operationType;
-    private String name;
-    private Collection<VariableDefinition> variableDefinitions;
+    private Map<String, VariableDefinition> variableDefinitionMap;
     private Collection<Selection> selections;
-    private Collection<Directive> directives;
 
     public Operation() {
+        super();
+        this.variableDefinitionMap = new LinkedHashMap<>();
+        this.selections = new LinkedHashSet<>();
+    }
+
+    public Operation(String name) {
+        super(name);
+        this.variableDefinitionMap = new LinkedHashMap<>();
+        this.selections = new LinkedHashSet<>();
     }
 
     public Operation(GraphqlParser.OperationDefinitionContext operationDefinitionContext) {
+        super(operationDefinitionContext.name(), null, operationDefinitionContext.directives());
         if (operationDefinitionContext.operationType() != null) {
             this.operationType = operationDefinitionContext.operationType().getText();
         } else {
             this.operationType = "query";
         }
-        if (operationDefinitionContext.name() != null) {
-            this.name = operationDefinitionContext.name().getText();
-        }
         if (operationDefinitionContext.variableDefinitions() != null) {
-            this.variableDefinitions = operationDefinitionContext.variableDefinitions().variableDefinition().stream()
+            this.variableDefinitionMap = operationDefinitionContext.variableDefinitions().variableDefinition().stream()
                     .map(VariableDefinition::new)
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
-        }
-        if (operationDefinitionContext.directives() != null) {
-            this.directives = operationDefinitionContext.directives().directive().stream()
-                    .map(Directive::new)
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
+                    .collect(
+                            Collectors.toMap(
+                                    variableDefinition -> variableDefinition.getVariable().getName(),
+                                    variableDefinition -> variableDefinition,
+                                    (x, y) -> y,
+                                    LinkedHashMap::new
+                            )
+                    );
         }
         this.selections = operationDefinitionContext.selectionSet().selection().stream()
                 .map(Selection::of)
@@ -57,62 +65,34 @@ public class Operation implements Definition {
         return this;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public Operation setName(String name) {
-        this.name = name;
-        return this;
+    public VariableDefinition getVariableDefinition(String name) {
+        return variableDefinitionMap.get(name);
     }
 
     public Collection<VariableDefinition> getVariableDefinitions() {
-        return variableDefinitions;
+        return variableDefinitionMap.values();
     }
 
     public Operation setVariableDefinitions(Collection<VariableDefinition> variableDefinitions) {
-        this.variableDefinitions = variableDefinitions;
+        this.variableDefinitionMap.clear();
+        return addVariableDefinitions(variableDefinitions);
+    }
+
+    public Operation addVariableDefinitions(Collection<VariableDefinition> variableDefinitions) {
+        this.variableDefinitionMap.putAll(
+                variableDefinitions.stream()
+                        .collect(
+                                Collectors.toMap(
+                                        variableDefinition -> variableDefinition.getVariable().getName(),
+                                        variableDefinition -> variableDefinition
+                                )
+                        )
+        );
         return this;
     }
 
     public Operation addVariableDefinition(VariableDefinition variableDefinition) {
-        if (this.variableDefinitions == null) {
-            this.variableDefinitions = new LinkedHashSet<>();
-        }
-        this.variableDefinitions.add(variableDefinition);
-        return this;
-    }
-
-    public Operation addVariableDefinitions(Stream<VariableDefinition> variableDefinitionStream) {
-        if (this.variableDefinitions == null) {
-            this.variableDefinitions = new LinkedHashSet<>();
-        }
-        this.variableDefinitions.addAll(variableDefinitionStream.collect(Collectors.toList()));
-        return this;
-    }
-
-    public Collection<Directive> getDirectives() {
-        return directives;
-    }
-
-    public Operation setDirectives(Collection<Directive> directives) {
-        this.directives = directives;
-        return this;
-    }
-
-    public Operation addDirective(Directive directive) {
-        if (this.directives == null) {
-            this.directives = new LinkedHashSet<>();
-        }
-        this.directives.add(directive);
-        return this;
-    }
-
-    public Operation addDirectives(Collection<Directive> directives) {
-        if (this.directives == null) {
-            this.directives = new LinkedHashSet<>();
-        }
-        this.directives.addAll(directives);
+        this.variableDefinitionMap.put(variableDefinition.getVariable().getName(), variableDefinition);
         return this;
     }
 

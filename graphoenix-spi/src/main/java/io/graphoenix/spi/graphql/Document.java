@@ -1,6 +1,10 @@
 package io.graphoenix.spi.graphql;
 
 import graphql.parser.antlr.GraphqlParser;
+import io.graphoenix.spi.graphql.type.EnumType;
+import io.graphoenix.spi.graphql.type.InputObjectType;
+import io.graphoenix.spi.graphql.type.InterfaceType;
+import io.graphoenix.spi.graphql.type.ObjectType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
@@ -20,13 +24,28 @@ public class Document {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/Document.stg");
 
-    private Collection<Definition> definitions;
+    private Map<String, Definition> definitionMap;
+
+    public Definition getDefinition(String name) {
+        return definitionMap.get(name);
+    }
 
     public Collection<Definition> getDefinitions() {
-        return definitions;
+        return definitionMap.values();
     }
 
     public Document() {
+    }
+
+    public Document(GraphqlParser.DocumentContext documentContext) {
+        this.definitionMap = documentContext.definition().stream()
+                .map(Definition::of)
+                .collect(
+                        Collectors.toMap(
+                                Definition::getName,
+                                definition -> definition
+                        )
+                );
     }
 
     public Document(String graphql) {
@@ -171,31 +190,85 @@ public class Document {
         return this;
     }
 
-    public Document(GraphqlParser.DocumentContext documentContext) {
-        this.definitions = documentContext.definition().stream()
-                .map(Definition::of)
-                .collect(Collectors.toList());
-    }
-
     public Document setDefinitions(Collection<Definition> definitions) {
-        this.definitions = definitions;
-        return this;
+        this.definitionMap.clear();
+        return addDefinitions(definitions);
     }
 
     public Document addDefinition(Definition definition) {
-        if (this.definitions == null) {
-            this.definitions = new LinkedHashSet<>();
-        }
-        this.definitions.add(definition);
+        this.definitionMap.put(definition.getName(), definition);
         return this;
     }
 
     public Document addDefinitions(Collection<Definition> definitions) {
-        if (this.definitions == null) {
-            this.definitions = definitions;
-        }
-        this.definitions.addAll(definitions);
+        this.definitionMap.putAll(
+                definitions.stream()
+                        .collect(
+                                Collectors.toMap(
+                                        Definition::getName,
+                                        definition -> definition
+                                )
+                        )
+        );
         return this;
+    }
+
+    public Document merge(GraphqlParser.DocumentContext documentContext) {
+        this.definitionMap.putAll(
+                documentContext.definition().stream()
+                        .map(this::merge)
+                        .collect(
+                                Collectors.toMap(
+                                        Definition::getName,
+                                        definition -> definition
+                                )
+                        )
+        );
+        return this;
+    }
+
+    public Definition merge(GraphqlParser.DefinitionContext definitionContext) {
+        Definition definition = Definition.of(definitionContext);
+        if (definitionContext.operationDefinition() != null) {
+            return definition;
+        } else if (definitionContext.fragmentDefinition() != null) {
+            return definition;
+        } else if (definitionContext.typeSystemDefinition() != null) {
+            if (definitionContext.typeSystemDefinition().schemaDefinition() != null) {
+                return definition;
+            } else if (definitionContext.typeSystemDefinition().typeDefinition() != null) {
+                if (definitionContext.typeSystemDefinition().typeDefinition().scalarTypeDefinition() != null) {
+                    return definition;
+                } else if (definitionContext.typeSystemDefinition().typeDefinition().enumTypeDefinition() != null) {
+                    if (definitionMap.get(definition.getName()) != null) {
+                        return ((EnumType) definitionMap.get(definition.getName())).merge((EnumType) definition);
+                    } else {
+                        return definition;
+                    }
+                } else if (definitionContext.typeSystemDefinition().typeDefinition().objectTypeDefinition() != null) {
+                    if (definitionMap.get(definition.getName()) != null) {
+                        return ((ObjectType) definitionMap.get(definition.getName())).merge((ObjectType) definition);
+                    } else {
+                        return definition;
+                    }
+                } else if (definitionContext.typeSystemDefinition().typeDefinition().interfaceTypeDefinition() != null) {
+                    if (definitionMap.get(definition.getName()) != null) {
+                        return ((InterfaceType) definitionMap.get(definition.getName())).merge((InterfaceType) definition);
+                    } else {
+                        return definition;
+                    }
+                } else if (definitionContext.typeSystemDefinition().typeDefinition().inputObjectTypeDefinition() != null) {
+                    if (definitionMap.get(definition.getName()) != null) {
+                        return ((InputObjectType) definitionMap.get(definition.getName())).merge((InputObjectType) definition);
+                    } else {
+                        return definition;
+                    }
+                }
+            } else if (definitionContext.typeSystemDefinition().directiveDefinition() != null) {
+                return definition;
+            }
+        }
+        throw new RuntimeException("unsupported document definition: " + definitionContext.getText());
     }
 
     @Override

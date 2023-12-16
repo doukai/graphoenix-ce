@@ -1,8 +1,8 @@
 package io.graphoenix.spi.graphql.operation;
 
 import graphql.parser.antlr.GraphqlParser;
+import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.common.Arguments;
-import io.graphoenix.spi.graphql.common.Directive;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
@@ -16,20 +16,19 @@ import java.util.stream.Stream;
 
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
-public class Field implements Selection {
+public class Field extends AbstractDefinition implements Selection {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/operation/Field.stg");
-    private String name;
     private String alias;
     private Arguments arguments;
     private Collection<Selection> selections;
-    private Collection<Directive> directives;
 
     public Field() {
+        super();
     }
 
     public Field(String name) {
-        this.name = name;
+        super(name);
     }
 
     public Field(GraphqlParser.SelectionContext selectionContext) {
@@ -37,7 +36,7 @@ public class Field implements Selection {
     }
 
     public Field(GraphqlParser.FieldContext fieldContext) {
-        this.name = fieldContext.name().getText();
+        super(fieldContext.name(), null, fieldContext.directives());
         if (fieldContext.alias() != null) {
             this.alias = fieldContext.alias().name().getText();
         }
@@ -49,33 +48,20 @@ public class Field implements Selection {
                     .map(Selection::of)
                     .collect(Collectors.toCollection(LinkedHashSet::new));
         }
-        if (fieldContext.directives() != null) {
-            this.directives = fieldContext.directives().directive().stream()
-                    .map(Directive::new)
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
-        }
     }
 
     public Field mergeSelection(Collection<Field> fields) {
-        this.selections = Stream.concat(
-                Stream.ofNullable(this.selections)
-                        .flatMap(Collection::stream)
-                        .filter(Selection::isField)
-                        .map(selection -> (Field) selection),
-                Stream.ofNullable(fields)
-                        .flatMap(Collection::stream)
-        )
+        this.selections = Stream
+                .concat(
+                        Stream.ofNullable(this.selections)
+                                .flatMap(Collection::stream)
+                                .filter(Selection::isField)
+                                .map(selection -> (Field) selection),
+                        Stream.ofNullable(fields)
+                                .flatMap(Collection::stream)
+                )
                 .filter(distinctByKey(Field::getName))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
-        return this;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Field setName(String name) {
-        this.name = name;
         return this;
     }
 
@@ -144,15 +130,6 @@ public class Field implements Selection {
             this.arguments = new Arguments();
         }
         this.arguments.put(name, valueWithVariable);
-        return this;
-    }
-
-    public Collection<Directive> getDirectives() {
-        return directives;
-    }
-
-    public Field setDirectives(Collection<Directive> directives) {
-        this.directives = directives;
         return this;
     }
 

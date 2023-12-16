@@ -1,55 +1,30 @@
 package io.graphoenix.spi.graphql.type;
 
 import graphql.parser.antlr.GraphqlParser;
-import io.graphoenix.spi.graphql.common.Directive;
+import io.graphoenix.spi.graphql.AbstractDefinition;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.stream.Collectors;
-
-import static io.graphoenix.spi.utils.DocumentUtil.getStringValue;
-
-public class InputValue {
+public class InputValue extends AbstractDefinition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/InputValue.stg");
-    private String name;
     private Type type;
     private String defaultValue;
-    private Collection<Directive> directives;
-    private String description;
 
     public InputValue() {
+        super();
+    }
+
+    public InputValue(String name) {
+        super(name);
     }
 
     public InputValue(GraphqlParser.InputValueDefinitionContext inputValueDefinitionContext) {
-        this.name = inputValueDefinitionContext.name().getText();
+        super(inputValueDefinitionContext.name(), inputValueDefinitionContext.description(), inputValueDefinitionContext.directives());
         this.type = Type.of(inputValueDefinitionContext.type());
         if (inputValueDefinitionContext.defaultValue() != null) {
             this.defaultValue = inputValueDefinitionContext.defaultValue().value().getText();
         }
-        if (inputValueDefinitionContext.directives() != null) {
-            this.directives = inputValueDefinitionContext.directives().directive().stream()
-                    .map(Directive::new)
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
-        }
-        if (inputValueDefinitionContext.description() != null) {
-            this.description = getStringValue(inputValueDefinitionContext.description().StringValue());
-        }
-    }
-
-    public InputValue(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public InputValue setName(String name) {
-        this.name = name;
-        return this;
     }
 
     public Type getType() {
@@ -78,42 +53,6 @@ public class InputValue {
                 this.defaultValue = defaultValue;
             }
         }
-        return this;
-    }
-
-    public Collection<Directive> getDirectives() {
-        return directives;
-    }
-
-    public InputValue setDirectives(Collection<Directive> directives) {
-        if (directives != null) {
-            this.directives = new LinkedHashSet<>(directives);
-        }
-        return this;
-    }
-
-    public InputValue addDirective(Directive directive) {
-        if (directives == null) {
-            this.directives = new LinkedHashSet<>();
-        }
-        this.directives.add(directive);
-        return this;
-    }
-
-    public InputValue addDirectives(Collection<Directive> directives) {
-        if (this.directives == null) {
-            this.directives = new LinkedHashSet<>();
-        }
-        this.directives.addAll(directives);
-        return this;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public InputValue setDescription(String description) {
-        this.description = description;
         return this;
     }
 

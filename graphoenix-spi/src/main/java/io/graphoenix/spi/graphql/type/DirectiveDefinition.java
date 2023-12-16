@@ -1,42 +1,48 @@
 package io.graphoenix.spi.graphql.type;
 
 import graphql.parser.antlr.GraphqlParser;
+import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import static io.graphoenix.spi.utils.DocumentUtil.getStringValue;
-
-public class DirectiveDefinition implements Definition {
+public class DirectiveDefinition extends AbstractDefinition implements Definition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/DirectiveDefinition.stg");
-    private String name;
-    private Collection<InputValue> arguments;
+    private Map<String, InputValue> argumentMap;
     private Collection<String> directiveLocations;
-    private String description;
 
     public DirectiveDefinition() {
+        super();
+        this.argumentMap = new LinkedHashMap<>();
     }
 
     public DirectiveDefinition(String name) {
-        this.name = name;
+        super(name);
+        this.argumentMap = new LinkedHashMap<>();
     }
 
     public DirectiveDefinition(GraphqlParser.DirectiveDefinitionContext directiveDefinitionContext) {
-        this.name = directiveDefinitionContext.name().getText();
+        super(directiveDefinitionContext.name(), directiveDefinitionContext.description());
         if (directiveDefinitionContext.argumentsDefinition() != null) {
-            this.arguments = directiveDefinitionContext.argumentsDefinition().inputValueDefinition().stream()
+            this.argumentMap = directiveDefinitionContext.argumentsDefinition().inputValueDefinition().stream()
                     .map(InputValue::new)
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
+                    .collect(
+                            Collectors.toMap(
+                                    InputValue::getName,
+                                    inputValue -> inputValue,
+                                    (x, y) -> y,
+                                    LinkedHashMap::new
+                            )
+                    );
         }
         this.directiveLocations = directiveLocationList(directiveDefinitionContext.directiveLocations());
-        if (directiveDefinitionContext.description() != null) {
-            this.description = getStringValue(directiveDefinitionContext.description().StringValue());
-        }
     }
 
     public Collection<String> directiveLocationList(GraphqlParser.DirectiveLocationsContext directiveLocationsContext) {
@@ -50,21 +56,30 @@ public class DirectiveDefinition implements Definition {
         return directiveLocationList;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public DirectiveDefinition setName(String name) {
-        this.name = name;
-        return this;
-    }
-
     public Collection<InputValue> getArguments() {
-        return arguments;
+        return argumentMap.values();
     }
 
     public DirectiveDefinition setArguments(Collection<InputValue> arguments) {
-        this.arguments = arguments;
+        this.argumentMap.clear();
+        return addArguments(arguments);
+    }
+
+    public DirectiveDefinition addArguments(Collection<InputValue> arguments) {
+        this.argumentMap.putAll(
+                arguments.stream()
+                        .collect(
+                                Collectors.toMap(
+                                        InputValue::getName,
+                                        inputValue -> inputValue
+                                )
+                        )
+        );
+        return this;
+    }
+
+    public DirectiveDefinition addArgument(InputValue argument) {
+        this.argumentMap.put(argument.getName(), argument);
         return this;
     }
 
@@ -74,15 +89,6 @@ public class DirectiveDefinition implements Definition {
 
     public DirectiveDefinition setDirectiveLocations(Collection<String> directiveLocations) {
         this.directiveLocations = directiveLocations;
-        return this;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public DirectiveDefinition setDescription(String description) {
-        this.description = description;
         return this;
     }
 

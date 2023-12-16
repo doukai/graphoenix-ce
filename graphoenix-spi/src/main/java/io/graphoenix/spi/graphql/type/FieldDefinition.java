@@ -1,86 +1,76 @@
 package io.graphoenix.spi.graphql.type;
 
 import graphql.parser.antlr.GraphqlParser;
-import io.graphoenix.spi.graphql.common.Directive;
+import io.graphoenix.spi.graphql.AbstractDefinition;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.DATA_TYPE_DIRECTIVE_NAME;
-import static io.graphoenix.spi.utils.DocumentUtil.getStringValue;
+import static io.graphoenix.spi.constant.Hammurabi.DATA_TYPE_DIRECTIVE_TYPE_NAME;
 
-public class FieldDefinition {
+public class FieldDefinition extends AbstractDefinition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/FieldDefinition.stg");
-    private String name;
-    private Collection<InputValue> arguments;
+    private Map<String, InputValue> argumentMap;
     private Type type;
-    private Collection<Directive> directives;
-    private String description;
 
     public FieldDefinition() {
+        super();
+        this.argumentMap = new LinkedHashMap<>();
     }
 
     public FieldDefinition(String name) {
-        this.name = name;
+        super(name);
+        this.argumentMap = new LinkedHashMap<>();
     }
 
     public FieldDefinition(GraphqlParser.FieldDefinitionContext fieldDefinitionContext) {
-        this.name = fieldDefinitionContext.name().getText();
+        super(fieldDefinitionContext.name(), fieldDefinitionContext.description(), fieldDefinitionContext.directives());
         this.type = Type.of(fieldDefinitionContext.type());
-        if (fieldDefinitionContext.description() != null) {
-            this.description = getStringValue(fieldDefinitionContext.description().StringValue());
-        }
         if (fieldDefinitionContext.argumentsDefinition() != null) {
-            this.arguments = fieldDefinitionContext.argumentsDefinition().inputValueDefinition().stream()
+            this.argumentMap = fieldDefinitionContext.argumentsDefinition().inputValueDefinition().stream()
                     .map(InputValue::new)
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
+                    .collect(
+                            Collectors.toMap(
+                                    InputValue::getName,
+                                    inputValue -> inputValue,
+                                    (x, y) -> y,
+                                    LinkedHashMap::new
+                            )
+                    );
         }
-        if (fieldDefinitionContext.directives() != null) {
-            this.directives = fieldDefinitionContext.directives().directive().stream()
-                    .map(Directive::new)
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
-        }
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public FieldDefinition setName(String name) {
-        this.name = name;
-        return this;
     }
 
     public Collection<InputValue> getArguments() {
-        return arguments;
+        return argumentMap.values();
     }
 
     public FieldDefinition setArguments(Collection<InputValue> arguments) {
-        this.arguments = arguments;
-        return this;
+        this.argumentMap.clear();
+        return addArguments(arguments);
     }
 
     public FieldDefinition addArguments(Collection<InputValue> arguments) {
-        if (this.arguments == null) {
-            this.arguments = new LinkedHashSet<>();
-        }
-        this.arguments.addAll(arguments);
+        this.argumentMap.putAll(
+                arguments.stream()
+                        .collect(
+                                Collectors.toMap(
+                                        InputValue::getName,
+                                        inputValue -> inputValue
+                                )
+                        )
+        );
         return this;
     }
 
     public FieldDefinition addArgument(InputValue argument) {
-        if (this.arguments == null) {
-            this.arguments = new LinkedHashSet<>();
-        }
-        this.arguments.add(argument);
+        this.argumentMap.put(argument.getName(), argument);
         return this;
     }
 
@@ -98,53 +88,12 @@ public class FieldDefinition {
         return this;
     }
 
-    public Collection<Directive> getDirectives() {
-        return directives;
-    }
-
-    public FieldDefinition setStringDirectives(Collection<Directive> directives) {
-        this.directives = directives;
-        return this;
-    }
-
-    public FieldDefinition setDirectives(Collection<Directive> directives) {
-        if (directives != null) {
-            this.directives = new LinkedHashSet<>(directives);
-        }
-        return this;
-    }
-
-    public FieldDefinition addDirective(Directive directive) {
-        if (this.directives == null) {
-            this.directives = new LinkedHashSet<>();
-        }
-        this.directives.add(directive);
-        return this;
-    }
-
-    public FieldDefinition addDirectives(Collection<Directive> directives) {
-        if (this.directives == null) {
-            this.directives = new LinkedHashSet<>();
-        }
-        this.directives.addAll(directives);
-        return this;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public FieldDefinition setDescription(String description) {
-        this.description = description;
-        return this;
-    }
-
     public Optional<String> getDataTypeName() {
-        return Stream.ofNullable(this.directives)
+        return Stream.ofNullable(getDirectives())
                 .flatMap(Collection::stream)
                 .filter(directive -> directive.getName().equals(DATA_TYPE_DIRECTIVE_NAME))
                 .flatMap(directive -> directive.getArguments().entrySet().stream())
-                .filter(entry -> entry.getKey().equals("type"))
+                .filter(entry -> entry.getKey().equals(DATA_TYPE_DIRECTIVE_TYPE_NAME))
                 .filter(entry -> entry.getValue().getValueType().equals(JsonValue.ValueType.STRING))
                 .map(entry -> ((JsonString) entry.getValue()).getString())
                 .findFirst();

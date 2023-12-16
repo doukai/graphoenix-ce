@@ -1,11 +1,12 @@
 package io.graphoenix.spi.graphql.type;
 
 import graphql.parser.antlr.GraphqlParser;
+import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
-public class Schema implements Definition {
+public class Schema extends AbstractDefinition implements Definition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/Schema.stg");
     private String query;
@@ -13,9 +14,11 @@ public class Schema implements Definition {
     private String subscription;
 
     public Schema() {
+        super();
     }
 
     public Schema(GraphqlParser.SchemaDefinitionContext schemaDefinitionContext) {
+        super(schemaDefinitionContext.description(), schemaDefinitionContext.directives());
         this.query = schemaDefinitionContext.operationTypeDefinition().stream()
                 .filter(operationTypeDefinitionContext -> operationTypeDefinitionContext.operationType().QUERY() != null)
                 .findFirst()
@@ -60,6 +63,11 @@ public class Schema implements Definition {
     public Schema setSubscription(String subscription) {
         this.subscription = subscription;
         return this;
+    }
+
+    @Override
+    public String getName() {
+        return "schema";
     }
 
     @Override
