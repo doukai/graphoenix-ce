@@ -71,6 +71,10 @@ public class Arguments extends AbstractMap<String, JsonValue> implements ValueWi
         return arguments;
     }
 
+    public ValueWithVariable getArgument(String name) {
+        return arguments.get(name);
+    }
+
     @Override
     public JsonValue put(String key, JsonValue value) {
         return put(key, (Object) value);

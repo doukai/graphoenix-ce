@@ -60,6 +60,10 @@ public class Directive {
         return arguments;
     }
 
+    public ValueWithVariable getArgument(String name) {
+        return arguments.getArgument(name);
+    }
+
     public Directive setArguments(GraphqlParser.ArgumentsContext argumentsContext) {
         this.arguments = new Arguments(argumentsContext);
         return this;

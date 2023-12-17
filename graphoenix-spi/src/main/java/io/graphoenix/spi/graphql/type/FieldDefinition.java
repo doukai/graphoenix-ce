@@ -11,8 +11,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.graphoenix.spi.constant.Hammurabi.DATA_TYPE_DIRECTIVE_NAME;
-import static io.graphoenix.spi.constant.Hammurabi.DATA_TYPE_DIRECTIVE_TYPE_NAME;
+import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_DATA_TYPE_NAME;
+import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_DATA_TYPE_TYPE_NAME;
 
 public class FieldDefinition extends AbstractDefinition {
 
@@ -91,9 +91,9 @@ public class FieldDefinition extends AbstractDefinition {
     public Optional<String> getDataTypeName() {
         return Stream.ofNullable(getDirectives())
                 .flatMap(Collection::stream)
-                .filter(directive -> directive.getName().equals(DATA_TYPE_DIRECTIVE_NAME))
+                .filter(directive -> directive.getName().equals(DIRECTIVE_DATA_TYPE_NAME))
                 .flatMap(directive -> directive.getArguments().entrySet().stream())
-                .filter(entry -> entry.getKey().equals(DATA_TYPE_DIRECTIVE_TYPE_NAME))
+                .filter(entry -> entry.getKey().equals(DIRECTIVE_DATA_TYPE_TYPE_NAME))
                 .filter(entry -> entry.getValue().getValueType().equals(JsonValue.ValueType.STRING))
                 .map(entry -> ((JsonString) entry.getValue()).getString())
                 .findFirst();

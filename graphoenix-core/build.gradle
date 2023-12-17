@@ -9,9 +9,21 @@ version '0.0.1-SNAPSHOT'
 repositories {
     mavenCentral()
     jcenter()
+    mavenLocal()
 }
 
 dependencies {
+    compile project(':graphoenix-spi')
+
+    implementation 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
+    implementation 'io.nozdormu:nozdormu-interceptor:0.0.1-SNAPSHOT'
+    implementation 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
+    implementation 'com.google.guava:guava:31.1-jre'
+
+    annotationProcessor 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
+    annotationProcessor 'io.nozdormu:nozdormu-interceptor:0.0.1-SNAPSHOT'
+    annotationProcessor 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
