@@ -107,6 +107,10 @@ public abstract class AbstractDefinition implements Definition {
         return this;
     }
 
+    public Directive getDirective(String name) {
+        return directiveMap.get(name);
+    }
+
     public Collection<Directive> getDirectives() {
         return directiveMap.values();
     }
@@ -155,19 +159,5 @@ public abstract class AbstractDefinition implements Definition {
                 .isPresent();
     }
 
-    public boolean isQueryOperationType() {
-        return isObject() && getName().equals(TYPE_QUERY_NAME);
-    }
 
-    public boolean isMutationOperationType() {
-        return isObject() && getName().equals(TYPE_MUTATION_NAME);
-    }
-
-    public boolean isSubscriptionOperationType() {
-        return isObject() && getName().equals(TYPE_SUBSCRIPTION_NAME);
-    }
-
-    public boolean isOperationType() {
-        return isQueryOperationType() || isMutationOperationType() || isSubscriptionOperationType();
-    }
 }

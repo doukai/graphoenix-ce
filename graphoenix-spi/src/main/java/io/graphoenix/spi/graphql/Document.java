@@ -1,10 +1,7 @@
 package io.graphoenix.spi.graphql;
 
 import graphql.parser.antlr.GraphqlParser;
-import io.graphoenix.spi.graphql.type.EnumType;
-import io.graphoenix.spi.graphql.type.InputObjectType;
-import io.graphoenix.spi.graphql.type.InterfaceType;
-import io.graphoenix.spi.graphql.type.ObjectType;
+import io.graphoenix.spi.graphql.type.*;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
@@ -269,6 +266,13 @@ public class Document {
             }
         }
         throw new RuntimeException("unsupported document definition: " + definitionContext.getText());
+    }
+
+    public Optional<Schema> getSchema() {
+        return getDefinitions().stream()
+                .filter(Definition::isSchema)
+                .map(definition -> (Schema) definition)
+                .findFirst();
     }
 
     @Override

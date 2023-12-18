@@ -45,12 +45,12 @@ public class InputValue extends AbstractDefinition {
         return defaultValue;
     }
 
-    public InputValue setDefaultValue(String defaultValue) {
+    public InputValue setDefaultValue(Object defaultValue) {
         if (defaultValue != null) {
             if (this.type.getTypeName().getName().equals("String")) {
                 this.defaultValue = "\"" + defaultValue + "\"";
             } else {
-                this.defaultValue = defaultValue;
+                this.defaultValue = String.valueOf(defaultValue);
             }
         }
         return this;

@@ -45,6 +45,10 @@ public interface Definition {
         return false;
     }
 
+    default boolean isLeaf() {
+        return isScalar() || isEnum();
+    }
+
     String toString();
 
     static Definition of(GraphqlParser.DefinitionContext definitionContext) {

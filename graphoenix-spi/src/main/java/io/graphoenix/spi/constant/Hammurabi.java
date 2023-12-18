@@ -4,10 +4,22 @@ public class Hammurabi {
 
     public static final String TYPE_QUERY_NAME = "Query";
     public static final String TYPE_MUTATION_NAME = "Mutation";
+    public static final String SCALA_ID_NAME = "ID";
+    public static final String SCALA_INT_NAME = "Int";
+    public static final String SCALA_FLOAT_NAME = "Float";
+    public static final String SCALA_STRING_NAME = "String";
+    public static final String SCALA_BOOLEAN_NAME = "Boolean";
+    public static final String SCALA_BIG_INTEGER_NAME = "BigInteger";
+    public static final String SCALA_BIG_DECIMAL_NAME = "BigDecimal";
+    public static final String SCALA_DATE_NAME = "Date";
+    public static final String SCALA_TIME_NAME = "Time";
+    public static final String SCALA_DATE_TIME_NAME = "DateTime";
+    public static final String SCALA_TIMESTAMP_NAME = "Timestamp";
     public static final String TYPE_SUBSCRIPTION_NAME = "Subscription";
     public static final String TYPE_PAGE_INFO_NAME = "PageInfo";
     public static final String INTERFACE_META_NAME = "Meta";
     public static final String FIELD_DEPRECATED_NAME = "isDeprecated";
+    public static final String FIELD_TYPE_NAME_NAME = "__typename";
     public static final String INPUT_DEPRECATED_NAME = "includeDeprecated";
     public static final String INPUT_NOT_NAME = "not";
     public static final String INPUT_LIST_NAME = "list";
