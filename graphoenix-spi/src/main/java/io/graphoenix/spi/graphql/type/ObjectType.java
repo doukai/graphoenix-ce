@@ -6,13 +6,11 @@ import io.graphoenix.spi.graphql.AbstractDefinition;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.utils.DocumentUtil.getImplementsInterfaces;
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
@@ -21,6 +19,7 @@ public class ObjectType extends AbstractDefinition implements Definition {
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/ObjectType.stg");
     private Collection<String> interfaces;
     private Map<String, FieldDefinition> fieldDefinitionMap;
+
     public ObjectType() {
         super();
         this.interfaces = new LinkedHashSet<>();
@@ -134,6 +133,24 @@ public class ObjectType extends AbstractDefinition implements Definition {
     public ObjectType addField(FieldDefinition fieldDefinition) {
         this.fieldDefinitionMap.put(fieldDefinition.getName(), fieldDefinition);
         return this;
+    }
+
+    public Optional<FieldDefinition> getIDField() {
+        return Optional.of(fieldDefinitionMap.values())
+                .flatMap(fieldDefinitions ->
+                        fieldDefinitions.stream()
+                                .filter(fieldDefinition -> fieldDefinition.getType().getTypeName().getName().equals(SCALA_ID_NAME))
+                                .findFirst()
+                );
+    }
+
+    public Optional<FieldDefinition> getCursorField() {
+        return Optional.of(fieldDefinitionMap.values())
+                .flatMap(fieldDefinitions ->
+                        fieldDefinitions.stream()
+                                .filter(fieldDefinition -> fieldDefinition.hasDirective(DIRECTIVE_CURSOR_NAME))
+                                .findFirst()
+                );
     }
 
     @Override

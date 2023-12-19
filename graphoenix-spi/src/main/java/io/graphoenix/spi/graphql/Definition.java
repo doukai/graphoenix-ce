@@ -49,6 +49,8 @@ public interface Definition {
         return isScalar() || isEnum();
     }
 
+    boolean isContainerType();
+
     String toString();
 
     static Definition of(GraphqlParser.DefinitionContext definitionContext) {

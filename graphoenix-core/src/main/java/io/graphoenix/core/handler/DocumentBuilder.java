@@ -1,6 +1,5 @@
 package io.graphoenix.core.handler;
 
-import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.spi.annotation.Application;
 import io.graphoenix.spi.graphql.AbstractDefinition;
@@ -12,34 +11,37 @@ import jakarta.inject.Inject;
 
 import java.util.LinkedHashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.graphoenix.core.utils.NameUtil.getGrpcTypeName;
 import static io.graphoenix.core.utils.PredicateUtil.not;
 import static io.graphoenix.spi.constant.Hammurabi.*;
+import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
 @Application
 public class DocumentBuilder {
 
     private final PackageConfig packageConfig;
     private final PackageManager packageManager;
-    private Document document;
+    private final DocumentManager documentManager;
 
     @Inject
-    public DocumentBuilder(PackageConfig packageConfig, PackageManager packageManager) {
+    public DocumentBuilder(PackageConfig packageConfig, PackageManager packageManager, DocumentManager documentManager) {
         this.packageConfig = packageConfig;
         this.packageManager = packageManager;
+        this.documentManager = documentManager;
     }
 
     public Document build(Document document) {
 
-        this.document = document;
         document.getDefinitions().stream()
                 .filter(Definition::isObject)
                 .map(definition -> (AbstractDefinition) definition)
                 .filter(packageManager::isOwnPackage)
                 .filter(abstractDefinition -> not(abstractDefinition.isContainerType()))
-                .filter(abstractDefinition -> not(isOperationType(abstractDefinition)))
+                .filter(abstractDefinition -> not(documentManager.isOperationType(abstractDefinition)))
 
 
         return document;
@@ -63,83 +65,80 @@ public class DocumentBuilder {
         }
 
         objectType.setFields(
-                fieldDefinitionContextList.stream()
-                        .map(fieldDefinitionContext ->
-                                manager.isNotInvokeField(fieldDefinitionContext) ?
-                                        buildField(objectTypeDefinitionContext.name().getText(), fieldDefinitionContext, manager.isMutationOperationType(objectTypeDefinitionContext.name().getText())) :
-                                        buildField(fieldDefinitionContext)
+                objectType.getFields().stream()
+                        .map(fieldDefinition ->
+                                fieldDefinition.isInvokeField() ?
+                                        fieldDefinition :
+                                        buildField(objectType, fieldDefinition)
                         )
                         .collect(Collectors.toCollection(LinkedHashSet::new))
         );
-
         return objectType;
     }
 
     public FieldDefinition buildField(ObjectType objectType, FieldDefinition fieldDefinition) {
+        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+        if (fieldTypeDefinition.isLeaf()) {
+            if (fieldDefinition.getType().hasList()) {
+                fieldDefinition
+                        .addArgument(new InputValue(INPUT_VALUE_OPERATOR_OPR_NAME).setType(INPUT_OPERATOR_NAME).setDefaultValue(INPUT_VALUE_OPERATOR_OPR_EQ))
+                        .addArgument(new InputValue(INPUT_VALUE_OPERATOR_VAL_NAME).setType(fieldDefinition.getType().getTypeName()))
+                        .addArgument(new InputValue(INPUT_VALUE_OPERATOR_ARR_NAME).setType(new ListType(fieldDefinition.getType().getTypeName())))
+                        .addArgument(new InputValue(INPUT_VALUE_FIRST_NAME).setType(SCALA_INT_NAME))
+                        .addArgument(new InputValue(INPUT_VALUE_LAST_NAME).setType(SCALA_INT_NAME))
+                        .addArgument(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(SCALA_INT_NAME))
+                        .addArgument(new InputValue(INPUT_VALUE_SORT_NAME).setType(INPUT_SORT_NAME));
 
-
-        Optional<GraphqlParser.ObjectTypeDefinitionContext> fieldObjectTypeDefinitionContext = manager.getObject(manager.getFieldTypeName(fieldDefinitionContext.type()));
-        if (fieldObjectTypeDefinitionContext.isPresent()) {
-            if (isMutationOperationType) {
-                field.addArguments(buildArgumentsFromObjectType(fieldObjectTypeDefinitionContext.get(), InputType.INPUT));
+                documentManager.getFieldMapWithTypeDefinition(fieldDefinition)
+                        .flatMap(mapWithTypeDefinition -> mapWithTypeDefinition.getCursorField()
+                                .or(mapWithTypeDefinition::getIDField)
+                        )
+                        .ifPresent(cursorField ->
+                                fieldDefinition
+                                        .addArgument(new InputValue(INPUT_VALUE_AFTER_NAME).setType(cursorField.getType().getTypeName()))
+                                        .addArgument(new InputValue(INPUT_VALUE_BEFORE_NAME).setType(cursorField.getType().getTypeName()))
+                        );
+            }
+        } else {
+            if (documentManager.isMutationOperationType(objectType)) {
+                fieldDefinition.addArguments(buildArgumentsFromObjectType((ObjectType) fieldTypeDefinition, InputType.INPUT));
             } else {
-                field.addArguments(buildArgumentsFromObjectType(fieldObjectTypeDefinitionContext.get(), InputType.EXPRESSION))
-                        .addArgument(new InputValue().setName(GROUP_BY_INPUT_NAME).setType(new ListType(new NonNullType(new TypeName("String")))));
-                if (manager.fieldTypeIsList(fieldDefinitionContext.type())) {
-                    field.addArgument(new InputValue().setName(FIRST_INPUT_NAME).setType("Int"))
-                            .addArgument(new InputValue().setName(LAST_INPUT_NAME).setType("Int"))
-                            .addArgument(new InputValue().setName(OFFSET_INPUT_NAME).setType("Int"));
+                fieldDefinition
+                        .addArguments(buildArgumentsFromObjectType((ObjectType) fieldTypeDefinition, InputType.EXPRESSION))
+                        .addArgument(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))));
+                if (fieldDefinition.getType().hasList()) {
+                    fieldDefinition
+                            .addArgument(new InputValue(INPUT_VALUE_FIRST_NAME).setType(SCALA_INT_NAME))
+                            .addArgument(new InputValue(INPUT_VALUE_LAST_NAME).setType(SCALA_INT_NAME))
+                            .addArgument(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(SCALA_INT_NAME))
+                            .addArgument(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(new TypeName(fieldTypeDefinition.getName() + InputType.ORDER_BY)));
 
-                    manager.getFieldByDirective(typeName, CURSOR_DIRECTIVE_NAME)
-                            .findFirst()
-                            .or(() -> manager.getObjectTypeIDFieldDefinition(typeName))
-                            .ifPresent(cursorFieldDefinitionContext ->
-                                    field.addArgument(new InputValue().setName(AFTER_INPUT_NAME).setType(manager.getFieldTypeName(cursorFieldDefinitionContext.type())))
-                                            .addArgument(new InputValue().setName(BEFORE_INPUT_NAME).setType(manager.getFieldTypeName(cursorFieldDefinitionContext.type())))
+                    objectType.getCursorField()
+                            .or(objectType::getIDField)
+                            .ifPresent(cursorField ->
+                                    fieldDefinition
+                                            .addArgument(new InputValue(INPUT_VALUE_AFTER_NAME).setType(cursorField.getType().getTypeName()))
+                                            .addArgument(new InputValue(INPUT_VALUE_BEFORE_NAME).setType(cursorField.getType().getTypeName()))
                             );
-
-                    field.addArgument(new InputValue().setName(ORDER_BY_INPUT_NAME).setType(manager.getFieldTypeName(fieldDefinitionContext.type()) + InputType.ORDER_BY));
                 }
             }
-        } else if (manager.isScalar(manager.getFieldTypeName(fieldDefinitionContext.type())) || manager.isEnum(manager.getFieldTypeName(fieldDefinitionContext.type()))) {
-            if (manager.fieldTypeIsList(fieldDefinitionContext.type())) {
-                field.addArgument(new InputValue().setName("opr").setType("Operator").setDefaultValue("EQ"))
-                        .addArgument(new InputValue().setName("val").setType(manager.getFieldTypeName(fieldDefinitionContext.type())))
-                        .addArgument(new InputValue().setName("in").setType(new ListType(new TypeName(manager.getFieldTypeName(fieldDefinitionContext.type())))))
-                        .addArgument(new InputValue().setName(FIRST_INPUT_NAME).setType("Int"))
-                        .addArgument(new InputValue().setName(LAST_INPUT_NAME).setType("Int"))
-                        .addArgument(new InputValue().setName(OFFSET_INPUT_NAME).setType("Int"));
-
-                mapper.getWithObjectTypeDefinition(typeName, fieldDefinitionContext.name().getText())
-                        .flatMap(objectTypeDefinitionContext -> manager.getFieldByDirective(objectTypeDefinitionContext.name().getText(), CURSOR_DIRECTIVE_NAME)
-                                .findFirst()
-                                .or(() -> manager.getObjectTypeIDFieldDefinition(objectTypeDefinitionContext.name().getText()))
-                        )
-                        .ifPresent(cursorFieldDefinitionContext ->
-                                field.addArgument(new InputValue().setName(AFTER_INPUT_NAME).setType(manager.getFieldTypeName(cursorFieldDefinitionContext.type())))
-                                        .addArgument(new InputValue().setName(BEFORE_INPUT_NAME).setType(manager.getFieldTypeName(cursorFieldDefinitionContext.type())))
-                        );
-
-                field.addArgument(new InputValue().setName(SORT_INPUT_NAME).setType("Sort"));
-            }
         }
-        return field;
+        return fieldDefinition;
     }
 
-
     public InputValue fieldToArgument(ObjectType objectType, FieldDefinition fieldDefinition, InputType inputType) {
-        Definition fieldTypeDefinition = getFieldTypeDefinition(fieldDefinition);
+        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (inputType.equals(InputType.INPUT) || inputType.equals(InputType.MUTATION_ARGUMENTS)) {
             if (fieldDefinition.getName().equals(FIELD_TYPE_NAME_NAME)) {
                 return new InputValue(FIELD_TYPE_NAME_NAME).setType(SCALA_STRING_NAME).setDefaultValue(objectType.getName());
             }
             Type argumentType;
             if (fieldTypeDefinition.isLeaf()) {
-                argumentType = new TypeName(fieldTypeDefinition.getName());
+                argumentType = fieldDefinition.getType().getTypeName();
             } else {
                 argumentType = new TypeName(fieldTypeDefinition.getName() + InputType.INPUT);
             }
-            if (fieldDefinition.getType().isList()) {
+            if (fieldDefinition.getType().hasList()) {
                 argumentType = new ListType(argumentType);
             }
             InputValue inputValue = new InputValue(fieldDefinition.getName()).setType(argumentType);
@@ -148,7 +147,7 @@ public class DocumentBuilder {
             return inputValue;
         } else if (inputType.equals(InputType.EXPRESSION) || inputType.equals(InputType.QUERY_ARGUMENTS) || inputType.equals(InputType.SUBSCRIPTION_ARGUMENTS)) {
             if (fieldDefinition.getName().equals(FIELD_DEPRECATED_NAME)) {
-                return new InputValue(INPUT_DEPRECATED_NAME).setType(SCALA_BOOLEAN_NAME).setDefaultValue(false);
+                return new InputValue(INPUT_VALUE_DEPRECATED_NAME).setType(SCALA_BOOLEAN_NAME).setDefaultValue(false);
             }
             Type argumentType;
             switch (fieldTypeDefinition.getName()) {
@@ -177,9 +176,41 @@ public class DocumentBuilder {
             }
             return new InputValue(fieldDefinition.getName()).setType(argumentType);
         } else if (inputType.equals(InputType.ORDER_BY)) {
-            return new InputValue(fieldTypeDefinition.getName()).setType(INPUT_SORT_NAME);
+            return new InputValue(fieldTypeDefinition.getName()).setType(INPUT_VALUE_SORT_NAME);
         }
         throw new RuntimeException("unsupported input type:" + inputType);
+    }
+
+    public Set<InputValue> buildArgumentsFromObjectType(ObjectType objectType, InputType inputType) {
+        if (inputType.equals(InputType.ORDER_BY)) {
+            return Stream.concat(
+                            objectType.getFields().stream(),
+                            documentManager.getMetaInterface().stream()
+                                    .flatMap(interfaceType -> interfaceType.getFields().stream())
+                    )
+                    .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
+                    .filter(fieldDefinition -> !fieldDefinition.isFunctionField())
+                    .filter(fieldDefinition -> !fieldDefinition.isConnectionField())
+                    .filter(fieldDefinition -> !fieldDefinition.isAggregateField())
+                    .filter(fieldDefinition -> !fieldDefinition.getType().hasList())
+                    .filter(fieldDefinition -> documentManager.getFieldTypeDefinition(fieldDefinition).isLeaf())
+                    .map(fieldDefinition -> fieldToArgument(objectType, fieldDefinition, inputType))
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+        } else {
+            return Stream.concat(
+                            objectType.getFields().stream(),
+                            documentManager.getMetaInterface().stream()
+                                    .flatMap(interfaceType -> interfaceType.getFields().stream())
+                    )
+                    .filter(distinctByKey(FieldDefinition::getName))
+                    .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
+                    .filter(fieldDefinition -> !fieldDefinition.isFunctionField())
+                    .filter(fieldDefinition -> !fieldDefinition.isConnectionField())
+                    .filter(fieldDefinition -> !fieldDefinition.isAggregateField())
+                    .filter(fieldDefinition -> !documentManager.getFieldTypeDefinition(fieldDefinition).isContainerType())
+                    .map(fieldDefinition -> fieldToArgument(objectType, fieldDefinition, inputType))
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+        }
     }
 
     private enum InputType {
@@ -202,28 +233,5 @@ public class DocumentBuilder {
         public String toString() {
             return suffix;
         }
-    }
-
-    public boolean isQueryOperationType(Definition definition) {
-        return definition.isObject() &&
-                definition.getName().equals(document.getSchema().map(Schema::getQuery).orElse(TYPE_QUERY_NAME));
-    }
-
-    public boolean isMutationOperationType(Definition definition) {
-        return definition.isObject() &&
-                definition.getName().equals(document.getSchema().map(Schema::getMutation).orElse(TYPE_MUTATION_NAME));
-    }
-
-    public boolean isSubscriptionOperationType(Definition definition) {
-        return definition.isObject() &&
-                definition.getName().equals(document.getSchema().map(Schema::getSubscription).orElse(TYPE_SUBSCRIPTION_NAME));
-    }
-
-    public boolean isOperationType(Definition definition) {
-        return isQueryOperationType(definition) || isMutationOperationType(definition) || isSubscriptionOperationType(definition);
-    }
-
-    public Definition getFieldTypeDefinition(FieldDefinition fieldDefinition) {
-        return document.getDefinition(fieldDefinition.getType().getTypeName().getName());
     }
 }

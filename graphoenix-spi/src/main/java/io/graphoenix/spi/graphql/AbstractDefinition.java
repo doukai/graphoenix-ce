@@ -111,6 +111,10 @@ public abstract class AbstractDefinition implements Definition {
         return directiveMap.get(name);
     }
 
+    public boolean hasDirective(String name) {
+        return directiveMap.containsKey(name);
+    }
+
     public Collection<Directive> getDirectives() {
         return directiveMap.values();
     }
@@ -155,9 +159,6 @@ public abstract class AbstractDefinition implements Definition {
     }
 
     public boolean isContainerType() {
-        return Optional.ofNullable(directiveMap.get(DIRECTIVE_CONTAINER_TYPE_NAME))
-                .isPresent();
+        return hasDirective(DIRECTIVE_CONTAINER_TYPE_NAME);
     }
-
-
 }

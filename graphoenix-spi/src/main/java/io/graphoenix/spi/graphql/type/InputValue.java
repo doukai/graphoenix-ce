@@ -5,6 +5,8 @@ import io.graphoenix.spi.graphql.AbstractDefinition;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
+import static io.graphoenix.spi.constant.Hammurabi.SCALA_STRING_NAME;
+
 public class InputValue extends AbstractDefinition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/InputValue.stg");
@@ -47,7 +49,7 @@ public class InputValue extends AbstractDefinition {
 
     public InputValue setDefaultValue(Object defaultValue) {
         if (defaultValue != null) {
-            if (this.type.getTypeName().getName().equals("String")) {
+            if (this.type.getTypeName().getName().equals(SCALA_STRING_NAME)) {
                 this.defaultValue = "\"" + defaultValue + "\"";
             } else {
                 this.defaultValue = String.valueOf(defaultValue);

@@ -2,6 +2,9 @@ package io.graphoenix.spi.graphql.type;
 
 import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.graphql.AbstractDefinition;
+import io.graphoenix.spi.graphql.common.Directive;
+import io.graphoenix.spi.graphql.common.StringValue;
+import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 import org.stringtemplate.v4.ST;
@@ -11,8 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_DATA_TYPE_NAME;
-import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_DATA_TYPE_TYPE_NAME;
+import static io.graphoenix.spi.constant.Hammurabi.*;
 
 public class FieldDefinition extends AbstractDefinition {
 
@@ -89,14 +91,40 @@ public class FieldDefinition extends AbstractDefinition {
     }
 
     public Optional<String> getDataTypeName() {
-        return Stream.ofNullable(getDirectives())
-                .flatMap(Collection::stream)
-                .filter(directive -> directive.getName().equals(DIRECTIVE_DATA_TYPE_NAME))
+        return Stream.ofNullable(getDirective(DIRECTIVE_DATA_TYPE_NAME))
                 .flatMap(directive -> directive.getArguments().entrySet().stream())
                 .filter(entry -> entry.getKey().equals(DIRECTIVE_DATA_TYPE_TYPE_NAME))
                 .filter(entry -> entry.getValue().getValueType().equals(JsonValue.ValueType.STRING))
                 .map(entry -> ((JsonString) entry.getValue()).getString())
                 .findFirst();
+    }
+
+    public Optional<Directive> getMap() {
+        return Stream.ofNullable(getDirective(DIRECTIVE_MAP_NAME))
+                .findFirst();
+    }
+
+    public Optional<String> getMapWithTypeName() {
+        return getMap()
+                .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_ARGUMENT_WITH_NAME)))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> ((StringValue) valueWithVariable).getString());
+    }
+
+    public boolean isInvokeField() {
+        return hasDirective(DIRECTIVE_INVOKE_NAME);
+    }
+
+    public boolean isFunctionField() {
+        return hasDirective(DIRECTIVE_FUNC_NAME);
+    }
+
+    public boolean isConnectionField() {
+        return hasDirective(DIRECTIVE_CONNECTION_NAME);
+    }
+
+    public boolean isAggregateField() {
+        return hasDirective(DIRECTIVE_AGGREGATE_NAME);
     }
 
     @Override
