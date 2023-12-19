@@ -49,6 +49,13 @@ public class DocumentManager {
         return Optional.ofNullable(document.getDefinition(INTERFACE_META_NAME)).map(definition -> (InterfaceType) definition);
     }
 
+    public boolean isMetaInterfaceField(FieldDefinition fieldDefinition) {
+        return Optional.ofNullable(document.getDefinition(INTERFACE_META_NAME))
+                .map(definition -> (InterfaceType) definition).stream()
+                .flatMap(interfaceType -> interfaceType.getFields().stream())
+                .anyMatch(interfaceFieldDefinition -> interfaceFieldDefinition.getName().equals(fieldDefinition.getName()));
+    }
+
     public Definition getFieldTypeDefinition(FieldDefinition fieldDefinition) {
         return document.getDefinition(fieldDefinition.getType().getTypeName().getName());
     }

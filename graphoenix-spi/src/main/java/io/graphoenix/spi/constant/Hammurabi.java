@@ -40,6 +40,8 @@ public class Hammurabi {
     public static final String INPUT_VALUE_OPERATOR_ARR_NAME = "arr";
     public static final String[] INPUT_VALUE_EXCLUDE = {INPUT_VALUE_DEPRECATED_NAME, INPUT_VALUE_FIRST_NAME, INPUT_VALUE_LAST_NAME, INPUT_VALUE_OFFSET_NAME, INPUT_VALUE_AFTER_NAME, INPUT_VALUE_BEFORE_NAME, INPUT_VALUE_GROUP_BY_NAME, INPUT_VALUE_ORDER_BY_NAME, INPUT_VALUE_SORT_NAME, INPUT_VALUE_LIST_NAME, INPUT_VALUE_WHERE_NAME, INPUT_VALUE_NOT_NAME};
     public static final String DIRECTIVE_FUNC_NAME = "func";
+    public static final String DIRECTIVE_FUNC_ARGUMENT_NAME_NAME = "name";
+    public static final String DIRECTIVE_FUNC_ARGUMENT_FIELD_NAME = "field";
     public static final String DIRECTIVE_CURSOR_NAME = "cursor";
     public static final String DIRECTIVE_INVOKE_NAME = "invoke";
     public static final String DIRECTIVE_INVOKES_NAME = "invokes";
@@ -49,6 +51,7 @@ public class Hammurabi {
     public static final String DIRECTIVE_ARGUMENT_WITH_NAME = "with";
     public static final String DIRECTIVE_DATA_TYPE_NAME = "dataType";
     public static final String DIRECTIVE_DATA_TYPE_TYPE_NAME = "type";
+    public static final String DIRECTIVE_DATA_TYPE_DEFAULT_NAME = "default";
     public static final String DIRECTIVE_VALIDATION_NAME = "validation";
     public static final String DIRECTIVE_FETCH_NAME = "fetch";
     public static final String DIRECTIVE_CONTAINER_TYPE_NAME = "containerType";
@@ -56,6 +59,8 @@ public class Hammurabi {
     public static final String DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME = "packageName";
     public static final String DIRECTIVE_CLASS_INFO_NAME = "classInfo";
     public static final String DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME = "className";
+    public static final String DIRECTIVE_GRPC_PACKAGE_INFO_PACKAGE_NAME_NAME = "grpcPackageName";
+    public static final String DIRECTIVE_GRPC_CLASS_INFO_CLASS_NAME_NAME = "grpcClassName";
     public static final String DIRECTIVE_MERGE_TO_LIST_NAME = "mergeToList";
     public static final String PREFIX_INTROSPECTION = "__";
     public static final String SUFFIX_INPUT = "Input";
@@ -66,4 +71,9 @@ public class Hammurabi {
     public static final String SUFFIX_AGGREGATE = "Aggregate";
     public static final String SUFFIX_EDGE = "Edge";
     public static final String SUFFIX_EXPRESSION = "Expression";
+    public static final String SUFFIX_COUNT = "Count";
+    public static final String SUFFIX_SUM = "Sum";
+    public static final String SUFFIX_AVG = "Avg";
+    public static final String SUFFIX_MAX = "Max";
+    public static final String SUFFIX_MIN = "Min";
 }

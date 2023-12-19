@@ -99,6 +99,14 @@ public class FieldDefinition extends AbstractDefinition {
                 .findFirst();
     }
 
+    public String getTypeNameWithoutID() {
+        String fieldTypeName = getDataTypeName().orElseGet(() -> getType().getTypeName().getName());
+        if (SCALA_ID_NAME.equals(fieldTypeName)) {
+            return SCALA_STRING_NAME;
+        }
+        return fieldTypeName;
+    }
+
     public Optional<Directive> getMap() {
         return Stream.ofNullable(getDirective(DIRECTIVE_MAP_NAME))
                 .findFirst();
@@ -125,6 +133,10 @@ public class FieldDefinition extends AbstractDefinition {
 
     public boolean isAggregateField() {
         return hasDirective(DIRECTIVE_AGGREGATE_NAME);
+    }
+
+    public boolean isFetchField() {
+        return hasDirective(DIRECTIVE_FETCH_NAME);
     }
 
     @Override

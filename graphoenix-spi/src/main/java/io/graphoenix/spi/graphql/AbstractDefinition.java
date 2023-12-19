@@ -16,6 +16,7 @@ import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.utils.DocumentUtil.getStringValue;
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
+@SuppressWarnings("ALL")
 public abstract class AbstractDefinition implements Definition {
 
     private String name;
@@ -61,7 +62,7 @@ public abstract class AbstractDefinition implements Definition {
         this(nameContext, description, null);
     }
 
-    public AbstractDefinition merge(AbstractDefinition... abstractDefinitions) {
+    public <T extends AbstractDefinition> T merge(AbstractDefinition... abstractDefinitions) {
         directiveMap.putAll(
                 Stream
                         .concat(
@@ -77,34 +78,34 @@ public abstract class AbstractDefinition implements Definition {
                                 )
                         )
         );
-        return this;
+        return (T) this;
     }
 
     public String getName() {
         return name;
     }
 
-    public AbstractDefinition setName(String name) {
+    public <T extends AbstractDefinition> T setName(String name) {
         this.name = name;
-        return this;
+        return (T) this;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public AbstractDefinition setDescription(String description) {
+    public <T extends AbstractDefinition> T setDescription(String description) {
         this.description = description;
-        return this;
+        return (T) this;
     }
 
     public Map<String, Directive> getDirectiveMap() {
         return directiveMap;
     }
 
-    public AbstractDefinition setDirectiveMap(Map<String, Directive> directiveMap) {
+    public <T extends AbstractDefinition> T setDirectiveMap(Map<String, Directive> directiveMap) {
         this.directiveMap = directiveMap;
-        return this;
+        return (T) this;
     }
 
     public Directive getDirective(String name) {
@@ -119,17 +120,17 @@ public abstract class AbstractDefinition implements Definition {
         return directiveMap.values();
     }
 
-    public AbstractDefinition setDirectives(Collection<Directive> directives) {
+    public <T extends AbstractDefinition> T setDirectives(Collection<Directive> directives) {
         this.directiveMap.clear();
         return addDirectives(directives);
     }
 
-    public AbstractDefinition addDirective(Directive directive) {
+    public <T extends AbstractDefinition> T addDirective(Directive directive) {
         this.directiveMap.put(directive.getName(), directive);
-        return this;
+        return (T) this;
     }
 
-    public AbstractDefinition addDirectives(Collection<Directive> directives) {
+    public <T extends AbstractDefinition> T addDirectives(Collection<Directive> directives) {
         this.directiveMap.putAll(
                 directives.stream()
                         .collect(
@@ -139,7 +140,7 @@ public abstract class AbstractDefinition implements Definition {
                                 )
                         )
         );
-        return this;
+        return (T) this;
     }
 
     public Optional<String> getPackageName() {
