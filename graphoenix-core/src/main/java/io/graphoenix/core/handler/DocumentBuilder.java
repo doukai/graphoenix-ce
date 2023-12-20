@@ -113,6 +113,29 @@ public class DocumentBuilder {
                                                 .addArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME, documentManager.getFieldTypeDefinition(fieldDefinition).asObject().getIDFieldOrError())
                                 )
                 );
+        objectType.getFields().stream()
+                .filter(fieldDefinition -> documentManager.getFieldTypeDefinition(fieldDefinition).isLeaf())
+                .filter(fieldDefinition -> fieldDefinition.getType().hasList())
+                .filter(fieldDefinition -> !fieldDefinition.isMapField())
+                .filter(fieldDefinition -> packageManager.isLocalPackage(documentManager.getFieldTypeDefinition(fieldDefinition)))
+                .forEach(fieldDefinition ->
+                        fieldDefinition
+                                .addDirective(
+                                        new Directive(DIRECTIVE_MAP_NAME)
+                                                .addArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME, objectType.getIDFieldOrError())
+                                                .addArgument(
+                                                        DIRECTIVE_MAP_ARGUMENT_WITH_NAME,
+                                                        ObjectValueWithVariable.of(
+                                                                INPUT_VALUE_WITH_TYPE_NAME,
+                                                                getRelationTypeName(objectType.getName(), fieldDefinition.getName()),
+                                                                INPUT_VALUE_WITH_FROM_NAME,
+                                                                getTypeRefFieldName(objectType.getName()),
+                                                                INPUT_VALUE_WITH_TO_NAME,
+                                                                getTypeRefFieldName(fieldDefinition.getName())
+                                                        )
+                                                )
+                                )
+                );
         return objectType;
     }
 
