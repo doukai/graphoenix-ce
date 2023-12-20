@@ -2,17 +2,12 @@ package io.graphoenix.spi.graphql.type;
 
 import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.graphql.AbstractDefinition;
-import io.graphoenix.spi.graphql.common.Directive;
-import io.graphoenix.spi.graphql.common.StringValue;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
-import jakarta.json.JsonString;
-import jakarta.json.JsonValue;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
 
@@ -90,13 +85,15 @@ public class FieldDefinition extends AbstractDefinition {
         return this;
     }
 
+    public boolean hesDataType() {
+        return hasDirective(DIRECTIVE_DATA_TYPE_NAME);
+    }
+
     public Optional<String> getDataTypeName() {
-        return Stream.ofNullable(getDirective(DIRECTIVE_DATA_TYPE_NAME))
-                .flatMap(directive -> directive.getArguments().entrySet().stream())
-                .filter(entry -> entry.getKey().equals(DIRECTIVE_DATA_TYPE_TYPE_NAME))
-                .filter(entry -> entry.getValue().getValueType().equals(JsonValue.ValueType.STRING))
-                .map(entry -> ((JsonString) entry.getValue()).getString())
-                .findFirst();
+        return Optional.ofNullable(getDirective(DIRECTIVE_DATA_TYPE_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_DATA_TYPE_TYPE_NAME)))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getString());
     }
 
     public String getTypeNameWithoutID() {
@@ -105,18 +102,6 @@ public class FieldDefinition extends AbstractDefinition {
             return SCALA_STRING_NAME;
         }
         return fieldTypeName;
-    }
-
-    public Optional<Directive> getMap() {
-        return Stream.ofNullable(getDirective(DIRECTIVE_MAP_NAME))
-                .findFirst();
-    }
-
-    public Optional<String> getMapWithTypeName() {
-        return getMap()
-                .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_ARGUMENT_WITH_NAME)))
-                .filter(ValueWithVariable::isString)
-                .map(valueWithVariable -> ((StringValue) valueWithVariable).getString());
     }
 
     public boolean isInvokeField() {
@@ -135,8 +120,100 @@ public class FieldDefinition extends AbstractDefinition {
         return hasDirective(DIRECTIVE_AGGREGATE_NAME);
     }
 
+    public boolean isMapField() {
+        return hasDirective(DIRECTIVE_MAP_NAME);
+    }
+
+    public boolean isMapAnchor() {
+        return hasDirective(DIRECTIVE_MAP_NAME) && getDirective(DIRECTIVE_MAP_NAME).hasArgument(DIRECTIVE_MAP_ARGUMENT_ANCHOR_NAME);
+    }
+
+    public boolean hasMapWith() {
+        return hasDirective(DIRECTIVE_MAP_NAME) && getDirective(DIRECTIVE_MAP_NAME).hasArgument(DIRECTIVE_MAP_ARGUMENT_WITH_NAME);
+    }
+
+    public String getMapFrom() {
+        return getDirective(DIRECTIVE_MAP_NAME).getArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME).asString().getString();
+    }
+
+    public Optional<String> getMapTo() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_MAP_NAME).getArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME))
+                .map(valueWithVariable -> valueWithVariable.asString().getString());
+    }
+
+    public String getMapToOrError() {
+        return getMapTo().orElseThrow(() -> new RuntimeException("map to argument not found: " + getName()));
+    }
+
+    public String getMapWithType() {
+        return getDirective(DIRECTIVE_MAP_NAME)
+                .getArgument(DIRECTIVE_MAP_ARGUMENT_WITH_NAME).asObject()
+                .getValueWithVariable(DIRECTIVE_MAP_ARGUMENT_WITH_TYPE_NAME).asString()
+                .getString();
+    }
+
+    public String getMapWithFrom() {
+        return getDirective(DIRECTIVE_MAP_NAME)
+                .getArgument(DIRECTIVE_MAP_ARGUMENT_WITH_NAME).asObject()
+                .getValueWithVariable(DIRECTIVE_MAP_ARGUMENT_FROM_NAME).asString()
+                .getString();
+    }
+
+    public String getMapWithTo() {
+        return getDirective(DIRECTIVE_MAP_NAME)
+                .getArgument(DIRECTIVE_MAP_ARGUMENT_WITH_NAME).asObject()
+                .getValueWithVariable(DIRECTIVE_MAP_ARGUMENT_TO_NAME).asString()
+                .getString();
+    }
+
     public boolean isFetchField() {
         return hasDirective(DIRECTIVE_FETCH_NAME);
+    }
+
+    public boolean isFetchAnchor() {
+        return hasDirective(DIRECTIVE_FETCH_NAME) && getDirective(DIRECTIVE_FETCH_NAME).hasArgument(DIRECTIVE_FETCH_ARGUMENT_ANCHOR_NAME);
+    }
+
+    public boolean hasFetchWith() {
+        return hasDirective(DIRECTIVE_FETCH_NAME) && getDirective(DIRECTIVE_FETCH_NAME).hasArgument(DIRECTIVE_FETCH_ARGUMENT_WITH_NAME);
+    }
+
+    public String getFetchFrom() {
+        return getDirective(DIRECTIVE_FETCH_NAME).getArgument(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME).asString().getString();
+    }
+
+    public Optional<String> getFetchTo() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_FETCH_NAME).getArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME))
+                .map(valueWithVariable -> valueWithVariable.asString().getString());
+    }
+
+    public String getFetchToOrError() {
+        return getFetchTo().orElseThrow(() -> new RuntimeException("fetch to argument not found: " + getName()));
+    }
+
+    public String getFetchWithType() {
+        return getDirective(DIRECTIVE_FETCH_NAME)
+                .getArgument(DIRECTIVE_FETCH_ARGUMENT_WITH_NAME).asObject()
+                .getValueWithVariable(DIRECTIVE_FETCH_ARGUMENT_WITH_TYPE_NAME).asString()
+                .getString();
+    }
+
+    public String getFetchWithFrom() {
+        return getDirective(DIRECTIVE_FETCH_NAME)
+                .getArgument(DIRECTIVE_FETCH_ARGUMENT_WITH_NAME).asObject()
+                .getValueWithVariable(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME).asString()
+                .getString();
+    }
+
+    public String getFetchWithTo() {
+        return getDirective(DIRECTIVE_FETCH_NAME)
+                .getArgument(DIRECTIVE_FETCH_ARGUMENT_WITH_NAME).asObject()
+                .getValueWithVariable(DIRECTIVE_FETCH_ARGUMENT_TO_NAME).asString()
+                .getString();
+    }
+
+    public String getFetchProtocol() {
+        return getDirective(DIRECTIVE_FETCH_NAME).getArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME).asString().getString();
     }
 
     @Override

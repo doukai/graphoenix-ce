@@ -15,7 +15,6 @@ import static io.graphoenix.spi.utils.GraphQLUtil.getNameFromElement;
 public class Directive {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/common/Directive.stg");
-
     private String name;
     private Arguments arguments;
 
@@ -62,6 +61,10 @@ public class Directive {
 
     public ValueWithVariable getArgument(String name) {
         return arguments.getArgument(name);
+    }
+
+    public boolean hasArgument(String name) {
+        return arguments.containsKey(name);
     }
 
     public Directive setArguments(GraphqlParser.ArgumentsContext argumentsContext) {

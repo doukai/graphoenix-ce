@@ -92,6 +92,10 @@ public class ObjectValueWithVariable extends AbstractMap<String, JsonValue> impl
                 .collect(Collectors.toSet());
     }
 
+    public ValueWithVariable getValueWithVariable(String name) {
+        return objectValueWithVariable.get(name);
+    }
+
     @Override
     public JsonArray getJsonArray(String name) {
         return (JsonArray) get(name);

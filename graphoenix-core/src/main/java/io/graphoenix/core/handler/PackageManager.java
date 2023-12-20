@@ -3,7 +3,7 @@ package io.graphoenix.core.handler;
 import com.google.common.reflect.ClassPath;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.spi.annotation.Package;
-import io.graphoenix.spi.graphql.AbstractDefinition;
+import io.graphoenix.spi.graphql.Definition;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.tinylog.Logger;
@@ -38,7 +38,7 @@ public class PackageManager {
         return Optional.empty();
     }
 
-    public boolean isOwnPackage(AbstractDefinition abstractDefinition) {
+    public boolean isOwnPackage(Definition abstractDefinition) {
         return abstractDefinition.getPackageName().map(this::isOwnPackage).orElse(true);
     }
 
@@ -46,11 +46,11 @@ public class PackageManager {
         return packageConfig.getPackageName().equals(packageName);
     }
 
-    public boolean isNotOwnPackage(AbstractDefinition abstractDefinition) {
+    public boolean isNotOwnPackage(Definition abstractDefinition) {
         return !isOwnPackage(abstractDefinition);
     }
 
-    public boolean isLocalPackage(AbstractDefinition abstractDefinition) {
+    public boolean isLocalPackage(Definition abstractDefinition) {
         return abstractDefinition.getPackageName().map(this::isLocalPackage).orElse(true);
     }
 
@@ -58,7 +58,7 @@ public class PackageManager {
         return getLocalPackages().anyMatch(localPackageName -> localPackageName.equals(packageName));
     }
 
-    public boolean isNotLocalPackage(AbstractDefinition abstractDefinition) {
+    public boolean isNotLocalPackage(Definition abstractDefinition) {
         return !isLocalPackage(abstractDefinition);
     }
 

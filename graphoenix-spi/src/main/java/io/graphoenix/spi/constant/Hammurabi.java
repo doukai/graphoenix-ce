@@ -18,6 +18,7 @@ public class Hammurabi {
     public static final String SCALA_TIMESTAMP_NAME = "Timestamp";
     public static final String TYPE_PAGE_INFO_NAME = "PageInfo";
     public static final String INTERFACE_META_NAME = "Meta";
+    public static final String FIELD_ID_NAME = "id";
     public static final String FIELD_DEPRECATED_NAME = "isDeprecated";
     public static final String FIELD_TYPE_NAME_NAME = "__typename";
     public static final String INPUT_VALUE_DEPRECATED_NAME = "includeDeprecated";
@@ -38,6 +39,9 @@ public class Hammurabi {
     public static final String INPUT_VALUE_OPERATOR_OPR_EQ = "EQ";
     public static final String INPUT_VALUE_OPERATOR_VAL_NAME = "val";
     public static final String INPUT_VALUE_OPERATOR_ARR_NAME = "arr";
+    public static final String INPUT_VALUE_WITH_TYPE_NAME = "type";
+    public static final String INPUT_VALUE_WITH_FROM_NAME = "from";
+    public static final String INPUT_VALUE_WITH_TO_NAME = "from";
     public static final String[] INPUT_VALUE_EXCLUDE = {INPUT_VALUE_DEPRECATED_NAME, INPUT_VALUE_FIRST_NAME, INPUT_VALUE_LAST_NAME, INPUT_VALUE_OFFSET_NAME, INPUT_VALUE_AFTER_NAME, INPUT_VALUE_BEFORE_NAME, INPUT_VALUE_GROUP_BY_NAME, INPUT_VALUE_ORDER_BY_NAME, INPUT_VALUE_SORT_NAME, INPUT_VALUE_LIST_NAME, INPUT_VALUE_WHERE_NAME, INPUT_VALUE_NOT_NAME};
     public static final String DIRECTIVE_FUNC_NAME = "func";
     public static final String DIRECTIVE_FUNC_ARGUMENT_NAME_NAME = "name";
@@ -46,14 +50,27 @@ public class Hammurabi {
     public static final String DIRECTIVE_INVOKE_NAME = "invoke";
     public static final String DIRECTIVE_INVOKES_NAME = "invokes";
     public static final String DIRECTIVE_CONNECTION_NAME = "connection";
+    public static final String DIRECTIVE_CONNECTION_ARGUMENT_FIELD_NAME = "field";
+    public static final String DIRECTIVE_CONNECTION_ARGUMENT_AGG_NAME = "agg";
     public static final String DIRECTIVE_AGGREGATE_NAME = "aggregate";
     public static final String DIRECTIVE_MAP_NAME = "map";
-    public static final String DIRECTIVE_ARGUMENT_WITH_NAME = "with";
+    public static final String DIRECTIVE_MAP_ARGUMENT_ANCHOR_NAME = "anchor";
+    public static final String DIRECTIVE_MAP_ARGUMENT_WITH_NAME = "with";
+    public static final String DIRECTIVE_MAP_ARGUMENT_FROM_NAME = "from";
+    public static final String DIRECTIVE_MAP_ARGUMENT_TO_NAME = "to";
     public static final String DIRECTIVE_DATA_TYPE_NAME = "dataType";
+    public static final String DIRECTIVE_DATA_TYPE_ARGUMENT_TYPE_NAME = "type";
+    public static final String DIRECTIVE_DATA_TYPE_ARGUMENT_AUTO_INCREMENT_NAME = "autoIncrement";
     public static final String DIRECTIVE_DATA_TYPE_TYPE_NAME = "type";
     public static final String DIRECTIVE_DATA_TYPE_DEFAULT_NAME = "default";
     public static final String DIRECTIVE_VALIDATION_NAME = "validation";
     public static final String DIRECTIVE_FETCH_NAME = "fetch";
+    public static final String DIRECTIVE_FETCH_ARGUMENT_ANCHOR_NAME = "anchor";
+    public static final String DIRECTIVE_FETCH_ARGUMENT_WITH_NAME = "with";
+    public static final String DIRECTIVE_FETCH_ARGUMENT_WITH_TYPE_NAME = "type";
+    public static final String DIRECTIVE_FETCH_ARGUMENT_FROM_NAME = "from";
+    public static final String DIRECTIVE_FETCH_ARGUMENT_TO_NAME = "to";
+    public static final String DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME = "protocol";
     public static final String DIRECTIVE_CONTAINER_TYPE_NAME = "containerType";
     public static final String DIRECTIVE_PACKAGE_INFO_NAME = "packageInfo";
     public static final String DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME = "packageName";
@@ -63,6 +80,7 @@ public class Hammurabi {
     public static final String DIRECTIVE_GRPC_CLASS_INFO_CLASS_NAME_NAME = "grpcClassName";
     public static final String DIRECTIVE_MERGE_TO_LIST_NAME = "mergeToList";
     public static final String PREFIX_INTROSPECTION = "__";
+    public static final String PREFIX_GRPC_INTROSPECTION = "Intro";
     public static final String SUFFIX_INPUT = "Input";
     public static final String SUFFIX_ARGUMENTS = "Arguments";
     public static final String SUFFIX_ORDER_BY = "OrderBy";
@@ -76,4 +94,6 @@ public class Hammurabi {
     public static final String SUFFIX_AVG = "Avg";
     public static final String SUFFIX_MAX = "Max";
     public static final String SUFFIX_MIN = "Min";
+    public static final String SUFFIX_REF = "Ref";
+    public static final String SUFFIX_RELATION = "Relation";
 }

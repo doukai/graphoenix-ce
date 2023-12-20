@@ -1,9 +1,13 @@
 package io.graphoenix.spi.graphql;
 
 import graphql.parser.antlr.GraphqlParser;
+import io.graphoenix.spi.graphql.common.Directive;
+import io.graphoenix.spi.graphql.operation.Fragment;
 import io.graphoenix.spi.graphql.operation.FragmentDefinition;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.*;
+
+import java.util.Optional;
 
 public interface Definition {
 
@@ -49,7 +53,47 @@ public interface Definition {
         return isScalar() || isEnum();
     }
 
+    default Schema asSchema() {
+        return (Schema) this;
+    }
+
+    default ScalarType asScalar() {
+        return (ScalarType) this;
+    }
+
+    default EnumType asEnum() {
+        return (EnumType) this;
+    }
+
+    default ObjectType asObject() {
+        return (ObjectType) this;
+    }
+
+    default InterfaceType asInterface() {
+        return (InterfaceType) this;
+    }
+
+    default InputObjectType asInputObject() {
+        return (InputObjectType) this;
+    }
+
+    default Directive asDirective() {
+        return (Directive) this;
+    }
+
+    default Operation asOperation() {
+        return (Operation) this;
+    }
+
+    default Fragment asFragment() {
+        return (Fragment) this;
+    }
+
     boolean isContainerType();
+
+    Optional<String> getPackageName();
+
+    Optional<String> getClassName();
 
     String toString();
 

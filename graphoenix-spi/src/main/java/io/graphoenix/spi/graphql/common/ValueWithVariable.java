@@ -168,6 +168,42 @@ public interface ValueWithVariable extends JsonValue {
         return false;
     }
 
+    default BooleanValue asBoolean() {
+        return (BooleanValue) this;
+    }
+
+    default IntValue asInt() {
+        return (IntValue) this;
+    }
+
+    default FloatValue asFloat() {
+        return (FloatValue) this;
+    }
+
+    default StringValue asString() {
+        return (StringValue) this;
+    }
+
+    default NullValue asNull() {
+        return (NullValue) this;
+    }
+
+    default EnumValue asEnum() {
+        return (EnumValue) this;
+    }
+
+    default ObjectValueWithVariable asObject() {
+        return (ObjectValueWithVariable) this;
+    }
+
+    default ArrayValueWithVariable asArray() {
+        return (ArrayValueWithVariable) this;
+    }
+
+    default Variable asVariable() {
+        return (Variable) this;
+    }
+
     static JsonObject updateJsonObject(JsonObject original, JsonObject jsonObject) {
         return jsonObject.entrySet().stream()
                 .filter(entry ->

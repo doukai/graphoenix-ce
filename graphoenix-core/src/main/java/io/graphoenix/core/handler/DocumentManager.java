@@ -60,7 +60,27 @@ public class DocumentManager {
         return document.getDefinition(fieldDefinition.getType().getTypeName().getName());
     }
 
-    public Optional<ObjectType> getFieldMapWithTypeDefinition(FieldDefinition fieldDefinition) {
-        return fieldDefinition.getMapWithTypeName().map(document::getDefinition).map(definition -> (ObjectType) definition);
+    public ObjectType getFieldMapWithTypeDefinition(FieldDefinition fieldDefinition) {
+        return document.getDefinition(fieldDefinition.getMapWithType()).asObject();
+    }
+
+    public FieldDefinition getFieldMapFromFieldDefinition(ObjectType objectType, FieldDefinition fieldDefinition) {
+        return objectType.getField(fieldDefinition.getMapFrom());
+    }
+
+    public Optional<FieldDefinition> getFieldMapToFieldDefinition(FieldDefinition fieldDefinition) {
+        return fieldDefinition.getMapTo().map(mapTo -> getFieldTypeDefinition(fieldDefinition).asObject().getField(mapTo));
+    }
+
+    public ObjectType getFieldFetchWithTypeDefinition(FieldDefinition fieldDefinition) {
+        return document.getDefinition(fieldDefinition.getFetchWithType()).asObject();
+    }
+
+    public FieldDefinition getFieldFetchFromFieldDefinition(ObjectType objectType, FieldDefinition fieldDefinition) {
+        return objectType.getField(fieldDefinition.getFetchFrom());
+    }
+
+    public Optional<FieldDefinition> getFieldFetchToFieldDefinition(FieldDefinition fieldDefinition) {
+        return fieldDefinition.getFetchTo().map(mapTo -> getFieldTypeDefinition(fieldDefinition).asObject().getField(mapTo));
     }
 }

@@ -1,6 +1,8 @@
 package io.graphoenix.spi.graphql.type;
 
 import graphql.parser.antlr.GraphqlParser;
+import io.graphoenix.spi.error.GraphQLErrorType;
+import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import org.stringtemplate.v4.ST;
@@ -11,6 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
+import static io.graphoenix.spi.error.GraphQLErrorType.TYPE_ID_FIELD_NOT_EXIST;
 import static io.graphoenix.spi.utils.DocumentUtil.getImplementsInterfaces;
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
@@ -142,6 +145,16 @@ public class ObjectType extends AbstractDefinition implements Definition {
                                 .filter(fieldDefinition -> fieldDefinition.getType().getTypeName().getName().equals(SCALA_ID_NAME))
                                 .findFirst()
                 );
+    }
+
+    public FieldDefinition getIDFieldOrError() {
+        return Optional.of(fieldDefinitionMap.values())
+                .flatMap(fieldDefinitions ->
+                        fieldDefinitions.stream()
+                                .filter(fieldDefinition -> fieldDefinition.getType().getTypeName().getName().equals(SCALA_ID_NAME))
+                                .findFirst()
+                )
+                .orElseThrow(() -> new GraphQLErrors(TYPE_ID_FIELD_NOT_EXIST.bind(this.getName())));
     }
 
     public Optional<FieldDefinition> getCursorField() {

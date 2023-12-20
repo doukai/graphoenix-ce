@@ -143,6 +143,7 @@ public abstract class AbstractDefinition implements Definition {
         return (T) this;
     }
 
+    @Override
     public Optional<String> getPackageName() {
         return Optional.ofNullable(directiveMap.get(DIRECTIVE_PACKAGE_INFO_NAME))
                 .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME)))
@@ -151,6 +152,7 @@ public abstract class AbstractDefinition implements Definition {
                 .map(StringValue::getString);
     }
 
+    @Override
     public Optional<String> getClassName() {
         return Optional.ofNullable(directiveMap.get(DIRECTIVE_CLASS_INFO_NAME))
                 .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME)))
