@@ -3,6 +3,7 @@ package io.graphoenix.spi.graphql.type;
 import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
+import io.graphoenix.spi.graphql.FieldsType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
@@ -16,7 +17,7 @@ import java.util.stream.Stream;
 import static io.graphoenix.spi.utils.DocumentUtil.getImplementsInterfaces;
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
-public class InterfaceType extends AbstractDefinition implements Definition {
+public class InterfaceType extends AbstractDefinition implements Definition, FieldsType {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/InterfaceType.stg");
     private Collection<String> interfaces;
@@ -90,6 +91,7 @@ public class InterfaceType extends AbstractDefinition implements Definition {
         return this;
     }
 
+    @Override
     public Collection<String> getInterfaces() {
         return interfaces;
     }
@@ -99,10 +101,12 @@ public class InterfaceType extends AbstractDefinition implements Definition {
         return this;
     }
 
+    @Override
     public FieldDefinition getField(String name) {
         return fieldDefinitionMap.get(name);
     }
 
+    @Override
     public Collection<FieldDefinition> getFields() {
         return fieldDefinitionMap.values();
     }

@@ -187,7 +187,7 @@ public class Document {
         return this;
     }
 
-    public Document setDefinitions(Collection<Definition> definitions) {
+    public Document setDefinitions(Collection<? extends Definition> definitions) {
         this.definitionMap.clear();
         return addDefinitions(definitions);
     }
@@ -197,7 +197,7 @@ public class Document {
         return this;
     }
 
-    public Document addDefinitions(Collection<Definition> definitions) {
+    public Document addDefinitions(Collection<? extends Definition> definitions) {
         this.definitionMap.putAll(
                 definitions.stream()
                         .collect(

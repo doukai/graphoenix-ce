@@ -7,7 +7,6 @@ import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.InterfaceType;
 import io.graphoenix.spi.graphql.type.ObjectType;
 import io.graphoenix.spi.graphql.type.Schema;
-import jakarta.inject.Inject;
 
 import java.util.Optional;
 
@@ -43,6 +42,21 @@ public class DocumentManager {
 
     public boolean isOperationType(Definition definition) {
         return isQueryOperationType(definition) || isMutationOperationType(definition) || isSubscriptionOperationType(definition);
+    }
+
+    public Optional<ObjectType> getQueryOperationType() {
+        return Optional.ofNullable(document.getDefinition(document.getSchema().map(Schema::getQuery).orElse(TYPE_QUERY_NAME)))
+                .map(Definition::asObject);
+    }
+
+    public Optional<ObjectType> getMutationOperationType() {
+        return Optional.ofNullable(document.getDefinition(document.getSchema().map(Schema::getMutation).orElse(TYPE_MUTATION_NAME)))
+                .map(Definition::asObject);
+    }
+
+    public Optional<ObjectType> getSubscriptionOperationType() {
+        return Optional.ofNullable(document.getDefinition(document.getSchema().map(Schema::getSubscription).orElse(TYPE_SUBSCRIPTION_NAME)))
+                .map(Definition::asObject);
     }
 
     public Optional<InterfaceType> getMetaInterface() {

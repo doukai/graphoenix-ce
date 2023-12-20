@@ -1,10 +1,10 @@
 package io.graphoenix.spi.graphql.type;
 
 import graphql.parser.antlr.GraphqlParser;
-import io.graphoenix.spi.error.GraphQLErrorType;
 import io.graphoenix.spi.error.GraphQLErrors;
-import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.AbstractDefinition;
+import io.graphoenix.spi.graphql.Definition;
+import io.graphoenix.spi.graphql.FieldsType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
@@ -12,12 +12,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.graphoenix.spi.constant.Hammurabi.*;
+import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_CURSOR_NAME;
+import static io.graphoenix.spi.constant.Hammurabi.SCALA_ID_NAME;
 import static io.graphoenix.spi.error.GraphQLErrorType.TYPE_ID_FIELD_NOT_EXIST;
 import static io.graphoenix.spi.utils.DocumentUtil.getImplementsInterfaces;
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
-public class ObjectType extends AbstractDefinition implements Definition {
+public class ObjectType extends AbstractDefinition implements Definition, FieldsType {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/ObjectType.stg");
     private Collection<String> interfaces;
@@ -93,6 +94,7 @@ public class ObjectType extends AbstractDefinition implements Definition {
         return this;
     }
 
+    @Override
     public Collection<String> getInterfaces() {
         return interfaces;
     }
@@ -107,10 +109,12 @@ public class ObjectType extends AbstractDefinition implements Definition {
         return this;
     }
 
+    @Override
     public FieldDefinition getField(String name) {
         return fieldDefinitionMap.get(name);
     }
 
+    @Override
     public Collection<FieldDefinition> getFields() {
         return fieldDefinitionMap.values();
     }

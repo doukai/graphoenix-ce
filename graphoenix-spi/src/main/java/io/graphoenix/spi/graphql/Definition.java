@@ -7,11 +7,18 @@ import io.graphoenix.spi.graphql.operation.FragmentDefinition;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.*;
 
+import java.util.Collection;
 import java.util.Optional;
 
 public interface Definition {
 
     String getName();
+
+    boolean hasDirective(String name);
+
+    Directive getDirective(String name);
+
+    Collection<Directive> getDirectives();
 
     default boolean isSchema() {
         return false;

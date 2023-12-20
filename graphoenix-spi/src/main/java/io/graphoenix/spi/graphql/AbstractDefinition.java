@@ -108,14 +108,17 @@ public abstract class AbstractDefinition implements Definition {
         return (T) this;
     }
 
+    @Override
     public Directive getDirective(String name) {
         return directiveMap.get(name);
     }
 
+    @Override
     public boolean hasDirective(String name) {
         return directiveMap.containsKey(name);
     }
 
+    @Override
     public Collection<Directive> getDirectives() {
         return directiveMap.values();
     }
