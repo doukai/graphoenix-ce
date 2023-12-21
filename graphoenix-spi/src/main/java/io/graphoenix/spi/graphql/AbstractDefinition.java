@@ -4,7 +4,11 @@ import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.graphql.common.Directive;
 import io.graphoenix.spi.graphql.common.StringValue;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
+import org.eclipse.microprofile.graphql.Source;
 
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -14,6 +18,7 @@ import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.utils.DocumentUtil.getStringValue;
+import static io.graphoenix.spi.utils.ElementUtil.*;
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
 @SuppressWarnings("ALL")
@@ -60,6 +65,35 @@ public abstract class AbstractDefinition implements Definition {
 
     public AbstractDefinition(GraphqlParser.NameContext nameContext, GraphqlParser.DescriptionContext description) {
         this(nameContext, description, null);
+    }
+
+    public AbstractDefinition(TypeElement typeElement) {
+        this.name = getNameFromElement(typeElement);
+        this.description = getDescriptionFromElement(typeElement);
+        this.addDirectives(getDirectivesFromElement(typeElement));
+        this.addDirective(
+                new Directive(DIRECTIVE_CLASS_INFO_NAME)
+                        .addArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME, typeElement.getQualifiedName().toString())
+                        .addArgument(DIRECTIVE_CLASS_INFO_CLASS_EXISTS_NAME, true)
+        );
+        this.addDirective(new Directive(DIRECTIVE_CONTAINER_TYPE_NAME));
+    }
+
+    public AbstractDefinition(VariableElement variableElement) {
+        this.name = getNameFromElement(variableElement);
+        this.description = getDescriptionFromElement(variableElement);
+        this.addDirectives(getDirectivesFromElement(variableElement));
+    }
+
+    public AbstractDefinition(ExecutableElement executableElement) {
+        this.name = executableElement.getParameters().stream()
+                .filter(variableElement -> variableElement.getAnnotation(Source.class) != null)
+                .filter(variableElement -> !variableElement.getAnnotation(Source.class).name().isBlank())
+                .findFirst()
+                .map(variableElement -> variableElement.getAnnotation(Source.class).name())
+                .orElseGet(() -> getNameFromElement(executableElement));
+        this.description = getDescriptionFromElement(executableElement);
+        this.addDirectives(getDirectivesFromElement(executableElement));
     }
 
     public <T extends AbstractDefinition> T merge(AbstractDefinition... abstractDefinitions) {

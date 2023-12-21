@@ -5,7 +5,12 @@ import io.graphoenix.spi.graphql.AbstractDefinition;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.util.Types;
+
 import static io.graphoenix.spi.constant.Hammurabi.SCALA_STRING_NAME;
+import static io.graphoenix.spi.utils.ElementUtil.getDefaultValueFromElement;
+import static io.graphoenix.spi.utils.ElementUtil.variableElementToTypeName;
 
 public class InputValue extends AbstractDefinition {
 
@@ -27,6 +32,12 @@ public class InputValue extends AbstractDefinition {
         if (inputValueDefinitionContext.defaultValue() != null) {
             this.defaultValue = inputValueDefinitionContext.defaultValue().value().getText();
         }
+    }
+
+    public InputValue(VariableElement variableElement, Types typeUtils) {
+        super(variableElement);
+        this.type = variableElementToTypeName(variableElement, typeUtils);
+        this.defaultValue = getDefaultValueFromElement(variableElement);
     }
 
     public Type getType() {

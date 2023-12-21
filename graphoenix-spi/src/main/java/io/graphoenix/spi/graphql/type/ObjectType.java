@@ -5,9 +5,14 @@ import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.FieldsType;
+import org.eclipse.microprofile.graphql.Ignore;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.util.Types;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -54,6 +59,26 @@ public class ObjectType extends AbstractDefinition implements Definition, Fields
                             )
                     );
         }
+    }
+
+    public ObjectType(TypeElement typeElement, Types typeUtils) {
+        super(typeElement);
+        this.interfaces = typeElement.getInterfaces().stream()
+                .map(typeMirror -> typeUtils.asElement(typeMirror).getSimpleName().toString())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        this.fieldDefinitionMap =
+                typeElement.getEnclosedElements().stream()
+                        .filter(element -> element.getKind().equals(ElementKind.FIELD))
+                        .filter(element -> element.getAnnotation(Ignore.class) == null)
+                        .map(element -> new FieldDefinition((VariableElement) element, typeUtils))
+                        .collect(
+                                Collectors.toMap(
+                                        FieldDefinition::getName,
+                                        fieldDefinition -> fieldDefinition,
+                                        (x, y) -> y,
+                                        LinkedHashMap::new
+                                )
+                        );
     }
 
     public ObjectType merge(GraphqlParser.ObjectTypeDefinitionContext... objectTypeDefinitionContexts) {

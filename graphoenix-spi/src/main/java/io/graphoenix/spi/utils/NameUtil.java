@@ -1,4 +1,4 @@
-package io.graphoenix.core.utils;
+package io.graphoenix.spi.utils;
 
 import com.google.common.base.CaseFormat;
 

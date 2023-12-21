@@ -10,7 +10,7 @@ import javax.lang.model.element.AnnotationMirror;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static io.graphoenix.spi.utils.GraphQLUtil.getNameFromElement;
+import static io.graphoenix.spi.utils.ElementUtil.getNameFromElement;
 
 public class Directive {
 

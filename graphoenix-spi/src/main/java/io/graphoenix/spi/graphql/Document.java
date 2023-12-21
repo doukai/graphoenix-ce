@@ -236,6 +236,44 @@ public class Document {
         return this;
     }
 
+    public Optional<ObjectType> getObjectType(String name) {
+        return Optional.ofNullable(getDefinition(name))
+                .map(Definition::asObject);
+    }
+
+    public ObjectType getObjectTypeOrError(String name) {
+        return getObjectType(name).orElseThrow(() -> new GraphQLErrors(TYPE_NOT_EXIST.bind(name)));
+    }
+
+    public Stream<ObjectType> getImplementsObjectType(String name) {
+        return getDefinitions().stream()
+                .filter(Definition::isObject)
+                .map(Definition::asObject)
+                .filter(objectType ->
+                        objectType.getInterfaces().stream()
+                                .anyMatch(interfaceTypeName -> interfaceTypeName.equals(name))
+                );
+    }
+
+    public Optional<InputObjectType> getInputObjectType(String name) {
+        return Optional.ofNullable(getDefinition(name))
+                .map(Definition::asInputObject);
+    }
+
+    public InputObjectType getInputObjectTypeOrError(String name) {
+        return getInputObjectType(name).orElseThrow(() -> new GraphQLErrors(INPUT_OBJECT_NOT_EXIST.bind(name)));
+    }
+
+    public Stream<InputObjectType> getImplementsInputObject(String name) {
+        return getDefinitions().stream()
+                .filter(Definition::isInputObject)
+                .map(Definition::asInputObject)
+                .filter(inputObjectType ->
+                        inputObjectType.getInterfaces().stream()
+                                .anyMatch(interfaceTypeName -> interfaceTypeName.equals(name))
+                );
+    }
+
     public Optional<ObjectType> getQueryOperationType() {
         return Optional.ofNullable(getDefinition(getSchema().map(Schema::getQuery).orElse(TYPE_QUERY_NAME)))
                 .map(Definition::asObject);
@@ -318,7 +356,7 @@ public class Document {
                 .findFirst();
     }
 
-    public void clear(){
+    public void clear() {
         this.definitionMap.clear();
     }
 

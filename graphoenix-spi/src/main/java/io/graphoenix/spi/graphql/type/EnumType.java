@@ -3,15 +3,20 @@ package io.graphoenix.spi.graphql.type;
 import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
+import org.eclipse.microprofile.graphql.Ignore;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.graphoenix.spi.utils.ElementUtil.getNameFromElement;
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
 public class EnumType extends AbstractDefinition implements Definition {
@@ -43,6 +48,22 @@ public class EnumType extends AbstractDefinition implements Definition {
                             )
                     );
         }
+    }
+
+    public EnumType(TypeElement typeElement) {
+        super(typeElement);
+        this.enumValueMap = typeElement.getEnclosedElements().stream()
+                .filter(element -> element.getKind().equals(ElementKind.ENUM_CONSTANT))
+                .filter(element -> element.getAnnotation(Ignore.class) == null)
+                .map(element -> new EnumValue((VariableElement) element))
+                .collect(
+                        Collectors.toMap(
+                                EnumValue::getName,
+                                enumValue -> enumValue,
+                                (x, y) -> y,
+                                LinkedHashMap::new
+                        )
+                );
     }
 
     public EnumType merge(GraphqlParser.EnumTypeDefinitionContext... enumTypeDefinitionContexts) {

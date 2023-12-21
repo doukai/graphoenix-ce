@@ -5,10 +5,7 @@ import jakarta.json.*;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
-import java.util.AbstractList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,6 +19,10 @@ public class ArrayValueWithVariable extends AbstractList<JsonValue> implements V
         this.valueWithVariables = Stream.of(valueWithVariables)
                 .map(ValueWithVariable::of)
                 .collect(Collectors.toList());
+    }
+
+    public ArrayValueWithVariable(ValueWithVariable valueWithVariable) {
+        this.valueWithVariables = Collections.singletonList(valueWithVariable);
     }
 
     public ArrayValueWithVariable(GraphqlParser.ArrayValueWithVariableContext arrayValueWithVariableContext) {
@@ -40,6 +41,14 @@ public class ArrayValueWithVariable extends AbstractList<JsonValue> implements V
         this.valueWithVariables = valueWithVariables.stream()
                 .map(ValueWithVariable::of)
                 .collect(Collectors.toList());
+    }
+
+    public List<ValueWithVariable> getValueWithVariables() {
+        return valueWithVariables;
+    }
+
+    public void add(ValueWithVariable valueWithVariable) {
+        valueWithVariables.add(valueWithVariable);
     }
 
     @Override

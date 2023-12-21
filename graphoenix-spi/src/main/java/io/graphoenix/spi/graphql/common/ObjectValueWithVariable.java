@@ -11,7 +11,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.graphoenix.spi.utils.GraphQLUtil.getNameFromElement;
+import static io.graphoenix.spi.utils.ElementUtil.getNameFromElement;
 import static io.graphoenix.spi.utils.ReflectUtil.getFieldValue;
 
 public class ObjectValueWithVariable extends AbstractMap<String, JsonValue> implements ValueWithVariable, JsonObject, Iterable<JsonValue> {

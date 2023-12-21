@@ -2,14 +2,20 @@ package io.graphoenix.spi.graphql.type;
 
 import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.graphql.AbstractDefinition;
+import io.graphoenix.spi.graphql.common.ArrayValueWithVariable;
+import io.graphoenix.spi.graphql.common.Directive;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.util.Types;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
+import static io.graphoenix.spi.utils.ElementUtil.*;
 
 public class FieldDefinition extends AbstractDefinition {
 
@@ -42,6 +48,42 @@ public class FieldDefinition extends AbstractDefinition {
                             )
                     );
         }
+    }
+
+    public FieldDefinition(VariableElement variableElement, Types typeUtils) {
+        super(variableElement);
+        this.type = variableElementToTypeName(variableElement, typeUtils);
+        this.argumentMap = new LinkedHashMap<>();
+        getFormatDirective(variableElement).ifPresent(this::addDirective);
+    }
+
+    public FieldDefinition(ExecutableElement executableElement, Types typeUtils) {
+        super(executableElement);
+        this.type = executableElementToTypeName(executableElement, typeUtils);
+        this.argumentMap = executableElementParametersToInputValues(executableElement, typeUtils);
+        getFormatDirective(executableElement).ifPresent(this::addDirective);
+        addDirective(
+                new Directive()
+                        .setName(DIRECTIVE_INVOKE_NAME)
+                        .addArgument(DIRECTIVE_INVOKE_ARGUMENT_CLASS_NAME_NAME, executableElement.getEnclosingElement().toString())
+                        .addArgument(DIRECTIVE_INVOKE_ARGUMENT_METHOD_NAME_NAME, executableElement.getSimpleName().toString())
+                        .addArgument(
+                                DIRECTIVE_INVOKE_ARGUMENT_PARAMETER_NAME,
+                                new ArrayValueWithVariable(
+                                        executableElement.getParameters().stream()
+                                                .map(parameter ->
+                                                        Map.of(
+                                                                INPUT_INVOKE_PARAMETER_NAME_NAME,
+                                                                parameter.getSimpleName().toString(),
+                                                                INPUT_INVOKE_PARAMETER_CLASS_NAME_NAME,
+                                                                getElementTypeName(parameter.asType(), typeUtils)
+                                                        )
+                                                )
+                                                .collect(Collectors.toList())
+                                )
+                        )
+                        .addArgument(DIRECTIVE_INVOKE_ARGUMENT_RETURN_CLASS_NAME_NAME, getElementTypeName(executableElement.getReturnType(), typeUtils))
+        );
     }
 
     public Collection<InputValue> getArguments() {

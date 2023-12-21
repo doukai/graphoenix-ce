@@ -5,6 +5,9 @@ import io.graphoenix.spi.graphql.AbstractDefinition;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.util.Types;
+
 public class EnumValue extends AbstractDefinition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/EnumValue.stg");
@@ -20,6 +23,11 @@ public class EnumValue extends AbstractDefinition {
     public EnumValue(GraphqlParser.EnumValueDefinitionContext enumValueDefinitionContext) {
         super(enumValueDefinitionContext.description(), enumValueDefinitionContext.directives());
         setName(enumValueDefinitionContext.enumValue().enumValueName().getText());
+    }
+
+
+    public EnumValue(VariableElement variableElement) {
+        super(variableElement);
     }
 
     @Override
