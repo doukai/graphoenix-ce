@@ -1,6 +1,7 @@
 package io.graphoenix.spi.graphql;
 
 import graphql.parser.antlr.GraphqlParser;
+import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.type.*;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
@@ -15,6 +16,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.graphoenix.spi.constant.Hammurabi.*;
+import static io.graphoenix.spi.error.GraphQLErrorType.*;
 import static io.graphoenix.spi.utils.DocumentUtil.graphqlToDocument;
 
 public class Document {
@@ -161,8 +164,13 @@ public class Document {
         return this;
     }
 
+
     public Document addDefinitionsByPathName(String pathName, String resourcePath) throws IOException {
-        Path graphqlPath = Paths.get(resourcePath).resolve(pathName);
+        return addDefinitionsByPath(pathName, Paths.get(resourcePath));
+    }
+
+    public Document addDefinitionsByPath(String pathName, Path resourcePath) throws IOException {
+        Path graphqlPath = resourcePath.resolve(pathName);
         try {
             if (Files.exists(graphqlPath)) {
                 try (Stream<Path> pathStream = Files.list(graphqlPath)) {
@@ -210,6 +218,10 @@ public class Document {
         return this;
     }
 
+    public Document merge(Path path) throws IOException {
+        return merge(graphqlToDocument(path));
+    }
+
     public Document merge(GraphqlParser.DocumentContext documentContext) {
         this.definitionMap.putAll(
                 documentContext.definition().stream()
@@ -222,6 +234,37 @@ public class Document {
                         )
         );
         return this;
+    }
+
+    public Optional<ObjectType> getQueryOperationType() {
+        return Optional.ofNullable(getDefinition(getSchema().map(Schema::getQuery).orElse(TYPE_QUERY_NAME)))
+                .map(Definition::asObject);
+    }
+
+    public Optional<ObjectType> getMutationOperationType() {
+        return Optional.ofNullable(getDefinition(getSchema().map(Schema::getMutation).orElse(TYPE_MUTATION_NAME)))
+                .map(Definition::asObject);
+    }
+
+    public Optional<ObjectType> getSubscriptionOperationType() {
+        return Optional.ofNullable(getDefinition(getSchema().map(Schema::getSubscription).orElse(TYPE_SUBSCRIPTION_NAME)))
+                .map(Definition::asObject);
+    }
+
+    public ObjectType getQueryOperationTypeOrError() {
+        return getQueryOperationType().orElseThrow(() -> new GraphQLErrors(QUERY_TYPE_NOT_EXIST));
+    }
+
+    public ObjectType getMutationOperationTypeOrError() {
+        return getMutationOperationType().orElseThrow(() -> new GraphQLErrors(MUTATION_TYPE_NOT_EXIST));
+    }
+
+    public ObjectType getSubscriptionOperationTypeOrError() {
+        return getSubscriptionOperationType().orElseThrow(() -> new GraphQLErrors(SUBSCRIBE_TYPE_NOT_EXIST));
+    }
+
+    public Optional<InterfaceType> getMetaInterface() {
+        return Optional.ofNullable(getDefinition(INTERFACE_META_NAME)).map(definition -> (InterfaceType) definition);
     }
 
     public Definition merge(GraphqlParser.DefinitionContext definitionContext) {
@@ -273,6 +316,10 @@ public class Document {
                 .filter(Definition::isSchema)
                 .map(definition -> (Schema) definition)
                 .findFirst();
+    }
+
+    public void clear(){
+        this.definitionMap.clear();
     }
 
     @Override

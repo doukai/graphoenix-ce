@@ -47,38 +47,38 @@ public class DocumentBuilder {
                 .map(Definition::asObject)
                 .forEach(this::buildFetchFields);
 
-        document.addDefinitions(
-                document.getDefinitions().stream()
-                        .filter(Definition::isObject)
-                        .map(Definition::asObject)
-                        .filter(packageManager::isOwnPackage)
-                        .filter(objectType -> !objectType.isContainerType())
-                        .filter(objectType -> !documentManager.isOperationType(objectType))
-                        .flatMap(objectType ->
-                                objectType.getFields().stream()
-                                        .filter(FieldDefinition::hasMapWith)
-                                        .map(fieldDefinition -> buildMapWithObject(objectType, fieldDefinition))
-                        )
-                        .filter(distinctByKey(ObjectType::getName))
-                        .collect(Collectors.toList())
-        );
-
-        document.addDefinitions(
-                document.getDefinitions().stream()
-                        .filter(Definition::isObject)
-                        .map(Definition::asObject)
-                        .filter(packageManager::isOwnPackage)
-                        .filter(objectType -> !objectType.isContainerType())
-                        .filter(objectType -> !documentManager.isOperationType(objectType))
-                        .flatMap(objectType ->
-                                objectType.getFields().stream()
-                                        .filter(FieldDefinition::isFetchAnchor)
-                                        .filter(FieldDefinition::hasFetchWith)
-                                        .map(fieldDefinition -> buildFetchWithObject(objectType, fieldDefinition))
-                        )
-                        .filter(distinctByKey(ObjectType::getName))
-                        .collect(Collectors.toList())
-        );
+        document
+                .addDefinitions(
+                        document.getDefinitions().stream()
+                                .filter(Definition::isObject)
+                                .map(Definition::asObject)
+                                .filter(packageManager::isOwnPackage)
+                                .filter(objectType -> !objectType.isContainerType())
+                                .filter(objectType -> !documentManager.isOperationType(objectType))
+                                .flatMap(objectType ->
+                                        objectType.getFields().stream()
+                                                .filter(FieldDefinition::hasMapWith)
+                                                .map(fieldDefinition -> buildMapWithObject(objectType, fieldDefinition))
+                                )
+                                .filter(distinctByKey(ObjectType::getName))
+                                .collect(Collectors.toList())
+                )
+                .addDefinitions(
+                        document.getDefinitions().stream()
+                                .filter(Definition::isObject)
+                                .map(Definition::asObject)
+                                .filter(packageManager::isOwnPackage)
+                                .filter(objectType -> !objectType.isContainerType())
+                                .filter(objectType -> !documentManager.isOperationType(objectType))
+                                .flatMap(objectType ->
+                                        objectType.getFields().stream()
+                                                .filter(FieldDefinition::isFetchAnchor)
+                                                .filter(FieldDefinition::hasFetchWith)
+                                                .map(fieldDefinition -> buildFetchWithObject(objectType, fieldDefinition))
+                                )
+                                .filter(distinctByKey(ObjectType::getName))
+                                .collect(Collectors.toList())
+                );
 
         document.getDefinitions().stream()
                 .filter(Definition::isObject)
@@ -97,31 +97,31 @@ public class DocumentBuilder {
                 .map(Definition::asObject)
                 .anyMatch(objectType -> !objectType.isContainerType())) {
 
-            ObjectType queryType = documentManager.getQueryOperationType()
+            ObjectType queryType = document.getQueryOperationType()
                     .orElseGet(() -> new ObjectType(TYPE_QUERY_NAME))
                     .setFields(buildQueryTypeFields(document));
 
-            ObjectType mutationType = documentManager.getMutationOperationType()
+            ObjectType mutationType = document.getMutationOperationType()
                     .orElseGet(() -> new ObjectType(TYPE_MUTATION_NAME))
                     .setFields(buildMutationTypeFields(document));
 
-            ObjectType subscriptionType = documentManager.getSubscriptionOperationType()
+            ObjectType subscriptionType = document.getSubscriptionOperationType()
                     .orElseGet(() -> new ObjectType(TYPE_SUBSCRIPTION_NAME))
                     .setFields(buildSubscriptionTypeFields(document));
 
-            documentManager.getQueryOperationType()
+            document.getQueryOperationType()
                     .ifPresentOrElse(
                             objectType -> objectType.merge(queryType),
                             () -> document.addDefinition(queryType)
                     );
 
-            documentManager.getMutationOperationType()
+            document.getMutationOperationType()
                     .ifPresentOrElse(
                             objectType -> objectType.merge(mutationType),
                             () -> document.addDefinition(mutationType)
                     );
 
-            documentManager.getSubscriptionOperationType()
+            document.getSubscriptionOperationType()
                     .ifPresentOrElse(
                             objectType -> objectType.merge(subscriptionType),
                             () -> document.addDefinition(subscriptionType)
@@ -133,8 +133,20 @@ public class DocumentBuilder {
                             .setMutation(mutationType.getName())
                             .setSubscription(subscriptionType.getName())
             );
+
+            document
+                    .addDefinitions(buildQueryTypeFieldArguments(document))
+                    .addDefinitions(buildMutationTypeFieldsArguments(document))
+                    .addDefinitions(buildSubscriptionTypeFieldsArguments(document));
         }
         return document;
+    }
+
+    public void buildInvoker(Document document) {
+        document
+                .addDefinitions(buildQueryTypeInvokeFieldArguments(document))
+                .addDefinitions(buildMutationTypeInvokeFieldsArguments(document))
+                .addDefinitions(buildSubscriptionTypeInvokeFieldsArguments(document));
     }
 
     public ObjectType buildMapFields(ObjectType objectType) {
@@ -557,7 +569,7 @@ public class DocumentBuilder {
             return Stream
                     .concat(
                             fieldsType.getFields().stream(),
-                            documentManager.getMetaInterface().stream()
+                            documentManager.getDocument().getMetaInterface().stream()
                                     .flatMap(interfaceType -> interfaceType.getFields().stream())
                     )
                     .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
@@ -572,7 +584,7 @@ public class DocumentBuilder {
             return Stream
                     .concat(
                             fieldsType.getFields().stream(),
-                            documentManager.getMetaInterface().stream()
+                            documentManager.getDocument().getMetaInterface().stream()
                                     .flatMap(interfaceType -> interfaceType.getFields().stream())
                     )
                     .filter(distinctByKey(FieldDefinition::getName))
@@ -587,7 +599,7 @@ public class DocumentBuilder {
     }
 
     public List<FieldDefinition> getMetaInterfaceFields() {
-        return documentManager.getMetaInterface().stream()
+        return documentManager.getDocument().getMetaInterface().stream()
                 .flatMap(interfaceType -> interfaceType.getFields().stream())
                 .collect(Collectors.toList());
     }
@@ -1003,6 +1015,378 @@ public class DocumentBuilder {
                 .addArgument(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
                 .setDirectives(fieldDefinition.getDirectives())
                 .addDirective(new Directive(DIRECTIVE_AGGREGATE_NAME));
+    }
+
+    public List<InputObjectType> buildQueryTypeFieldArguments(Document document) {
+        return document.getDefinitions().stream()
+                .filter(Definition::isObject)
+                .map(Definition::asObject)
+                .filter(packageManager::isOwnPackage)
+                .filter(objectType -> !objectType.isContainerType())
+                .filter(objectType -> !documentManager.isOperationType(objectType))
+                .flatMap(objectType ->
+                        Stream.of(
+                                buildSchemaTypeFieldArguments(objectType, InputType.QUERY_ARGUMENTS),
+                                buildSchemaTypeFieldListArguments(objectType, InputType.QUERY_ARGUMENTS),
+                                buildSchemaTypeFieldConnectionArguments(objectType, InputType.QUERY_ARGUMENTS)
+                        )
+                )
+                .collect(Collectors.toList());
+    }
+
+    public List<InputObjectType> buildMutationTypeFieldsArguments(Document document) {
+        return document.getDefinitions().stream()
+                .filter(Definition::isObject)
+                .map(Definition::asObject)
+                .filter(packageManager::isOwnPackage)
+                .filter(objectType -> !objectType.isContainerType())
+                .filter(objectType -> !documentManager.isOperationType(objectType))
+                .flatMap(objectType ->
+                        Stream.of(
+                                buildSchemaTypeFieldArguments(objectType, InputType.MUTATION_ARGUMENTS),
+                                buildSchemaTypeFieldListArguments(objectType, InputType.MUTATION_ARGUMENTS)
+                        )
+                )
+                .collect(Collectors.toList());
+    }
+
+    public List<InputObjectType> buildSubscriptionTypeFieldsArguments(Document document) {
+        return document.getDefinitions().stream()
+                .filter(Definition::isObject)
+                .map(Definition::asObject)
+                .filter(packageManager::isOwnPackage)
+                .filter(objectType -> !objectType.isContainerType())
+                .filter(objectType -> !documentManager.isOperationType(objectType))
+                .flatMap(objectType ->
+                        Stream.of(
+                                buildSchemaTypeFieldArguments(objectType, InputType.SUBSCRIPTION_ARGUMENTS),
+                                buildSchemaTypeFieldListArguments(objectType, InputType.SUBSCRIPTION_ARGUMENTS),
+                                buildSchemaTypeFieldConnectionArguments(objectType, InputType.SUBSCRIPTION_ARGUMENTS)
+                        )
+                )
+                .collect(Collectors.toList());
+    }
+
+    public InputObjectType buildSchemaTypeFieldArguments(ObjectType objectType, InputType inputType) {
+        InputObjectType inputObjectType = new InputObjectType()
+                .addInputValues(buildInputValuesFromObjectType(objectType, inputType))
+                .addDirective(
+                        new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
+                                .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
+                                .addArgument(DIRECTIVE_GRPC_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getGrpcPackageName())
+                );
+        if (inputType.equals(InputType.QUERY_ARGUMENTS)) {
+            ObjectType queryOperationType = documentManager.getDocument().getQueryOperationTypeOrError();
+            inputObjectType
+                    .addInputValue(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
+                    .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(SCALA_BOOLEAN_NAME).setDefaultValue(false))
+                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(INPUT_CONDITIONAL_NAME).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
+                    .addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
+                    .setName(objectType.getName() + queryOperationType.getName() + inputType)
+                    .addDirective(
+                            new Directive(DIRECTIVE_IMPLEMENTS_NAME)
+                                    .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
+                                            new ArrayValueWithVariable(
+                                                    Stream
+                                                            .concat(
+                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
+                                                                    Stream.of(INTERFACE_META_NAME)
+                                                            )
+                                                            .map(interfaceName -> interfaceName + SUFFIX_EXPRESSION)
+                                                            .distinct()
+                                                            .collect(Collectors.toList())
+                                            )
+                                    )
+                    );
+        } else if (inputType.equals(InputType.SUBSCRIPTION_ARGUMENTS)) {
+            ObjectType subscriptionOperation = documentManager.getDocument().getSubscriptionOperationTypeOrError();
+            inputObjectType
+                    .addInputValue(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
+                    .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(SCALA_BOOLEAN_NAME).setDefaultValue(false))
+                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(INPUT_CONDITIONAL_NAME).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
+                    .addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
+                    .setName(objectType.getName() + subscriptionOperation.getName() + inputType)
+                    .addDirective(
+                            new Directive(DIRECTIVE_IMPLEMENTS_NAME)
+                                    .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
+                                            new ArrayValueWithVariable(
+                                                    Stream
+                                                            .concat(
+                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
+                                                                    Stream.of(INTERFACE_META_NAME)
+                                                            )
+                                                            .map(interfaceName -> interfaceName + SUFFIX_EXPRESSION)
+                                                            .distinct()
+                                                            .collect(Collectors.toList())
+                                            )
+                                    )
+                    );
+        } else if (inputType.equals(InputType.MUTATION_ARGUMENTS)) {
+            ObjectType mutationOperationType = documentManager.getDocument().getMutationOperationTypeOrError();
+            inputObjectType
+                    .addInputValue(new InputValue(INPUT_VALUE_WHERE_NAME).setType(new TypeName(objectType.getName() + InputType.EXPRESSION)))
+                    .setName(objectType.getName() + mutationOperationType.getName() + inputType)
+                    .addDirective(
+                            new Directive(DIRECTIVE_IMPLEMENTS_NAME)
+                                    .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
+                                            new ArrayValueWithVariable(
+                                                    Stream
+                                                            .concat(
+                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
+                                                                    Stream.of(INTERFACE_META_NAME)
+                                                            )
+                                                            .map(interfaceName -> interfaceName + SUFFIX_INPUT)
+                                                            .distinct()
+                                                            .collect(Collectors.toList())
+                                            )
+                                    )
+                    );
+        }
+
+        Optional.ofNullable(objectType.getDirective(DIRECTIVE_VALIDATION_NAME))
+                .ifPresent(inputObjectType::addDirective);
+        return inputObjectType;
+    }
+
+    public InputObjectType buildSchemaTypeFieldListArguments(ObjectType objectType, InputType inputType) {
+        InputObjectType inputObjectType = new InputObjectType()
+                .addInputValues(buildInputValuesFromObjectType(objectType, inputType))
+                .addDirective(
+                        new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
+                                .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
+                                .addArgument(DIRECTIVE_GRPC_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getGrpcPackageName())
+                );
+
+        if (inputType.equals(InputType.QUERY_ARGUMENTS)) {
+            ObjectType queryOperationType = documentManager.getDocument().getQueryOperationTypeOrError();
+            inputObjectType
+                    .addInputValue(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(objectType.getName() + InputType.ORDER_BY))
+                    .addInputValue(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
+                    .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(SCALA_BOOLEAN_NAME).setDefaultValue(false))
+                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(INPUT_CONDITIONAL_NAME).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
+                    .addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
+                    .addInputValue(new InputValue(INPUT_VALUE_FIRST_NAME).setType(SCALA_INT_NAME))
+                    .addInputValue(new InputValue(INPUT_VALUE_LAST_NAME).setType(SCALA_INT_NAME))
+                    .addInputValue(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(SCALA_INT_NAME))
+                    .setName(objectType.getName() + SUFFIX_LIST + queryOperationType.getName() + inputType)
+                    .addDirective(
+                            new Directive(DIRECTIVE_IMPLEMENTS_NAME)
+                                    .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
+                                            new ArrayValueWithVariable(
+                                                    Stream
+                                                            .concat(
+                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
+                                                                    Stream.of(INTERFACE_META_NAME)
+                                                            )
+                                                            .map(interfaceName -> interfaceName + SUFFIX_EXPRESSION)
+                                                            .distinct()
+                                                            .collect(Collectors.toList())
+                                            )
+                                    )
+                    );
+            objectType.getCursorField()
+                    .or(objectType::getIDField)
+                    .ifPresent(cursorField ->
+                            inputObjectType
+                                    .addInputValue(new InputValue(INPUT_VALUE_AFTER_NAME).setType(cursorField.getType().getTypeName()))
+                                    .addInputValue(new InputValue(INPUT_VALUE_BEFORE_NAME).setType(cursorField.getType().getTypeName()))
+                    );
+        } else if (inputType.equals(InputType.SUBSCRIPTION_ARGUMENTS)) {
+            ObjectType subscriptionOperationType = documentManager.getDocument().getSubscriptionOperationTypeOrError();
+            inputObjectType
+                    .addInputValue(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(objectType.getName() + InputType.ORDER_BY))
+                    .addInputValue(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
+                    .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(SCALA_BOOLEAN_NAME).setDefaultValue(false))
+                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(INPUT_CONDITIONAL_NAME).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
+                    .addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
+                    .addInputValue(new InputValue(INPUT_VALUE_FIRST_NAME).setType(SCALA_INT_NAME))
+                    .addInputValue(new InputValue(INPUT_VALUE_LAST_NAME).setType(SCALA_INT_NAME))
+                    .addInputValue(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(SCALA_INT_NAME))
+                    .setName(objectType.getName() + SUFFIX_LIST + subscriptionOperationType.getName() + inputType)
+                    .addDirective(
+                            new Directive(DIRECTIVE_IMPLEMENTS_NAME)
+                                    .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
+                                            new ArrayValueWithVariable(
+                                                    Stream
+                                                            .concat(
+                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
+                                                                    Stream.of(INTERFACE_META_NAME)
+                                                            )
+                                                            .map(interfaceName -> interfaceName + SUFFIX_EXPRESSION)
+                                                            .distinct()
+                                                            .collect(Collectors.toList())
+                                            )
+                                    )
+                    );
+            objectType.getCursorField()
+                    .or(objectType::getIDField)
+                    .ifPresent(cursorField ->
+                            inputObjectType
+                                    .addInputValue(new InputValue(INPUT_VALUE_AFTER_NAME).setType(cursorField.getType().getTypeName()))
+                                    .addInputValue(new InputValue(INPUT_VALUE_BEFORE_NAME).setType(cursorField.getType().getTypeName()))
+                    );
+        } else if (inputType.equals(InputType.MUTATION_ARGUMENTS)) {
+            ObjectType mutationOperationType = documentManager.getDocument().getMutationOperationTypeOrError();
+            inputObjectType
+                    .addInputValue(new InputValue(INPUT_VALUE_LIST_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.INPUT))))
+                    .addInputValue(new InputValue(INPUT_VALUE_WHERE_NAME).setType(new TypeName(objectType.getName() + InputType.EXPRESSION)))
+                    .setName(objectType.getName() + SUFFIX_LIST + mutationOperationType.getName() + inputType)
+                    .addDirective(
+                            new Directive(DIRECTIVE_IMPLEMENTS_NAME)
+                                    .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
+                                            new ArrayValueWithVariable(
+                                                    Stream
+                                                            .concat(
+                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
+                                                                    Stream.of(INTERFACE_META_NAME)
+                                                            )
+                                                            .map(interfaceName -> interfaceName + SUFFIX_INPUT)
+                                                            .distinct()
+                                                            .collect(Collectors.toList())
+                                            )
+                                    )
+                    );
+        }
+        Optional.ofNullable(objectType.getDirective(DIRECTIVE_VALIDATION_NAME))
+                .ifPresent(inputObjectType::addDirective);
+        return inputObjectType;
+    }
+
+    public InputObjectType buildSchemaTypeFieldConnectionArguments(ObjectType objectType, InputType inputType) {
+        InputObjectType inputObjectType = new InputObjectType()
+                .addInputValues(buildInputValuesFromObjectType(objectType, inputType))
+                .addDirective(
+                        new Directive()
+                                .setName(DIRECTIVE_CONNECTION_NAME)
+                                .addArgument(DIRECTIVE_CONNECTION_ARGUMENT_FIELD_NAME, typeNameToFieldName(objectType.getName()) + SUFFIX_LIST)
+                                .addArgument(DIRECTIVE_CONNECTION_ARGUMENT_AGG_NAME, typeNameToFieldName(objectType.getName()))
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
+                                .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
+                                .addArgument(DIRECTIVE_GRPC_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getGrpcPackageName())
+                );
+
+        if (inputType.equals(InputType.QUERY_ARGUMENTS)) {
+            ObjectType queryOperationType = documentManager.getDocument().getQueryOperationTypeOrError();
+            inputObjectType
+                    .addInputValue(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(objectType.getName() + InputType.ORDER_BY))
+                    .addInputValue(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
+                    .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(SCALA_BOOLEAN_NAME).setDefaultValue(false))
+                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(INPUT_CONDITIONAL_NAME).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
+                    .addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
+                    .addInputValue(new InputValue(INPUT_VALUE_FIRST_NAME).setType(SCALA_INT_NAME))
+                    .addInputValue(new InputValue(INPUT_VALUE_LAST_NAME).setType(SCALA_INT_NAME))
+                    .addInputValue(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(SCALA_INT_NAME))
+                    .setName(objectType.getName() + SUFFIX_CONNECTION + queryOperationType.getName() + inputType)
+                    .addDirective(
+                            new Directive(DIRECTIVE_IMPLEMENTS_NAME)
+                                    .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
+                                            new ArrayValueWithVariable(
+                                                    Stream
+                                                            .concat(
+                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
+                                                                    Stream.of(INTERFACE_META_NAME)
+                                                            )
+                                                            .map(interfaceName -> interfaceName + SUFFIX_EXPRESSION)
+                                                            .distinct()
+                                                            .collect(Collectors.toList())
+                                            )
+                                    )
+                    );
+            objectType.getCursorField()
+                    .or(objectType::getIDField)
+                    .ifPresent(cursorField ->
+                            inputObjectType
+                                    .addInputValue(new InputValue(INPUT_VALUE_AFTER_NAME).setType(cursorField.getType().getTypeName()))
+                                    .addInputValue(new InputValue(INPUT_VALUE_BEFORE_NAME).setType(cursorField.getType().getTypeName()))
+                    );
+        } else if (inputType.equals(InputType.SUBSCRIPTION_ARGUMENTS)) {
+            ObjectType subscriptionOperationType = documentManager.getDocument().getSubscriptionOperationTypeOrError();
+            inputObjectType
+                    .addInputValue(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(objectType.getName() + InputType.ORDER_BY))
+                    .addInputValue(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
+                    .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(SCALA_BOOLEAN_NAME).setDefaultValue(false))
+                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(INPUT_CONDITIONAL_NAME).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
+                    .addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
+                    .addInputValue(new InputValue(INPUT_VALUE_FIRST_NAME).setType(SCALA_INT_NAME))
+                    .addInputValue(new InputValue(INPUT_VALUE_LAST_NAME).setType(SCALA_INT_NAME))
+                    .addInputValue(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(SCALA_INT_NAME))
+                    .setName(objectType.getName() + SUFFIX_CONNECTION + subscriptionOperationType.getName() + inputType)
+                    .addDirective(
+                            new Directive(DIRECTIVE_IMPLEMENTS_NAME)
+                                    .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
+                                            new ArrayValueWithVariable(
+                                                    Stream
+                                                            .concat(
+                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
+                                                                    Stream.of(INTERFACE_META_NAME)
+                                                            )
+                                                            .map(interfaceName -> interfaceName + SUFFIX_EXPRESSION)
+                                                            .distinct()
+                                                            .collect(Collectors.toList())
+                                            )
+                                    )
+                    );
+            objectType.getCursorField()
+                    .or(objectType::getIDField)
+                    .ifPresent(cursorField ->
+                            inputObjectType
+                                    .addInputValue(new InputValue(INPUT_VALUE_AFTER_NAME).setType(cursorField.getType().getTypeName()))
+                                    .addInputValue(new InputValue(INPUT_VALUE_BEFORE_NAME).setType(cursorField.getType().getTypeName()))
+                    );
+        }
+        return inputObjectType;
+    }
+
+    public List<InputObjectType> buildQueryTypeInvokeFieldArguments(Document document) {
+        return document.getQueryOperationType().stream()
+                .flatMap(objectType ->
+                        objectType.getFields().stream()
+                                .filter(packageManager::isOwnPackage)
+                                .filter(FieldDefinition::isInvokeField)
+                                .filter(fieldDefinition -> !fieldDefinition.getArguments().isEmpty())
+                                .map(fieldDefinition -> buildSchemaTypeInvokeFieldArguments(objectType, fieldDefinition))
+                )
+                .collect(Collectors.toList());
+    }
+
+    public List<InputObjectType> buildMutationTypeInvokeFieldsArguments(Document document) {
+        return document.getMutationOperationType().stream()
+                .flatMap(objectType ->
+                        objectType.getFields().stream()
+                                .filter(packageManager::isOwnPackage)
+                                .filter(FieldDefinition::isInvokeField)
+                                .filter(fieldDefinition -> !fieldDefinition.getArguments().isEmpty())
+                                .map(fieldDefinition -> buildSchemaTypeInvokeFieldArguments(objectType, fieldDefinition))
+                )
+                .collect(Collectors.toList());
+    }
+
+    public List<InputObjectType> buildSubscriptionTypeInvokeFieldsArguments(Document document) {
+        return document.getSubscriptionOperationType().stream()
+                .flatMap(objectType ->
+                        objectType.getFields().stream()
+                                .filter(packageManager::isOwnPackage)
+                                .filter(FieldDefinition::isInvokeField)
+                                .filter(fieldDefinition -> !fieldDefinition.getArguments().isEmpty())
+                                .map(fieldDefinition -> buildSchemaTypeInvokeFieldArguments(objectType, fieldDefinition))
+                )
+                .collect(Collectors.toList());
+    }
+
+    public InputObjectType buildSchemaTypeInvokeFieldArguments(ObjectType objectType, FieldDefinition fieldDefinition) {
+        return new InputObjectType(objectType.getName() + "_" + fieldDefinition.getName() + "_" + SUFFIX_ARGUMENTS)
+                .addInputValues(
+                        Stream.ofNullable(fieldDefinition.getArguments())
+                                .flatMap(Collection::stream)
+                                .collect(Collectors.toList())
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
+                                .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
+                                .addArgument(DIRECTIVE_GRPC_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getGrpcPackageName())
+                );
     }
 
     private enum InputType {

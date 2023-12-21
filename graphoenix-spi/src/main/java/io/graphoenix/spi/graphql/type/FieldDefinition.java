@@ -148,7 +148,7 @@ public class FieldDefinition extends AbstractDefinition {
     public String getMapWithType() {
         return getDirective(DIRECTIVE_MAP_NAME)
                 .getArgument(DIRECTIVE_MAP_ARGUMENT_WITH_NAME).asObject()
-                .getValueWithVariable(DIRECTIVE_MAP_ARGUMENT_WITH_TYPE_NAME).asString()
+                .getValueWithVariable(INPUT_VALUE_WITH_TYPE_NAME).asString()
                 .getString();
     }
 

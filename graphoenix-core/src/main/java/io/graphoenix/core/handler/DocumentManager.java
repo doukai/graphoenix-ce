@@ -14,15 +14,10 @@ import static io.graphoenix.spi.constant.Hammurabi.*;
 
 @Application
 public class DocumentManager {
-    private Document document;
+    private final Document document = new Document();
 
     public Document getDocument() {
         return document;
-    }
-
-    public DocumentManager setDocument(Document document) {
-        this.document = document;
-        return this;
     }
 
     public boolean isQueryOperationType(Definition definition) {
@@ -42,25 +37,6 @@ public class DocumentManager {
 
     public boolean isOperationType(Definition definition) {
         return isQueryOperationType(definition) || isMutationOperationType(definition) || isSubscriptionOperationType(definition);
-    }
-
-    public Optional<ObjectType> getQueryOperationType() {
-        return Optional.ofNullable(document.getDefinition(document.getSchema().map(Schema::getQuery).orElse(TYPE_QUERY_NAME)))
-                .map(Definition::asObject);
-    }
-
-    public Optional<ObjectType> getMutationOperationType() {
-        return Optional.ofNullable(document.getDefinition(document.getSchema().map(Schema::getMutation).orElse(TYPE_MUTATION_NAME)))
-                .map(Definition::asObject);
-    }
-
-    public Optional<ObjectType> getSubscriptionOperationType() {
-        return Optional.ofNullable(document.getDefinition(document.getSchema().map(Schema::getSubscription).orElse(TYPE_SUBSCRIPTION_NAME)))
-                .map(Definition::asObject);
-    }
-
-    public Optional<InterfaceType> getMetaInterface() {
-        return Optional.ofNullable(document.getDefinition(INTERFACE_META_NAME)).map(definition -> (InterfaceType) definition);
     }
 
     public boolean isMetaInterfaceField(FieldDefinition fieldDefinition) {
