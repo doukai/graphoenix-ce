@@ -67,7 +67,7 @@ public class InputObjectType extends AbstractDefinition implements Definition {
     public InputObjectType merge(InputObjectType... inputObjectTypes) {
         super.merge(inputObjectTypes);
         inputValueMap.putAll(
-                Stream
+                (Map<? extends String, ? extends InputValue>) Stream
                         .concat(
                                 Stream.ofNullable(inputValueMap.values()),
                                 Stream.of(inputObjectTypes).flatMap(item -> Stream.ofNullable(item.getInputValues()))
@@ -77,7 +77,9 @@ public class InputObjectType extends AbstractDefinition implements Definition {
                         .collect(
                                 Collectors.toMap(
                                         InputValue::getName,
-                                        inputValue -> inputValue
+                                        inputValue -> inputValue,
+                                        (x, y) -> y,
+                                        LinkedHashMap::new
                                 )
                         )
         );
@@ -99,11 +101,13 @@ public class InputObjectType extends AbstractDefinition implements Definition {
 
     public InputObjectType addInputValues(Collection<InputValue> inputValues) {
         this.inputValueMap.putAll(
-                inputValues.stream()
+                (Map<? extends String, ? extends InputValue>) inputValues.stream()
                         .collect(
                                 Collectors.toMap(
                                         InputValue::getName,
-                                        inputValue -> inputValue
+                                        inputValue -> inputValue,
+                                        (x, y) -> y,
+                                        LinkedHashMap::new
                                 )
                         )
         );

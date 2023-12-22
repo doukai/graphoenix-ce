@@ -65,9 +65,9 @@ public class FieldDefinition extends AbstractDefinition {
                                         executableElement.getParameters().stream()
                                                 .map(parameter ->
                                                         Map.of(
-                                                                INPUT_INVOKE_PARAMETER_NAME_NAME,
+                                                                INPUT_INVOKE_PARAMETER_INPUT_VALUE_NAME_NAME,
                                                                 parameter.getSimpleName().toString(),
-                                                                INPUT_INVOKE_PARAMETER_CLASS_NAME_NAME,
+                                                                INPUT_INVOKE_PARAMETER_INPUT_VALUE_CLASS_NAME_NAME,
                                                                 getTypeNameFromTypeMirror(parameter.asType(), typeUtils)
                                                         )
                                                 )
@@ -89,11 +89,13 @@ public class FieldDefinition extends AbstractDefinition {
 
     public FieldDefinition addArguments(Collection<InputValue> arguments) {
         this.argumentMap.putAll(
-                arguments.stream()
+                (Map<? extends String, ? extends InputValue>) arguments.stream()
                         .collect(
                                 Collectors.toMap(
                                         InputValue::getName,
-                                        inputValue -> inputValue
+                                        inputValue -> inputValue,
+                                        (x, y) -> y,
+                                        LinkedHashMap::new
                                 )
                         )
         );
@@ -120,18 +122,18 @@ public class FieldDefinition extends AbstractDefinition {
     }
 
     public boolean hesDataType() {
-        return hasDirective(DIRECTIVE_DATA_TYPE_NAME);
+        return hasDirective(DIRECTIVE_TYPE_NAME);
     }
 
-    public Optional<String> getDataTypeName() {
-        return Optional.ofNullable(getDirective(DIRECTIVE_DATA_TYPE_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_DATA_TYPE_TYPE_NAME)))
+    public Optional<String> getTypeName() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_TYPE_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_TYPE_ARGUMENT_NAME_NAME)))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getString());
     }
 
     public String getTypeNameWithoutID() {
-        String fieldTypeName = getDataTypeName().orElseGet(() -> getType().getTypeName().getName());
+        String fieldTypeName = getTypeName().orElseGet(() -> getType().getTypeName().getName());
         if (SCALA_ID_NAME.equals(fieldTypeName)) {
             return SCALA_STRING_NAME;
         }
@@ -182,7 +184,7 @@ public class FieldDefinition extends AbstractDefinition {
     public String getMapWithType() {
         return getDirective(DIRECTIVE_MAP_NAME)
                 .getArgument(DIRECTIVE_MAP_ARGUMENT_WITH_NAME).asObject()
-                .getValueWithVariable(INPUT_VALUE_WITH_TYPE_NAME).asString()
+                .getValueWithVariable(INPUT_WITH_INPUT_VALUE_TYPE_NAME).asString()
                 .getString();
     }
 

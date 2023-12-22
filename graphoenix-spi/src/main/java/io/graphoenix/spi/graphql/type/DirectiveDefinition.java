@@ -60,11 +60,13 @@ public class DirectiveDefinition extends AbstractDefinition implements Definitio
 
     public DirectiveDefinition addArguments(Collection<InputValue> arguments) {
         this.argumentMap.putAll(
-                arguments.stream()
+                (Map<? extends String, ? extends InputValue>) arguments.stream()
                         .collect(
                                 Collectors.toMap(
                                         InputValue::getName,
-                                        inputValue -> inputValue
+                                        inputValue -> inputValue,
+                                        (x, y) -> y,
+                                        LinkedHashMap::new
                                 )
                         )
         );

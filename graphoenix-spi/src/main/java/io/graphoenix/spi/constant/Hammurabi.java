@@ -2,9 +2,6 @@ package io.graphoenix.spi.constant;
 
 public class Hammurabi {
 
-    public static final String TYPE_QUERY_NAME = "Query";
-    public static final String TYPE_MUTATION_NAME = "Mutation";
-    public static final String TYPE_SUBSCRIPTION_NAME = "Subscription";
     public static final String SCALA_ID_NAME = "ID";
     public static final String SCALA_INT_NAME = "Int";
     public static final String SCALA_FLOAT_NAME = "Float";
@@ -16,8 +13,17 @@ public class Hammurabi {
     public static final String SCALA_TIME_NAME = "Time";
     public static final String SCALA_DATE_TIME_NAME = "DateTime";
     public static final String SCALA_TIMESTAMP_NAME = "Timestamp";
-    public static final String TYPE_PAGE_INFO_NAME = "PageInfo";
+
+
     public static final String INTERFACE_META_NAME = "Meta";
+
+
+    public static final String TYPE_QUERY_NAME = "Query";
+    public static final String TYPE_MUTATION_NAME = "Mutation";
+    public static final String TYPE_SUBSCRIPTION_NAME = "Subscription";
+    public static final String TYPE_PAGE_INFO_NAME = "PageInfo";
+
+
     public static final String FIELD_ID_NAME = "id";
     public static final String FIELD_DEPRECATED_NAME = "isDeprecated";
     public static final String FIELD_TYPENAME_NAME = "__typename";
@@ -26,6 +32,22 @@ public class Hammurabi {
     public static final String FIELD_EDGES_NAME = "edges";
     public static final String FIELD_NODE_NAME = "node";
     public static final String FIELD_CURSOR_NAME = "cursor";
+
+
+    public static final String INPUT_SORT_NAME = "Sort";
+
+
+    public static final String INPUT_CONDITIONAL_NAME = "Conditional";
+    public static final String INPUT_CONDITIONAL_INPUT_VALUE_AND = "AND";
+
+
+    public static final String INPUT_OPERATOR_NAME = "Operator";
+    public static final String INPUT_OPERATOR_INPUT_VALUE_EQ = "EQ";
+    public static final String INPUT_OPERATOR_INPUT_VALUE_OPR_NAME = "opr";
+    public static final String INPUT_OPERATOR_INPUT_VALUE_VAL_NAME = "val";
+    public static final String INPUT_OPERATOR_INPUT_VALUE_ARR_NAME = "arr";
+
+
     public static final String INPUT_VALUE_DEPRECATED_NAME = "includeDeprecated";
     public static final String INPUT_VALUE_NOT_NAME = "not";
     public static final String INPUT_VALUE_EXS_NAME = "exs";
@@ -38,54 +60,71 @@ public class Hammurabi {
     public static final String INPUT_VALUE_BEFORE_NAME = "before";
     public static final String INPUT_VALUE_ORDER_BY_NAME = "orderBy";
     public static final String INPUT_VALUE_GROUP_BY_NAME = "groupBy";
-    public static final String INPUT_SORT_NAME = "Sort";
     public static final String INPUT_VALUE_SORT_NAME = "sort";
-    public static final String INPUT_CONDITIONAL_NAME = "Conditional";
-    public static final String INPUT_VALUE_CONDITIONAL_COND_NAME = "cond";
-    public static final String INPUT_VALUE_CONDITIONAL_COND_AND = "AND";
-    public static final String INPUT_OPERATOR_NAME = "Operator";
-    public static final String INPUT_VALUE_OPERATOR_OPR_NAME = "opr";
-    public static final String INPUT_VALUE_OPERATOR_OPR_EQ = "EQ";
-    public static final String INPUT_VALUE_OPERATOR_VAL_NAME = "val";
-    public static final String INPUT_VALUE_OPERATOR_ARR_NAME = "arr";
-    public static final String INPUT_VALUE_WITH_TYPE_NAME = "type";
-    public static final String INPUT_VALUE_WITH_FROM_NAME = "from";
-    public static final String INPUT_VALUE_WITH_TO_NAME = "to";
-    public static final String INPUT_INVOKE_NAME = "Invoke";
-    public static final String INPUT_INVOKE_VALUE_CLASS_NAME_NAME = "className";
-    public static final String INPUT_INVOKE_VALUE_METHOD_NAME_NAME = "methodName";
-    public static final String INPUT_INVOKE_VALUE_PARAMETER_NAME = "parameters";
-    public static final String INPUT_INVOKE_VALUE_RETURN_CLASS_NAME_NAME = "returnClassName";
-    public static final String INPUT_INVOKE_PARAMETER_NAME = "InvokeParameter";
-    public static final String INPUT_INVOKE_PARAMETER_NAME_NAME = "name";
-    public static final String INPUT_INVOKE_PARAMETER_CLASS_NAME_NAME = "className";
+    public static final String INPUT_VALUE_COND_NAME = "cond";
+
+
+    public static final String INPUT_WITH_INPUT_VALUE_TYPE_NAME = "type";
+    public static final String INPUT_WITH_INPUT_VALUE_FROM_NAME = "from";
+    public static final String INPUT_WITH_INPUT_VALUE_TO_NAME = "to";
+
+
+    public static final String INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME = "className";
+    public static final String INPUT_INVOKE_INPUT_VALUE_METHOD_NAME_NAME = "methodName";
+    public static final String INPUT_INVOKE_INPUT_VALUE_PARAMETER_NAME = "parameters";
+    public static final String INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME = "returnClassName";
+
+
+    public static final String INPUT_INVOKE_PARAMETER_INPUT_VALUE_NAME_NAME = "name";
+    public static final String INPUT_INVOKE_PARAMETER_INPUT_VALUE_CLASS_NAME_NAME = "className";
+
+
     public static final String[] INPUT_VALUE_EXCLUDE = {INPUT_VALUE_DEPRECATED_NAME, INPUT_VALUE_FIRST_NAME, INPUT_VALUE_LAST_NAME, INPUT_VALUE_OFFSET_NAME, INPUT_VALUE_AFTER_NAME, INPUT_VALUE_BEFORE_NAME, INPUT_VALUE_GROUP_BY_NAME, INPUT_VALUE_ORDER_BY_NAME, INPUT_VALUE_SORT_NAME, INPUT_VALUE_LIST_NAME, INPUT_VALUE_WHERE_NAME, INPUT_VALUE_NOT_NAME};
+
+
+    public static final String DIRECTIVE_CURSOR_NAME = "cursor";
+
+
     public static final String DIRECTIVE_FUNC_NAME = "func";
     public static final String DIRECTIVE_FUNC_ARGUMENT_NAME_NAME = "name";
     public static final String DIRECTIVE_FUNC_ARGUMENT_FIELD_NAME = "field";
-    public static final String DIRECTIVE_CURSOR_NAME = "cursor";
+
+
     public static final String DIRECTIVE_INVOKE_NAME = "invoke";
     public static final String DIRECTIVE_INVOKE_ARGUMENT_CLASS_NAME_NAME = "className";
     public static final String DIRECTIVE_INVOKE_ARGUMENT_METHOD_NAME_NAME = "methodName";
     public static final String DIRECTIVE_INVOKE_ARGUMENT_PARAMETER_NAME = "parameters";
     public static final String DIRECTIVE_INVOKE_ARGUMENT_RETURN_CLASS_NAME_NAME = "returnClassName";
+
+
     public static final String DIRECTIVE_INVOKES_NAME = "invokes";
     public static final String DIRECTIVE_INVOKES_LIST_NAME = "list";
+
+
     public static final String DIRECTIVE_CONNECTION_NAME = "connection";
     public static final String DIRECTIVE_CONNECTION_ARGUMENT_FIELD_NAME = "field";
     public static final String DIRECTIVE_CONNECTION_ARGUMENT_AGG_NAME = "agg";
+
+
     public static final String DIRECTIVE_AGGREGATE_NAME = "aggregate";
+
+
     public static final String DIRECTIVE_MAP_NAME = "map";
     public static final String DIRECTIVE_MAP_ARGUMENT_ANCHOR_NAME = "anchor";
     public static final String DIRECTIVE_MAP_ARGUMENT_WITH_NAME = "with";
     public static final String DIRECTIVE_MAP_ARGUMENT_FROM_NAME = "from";
     public static final String DIRECTIVE_MAP_ARGUMENT_TO_NAME = "to";
-    public static final String DIRECTIVE_DATA_TYPE_NAME = "dataType";
-    public static final String DIRECTIVE_DATA_TYPE_ARGUMENT_TYPE_NAME = "type";
-    public static final String DIRECTIVE_DATA_TYPE_ARGUMENT_AUTO_INCREMENT_NAME = "autoIncrement";
-    public static final String DIRECTIVE_DATA_TYPE_TYPE_NAME = "type";
-    public static final String DIRECTIVE_DATA_TYPE_DEFAULT_NAME = "default";
+
+
+    public static final String DIRECTIVE_TYPE_NAME = "type";
+    public static final String DIRECTIVE_TYPE_ARGUMENT_NAME_NAME = "name";
+    public static final String DIRECTIVE_TYPE_ARGUMENT_AUTO_INCREMENT_NAME = "autoIncrement";
+    public static final String DIRECTIVE_TYPE_ARGUMENT_DEFAULT_NAME = "default";
+
+
     public static final String DIRECTIVE_VALIDATION_NAME = "validation";
+
+
     public static final String DIRECTIVE_FETCH_NAME = "fetch";
     public static final String DIRECTIVE_FETCH_ARGUMENT_ANCHOR_NAME = "anchor";
     public static final String DIRECTIVE_FETCH_ARGUMENT_WITH_NAME = "with";
@@ -93,26 +132,44 @@ public class Hammurabi {
     public static final String DIRECTIVE_FETCH_ARGUMENT_FROM_NAME = "from";
     public static final String DIRECTIVE_FETCH_ARGUMENT_TO_NAME = "to";
     public static final String DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME = "protocol";
+
+
     public static final String DIRECTIVE_CONTAINER_TYPE_NAME = "containerType";
+
+
     public static final String DIRECTIVE_PACKAGE_INFO_NAME = "packageInfo";
     public static final String DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME = "packageName";
+
+
     public static final String DIRECTIVE_CLASS_INFO_NAME = "classInfo";
     public static final String DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME = "className";
     public static final String DIRECTIVE_CLASS_INFO_CLASS_EXISTS_NAME = "exists";
-    public static final String DIRECTIVE_GRPC_PACKAGE_INFO_PACKAGE_NAME_NAME = "grpcPackageName";
-    public static final String DIRECTIVE_GRPC_CLASS_INFO_CLASS_NAME_NAME = "grpcClassName";
+
+
     public static final String DIRECTIVE_INTERFACE_NAME = "interface";
+
+
     public static final String DIRECTIVE_IMPLEMENTS_NAME = "implements";
     public static final String DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME = "interfaces";
+
+
     public static final String DIRECTIVE_FORMAT_NAME = "format";
     public static final String DIRECTIVE_FORMAT_ARGUMENT_VALUE_NAME = "value";
     public static final String DIRECTIVE_FORMAT_ARGUMENT_LOCALE_NAME = "locale";
+
+
     public static final String DIRECTIVE_MERGE_TO_LIST_NAME = "mergeToList";
+
+
     public static final String DIRECTIVE_PERMIT_ALL = "permitAll";
     public static final String DIRECTIVE_DENY_ALL = "denyAll";
     public static final String DIRECTIVE_ROLES_ALLOWED = "rolesAllowed";
+
+
     public static final String PREFIX_INTROSPECTION = "__";
     public static final String PREFIX_GRPC_INTROSPECTION = "Intro";
+
+
     public static final String SUFFIX_INPUT = "Input";
     public static final String SUFFIX_ARGUMENTS = "Arguments";
     public static final String SUFFIX_ORDER_BY = "OrderBy";

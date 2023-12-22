@@ -64,7 +64,7 @@ public class EnumType extends AbstractDefinition implements Definition {
     public EnumType merge(EnumType... enumTypes) {
         super.merge(enumTypes);
         enumValueMap.putAll(
-                Stream
+                (Map<? extends String, ? extends EnumValueDefinition>) Stream
                         .concat(
                                 Stream.ofNullable(enumValueMap.values()),
                                 Stream.of(enumTypes).flatMap(item -> Stream.ofNullable(item.getEnumValues()))
@@ -74,7 +74,9 @@ public class EnumType extends AbstractDefinition implements Definition {
                         .collect(
                                 Collectors.toMap(
                                         EnumValueDefinition::getName,
-                                        enumValueDefinition -> enumValueDefinition
+                                        enumValueDefinition -> enumValueDefinition,
+                                        (x, y) -> y,
+                                        LinkedHashMap::new
                                 )
                         )
         );
@@ -96,11 +98,13 @@ public class EnumType extends AbstractDefinition implements Definition {
 
     public EnumType addEnumValues(Collection<EnumValueDefinition> enumValueDefinitions) {
         this.enumValueMap.putAll(
-                enumValueDefinitions.stream()
+                (Map<? extends String, ? extends EnumValueDefinition>) enumValueDefinitions.stream()
                         .collect(
                                 Collectors.toMap(
                                         EnumValueDefinition::getName,
-                                        enumValueDefinition -> enumValueDefinition
+                                        enumValueDefinition -> enumValueDefinition,
+                                        (x, y) -> y,
+                                        LinkedHashMap::new
                                 )
                         )
         );

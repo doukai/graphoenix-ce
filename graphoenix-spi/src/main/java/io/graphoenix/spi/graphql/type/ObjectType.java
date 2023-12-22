@@ -92,7 +92,7 @@ public class ObjectType extends AbstractDefinition implements Definition, Fields
         );
 
         fieldDefinitionMap.putAll(
-                Stream
+                (Map<? extends String, ? extends FieldDefinition>) Stream
                         .concat(
                                 Stream.ofNullable(fieldDefinitionMap.values()),
                                 Stream.of(objectTypes).flatMap(item -> Stream.ofNullable(item.getFields()))
@@ -102,7 +102,9 @@ public class ObjectType extends AbstractDefinition implements Definition, Fields
                         .collect(
                                 Collectors.toMap(
                                         FieldDefinition::getName,
-                                        fieldDefinition -> fieldDefinition
+                                        fieldDefinition -> fieldDefinition,
+                                        (x, y) -> y,
+                                        LinkedHashMap::new
                                 )
                         )
         );
@@ -142,11 +144,13 @@ public class ObjectType extends AbstractDefinition implements Definition, Fields
 
     public ObjectType addFields(Collection<FieldDefinition> fieldDefinitions) {
         this.fieldDefinitionMap.putAll(
-                fieldDefinitions.stream()
+                (Map<? extends String, ? extends FieldDefinition>) fieldDefinitions.stream()
                         .collect(
                                 Collectors.toMap(
                                         FieldDefinition::getName,
-                                        fieldDefinition -> fieldDefinition
+                                        fieldDefinition -> fieldDefinition,
+                                        (x, y) -> y,
+                                        LinkedHashMap::new
                                 )
                         )
         );

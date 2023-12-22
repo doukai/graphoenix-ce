@@ -26,12 +26,26 @@ public class ObjectValueWithVariable extends AbstractMap<String, JsonValue> impl
 
     public ObjectValueWithVariable(Map<?, ?> objectValueWithVariable) {
         this.objectValueWithVariable = objectValueWithVariable.entrySet().stream()
-                .collect(Collectors.toMap(entry -> (String) entry.getKey(), entry -> ValueWithVariable.of(entry.getValue())));
+                .collect(
+                        Collectors.toMap(
+                                entry -> (String) entry.getKey(),
+                                entry -> ValueWithVariable.of(entry.getValue()),
+                                (x, y) -> y,
+                                LinkedHashMap::new
+                        )
+                );
     }
 
     public ObjectValueWithVariable(JsonObject objectValueWithVariable) {
         this.objectValueWithVariable = objectValueWithVariable.entrySet().stream()
-                .collect(Collectors.toMap(Entry::getKey, entry -> ValueWithVariable.of(entry.getValue())));
+                .collect(
+                        Collectors.toMap(
+                                Entry::getKey,
+                                entry -> ValueWithVariable.of(entry.getValue()),
+                                (x, y) -> y,
+                                LinkedHashMap::new
+                        )
+                );
     }
 
     public ObjectValueWithVariable(AnnotationMirror objectValueWithVariable) {
@@ -40,7 +54,9 @@ public class ObjectValueWithVariable extends AbstractMap<String, JsonValue> impl
                         Collectors
                                 .toMap(
                                         entry -> getNameFromElement(entry.getKey()),
-                                        entry -> ValueWithVariable.of(entry.getValue())
+                                        entry -> ValueWithVariable.of(entry.getValue()),
+                                        (x, y) -> y,
+                                        LinkedHashMap::new
                                 )
                 );
     }
@@ -52,7 +68,9 @@ public class ObjectValueWithVariable extends AbstractMap<String, JsonValue> impl
                         Collectors
                                 .toMap(
                                         Field::getName,
-                                        field -> ValueWithVariable.of(getFieldValue(objectValueWithVariable, field))
+                                        field -> ValueWithVariable.of(getFieldValue(objectValueWithVariable, field)),
+                                        (x, y) -> y,
+                                        LinkedHashMap::new
                                 )
                 );
     }
@@ -63,7 +81,9 @@ public class ObjectValueWithVariable extends AbstractMap<String, JsonValue> impl
                         Collectors
                                 .toMap(
                                         objectFieldWithVariableContext -> objectFieldWithVariableContext.name().getText(),
-                                        objectFieldWithVariableContext -> ValueWithVariable.of(objectFieldWithVariableContext.valueWithVariable())
+                                        objectFieldWithVariableContext -> ValueWithVariable.of(objectFieldWithVariableContext.valueWithVariable()),
+                                        (x, y) -> y,
+                                        LinkedHashMap::new
                                 )
                 );
     }

@@ -188,11 +188,11 @@ public class DocumentBuilder {
                                                 .addArgument(
                                                         DIRECTIVE_MAP_ARGUMENT_WITH_NAME,
                                                         ObjectValueWithVariable.of(
-                                                                INPUT_VALUE_WITH_TYPE_NAME,
+                                                                INPUT_WITH_INPUT_VALUE_TYPE_NAME,
                                                                 getRelationTypeName(objectType.getName(), fieldDefinition.getType().getTypeName().getName()),
-                                                                INPUT_VALUE_WITH_FROM_NAME,
+                                                                INPUT_WITH_INPUT_VALUE_FROM_NAME,
                                                                 getTypeRefFieldName(objectType.getName()),
-                                                                INPUT_VALUE_WITH_TO_NAME,
+                                                                INPUT_WITH_INPUT_VALUE_TO_NAME,
                                                                 getTypeRefFieldName(fieldDefinition.getType().getTypeName().getName())
                                                         )
                                                 )
@@ -212,11 +212,11 @@ public class DocumentBuilder {
                                                 .addArgument(
                                                         DIRECTIVE_MAP_ARGUMENT_WITH_NAME,
                                                         ObjectValueWithVariable.of(
-                                                                INPUT_VALUE_WITH_TYPE_NAME,
+                                                                INPUT_WITH_INPUT_VALUE_TYPE_NAME,
                                                                 getRelationTypeName(objectType.getName(), fieldDefinition.getName()),
-                                                                INPUT_VALUE_WITH_FROM_NAME,
+                                                                INPUT_WITH_INPUT_VALUE_FROM_NAME,
                                                                 getTypeRefFieldName(objectType.getName()),
-                                                                INPUT_VALUE_WITH_TO_NAME,
+                                                                INPUT_WITH_INPUT_VALUE_TO_NAME,
                                                                 getTypeRefFieldName(fieldDefinition.getName())
                                                         )
                                                 )
@@ -238,11 +238,11 @@ public class DocumentBuilder {
                                                 .addArgument(
                                                         DIRECTIVE_FETCH_ARGUMENT_WITH_NAME,
                                                         ObjectValueWithVariable.of(
-                                                                INPUT_VALUE_WITH_TYPE_NAME,
+                                                                INPUT_WITH_INPUT_VALUE_TYPE_NAME,
                                                                 getRelationTypeName(objectType.getName(), fieldDefinition.getType().getTypeName().getName()),
-                                                                INPUT_VALUE_WITH_FROM_NAME,
+                                                                INPUT_WITH_INPUT_VALUE_FROM_NAME,
                                                                 getTypeRefFieldName(objectType.getName()),
-                                                                INPUT_VALUE_WITH_TO_NAME,
+                                                                INPUT_WITH_INPUT_VALUE_TO_NAME,
                                                                 getTypeRefFieldName(fieldDefinition.getType().getTypeName().getName())
                                                         )
                                                 )
@@ -378,9 +378,9 @@ public class DocumentBuilder {
                 .ifPresent(fieldDefinition -> {
                             if (!fieldDefinition.hesDataType()) {
                                 fieldDefinition.addDirective(
-                                        new Directive(DIRECTIVE_DATA_TYPE_NAME)
-                                                .addArgument(DIRECTIVE_DATA_TYPE_ARGUMENT_TYPE_NAME, SCALA_INT_NAME)
-                                                .addArgument(DIRECTIVE_DATA_TYPE_ARGUMENT_AUTO_INCREMENT_NAME, true)
+                                        new Directive(DIRECTIVE_TYPE_NAME)
+                                                .addArgument(DIRECTIVE_TYPE_ARGUMENT_NAME_NAME, SCALA_INT_NAME)
+                                                .addArgument(DIRECTIVE_TYPE_ARGUMENT_AUTO_INCREMENT_NAME, true)
                                 );
                             }
                         }
@@ -546,9 +546,9 @@ public class DocumentBuilder {
         if (fieldTypeDefinition.isLeaf()) {
             if (fieldDefinition.getType().hasList()) {
                 fieldDefinition
-                        .addArgument(new InputValue(INPUT_VALUE_OPERATOR_OPR_NAME).setType(new TypeName(INPUT_OPERATOR_NAME)).setDefaultValue(INPUT_VALUE_OPERATOR_OPR_EQ))
-                        .addArgument(new InputValue(INPUT_VALUE_OPERATOR_VAL_NAME).setType(fieldDefinition.getType().getTypeName()))
-                        .addArgument(new InputValue(INPUT_VALUE_OPERATOR_ARR_NAME).setType(new ListType(fieldDefinition.getType().getTypeName())))
+                        .addArgument(new InputValue(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME).setType(new TypeName(INPUT_OPERATOR_NAME)).setDefaultValue(INPUT_OPERATOR_INPUT_VALUE_EQ))
+                        .addArgument(new InputValue(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME).setType(fieldDefinition.getType().getTypeName()))
+                        .addArgument(new InputValue(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME).setType(new ListType(fieldDefinition.getType().getTypeName())))
                         .addArgument(new InputValue(INPUT_VALUE_FIRST_NAME).setType(new TypeName(SCALA_INT_NAME)))
                         .addArgument(new InputValue(INPUT_VALUE_LAST_NAME).setType(new TypeName(SCALA_INT_NAME)))
                         .addArgument(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(new TypeName(SCALA_INT_NAME)))
@@ -691,7 +691,7 @@ public class DocumentBuilder {
     public FieldDefinition buildTypeNameField(ObjectType objectType) {
         return new FieldDefinition(FIELD_TYPENAME_NAME)
                 .setType(new TypeName(SCALA_STRING_NAME))
-                .addDirective(new Directive(DIRECTIVE_DATA_TYPE_NAME).addArgument(DIRECTIVE_DATA_TYPE_DEFAULT_NAME, objectType.getName()));
+                .addDirective(new Directive(DIRECTIVE_TYPE_NAME).addArgument(DIRECTIVE_TYPE_ARGUMENT_DEFAULT_NAME, objectType.getName()));
     }
 
     public List<InputObjectType> buildInputObjects(Document document) {
@@ -747,7 +747,7 @@ public class DocumentBuilder {
         return new InputObjectType(fieldsType.getName() + InputType.EXPRESSION)
                 .setInputValues(buildInputValuesFromObjectType(fieldsType, InputType.EXPRESSION))
                 .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
-                .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
+                .addInputValue(new InputValue(INPUT_VALUE_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_CONDITIONAL_INPUT_VALUE_AND)))
                 .addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(fieldsType.getName() + InputType.EXPRESSION))))
                 .addDirective(
                         new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
@@ -823,9 +823,9 @@ public class DocumentBuilder {
 
     public InputObjectType enumToExpression(EnumType enumType) {
         return new InputObjectType(enumType.getName() + InputType.EXPRESSION)
-                .addInputValue(new InputValue(INPUT_VALUE_OPERATOR_OPR_NAME).setType(new TypeName(INPUT_OPERATOR_NAME)).setDefaultValue(INPUT_VALUE_OPERATOR_OPR_EQ))
-                .addInputValue(new InputValue(INPUT_VALUE_OPERATOR_VAL_NAME).setType(new TypeName(enumType.getName())))
-                .addInputValue(new InputValue(INPUT_VALUE_OPERATOR_ARR_NAME).setType(new ListType(new TypeName(enumType.getName()))))
+                .addInputValue(new InputValue(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME).setType(new TypeName(INPUT_OPERATOR_NAME)).setDefaultValue(INPUT_OPERATOR_INPUT_VALUE_EQ))
+                .addInputValue(new InputValue(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME).setType(new TypeName(enumType.getName())))
+                .addInputValue(new InputValue(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME).setType(new ListType(new TypeName(enumType.getName()))))
                 .addDirective(
                         new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
                                 .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
@@ -932,7 +932,7 @@ public class DocumentBuilder {
         if (inputType.equals(InputType.QUERY_ARGUMENTS) || inputType.equals(InputType.SUBSCRIPTION_ARGUMENTS)) {
             fieldDefinition.addArgument(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
                     .addArgument(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
-                    .addArgument(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(INPUT_VALUE_CONDITIONAL_COND_AND))
+                    .addArgument(new InputValue(INPUT_VALUE_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(INPUT_CONDITIONAL_INPUT_VALUE_AND))
                     .addArgument(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))));
         } else if (inputType.equals(InputType.MUTATION_ARGUMENTS)) {
             fieldDefinition.addArgument(new InputValue(INPUT_VALUE_WHERE_NAME).setType(new TypeName(objectType.getName() + InputType.EXPRESSION)));
@@ -958,7 +958,7 @@ public class DocumentBuilder {
                     .addArgument(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(new TypeName(objectType.getName() + InputType.ORDER_BY)))
                     .addArgument(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
                     .addArgument(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
-                    .addArgument(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(INPUT_VALUE_CONDITIONAL_COND_AND))
+                    .addArgument(new InputValue(INPUT_VALUE_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(INPUT_CONDITIONAL_INPUT_VALUE_AND))
                     .addArgument(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
                     .addArgument(new InputValue(INPUT_VALUE_FIRST_NAME).setType(new TypeName(SCALA_INT_NAME)))
                     .addArgument(new InputValue(INPUT_VALUE_LAST_NAME).setType(new TypeName(SCALA_INT_NAME)))
@@ -1004,7 +1004,7 @@ public class DocumentBuilder {
         if (inputType.equals(InputType.QUERY_ARGUMENTS) || inputType.equals(InputType.SUBSCRIPTION_ARGUMENTS)) {
             fieldDefinition
                     .addArgument(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
-                    .addArgument(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(INPUT_VALUE_CONDITIONAL_COND_AND))
+                    .addArgument(new InputValue(INPUT_VALUE_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(INPUT_CONDITIONAL_INPUT_VALUE_AND))
                     .addArgument(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
                     .addArgument(new InputValue(INPUT_VALUE_FIRST_NAME).setType(new TypeName(SCALA_INT_NAME)))
                     .addArgument(new InputValue(INPUT_VALUE_LAST_NAME).setType(new TypeName(SCALA_INT_NAME)))
@@ -1208,7 +1208,7 @@ public class DocumentBuilder {
             inputObjectType
                     .addInputValue(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
                     .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
-                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
+                    .addInputValue(new InputValue(INPUT_VALUE_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_CONDITIONAL_INPUT_VALUE_AND)))
                     .addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
                     .setName(objectType.getName() + queryOperationType.getName() + inputType)
                     .addDirective(
@@ -1235,7 +1235,7 @@ public class DocumentBuilder {
             inputObjectType
                     .addInputValue(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
                     .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
-                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
+                    .addInputValue(new InputValue(INPUT_VALUE_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_CONDITIONAL_INPUT_VALUE_AND)))
                     .addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
                     .setName(objectType.getName() + subscriptionOperation.getName() + inputType)
                     .addDirective(
@@ -1302,7 +1302,7 @@ public class DocumentBuilder {
                     .addInputValue(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(new TypeName(objectType.getName() + InputType.ORDER_BY)))
                     .addInputValue(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
                     .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
-                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
+                    .addInputValue(new InputValue(INPUT_VALUE_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_CONDITIONAL_INPUT_VALUE_AND)))
                     .addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
                     .addInputValue(new InputValue(INPUT_VALUE_FIRST_NAME).setType(new TypeName(SCALA_INT_NAME)))
                     .addInputValue(new InputValue(INPUT_VALUE_LAST_NAME).setType(new TypeName(SCALA_INT_NAME)))
@@ -1340,7 +1340,7 @@ public class DocumentBuilder {
                     .addInputValue(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(new TypeName(objectType.getName() + InputType.ORDER_BY)))
                     .addInputValue(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
                     .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
-                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
+                    .addInputValue(new InputValue(INPUT_VALUE_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_CONDITIONAL_INPUT_VALUE_AND)))
                     .addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
                     .addInputValue(new InputValue(INPUT_VALUE_FIRST_NAME).setType(new TypeName(SCALA_INT_NAME)))
                     .addInputValue(new InputValue(INPUT_VALUE_LAST_NAME).setType(new TypeName(SCALA_INT_NAME)))
@@ -1417,7 +1417,7 @@ public class DocumentBuilder {
                     .addInputValue(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(new TypeName(objectType.getName() + InputType.ORDER_BY)))
                     .addInputValue(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
                     .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
-                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
+                    .addInputValue(new InputValue(INPUT_VALUE_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_CONDITIONAL_INPUT_VALUE_AND)))
                     .addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
                     .addInputValue(new InputValue(INPUT_VALUE_FIRST_NAME).setType(new TypeName(SCALA_INT_NAME)))
                     .addInputValue(new InputValue(INPUT_VALUE_LAST_NAME).setType(new TypeName(SCALA_INT_NAME)))
@@ -1455,7 +1455,7 @@ public class DocumentBuilder {
                     .addInputValue(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(new TypeName(objectType.getName() + InputType.ORDER_BY)))
                     .addInputValue(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
                     .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
-                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
+                    .addInputValue(new InputValue(INPUT_VALUE_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_CONDITIONAL_INPUT_VALUE_AND)))
                     .addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
                     .addInputValue(new InputValue(INPUT_VALUE_FIRST_NAME).setType(new TypeName(SCALA_INT_NAME)))
                     .addInputValue(new InputValue(INPUT_VALUE_LAST_NAME).setType(new TypeName(SCALA_INT_NAME)))
@@ -1586,9 +1586,9 @@ public class DocumentBuilder {
                     );
             if (isList) {
                 fieldDefinition
-                        .addArgument(new InputValue(INPUT_VALUE_OPERATOR_OPR_NAME).setType(new TypeName(INPUT_OPERATOR_NAME)).setDefaultValue(INPUT_VALUE_OPERATOR_OPR_EQ))
-                        .addArgument(new InputValue(INPUT_VALUE_OPERATOR_VAL_NAME).setType(new TypeName(fieldTypeName)))
-                        .addArgument(new InputValue(INPUT_VALUE_OPERATOR_ARR_NAME).setType(new ListType(new TypeName(fieldTypeName))));
+                        .addArgument(new InputValue(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME).setType(new TypeName(INPUT_OPERATOR_NAME)).setDefaultValue(INPUT_OPERATOR_INPUT_VALUE_EQ))
+                        .addArgument(new InputValue(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME).setType(new TypeName(fieldTypeName)))
+                        .addArgument(new InputValue(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME).setType(new ListType(new TypeName(fieldTypeName))));
             }
             return fieldDefinition;
         }

@@ -92,7 +92,7 @@ public abstract class AbstractDefinition implements Definition {
 
     public <T extends AbstractDefinition> T merge(AbstractDefinition... abstractDefinitions) {
         directiveMap.putAll(
-                Stream
+                (Map<? extends String, ? extends Directive>) Stream
                         .concat(
                                 Stream.ofNullable(directiveMap.values()),
                                 Stream.of(abstractDefinitions).flatMap(item -> Stream.ofNullable(item.getDirectives()))
@@ -102,7 +102,9 @@ public abstract class AbstractDefinition implements Definition {
                         .collect(
                                 Collectors.toMap(
                                         Directive::getName,
-                                        directive -> directive
+                                        directive -> directive,
+                                        (x, y) -> y,
+                                        LinkedHashMap::new
                                 )
                         )
         );
@@ -164,11 +166,13 @@ public abstract class AbstractDefinition implements Definition {
 
     public <T extends AbstractDefinition> T addDirectives(Collection<Directive> directives) {
         this.directiveMap.putAll(
-                directives.stream()
+                (Map<? extends String, ? extends Directive>) directives.stream()
                         .collect(
                                 Collectors.toMap(
                                         Directive::getName,
-                                        directive -> directive
+                                        directive -> directive,
+                                        (x, y) -> y,
+                                        LinkedHashMap::new
                                 )
                         )
         );

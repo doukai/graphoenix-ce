@@ -91,7 +91,7 @@ public class InterfaceType extends AbstractDefinition implements Definition, Fie
         );
 
         fieldDefinitionMap.putAll(
-                Stream
+                (Map<? extends String, ? extends FieldDefinition>) Stream
                         .concat(
                                 Stream.ofNullable(fieldDefinitionMap.values()),
                                 Stream.of(interfaceTypes).flatMap(item -> Stream.ofNullable(item.getFields()))
@@ -101,7 +101,9 @@ public class InterfaceType extends AbstractDefinition implements Definition, Fie
                         .collect(
                                 Collectors.toMap(
                                         FieldDefinition::getName,
-                                        fieldDefinition -> fieldDefinition
+                                        fieldDefinition -> fieldDefinition,
+                                        (x, y) -> y,
+                                        LinkedHashMap::new
                                 )
                         )
         );
@@ -136,11 +138,13 @@ public class InterfaceType extends AbstractDefinition implements Definition, Fie
 
     public InterfaceType addFields(Collection<FieldDefinition> fieldDefinitions) {
         this.fieldDefinitionMap.putAll(
-                fieldDefinitions.stream()
+                (Map<? extends String, ? extends FieldDefinition>) fieldDefinitions.stream()
                         .collect(
                                 Collectors.toMap(
                                         FieldDefinition::getName,
-                                        fieldDefinition -> fieldDefinition
+                                        fieldDefinition -> fieldDefinition,
+                                        (x, y) -> y,
+                                        LinkedHashMap::new
                                 )
                         )
         );

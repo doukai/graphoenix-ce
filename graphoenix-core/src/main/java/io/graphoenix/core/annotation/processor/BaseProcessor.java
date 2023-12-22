@@ -210,22 +210,22 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                     )
                             ) {
                                 ObjectValueWithVariable invoke = ObjectValueWithVariable.of(
-                                        INPUT_INVOKE_VALUE_CLASS_NAME_NAME, executableElement.getEnclosingElement().toString(),
-                                        INPUT_INVOKE_VALUE_METHOD_NAME_NAME, executableElement.getSimpleName().toString(),
-                                        INPUT_INVOKE_VALUE_PARAMETER_NAME,
+                                        INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME, executableElement.getEnclosingElement().toString(),
+                                        INPUT_INVOKE_INPUT_VALUE_METHOD_NAME_NAME, executableElement.getSimpleName().toString(),
+                                        INPUT_INVOKE_INPUT_VALUE_PARAMETER_NAME,
                                         new ArrayValueWithVariable(
                                                 executableElement.getParameters().stream()
                                                         .map(parameter ->
                                                                 ObjectValueWithVariable.of(
-                                                                        INPUT_INVOKE_PARAMETER_NAME_NAME,
+                                                                        INPUT_INVOKE_PARAMETER_INPUT_VALUE_NAME_NAME,
                                                                         parameter.getSimpleName().toString(),
-                                                                        INPUT_INVOKE_PARAMETER_CLASS_NAME_NAME,
+                                                                        INPUT_INVOKE_PARAMETER_INPUT_VALUE_CLASS_NAME_NAME,
                                                                         getTypeNameFromTypeMirror(parameter.asType(), typeUtils)
                                                                 )
                                                         )
                                                         .collect(Collectors.toList())
                                         ),
-                                        INPUT_INVOKE_VALUE_RETURN_CLASS_NAME_NAME, getTypeNameFromTypeMirror(executableElement.getReturnType(), typeUtils)
+                                        INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME, getTypeNameFromTypeMirror(executableElement.getReturnType(), typeUtils)
                                 );
 
                                 executableElement.getParameters().stream()

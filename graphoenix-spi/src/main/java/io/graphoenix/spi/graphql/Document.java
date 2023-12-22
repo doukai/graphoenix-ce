@@ -204,11 +204,13 @@ public class Document {
 
     public Document addDefinitions(Collection<? extends Definition> definitions) {
         this.definitionMap.putAll(
-                definitions.stream()
+                (Map<? extends String, ? extends Definition>) definitions.stream()
                         .collect(
                                 Collectors.toMap(
                                         Definition::getName,
-                                        definition -> definition
+                                        definition -> definition,
+                                        (x, y) -> y,
+                                        LinkedHashMap::new
                                 )
                         )
         );
@@ -225,12 +227,14 @@ public class Document {
 
     public Document merge(GraphqlParser.DocumentContext documentContext) {
         this.definitionMap.putAll(
-                documentContext.definition().stream()
+                (Map<? extends String, ? extends Definition>) documentContext.definition().stream()
                         .map(this::merge)
                         .collect(
                                 Collectors.toMap(
                                         Definition::getName,
-                                        definition -> definition
+                                        definition -> definition,
+                                        (x, y) -> y,
+                                        LinkedHashMap::new
                                 )
                         )
         );

@@ -73,11 +73,13 @@ public class Operation extends AbstractDefinition implements Definition {
 
     public Operation addVariableDefinitions(Collection<VariableDefinition> variableDefinitions) {
         this.variableDefinitionMap.putAll(
-                variableDefinitions.stream()
+                (Map<? extends String, ? extends VariableDefinition>) variableDefinitions.stream()
                         .collect(
                                 Collectors.toMap(
                                         variableDefinition -> variableDefinition.getVariable().getName(),
-                                        variableDefinition -> variableDefinition
+                                        variableDefinition -> variableDefinition,
+                                        (x, y) -> y,
+                                        LinkedHashMap::new
                                 )
                         )
         );
