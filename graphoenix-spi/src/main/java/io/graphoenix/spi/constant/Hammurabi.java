@@ -98,7 +98,7 @@ public class Hammurabi {
 
 
     public static final String DIRECTIVE_INVOKES_NAME = "invokes";
-    public static final String DIRECTIVE_INVOKES_LIST_NAME = "list";
+    public static final String DIRECTIVE_INVOKES_METHODS_NAME = "methods";
 
 
     public static final String DIRECTIVE_CONNECTION_NAME = "connection";
@@ -122,9 +122,6 @@ public class Hammurabi {
     public static final String DIRECTIVE_TYPE_ARGUMENT_DEFAULT_NAME = "default";
 
 
-    public static final String DIRECTIVE_VALIDATION_NAME = "validation";
-
-
     public static final String DIRECTIVE_FETCH_NAME = "fetch";
     public static final String DIRECTIVE_FETCH_ARGUMENT_ANCHOR_NAME = "anchor";
     public static final String DIRECTIVE_FETCH_ARGUMENT_WITH_NAME = "with";
@@ -134,16 +131,16 @@ public class Hammurabi {
     public static final String DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME = "protocol";
 
 
-    public static final String DIRECTIVE_CONTAINER_TYPE_NAME = "containerType";
+    public static final String DIRECTIVE_CONTAINER_NAME = "container";
 
 
-    public static final String DIRECTIVE_PACKAGE_INFO_NAME = "packageInfo";
-    public static final String DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME = "packageName";
+    public static final String DIRECTIVE_PACKAGE_NAME = "package";
+    public static final String DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME = "name";
 
 
-    public static final String DIRECTIVE_CLASS_INFO_NAME = "classInfo";
-    public static final String DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME = "className";
-    public static final String DIRECTIVE_CLASS_INFO_CLASS_EXISTS_NAME = "exists";
+    public static final String DIRECTIVE_CLASS_NAME = "class";
+    public static final String DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME = "name";
+    public static final String DIRECTIVE_CLASS_ARGUMENT_EXISTS_NAME = "exists";
 
 
     public static final String DIRECTIVE_INTERFACE_NAME = "interface";
@@ -158,7 +155,8 @@ public class Hammurabi {
     public static final String DIRECTIVE_FORMAT_ARGUMENT_LOCALE_NAME = "locale";
 
 
-    public static final String DIRECTIVE_MERGE_TO_LIST_NAME = "mergeToList";
+    public static final String DIRECTIVE_MERGE_NAME = "merge";
+    public static final String DIRECTIVE_MERGE_ARGUMENT_ARGUMENTS_NAME = "arguments";
 
 
     public static final String DIRECTIVE_PERMIT_ALL = "permitAll";
@@ -167,8 +165,6 @@ public class Hammurabi {
 
 
     public static final String PREFIX_INTROSPECTION = "__";
-    public static final String PREFIX_GRPC_INTROSPECTION = "Intro";
-
 
     public static final String SUFFIX_INPUT = "Input";
     public static final String SUFFIX_ARGUMENTS = "Arguments";

@@ -66,11 +66,11 @@ public abstract class AbstractDefinition implements Definition {
         this.description = getDescriptionFromElement(typeElement);
         this.addDirectives(getDirectivesFromElement(typeElement));
         this.addDirective(
-                new Directive(DIRECTIVE_CLASS_INFO_NAME)
-                        .addArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME, typeElement.getQualifiedName().toString())
-                        .addArgument(DIRECTIVE_CLASS_INFO_CLASS_EXISTS_NAME, true)
+                new Directive(DIRECTIVE_CLASS_NAME)
+                        .addArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME, typeElement.getQualifiedName().toString())
+                        .addArgument(DIRECTIVE_CLASS_ARGUMENT_EXISTS_NAME, true)
         );
-        this.addDirective(new Directive(DIRECTIVE_CONTAINER_TYPE_NAME));
+        this.addDirective(new Directive(DIRECTIVE_CONTAINER_NAME));
     }
 
     public AbstractDefinition(VariableElement variableElement) {
@@ -181,8 +181,8 @@ public abstract class AbstractDefinition implements Definition {
 
     @Override
     public Optional<String> getPackageName() {
-        return Optional.ofNullable(directiveMap.get(DIRECTIVE_PACKAGE_INFO_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME)))
+        return Optional.ofNullable(directiveMap.get(DIRECTIVE_PACKAGE_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME)))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> (StringValue) valueWithVariable)
                 .map(StringValue::getString);
@@ -190,14 +190,14 @@ public abstract class AbstractDefinition implements Definition {
 
     @Override
     public Optional<String> getClassName() {
-        return Optional.ofNullable(directiveMap.get(DIRECTIVE_CLASS_INFO_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME)))
+        return Optional.ofNullable(directiveMap.get(DIRECTIVE_CLASS_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME)))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> (StringValue) valueWithVariable)
                 .map(StringValue::getString);
     }
 
-    public boolean isContainerType() {
-        return hasDirective(DIRECTIVE_CONTAINER_TYPE_NAME);
+    public boolean isContainer() {
+        return hasDirective(DIRECTIVE_CONTAINER_NAME);
     }
 }

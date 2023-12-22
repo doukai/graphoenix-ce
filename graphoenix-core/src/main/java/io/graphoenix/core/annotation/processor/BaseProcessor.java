@@ -247,11 +247,11 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                         .ifPresent(inputObjectType ->
                                                 Optional.ofNullable(inputObjectType.getDirective(DIRECTIVE_INVOKES_NAME))
                                                         .ifPresentOrElse(
-                                                                directive -> directive.getArgument(DIRECTIVE_INVOKES_LIST_NAME).asArray().add(invoke),
+                                                                directive -> directive.getArgument(DIRECTIVE_INVOKES_METHODS_NAME).asArray().add(invoke),
                                                                 () -> inputObjectType
                                                                         .addDirective(
                                                                                 new Directive(DIRECTIVE_INVOKES_NAME)
-                                                                                        .addArgument(DIRECTIVE_INVOKES_LIST_NAME, new ArrayValueWithVariable(invoke))
+                                                                                        .addArgument(DIRECTIVE_INVOKES_METHODS_NAME, new ArrayValueWithVariable(invoke))
                                                                         )
                                                         )
                                         );
@@ -275,11 +275,11 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                         .forEach(inputObjectType ->
                                                 Optional.ofNullable(inputObjectType.getDirective(DIRECTIVE_INVOKES_NAME))
                                                         .ifPresentOrElse(
-                                                                directive -> directive.getArgument(DIRECTIVE_INVOKES_LIST_NAME).asArray().add(invoke),
+                                                                directive -> directive.getArgument(DIRECTIVE_INVOKES_METHODS_NAME).asArray().add(invoke),
                                                                 () -> inputObjectType
                                                                         .addDirective(
                                                                                 new Directive(DIRECTIVE_INVOKES_NAME)
-                                                                                        .addArgument(DIRECTIVE_INVOKES_LIST_NAME, new ArrayValueWithVariable(invoke))
+                                                                                        .addArgument(DIRECTIVE_INVOKES_METHODS_NAME, new ArrayValueWithVariable(invoke))
                                                                         )
                                                         )
                                         );

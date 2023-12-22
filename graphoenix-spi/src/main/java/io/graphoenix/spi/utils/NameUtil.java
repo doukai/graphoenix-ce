@@ -9,10 +9,6 @@ import static io.graphoenix.spi.constant.Hammurabi.*;
 
 public final class NameUtil {
 
-    public static String getGrpcTypeName(String name) {
-        return name.replaceFirst(PREFIX_INTROSPECTION, PREFIX_GRPC_INTROSPECTION);
-    }
-
     public static String typeNameToFieldName(String name) {
         if (name.startsWith(PREFIX_INTROSPECTION)) {
             return PREFIX_INTROSPECTION + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, name.replace(PREFIX_INTROSPECTION, ""));

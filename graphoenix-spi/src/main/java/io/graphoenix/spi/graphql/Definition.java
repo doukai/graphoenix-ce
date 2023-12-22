@@ -96,7 +96,7 @@ public interface Definition {
         return (FragmentDefinition) this;
     }
 
-    boolean isContainerType();
+    boolean isContainer();
 
     Optional<String> getPackageName();
 
