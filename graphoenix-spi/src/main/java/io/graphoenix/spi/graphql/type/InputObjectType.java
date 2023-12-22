@@ -24,48 +24,36 @@ import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 public class InputObjectType extends AbstractDefinition implements Definition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/InputObjectType.stg");
-    private Map<String, InputValue> inputValueMap;
+    private final Map<String, InputValue> inputValueMap = new LinkedHashMap<>();
 
     public InputObjectType() {
         super();
-        this.inputValueMap = new LinkedHashMap<>();
     }
 
     public InputObjectType(String name) {
         super(name);
-        this.inputValueMap = new LinkedHashMap<>();
     }
 
     public InputObjectType(GraphqlParser.InputObjectTypeDefinitionContext inputObjectTypeDefinitionContext) {
         super(inputObjectTypeDefinitionContext.name(), inputObjectTypeDefinitionContext.description(), inputObjectTypeDefinitionContext.directives());
         if (inputObjectTypeDefinitionContext.inputObjectValueDefinitions() != null) {
-            this.inputValueMap = inputObjectTypeDefinitionContext.inputObjectValueDefinitions().inputValueDefinition().stream()
-                    .map(InputValue::new)
-                    .collect(
-                            Collectors.toMap(
-                                    InputValue::getName,
-                                    inputValue -> inputValue,
-                                    (x, y) -> y,
-                                    LinkedHashMap::new
-                            )
-                    );
+            setInputValues(
+                    inputObjectTypeDefinitionContext.inputObjectValueDefinitions().inputValueDefinition().stream()
+                            .map(InputValue::new)
+                            .collect(Collectors.toList())
+            );
         }
     }
 
     public InputObjectType(TypeElement typeElement, Types typeUtils) {
         super(typeElement);
-        this.inputValueMap = typeElement.getEnclosedElements().stream()
-                .filter(element -> element.getKind().equals(ElementKind.FIELD))
-                .filter(element -> element.getAnnotation(Ignore.class) == null)
-                .map(element -> new InputValue((VariableElement) element, typeUtils))
-                .collect(
-                        Collectors.toMap(
-                                InputValue::getName,
-                                inputValue -> inputValue,
-                                (x, y) -> y,
-                                LinkedHashMap::new
-                        )
-                );
+        setInputValues(
+                typeElement.getEnclosedElements().stream()
+                        .filter(element -> element.getKind().equals(ElementKind.FIELD))
+                        .filter(element -> element.getAnnotation(Ignore.class) == null)
+                        .map(element -> new InputValue((VariableElement) element, typeUtils))
+                        .collect(Collectors.toList())
+        );
     }
 
     public InputObjectType merge(GraphqlParser.InputObjectTypeDefinitionContext... inputObjectTypeDefinitionContexts) {
@@ -127,7 +115,7 @@ public class InputObjectType extends AbstractDefinition implements Definition {
         return this;
     }
 
-    public boolean isInterface() {
+    public boolean isInputInterface() {
         return hasDirective(DIRECTIVE_INTERFACE_NAME);
     }
 

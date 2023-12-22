@@ -1,0 +1,45 @@
+type User {
+    id: ID
+    login: String!
+    password: String!
+    name: String!
+    age: Int
+    disabled: Boolean
+    sex: Sex
+    userProfile: UserProfile
+    organization: Organization
+    roles: [Role!]
+    mobileNumbers: [String!]
+}
+
+type UserProfile {
+    id: ID
+    user: User
+    email: String
+    address: String
+}
+
+enum Sex {
+    MAN
+    FEMALE
+}
+
+type Role {
+    id: ID
+    name: String!
+    type: [RoleType]!
+    users: [User!]
+}
+
+enum RoleType {
+    ADMIN
+    USER
+    ANONYMOUS
+}
+
+type Organization {
+    id: ID
+    name: String!
+    above: Organization
+    users: [User!]
+}

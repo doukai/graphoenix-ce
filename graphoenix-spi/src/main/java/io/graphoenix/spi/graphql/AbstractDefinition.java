@@ -26,10 +26,9 @@ public abstract class AbstractDefinition implements Definition {
 
     private String name;
     private String description;
-    private Map<String, Directive> directiveMap;
+    private final Map<String, Directive> directiveMap = new LinkedHashMap<>();
 
     public AbstractDefinition() {
-        this.directiveMap = new LinkedHashMap<>();
     }
 
     public AbstractDefinition(String name) {
@@ -45,16 +44,11 @@ public abstract class AbstractDefinition implements Definition {
     public AbstractDefinition(GraphqlParser.DescriptionContext description, GraphqlParser.DirectivesContext directivesContext) {
         this(description);
         if (directivesContext != null) {
-            this.directiveMap = directivesContext.directive().stream()
-                    .map(Directive::new)
-                    .collect(
-                            Collectors.toMap(
-                                    Directive::getName,
-                                    directive -> directive,
-                                    (x, y) -> y,
-                                    LinkedHashMap::new
-                            )
-                    );
+            setDirectives(
+                    directivesContext.directive().stream()
+                            .map(Directive::new)
+                            .collect(Collectors.toList())
+            );
         }
     }
 
@@ -138,7 +132,8 @@ public abstract class AbstractDefinition implements Definition {
     }
 
     public <T extends AbstractDefinition> T setDirectiveMap(Map<String, Directive> directiveMap) {
-        this.directiveMap = directiveMap;
+        this.directiveMap.clear();
+        this.directiveMap.putAll(directiveMap);
         return (T) this;
     }
 

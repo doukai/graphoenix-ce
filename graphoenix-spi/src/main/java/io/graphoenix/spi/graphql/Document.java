@@ -24,7 +24,7 @@ public class Document {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/Document.stg");
 
-    private Map<String, Definition> definitionMap;
+    private final Map<String, Definition> definitionMap = new LinkedHashMap<>();
 
     public Definition getDefinition(String name) {
         return definitionMap.get(name);
@@ -38,14 +38,11 @@ public class Document {
     }
 
     public Document(GraphqlParser.DocumentContext documentContext) {
-        this.definitionMap = documentContext.definition().stream()
-                .map(Definition::of)
-                .collect(
-                        Collectors.toMap(
-                                Definition::getName,
-                                definition -> definition
-                        )
-                );
+        setDefinitions(
+                documentContext.definition().stream()
+                        .map(Definition::of)
+                        .collect(Collectors.toList())
+        );
     }
 
     public Document(String graphql) {
@@ -220,6 +217,10 @@ public class Document {
 
     public Document merge(Path path) throws IOException {
         return merge(graphqlToDocument(path));
+    }
+
+    public Document merge(File file) throws IOException {
+        return merge(graphqlToDocument(file));
     }
 
     public Document merge(GraphqlParser.DocumentContext documentContext) {

@@ -215,35 +215,28 @@ public final class ElementUtil {
         return Optional.empty();
     }
 
-    public static Map<String, InputValue> executableElementParametersToInputValues(ExecutableElement executableElement, Types typeUtils) {
+    public static List<InputValue> executableElementParametersToInputValues(ExecutableElement executableElement, Types typeUtils) {
         if (executableElement.getParameters() != null) {
             return executableElement.getParameters().stream()
                     .filter(variableElement -> variableElement.getAnnotation(Source.class) == null)
                     .map(variableElement -> new InputValue(variableElement, typeUtils))
-                    .collect(
-                            Collectors.toMap(
-                                    InputValue::getName,
-                                    inputValue -> inputValue,
-                                    (x, y) -> y,
-                                    LinkedHashMap::new
-                            )
-                    );
+                    .collect(Collectors.toList());
         } else {
-            return new LinkedHashMap<>();
+            return Collections.emptyList();
         }
     }
 
-    public static String getElementTypeName(TypeMirror typeMirror, Types types) {
+    public static String getTypeNameFromTypeMirror(TypeMirror typeMirror, Types types) {
         if (typeMirror.getKind().isPrimitive()) {
             return typeMirror.getKind().toString().toLowerCase();
         } else if (typeMirror.getKind().equals(ARRAY)) {
-            return getElementTypeName(((ArrayType) typeMirror).getComponentType(), types) + "[]";
+            return getTypeNameFromTypeMirror(((ArrayType) typeMirror).getComponentType(), types) + "[]";
         } else if (typeMirror.getKind().equals(TypeKind.DECLARED)) {
             DeclaredType declaredType = (DeclaredType) typeMirror;
             if (declaredType.getTypeArguments() != null && !declaredType.getTypeArguments().isEmpty()) {
                 return ((TypeElement) types.asElement(declaredType)).getQualifiedName().toString() +
                         "<" +
-                        declaredType.getTypeArguments().stream().map(argumentTypeMirror -> getElementTypeName(argumentTypeMirror, types))
+                        declaredType.getTypeArguments().stream().map(argumentTypeMirror -> getTypeNameFromTypeMirror(argumentTypeMirror, types))
                                 .collect(Collectors.joining(", ")) +
                         ">";
             }

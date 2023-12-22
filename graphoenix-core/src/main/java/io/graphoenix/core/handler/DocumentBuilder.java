@@ -2,27 +2,28 @@ package io.graphoenix.core.handler;
 
 import com.google.common.collect.Streams;
 import io.graphoenix.core.config.PackageConfig;
-import io.graphoenix.spi.annotation.Application;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.Document;
 import io.graphoenix.spi.graphql.FieldsType;
 import io.graphoenix.spi.graphql.common.ArrayValueWithVariable;
 import io.graphoenix.spi.graphql.common.Directive;
+import io.graphoenix.spi.graphql.common.EnumValue;
 import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
 import io.graphoenix.spi.graphql.type.*;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.graphoenix.spi.utils.NameUtil.*;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.TYPE_ID_FIELD_NOT_EXIST;
+import static io.graphoenix.spi.utils.NameUtil.*;
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
-@Application
+@ApplicationScoped
 public class DocumentBuilder {
 
     private final PackageConfig packageConfig;
@@ -34,6 +35,10 @@ public class DocumentBuilder {
         this.packageConfig = packageConfig;
         this.packageManager = packageManager;
         this.documentManager = documentManager;
+    }
+
+    public Document build() {
+        return build(documentManager.getDocument());
     }
 
     public Document build(Document document) {
@@ -87,6 +92,27 @@ public class DocumentBuilder {
                 .filter(objectType -> !objectType.isContainerType())
                 .filter(objectType -> !documentManager.isOperationType(objectType))
                 .forEach(this::buildObject);
+
+        document.getDefinitions().stream()
+                .filter(Definition::isInterface)
+                .map(Definition::asInterface)
+                .filter(packageManager::isOwnPackage)
+                .filter(interfaceType -> !interfaceType.isContainerType())
+                .forEach(this::buildInterface);
+
+        document.getDefinitions().stream()
+                .filter(Definition::isInputObject)
+                .map(Definition::asInputObject)
+                .filter(packageManager::isOwnPackage)
+                .filter(inputObjectType -> !inputObjectType.isContainerType())
+                .forEach(this::buildInputObject);
+
+        document.getDefinitions().stream()
+                .filter(Definition::isEnum)
+                .map(Definition::asEnum)
+                .filter(packageManager::isOwnPackage)
+                .filter(enumType -> !enumType.isContainerType())
+                .forEach(this::buildEnum);
 
         document
                 .addDefinitions(buildInputObjects(document))
@@ -158,7 +184,7 @@ public class DocumentBuilder {
                         fieldDefinition
                                 .addDirective(
                                         new Directive(DIRECTIVE_MAP_NAME)
-                                                .addArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME, objectType.getIDFieldOrError())
+                                                .addArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME, objectType.getIDFieldOrError().getName())
                                                 .addArgument(
                                                         DIRECTIVE_MAP_ARGUMENT_WITH_NAME,
                                                         ObjectValueWithVariable.of(
@@ -170,7 +196,7 @@ public class DocumentBuilder {
                                                                 getTypeRefFieldName(fieldDefinition.getType().getTypeName().getName())
                                                         )
                                                 )
-                                                .addArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME, documentManager.getFieldTypeDefinition(fieldDefinition).asObject().getIDFieldOrError())
+                                                .addArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME, documentManager.getFieldTypeDefinition(fieldDefinition).asObject().getIDFieldOrError().getName())
                                 )
                 );
         objectType.getFields().stream()
@@ -182,7 +208,7 @@ public class DocumentBuilder {
                         fieldDefinition
                                 .addDirective(
                                         new Directive(DIRECTIVE_MAP_NAME)
-                                                .addArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME, objectType.getIDFieldOrError())
+                                                .addArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME, objectType.getIDFieldOrError().getName())
                                                 .addArgument(
                                                         DIRECTIVE_MAP_ARGUMENT_WITH_NAME,
                                                         ObjectValueWithVariable.of(
@@ -208,7 +234,7 @@ public class DocumentBuilder {
                         fieldDefinition
                                 .addDirective(
                                         new Directive(DIRECTIVE_FETCH_NAME)
-                                                .addArgument(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME, objectType.getIDFieldOrError())
+                                                .addArgument(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME, objectType.getIDFieldOrError().getName())
                                                 .addArgument(
                                                         DIRECTIVE_FETCH_ARGUMENT_WITH_NAME,
                                                         ObjectValueWithVariable.of(
@@ -220,7 +246,7 @@ public class DocumentBuilder {
                                                                 getTypeRefFieldName(fieldDefinition.getType().getTypeName().getName())
                                                         )
                                                 )
-                                                .addArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME, documentManager.getFieldTypeDefinition(fieldDefinition).asObject().getIDFieldOrError())
+                                                .addArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME, documentManager.getFieldTypeDefinition(fieldDefinition).asObject().getIDFieldOrError().getName())
                                 )
                 );
         return objectType;
@@ -228,7 +254,7 @@ public class DocumentBuilder {
 
     public ObjectType buildMapWithObject(ObjectType objectType, FieldDefinition fieldDefinition) {
         ObjectType relationObjectType = new ObjectType(fieldDefinition.getMapWithType())
-                .addField(new FieldDefinition(FIELD_ID_NAME).setType(SCALA_ID_NAME))
+                .addField(new FieldDefinition(FIELD_ID_NAME).setType(new TypeName(SCALA_ID_NAME)))
                 .addField(
                         new FieldDefinition(fieldDefinition.getMapWithFrom())
                                 .setType(documentManager.getFieldMapFromFieldDefinition(objectType, fieldDefinition).getTypeNameWithoutID()))
@@ -241,6 +267,14 @@ public class DocumentBuilder {
                                                 .addArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME, fieldDefinition.getMapFrom())
                                                 .addArgument(DIRECTIVE_MAP_ARGUMENT_ANCHOR_NAME, true)
                                 )
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
+                                .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_CLASS_INFO_NAME)
+                                .addArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + fieldDefinition.getMapWithType())
                 );
 
         documentManager.getFieldMapToFieldDefinition(fieldDefinition)
@@ -248,7 +282,7 @@ public class DocumentBuilder {
                                 relationObjectType
                                         .addField(
                                                 new FieldDefinition(fieldDefinition.getMapWithTo())
-                                                        .setType(mapToFieldDefinition.getTypeNameWithoutID())
+                                                        .setType(new TypeName(mapToFieldDefinition.getTypeNameWithoutID()))
                                         )
                                         .addField(
                                                 new FieldDefinition(typeNameToFieldName(fieldDefinition.getType().getTypeName().getName()))
@@ -256,7 +290,7 @@ public class DocumentBuilder {
                                                         .addDirective(
                                                                 new Directive(DIRECTIVE_MAP_NAME)
                                                                         .addArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME, fieldDefinition.getMapWithTo())
-                                                                        .addArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME, fieldDefinition.getMapTo())
+                                                                        .addArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME, fieldDefinition.getMapToOrError())
                                                                         .addArgument(DIRECTIVE_MAP_ARGUMENT_ANCHOR_NAME, true)
                                                         )
                                         ),
@@ -270,7 +304,7 @@ public class DocumentBuilder {
 
     public ObjectType buildFetchWithObject(ObjectType objectType, FieldDefinition fieldDefinition) {
         ObjectType relationObjectType = new ObjectType(fieldDefinition.getFetchWithType())
-                .addField(new FieldDefinition(FIELD_ID_NAME).setType(SCALA_ID_NAME))
+                .addField(new FieldDefinition(FIELD_ID_NAME).setType(new TypeName(SCALA_ID_NAME)))
                 .addField(
                         new FieldDefinition(fieldDefinition.getFetchWithFrom())
                                 .setType(documentManager.getFieldFetchFromFieldDefinition(objectType, fieldDefinition).getTypeNameWithoutID()))
@@ -289,6 +323,14 @@ public class DocumentBuilder {
                                                         .addArgument(DIRECTIVE_FETCH_ARGUMENT_ANCHOR_NAME, true)
                                                         .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, new EnumValue(fieldDefinition.getFetchProtocol()))
                                 )
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
+                                .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_CLASS_INFO_NAME)
+                                .addArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + fieldDefinition.getFetchWithType())
                 );
 
         documentManager.getFieldFetchToFieldDefinition(fieldDefinition)
@@ -296,7 +338,7 @@ public class DocumentBuilder {
                                 relationObjectType
                                         .addField(
                                                 new FieldDefinition(fieldDefinition.getFetchWithTo())
-                                                        .setType(fetchToFieldDefinition.getTypeNameWithoutID())
+                                                        .setType(new TypeName(fetchToFieldDefinition.getTypeNameWithoutID()))
                                         )
                                         .addField(
                                                 new FieldDefinition(typeNameToFieldName(fieldDefinition.getType().getTypeName().getName()))
@@ -322,7 +364,6 @@ public class DocumentBuilder {
             objectType.addDirective(
                     new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
                             .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
-                            .addArgument(DIRECTIVE_GRPC_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getGrpcPackageName())
             );
         }
 
@@ -330,7 +371,6 @@ public class DocumentBuilder {
             objectType.addDirective(
                     new Directive(DIRECTIVE_CLASS_INFO_NAME)
                             .addArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + objectType.getName())
-                            .addArgument(DIRECTIVE_GRPC_CLASS_INFO_CLASS_NAME_NAME, packageConfig.getGrpcObjectTypePackageName() + "." + getGrpcTypeName(objectType.getName()))
             );
         }
 
@@ -381,11 +421,7 @@ public class DocumentBuilder {
                                 .filter(FieldDefinition::hasFetchWith)
                                 .map(fieldDefinition ->
                                         (FieldDefinition) new FieldDefinition(typeNameToFieldName(fieldDefinition.getFetchWithType()))
-                                                .setType(
-                                                        fieldDefinition.getType().hasList() ?
-                                                                new ListType(fieldDefinition.getType().getTypeName()) :
-                                                                fieldDefinition.getType().getTypeName()
-                                                )
+                                                .setType(new ListType(new TypeName(fieldDefinition.getFetchWithType())))
                                                 .addDirective(
                                                         fieldDefinition.isFetchAnchor() ?
                                                                 new Directive(DIRECTIVE_MAP_NAME)
@@ -404,6 +440,7 @@ public class DocumentBuilder {
                                 .filter(FieldDefinition::isMapField)
                                 .filter(FieldDefinition::isMapAnchor)
                                 .filter(fieldDefinition -> !fieldDefinition.hasMapWith())
+                                .filter(fieldDefinition -> objectType.getFields().stream().noneMatch(item -> item.getName().equals(fieldDefinition.getMapFrom())))
                                 .map(fieldDefinition ->
                                         new FieldDefinition(fieldDefinition.getMapFrom())
                                                 .setType(
@@ -412,7 +449,6 @@ public class DocumentBuilder {
                                                                 .getTypeNameWithoutID()
                                                 )
                                 )
-                                .filter(fieldDefinition -> objectType.getFields().stream().noneMatch(item -> item.getName().equals(fieldDefinition.getMapFrom())))
                                 .collect(Collectors.toList())
                 )
                 .addFields(
@@ -421,11 +457,7 @@ public class DocumentBuilder {
                                 .filter(FieldDefinition::hasMapWith)
                                 .map(fieldDefinition ->
                                         (FieldDefinition) new FieldDefinition(typeNameToFieldName(fieldDefinition.getMapWithType()))
-                                                .setType(
-                                                        fieldDefinition.getType().hasList() ?
-                                                                new ListType(fieldDefinition.getType().getTypeName()) :
-                                                                fieldDefinition.getType().getTypeName()
-                                                )
+                                                .setType(new ListType(new TypeName(fieldDefinition.getMapWithType())))
                                                 .addDirective(
                                                         new Directive(DIRECTIVE_MAP_NAME)
                                                                 .addArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME, fieldDefinition.getMapFrom())
@@ -458,6 +490,57 @@ public class DocumentBuilder {
         return objectType;
     }
 
+    public InterfaceType buildInterface(InterfaceType interfaceType) {
+        if (interfaceType.getPackageName().isEmpty()) {
+            interfaceType.addDirective(
+                    new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
+                            .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
+            );
+        }
+
+        if (interfaceType.getClassName().isEmpty()) {
+            interfaceType.addDirective(
+                    new Directive(DIRECTIVE_CLASS_INFO_NAME)
+                            .addArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME, packageConfig.getInterfaceTypePackageName() + "." + interfaceType.getName())
+            );
+        }
+        return interfaceType;
+    }
+
+    public InputObjectType buildInputObject(InputObjectType inputObjectType) {
+        if (inputObjectType.getPackageName().isEmpty()) {
+            inputObjectType.addDirective(
+                    new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
+                            .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
+            );
+        }
+
+        if (inputObjectType.getClassName().isEmpty()) {
+            inputObjectType.addDirective(
+                    new Directive(DIRECTIVE_CLASS_INFO_NAME)
+                            .addArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + inputObjectType.getName())
+            );
+        }
+        return inputObjectType;
+    }
+
+    public EnumType buildEnum(EnumType enumType) {
+        if (enumType.getPackageName().isEmpty()) {
+            enumType.addDirective(
+                    new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
+                            .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
+            );
+        }
+
+        if (enumType.getClassName().isEmpty()) {
+            enumType.addDirective(
+                    new Directive(DIRECTIVE_CLASS_INFO_NAME)
+                            .addArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME, packageConfig.getEnumTypePackageName() + "." + enumType.getName())
+            );
+        }
+        return enumType;
+    }
+
     public FieldDefinition buildField(ObjectType objectType, FieldDefinition fieldDefinition) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isLeaf()) {
@@ -466,10 +549,10 @@ public class DocumentBuilder {
                         .addArgument(new InputValue(INPUT_VALUE_OPERATOR_OPR_NAME).setType(new TypeName(INPUT_OPERATOR_NAME)).setDefaultValue(INPUT_VALUE_OPERATOR_OPR_EQ))
                         .addArgument(new InputValue(INPUT_VALUE_OPERATOR_VAL_NAME).setType(fieldDefinition.getType().getTypeName()))
                         .addArgument(new InputValue(INPUT_VALUE_OPERATOR_ARR_NAME).setType(new ListType(fieldDefinition.getType().getTypeName())))
-                        .addArgument(new InputValue(INPUT_VALUE_FIRST_NAME).setType(SCALA_INT_NAME))
-                        .addArgument(new InputValue(INPUT_VALUE_LAST_NAME).setType(SCALA_INT_NAME))
-                        .addArgument(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(SCALA_INT_NAME))
-                        .addArgument(new InputValue(INPUT_VALUE_SORT_NAME).setType(INPUT_SORT_NAME));
+                        .addArgument(new InputValue(INPUT_VALUE_FIRST_NAME).setType(new TypeName(SCALA_INT_NAME)))
+                        .addArgument(new InputValue(INPUT_VALUE_LAST_NAME).setType(new TypeName(SCALA_INT_NAME)))
+                        .addArgument(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(new TypeName(SCALA_INT_NAME)))
+                        .addArgument(new InputValue(INPUT_VALUE_SORT_NAME).setType(new TypeName(INPUT_SORT_NAME)));
 
                 if (fieldDefinition.hasMapWith()) {
                     ObjectType fieldMapWithTypeDefinition = documentManager.getFieldMapWithTypeDefinition(fieldDefinition);
@@ -513,7 +596,7 @@ public class DocumentBuilder {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (inputType.equals(InputType.INPUT) || inputType.equals(InputType.MUTATION_ARGUMENTS)) {
             if (fieldDefinition.getName().equals(FIELD_TYPENAME_NAME)) {
-                return new InputValue(FIELD_TYPENAME_NAME).setType(SCALA_STRING_NAME).setDefaultValue(fieldsType.getName());
+                return new InputValue(FIELD_TYPENAME_NAME).setType(new TypeName(SCALA_STRING_NAME)).setDefaultValue(fieldsType.getName());
             }
             Type argumentType;
             if (fieldTypeDefinition.isLeaf()) {
@@ -530,7 +613,7 @@ public class DocumentBuilder {
             return inputValue;
         } else if (inputType.equals(InputType.EXPRESSION) || inputType.equals(InputType.QUERY_ARGUMENTS) || inputType.equals(InputType.SUBSCRIPTION_ARGUMENTS)) {
             if (fieldDefinition.getName().equals(FIELD_DEPRECATED_NAME)) {
-                return new InputValue(INPUT_VALUE_DEPRECATED_NAME).setType(SCALA_BOOLEAN_NAME).setDefaultValue(false);
+                return new InputValue(INPUT_VALUE_DEPRECATED_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false);
             }
             Type argumentType;
             switch (fieldTypeDefinition.getName()) {
@@ -559,7 +642,7 @@ public class DocumentBuilder {
             }
             return new InputValue(fieldDefinition.getName()).setType(argumentType);
         } else if (inputType.equals(InputType.ORDER_BY)) {
-            return new InputValue(fieldTypeDefinition.getName()).setType(new TypeName(INPUT_VALUE_SORT_NAME));
+            return new InputValue(fieldDefinition.getName()).setType(new TypeName(INPUT_SORT_NAME));
         }
         throw new RuntimeException("unsupported input type:" + inputType);
     }
@@ -572,6 +655,7 @@ public class DocumentBuilder {
                             documentManager.getDocument().getMetaInterface().stream()
                                     .flatMap(interfaceType -> interfaceType.getFields().stream())
                     )
+                    .filter(distinctByKey(FieldDefinition::getName))
                     .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
                     .filter(fieldDefinition -> !fieldDefinition.isFunctionField())
                     .filter(fieldDefinition -> !fieldDefinition.isConnectionField())
@@ -606,7 +690,7 @@ public class DocumentBuilder {
 
     public FieldDefinition buildTypeNameField(ObjectType objectType) {
         return new FieldDefinition(FIELD_TYPENAME_NAME)
-                .setType(SCALA_STRING_NAME)
+                .setType(new TypeName(SCALA_STRING_NAME))
                 .addDirective(new Directive(DIRECTIVE_DATA_TYPE_NAME).addArgument(DIRECTIVE_DATA_TYPE_DEFAULT_NAME, objectType.getName()));
     }
 
@@ -662,9 +746,17 @@ public class DocumentBuilder {
     public InputObjectType fieldsToExpression(FieldsType fieldsType) {
         return new InputObjectType(fieldsType.getName() + InputType.EXPRESSION)
                 .setInputValues(buildInputValuesFromObjectType(fieldsType, InputType.EXPRESSION))
-                .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(SCALA_BOOLEAN_NAME).setDefaultValue(false))
-                .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(INPUT_CONDITIONAL_NAME).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
+                .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
+                .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
                 .addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(fieldsType.getName() + InputType.EXPRESSION))))
+                .addDirective(
+                        new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
+                                .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_CLASS_INFO_NAME)
+                                .addArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + fieldsType.getName() + InputType.EXPRESSION)
+                )
                 .addDirective(
                         new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                 .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
@@ -685,7 +777,15 @@ public class DocumentBuilder {
     public InputObjectType fieldsToInput(FieldsType fieldsType) {
         InputObjectType inputObjectType = new InputObjectType(fieldsType.getName() + InputType.INPUT)
                 .setInputValues(buildInputValuesFromObjectType(fieldsType, InputType.INPUT))
-                .addInputValue(new InputValue(INPUT_VALUE_WHERE_NAME).setType(fieldsType.getName() + InputType.EXPRESSION))
+                .addInputValue(new InputValue(INPUT_VALUE_WHERE_NAME).setType(new TypeName(fieldsType.getName() + InputType.EXPRESSION)))
+                .addDirective(
+                        new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
+                                .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_CLASS_INFO_NAME)
+                                .addArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + fieldsType.getName() + InputType.INPUT)
+                )
                 .addDirective(
                         new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                 .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
@@ -710,21 +810,45 @@ public class DocumentBuilder {
 
     public InputObjectType fieldsToOrderBy(FieldsType fieldsType) {
         return new InputObjectType(fieldsType.getName() + InputType.ORDER_BY)
-                .setInputValues(buildInputValuesFromObjectType(fieldsType, InputType.ORDER_BY));
+                .setInputValues(buildInputValuesFromObjectType(fieldsType, InputType.ORDER_BY))
+                .addDirective(
+                        new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
+                                .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_CLASS_INFO_NAME)
+                                .addArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + fieldsType.getName() + InputType.ORDER_BY)
+                );
     }
 
     public InputObjectType enumToExpression(EnumType enumType) {
         return new InputObjectType(enumType.getName() + InputType.EXPRESSION)
-                .addInputValue(new InputValue(INPUT_VALUE_OPERATOR_OPR_NAME).setType(INPUT_OPERATOR_NAME).setDefaultValue(INPUT_VALUE_OPERATOR_OPR_EQ))
+                .addInputValue(new InputValue(INPUT_VALUE_OPERATOR_OPR_NAME).setType(new TypeName(INPUT_OPERATOR_NAME)).setDefaultValue(INPUT_VALUE_OPERATOR_OPR_EQ))
                 .addInputValue(new InputValue(INPUT_VALUE_OPERATOR_VAL_NAME).setType(new TypeName(enumType.getName())))
-                .addInputValue(new InputValue(INPUT_VALUE_OPERATOR_ARR_NAME).setType(new ListType(new TypeName(enumType.getName()))));
+                .addInputValue(new InputValue(INPUT_VALUE_OPERATOR_ARR_NAME).setType(new ListType(new TypeName(enumType.getName()))))
+                .addDirective(
+                        new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
+                                .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_CLASS_INFO_NAME)
+                                .addArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + enumType.getName() + InputType.EXPRESSION)
+                );
     }
 
     public ObjectType objectToConnection(ObjectType objectType) {
         return new ObjectType(objectType.getName() + InputType.CONNECTION)
-                .addField(new FieldDefinition(FIELD_TOTAL_COUNT_NAME).setType(SCALA_INT_NAME))
-                .addField(new FieldDefinition(FIELD_PAGE_INFO_NAME).setType(TYPE_PAGE_INFO_NAME))
+                .addField(new FieldDefinition(FIELD_TOTAL_COUNT_NAME).setType(new TypeName(SCALA_INT_NAME)))
+                .addField(new FieldDefinition(FIELD_PAGE_INFO_NAME).setType(new TypeName(TYPE_PAGE_INFO_NAME)))
                 .addField(new FieldDefinition(FIELD_EDGES_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EDGE))))
+                .addDirective(
+                        new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
+                                .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_CLASS_INFO_NAME)
+                                .addArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + objectType.getName() + InputType.CONNECTION)
+                )
                 .addDirective(new Directive(DIRECTIVE_CONTAINER_TYPE_NAME));
     }
 
@@ -734,8 +858,16 @@ public class DocumentBuilder {
                 .orElseThrow(() -> new GraphQLErrors(TYPE_ID_FIELD_NOT_EXIST.bind(objectType.getName())));
 
         return new ObjectType(objectType.getName() + InputType.EDGE)
-                .addField(new FieldDefinition(FIELD_NODE_NAME).setType(objectType.getName()))
+                .addField(new FieldDefinition(FIELD_NODE_NAME).setType(new TypeName(objectType.getName())))
                 .addField(new FieldDefinition(FIELD_CURSOR_NAME).setType(cursorFieldDefinition.getType().getTypeName()))
+                .addDirective(
+                        new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
+                                .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_CLASS_INFO_NAME)
+                                .addArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + objectType.getName() + InputType.EDGE)
+                )
                 .addDirective(new Directive(DIRECTIVE_CONTAINER_TYPE_NAME));
     }
 
@@ -796,15 +928,14 @@ public class DocumentBuilder {
                 .addDirective(
                         new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
                                 .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
-                                .addArgument(DIRECTIVE_GRPC_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getGrpcPackageName())
                 );
         if (inputType.equals(InputType.QUERY_ARGUMENTS) || inputType.equals(InputType.SUBSCRIPTION_ARGUMENTS)) {
             fieldDefinition.addArgument(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
-                    .addArgument(new InputValue(INPUT_VALUE_NOT_NAME).setType(SCALA_BOOLEAN_NAME).setDefaultValue(false))
-                    .addArgument(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(INPUT_CONDITIONAL_NAME).setDefaultValue(INPUT_VALUE_CONDITIONAL_COND_AND))
+                    .addArgument(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
+                    .addArgument(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(INPUT_VALUE_CONDITIONAL_COND_AND))
                     .addArgument(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))));
         } else if (inputType.equals(InputType.MUTATION_ARGUMENTS)) {
-            fieldDefinition.addArgument(new InputValue(INPUT_VALUE_WHERE_NAME).setType(objectType.getName() + InputType.EXPRESSION));
+            fieldDefinition.addArgument(new InputValue(INPUT_VALUE_WHERE_NAME).setType(new TypeName(objectType.getName() + InputType.EXPRESSION)));
         }
 
         Optional.ofNullable(objectType.getDirective(DIRECTIVE_VALIDATION_NAME))
@@ -820,19 +951,18 @@ public class DocumentBuilder {
                 .addDirective(
                         new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
                                 .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
-                                .addArgument(DIRECTIVE_GRPC_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getGrpcPackageName())
                 );
 
         if (inputType.equals(InputType.QUERY_ARGUMENTS) || inputType.equals(InputType.SUBSCRIPTION_ARGUMENTS)) {
             fieldDefinition
-                    .addArgument(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(objectType.getName() + InputType.ORDER_BY))
+                    .addArgument(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(new TypeName(objectType.getName() + InputType.ORDER_BY)))
                     .addArgument(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
-                    .addArgument(new InputValue(INPUT_VALUE_NOT_NAME).setType(SCALA_BOOLEAN_NAME).setDefaultValue(false))
-                    .addArgument(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(INPUT_CONDITIONAL_NAME).setDefaultValue(INPUT_VALUE_CONDITIONAL_COND_AND))
+                    .addArgument(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
+                    .addArgument(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(INPUT_VALUE_CONDITIONAL_COND_AND))
                     .addArgument(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
-                    .addArgument(new InputValue(INPUT_VALUE_FIRST_NAME).setType(SCALA_INT_NAME))
-                    .addArgument(new InputValue(INPUT_VALUE_LAST_NAME).setType(SCALA_INT_NAME))
-                    .addArgument(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(SCALA_INT_NAME));
+                    .addArgument(new InputValue(INPUT_VALUE_FIRST_NAME).setType(new TypeName(SCALA_INT_NAME)))
+                    .addArgument(new InputValue(INPUT_VALUE_LAST_NAME).setType(new TypeName(SCALA_INT_NAME)))
+                    .addArgument(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(new TypeName(SCALA_INT_NAME)));
 
             objectType.getCursorField()
                     .or(objectType::getIDField)
@@ -856,9 +986,9 @@ public class DocumentBuilder {
 
     public FieldDefinition buildSchemaTypeFieldConnection(ObjectType objectType, InputType inputType) {
         FieldDefinition fieldDefinition = new FieldDefinition(typeNameToFieldName(objectType.getName()) + SUFFIX_CONNECTION)
-                .setType(objectType.getName() + SUFFIX_CONNECTION)
+                .setType(new TypeName(objectType.getName() + SUFFIX_CONNECTION))
                 .addArguments(buildInputValuesFromObjectType(objectType, inputType))
-                .addArgument(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(objectType.getName() + InputType.ORDER_BY))
+                .addArgument(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(new TypeName(objectType.getName() + InputType.ORDER_BY)))
                 .addArgument(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
                 .addDirective(
                         new Directive()
@@ -869,17 +999,16 @@ public class DocumentBuilder {
                 .addDirective(
                         new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
                                 .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
-                                .addArgument(DIRECTIVE_GRPC_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getGrpcPackageName())
                 );
 
         if (inputType.equals(InputType.QUERY_ARGUMENTS) || inputType.equals(InputType.SUBSCRIPTION_ARGUMENTS)) {
             fieldDefinition
-                    .addArgument(new InputValue(INPUT_VALUE_NOT_NAME).setType(SCALA_BOOLEAN_NAME).setDefaultValue(false))
-                    .addArgument(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(INPUT_CONDITIONAL_NAME).setDefaultValue(INPUT_VALUE_CONDITIONAL_COND_AND))
+                    .addArgument(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
+                    .addArgument(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(INPUT_VALUE_CONDITIONAL_COND_AND))
                     .addArgument(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
-                    .addArgument(new InputValue(INPUT_VALUE_FIRST_NAME).setType(SCALA_INT_NAME))
-                    .addArgument(new InputValue(INPUT_VALUE_LAST_NAME).setType(SCALA_INT_NAME))
-                    .addArgument(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(SCALA_INT_NAME));
+                    .addArgument(new InputValue(INPUT_VALUE_FIRST_NAME).setType(new TypeName(SCALA_INT_NAME)))
+                    .addArgument(new InputValue(INPUT_VALUE_LAST_NAME).setType(new TypeName(SCALA_INT_NAME)))
+                    .addArgument(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(new TypeName(SCALA_INT_NAME)));
         }
 
         Optional.ofNullable(objectType.getDirective(DIRECTIVE_VALIDATION_NAME))
@@ -909,7 +1038,7 @@ public class DocumentBuilder {
                 .filter(fieldDefinition -> !fieldDefinition.isAggregateField())
                 .filter(fieldDefinition -> !fieldDefinition.getName().equals(FIELD_TYPENAME_NAME))
                 .filter(fieldDefinition -> !documentManager.isMetaInterfaceField(fieldDefinition))
-                .filter(fieldDefinition -> fieldDefinition.getType().hasList())
+                .filter(fieldDefinition -> !fieldDefinition.getType().hasList())
                 .collect(Collectors.toList());
 
         return Stream.concat(
@@ -992,9 +1121,9 @@ public class DocumentBuilder {
         return new FieldDefinition(fieldDefinition.getName() + SUFFIX_CONNECTION)
                 .setType(new TypeName(fieldDefinition.getType().getTypeName().getName() + SUFFIX_CONNECTION))
                 .addArguments(buildInputValuesFromObjectType(documentManager.getFieldTypeDefinition(fieldDefinition).asObject(), InputType.EXPRESSION))
-                .addArgument(new InputValue(INPUT_VALUE_FIRST_NAME).setType(SCALA_INT_NAME))
-                .addArgument(new InputValue(INPUT_VALUE_LAST_NAME).setType(SCALA_INT_NAME))
-                .addArgument(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(SCALA_INT_NAME))
+                .addArgument(new InputValue(INPUT_VALUE_FIRST_NAME).setType(new TypeName(SCALA_INT_NAME)))
+                .addArgument(new InputValue(INPUT_VALUE_LAST_NAME).setType(new TypeName(SCALA_INT_NAME)))
+                .addArgument(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(new TypeName(SCALA_INT_NAME)))
                 .addArgument(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(new TypeName(fieldDefinition.getType().getTypeName().getName() + InputType.ORDER_BY)))
                 .addArgument(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
                 .addDirective(
@@ -1008,9 +1137,9 @@ public class DocumentBuilder {
         return new FieldDefinition(fieldDefinition.getName() + SUFFIX_AGGREGATE)
                 .setType(fieldDefinition.getType().getTypeName())
                 .addArguments(buildInputValuesFromObjectType(documentManager.getFieldTypeDefinition(fieldDefinition).asObject(), InputType.EXPRESSION))
-                .addArgument(new InputValue(INPUT_VALUE_FIRST_NAME).setType(SCALA_INT_NAME))
-                .addArgument(new InputValue(INPUT_VALUE_LAST_NAME).setType(SCALA_INT_NAME))
-                .addArgument(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(SCALA_INT_NAME))
+                .addArgument(new InputValue(INPUT_VALUE_FIRST_NAME).setType(new TypeName(SCALA_INT_NAME)))
+                .addArgument(new InputValue(INPUT_VALUE_LAST_NAME).setType(new TypeName(SCALA_INT_NAME)))
+                .addArgument(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(new TypeName(SCALA_INT_NAME)))
                 .addArgument(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(new TypeName(fieldDefinition.getType().getTypeName().getName() + InputType.ORDER_BY)))
                 .addArgument(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
                 .setDirectives(fieldDefinition.getDirectives())
@@ -1073,16 +1202,19 @@ public class DocumentBuilder {
                 .addDirective(
                         new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
                                 .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
-                                .addArgument(DIRECTIVE_GRPC_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getGrpcPackageName())
                 );
         if (inputType.equals(InputType.QUERY_ARGUMENTS)) {
             ObjectType queryOperationType = documentManager.getDocument().getQueryOperationTypeOrError();
             inputObjectType
                     .addInputValue(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
-                    .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(SCALA_BOOLEAN_NAME).setDefaultValue(false))
-                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(INPUT_CONDITIONAL_NAME).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
+                    .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
+                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
                     .addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
                     .setName(objectType.getName() + queryOperationType.getName() + inputType)
+                    .addDirective(
+                            new Directive(DIRECTIVE_CLASS_INFO_NAME)
+                                    .addArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + queryOperationType.getName() + inputType)
+                    )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                     .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
@@ -1102,10 +1234,14 @@ public class DocumentBuilder {
             ObjectType subscriptionOperation = documentManager.getDocument().getSubscriptionOperationTypeOrError();
             inputObjectType
                     .addInputValue(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
-                    .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(SCALA_BOOLEAN_NAME).setDefaultValue(false))
-                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(INPUT_CONDITIONAL_NAME).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
+                    .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
+                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
                     .addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
                     .setName(objectType.getName() + subscriptionOperation.getName() + inputType)
+                    .addDirective(
+                            new Directive(DIRECTIVE_CLASS_INFO_NAME)
+                                    .addArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + subscriptionOperation.getName() + inputType)
+                    )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                     .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
@@ -1126,6 +1262,10 @@ public class DocumentBuilder {
             inputObjectType
                     .addInputValue(new InputValue(INPUT_VALUE_WHERE_NAME).setType(new TypeName(objectType.getName() + InputType.EXPRESSION)))
                     .setName(objectType.getName() + mutationOperationType.getName() + inputType)
+                    .addDirective(
+                            new Directive(DIRECTIVE_CLASS_INFO_NAME)
+                                    .addArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + mutationOperationType.getName() + inputType)
+                    )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                     .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
@@ -1154,21 +1294,24 @@ public class DocumentBuilder {
                 .addDirective(
                         new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
                                 .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
-                                .addArgument(DIRECTIVE_GRPC_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getGrpcPackageName())
                 );
 
         if (inputType.equals(InputType.QUERY_ARGUMENTS)) {
             ObjectType queryOperationType = documentManager.getDocument().getQueryOperationTypeOrError();
             inputObjectType
-                    .addInputValue(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(objectType.getName() + InputType.ORDER_BY))
+                    .addInputValue(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(new TypeName(objectType.getName() + InputType.ORDER_BY)))
                     .addInputValue(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
-                    .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(SCALA_BOOLEAN_NAME).setDefaultValue(false))
-                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(INPUT_CONDITIONAL_NAME).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
+                    .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
+                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
                     .addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
-                    .addInputValue(new InputValue(INPUT_VALUE_FIRST_NAME).setType(SCALA_INT_NAME))
-                    .addInputValue(new InputValue(INPUT_VALUE_LAST_NAME).setType(SCALA_INT_NAME))
-                    .addInputValue(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(SCALA_INT_NAME))
+                    .addInputValue(new InputValue(INPUT_VALUE_FIRST_NAME).setType(new TypeName(SCALA_INT_NAME)))
+                    .addInputValue(new InputValue(INPUT_VALUE_LAST_NAME).setType(new TypeName(SCALA_INT_NAME)))
+                    .addInputValue(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(new TypeName(SCALA_INT_NAME)))
                     .setName(objectType.getName() + SUFFIX_LIST + queryOperationType.getName() + inputType)
+                    .addDirective(
+                            new Directive(DIRECTIVE_CLASS_INFO_NAME)
+                                    .addArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + SUFFIX_LIST + queryOperationType.getName() + inputType)
+                    )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                     .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
@@ -1194,15 +1337,19 @@ public class DocumentBuilder {
         } else if (inputType.equals(InputType.SUBSCRIPTION_ARGUMENTS)) {
             ObjectType subscriptionOperationType = documentManager.getDocument().getSubscriptionOperationTypeOrError();
             inputObjectType
-                    .addInputValue(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(objectType.getName() + InputType.ORDER_BY))
+                    .addInputValue(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(new TypeName(objectType.getName() + InputType.ORDER_BY)))
                     .addInputValue(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
-                    .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(SCALA_BOOLEAN_NAME).setDefaultValue(false))
-                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(INPUT_CONDITIONAL_NAME).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
+                    .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
+                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
                     .addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
-                    .addInputValue(new InputValue(INPUT_VALUE_FIRST_NAME).setType(SCALA_INT_NAME))
-                    .addInputValue(new InputValue(INPUT_VALUE_LAST_NAME).setType(SCALA_INT_NAME))
-                    .addInputValue(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(SCALA_INT_NAME))
+                    .addInputValue(new InputValue(INPUT_VALUE_FIRST_NAME).setType(new TypeName(SCALA_INT_NAME)))
+                    .addInputValue(new InputValue(INPUT_VALUE_LAST_NAME).setType(new TypeName(SCALA_INT_NAME)))
+                    .addInputValue(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(new TypeName(SCALA_INT_NAME)))
                     .setName(objectType.getName() + SUFFIX_LIST + subscriptionOperationType.getName() + inputType)
+                    .addDirective(
+                            new Directive(DIRECTIVE_CLASS_INFO_NAME)
+                                    .addArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + SUFFIX_LIST + subscriptionOperationType.getName() + inputType)
+                    )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                     .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
@@ -1232,6 +1379,10 @@ public class DocumentBuilder {
                     .addInputValue(new InputValue(INPUT_VALUE_WHERE_NAME).setType(new TypeName(objectType.getName() + InputType.EXPRESSION)))
                     .setName(objectType.getName() + SUFFIX_LIST + mutationOperationType.getName() + inputType)
                     .addDirective(
+                            new Directive(DIRECTIVE_CLASS_INFO_NAME)
+                                    .addArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + SUFFIX_LIST + mutationOperationType.getName() + inputType)
+                    )
+                    .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                     .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                             new ArrayValueWithVariable(
@@ -1256,29 +1407,26 @@ public class DocumentBuilder {
         InputObjectType inputObjectType = new InputObjectType()
                 .addInputValues(buildInputValuesFromObjectType(objectType, inputType))
                 .addDirective(
-                        new Directive()
-                                .setName(DIRECTIVE_CONNECTION_NAME)
-                                .addArgument(DIRECTIVE_CONNECTION_ARGUMENT_FIELD_NAME, typeNameToFieldName(objectType.getName()) + SUFFIX_LIST)
-                                .addArgument(DIRECTIVE_CONNECTION_ARGUMENT_AGG_NAME, typeNameToFieldName(objectType.getName()))
-                )
-                .addDirective(
                         new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
                                 .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
-                                .addArgument(DIRECTIVE_GRPC_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getGrpcPackageName())
                 );
 
         if (inputType.equals(InputType.QUERY_ARGUMENTS)) {
             ObjectType queryOperationType = documentManager.getDocument().getQueryOperationTypeOrError();
             inputObjectType
-                    .addInputValue(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(objectType.getName() + InputType.ORDER_BY))
+                    .addInputValue(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(new TypeName(objectType.getName() + InputType.ORDER_BY)))
                     .addInputValue(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
-                    .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(SCALA_BOOLEAN_NAME).setDefaultValue(false))
-                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(INPUT_CONDITIONAL_NAME).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
+                    .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
+                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
                     .addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
-                    .addInputValue(new InputValue(INPUT_VALUE_FIRST_NAME).setType(SCALA_INT_NAME))
-                    .addInputValue(new InputValue(INPUT_VALUE_LAST_NAME).setType(SCALA_INT_NAME))
-                    .addInputValue(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(SCALA_INT_NAME))
+                    .addInputValue(new InputValue(INPUT_VALUE_FIRST_NAME).setType(new TypeName(SCALA_INT_NAME)))
+                    .addInputValue(new InputValue(INPUT_VALUE_LAST_NAME).setType(new TypeName(SCALA_INT_NAME)))
+                    .addInputValue(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(new TypeName(SCALA_INT_NAME)))
                     .setName(objectType.getName() + SUFFIX_CONNECTION + queryOperationType.getName() + inputType)
+                    .addDirective(
+                            new Directive(DIRECTIVE_CLASS_INFO_NAME)
+                                    .addArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + SUFFIX_CONNECTION + queryOperationType.getName() + inputType)
+                    )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                     .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
@@ -1304,15 +1452,19 @@ public class DocumentBuilder {
         } else if (inputType.equals(InputType.SUBSCRIPTION_ARGUMENTS)) {
             ObjectType subscriptionOperationType = documentManager.getDocument().getSubscriptionOperationTypeOrError();
             inputObjectType
-                    .addInputValue(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(objectType.getName() + InputType.ORDER_BY))
+                    .addInputValue(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(new TypeName(objectType.getName() + InputType.ORDER_BY)))
                     .addInputValue(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
-                    .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(SCALA_BOOLEAN_NAME).setDefaultValue(false))
-                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(INPUT_CONDITIONAL_NAME).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
+                    .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
+                    .addInputValue(new InputValue(INPUT_VALUE_CONDITIONAL_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_VALUE_CONDITIONAL_COND_AND)))
                     .addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
-                    .addInputValue(new InputValue(INPUT_VALUE_FIRST_NAME).setType(SCALA_INT_NAME))
-                    .addInputValue(new InputValue(INPUT_VALUE_LAST_NAME).setType(SCALA_INT_NAME))
-                    .addInputValue(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(SCALA_INT_NAME))
+                    .addInputValue(new InputValue(INPUT_VALUE_FIRST_NAME).setType(new TypeName(SCALA_INT_NAME)))
+                    .addInputValue(new InputValue(INPUT_VALUE_LAST_NAME).setType(new TypeName(SCALA_INT_NAME)))
+                    .addInputValue(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(new TypeName(SCALA_INT_NAME)))
                     .setName(objectType.getName() + SUFFIX_CONNECTION + subscriptionOperationType.getName() + inputType)
+                    .addDirective(
+                            new Directive(DIRECTIVE_CLASS_INFO_NAME)
+                                    .addArgument(DIRECTIVE_CLASS_INFO_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + SUFFIX_CONNECTION + subscriptionOperationType.getName() + inputType)
+                    )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                     .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
@@ -1385,7 +1537,6 @@ public class DocumentBuilder {
                 .addDirective(
                         new Directive(DIRECTIVE_PACKAGE_INFO_NAME)
                                 .addArgument(DIRECTIVE_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getPackageName())
-                                .addArgument(DIRECTIVE_GRPC_PACKAGE_INFO_PACKAGE_NAME_NAME, packageConfig.getGrpcPackageName())
                 );
     }
 
@@ -1426,7 +1577,7 @@ public class DocumentBuilder {
 
         public FieldDefinition toField(String fieldName, String returnTypeName, String fieldTypeName, boolean isList) {
             FieldDefinition fieldDefinition = new FieldDefinition(fieldName + name)
-                    .setType(returnTypeName)
+                    .setType(new TypeName(returnTypeName))
                     .addDirective(
                             new Directive()
                                     .setName(DIRECTIVE_FUNC_NAME)

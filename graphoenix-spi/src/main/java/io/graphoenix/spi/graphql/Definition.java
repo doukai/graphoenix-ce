@@ -52,7 +52,7 @@ public interface Definition {
         return false;
     }
 
-    default boolean isFragment() {
+    default boolean isFragmentDefinition() {
         return false;
     }
 
@@ -92,8 +92,8 @@ public interface Definition {
         return (Operation) this;
     }
 
-    default Fragment asFragment() {
-        return (Fragment) this;
+    default FragmentDefinition asFragmentDefinition() {
+        return (FragmentDefinition) this;
     }
 
     boolean isContainerType();

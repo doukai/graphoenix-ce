@@ -16,7 +16,7 @@ public class VariableDefinition {
     private Variable variable;
     private String typeName;
     private String defaultValue;
-    private Collection<Directive> directives;
+    private final Collection<Directive> directives = new LinkedHashSet<>();
 
     public VariableDefinition() {
     }
@@ -32,9 +32,11 @@ public class VariableDefinition {
             this.defaultValue = variableDefinitionContext.defaultValue().value().getText();
         }
         if (variableDefinitionContext.directives() != null) {
-            this.directives = variableDefinitionContext.directives().directive().stream()
-                    .map(Directive::new)
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
+            setDirectives(
+                    variableDefinitionContext.directives().directive().stream()
+                            .map(Directive::new)
+                            .collect(Collectors.toList())
+            );
         }
     }
 
@@ -75,14 +77,12 @@ public class VariableDefinition {
     }
 
     public VariableDefinition setDirectives(Collection<Directive> directives) {
-        this.directives = directives;
+        this.directives.clear();
+        this.directives.addAll(directives);
         return this;
     }
 
     public VariableDefinition addDirectives(Collection<Directive> directives) {
-        if (this.directives == null) {
-            this.directives = new LinkedHashSet<>();
-        }
         this.directives.addAll(directives);
         return this;
     }

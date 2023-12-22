@@ -7,9 +7,15 @@ version = '0.0.1-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    jcenter()
+    mavenLocal()
 }
 
 dependencies {
+    implementation project(':graphoenix-core')
+
+    annotationProcessor project(':graphoenix-core')
+
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }

@@ -14,15 +14,17 @@ public class FragmentDefinition extends AbstractDefinition implements Definition
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/operation/FragmentDefinition.stg");
     private String typeName;
-    private Collection<Selection> selections;
+    private final Collection<Selection> selections = new LinkedHashSet<>();
 
     public FragmentDefinition(GraphqlParser.FragmentDefinitionContext fragmentDefinitionContext) {
         super(null, fragmentDefinitionContext.directives());
         setName(fragmentDefinitionContext.fragmentName().getText());
         this.typeName = fragmentDefinitionContext.typeCondition().typeName().name().getText();
-        this.selections = fragmentDefinitionContext.selectionSet().selection().stream()
-                .map(Selection::of)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        setSelections(
+                fragmentDefinitionContext.selectionSet().selection().stream()
+                        .map(Selection::of)
+                        .collect(Collectors.toList())
+        );
     }
 
     public String getTypeName() {
@@ -39,12 +41,13 @@ public class FragmentDefinition extends AbstractDefinition implements Definition
     }
 
     public FragmentDefinition setSelections(Collection<Selection> selections) {
-        this.selections = selections;
+        this.selections.clear();
+        this.selections.addAll(selections);
         return this;
     }
 
     @Override
-    public boolean isFragment() {
+    public boolean isFragmentDefinition() {
         return true;
     }
 

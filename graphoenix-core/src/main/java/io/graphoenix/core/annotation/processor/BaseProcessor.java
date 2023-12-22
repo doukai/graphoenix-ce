@@ -1,7 +1,6 @@
 package io.graphoenix.core.annotation.processor;
 
 import io.graphoenix.core.config.PackageConfig;
-import io.graphoenix.core.handler.DocumentBuilder;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.GraphQLConfigRegister;
 import io.graphoenix.spi.annotation.Package;
@@ -30,15 +29,14 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
-import static io.graphoenix.spi.utils.ElementUtil.getElementTypeName;
 import static io.graphoenix.spi.utils.ElementUtil.getNameFromElement;
+import static io.graphoenix.spi.utils.ElementUtil.getTypeNameFromTypeMirror;
 
 
 public abstract class BaseProcessor extends AbstractProcessor {
 
     private PackageConfig packageConfig;
     private DocumentManager documentManager;
-    private DocumentBuilder documentBuilder;
     private Types typeUtils;
 
     @Override
@@ -51,7 +49,6 @@ public abstract class BaseProcessor extends AbstractProcessor {
         ((TypesafeConfig) config).load(filer);
         packageConfig = BeanContext.get(PackageConfig.class);
         documentManager = BeanContext.get(DocumentManager.class);
-        documentBuilder = BeanContext.get(DocumentBuilder.class);
         GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
 
         try {
@@ -223,12 +220,12 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                                                         INPUT_INVOKE_PARAMETER_NAME_NAME,
                                                                         parameter.getSimpleName().toString(),
                                                                         INPUT_INVOKE_PARAMETER_CLASS_NAME_NAME,
-                                                                        getElementTypeName(parameter.asType(), typeUtils)
+                                                                        getTypeNameFromTypeMirror(parameter.asType(), typeUtils)
                                                                 )
                                                         )
                                                         .collect(Collectors.toList())
                                         ),
-                                        INPUT_INVOKE_VALUE_RETURN_CLASS_NAME_NAME, getElementTypeName(executableElement.getReturnType(), typeUtils)
+                                        INPUT_INVOKE_VALUE_RETURN_CLASS_NAME_NAME, getTypeNameFromTypeMirror(executableElement.getReturnType(), typeUtils)
                                 );
 
                                 executableElement.getParameters().stream()
@@ -242,22 +239,21 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                                         .orElseGet(() ->
                                                                 documentManager.getDocument()
                                                                         .addDefinition(new InputObjectType(inputName))
-                                                                        .getDefinition(inputName)
-                                                                        .asInputObject()
+                                                                        .getInputObjectTypeOrError(inputName)
                                                         )
                                         )
-                                        .filter(inputObjectType -> !inputObjectType.isInterface())
+                                        .filter(inputObjectType -> !inputObjectType.isInputInterface())
                                         .findFirst()
-                                        .ifPresent(inputObjectType -> {
-                                                    Optional.ofNullable(inputObjectType.getDirective(DIRECTIVE_INVOKES_NAME))
-                                                            .ifPresentOrElse(
-                                                                    directive -> directive.getArgument(DIRECTIVE_INVOKES_LIST_NAME).asArray().add(invoke),
-                                                                    () -> inputObjectType.addDirective(
-                                                                            new Directive(DIRECTIVE_INVOKES_NAME)
-                                                                                    .addArgument(DIRECTIVE_INVOKES_LIST_NAME, new ArrayValueWithVariable(invoke))
-                                                                    )
-                                                            );
-                                                }
+                                        .ifPresent(inputObjectType ->
+                                                Optional.ofNullable(inputObjectType.getDirective(DIRECTIVE_INVOKES_NAME))
+                                                        .ifPresentOrElse(
+                                                                directive -> directive.getArgument(DIRECTIVE_INVOKES_LIST_NAME).asArray().add(invoke),
+                                                                () -> inputObjectType
+                                                                        .addDirective(
+                                                                                new Directive(DIRECTIVE_INVOKES_NAME)
+                                                                                        .addArgument(DIRECTIVE_INVOKES_LIST_NAME, new ArrayValueWithVariable(invoke))
+                                                                        )
+                                                        )
                                         );
 
                                 executableElement.getParameters().stream()
@@ -271,22 +267,21 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                                         .orElseGet(() ->
                                                                 documentManager.getDocument()
                                                                         .addDefinition(new InputObjectType(inputName).addDirective(new Directive(DIRECTIVE_INTERFACE_NAME)))
-                                                                        .getDefinition(inputName)
-                                                                        .asInputObject()
+                                                                        .getInputObjectTypeOrError(inputName)
                                                         )
                                         )
-                                        .filter(InputObjectType::isInterface)
+                                        .filter(InputObjectType::isInputInterface)
                                         .flatMap(inputObjectType -> documentManager.getDocument().getImplementsInputObject(inputObjectType.getName()))
-                                        .forEach(inputObjectType -> {
-                                                    Optional.ofNullable(inputObjectType.getDirective(DIRECTIVE_INVOKES_NAME))
-                                                            .ifPresentOrElse(
-                                                                    directive -> directive.getArgument(DIRECTIVE_INVOKES_LIST_NAME).asArray().add(invoke),
-                                                                    () -> inputObjectType.addDirective(
-                                                                            new Directive(DIRECTIVE_INVOKES_NAME)
-                                                                                    .addArgument(DIRECTIVE_INVOKES_LIST_NAME, new ArrayValueWithVariable(invoke))
-                                                                    )
-                                                            );
-                                                }
+                                        .forEach(inputObjectType ->
+                                                Optional.ofNullable(inputObjectType.getDirective(DIRECTIVE_INVOKES_NAME))
+                                                        .ifPresentOrElse(
+                                                                directive -> directive.getArgument(DIRECTIVE_INVOKES_LIST_NAME).asArray().add(invoke),
+                                                                () -> inputObjectType
+                                                                        .addDirective(
+                                                                                new Directive(DIRECTIVE_INVOKES_NAME)
+                                                                                        .addArgument(DIRECTIVE_INVOKES_LIST_NAME, new ArrayValueWithVariable(invoke))
+                                                                        )
+                                                        )
                                         );
                             }
                         }

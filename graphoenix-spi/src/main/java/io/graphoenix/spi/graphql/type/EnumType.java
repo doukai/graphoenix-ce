@@ -16,54 +16,41 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.graphoenix.spi.utils.ElementUtil.getNameFromElement;
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
 public class EnumType extends AbstractDefinition implements Definition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/EnumType.stg");
-    private Map<String, EnumValue> enumValueMap;
+    private final Map<String, EnumValueDefinition> enumValueMap = new LinkedHashMap<>();
 
     public EnumType() {
         super();
-        this.enumValueMap = new LinkedHashMap<>();
     }
 
     public EnumType(String name) {
         super(name);
-        this.enumValueMap = new LinkedHashMap<>();
     }
 
     public EnumType(GraphqlParser.EnumTypeDefinitionContext enumTypeDefinitionContext) {
         super(enumTypeDefinitionContext.name(), enumTypeDefinitionContext.description(), enumTypeDefinitionContext.directives());
         if (enumTypeDefinitionContext.enumValueDefinitions() != null) {
-            this.enumValueMap = enumTypeDefinitionContext.enumValueDefinitions().enumValueDefinition().stream()
-                    .map(EnumValue::new)
-                    .collect(
-                            Collectors.toMap(
-                                    EnumValue::getName,
-                                    enumValue -> enumValue,
-                                    (x, y) -> y,
-                                    LinkedHashMap::new
-                            )
-                    );
+            setEnumValues(
+                    enumTypeDefinitionContext.enumValueDefinitions().enumValueDefinition().stream()
+                            .map(EnumValueDefinition::new)
+                            .collect(Collectors.toList())
+            );
         }
     }
 
     public EnumType(TypeElement typeElement) {
         super(typeElement);
-        this.enumValueMap = typeElement.getEnclosedElements().stream()
-                .filter(element -> element.getKind().equals(ElementKind.ENUM_CONSTANT))
-                .filter(element -> element.getAnnotation(Ignore.class) == null)
-                .map(element -> new EnumValue((VariableElement) element))
-                .collect(
-                        Collectors.toMap(
-                                EnumValue::getName,
-                                enumValue -> enumValue,
-                                (x, y) -> y,
-                                LinkedHashMap::new
-                        )
-                );
+        setEnumValues(
+                typeElement.getEnclosedElements().stream()
+                        .filter(element -> element.getKind().equals(ElementKind.ENUM_CONSTANT))
+                        .filter(element -> element.getAnnotation(Ignore.class) == null)
+                        .map(element -> new EnumValueDefinition((VariableElement) element))
+                        .collect(Collectors.toList())
+        );
     }
 
     public EnumType merge(GraphqlParser.EnumTypeDefinitionContext... enumTypeDefinitionContexts) {
@@ -83,45 +70,45 @@ public class EnumType extends AbstractDefinition implements Definition {
                                 Stream.of(enumTypes).flatMap(item -> Stream.ofNullable(item.getEnumValues()))
                         )
                         .flatMap(Collection::stream)
-                        .filter(distinctByKey(EnumValue::getName))
+                        .filter(distinctByKey(EnumValueDefinition::getName))
                         .collect(
                                 Collectors.toMap(
-                                        EnumValue::getName,
-                                        enumValue -> enumValue
+                                        EnumValueDefinition::getName,
+                                        enumValueDefinition -> enumValueDefinition
                                 )
                         )
         );
         return this;
     }
 
-    public EnumValue getEnumValue(String name) {
+    public EnumValueDefinition getEnumValue(String name) {
         return enumValueMap.get(name);
     }
 
-    public Collection<EnumValue> getEnumValues() {
+    public Collection<EnumValueDefinition> getEnumValues() {
         return enumValueMap.values();
     }
 
-    public EnumType setEnumValues(Collection<EnumValue> enumValues) {
+    public EnumType setEnumValues(Collection<EnumValueDefinition> enumValueDefinitions) {
         enumValueMap.clear();
-        return addEnumValues(enumValues);
+        return addEnumValues(enumValueDefinitions);
     }
 
-    public EnumType addEnumValues(Collection<EnumValue> enumValues) {
+    public EnumType addEnumValues(Collection<EnumValueDefinition> enumValueDefinitions) {
         this.enumValueMap.putAll(
-                enumValues.stream()
+                enumValueDefinitions.stream()
                         .collect(
                                 Collectors.toMap(
-                                        EnumValue::getName,
-                                        enumValue -> enumValue
+                                        EnumValueDefinition::getName,
+                                        enumValueDefinition -> enumValueDefinition
                                 )
                         )
         );
         return this;
     }
 
-    public EnumType addEnumValue(EnumValue enumValue) {
-        this.enumValueMap.put(enumValue.getName(), enumValue);
+    public EnumType addEnumValue(EnumValueDefinition enumValueDefinition) {
+        this.enumValueMap.put(enumValueDefinition.getName(), enumValueDefinition);
         return this;
     }
 

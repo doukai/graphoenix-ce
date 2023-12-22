@@ -1,5 +1,6 @@
 rootProject.name = 'graphoenix-ce'
 include 'graphoenix-spi'
 include 'graphoenix-core'
-include 'graphoenix-annotation-processor'
+include 'graphoenix-showcase-user'
+include 'graphoenix-json'
 

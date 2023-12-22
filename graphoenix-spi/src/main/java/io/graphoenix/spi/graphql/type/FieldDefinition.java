@@ -20,47 +20,39 @@ import static io.graphoenix.spi.utils.ElementUtil.*;
 public class FieldDefinition extends AbstractDefinition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/FieldDefinition.stg");
-    private Map<String, InputValue> argumentMap;
+    private final Map<String, InputValue> argumentMap = new LinkedHashMap<>();
     private Type type;
 
     public FieldDefinition() {
         super();
-        this.argumentMap = new LinkedHashMap<>();
     }
 
     public FieldDefinition(String name) {
         super(name);
-        this.argumentMap = new LinkedHashMap<>();
     }
 
     public FieldDefinition(GraphqlParser.FieldDefinitionContext fieldDefinitionContext) {
         super(fieldDefinitionContext.name(), fieldDefinitionContext.description(), fieldDefinitionContext.directives());
         this.type = Type.of(fieldDefinitionContext.type());
         if (fieldDefinitionContext.argumentsDefinition() != null) {
-            this.argumentMap = fieldDefinitionContext.argumentsDefinition().inputValueDefinition().stream()
-                    .map(InputValue::new)
-                    .collect(
-                            Collectors.toMap(
-                                    InputValue::getName,
-                                    inputValue -> inputValue,
-                                    (x, y) -> y,
-                                    LinkedHashMap::new
-                            )
-                    );
+            setArguments(
+                    fieldDefinitionContext.argumentsDefinition().inputValueDefinition().stream()
+                            .map(InputValue::new)
+                            .collect(Collectors.toList())
+            );
         }
     }
 
     public FieldDefinition(VariableElement variableElement, Types typeUtils) {
         super(variableElement);
         this.type = variableElementToTypeName(variableElement, typeUtils);
-        this.argumentMap = new LinkedHashMap<>();
         getFormatDirective(variableElement).ifPresent(this::addDirective);
     }
 
     public FieldDefinition(ExecutableElement executableElement, Types typeUtils) {
         super(executableElement);
         this.type = executableElementToTypeName(executableElement, typeUtils);
-        this.argumentMap = executableElementParametersToInputValues(executableElement, typeUtils);
+        setArguments(executableElementParametersToInputValues(executableElement, typeUtils));
         getFormatDirective(executableElement).ifPresent(this::addDirective);
         addDirective(
                 new Directive()
@@ -76,13 +68,13 @@ public class FieldDefinition extends AbstractDefinition {
                                                                 INPUT_INVOKE_PARAMETER_NAME_NAME,
                                                                 parameter.getSimpleName().toString(),
                                                                 INPUT_INVOKE_PARAMETER_CLASS_NAME_NAME,
-                                                                getElementTypeName(parameter.asType(), typeUtils)
+                                                                getTypeNameFromTypeMirror(parameter.asType(), typeUtils)
                                                         )
                                                 )
                                                 .collect(Collectors.toList())
                                 )
                         )
-                        .addArgument(DIRECTIVE_INVOKE_ARGUMENT_RETURN_CLASS_NAME_NAME, getElementTypeName(executableElement.getReturnType(), typeUtils))
+                        .addArgument(DIRECTIVE_INVOKE_ARGUMENT_RETURN_CLASS_NAME_NAME, getTypeNameFromTypeMirror(executableElement.getReturnType(), typeUtils))
         );
     }
 

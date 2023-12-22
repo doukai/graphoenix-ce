@@ -1,18 +1,18 @@
 package io.graphoenix.core.handler;
 
-import io.graphoenix.spi.annotation.Application;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.Document;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.InterfaceType;
 import io.graphoenix.spi.graphql.type.ObjectType;
 import io.graphoenix.spi.graphql.type.Schema;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.Optional;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
 
-@Application
+@ApplicationScoped
 public class DocumentManager {
     private final Document document = new Document();
 

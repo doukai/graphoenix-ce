@@ -20,8 +20,8 @@ public class Field extends AbstractDefinition implements Selection {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/operation/Field.stg");
     private String alias;
-    private Arguments arguments;
-    private Collection<Selection> selections;
+    private final Arguments arguments = new Arguments();
+    private final Collection<Selection> selections = new LinkedHashSet<>();
 
     public Field() {
         super();
@@ -41,27 +41,31 @@ public class Field extends AbstractDefinition implements Selection {
             this.alias = fieldContext.alias().name().getText();
         }
         if (fieldContext.arguments() != null) {
-            this.arguments = new Arguments(fieldContext.arguments());
+            setArguments(new Arguments(fieldContext.arguments()));
         }
         if (fieldContext.selectionSet() != null) {
-            this.selections = fieldContext.selectionSet().selection().stream()
-                    .map(Selection::of)
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
+            setSelections(
+                    fieldContext.selectionSet().selection().stream()
+                            .map(Selection::of)
+                            .collect(Collectors.toList())
+            );
         }
     }
 
     public Field mergeSelection(Collection<Field> fields) {
-        this.selections = Stream
-                .concat(
-                        Stream.ofNullable(this.selections)
-                                .flatMap(Collection::stream)
-                                .filter(Selection::isField)
-                                .map(selection -> (Field) selection),
-                        Stream.ofNullable(fields)
-                                .flatMap(Collection::stream)
-                )
-                .filter(distinctByKey(Field::getName))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        this.selections.addAll(
+                Stream
+                        .concat(
+                                Stream.ofNullable(this.selections)
+                                        .flatMap(Collection::stream)
+                                        .filter(Selection::isField)
+                                        .map(selection -> (Field) selection),
+                                Stream.ofNullable(fields)
+                                        .flatMap(Collection::stream)
+                        )
+                        .filter(distinctByKey(Field::getName))
+                        .collect(Collectors.toList())
+        );
         return this;
     }
 
@@ -79,56 +83,40 @@ public class Field extends AbstractDefinition implements Selection {
     }
 
     public Field setArguments(Arguments arguments) {
-        this.arguments = arguments;
+        this.arguments.clear();
+        this.arguments.putAll(arguments);
         return this;
     }
 
     public Field setArguments(JsonObject jsonObject) {
-        this.arguments = new Arguments(jsonObject);
-        return this;
+        return setArguments(new Arguments(jsonObject));
     }
 
     public Field updateArguments(JsonObject jsonObject) {
-        this.arguments = new Arguments(ValueWithVariable.updateJsonObject(this.arguments, jsonObject));
-        return this;
+        return setArguments(new Arguments(ValueWithVariable.updateJsonObject(this.arguments, jsonObject)));
     }
 
     public Field addArguments(Arguments arguments) {
-        if (this.arguments == null) {
-            this.arguments = new Arguments();
-        }
         this.arguments.putAll(arguments);
         return this;
     }
 
     public Field addArguments(JsonObject jsonObject) {
-        if (this.arguments == null) {
-            this.arguments = new Arguments();
-        }
         this.arguments.putAll(jsonObject);
         return this;
     }
 
     public Field addArgument(String name, Object valueWithVariable) {
-        if (this.arguments == null) {
-            this.arguments = new Arguments();
-        }
         this.arguments.put(name, valueWithVariable);
         return this;
     }
 
     public Field addArgument(String name, ValueWithVariable valueWithVariable) {
-        if (this.arguments == null) {
-            this.arguments = new Arguments();
-        }
         this.arguments.put(name, valueWithVariable);
         return this;
     }
 
     public Field addArgument(String name, JsonValue valueWithVariable) {
-        if (this.arguments == null) {
-            this.arguments = new Arguments();
-        }
         this.arguments.put(name, valueWithVariable);
         return this;
     }
@@ -147,22 +135,17 @@ public class Field extends AbstractDefinition implements Selection {
     }
 
     public Field setSelections(Collection<Selection> selections) {
-        this.selections = selections;
+        this.selections.clear();
+        this.selections.addAll(selections);
         return this;
     }
 
     public Field addSelection(Selection selection) {
-        if (this.selections == null) {
-            this.selections = new LinkedHashSet<>();
-        }
         this.selections.add(selection);
         return this;
     }
 
     public Field addSelections(Collection<Selection> selections) {
-        if (this.selections == null) {
-            this.selections = new LinkedHashSet<>();
-        }
         this.selections.addAll(selections);
         return this;
     }

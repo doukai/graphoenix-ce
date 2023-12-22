@@ -3,6 +3,7 @@ package io.graphoenix.spi.utils;
 import com.google.common.base.CaseFormat;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
 
@@ -21,8 +22,9 @@ public final class NameUtil {
     }
 
     public static String getRelationTypeName(String... typeNames) {
-        Arrays.sort(typeNames);
-        return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, String.join("_", typeNames)) + SUFFIX_RELATION;
+        String[] upperCamelTypeNames = Arrays.stream(typeNames).map(name -> CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, name)).toArray(String[]::new);
+        Arrays.sort(upperCamelTypeNames);
+        return String.join("", upperCamelTypeNames) + SUFFIX_RELATION;
     }
 
     public static String getTypeRefFieldName(String typeName) {

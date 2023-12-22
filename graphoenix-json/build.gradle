@@ -1,0 +1,31 @@
+plugins {
+    id 'java'
+}
+
+group = 'io.graphoenix'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    jcenter()
+    mavenLocal()
+}
+
+dependencies {
+    compile 'org.eclipse.parsson:jakarta.json:1.1.1'
+    compile 'com.dslplatform:dsl-json-java8:1.9.9'
+
+    implementation project(':graphoenix-spi')
+    implementation 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
+    implementation 'com.google.auto.service:auto-service:1.0.1'
+
+    annotationProcessor project(':graphoenix-spi')
+    annotationProcessor 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
+
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}

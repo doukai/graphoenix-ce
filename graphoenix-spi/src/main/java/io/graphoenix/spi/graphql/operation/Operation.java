@@ -17,19 +17,15 @@ public class Operation extends AbstractDefinition implements Definition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/operation/Operation.stg");
     private String operationType;
-    private Map<String, VariableDefinition> variableDefinitionMap;
-    private Collection<Selection> selections;
+    private final Map<String, VariableDefinition> variableDefinitionMap = new LinkedHashMap<>();
+    private final Collection<Selection> selections = new LinkedHashSet<>();
 
     public Operation() {
         super();
-        this.variableDefinitionMap = new LinkedHashMap<>();
-        this.selections = new LinkedHashSet<>();
     }
 
     public Operation(String name) {
         super(name);
-        this.variableDefinitionMap = new LinkedHashMap<>();
-        this.selections = new LinkedHashSet<>();
     }
 
     public Operation(GraphqlParser.OperationDefinitionContext operationDefinitionContext) {
@@ -40,20 +36,17 @@ public class Operation extends AbstractDefinition implements Definition {
             this.operationType = "query";
         }
         if (operationDefinitionContext.variableDefinitions() != null) {
-            this.variableDefinitionMap = operationDefinitionContext.variableDefinitions().variableDefinition().stream()
-                    .map(VariableDefinition::new)
-                    .collect(
-                            Collectors.toMap(
-                                    variableDefinition -> variableDefinition.getVariable().getName(),
-                                    variableDefinition -> variableDefinition,
-                                    (x, y) -> y,
-                                    LinkedHashMap::new
-                            )
-                    );
+            setVariableDefinitions(
+                    operationDefinitionContext.variableDefinitions().variableDefinition().stream()
+                            .map(VariableDefinition::new)
+                            .collect(Collectors.toList())
+            );
         }
-        this.selections = operationDefinitionContext.selectionSet().selection().stream()
-                .map(Selection::of)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        setSelections(
+                operationDefinitionContext.selectionSet().selection().stream()
+                        .map(Selection::of)
+                        .collect(Collectors.toList())
+        );
     }
 
     public String getOperationType() {
@@ -101,14 +94,12 @@ public class Operation extends AbstractDefinition implements Definition {
     }
 
     public Operation setSelections(Collection<Selection> selections) {
-        this.selections = selections;
+        this.selections.clear();
+        this.selections.addAll(selections);
         return this;
     }
 
     public Operation addSelections(Collection<Selection> selections) {
-        if (this.selections == null) {
-            this.selections = new LinkedHashSet<>();
-        }
         this.selections.addAll(selections);
         return this;
     }
@@ -123,9 +114,6 @@ public class Operation extends AbstractDefinition implements Definition {
     }
 
     public Operation addSelection(Selection selection) {
-        if (this.selections == null) {
-            this.selections = new LinkedHashSet<>();
-        }
         this.selections.add(selection);
         return this;
     }

@@ -21,64 +21,54 @@ import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_CURSOR_NAME;
 import static io.graphoenix.spi.constant.Hammurabi.SCALA_ID_NAME;
 import static io.graphoenix.spi.error.GraphQLErrorType.TYPE_ID_FIELD_NOT_EXIST;
 import static io.graphoenix.spi.utils.DocumentUtil.getImplementsInterfaces;
+import static io.graphoenix.spi.utils.ElementUtil.getNameFromElement;
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
 public class ObjectType extends AbstractDefinition implements Definition, FieldsType {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/ObjectType.stg");
-    private Collection<String> interfaces;
-    private Map<String, FieldDefinition> fieldDefinitionMap;
+    private final Collection<String> interfaces = new LinkedHashSet<>();
+    private final Map<String, FieldDefinition> fieldDefinitionMap = new LinkedHashMap<>();
 
     public ObjectType() {
         super();
-        this.interfaces = new LinkedHashSet<>();
-        this.fieldDefinitionMap = new LinkedHashMap<>();
     }
 
     public ObjectType(String name) {
         super(name);
-        this.interfaces = new LinkedHashSet<>();
-        this.fieldDefinitionMap = new LinkedHashMap<>();
     }
 
     public ObjectType(GraphqlParser.ObjectTypeDefinitionContext objectTypeDefinitionContext) {
         super(objectTypeDefinitionContext.name(), objectTypeDefinitionContext.description(), objectTypeDefinitionContext.directives());
         if (objectTypeDefinitionContext.implementsInterfaces() != null) {
-            this.interfaces = getImplementsInterfaces(objectTypeDefinitionContext.implementsInterfaces())
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
+            setInterfaces(
+                    getImplementsInterfaces(objectTypeDefinitionContext.implementsInterfaces())
+                            .collect(Collectors.toCollection(LinkedHashSet::new))
+            );
         }
         if (objectTypeDefinitionContext.fieldsDefinition() != null) {
-            this.fieldDefinitionMap = objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().stream()
-                    .map(FieldDefinition::new)
-                    .collect(
-                            Collectors.toMap(
-                                    FieldDefinition::getName,
-                                    fieldDefinition -> fieldDefinition,
-                                    (x, y) -> y,
-                                    LinkedHashMap::new
-                            )
-                    );
+            setFields(
+                    objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().stream()
+                            .map(FieldDefinition::new)
+                            .collect(Collectors.toList())
+            );
         }
     }
 
     public ObjectType(TypeElement typeElement, Types typeUtils) {
         super(typeElement);
-        this.interfaces = typeElement.getInterfaces().stream()
-                .map(typeMirror -> typeUtils.asElement(typeMirror).getSimpleName().toString())
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-        this.fieldDefinitionMap =
+        setInterfaces(
+                typeElement.getInterfaces().stream()
+                        .map(typeMirror -> getNameFromElement(typeUtils.asElement(typeMirror)))
+                        .collect(Collectors.toCollection(LinkedHashSet::new))
+        );
+        setFields(
                 typeElement.getEnclosedElements().stream()
                         .filter(element -> element.getKind().equals(ElementKind.FIELD))
                         .filter(element -> element.getAnnotation(Ignore.class) == null)
                         .map(element -> new FieldDefinition((VariableElement) element, typeUtils))
-                        .collect(
-                                Collectors.toMap(
-                                        FieldDefinition::getName,
-                                        fieldDefinition -> fieldDefinition,
-                                        (x, y) -> y,
-                                        LinkedHashMap::new
-                                )
-                        );
+                        .collect(Collectors.toList())
+        );
     }
 
     public ObjectType merge(GraphqlParser.ObjectTypeDefinitionContext... objectTypeDefinitionContexts) {
@@ -125,7 +115,8 @@ public class ObjectType extends AbstractDefinition implements Definition, Fields
     }
 
     public ObjectType setInterfaces(Collection<String> interfaces) {
-        this.interfaces = interfaces;
+        this.interfaces.clear();
+        this.interfaces.addAll(interfaces);
         return this;
     }
 

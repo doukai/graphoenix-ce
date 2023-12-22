@@ -7,7 +7,6 @@ import jakarta.inject.Inject;
 import org.tinylog.Logger;
 
 import javax.annotation.processing.Filer;
-import javax.tools.StandardLocation;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,7 +15,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.core.utils.FilerUtil.*;
@@ -93,36 +91,35 @@ public class GraphQLConfigRegister {
     }
 
     public void registerPackage(ClassLoader classLoader, boolean application) throws IOException, URISyntaxException {
-        Iterator<URL> urlIterator = Objects.requireNonNull(classLoader.getResources("META-INF/graphql")).asIterator();
-        while (urlIterator.hasNext()) {
-            URI uri = urlIterator.next().toURI();
-            List<Path> pathList;
+        Enumeration<URL> urlEnumeration = classLoader.getResources("META-INF/graphql");
+        while (urlEnumeration.hasMoreElements()) {
+            URL url = urlEnumeration.nextElement();
+            URI uri = url.toURI();
             try (Stream<Path> pathStream = Files.list(Path.of(uri))) {
-                pathList = pathStream.collect(Collectors.toList());
+                registerPackage(pathStream, application);
             } catch (FileSystemNotFoundException fileSystemNotFoundException) {
                 Map<String, String> env = new HashMap<>();
                 try (FileSystem fileSystem = FileSystems.newFileSystem(uri, env);
                      Stream<Path> pathStream = Files.list(fileSystem.getPath("META-INF/graphql"))) {
-                    pathList = pathStream.collect(Collectors.toList());
+                    registerPackage(pathStream, application);
                 }
             }
-            try {
-                pathList.stream()
-                        .filter(path -> !path.getFileName().toString().equals("main.gql"))
-                        .filter(path -> application || !path.getFileName().toString().equals(packageConfig.getPackageName() + ".gql"))
-                        .forEach(path -> {
-                                    try {
-                                        documentManager.getDocument().merge(path);
-                                    } catch (IOException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                    Logger.info("registered preset path {} from {}", path, classLoader.getName());
-                                }
-                        );
-            } catch (IllegalArgumentException e) {
-                Logger.warn(e);
-            }
         }
+    }
+
+    public void registerPackage(Stream<Path> pathStream, boolean application) {
+        pathStream
+                .filter(path -> !path.getFileName().toString().equals("main.gql"))
+                .filter(path -> application || !path.getFileName().toString().equals(packageConfig.getPackageName() + ".gql"))
+                .forEach(path -> {
+                            try {
+                                documentManager.getDocument().merge(path);
+                                Logger.info("registered preset path {}", path);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                );
     }
 
     public void registerPackage() throws IOException, URISyntaxException {

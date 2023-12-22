@@ -50,7 +50,7 @@ public class Hammurabi {
     public static final String INPUT_VALUE_OPERATOR_ARR_NAME = "arr";
     public static final String INPUT_VALUE_WITH_TYPE_NAME = "type";
     public static final String INPUT_VALUE_WITH_FROM_NAME = "from";
-    public static final String INPUT_VALUE_WITH_TO_NAME = "from";
+    public static final String INPUT_VALUE_WITH_TO_NAME = "to";
     public static final String INPUT_INVOKE_NAME = "Invoke";
     public static final String INPUT_INVOKE_VALUE_CLASS_NAME_NAME = "className";
     public static final String INPUT_INVOKE_VALUE_METHOD_NAME_NAME = "methodName";

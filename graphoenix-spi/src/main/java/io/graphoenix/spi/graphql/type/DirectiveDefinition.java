@@ -15,34 +15,27 @@ import java.util.stream.Collectors;
 public class DirectiveDefinition extends AbstractDefinition implements Definition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/DirectiveDefinition.stg");
-    private Map<String, InputValue> argumentMap;
-    private Collection<String> directiveLocations;
+    private final Map<String, InputValue> argumentMap = new LinkedHashMap<>();
+    private final Collection<String> directiveLocations = new LinkedHashSet<>();
 
     public DirectiveDefinition() {
         super();
-        this.argumentMap = new LinkedHashMap<>();
     }
 
     public DirectiveDefinition(String name) {
         super(name);
-        this.argumentMap = new LinkedHashMap<>();
     }
 
     public DirectiveDefinition(GraphqlParser.DirectiveDefinitionContext directiveDefinitionContext) {
         super(directiveDefinitionContext.name(), directiveDefinitionContext.description());
         if (directiveDefinitionContext.argumentsDefinition() != null) {
-            this.argumentMap = directiveDefinitionContext.argumentsDefinition().inputValueDefinition().stream()
-                    .map(InputValue::new)
-                    .collect(
-                            Collectors.toMap(
-                                    InputValue::getName,
-                                    inputValue -> inputValue,
-                                    (x, y) -> y,
-                                    LinkedHashMap::new
-                            )
-                    );
+            setArguments(
+                    directiveDefinitionContext.argumentsDefinition().inputValueDefinition().stream()
+                            .map(InputValue::new)
+                            .collect(Collectors.toList())
+            );
         }
-        this.directiveLocations = directiveLocationList(directiveDefinitionContext.directiveLocations());
+        setDirectiveLocations(directiveLocationList(directiveDefinitionContext.directiveLocations()));
     }
 
     public Collection<String> directiveLocationList(GraphqlParser.DirectiveLocationsContext directiveLocationsContext) {
@@ -88,7 +81,8 @@ public class DirectiveDefinition extends AbstractDefinition implements Definitio
     }
 
     public DirectiveDefinition setDirectiveLocations(Collection<String> directiveLocations) {
-        this.directiveLocations = directiveLocations;
+        this.directiveLocations.clear();
+        this.directiveLocations.addAll(directiveLocations);
         return this;
     }
 

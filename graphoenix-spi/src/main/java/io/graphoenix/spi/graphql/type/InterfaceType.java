@@ -26,59 +26,48 @@ import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 public class InterfaceType extends AbstractDefinition implements Definition, FieldsType {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/InterfaceType.stg");
-    private Collection<String> interfaces;
-    private Map<String, FieldDefinition> fieldDefinitionMap;
+    private final Collection<String> interfaces = new LinkedHashSet<>();
+    private final Map<String, FieldDefinition> fieldDefinitionMap = new LinkedHashMap<>();
 
     public InterfaceType() {
         super();
-        this.interfaces = new LinkedHashSet<>();
-        this.fieldDefinitionMap = new LinkedHashMap<>();
     }
 
     public InterfaceType(String name) {
         super(name);
-        this.interfaces = new LinkedHashSet<>();
-        this.fieldDefinitionMap = new LinkedHashMap<>();
     }
 
     public InterfaceType(GraphqlParser.InterfaceTypeDefinitionContext interfaceTypeDefinitionContext) {
         super(interfaceTypeDefinitionContext.name(), interfaceTypeDefinitionContext.description(), interfaceTypeDefinitionContext.directives());
         if (interfaceTypeDefinitionContext.implementsInterfaces() != null) {
-            this.interfaces = getImplementsInterfaces(interfaceTypeDefinitionContext.implementsInterfaces())
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
+            setInterfaces(
+                    getImplementsInterfaces(interfaceTypeDefinitionContext.implementsInterfaces())
+                            .collect(Collectors.toList())
+            );
         }
         if (interfaceTypeDefinitionContext.fieldsDefinition() != null) {
-            this.fieldDefinitionMap = interfaceTypeDefinitionContext.fieldsDefinition().fieldDefinition().stream()
-                    .map(FieldDefinition::new)
-                    .collect(
-                            Collectors.toMap(
-                                    FieldDefinition::getName,
-                                    fieldDefinition -> fieldDefinition,
-                                    (x, y) -> y,
-                                    LinkedHashMap::new
-                            )
-                    );
+            setFields(
+                    interfaceTypeDefinitionContext.fieldsDefinition().fieldDefinition().stream()
+                            .map(FieldDefinition::new)
+                            .collect(Collectors.toList())
+            );
         }
     }
 
     public InterfaceType(TypeElement typeElement, Types typeUtils) {
         super(typeElement);
-        this.interfaces = typeElement.getInterfaces().stream()
-                .map(typeMirror -> typeUtils.asElement(typeMirror).getSimpleName().toString())
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-        this.fieldDefinitionMap =
+        setInterfaces(
+                typeElement.getInterfaces().stream()
+                        .map(typeMirror -> getNameFromElement(typeUtils.asElement(typeMirror)))
+                        .collect(Collectors.toList())
+        );
+        setFields(
                 typeElement.getEnclosedElements().stream()
                         .filter(element -> element.getKind().equals(ElementKind.FIELD))
                         .filter(element -> element.getAnnotation(Ignore.class) == null)
                         .map(element -> new FieldDefinition((VariableElement) element, typeUtils))
-                        .collect(
-                                Collectors.toMap(
-                                        FieldDefinition::getName,
-                                        fieldDefinition -> fieldDefinition,
-                                        (x, y) -> y,
-                                        LinkedHashMap::new
-                                )
-                        );
+                        .collect(Collectors.toList())
+        );
     }
 
     public InterfaceType merge(GraphqlParser.InterfaceTypeDefinitionContext... interfaceTypeDefinitionContexts) {
@@ -91,13 +80,15 @@ public class InterfaceType extends AbstractDefinition implements Definition, Fie
 
     public InterfaceType merge(InterfaceType... interfaceTypes) {
         super.merge(interfaceTypes);
-        interfaces = Stream
-                .concat(
-                        Stream.ofNullable(interfaces),
-                        Stream.of(interfaceTypes).flatMap(item -> Stream.ofNullable(item.getInterfaces()))
-                )
-                .flatMap(Collection::stream)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        interfaces.addAll(
+                Stream
+                        .concat(
+                                Stream.ofNullable(interfaces),
+                                Stream.of(interfaceTypes).flatMap(item -> Stream.ofNullable(item.getInterfaces()))
+                        )
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toCollection(LinkedHashSet::new))
+        );
 
         fieldDefinitionMap.putAll(
                 Stream
@@ -123,7 +114,8 @@ public class InterfaceType extends AbstractDefinition implements Definition, Fie
     }
 
     public InterfaceType setInterfaces(Collection<String> interfaces) {
-        this.interfaces = interfaces;
+        this.interfaces.clear();
+        this.interfaces.addAll(interfaces);
         return this;
     }
 
