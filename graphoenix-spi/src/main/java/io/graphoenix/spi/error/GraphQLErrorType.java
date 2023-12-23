@@ -50,7 +50,7 @@ public enum GraphQLErrorType {
     MAP_WITH_FROM_FIELD_NOT_EXIST(-61, "map with type from field not exist: %s"),
     MAP_WITH_TO_FIELD_NOT_EXIST(-62, "map with type to field not exist: %s"),
 
-    CLASS_NAME_ARGUMENT_NOT_EXIST(-71, "className not exist in @classInfo directive: %s"),
+    CLASS_NAME_ARGUMENT_NOT_EXIST(-71, "name not exist in @class directive: %s"),
     ANNOTATION_NAME_ARGUMENT_NOT_EXIST(-72, "annotationName not exist in @classInfo directive: %s"),
     GRPC_CLASS_NAME_ARGUMENT_NOT_EXIST(-73, "grpcClassName not exist in @classInfo directive: %s"),
     METHOD_NAME_ARGUMENT_NOT_EXIST(-74, "methodName not exist in @invoke directive: %s"),

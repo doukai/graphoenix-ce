@@ -1,7 +1,9 @@
 package io.graphoenix.spi.graphql.type;
 
 import graphql.parser.antlr.GraphqlParser;
-import io.graphoenix.spi.error.GraphQLErrors;;import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_FIELD_TYPE;
+import io.graphoenix.spi.error.GraphQLErrors;
+
+import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_FIELD_TYPE;
 import static io.graphoenix.spi.utils.DocumentUtil.graphqlToType;
 
 public interface Type {
@@ -31,6 +33,18 @@ public interface Type {
 
     default boolean isNonNull() {
         return false;
+    }
+
+    default ListType asListType() {
+        return (ListType) this;
+    }
+
+    default NonNullType asNonNullType() {
+        return (NonNullType) this;
+    }
+
+    default TypeName asTypeName() {
+        return (TypeName) this;
     }
 
     default TypeName getTypeName() {

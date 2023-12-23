@@ -1,6 +1,8 @@
 package io.graphoenix.spi.graphql;
 
 import graphql.parser.antlr.GraphqlParser;
+import io.graphoenix.spi.error.GraphQLErrors;
+import io.graphoenix.spi.graphql.common.BooleanValue;
 import io.graphoenix.spi.graphql.common.Directive;
 import io.graphoenix.spi.graphql.common.StringValue;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
+import static io.graphoenix.spi.error.GraphQLErrorType.CLASS_NAME_ARGUMENT_NOT_EXIST;
 import static io.graphoenix.spi.utils.DocumentUtil.getStringValue;
 import static io.graphoenix.spi.utils.ElementUtil.*;
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
@@ -195,6 +198,21 @@ public abstract class AbstractDefinition implements Definition {
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> (StringValue) valueWithVariable)
                 .map(StringValue::getString);
+    }
+
+    @Override
+    public boolean classExists() {
+        return Optional.ofNullable(directiveMap.get(DIRECTIVE_CLASS_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_CLASS_ARGUMENT_EXISTS_NAME)))
+                .filter(ValueWithVariable::isBoolean)
+                .map(valueWithVariable -> (BooleanValue) valueWithVariable)
+                .map(BooleanValue::getValue)
+                .orElse(false);
+    }
+
+    @Override
+    public String getClassNameOrError() {
+        return getClassName().orElseThrow(() -> new GraphQLErrors(CLASS_NAME_ARGUMENT_NOT_EXIST));
     }
 
     public boolean isContainer() {

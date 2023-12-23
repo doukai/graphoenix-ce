@@ -2,7 +2,6 @@ package io.graphoenix.spi.graphql;
 
 import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.graphql.common.Directive;
-import io.graphoenix.spi.graphql.operation.Fragment;
 import io.graphoenix.spi.graphql.operation.FragmentDefinition;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.*;
@@ -84,8 +83,8 @@ public interface Definition {
         return (InputObjectType) this;
     }
 
-    default Directive asDirective() {
-        return (Directive) this;
+    default DirectiveDefinition asDirective() {
+        return (DirectiveDefinition) this;
     }
 
     default Operation asOperation() {
@@ -101,6 +100,10 @@ public interface Definition {
     Optional<String> getPackageName();
 
     Optional<String> getClassName();
+
+    boolean classExists();
+
+    String getClassNameOrError();
 
     String toString();
 

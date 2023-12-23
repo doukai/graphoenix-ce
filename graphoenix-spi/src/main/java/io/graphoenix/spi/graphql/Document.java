@@ -250,6 +250,45 @@ public class Document {
         return getObjectType(name).orElseThrow(() -> new GraphQLErrors(TYPE_NOT_EXIST.bind(name)));
     }
 
+    public Optional<InterfaceType> getInterfaceType(String name) {
+        return Optional.ofNullable(getDefinition(name))
+                .map(Definition::asInterface);
+    }
+
+    public InterfaceType getInterfaceTypeOrError(String name) {
+        return getInterfaceType(name).orElseThrow(() -> new GraphQLErrors(TYPE_NOT_EXIST.bind(name)));
+    }
+
+    public Stream<ObjectType> getObjectTypes() {
+        return getDefinitions().stream()
+                .filter(Definition::isObject)
+                .map(Definition::asObject);
+    }
+
+    public Stream<InterfaceType> getInterfaceTypes() {
+        return getDefinitions().stream()
+                .filter(Definition::isInterface)
+                .map(Definition::asInterface);
+    }
+
+    public Stream<InputObjectType> getInputObjectTypes() {
+        return getDefinitions().stream()
+                .filter(Definition::isInputObject)
+                .map(Definition::asInputObject);
+    }
+
+    public Stream<EnumType> getEnums() {
+        return getDefinitions().stream()
+                .filter(Definition::isEnum)
+                .map(Definition::asEnum);
+    }
+
+    public Stream<DirectiveDefinition> getDirectives() {
+        return getDefinitions().stream()
+                .filter(Definition::isDirective)
+                .map(Definition::asDirective);
+    }
+
     public Stream<ObjectType> getImplementsObjectType(String name) {
         return getDefinitions().stream()
                 .filter(Definition::isObject)

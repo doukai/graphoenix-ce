@@ -3,4 +3,5 @@ include 'graphoenix-spi'
 include 'graphoenix-core'
 include 'graphoenix-showcase-user'
 include 'graphoenix-json'
+include 'graphoenix-java'
 
