@@ -168,8 +168,12 @@ public class DocumentBuilder {
         return document;
     }
 
-    public void buildInvoker(Document document) {
-        document
+    public Document buildInvoker() {
+        return buildInvoker(documentManager.getDocument());
+    }
+
+    public Document buildInvoker(Document document) {
+        return document
                 .addDefinitions(buildQueryTypeInvokeFieldArguments(document))
                 .addDefinitions(buildMutationTypeInvokeFieldsArguments(document))
                 .addDefinitions(buildSubscriptionTypeInvokeFieldsArguments(document));
@@ -274,7 +278,7 @@ public class DocumentBuilder {
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_CLASS_NAME)
-                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + fieldDefinition.getMapWithType())
+                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + fieldDefinition.getMapWithType())
                 );
 
         documentManager.getFieldMapToFieldDefinition(fieldDefinition)
@@ -330,7 +334,7 @@ public class DocumentBuilder {
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_CLASS_NAME)
-                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + fieldDefinition.getFetchWithType())
+                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + fieldDefinition.getFetchWithType())
                 );
 
         documentManager.getFieldFetchToFieldDefinition(fieldDefinition)
@@ -370,7 +374,7 @@ public class DocumentBuilder {
         if (objectType.getClassName().isEmpty()) {
             objectType.addDirective(
                     new Directive(DIRECTIVE_CLASS_NAME)
-                            .addArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + objectType.getName())
+                            .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + objectType.getName())
             );
         }
 
@@ -501,7 +505,7 @@ public class DocumentBuilder {
         if (interfaceType.getClassName().isEmpty()) {
             interfaceType.addDirective(
                     new Directive(DIRECTIVE_CLASS_NAME)
-                            .addArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME, packageConfig.getInterfaceTypePackageName() + "." + interfaceType.getName())
+                            .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInterfaceTypePackageName() + "." + interfaceType.getName())
             );
         }
         return interfaceType;
@@ -518,7 +522,7 @@ public class DocumentBuilder {
         if (inputObjectType.getClassName().isEmpty()) {
             inputObjectType.addDirective(
                     new Directive(DIRECTIVE_CLASS_NAME)
-                            .addArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + inputObjectType.getName())
+                            .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + inputObjectType.getName())
             );
         }
         return inputObjectType;
@@ -535,7 +539,7 @@ public class DocumentBuilder {
         if (enumType.getClassName().isEmpty()) {
             enumType.addDirective(
                     new Directive(DIRECTIVE_CLASS_NAME)
-                            .addArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME, packageConfig.getEnumTypePackageName() + "." + enumType.getName())
+                            .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getEnumTypePackageName() + "." + enumType.getName())
             );
         }
         return enumType;
@@ -752,7 +756,7 @@ public class DocumentBuilder {
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_CLASS_NAME)
-                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + fieldsType.getName() + InputType.EXPRESSION)
+                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + fieldsType.getName() + InputType.EXPRESSION)
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_IMPLEMENTS_NAME)
@@ -781,7 +785,7 @@ public class DocumentBuilder {
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_CLASS_NAME)
-                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + fieldsType.getName() + InputType.INPUT)
+                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + fieldsType.getName() + InputType.INPUT)
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_IMPLEMENTS_NAME)
@@ -809,7 +813,7 @@ public class DocumentBuilder {
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_CLASS_NAME)
-                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + fieldsType.getName() + InputType.ORDER_BY)
+                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + fieldsType.getName() + InputType.ORDER_BY)
                 );
     }
 
@@ -824,7 +828,7 @@ public class DocumentBuilder {
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_CLASS_NAME)
-                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + enumType.getName() + InputType.EXPRESSION)
+                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + enumType.getName() + InputType.EXPRESSION)
                 );
     }
 
@@ -839,7 +843,7 @@ public class DocumentBuilder {
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_CLASS_NAME)
-                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + objectType.getName() + InputType.CONNECTION)
+                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + objectType.getName() + InputType.CONNECTION)
                 )
                 .addDirective(new Directive(DIRECTIVE_CONTAINER_NAME));
     }
@@ -858,7 +862,7 @@ public class DocumentBuilder {
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_CLASS_NAME)
-                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + objectType.getName() + InputType.EDGE)
+                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + objectType.getName() + InputType.EDGE)
                 )
                 .addDirective(new Directive(DIRECTIVE_CONTAINER_NAME));
     }
@@ -1196,7 +1200,7 @@ public class DocumentBuilder {
                     .setName(objectType.getName() + queryOperationType.getName() + inputType)
                     .addDirective(
                             new Directive(DIRECTIVE_CLASS_NAME)
-                                    .addArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + queryOperationType.getName() + inputType)
+                                    .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + queryOperationType.getName() + inputType)
                     )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
@@ -1223,7 +1227,7 @@ public class DocumentBuilder {
                     .setName(objectType.getName() + subscriptionOperation.getName() + inputType)
                     .addDirective(
                             new Directive(DIRECTIVE_CLASS_NAME)
-                                    .addArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + subscriptionOperation.getName() + inputType)
+                                    .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + subscriptionOperation.getName() + inputType)
                     )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
@@ -1247,7 +1251,7 @@ public class DocumentBuilder {
                     .setName(objectType.getName() + mutationOperationType.getName() + inputType)
                     .addDirective(
                             new Directive(DIRECTIVE_CLASS_NAME)
-                                    .addArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + mutationOperationType.getName() + inputType)
+                                    .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + mutationOperationType.getName() + inputType)
                     )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
@@ -1290,7 +1294,7 @@ public class DocumentBuilder {
                     .setName(objectType.getName() + SUFFIX_LIST + queryOperationType.getName() + inputType)
                     .addDirective(
                             new Directive(DIRECTIVE_CLASS_NAME)
-                                    .addArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + SUFFIX_LIST + queryOperationType.getName() + inputType)
+                                    .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + SUFFIX_LIST + queryOperationType.getName() + inputType)
                     )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
@@ -1328,7 +1332,7 @@ public class DocumentBuilder {
                     .setName(objectType.getName() + SUFFIX_LIST + subscriptionOperationType.getName() + inputType)
                     .addDirective(
                             new Directive(DIRECTIVE_CLASS_NAME)
-                                    .addArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + SUFFIX_LIST + subscriptionOperationType.getName() + inputType)
+                                    .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + SUFFIX_LIST + subscriptionOperationType.getName() + inputType)
                     )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
@@ -1360,7 +1364,7 @@ public class DocumentBuilder {
                     .setName(objectType.getName() + SUFFIX_LIST + mutationOperationType.getName() + inputType)
                     .addDirective(
                             new Directive(DIRECTIVE_CLASS_NAME)
-                                    .addArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + SUFFIX_LIST + mutationOperationType.getName() + inputType)
+                                    .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + SUFFIX_LIST + mutationOperationType.getName() + inputType)
                     )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
@@ -1403,7 +1407,7 @@ public class DocumentBuilder {
                     .setName(objectType.getName() + SUFFIX_CONNECTION + queryOperationType.getName() + inputType)
                     .addDirective(
                             new Directive(DIRECTIVE_CLASS_NAME)
-                                    .addArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + SUFFIX_CONNECTION + queryOperationType.getName() + inputType)
+                                    .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + SUFFIX_CONNECTION + queryOperationType.getName() + inputType)
                     )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
@@ -1441,7 +1445,7 @@ public class DocumentBuilder {
                     .setName(objectType.getName() + SUFFIX_CONNECTION + subscriptionOperationType.getName() + inputType)
                     .addDirective(
                             new Directive(DIRECTIVE_CLASS_NAME)
-                                    .addArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + SUFFIX_CONNECTION + subscriptionOperationType.getName() + inputType)
+                                    .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + SUFFIX_CONNECTION + subscriptionOperationType.getName() + inputType)
                     )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)

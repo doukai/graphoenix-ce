@@ -4,4 +4,5 @@ include 'graphoenix-core'
 include 'graphoenix-showcase-user'
 include 'graphoenix-json'
 include 'graphoenix-java'
+include 'graphoenix-gradle-plugin'
 

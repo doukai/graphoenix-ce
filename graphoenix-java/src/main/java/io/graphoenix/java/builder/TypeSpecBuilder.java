@@ -91,12 +91,13 @@ public class TypeSpecBuilder {
             );
         }
         if (objectType.getDescription() != null) {
-            builder.addJavadoc("$L", objectType.getDescription());
-            builder.addAnnotation(
-                    AnnotationSpec.builder(Description.class)
-                            .addMember("value", "$S", objectType.getDescription())
-                            .build()
-            );
+            builder
+                    .addJavadoc("$L", objectType.getDescription())
+                    .addAnnotation(
+                            AnnotationSpec.builder(Description.class)
+                                    .addMember("value", "$S", objectType.getDescription())
+                                    .build()
+                    );
         }
         Logger.info("class {} build success", objectType.getName());
         return builder.build();
@@ -152,12 +153,13 @@ public class TypeSpecBuilder {
             );
         }
         if (inputObjectType.getDescription() != null) {
-            builder.addJavadoc("$L", inputObjectType.getDescription());
-            builder.addAnnotation(
-                    AnnotationSpec.builder(Description.class)
-                            .addMember("value", "$S", inputObjectType.getDescription())
-                            .build()
-            );
+            builder
+                    .addJavadoc("$L", inputObjectType.getDescription())
+                    .addAnnotation(
+                            AnnotationSpec.builder(Description.class)
+                                    .addMember("value", "$S", inputObjectType.getDescription())
+                                    .build()
+                    );
         }
         Logger.info("input class {} build success", inputObjectType.getName());
         return builder.build();
@@ -175,12 +177,13 @@ public class TypeSpecBuilder {
                 .forEach(builder::addEnumConstant);
 
         if (enumType.getDescription() != null) {
-            builder.addJavadoc("$L", enumType.getDescription());
-            builder.addAnnotation(
-                    AnnotationSpec.builder(Description.class)
-                            .addMember("value", "$S", enumType.getDescription())
-                            .build()
-            );
+            builder
+                    .addJavadoc("$L", enumType.getDescription())
+                    .addAnnotation(
+                            AnnotationSpec.builder(Description.class)
+                                    .addMember("value", "$S", enumType.getDescription())
+                                    .build()
+                    );
         }
         Logger.info("enum {} build success", enumType.getName());
         return builder.build();
@@ -220,12 +223,13 @@ public class TypeSpecBuilder {
             );
         }
         if (interfaceType.getDescription() != null) {
-            builder.addJavadoc("$L", interfaceType.getDescription());
-            builder.addAnnotation(
-                    AnnotationSpec.builder(Description.class)
-                            .addMember("value", "$S", interfaceType.getDescription())
-                            .build()
-            );
+            builder
+                    .addJavadoc("$L", interfaceType.getDescription())
+                    .addAnnotation(
+                            AnnotationSpec.builder(Description.class)
+                                    .addMember("value", "$S", interfaceType.getDescription())
+                                    .build()
+                    );
         }
         Logger.info("interface {} build success", interfaceType.getName());
         return builder.build();
@@ -257,30 +261,31 @@ public class TypeSpecBuilder {
                                 .build()
                 );
 
-        CodeBlock.Builder codeBuilder = CodeBlock.builder();
-        codeBuilder.add("{");
-        codeBuilder.add(
-                CodeBlock.join(
-                        directiveDefinition.getDirectiveLocations().stream()
-                                .map(this::buildElementType)
-                                .map(elementType -> CodeBlock.of("$T.$L", ElementType.class, elementType))
-                                .collect(Collectors.toList()),
-                        ","
+        CodeBlock.Builder codeBuilder = CodeBlock.builder()
+                .add("{")
+                .add(
+                        CodeBlock.join(
+                                directiveDefinition.getDirectiveLocations().stream()
+                                        .map(this::buildElementType)
+                                        .map(elementType -> CodeBlock.of("$T.$L", ElementType.class, elementType))
+                                        .collect(Collectors.toList()),
+                                ","
+                        )
                 )
-        );
-        codeBuilder.add("}");
+                .add("}");
         builder.addAnnotation(
                 AnnotationSpec.builder(Target.class)
                         .addMember("value", codeBuilder.build())
                         .build()
         );
         if (directiveDefinition.getDescription() != null) {
-            builder.addJavadoc("$L", directiveDefinition.getDescription());
-            builder.addAnnotation(
-                    AnnotationSpec.builder(Description.class)
-                            .addMember("value", "$S", directiveDefinition.getDescription())
-                            .build()
-            );
+            builder
+                    .addJavadoc("$L", directiveDefinition.getDescription())
+                    .addAnnotation(
+                            AnnotationSpec.builder(Description.class)
+                                    .addMember("value", "$S", directiveDefinition.getDescription())
+                                    .build()
+                    );
         }
         Logger.info("directive annotation {} build success", directiveDefinition.getName());
         return builder.build();
@@ -333,12 +338,13 @@ public class TypeSpecBuilder {
             builder.addAnnotation(NonNull.class);
         }
         if (fieldDefinition.getDescription() != null) {
-            builder.addJavadoc("$L", fieldDefinition.getDescription());
-            builder.addAnnotation(
-                    AnnotationSpec.builder(Description.class)
-                            .addMember("value", "$S", fieldDefinition.getDescription())
-                            .build()
-            );
+            builder
+                    .addJavadoc("$L", fieldDefinition.getDescription())
+                    .addAnnotation(
+                            AnnotationSpec.builder(Description.class)
+                                    .addMember("value", "$S", fieldDefinition.getDescription())
+                                    .build()
+                    );
         }
         Logger.info("class field {} build success", fieldDefinition.getName());
         return builder.build();
@@ -360,12 +366,13 @@ public class TypeSpecBuilder {
             builder.addAnnotation(NonNull.class);
         }
         if (fieldDefinition.getDescription() != null) {
-            builder.addJavadoc("$L", fieldDefinition.getDescription());
-            builder.addAnnotation(
-                    AnnotationSpec.builder(Description.class)
-                            .addMember("value", "$S", fieldDefinition.getDescription())
-                            .build()
-            );
+            builder
+                    .addJavadoc("$L", fieldDefinition.getDescription())
+                    .addAnnotation(
+                            AnnotationSpec.builder(Description.class)
+                                    .addMember("value", "$S", fieldDefinition.getDescription())
+                                    .build()
+                    );
         }
         Logger.info("class field {} build success", fieldDefinition.getName());
         return builder.build();
@@ -392,12 +399,13 @@ public class TypeSpecBuilder {
             builder.addAnnotation(NonNull.class);
         }
         if (inputValue.getDescription() != null) {
-            builder.addJavadoc("$L", inputValue.getDescription());
-            builder.addAnnotation(
-                    AnnotationSpec.builder(Description.class)
-                            .addMember("value", "$S", inputValue.getDescription())
-                            .build()
-            );
+            builder
+                    .addJavadoc("$L", inputValue.getDescription())
+                    .addAnnotation(
+                            AnnotationSpec.builder(Description.class)
+                                    .addMember("value", "$S", inputValue.getDescription())
+                                    .build()
+                    );
         }
         Logger.info("input class field {} build success", inputValue.getName());
         return builder.build();
@@ -418,12 +426,13 @@ public class TypeSpecBuilder {
             builder.addAnnotation(NonNull.class);
         }
         if (inputValue.getDescription() != null) {
-            builder.addJavadoc("$L", inputValue.getDescription());
-            builder.addAnnotation(
-                    AnnotationSpec.builder(Description.class)
-                            .addMember("value", "$S", inputValue.getDescription())
-                            .build()
-            );
+            builder
+                    .addJavadoc("$L", inputValue.getDescription())
+                    .addAnnotation(
+                            AnnotationSpec.builder(Description.class)
+                                    .addMember("value", "$S", inputValue.getDescription())
+                                    .build()
+                    );
         }
         Logger.info("interface field {}.{} build success", inputValue.getName());
         return builder.build();
@@ -445,12 +454,13 @@ public class TypeSpecBuilder {
             builder.defaultValue(buildDefaultValue(inputValue, inputValue.getDefaultValue()));
         }
         if (inputValue.getDescription() != null) {
-            builder.addJavadoc("$L", inputValue.getDescription());
-            builder.addAnnotation(
-                    AnnotationSpec.builder(Description.class)
-                            .addMember("value", "$S", inputValue.getDescription())
-                            .build()
-            );
+            builder
+                    .addJavadoc("$L", inputValue.getDescription())
+                    .addAnnotation(
+                            AnnotationSpec.builder(Description.class)
+                                    .addMember("value", "$S", inputValue.getDescription())
+                                    .build()
+                    );
         }
         Logger.info("input annotation field {}.{} build success", inputValue.getName());
         return builder.build();

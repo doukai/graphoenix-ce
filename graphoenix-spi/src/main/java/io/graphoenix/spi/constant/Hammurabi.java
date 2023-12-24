@@ -139,7 +139,7 @@ public class Hammurabi {
 
 
     public static final String DIRECTIVE_CLASS_NAME = "class";
-    public static final String DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME = "name";
+    public static final String DIRECTIVE_CLASS_ARGUMENT_NAME_NAME = "name";
     public static final String DIRECTIVE_CLASS_ARGUMENT_EXISTS_NAME = "exists";
 
 

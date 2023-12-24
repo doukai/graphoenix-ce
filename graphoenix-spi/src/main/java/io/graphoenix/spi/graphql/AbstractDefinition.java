@@ -70,7 +70,7 @@ public abstract class AbstractDefinition implements Definition {
         this.addDirectives(getDirectivesFromElement(typeElement));
         this.addDirective(
                 new Directive(DIRECTIVE_CLASS_NAME)
-                        .addArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME, typeElement.getQualifiedName().toString())
+                        .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, typeElement.getQualifiedName().toString())
                         .addArgument(DIRECTIVE_CLASS_ARGUMENT_EXISTS_NAME, true)
         );
         this.addDirective(new Directive(DIRECTIVE_CONTAINER_NAME));
@@ -194,7 +194,7 @@ public abstract class AbstractDefinition implements Definition {
     @Override
     public Optional<String> getClassName() {
         return Optional.ofNullable(directiveMap.get(DIRECTIVE_CLASS_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_CLASS_ARGUMENT_CLASS_NAME_NAME)))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME)))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> (StringValue) valueWithVariable)
                 .map(StringValue::getString);

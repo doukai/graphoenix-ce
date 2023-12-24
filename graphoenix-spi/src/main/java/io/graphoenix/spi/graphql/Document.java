@@ -30,6 +30,10 @@ public class Document {
         return definitionMap.get(name);
     }
 
+    public boolean hasDefinition(String name) {
+        return definitionMap.containsKey(name);
+    }
+
     public Collection<Definition> getDefinitions() {
         return definitionMap.values();
     }
@@ -308,6 +312,15 @@ public class Document {
         return getInputObjectType(name).orElseThrow(() -> new GraphQLErrors(INPUT_OBJECT_NOT_EXIST.bind(name)));
     }
 
+    public Optional<EnumType> getEnumType(String name) {
+        return Optional.ofNullable(getDefinition(name))
+                .map(Definition::asEnum);
+    }
+
+    public EnumType getEnumTypeOrError(String name) {
+        return getEnumType(name).orElseThrow(() -> new GraphQLErrors(INPUT_OBJECT_NOT_EXIST.bind(name)));
+    }
+
     public Stream<InputObjectType> getImplementsInputObject(String name) {
         return getDefinitions().stream()
                 .filter(Definition::isInputObject)
@@ -347,6 +360,37 @@ public class Document {
 
     public Optional<InterfaceType> getMetaInterface() {
         return Optional.ofNullable(getDefinition(INTERFACE_META_NAME)).map(definition -> (InterfaceType) definition);
+    }
+
+    public Definition merge(Definition definition) {
+        if (definition.isObject()) {
+            getObjectType(definition.getName())
+                    .ifPresentOrElse(
+                            objectType -> objectType.merge(definition.asObject()),
+                            () -> addDefinition(definition)
+                    );
+        } else if (definition.isInterface()) {
+            getInterfaceType(definition.getName())
+                    .ifPresentOrElse(
+                            interfaceType -> interfaceType.merge(definition.asObject()),
+                            () -> addDefinition(definition)
+                    );
+        } else if (definition.isInputObject()) {
+            getInputObjectType(definition.getName())
+                    .ifPresentOrElse(
+                            inputObjectType -> inputObjectType.merge(definition.asObject()),
+                            () -> addDefinition(definition)
+                    );
+        } else if (definition.isEnum()) {
+            getEnumType(definition.getName())
+                    .ifPresentOrElse(
+                            enumType -> enumType.merge(definition.asObject()),
+                            () -> addDefinition(definition)
+                    );
+        } else {
+            this.definitionMap.put(definition.getName(), definition);
+        }
+        return definition;
     }
 
     public Definition merge(GraphqlParser.DefinitionContext definitionContext) {
