@@ -18,6 +18,9 @@ dependencies {
     implementation 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
     implementation 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
     implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.25.3'
+    implementation('org.antlr:antlr4:4.9.3') {
+        exclude group: 'org.glassfish', module: 'javax.json'
+    }
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'

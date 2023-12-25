@@ -37,6 +37,7 @@ import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
 import io.graphoenix.spi.graphql.type.*;
 import io.nozdormu.config.TypesafeConfig;
 import io.nozdormu.spi.context.BeanContext;
+import jakarta.annotation.Generated;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.graphql.Enum;
 import org.eclipse.microprofile.graphql.*;
@@ -123,14 +124,15 @@ public class BaseTask extends DefaultTask {
         SourceSet sourceSet = getProject().getConvention().getPlugin(JavaPluginConvention.class).getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
         String javaPath = sourceSet.getJava().getSourceDirectories().filter(file -> file.getPath().contains(MAIN_JAVA_PATH)).getAsPath();
         CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
-        JavaParserTypeSolver javaParserTypeSolver = new JavaParserTypeSolver(Path.of(javaPath));
+        Path path = Path.of(javaPath);
+        JavaParserTypeSolver javaParserTypeSolver = new JavaParserTypeSolver(path);
         ClassLoaderTypeSolver classLoaderTypeSolver = new ClassLoaderTypeSolver(createClassLoader());
         ReflectionTypeSolver reflectionTypeSolver = new ReflectionTypeSolver();
         combinedTypeSolver.add(javaParserTypeSolver);
         combinedTypeSolver.add(classLoaderTypeSolver);
         combinedTypeSolver.add(reflectionTypeSolver);
         JavaSymbolSolver javaSymbolSolver = new JavaSymbolSolver(combinedTypeSolver);
-        SourceRoot sourceRoot = new SourceRoot(Path.of(javaPath));
+        SourceRoot sourceRoot = new SourceRoot(path);
         sourceRoot.getParserConfiguration().setSymbolResolver(javaSymbolSolver);
         sourceRoot.tryToParse();
         return sourceRoot.getCompilationUnits();
@@ -139,8 +141,9 @@ public class BaseTask extends DefaultTask {
     public Optional<String> findDefaultPackageName() throws IOException {
         SourceSet sourceSet = getProject().getConvention().getPlugin(JavaPluginConvention.class).getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
         String javaPath = sourceSet.getJava().getSourceDirectories().filter(file -> file.getPath().contains(MAIN_JAVA_PATH)).getAsPath();
-        JavaParserTypeSolver javaParserTypeSolver = new JavaParserTypeSolver(Path.of(javaPath));
-        SourceRoot sourceRoot = new SourceRoot(Path.of(javaPath));
+        Path path = Path.of(javaPath);
+        JavaParserTypeSolver javaParserTypeSolver = new JavaParserTypeSolver(path);
+        SourceRoot sourceRoot = new SourceRoot(path);
         JavaSymbolSolver javaSymbolSolver = new JavaSymbolSolver(javaParserTypeSolver);
         sourceRoot.getParserConfiguration().setSymbolResolver(javaSymbolSolver);
         sourceRoot.tryToParse();
@@ -162,7 +165,7 @@ public class BaseTask extends DefaultTask {
                 .flatMap(typeDeclaration -> typeDeclaration.getMethods().stream())
                 .flatMap(methodDeclaration -> resolve(methodDeclaration.getType()).stream())
                 .filter(resolvedReferenceTypeDeclaration -> resolvedReferenceTypeDeclaration.hasAnnotation(org.eclipse.microprofile.graphql.Type.class.getCanonicalName()))
-                .filter(resolvedReferenceTypeDeclaration -> !resolvedReferenceTypeDeclaration.hasAnnotation(Ignore.class.getCanonicalName()))
+                .filter(resolvedReferenceTypeDeclaration -> !resolvedReferenceTypeDeclaration.hasAnnotation(Generated.class.getCanonicalName()))
                 .filter(resolvedReferenceTypeDeclaration -> !documentManager.getDocument().hasDefinition(findTypeName(resolvedReferenceTypeDeclaration)))
                 .collect(Collectors.toList());
 
@@ -171,7 +174,7 @@ public class BaseTask extends DefaultTask {
                 .flatMap(typeDeclaration -> typeDeclaration.getMethods().stream())
                 .flatMap(methodDeclaration -> resolve(methodDeclaration.getType()).stream())
                 .filter(resolvedReferenceTypeDeclaration -> resolvedReferenceTypeDeclaration.hasAnnotation(Interface.class.getCanonicalName()))
-                .filter(resolvedReferenceTypeDeclaration -> !resolvedReferenceTypeDeclaration.hasAnnotation(Ignore.class.getCanonicalName()))
+                .filter(resolvedReferenceTypeDeclaration -> !resolvedReferenceTypeDeclaration.hasAnnotation(Generated.class.getCanonicalName()))
                 .filter(resolvedReferenceTypeDeclaration -> !documentManager.getDocument().hasDefinition(findTypeName(resolvedReferenceTypeDeclaration)))
                 .collect(Collectors.toList());
 
@@ -180,7 +183,7 @@ public class BaseTask extends DefaultTask {
                 .flatMap(typeDeclaration -> typeDeclaration.getMethods().stream())
                 .flatMap(methodDeclaration -> resolve(methodDeclaration.getType()).stream())
                 .filter(resolvedReferenceTypeDeclaration -> resolvedReferenceTypeDeclaration.hasAnnotation(Enum.class.getCanonicalName()))
-                .filter(resolvedReferenceTypeDeclaration -> !resolvedReferenceTypeDeclaration.hasAnnotation(Ignore.class.getCanonicalName()))
+                .filter(resolvedReferenceTypeDeclaration -> !resolvedReferenceTypeDeclaration.hasAnnotation(Generated.class.getCanonicalName()))
                 .filter(resolvedReferenceTypeDeclaration -> !documentManager.getDocument().hasDefinition(findTypeName(resolvedReferenceTypeDeclaration)))
                 .collect(Collectors.toList());
 
@@ -457,7 +460,7 @@ public class BaseTask extends DefaultTask {
                 .filter(resolvedMethodDeclaration -> resolvedMethodDeclaration.getReturnType().isReferenceType())
                 .flatMap(resolvedMethodDeclaration -> resolve(resolvedMethodDeclaration.getReturnType().asReferenceType()).stream())
                 .filter(resolvedReferenceTypeDeclaration -> resolvedReferenceTypeDeclaration.hasAnnotation(org.eclipse.microprofile.graphql.Type.class.getCanonicalName()))
-                .filter(resolvedReferenceTypeDeclaration -> !resolvedReferenceTypeDeclaration.hasAnnotation(Ignore.class.getCanonicalName()))
+                .filter(resolvedReferenceTypeDeclaration -> !resolvedReferenceTypeDeclaration.hasAnnotation(Generated.class.getCanonicalName()))
                 .filter(resolvedReferenceTypeDeclaration -> !documentManager.getDocument().hasDefinition(findTypeName(resolvedReferenceTypeDeclaration)))
                 .collect(Collectors.toList());
 
@@ -465,7 +468,7 @@ public class BaseTask extends DefaultTask {
                 .filter(resolvedMethodDeclaration -> resolvedMethodDeclaration.getReturnType().isReferenceType())
                 .flatMap(resolvedMethodDeclaration -> resolve(resolvedMethodDeclaration.getReturnType().asReferenceType()).stream())
                 .filter(resolvedReferenceTypeDeclaration -> resolvedReferenceTypeDeclaration.hasAnnotation(org.eclipse.microprofile.graphql.Interface.class.getCanonicalName()))
-                .filter(resolvedReferenceTypeDeclaration -> !resolvedReferenceTypeDeclaration.hasAnnotation(Ignore.class.getCanonicalName()))
+                .filter(resolvedReferenceTypeDeclaration -> !resolvedReferenceTypeDeclaration.hasAnnotation(Generated.class.getCanonicalName()))
                 .filter(resolvedReferenceTypeDeclaration -> !documentManager.getDocument().hasDefinition(findTypeName(resolvedReferenceTypeDeclaration)))
                 .collect(Collectors.toList());
 
@@ -473,7 +476,7 @@ public class BaseTask extends DefaultTask {
                 .filter(resolvedMethodDeclaration -> resolvedMethodDeclaration.getReturnType().isReferenceType())
                 .flatMap(resolvedMethodDeclaration -> resolve(resolvedMethodDeclaration.getReturnType().asReferenceType()).stream())
                 .filter(resolvedReferenceTypeDeclaration -> resolvedReferenceTypeDeclaration.hasAnnotation(org.eclipse.microprofile.graphql.Enum.class.getCanonicalName()))
-                .filter(resolvedReferenceTypeDeclaration -> !resolvedReferenceTypeDeclaration.hasAnnotation(Ignore.class.getCanonicalName()))
+                .filter(resolvedReferenceTypeDeclaration -> !resolvedReferenceTypeDeclaration.hasAnnotation(Generated.class.getCanonicalName()))
                 .filter(resolvedReferenceTypeDeclaration -> !documentManager.getDocument().hasDefinition(findTypeName(resolvedReferenceTypeDeclaration)))
                 .collect(Collectors.toList());
 

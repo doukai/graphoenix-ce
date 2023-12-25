@@ -1,0 +1,215 @@
+scalar ID
+scalar Int
+scalar Float
+scalar String
+scalar Boolean
+scalar BigInteger
+scalar BigDecimal
+scalar Date
+scalar Time
+scalar DateTime
+scalar Timestamp
+enum Operator {
+    EQ
+    NEQ
+    LK
+    NLK
+    GT
+    NLTE
+    GTE
+    NLT
+    LT
+    NGTE
+    LTE
+    NGT
+    NIL
+    NNIL
+    IN
+    NIN
+    BT
+    NBT
+}
+enum Conditional{
+    AND
+    OR
+}
+enum Sort {
+    ASC
+    DESC
+}
+enum Func {
+    COUNT
+    MAX
+    MIN
+    SUM
+    AVG
+}
+enum Protocol {
+    LOCAL
+    GRPC
+    HTTP
+    RSOCKET
+}
+enum __TypeKind {
+    SCALAR
+    OBJECT
+    INTERFACE
+    UNION
+    ENUM
+    INPUT_OBJECT
+    LIST
+    NON_NULL
+}
+enum __DirectiveLocation {
+    QUERY
+    MUTATION
+    SUBSCRIPTION
+    FIELD
+    FRAGMENT_DEFINITION
+    FRAGMENT_SPREAD
+    INLINE_FRAGMENT
+    SCHEMA
+    SCALAR
+    OBJECT
+    FIELD_DEFINITION
+    ARGUMENT_DEFINITION
+    INTERFACE
+    UNION
+    ENUM
+    ENUM_VALUE
+    INPUT_OBJECT
+    INPUT_FIELD_DEFINITION
+}
+interface Meta {
+    isDeprecated: Boolean
+    version: Int
+    realmId: Int
+    createUserId: String
+    createTime: Timestamp
+    updateUserId: String
+    updateTime: Timestamp
+    createGroupId: String
+}
+input MetaInput @interface {
+    version: Int
+    realmId: Int
+    createUserId: String
+    createTime: Timestamp
+    updateUserId: String
+    updateTime: Timestamp
+    createGroupId: String
+}
+input MetaExpression @interface {
+    realmId: IntExpression
+    createUserId: StringExpression
+    createTime: StringExpression
+    updateUserId: StringExpression
+    updateTime: StringExpression
+    createGroupId: StringExpression
+}
+type PageInfo @container {
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+    startCursor: String!
+    endCursor: String!
+}
+input IDExpression {
+    opr: Operator = EQ
+    val: ID
+    arr: [ID]
+    skipNull: Boolean = false
+}
+input StringExpression {
+    opr: Operator = EQ
+    val: String
+    arr: [String]
+    skipNull: Boolean = false
+}
+input BooleanExpression {
+    opr: Operator = EQ
+    val: Boolean
+    arr: [Boolean]
+    skipNull: Boolean = false
+}
+input IntExpression {
+    opr: Operator = EQ
+    val: Int
+    arr: [Int]
+    skipNull: Boolean = false
+}
+input FloatExpression {
+    opr: Operator = EQ
+    val: Float
+    arr: [Float]
+    skipNull: Boolean = false
+}
+input With {
+    type: String
+    from: String
+    to: String
+}
+input Invoke {
+    className: String
+    methodName: String
+    parameters: [InvokeParameter]
+    returnClassName: String
+    thrownTypes: [String]
+}
+input InvokeParameter {
+    name: String
+    className: String
+}
+input OperatorExpression {
+    opr: Operator = EQ
+    val: Operator
+    arr: [Operator]
+}
+input ConditionalExpression {
+    opr: Operator = EQ
+    val: Conditional
+    arr: [Conditional]
+}
+input SortExpression {
+    opr: Operator = EQ
+    val: Sort
+    arr: [Sort]
+}
+input FuncExpression {
+    opr: Operator = EQ
+    val: Func
+    arr: [Func]
+}
+input ProtocolExpression {
+    opr: Operator = EQ
+    val: Protocol
+    arr: [Protocol]
+}
+input __TypeKindExpression {
+    opr: Operator = EQ
+    val: __TypeKind
+    arr: [__TypeKind]
+}
+input __DirectiveLocationExpression {
+    opr: Operator = EQ
+    val: __DirectiveLocation
+    arr: [__DirectiveLocation]
+}
+directive @type(name: String default: String length: Int decimals: Int autoIncrement: Boolean) on FIELD_DEFINITION
+directive @map(from: String! with: With to: String anchor: Boolean) on FIELD_DEFINITION
+directive @fetch(protocol: Protocol from: String! with: With to: String anchor: Boolean) on FIELD_DEFINITION
+directive @invoke(className: String methodName: String parameters: [InvokeParameter] returnClassName: String) on FIELD_DEFINITION | INPUT_OBJECT | QUERY | MUTATION | SUBSCRIPTION
+directive @invokes(methods: [Invoke]) on FIELD_DEFINITION | INPUT_OBJECT | QUERY | MUTATION | SUBSCRIPTION
+directive @cursor on FIELD_DEFINITION
+directive @func(name: Func field: String) on FIELD_DEFINITION
+directive @container on OBJECT
+directive @class(name: String! exists: Boolean) on OBJECT
+directive @annotation(name: String!) on OBJECT
+directive @package(name: String!) on OBJECT | FIELD_DEFINITION | QUERY | MUTATION | SUBSCRIPTION
+directive @connection(field: String agg: String) on FIELD_DEFINITION
+directive @merge(arguments: [String]) on FIELD
+directive @format(value: String locale: String) on FIELD | FIELD_DEFINITION
+directive @permitAll on FIELD | OBJECT
+directive @denyAll on FIELD | OBJECT
+directive @rolesAllowed(roles: [String]) on FIELD | OBJECT
+directive @implements(interfaces: [String]) on OBJECT | INPUT_OBJECT
+directive @interface on OBJECT | INPUT_OBJECT

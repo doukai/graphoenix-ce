@@ -11,6 +11,7 @@ import io.graphoenix.spi.graphql.type.*;
 import io.graphoenix.spi.utils.ElementUtil;
 import io.nozdormu.config.TypesafeConfig;
 import io.nozdormu.spi.context.BeanContext;
+import jakarta.annotation.Generated;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.graphql.Enum;
 import org.eclipse.microprofile.graphql.Type;
@@ -78,39 +79,38 @@ public abstract class BaseProcessor extends AbstractProcessor {
         documentManager.getDocument()
                 .addDefinitions(
                         roundEnv.getElementsAnnotatedWith(Enum.class).stream()
-                                .filter(element -> element.getAnnotation(Ignore.class) == null)
+                                .filter(element -> element.getAnnotation(Generated.class) == null)
                                 .filter(element -> element.getKind().equals(ElementKind.ENUM))
                                 .map(element -> new EnumType((TypeElement) element))
                                 .collect(Collectors.toList())
                 )
                 .addDefinitions(
                         roundEnv.getElementsAnnotatedWith(Interface.class).stream()
-                                .filter(element -> element.getAnnotation(Ignore.class) == null)
+                                .filter(element -> element.getAnnotation(Generated.class) == null)
                                 .filter(element -> element.getKind().equals(ElementKind.INTERFACE))
                                 .map(element -> new InterfaceType((TypeElement) element, typeUtils))
                                 .collect(Collectors.toList())
                 )
                 .addDefinitions(
                         roundEnv.getElementsAnnotatedWith(Type.class).stream()
-                                .filter(element -> element.getAnnotation(Ignore.class) == null)
+                                .filter(element -> element.getAnnotation(Generated.class) == null)
                                 .filter(element -> element.getKind().equals(ElementKind.CLASS))
                                 .map(element -> new ObjectType((TypeElement) element, typeUtils))
                                 .collect(Collectors.toList())
                 )
                 .addDefinitions(
                         roundEnv.getElementsAnnotatedWith(Input.class).stream()
-                                .filter(element -> element.getAnnotation(Ignore.class) == null)
+                                .filter(element -> element.getAnnotation(Generated.class) == null)
                                 .filter(element -> element.getKind().equals(ElementKind.CLASS))
                                 .map(element -> new InputObjectType((TypeElement) element, typeUtils))
                                 .collect(Collectors.toList())
                 )
                 .addDefinitions(
                         roundEnv.getElementsAnnotatedWith(Interface.class).stream()
-                                .filter(element -> element.getAnnotation(Ignore.class) == null)
+                                .filter(element -> element.getAnnotation(Generated.class) == null)
                                 .filter(element -> element.getKind().equals(ElementKind.INTERFACE))
                                 .flatMap(element ->
                                         element.getEnclosedElements().stream()
-                                                .filter(subElement -> subElement.getAnnotation(Ignore.class) == null)
                                                 .filter(subElement -> subElement.getAnnotation(Enum.class) != null)
                                                 .filter(subElement -> subElement.getKind().equals(ElementKind.ENUM))
                                                 .map(subElement -> new EnumType((TypeElement) subElement))
@@ -119,11 +119,10 @@ public abstract class BaseProcessor extends AbstractProcessor {
                 )
                 .addDefinitions(
                         roundEnv.getElementsAnnotatedWith(Type.class).stream()
-                                .filter(element -> element.getAnnotation(Ignore.class) == null)
+                                .filter(element -> element.getAnnotation(Generated.class) == null)
                                 .filter(element -> element.getKind().equals(ElementKind.CLASS))
                                 .flatMap(element ->
                                         element.getEnclosedElements().stream()
-                                                .filter(subElement -> subElement.getAnnotation(Ignore.class) == null)
                                                 .filter(subElement -> subElement.getAnnotation(Enum.class) != null)
                                                 .filter(subElement -> subElement.getKind().equals(ElementKind.ENUM))
                                                 .map(subElement -> new EnumType((TypeElement) subElement))
@@ -132,11 +131,10 @@ public abstract class BaseProcessor extends AbstractProcessor {
                 )
                 .addDefinitions(
                         roundEnv.getElementsAnnotatedWith(Input.class).stream()
-                                .filter(element -> element.getAnnotation(Ignore.class) == null)
+                                .filter(element -> element.getAnnotation(Generated.class) == null)
                                 .filter(element -> element.getKind().equals(ElementKind.CLASS))
                                 .flatMap(element ->
                                         element.getEnclosedElements().stream()
-                                                .filter(subElement -> subElement.getAnnotation(Ignore.class) == null)
                                                 .filter(subElement -> subElement.getAnnotation(Enum.class) != null)
                                                 .filter(subElement -> subElement.getKind().equals(ElementKind.ENUM))
                                                 .map(subElement -> new EnumType((TypeElement) subElement))

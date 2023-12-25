@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
+import static io.graphoenix.spi.error.GraphQLErrorType.ANNOTATION_NAME_ARGUMENT_NOT_EXIST;
 import static io.graphoenix.spi.error.GraphQLErrorType.CLASS_NAME_ARGUMENT_NOT_EXIST;
 import static io.graphoenix.spi.utils.DocumentUtil.getStringValue;
 import static io.graphoenix.spi.utils.ElementUtil.*;
@@ -211,8 +212,22 @@ public abstract class AbstractDefinition implements Definition {
     }
 
     @Override
+    public Optional<String> getAnnotationName() {
+        return Optional.ofNullable(directiveMap.get(DIRECTIVE_ANNOTATION_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME)))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> (StringValue) valueWithVariable)
+                .map(StringValue::getString);
+    }
+
+    @Override
     public String getClassNameOrError() {
         return getClassName().orElseThrow(() -> new GraphQLErrors(CLASS_NAME_ARGUMENT_NOT_EXIST));
+    }
+
+    @Override
+    public String getAnnotationNameOrError() {
+        return getAnnotationName().orElseThrow(() -> new GraphQLErrors(ANNOTATION_NAME_ARGUMENT_NOT_EXIST));
     }
 
     public boolean isContainer() {

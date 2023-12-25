@@ -95,6 +95,8 @@ public interface Definition {
         return (FragmentDefinition) this;
     }
 
+    String getAnnotationNameOrError();
+
     boolean isContainer();
 
     Optional<String> getPackageName();
@@ -102,6 +104,8 @@ public interface Definition {
     Optional<String> getClassName();
 
     boolean classExists();
+
+    Optional<String> getAnnotationName();
 
     String getClassNameOrError();
 

@@ -61,6 +61,10 @@ public class JavaFileBuilder {
                         .filter(inputObjectType -> !inputObjectType.classExists())
                         .map(typeSpecBuilder::buildType)
                         .map(typeSpec -> JavaFile.builder(packageConfig.getInputObjectTypePackageName(), typeSpec).build()),
+                documentManager.getDocument().getInputObjectTypes()
+                        .filter(packageManager::isOwnPackage)
+                        .map(typeSpecBuilder::buildAnnotation)
+                        .map(typeSpec -> JavaFile.builder(packageConfig.getAnnotationPackageName(), typeSpec).build()),
                 documentManager.getDocument().getObjectTypes()
                         .filter(objectType -> !documentManager.isOperationType(objectType))
                         .filter(packageManager::isOwnPackage)

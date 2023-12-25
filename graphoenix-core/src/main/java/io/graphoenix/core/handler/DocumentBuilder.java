@@ -525,6 +525,13 @@ public class DocumentBuilder {
                             .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + inputObjectType.getName())
             );
         }
+
+        if (inputObjectType.getAnnotationName().isEmpty()) {
+            inputObjectType.addDirective(
+                    new Directive(DIRECTIVE_ANNOTATION_NAME)
+                            .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + inputObjectType.getName())
+            );
+        }
         return inputObjectType;
     }
 
@@ -759,6 +766,10 @@ public class DocumentBuilder {
                                 .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + fieldsType.getName() + InputType.EXPRESSION)
                 )
                 .addDirective(
+                        new Directive(DIRECTIVE_ANNOTATION_NAME)
+                                .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + fieldsType.getName())
+                )
+                .addDirective(
                         new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                 .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                         new ArrayValueWithVariable(
@@ -788,6 +799,10 @@ public class DocumentBuilder {
                                 .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + fieldsType.getName() + InputType.INPUT)
                 )
                 .addDirective(
+                        new Directive(DIRECTIVE_ANNOTATION_NAME)
+                                .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + fieldsType.getName())
+                )
+                .addDirective(
                         new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                 .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                         new ArrayValueWithVariable(
@@ -814,6 +829,10 @@ public class DocumentBuilder {
                 .addDirective(
                         new Directive(DIRECTIVE_CLASS_NAME)
                                 .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + fieldsType.getName() + InputType.ORDER_BY)
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_ANNOTATION_NAME)
+                                .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + fieldsType.getName())
                 );
     }
 
@@ -829,6 +848,10 @@ public class DocumentBuilder {
                 .addDirective(
                         new Directive(DIRECTIVE_CLASS_NAME)
                                 .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + enumType.getName() + InputType.EXPRESSION)
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_ANNOTATION_NAME)
+                                .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + enumType.getName())
                 );
     }
 
@@ -1203,6 +1226,10 @@ public class DocumentBuilder {
                                     .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + queryOperationType.getName() + inputType)
                     )
                     .addDirective(
+                            new Directive(DIRECTIVE_ANNOTATION_NAME)
+                                    .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + objectType.getName() + queryOperationType.getName() + inputType)
+                    )
+                    .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                     .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                             new ArrayValueWithVariable(
@@ -1230,6 +1257,10 @@ public class DocumentBuilder {
                                     .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + subscriptionOperation.getName() + inputType)
                     )
                     .addDirective(
+                            new Directive(DIRECTIVE_ANNOTATION_NAME)
+                                    .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + objectType.getName() + subscriptionOperation.getName() + inputType)
+                    )
+                    .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                     .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                             new ArrayValueWithVariable(
@@ -1252,6 +1283,10 @@ public class DocumentBuilder {
                     .addDirective(
                             new Directive(DIRECTIVE_CLASS_NAME)
                                     .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + mutationOperationType.getName() + inputType)
+                    )
+                    .addDirective(
+                            new Directive(DIRECTIVE_ANNOTATION_NAME)
+                                    .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + objectType.getName() + mutationOperationType.getName() + inputType)
                     )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
@@ -1297,6 +1332,10 @@ public class DocumentBuilder {
                                     .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + SUFFIX_LIST + queryOperationType.getName() + inputType)
                     )
                     .addDirective(
+                            new Directive(DIRECTIVE_ANNOTATION_NAME)
+                                    .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + objectType.getName() + SUFFIX_LIST + queryOperationType.getName() + inputType)
+                    )
+                    .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                     .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                             new ArrayValueWithVariable(
@@ -1335,6 +1374,10 @@ public class DocumentBuilder {
                                     .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + SUFFIX_LIST + subscriptionOperationType.getName() + inputType)
                     )
                     .addDirective(
+                            new Directive(DIRECTIVE_ANNOTATION_NAME)
+                                    .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + objectType.getName() + SUFFIX_LIST + subscriptionOperationType.getName() + inputType)
+                    )
+                    .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                     .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                             new ArrayValueWithVariable(
@@ -1365,6 +1408,10 @@ public class DocumentBuilder {
                     .addDirective(
                             new Directive(DIRECTIVE_CLASS_NAME)
                                     .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + SUFFIX_LIST + mutationOperationType.getName() + inputType)
+                    )
+                    .addDirective(
+                            new Directive(DIRECTIVE_ANNOTATION_NAME)
+                                    .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + objectType.getName() + SUFFIX_LIST + mutationOperationType.getName() + inputType)
                     )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
@@ -1410,6 +1457,10 @@ public class DocumentBuilder {
                                     .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + SUFFIX_CONNECTION + queryOperationType.getName() + inputType)
                     )
                     .addDirective(
+                            new Directive(DIRECTIVE_ANNOTATION_NAME)
+                                    .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + objectType.getName() + SUFFIX_CONNECTION + queryOperationType.getName() + inputType)
+                    )
+                    .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                     .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                             new ArrayValueWithVariable(
@@ -1446,6 +1497,10 @@ public class DocumentBuilder {
                     .addDirective(
                             new Directive(DIRECTIVE_CLASS_NAME)
                                     .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + SUFFIX_CONNECTION + subscriptionOperationType.getName() + inputType)
+                    )
+                    .addDirective(
+                            new Directive(DIRECTIVE_ANNOTATION_NAME)
+                                    .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + objectType.getName() + SUFFIX_CONNECTION + subscriptionOperationType.getName() + inputType)
                     )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
