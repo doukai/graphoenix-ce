@@ -14,9 +14,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface __TypeKindExpression2 {
-  Operator opr() default EQ;
+  Operator opr() default Operator.EQ;
 
-  __TypeKind val();
+  __TypeKind val() default __TypeKind.SCALAR;
 
-  __TypeKind[] arr();
+  __TypeKind[] arr() default {};
 }

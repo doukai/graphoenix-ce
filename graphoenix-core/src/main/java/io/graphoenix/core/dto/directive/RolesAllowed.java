@@ -15,5 +15,5 @@ import java.lang.annotation.Target;
 @Directive("rolesAllowed")
 @Target({ElementType.TYPE,ElementType.FIELD})
 public @interface RolesAllowed {
-  String[] roles();
+  String[] roles() default {};
 }

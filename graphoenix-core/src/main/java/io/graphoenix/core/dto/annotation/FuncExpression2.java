@@ -14,9 +14,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface FuncExpression2 {
-  Operator opr() default EQ;
+  Operator opr() default Operator.EQ;
 
-  Func val();
+  Func val() default Func.COUNT;
 
-  Func[] arr();
+  Func[] arr() default {};
 }

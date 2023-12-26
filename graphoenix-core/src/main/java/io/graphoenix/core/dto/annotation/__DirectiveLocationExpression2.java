@@ -14,9 +14,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface __DirectiveLocationExpression2 {
-  Operator opr() default EQ;
+  Operator opr() default Operator.EQ;
 
-  __DirectiveLocation val();
+  __DirectiveLocation val() default __DirectiveLocation.QUERY;
 
-  __DirectiveLocation[] arr();
+  __DirectiveLocation[] arr() default {};
 }

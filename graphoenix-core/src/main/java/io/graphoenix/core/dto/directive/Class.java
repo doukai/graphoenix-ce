@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 @Directive("class")
 @Target({ElementType.TYPE})
 public @interface Class {
-  String name();
+  String name() default "";
 
-  boolean exists();
+  boolean exists() default false;
 }

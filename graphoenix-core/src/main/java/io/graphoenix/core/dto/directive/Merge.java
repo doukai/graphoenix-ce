@@ -15,5 +15,5 @@ import java.lang.annotation.Target;
 @Directive("merge")
 @Target({ElementType.FIELD})
 public @interface Merge {
-  String[] arguments();
+  String[] arguments() default {};
 }

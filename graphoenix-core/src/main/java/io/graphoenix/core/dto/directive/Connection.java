@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 @Directive("connection")
 @Target({ElementType.FIELD})
 public @interface Connection {
-  String field();
+  String field() default "";
 
-  String agg();
+  String agg() default "";
 }

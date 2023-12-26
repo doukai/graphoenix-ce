@@ -13,9 +13,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface OperatorExpression2 {
-  Operator opr() default EQ;
+  Operator opr() default Operator.EQ;
 
-  Operator val();
+  Operator val() default Operator.EQ;
 
-  Operator[] arr();
+  Operator[] arr() default {};
 }

@@ -1,123 +1,53 @@
 package io.graphoenix.core.dto.inputObjectType;
 
-import com.dslplatform.json.CompiledJson;
 import jakarta.annotation.Generated;
-import java.lang.Boolean;
 import java.lang.Integer;
-import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
 import org.eclipse.microprofile.graphql.Input;
 
-@CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
-public class MetaInput implements MetaInput {
-  private Boolean isDeprecated;
+public interface MetaInput {
+  Integer version = null;
 
-  private Integer version;
+  Integer realmId = null;
 
-  private Integer realmId;
+  String createUserId = null;
 
-  private String createUserId;
+  LocalDateTime createTime = null;
 
-  private LocalDateTime createTime;
+  String updateUserId = null;
 
-  private String updateUserId;
+  LocalDateTime updateTime = null;
 
-  private LocalDateTime updateTime;
+  String createGroupId = null;
 
-  private String createGroupId;
+  Integer getVersion();
 
-  private MetaExpression where;
+  void setVersion(Integer version);
 
-  @Override
-  public Boolean getIsDeprecated() {
-    return this.isDeprecated;
-  }
+  Integer getRealmId();
 
-  @Override
-  public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = isDeprecated;
-  }
+  void setRealmId(Integer realmId);
 
-  @Override
-  public Integer getVersion() {
-    return this.version;
-  }
+  String getCreateUserId();
 
-  @Override
-  public void setVersion(Integer version) {
-    this.version = version;
-  }
+  void setCreateUserId(String createUserId);
 
-  @Override
-  public Integer getRealmId() {
-    return this.realmId;
-  }
+  LocalDateTime getCreateTime();
 
-  @Override
-  public void setRealmId(Integer realmId) {
-    this.realmId = realmId;
-  }
+  void setCreateTime(LocalDateTime createTime);
 
-  @Override
-  public String getCreateUserId() {
-    return this.createUserId;
-  }
+  String getUpdateUserId();
 
-  @Override
-  public void setCreateUserId(String createUserId) {
-    this.createUserId = createUserId;
-  }
+  void setUpdateUserId(String updateUserId);
 
-  @Override
-  public LocalDateTime getCreateTime() {
-    return this.createTime;
-  }
+  LocalDateTime getUpdateTime();
 
-  @Override
-  public void setCreateTime(LocalDateTime createTime) {
-    this.createTime = createTime;
-  }
+  void setUpdateTime(LocalDateTime updateTime);
 
-  @Override
-  public String getUpdateUserId() {
-    return this.updateUserId;
-  }
+  String getCreateGroupId();
 
-  @Override
-  public void setUpdateUserId(String updateUserId) {
-    this.updateUserId = updateUserId;
-  }
-
-  @Override
-  public LocalDateTime getUpdateTime() {
-    return this.updateTime;
-  }
-
-  @Override
-  public void setUpdateTime(LocalDateTime updateTime) {
-    this.updateTime = updateTime;
-  }
-
-  @Override
-  public String getCreateGroupId() {
-    return this.createGroupId;
-  }
-
-  @Override
-  public void setCreateGroupId(String createGroupId) {
-    this.createGroupId = createGroupId;
-  }
-
-  @Override
-  public MetaExpression getWhere() {
-    return this.where;
-  }
-
-  @Override
-  public void setWhere(MetaExpression where) {
-    this.where = where;
-  }
+  void setCreateGroupId(String createGroupId);
 }

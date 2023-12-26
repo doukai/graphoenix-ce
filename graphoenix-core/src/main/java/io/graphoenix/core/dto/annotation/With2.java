@@ -13,9 +13,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface With2 {
-  String type();
+  String type() default "";
 
-  String from();
+  String from() default "";
 
-  String to();
+  String to() default "";
 }

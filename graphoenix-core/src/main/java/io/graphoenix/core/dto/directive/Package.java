@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("package")
-@Target({ElementType.METHOD,ElementType.METHOD,ElementType.METHOD,ElementType.FIELD,ElementType.TYPE})
+@Target({ElementType.METHOD,ElementType.FIELD,ElementType.TYPE})
 public @interface Package {
-  String name();
+  String name() default "";
 }

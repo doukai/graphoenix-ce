@@ -16,11 +16,11 @@ import java.lang.annotation.Target;
 @Directive("map")
 @Target({ElementType.FIELD})
 public @interface Map {
-  String from();
+  String from() default "";
 
-  With with();
+  With with() default @With;
 
-  String to();
+  String to() default "";
 
-  boolean anchor();
+  boolean anchor() default false;
 }

@@ -2,6 +2,7 @@ package io.graphoenix.core.dto.annotation;
 
 import io.graphoenix.core.dto.enumType.Operator;
 import jakarta.annotation.Generated;
+import java.lang.String;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,11 +14,19 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface FloatExpression1 {
-  Operator opr() default EQ;
+  Operator opr() default Operator.EQ;
 
-  float val();
+  float val() default 0;
 
-  float[] arr();
+  float[] arr() default {};
 
   boolean skipNull() default false;
+
+  String $opr() default "";
+
+  String $val() default "";
+
+  String $arr() default "";
+
+  String $skipNull() default "";
 }

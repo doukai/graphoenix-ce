@@ -14,11 +14,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface StringExpression2 {
-  Operator opr() default EQ;
+  Operator opr() default Operator.EQ;
 
-  String val();
+  String val() default "";
 
-  String[] arr();
+  String[] arr() default {};
 
   boolean skipNull() default false;
 }

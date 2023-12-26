@@ -16,14 +16,14 @@ import org.eclipse.microprofile.graphql.Name;
 @Directive("type")
 @Target({ElementType.FIELD})
 public @interface Type {
-  String name();
+  String name() default "";
 
   @Name("default")
-  String _default();
+  String _default() default "";
 
-  int length();
+  int length() default 0;
 
-  int decimals();
+  int decimals() default 0;
 
-  boolean autoIncrement();
+  boolean autoIncrement() default false;
 }

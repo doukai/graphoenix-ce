@@ -14,9 +14,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface ProtocolExpression2 {
-  Operator opr() default EQ;
+  Operator opr() default Operator.EQ;
 
-  Protocol val();
+  Protocol val() default Protocol.LOCAL;
 
-  Protocol[] arr();
+  Protocol[] arr() default {};
 }

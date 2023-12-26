@@ -17,13 +17,13 @@ import java.lang.annotation.Target;
 @Directive("fetch")
 @Target({ElementType.FIELD})
 public @interface Fetch {
-  Protocol protocol();
+  Protocol protocol() default Protocol.LOCAL;
 
-  String from();
+  String from() default "";
 
-  With with();
+  With with() default @With;
 
-  String to();
+  String to() default "";
 
-  boolean anchor();
+  boolean anchor() default false;
 }

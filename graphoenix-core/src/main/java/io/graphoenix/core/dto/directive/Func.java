@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 @Directive("func")
 @Target({ElementType.FIELD})
 public @interface Func {
-  io.graphoenix.core.dto.enumType.Func name();
+  io.graphoenix.core.dto.enumType.Func name() default io.graphoenix.core.dto.enumType.Func.COUNT;
 
-  String field();
+  String field() default "";
 }

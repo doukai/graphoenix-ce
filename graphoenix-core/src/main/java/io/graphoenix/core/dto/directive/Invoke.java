@@ -14,13 +14,13 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("invoke")
-@Target({ElementType.METHOD,ElementType.METHOD,ElementType.METHOD,ElementType.TYPE,ElementType.FIELD})
+@Target({ElementType.METHOD,ElementType.TYPE,ElementType.FIELD})
 public @interface Invoke {
-  String className();
+  String className() default "";
 
-  String methodName();
+  String methodName() default "";
 
-  InvokeParameter[] parameters();
+  InvokeParameter[] parameters() default {};
 
-  String returnClassName();
+  String returnClassName() default "";
 }

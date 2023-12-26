@@ -721,6 +721,7 @@ public class DocumentBuilder {
                         .filter(Definition::isInterface)
                         .map(Definition::asInterface)
                         .filter(packageManager::isOwnPackage)
+                        .filter(interfaceType -> !interfaceType.getName().equals(INTERFACE_META_NAME))
                         .flatMap(interfaceType ->
                                 Stream.of(
                                         fieldsToExpression(interfaceType),

@@ -12,6 +12,6 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("interface")
-@Target({ElementType.TYPE,ElementType.TYPE})
+@Target({ElementType.TYPE})
 public @interface Interface {
 }

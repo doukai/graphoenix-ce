@@ -13,11 +13,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface IntExpression2 {
-  Operator opr() default EQ;
+  Operator opr() default Operator.EQ;
 
-  int val();
+  int val() default 0;
 
-  int[] arr();
+  int[] arr() default {};
 
   boolean skipNull() default false;
 }

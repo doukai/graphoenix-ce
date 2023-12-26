@@ -4,7 +4,6 @@ import com.dslplatform.json.CompiledJson;
 import com.google.common.base.CaseFormat;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.*;
-import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.java.config.GeneratorConfig;
 import io.graphoenix.spi.error.GraphQLErrors;
@@ -30,19 +29,16 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static com.squareup.javapoet.TypeName.*;
-import static io.graphoenix.core.utils.TypeNameUtil.TYPE_NAME_UTIL;
 import static io.graphoenix.java.utils.NameUtil.getFieldGetterMethodName;
 import static io.graphoenix.java.utils.NameUtil.getFieldSetterMethodName;
 import static io.graphoenix.java.utils.TypeNameUtil.toClassName;
 import static io.graphoenix.spi.constant.Hammurabi.*;
-import static io.graphoenix.spi.constant.Hammurabi.INPUT_SUFFIX;
-import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_FIELD_TYPE;
+import static io.graphoenix.spi.error.GraphQLErrorType.*;
 
 @ApplicationScoped
 public class TypeSpecBuilder {
@@ -189,12 +185,26 @@ public class TypeSpecBuilder {
                                 .addMember("value", "$T.$L", ElementType.class, ElementType.METHOD)
                                 .build()
                 );
+
         List<MethodSpec> methodSpecs = inputObjectType.getInputValues().stream()
                 .filter(inputValue -> documentManager.getInputValueTypeDefinition(inputValue).isLeaf() || level < generatorConfig.getAnnotationLevel() - 1)
                 .map(inputValue -> buildAnnotationMethod(inputValue, level))
                 .collect(Collectors.toList());
 
         builder.addMethods(methodSpecs);
+
+        List<MethodSpec> variableMethodSpecs = inputObjectType.getInputValues().stream()
+                .filter(inputValue -> level < generatorConfig.getAnnotationLevel() - 1)
+                .map(inputValue ->
+                        MethodSpec.methodBuilder("$" + inputValue.getName())
+                                .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
+                                .returns(String.class)
+                                .defaultValue("$S", "")
+                                .build()
+                )
+                .collect(Collectors.toList());
+
+        builder.addMethods(variableMethodSpecs);
 
         if (inputObjectType.getDescription() != null) {
             builder
@@ -308,6 +318,7 @@ public class TypeSpecBuilder {
                         CodeBlock.join(
                                 directiveDefinition.getDirectiveLocations().stream()
                                         .map(this::buildElementType)
+                                        .distinct()
                                         .map(elementType -> CodeBlock.of("$T.$L", ElementType.class, elementType))
                                         .collect(Collectors.toList()),
                                 ","
@@ -357,8 +368,9 @@ public class TypeSpecBuilder {
                 return ElementType.TYPE_USE;
             case "ARGUMENT_DEFINITION":
                 return ElementType.PARAMETER;
+            default:
+                throw new GraphQLErrors(UNSUPPORTED_LOCATION_NAME.bind(locationName));
         }
-        return null;
     }
 
     public FieldSpec buildField(FieldDefinition fieldDefinition) {
@@ -493,6 +505,8 @@ public class TypeSpecBuilder {
         }
         if (inputValue.getDefaultValue() != null) {
             builder.defaultValue(buildDefaultValue(inputValue, inputValue.getDefaultValue()));
+        } else {
+            builder.defaultValue(buildAnnotationDefaultValue(inputValue, level));
         }
         if (inputValue.getDescription() != null) {
             builder
@@ -509,18 +523,20 @@ public class TypeSpecBuilder {
 
     private CodeBlock buildDefaultValue(InputValue inputValue, String defaultValue) {
         Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
-        if (inputValueTypeDefinition.isEnum()) {
+        if (inputValueTypeDefinition.isScalar()) {
+            return CodeBlock.of("$L", defaultValue);
+        } else if (inputValueTypeDefinition.isEnum()) {
             return CodeBlock.of(
                     "$T.$L",
                     toClassName(inputValueTypeDefinition.getClassNameOrError()),
                     defaultValue
             );
         } else {
-            return CodeBlock.of("$L", defaultValue);
+            throw new GraphQLErrors(UNSUPPORTED_DEFAULT_VALUE.bind(defaultValue));
         }
     }
 
-    public CodeBlock buildAnnotationDefaultValue(InputValue inputValue, int layer) {
+    public CodeBlock buildAnnotationDefaultValue(InputValue inputValue, int level) {
         if (inputValue.getType().hasList()) {
             return CodeBlock.of("$L", "{}");
         }
@@ -537,7 +553,7 @@ public class TypeSpecBuilder {
         } else if (inputValueTypeDefinition.isInputObject()) {
             return CodeBlock.of(
                     "@$T",
-                    toClassName(inputValueTypeDefinition.asInputObject().getClassNameOrError() + (layer + 1))
+                    toClassName(inputValueTypeDefinition.asInputObject().getAnnotationNameOrError() + ((level + 1) == 0 ? "" : "" + (level + 1)))
             );
         }
         throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(inputValue.getType().getTypeName()));

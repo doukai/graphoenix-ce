@@ -3,6 +3,7 @@ package io.graphoenix.core.dto.annotation;
 import io.graphoenix.core.dto.enumType.Operator;
 import io.graphoenix.core.dto.enumType.Protocol;
 import jakarta.annotation.Generated;
+import java.lang.String;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -14,9 +15,15 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface ProtocolExpression1 {
-  Operator opr() default EQ;
+  Operator opr() default Operator.EQ;
 
-  Protocol val();
+  Protocol val() default Protocol.LOCAL;
 
-  Protocol[] arr();
+  Protocol[] arr() default {};
+
+  String $opr() default "";
+
+  String $val() default "";
+
+  String $arr() default "";
 }

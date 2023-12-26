@@ -14,9 +14,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface ConditionalExpression2 {
-  Operator opr() default EQ;
+  Operator opr() default Operator.EQ;
 
-  Conditional val();
+  Conditional val() default Conditional.AND;
 
-  Conditional[] arr();
+  Conditional[] arr() default {};
 }

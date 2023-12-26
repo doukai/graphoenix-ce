@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("implements")
-@Target({ElementType.TYPE,ElementType.TYPE})
+@Target({ElementType.TYPE})
 public @interface Implements {
-  String[] interfaces();
+  String[] interfaces() default {};
 }

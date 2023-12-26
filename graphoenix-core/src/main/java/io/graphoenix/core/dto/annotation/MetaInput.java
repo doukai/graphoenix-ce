@@ -13,21 +13,31 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface MetaInput {
-  boolean isDeprecated();
+  int version() default 0;
 
-  int version();
+  int realmId() default 0;
 
-  int realmId();
+  String createUserId() default "";
 
-  String createUserId();
+  String createTime() default "";
 
-  String createTime();
+  String updateUserId() default "";
 
-  String updateUserId();
+  String updateTime() default "";
 
-  String updateTime();
+  String createGroupId() default "";
 
-  String createGroupId();
+  String $version() default "";
 
-  MetaExpression1 where();
+  String $realmId() default "";
+
+  String $createUserId() default "";
+
+  String $createTime() default "";
+
+  String $updateUserId() default "";
+
+  String $updateTime() default "";
+
+  String $createGroupId() default "";
 }

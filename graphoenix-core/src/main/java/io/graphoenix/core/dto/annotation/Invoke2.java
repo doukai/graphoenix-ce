@@ -13,11 +13,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface Invoke2 {
-  String className();
+  String className() default "";
 
-  String methodName();
+  String methodName() default "";
 
-  String returnClassName();
+  String returnClassName() default "";
 
-  String[] thrownTypes();
+  String[] thrownTypes() default {};
 }

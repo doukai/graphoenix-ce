@@ -1,7 +1,7 @@
 package io.graphoenix.core.dto.annotation;
 
-import io.graphoenix.core.dto.enumType.Conditional;
 import jakarta.annotation.Generated;
+import java.lang.String;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,25 +13,27 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface MetaExpression {
-  boolean includeDeprecated() default false;
+  IntExpression1 realmId() default @IntExpression1;
 
-  IntExpression1 version();
+  StringExpression1 createUserId() default @StringExpression1;
 
-  IntExpression1 realmId();
+  StringExpression1 createTime() default @StringExpression1;
 
-  StringExpression1 createUserId();
+  StringExpression1 updateUserId() default @StringExpression1;
 
-  StringExpression1 createTime();
+  StringExpression1 updateTime() default @StringExpression1;
 
-  StringExpression1 updateUserId();
+  StringExpression1 createGroupId() default @StringExpression1;
 
-  StringExpression1 updateTime();
+  String $realmId() default "";
 
-  StringExpression1 createGroupId();
+  String $createUserId() default "";
 
-  boolean not() default false;
+  String $createTime() default "";
 
-  Conditional cond() default AND;
+  String $updateUserId() default "";
 
-  MetaExpression1[] exs();
+  String $updateTime() default "";
+
+  String $createGroupId() default "";
 }

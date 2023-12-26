@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("invokes")
-@Target({ElementType.METHOD,ElementType.METHOD,ElementType.METHOD,ElementType.TYPE,ElementType.FIELD})
+@Target({ElementType.METHOD,ElementType.TYPE,ElementType.FIELD})
 public @interface Invokes {
-  Invoke[] methods();
+  Invoke[] methods() default {};
 }

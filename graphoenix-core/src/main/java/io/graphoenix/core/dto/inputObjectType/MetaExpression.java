@@ -1,150 +1,44 @@
 package io.graphoenix.core.dto.inputObjectType;
 
-import com.dslplatform.json.CompiledJson;
-import io.graphoenix.core.dto.enumType.Conditional;
 import jakarta.annotation.Generated;
-import java.lang.Boolean;
-import java.lang.Override;
-import java.util.Collection;
-import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Input;
 
-@CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
-public class MetaExpression implements MetaExpression {
-  @DefaultValue("false")
-  private Boolean includeDeprecated;
+public interface MetaExpression {
+  IntExpression realmId = null;
 
-  private IntExpression version;
+  StringExpression createUserId = null;
 
-  private IntExpression realmId;
+  StringExpression createTime = null;
 
-  private StringExpression createUserId;
+  StringExpression updateUserId = null;
 
-  private StringExpression createTime;
+  StringExpression updateTime = null;
 
-  private StringExpression updateUserId;
+  StringExpression createGroupId = null;
 
-  private StringExpression updateTime;
+  IntExpression getRealmId();
 
-  private StringExpression createGroupId;
+  void setRealmId(IntExpression realmId);
 
-  @DefaultValue("false")
-  private Boolean not;
+  StringExpression getCreateUserId();
 
-  @DefaultValue("AND")
-  private Conditional cond;
+  void setCreateUserId(StringExpression createUserId);
 
-  private Collection<MetaExpression> exs;
+  StringExpression getCreateTime();
 
-  @Override
-  public Boolean getIncludeDeprecated() {
-    return this.includeDeprecated;
-  }
+  void setCreateTime(StringExpression createTime);
 
-  @Override
-  public void setIncludeDeprecated(Boolean includeDeprecated) {
-    this.includeDeprecated = includeDeprecated;
-  }
+  StringExpression getUpdateUserId();
 
-  @Override
-  public IntExpression getVersion() {
-    return this.version;
-  }
+  void setUpdateUserId(StringExpression updateUserId);
 
-  @Override
-  public void setVersion(IntExpression version) {
-    this.version = version;
-  }
+  StringExpression getUpdateTime();
 
-  @Override
-  public IntExpression getRealmId() {
-    return this.realmId;
-  }
+  void setUpdateTime(StringExpression updateTime);
 
-  @Override
-  public void setRealmId(IntExpression realmId) {
-    this.realmId = realmId;
-  }
+  StringExpression getCreateGroupId();
 
-  @Override
-  public StringExpression getCreateUserId() {
-    return this.createUserId;
-  }
-
-  @Override
-  public void setCreateUserId(StringExpression createUserId) {
-    this.createUserId = createUserId;
-  }
-
-  @Override
-  public StringExpression getCreateTime() {
-    return this.createTime;
-  }
-
-  @Override
-  public void setCreateTime(StringExpression createTime) {
-    this.createTime = createTime;
-  }
-
-  @Override
-  public StringExpression getUpdateUserId() {
-    return this.updateUserId;
-  }
-
-  @Override
-  public void setUpdateUserId(StringExpression updateUserId) {
-    this.updateUserId = updateUserId;
-  }
-
-  @Override
-  public StringExpression getUpdateTime() {
-    return this.updateTime;
-  }
-
-  @Override
-  public void setUpdateTime(StringExpression updateTime) {
-    this.updateTime = updateTime;
-  }
-
-  @Override
-  public StringExpression getCreateGroupId() {
-    return this.createGroupId;
-  }
-
-  @Override
-  public void setCreateGroupId(StringExpression createGroupId) {
-    this.createGroupId = createGroupId;
-  }
-
-  @Override
-  public Boolean getNot() {
-    return this.not;
-  }
-
-  @Override
-  public void setNot(Boolean not) {
-    this.not = not;
-  }
-
-  @Override
-  public Conditional getCond() {
-    return this.cond;
-  }
-
-  @Override
-  public void setCond(Conditional cond) {
-    this.cond = cond;
-  }
-
-  @Override
-  public Collection<MetaExpression> getExs() {
-    return this.exs;
-  }
-
-  @Override
-  public void setExs(Collection<MetaExpression> exs) {
-    this.exs = exs;
-  }
+  void setCreateGroupId(StringExpression createGroupId);
 }

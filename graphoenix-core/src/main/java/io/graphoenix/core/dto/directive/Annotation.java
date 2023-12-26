@@ -15,5 +15,5 @@ import java.lang.annotation.Target;
 @Directive("annotation")
 @Target({ElementType.TYPE})
 public @interface Annotation {
-  String name();
+  String name() default "";
 }

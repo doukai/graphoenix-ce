@@ -14,9 +14,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface SortExpression2 {
-  Operator opr() default EQ;
+  Operator opr() default Operator.EQ;
 
-  Sort val();
+  Sort val() default Sort.ASC;
 
-  Sort[] arr();
+  Sort[] arr() default {};
 }

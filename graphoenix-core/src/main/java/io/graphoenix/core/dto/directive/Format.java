@@ -13,9 +13,9 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("format")
-@Target({ElementType.FIELD,ElementType.FIELD})
+@Target({ElementType.FIELD})
 public @interface Format {
-  String value();
+  String value() default "";
 
-  String locale();
+  String locale() default "";
 }

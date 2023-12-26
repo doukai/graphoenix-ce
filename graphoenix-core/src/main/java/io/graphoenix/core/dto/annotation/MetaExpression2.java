@@ -1,6 +1,5 @@
 package io.graphoenix.core.dto.annotation;
 
-import io.graphoenix.core.dto.enumType.Conditional;
 import jakarta.annotation.Generated;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -13,9 +12,4 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface MetaExpression2 {
-  boolean includeDeprecated() default false;
-
-  boolean not() default false;
-
-  Conditional cond() default AND;
 }
