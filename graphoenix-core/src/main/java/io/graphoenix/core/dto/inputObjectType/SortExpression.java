@@ -1,22 +1,45 @@
 package io.graphoenix.core.dto.inputObjectType;
 
+import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.enumType.Operator;
 import io.graphoenix.core.dto.enumType.Sort;
 import jakarta.annotation.Generated;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Collection;
+import org.eclipse.microprofile.graphql.DefaultValue;
+import org.eclipse.microprofile.graphql.Input;
 
+@CompiledJson
+@Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
-@Documented
-@Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.METHOD)
-public @interface SortExpression {
-  Operator opr() default EQ;
+public class SortExpression {
+  @DefaultValue("EQ")
+  private Operator opr;
 
-  Sort val();
+  private Sort val;
 
-  Sort[] arr();
+  private Collection<Sort> arr;
+
+  public Operator getOpr() {
+    return this.opr;
+  }
+
+  public void setOpr(Operator opr) {
+    this.opr = opr;
+  }
+
+  public Sort getVal() {
+    return this.val;
+  }
+
+  public void setVal(Sort val) {
+    this.val = val;
+  }
+
+  public Collection<Sort> getArr() {
+    return this.arr;
+  }
+
+  public void setArr(Collection<Sort> arr) {
+    this.arr = arr;
+  }
 }

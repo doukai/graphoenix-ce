@@ -1,22 +1,45 @@
 package io.graphoenix.core.dto.inputObjectType;
 
+import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.enumType.Operator;
 import io.graphoenix.core.dto.enumType.__DirectiveLocation;
 import jakarta.annotation.Generated;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Collection;
+import org.eclipse.microprofile.graphql.DefaultValue;
+import org.eclipse.microprofile.graphql.Input;
 
+@CompiledJson
+@Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
-@Documented
-@Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.METHOD)
-public @interface __DirectiveLocationExpression {
-  Operator opr() default EQ;
+public class __DirectiveLocationExpression {
+  @DefaultValue("EQ")
+  private Operator opr;
 
-  __DirectiveLocation val();
+  private __DirectiveLocation val;
 
-  __DirectiveLocation[] arr();
+  private Collection<__DirectiveLocation> arr;
+
+  public Operator getOpr() {
+    return this.opr;
+  }
+
+  public void setOpr(Operator opr) {
+    this.opr = opr;
+  }
+
+  public __DirectiveLocation getVal() {
+    return this.val;
+  }
+
+  public void setVal(__DirectiveLocation val) {
+    this.val = val;
+  }
+
+  public Collection<__DirectiveLocation> getArr() {
+    return this.arr;
+  }
+
+  public void setArr(Collection<__DirectiveLocation> arr) {
+    this.arr = arr;
+  }
 }

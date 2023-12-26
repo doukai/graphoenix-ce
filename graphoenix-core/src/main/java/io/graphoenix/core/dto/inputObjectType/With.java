@@ -1,21 +1,41 @@
 package io.graphoenix.core.dto.inputObjectType;
 
+import com.dslplatform.json.CompiledJson;
 import jakarta.annotation.Generated;
 import java.lang.String;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.eclipse.microprofile.graphql.Input;
 
+@CompiledJson
+@Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
-@Documented
-@Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.METHOD)
-public @interface With {
-  String type();
+public class With {
+  private String type;
 
-  String from();
+  private String from;
 
-  String to();
+  private String to;
+
+  public String getType() {
+    return this.type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public String getFrom() {
+    return this.from;
+  }
+
+  public void setFrom(String from) {
+    this.from = from;
+  }
+
+  public String getTo() {
+    return this.to;
+  }
+
+  public void setTo(String to) {
+    this.to = to;
+  }
 }

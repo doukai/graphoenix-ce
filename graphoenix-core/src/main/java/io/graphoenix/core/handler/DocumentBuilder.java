@@ -767,7 +767,7 @@ public class DocumentBuilder {
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_ANNOTATION_NAME)
-                                .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + fieldsType.getName())
+                                .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + fieldsType.getName() + InputType.EXPRESSION)
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_IMPLEMENTS_NAME)
@@ -800,7 +800,7 @@ public class DocumentBuilder {
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_ANNOTATION_NAME)
-                                .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + fieldsType.getName())
+                                .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + fieldsType.getName() + InputType.INPUT)
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_IMPLEMENTS_NAME)
@@ -832,7 +832,7 @@ public class DocumentBuilder {
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_ANNOTATION_NAME)
-                                .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + fieldsType.getName())
+                                .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + fieldsType.getName() + InputType.ORDER_BY)
                 );
     }
 
@@ -851,7 +851,7 @@ public class DocumentBuilder {
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_ANNOTATION_NAME)
-                                .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + enumType.getName())
+                                .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + enumType.getName() + InputType.EXPRESSION)
                 );
     }
 

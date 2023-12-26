@@ -1,19 +1,31 @@
 package io.graphoenix.core.dto.inputObjectType;
 
+import com.dslplatform.json.CompiledJson;
 import jakarta.annotation.Generated;
 import java.lang.String;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.eclipse.microprofile.graphql.Input;
 
+@CompiledJson
+@Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
-@Documented
-@Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.METHOD)
-public @interface InvokeParameter {
-  String name();
+public class InvokeParameter {
+  private String name;
 
-  String className();
+  private String className;
+
+  public String getName() {
+    return this.name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getClassName() {
+    return this.className;
+  }
+
+  public void setClassName(String className) {
+    this.className = className;
+  }
 }

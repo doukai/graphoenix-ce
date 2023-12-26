@@ -1,23 +1,62 @@
 package io.graphoenix.core.dto.inputObjectType;
 
+import com.dslplatform.json.CompiledJson;
 import jakarta.annotation.Generated;
 import java.lang.String;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Collection;
+import org.eclipse.microprofile.graphql.Input;
 
+@CompiledJson
+@Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
-@Documented
-@Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.METHOD)
-public @interface Invoke {
-  String className();
+public class Invoke {
+  private String className;
 
-  String methodName();
+  private String methodName;
 
-  String returnClassName();
+  private Collection<InvokeParameter> parameters;
 
-  String[] thrownTypes();
+  private String returnClassName;
+
+  private Collection<String> thrownTypes;
+
+  public String getClassName() {
+    return this.className;
+  }
+
+  public void setClassName(String className) {
+    this.className = className;
+  }
+
+  public String getMethodName() {
+    return this.methodName;
+  }
+
+  public void setMethodName(String methodName) {
+    this.methodName = methodName;
+  }
+
+  public Collection<InvokeParameter> getParameters() {
+    return this.parameters;
+  }
+
+  public void setParameters(Collection<InvokeParameter> parameters) {
+    this.parameters = parameters;
+  }
+
+  public String getReturnClassName() {
+    return this.returnClassName;
+  }
+
+  public void setReturnClassName(String returnClassName) {
+    this.returnClassName = returnClassName;
+  }
+
+  public Collection<String> getThrownTypes() {
+    return this.thrownTypes;
+  }
+
+  public void setThrownTypes(Collection<String> thrownTypes) {
+    this.thrownTypes = thrownTypes;
+  }
 }

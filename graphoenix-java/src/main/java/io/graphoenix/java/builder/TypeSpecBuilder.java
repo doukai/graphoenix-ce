@@ -4,7 +4,9 @@ import com.dslplatform.json.CompiledJson;
 import com.google.common.base.CaseFormat;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.*;
+import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.core.handler.DocumentManager;
+import io.graphoenix.java.config.GeneratorConfig;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
@@ -25,26 +27,33 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static com.squareup.javapoet.TypeName.*;
+import static io.graphoenix.core.utils.TypeNameUtil.TYPE_NAME_UTIL;
 import static io.graphoenix.java.utils.NameUtil.getFieldGetterMethodName;
 import static io.graphoenix.java.utils.NameUtil.getFieldSetterMethodName;
 import static io.graphoenix.java.utils.TypeNameUtil.toClassName;
 import static io.graphoenix.spi.constant.Hammurabi.*;
+import static io.graphoenix.spi.constant.Hammurabi.INPUT_SUFFIX;
 import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_FIELD_TYPE;
 
 @ApplicationScoped
 public class TypeSpecBuilder {
 
     private final DocumentManager documentManager;
+    private final GeneratorConfig generatorConfig;
 
     @Inject
-    public TypeSpecBuilder(DocumentManager documentManager) {
+    public TypeSpecBuilder(DocumentManager documentManager, GeneratorConfig generatorConfig) {
         this.documentManager = documentManager;
+        this.generatorConfig = generatorConfig;
     }
 
     private AnnotationSpec getGeneratedAnnotationSpec() {
@@ -159,8 +168,14 @@ public class TypeSpecBuilder {
         return builder.build();
     }
 
-    public TypeSpec buildAnnotation(InputObjectType inputObjectType) {
-        TypeSpec.Builder builder = TypeSpec.annotationBuilder(inputObjectType.getName())
+
+    public Stream<TypeSpec> buildAnnotations(InputObjectType inputObjectType) {
+        return IntStream.range(0, generatorConfig.getAnnotationLevel())
+                .mapToObj(level -> buildAnnotation(inputObjectType, level));
+    }
+
+    public TypeSpec buildAnnotation(InputObjectType inputObjectType, int level) {
+        TypeSpec.Builder builder = TypeSpec.annotationBuilder(inputObjectType.getName() + (level == 0 ? "" : "" + level))
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(getGeneratedAnnotationSpec())
                 .addAnnotation(AnnotationSpec.builder(Documented.class).build())
@@ -175,8 +190,8 @@ public class TypeSpecBuilder {
                                 .build()
                 );
         List<MethodSpec> methodSpecs = inputObjectType.getInputValues().stream()
-                .filter(inputValue -> documentManager.getInputValueTypeDefinition(inputValue).isLeaf())
-                .map(this::buildAnnotationMethod)
+                .filter(inputValue -> documentManager.getInputValueTypeDefinition(inputValue).isLeaf() || level < generatorConfig.getAnnotationLevel() - 1)
+                .map(inputValue -> buildAnnotationMethod(inputValue, level))
                 .collect(Collectors.toList());
 
         builder.addMethods(methodSpecs);
@@ -270,7 +285,7 @@ public class TypeSpecBuilder {
         if (directiveDefinition.getArguments() != null && !directiveDefinition.getArguments().isEmpty()) {
             builder.addMethods(
                     directiveDefinition.getArguments().stream()
-                            .map(this::buildAnnotationMethod)
+                            .map(inputValue -> buildAnnotationMethod(inputValue, -1))
                             .collect(Collectors.toList())
             );
         }
@@ -464,11 +479,11 @@ public class TypeSpecBuilder {
         return builder.build();
     }
 
-    public MethodSpec buildAnnotationMethod(InputValue inputValue) {
+    public MethodSpec buildAnnotationMethod(InputValue inputValue, int level) {
         boolean isKeyword = SourceVersion.isKeyword(inputValue.getName());
         MethodSpec.Builder builder = MethodSpec.methodBuilder(isKeyword ? "_" + inputValue.getName() : inputValue.getName())
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                .returns(buildAnnotationType(inputValue.getType()));
+                .returns(buildAnnotationType(inputValue.getType(), level));
         if (isKeyword) {
             builder.addAnnotation(
                     AnnotationSpec.builder(Name.class)
@@ -494,7 +509,7 @@ public class TypeSpecBuilder {
 
     private CodeBlock buildDefaultValue(InputValue inputValue, String defaultValue) {
         Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
-        if (inputValue.isEnum()) {
+        if (inputValueTypeDefinition.isEnum()) {
             return CodeBlock.of(
                     "$T.$L",
                     toClassName(inputValueTypeDefinition.getClassNameOrError()),
@@ -503,6 +518,49 @@ public class TypeSpecBuilder {
         } else {
             return CodeBlock.of("$L", defaultValue);
         }
+    }
+
+    public CodeBlock buildAnnotationDefaultValue(InputValue inputValue, int layer) {
+        if (inputValue.getType().hasList()) {
+            return CodeBlock.of("$L", "{}");
+        }
+        Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
+        if (inputValueTypeDefinition.isScalar()) {
+            return buildAnnotationDefaultValue(inputValueTypeDefinition.asScalar());
+        } else if (inputValueTypeDefinition.isEnum()) {
+            EnumType enumType = inputValueTypeDefinition.asEnum();
+            return CodeBlock.of(
+                    "$T.$L",
+                    toClassName(enumType.getClassNameOrError()),
+                    new ArrayList<>(enumType.getEnumValues()).get(0).getName()
+            );
+        } else if (inputValueTypeDefinition.isInputObject()) {
+            return CodeBlock.of(
+                    "@$T",
+                    toClassName(inputValueTypeDefinition.asInputObject().getClassNameOrError() + (layer + 1))
+            );
+        }
+        throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(inputValue.getType().getTypeName()));
+    }
+
+    public CodeBlock buildAnnotationDefaultValue(ScalarType scalarType) {
+        switch (scalarType.getName()) {
+            case SCALA_ID_NAME:
+            case SCALA_STRING_NAME:
+            case SCALA_DATE_NAME:
+            case SCALA_TIME_NAME:
+            case SCALA_DATE_TIME_NAME:
+            case SCALA_TIMESTAMP_NAME:
+                return CodeBlock.of("$S", "");
+            case SCALA_BOOLEAN_NAME:
+                return CodeBlock.of("$L", false);
+            case SCALA_INT_NAME:
+            case SCALA_BIG_INTEGER_NAME:
+            case SCALA_FLOAT_NAME:
+            case SCALA_BIG_DECIMAL_NAME:
+                return CodeBlock.of("$L", 0);
+        }
+        throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(scalarType.getName()));
     }
 
     public TypeName buildType(io.graphoenix.spi.graphql.type.Type type) {
@@ -515,13 +573,13 @@ public class TypeSpecBuilder {
         }
     }
 
-    public TypeName buildAnnotationType(io.graphoenix.spi.graphql.type.Type type) {
+    public TypeName buildAnnotationType(io.graphoenix.spi.graphql.type.Type type, int level) {
         if (type.isList()) {
-            return ArrayTypeName.of(buildAnnotationType(type.asListType().getType()));
+            return ArrayTypeName.of(buildAnnotationType(type.asListType().getType(), level));
         } else if (type.isNonNull()) {
-            return buildAnnotationType(type.asNonNullType().getType());
+            return buildAnnotationType(type.asNonNullType().getType(), level);
         } else {
-            return buildAnnotationType(type.asTypeName());
+            return buildAnnotationType(type.asTypeName(), level);
         }
     }
 
@@ -534,14 +592,14 @@ public class TypeSpecBuilder {
         }
     }
 
-    public TypeName buildAnnotationType(io.graphoenix.spi.graphql.type.TypeName typeName) {
+    public TypeName buildAnnotationType(io.graphoenix.spi.graphql.type.TypeName typeName, int level) {
         Definition typeDefinition = documentManager.getDocument().getDefinition(typeName.getName());
         if (typeDefinition.isScalar()) {
             return buildAnnotationType(typeDefinition.asScalar());
         } else if (typeDefinition.isEnum()) {
             return toClassName(typeDefinition.getClassNameOrError());
         } else {
-            return toClassName(typeDefinition.getAnnotationNameOrError());
+            return toClassName(typeDefinition.getAnnotationNameOrError() + ((level + 1) == 0 ? "" : "" + (level + 1)));
         }
     }
 

@@ -1,22 +1,45 @@
 package io.graphoenix.core.dto.inputObjectType;
 
+import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.enumType.Operator;
 import io.graphoenix.core.dto.enumType.__TypeKind;
 import jakarta.annotation.Generated;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Collection;
+import org.eclipse.microprofile.graphql.DefaultValue;
+import org.eclipse.microprofile.graphql.Input;
 
+@CompiledJson
+@Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
-@Documented
-@Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.METHOD)
-public @interface __TypeKindExpression {
-  Operator opr() default EQ;
+public class __TypeKindExpression {
+  @DefaultValue("EQ")
+  private Operator opr;
 
-  __TypeKind val();
+  private __TypeKind val;
 
-  __TypeKind[] arr();
+  private Collection<__TypeKind> arr;
+
+  public Operator getOpr() {
+    return this.opr;
+  }
+
+  public void setOpr(Operator opr) {
+    this.opr = opr;
+  }
+
+  public __TypeKind getVal() {
+    return this.val;
+  }
+
+  public void setVal(__TypeKind val) {
+    this.val = val;
+  }
+
+  public Collection<__TypeKind> getArr() {
+    return this.arr;
+  }
+
+  public void setArr(Collection<__TypeKind> arr) {
+    this.arr = arr;
+  }
 }
