@@ -65,6 +65,8 @@ public class JavaFileBuilder {
                         .filter(packageManager::isOwnPackage)
                         .flatMap(typeSpecBuilder::buildAnnotations)
                         .map(typeSpec -> JavaFile.builder(packageConfig.getAnnotationPackageName(), typeSpec).build()),
+                typeSpecBuilder.buildOperationTypeAnnotations()
+                        .map(typeSpec -> JavaFile.builder(packageConfig.getAnnotationPackageName(), typeSpec).build()),
                 documentManager.getDocument().getObjectTypes()
                         .filter(objectType -> !documentManager.isOperationType(objectType))
                         .filter(packageManager::isOwnPackage)

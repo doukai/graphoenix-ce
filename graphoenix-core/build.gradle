@@ -6,7 +6,6 @@ buildscript {
     }
     dependencies {
         classpath 'io.graphoenix:graphoenix-gradle-plugin:0.0.1-SNAPSHOT'
-        classpath 'io.graphoenix:graphoenix-core:0.0.1-SNAPSHOT'
     }
 }
 

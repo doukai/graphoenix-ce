@@ -2,9 +2,11 @@ package io.graphoenix.java.builder;
 
 import com.dslplatform.json.CompiledJson;
 import com.google.common.base.CaseFormat;
+import com.google.common.collect.Streams;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.*;
 import io.graphoenix.core.handler.DocumentManager;
+import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.java.config.GeneratorConfig;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.AbstractDefinition;
@@ -44,11 +46,13 @@ import static io.graphoenix.spi.error.GraphQLErrorType.*;
 public class TypeSpecBuilder {
 
     private final DocumentManager documentManager;
+    private final PackageManager packageManager;
     private final GeneratorConfig generatorConfig;
 
     @Inject
-    public TypeSpecBuilder(DocumentManager documentManager, GeneratorConfig generatorConfig) {
+    public TypeSpecBuilder(DocumentManager documentManager, PackageManager packageManager, GeneratorConfig generatorConfig) {
         this.documentManager = documentManager;
+        this.packageManager = packageManager;
         this.generatorConfig = generatorConfig;
     }
 
@@ -164,10 +168,81 @@ public class TypeSpecBuilder {
         return builder.build();
     }
 
+    public Stream<TypeSpec> buildOperationTypeAnnotations() {
+        return Streams.concat(
+                documentManager.getDocument().getQueryOperationType().map(this::buildOperationTypeAnnotation).stream(),
+                documentManager.getDocument().getMutationOperationType().map(this::buildOperationTypeAnnotation).stream(),
+                documentManager.getDocument().getSubscriptionOperationType().map(this::buildOperationTypeAnnotation).stream()
+        );
+    }
+
+    public TypeSpec buildOperationTypeAnnotation(ObjectType objectType) {
+        TypeSpec.Builder builder = TypeSpec.annotationBuilder(objectType.getName())
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(getGeneratedAnnotationSpec());
+
+        List<FieldDefinition> fieldDefinitions = objectType.getFields().stream()
+                .filter(packageManager::isLocalPackage)
+                .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
+                .collect(Collectors.toList());
+
+        if (!fieldDefinitions.isEmpty()) {
+            builder.addMethods(
+                    fieldDefinitions.stream()
+                            .map(fieldDefinition -> {
+                                        InputObjectType argumentInput = getArgumentInput(objectType, fieldDefinition);
+                                        return MethodSpec.methodBuilder(fieldDefinition.getName())
+                                                .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                                                .returns(toClassName(argumentInput.getAnnotationNameOrError()))
+                                                .defaultValue(CodeBlock.of("@$T", toClassName(argumentInput.getAnnotationNameOrError())))
+                                                .build();
+                                    }
+                            )
+                            .collect(Collectors.toList())
+            );
+        }
+        builder
+                .addAnnotation(AnnotationSpec.builder(Documented.class).build())
+                .addAnnotation(
+                        AnnotationSpec.builder(Retention.class)
+                                .addMember("value", "$T.$L", RetentionPolicy.class, RetentionPolicy.SOURCE)
+                                .build()
+                )
+                .addAnnotation(
+                        AnnotationSpec.builder(Target.class)
+                                .addMember("value", "$T.$L", ElementType.class, ElementType.METHOD)
+                                .build()
+                );
+
+        if (objectType.getDescription() != null) {
+            builder
+                    .addJavadoc("$L", objectType.getDescription())
+                    .addAnnotation(
+                            AnnotationSpec.builder(Description.class)
+                                    .addMember("value", "$S", objectType.getDescription())
+                                    .build()
+                    );
+        }
+        Logger.info("operation type annotation {} build success", objectType.getName());
+        return builder.build();
+    }
+
+    public InputObjectType getArgumentInput(ObjectType objectType, FieldDefinition fieldDefinition) {
+        ObjectType fieldType = documentManager.getFieldTypeDefinition(fieldDefinition).asObject();
+        if (fieldDefinition.getType().hasList()) {
+            return documentManager.getDocument().getInputObjectTypeOrError(fieldType.getName() + SUFFIX_LIST + objectType.getName() + SUFFIX_ARGUMENTS);
+        } else {
+            return documentManager.getDocument().getInputObjectTypeOrError(fieldType.getName() + objectType.getName() + SUFFIX_ARGUMENTS);
+        }
+    }
 
     public Stream<TypeSpec> buildAnnotations(InputObjectType inputObjectType) {
-        return IntStream.range(0, generatorConfig.getAnnotationLevel())
-                .mapToObj(level -> buildAnnotation(inputObjectType, level));
+        if (inputObjectType.getName().endsWith(SUFFIX_ARGUMENTS)) {
+            return Stream.of(buildAnnotation(inputObjectType, 0));
+        } else {
+            return IntStream.range(0, generatorConfig.getAnnotationLevel())
+                    .mapToObj(level -> buildAnnotation(inputObjectType, level));
+        }
     }
 
     public TypeSpec buildAnnotation(InputObjectType inputObjectType, int level) {

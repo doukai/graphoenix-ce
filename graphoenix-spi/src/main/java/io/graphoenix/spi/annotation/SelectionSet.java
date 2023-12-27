@@ -5,11 +5,9 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.SOURCE)
 @Documented
-public @interface QueryOperation {
+public @interface SelectionSet {
 
     String value() default "";
-
-    String selectionSet() default "";
 
     int layers() default 0;
 }

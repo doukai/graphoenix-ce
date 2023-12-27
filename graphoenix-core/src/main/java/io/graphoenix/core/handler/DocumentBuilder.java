@@ -1578,7 +1578,7 @@ public class DocumentBuilder {
                 );
     }
 
-    private enum InputType {
+    public enum InputType {
         EXPRESSION(SUFFIX_EXPRESSION),
         INPUT(SUFFIX_INPUT),
         QUERY_ARGUMENTS(SUFFIX_ARGUMENTS),
@@ -1600,7 +1600,7 @@ public class DocumentBuilder {
         }
     }
 
-    private enum Function {
+    public enum Function {
         COUNT(SUFFIX_COUNT),
         SUM(SUFFIX_SUM),
         AVG(SUFFIX_AVG),
