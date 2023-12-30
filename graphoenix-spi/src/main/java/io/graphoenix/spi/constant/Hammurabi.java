@@ -1,6 +1,9 @@
 package io.graphoenix.spi.constant;
 
 public class Hammurabi {
+    public static final String OPERATION_QUERY_NAME = "query";
+    public static final String OPERATION_MUTATION_NAME = "mutation";
+    public static final String OPERATION_SUBSCRIPTION_NAME = "subscription";
 
     public static final String SCALA_ID_NAME = "ID";
     public static final String SCALA_INT_NAME = "Int";

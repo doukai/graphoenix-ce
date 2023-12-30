@@ -13,6 +13,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static io.graphoenix.spi.constant.Hammurabi.OPERATION_QUERY_NAME;
+
 public class Operation extends AbstractDefinition implements Definition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/operation/Operation.stg");
@@ -33,7 +35,7 @@ public class Operation extends AbstractDefinition implements Definition {
         if (operationDefinitionContext.operationType() != null) {
             this.operationType = operationDefinitionContext.operationType().getText();
         } else {
-            this.operationType = "query";
+            this.operationType = OPERATION_QUERY_NAME;
         }
         if (operationDefinitionContext.variableDefinitions() != null) {
             setVariableDefinitions(
