@@ -21,5 +21,13 @@ public interface Selection {
         return false;
     }
 
+    default Field asField() {
+        return (Field) this;
+    }
+
+    default Fragment asFragment() {
+        return (Fragment) this;
+    }
+
     String toString();
 }

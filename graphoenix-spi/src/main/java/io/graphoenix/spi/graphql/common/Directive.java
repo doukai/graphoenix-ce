@@ -1,12 +1,14 @@
 package io.graphoenix.spi.graphql.common;
 
 import graphql.parser.antlr.GraphqlParser;
+import io.graphoenix.spi.graphql.operation.Field;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
 import javax.lang.model.element.AnnotationMirror;
+import java.util.Map;
 
 public class Directive {
 
@@ -68,6 +70,10 @@ public class Directive {
 
     public Directive setArguments(JsonObject jsonObject) {
         return setArguments(new Arguments(jsonObject));
+    }
+
+    public Directive setArguments(Map<?, ?> objectValueWithVariableMap) {
+        return setArguments(new Arguments(objectValueWithVariableMap));
     }
 
     public Directive addArguments(Arguments arguments) {

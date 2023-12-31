@@ -55,6 +55,27 @@ public interface ValueWithVariable extends JsonValue {
         throw new GraphQLErrors(UNSUPPORTED_VALUE.bind(value.toString()));
     }
 
+    static ValueWithVariable of(GraphqlParser.ValueContext valueContext) {
+        if (valueContext.NullValue() != null) {
+            return new NullValue();
+        } else if (valueContext.BooleanValue() != null) {
+            return new BooleanValue(valueContext.BooleanValue());
+        } else if (valueContext.IntValue() != null) {
+            return new IntValue(valueContext.IntValue());
+        } else if (valueContext.FloatValue() != null) {
+            return new FloatValue(valueContext.FloatValue());
+        } else if (valueContext.StringValue() != null) {
+            return new StringValue(valueContext.StringValue());
+        } else if (valueContext.enumValue() != null) {
+            return new EnumValue(valueContext.enumValue());
+        } else if (valueContext.arrayValue() != null) {
+            return new ArrayValueWithVariable(valueContext.arrayValue());
+        } else if (valueContext.objectValue() != null) {
+            return new ObjectValueWithVariable(valueContext.objectValue());
+        }
+        throw new GraphQLErrors(UNSUPPORTED_VALUE.bind(valueContext.getText()));
+    }
+
     static ValueWithVariable of(GraphqlParser.ValueWithVariableContext valueWithVariableContext) {
         if (valueWithVariableContext.NullValue() != null) {
             return new NullValue();

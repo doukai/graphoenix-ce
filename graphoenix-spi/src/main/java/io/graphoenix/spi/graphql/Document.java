@@ -2,6 +2,7 @@ package io.graphoenix.spi.graphql;
 
 import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.error.GraphQLErrors;
+import io.graphoenix.spi.graphql.operation.FragmentDefinition;
 import io.graphoenix.spi.graphql.type.*;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
@@ -319,6 +320,15 @@ public class Document {
 
     public EnumType getEnumTypeOrError(String name) {
         return getEnumType(name).orElseThrow(() -> new GraphQLErrors(INPUT_OBJECT_NOT_EXIST.bind(name)));
+    }
+
+    public Optional<FragmentDefinition> getFragmentDefinition(String name) {
+        return Optional.ofNullable(getDefinition(name))
+                .map(Definition::asFragmentDefinition);
+    }
+
+    public FragmentDefinition getFragmentDefinitionOrError(String name) {
+        return getFragmentDefinition(name).orElseThrow(() -> new GraphQLErrors(FRAGMENT_NOT_EXIST.bind(name)));
     }
 
     public Stream<InputObjectType> getImplementsInputObject(String name) {

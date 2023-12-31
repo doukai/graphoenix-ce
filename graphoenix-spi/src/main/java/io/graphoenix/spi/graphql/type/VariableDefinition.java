@@ -2,6 +2,7 @@ package io.graphoenix.spi.graphql.type;
 
 import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.graphql.common.Directive;
+import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.common.Variable;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
@@ -14,8 +15,8 @@ public class VariableDefinition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/VariableDefinition.stg");
     private Variable variable;
-    private String typeName;
-    private String defaultValue;
+    private Type type;
+    private ValueWithVariable defaultValue;
     private final Collection<Directive> directives = new LinkedHashSet<>();
 
     public VariableDefinition() {
@@ -26,10 +27,10 @@ public class VariableDefinition {
             this.variable = new Variable(variableDefinitionContext.variable());
         }
         if (variableDefinitionContext.type() != null) {
-            this.typeName = variableDefinitionContext.type().getText();
+            this.type = Type.of(variableDefinitionContext.type());
         }
         if (variableDefinitionContext.defaultValue() != null) {
-            this.defaultValue = variableDefinitionContext.defaultValue().value().getText();
+            this.defaultValue = ValueWithVariable.of(variableDefinitionContext.defaultValue().value());
         }
         if (variableDefinitionContext.directives() != null) {
             setDirectives(
@@ -54,20 +55,20 @@ public class VariableDefinition {
         return this;
     }
 
-    public String getTypeName() {
-        return typeName;
+    public Type getType() {
+        return type;
     }
 
-    public VariableDefinition setTypeName(String typeName) {
-        this.typeName = typeName;
+    public VariableDefinition setType(Type type) {
+        this.type = type;
         return this;
     }
 
-    public String getDefaultValue() {
+    public ValueWithVariable getDefaultValue() {
         return defaultValue;
     }
 
-    public VariableDefinition setDefaultValue(String defaultValue) {
+    public VariableDefinition setDefaultValue(ValueWithVariable defaultValue) {
         this.defaultValue = defaultValue;
         return this;
     }

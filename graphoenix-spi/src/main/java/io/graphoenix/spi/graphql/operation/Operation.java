@@ -97,13 +97,20 @@ public class Operation extends AbstractDefinition implements Definition {
         return selections;
     }
 
-    public Operation setSelections(Collection<Selection> selections) {
+    public Collection<Field> getFields() {
+        return selections.stream()
+                .filter(Selection::isField)
+                .map(Selection::asField)
+                .collect(Collectors.toList());
+    }
+
+    public Operation setSelections(Collection<? extends Selection> selections) {
         this.selections.clear();
         this.selections.addAll(selections);
         return this;
     }
 
-    public Operation addSelections(Collection<Selection> selections) {
+    public Operation addSelections(Collection<? extends Selection> selections) {
         this.selections.addAll(selections);
         return this;
     }

@@ -88,6 +88,23 @@ public class ObjectValueWithVariable extends AbstractMap<String, JsonValue> impl
                 );
     }
 
+    public ObjectValueWithVariable(GraphqlParser.ObjectValueContext objectValueContext) {
+        this.objectValueWithVariable = objectValueContext.objectField().stream()
+                .collect(
+                        Collectors
+                                .toMap(
+                                        objectFieldContext -> objectFieldContext.name().getText(),
+                                        objectFieldContext -> ValueWithVariable.of(objectFieldContext.value()),
+                                        (x, y) -> y,
+                                        LinkedHashMap::new
+                                )
+                );
+    }
+
+    public Map<String, ValueWithVariable> getObjectValueWithVariable() {
+        return objectValueWithVariable;
+    }
+
     public ValueWithVariable put(String key, Object value) {
         return objectValueWithVariable.put(key, ValueWithVariable.of(value));
     }

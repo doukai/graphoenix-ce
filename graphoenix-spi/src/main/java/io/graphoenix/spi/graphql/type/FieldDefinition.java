@@ -20,7 +20,7 @@ import static io.graphoenix.spi.utils.ElementUtil.*;
 public class FieldDefinition extends AbstractDefinition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/FieldDefinition.stg");
-    private final Map<String, InputValue> argumentMap = new LinkedHashMap<>();
+    private Map<String, InputValue> argumentMap;
     private Type type;
 
     public FieldDefinition() {
@@ -79,15 +79,30 @@ public class FieldDefinition extends AbstractDefinition {
     }
 
     public Collection<InputValue> getArguments() {
-        return argumentMap.values();
+        return Optional.ofNullable(argumentMap).map(Map::values).orElse(null);
+    }
+
+    public InputValue getArgument(String name) {
+        return Optional.ofNullable(argumentMap).map(stringInputValueMap -> stringInputValueMap.get(name)).orElse(null);
     }
 
     public FieldDefinition setArguments(Collection<InputValue> arguments) {
-        this.argumentMap.clear();
-        return addArguments(arguments);
+        this.argumentMap = arguments.stream()
+                .collect(
+                        Collectors.toMap(
+                                InputValue::getName,
+                                inputValue -> inputValue,
+                                (x, y) -> y,
+                                LinkedHashMap::new
+                        )
+                );
+        return this;
     }
 
     public FieldDefinition addArguments(Collection<InputValue> arguments) {
+        if (this.argumentMap == null) {
+            this.argumentMap = new LinkedHashMap<>();
+        }
         this.argumentMap.putAll(
                 (Map<? extends String, ? extends InputValue>) arguments.stream()
                         .collect(
@@ -103,6 +118,9 @@ public class FieldDefinition extends AbstractDefinition {
     }
 
     public FieldDefinition addArgument(InputValue argument) {
+        if (this.argumentMap == null) {
+            this.argumentMap = new LinkedHashMap<>();
+        }
         this.argumentMap.put(argument.getName(), argument);
         return this;
     }

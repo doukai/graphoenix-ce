@@ -31,6 +31,12 @@ public class ArrayValueWithVariable extends AbstractList<JsonValue> implements V
                 .collect(Collectors.toList());
     }
 
+    public ArrayValueWithVariable(GraphqlParser.ArrayValueContext arrayValueContext) {
+        this.valueWithVariables = arrayValueContext.value().stream()
+                .map(ValueWithVariable::of)
+                .collect(Collectors.toList());
+    }
+
     public ArrayValueWithVariable(Collection<?> valueWithVariables) {
         this.valueWithVariables = valueWithVariables.stream()
                 .map(ValueWithVariable::of)

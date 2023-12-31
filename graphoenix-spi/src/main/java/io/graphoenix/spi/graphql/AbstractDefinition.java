@@ -30,7 +30,7 @@ public abstract class AbstractDefinition implements Definition {
 
     private String name;
     private String description;
-    private final Map<String, Directive> directiveMap = new LinkedHashMap<>();
+    private Map<String, Directive> directiveMap = new LinkedHashMap<>();
 
     public AbstractDefinition() {
     }
@@ -95,23 +95,21 @@ public abstract class AbstractDefinition implements Definition {
     }
 
     public <T extends AbstractDefinition> T merge(AbstractDefinition... abstractDefinitions) {
-        directiveMap.putAll(
-                (Map<? extends String, ? extends Directive>) Stream
-                        .concat(
-                                Stream.ofNullable(directiveMap.values()),
-                                Stream.of(abstractDefinitions).flatMap(item -> Stream.ofNullable(item.getDirectives()))
+        this.directiveMap = Stream
+                .concat(
+                        Stream.ofNullable(directiveMap.values()),
+                        Stream.of(abstractDefinitions).flatMap(item -> Stream.ofNullable(item.getDirectives()))
+                )
+                .flatMap(Collection::stream)
+                .filter(distinctByKey(Directive::getName))
+                .collect(
+                        Collectors.toMap(
+                                Directive::getName,
+                                directive -> directive,
+                                (x, y) -> y,
+                                LinkedHashMap::new
                         )
-                        .flatMap(Collection::stream)
-                        .filter(distinctByKey(Directive::getName))
-                        .collect(
-                                Collectors.toMap(
-                                        Directive::getName,
-                                        directive -> directive,
-                                        (x, y) -> y,
-                                        LinkedHashMap::new
-                                )
-                        )
-        );
+                );
         return (T) this;
     }
 
@@ -138,14 +136,13 @@ public abstract class AbstractDefinition implements Definition {
     }
 
     public <T extends AbstractDefinition> T setDirectiveMap(Map<String, Directive> directiveMap) {
-        this.directiveMap.clear();
-        this.directiveMap.putAll(directiveMap);
+        this.directiveMap = new LinkedHashMap<>(directiveMap);
         return (T) this;
     }
 
     @Override
     public Directive getDirective(String name) {
-        return directiveMap.get(name);
+        return Optional.ofNullable(directiveMap).map(stringDirectiveMap -> stringDirectiveMap.get(name)).orElse(null);
     }
 
     @Override
@@ -155,20 +152,36 @@ public abstract class AbstractDefinition implements Definition {
 
     @Override
     public Collection<Directive> getDirectives() {
-        return directiveMap.values();
+        return Optional.ofNullable(directiveMap).map(stringDirectiveMap -> stringDirectiveMap.values()).orElse(null);
     }
 
     public <T extends AbstractDefinition> T setDirectives(Collection<Directive> directives) {
-        this.directiveMap.clear();
-        return addDirectives(directives);
+        if (directives.size() > 0) {
+            this.directiveMap = directives.stream()
+                    .collect(
+                            Collectors.toMap(
+                                    Directive::getName,
+                                    directive -> directive,
+                                    (x, y) -> y,
+                                    LinkedHashMap::new
+                            )
+                    );
+        }
+        return (T) this;
     }
 
     public <T extends AbstractDefinition> T addDirective(Directive directive) {
+        if (this.directiveMap == null) {
+            this.directiveMap = new LinkedHashMap<>();
+        }
         this.directiveMap.put(directive.getName(), directive);
         return (T) this;
     }
 
     public <T extends AbstractDefinition> T addDirectives(Collection<Directive> directives) {
+        if (this.directiveMap == null) {
+            this.directiveMap = new LinkedHashMap<>();
+        }
         this.directiveMap.putAll(
                 (Map<? extends String, ? extends Directive>) directives.stream()
                         .collect(

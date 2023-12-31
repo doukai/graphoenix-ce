@@ -1,13 +1,16 @@
 package io.graphoenix.core.handler;
 
+import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.Document;
+import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.*;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.Optional;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
+import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_OPERATION_TYPE;
 
 @ApplicationScoped
 public class DocumentManager {
@@ -73,5 +76,31 @@ public class DocumentManager {
 
     public Definition getInputValueTypeDefinition(InputValue inputValue) {
         return document.getDefinition(inputValue.getType().getTypeName().getName());
+    }
+
+    public Optional<ObjectType> getOperationType(Operation operation) {
+        switch (operation.getOperationType()) {
+            case OPERATION_QUERY_NAME:
+                return document.getQueryOperationType();
+            case OPERATION_MUTATION_NAME:
+                return document.getMutationOperationType();
+            case OPERATION_SUBSCRIPTION_NAME:
+                return document.getSubscriptionOperationType();
+            default:
+                throw new GraphQLErrors(UNSUPPORTED_OPERATION_TYPE.bind(operation.getOperationType()));
+        }
+    }
+
+    public ObjectType getOperationTypeOrError(Operation operation) {
+        switch (operation.getOperationType()) {
+            case OPERATION_QUERY_NAME:
+                return document.getQueryOperationTypeOrError();
+            case OPERATION_MUTATION_NAME:
+                return document.getMutationOperationTypeOrError();
+            case OPERATION_SUBSCRIPTION_NAME:
+                return document.getSubscriptionOperationTypeOrError();
+            default:
+                throw new GraphQLErrors(UNSUPPORTED_OPERATION_TYPE.bind(operation.getOperationType()));
+        }
     }
 }

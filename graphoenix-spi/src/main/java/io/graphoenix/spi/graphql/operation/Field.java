@@ -3,6 +3,7 @@ package io.graphoenix.spi.graphql.operation;
 import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.common.Arguments;
+import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
@@ -11,6 +12,7 @@ import org.stringtemplate.v4.STGroupFile;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -20,8 +22,8 @@ public class Field extends AbstractDefinition implements Selection {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/operation/Field.stg");
     private String alias;
-    private final Arguments arguments = new Arguments();
-    private final Collection<Selection> selections = new LinkedHashSet<>();
+    private Arguments arguments;
+    private Collection<Selection> selections;
 
     public Field() {
         super();
@@ -53,6 +55,9 @@ public class Field extends AbstractDefinition implements Selection {
     }
 
     public Field mergeSelection(Collection<Field> fields) {
+        if (this.selections == null) {
+            this.selections = new LinkedHashSet<>();
+        }
         this.selections.addAll(
                 Stream
                         .concat(
@@ -83,8 +88,7 @@ public class Field extends AbstractDefinition implements Selection {
     }
 
     public Field setArguments(Arguments arguments) {
-        this.arguments.clear();
-        this.arguments.putAll(arguments);
+        this.arguments = new Arguments(arguments);
         return this;
     }
 
@@ -92,37 +96,60 @@ public class Field extends AbstractDefinition implements Selection {
         return setArguments(new Arguments(jsonObject));
     }
 
+    public Field setArguments(Map<?, ?> objectValueWithVariableMap) {
+        return setArguments(new Arguments(objectValueWithVariableMap));
+    }
+
     public Field updateArguments(JsonObject jsonObject) {
         return setArguments(new Arguments(ValueWithVariable.updateJsonObject(this.arguments, jsonObject)));
     }
 
     public Field addArguments(Arguments arguments) {
+        if (this.arguments == null) {
+            this.arguments = new Arguments();
+        }
         this.arguments.putAll(arguments);
         return this;
     }
 
     public Field addArguments(JsonObject jsonObject) {
-        this.arguments.putAll(jsonObject);
+        return addArguments(new Arguments(jsonObject));
+    }
+
+    public Field putArgument(String name, Object object) {
+        if (this.arguments == null) {
+            this.arguments = new Arguments();
+        }
+        this.arguments.put(name, object);
         return this;
     }
 
-    public Field addArgument(String name, Object valueWithVariable) {
+    public Field putArgument(String name, ValueWithVariable valueWithVariable) {
+        if (this.arguments == null) {
+            this.arguments = new Arguments();
+        }
         this.arguments.put(name, valueWithVariable);
         return this;
     }
 
-    public Field addArgument(String name, ValueWithVariable valueWithVariable) {
-        this.arguments.put(name, valueWithVariable);
-        return this;
-    }
-
-    public Field addArgument(String name, JsonValue valueWithVariable) {
-        this.arguments.put(name, valueWithVariable);
+    public Field putArgument(String name, JsonValue jsonValue) {
+        if (this.arguments == null) {
+            this.arguments = new Arguments();
+        }
+        this.arguments.put(name, jsonValue);
         return this;
     }
 
     public Collection<Selection> getSelections() {
         return selections;
+    }
+
+    public Collection<Field> getFields() {
+        return Stream.ofNullable(selections)
+                .flatMap(Collection::stream)
+                .filter(Selection::isField)
+                .map(Selection::asField)
+                .collect(Collectors.toList());
     }
 
     public Field getField(String name) {
@@ -135,17 +162,22 @@ public class Field extends AbstractDefinition implements Selection {
     }
 
     public Field setSelections(Collection<Selection> selections) {
-        this.selections.clear();
-        this.selections.addAll(selections);
+        this.selections = new LinkedHashSet<>(selections);
         return this;
     }
 
     public Field addSelection(Selection selection) {
+        if (this.selections == null) {
+            this.selections = new LinkedHashSet<>();
+        }
         this.selections.add(selection);
         return this;
     }
 
     public Field addSelections(Collection<Selection> selections) {
+        if (this.selections == null) {
+            this.selections = new LinkedHashSet<>();
+        }
         this.selections.addAll(selections);
         return this;
     }
