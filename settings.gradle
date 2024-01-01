@@ -5,4 +5,5 @@ include 'graphoenix-showcase-user'
 include 'graphoenix-json'
 include 'graphoenix-java'
 include 'graphoenix-gradle-plugin'
+include 'graphoenix-annotation-processor'
 

@@ -1,4 +1,4 @@
-package io.graphoenix.core.annotation.processor;
+package graphoenix.annotation.processor;
 
 import com.google.auto.service.AutoService;
 import io.graphoenix.core.config.GraphQLConfig;

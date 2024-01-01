@@ -3,7 +3,6 @@ package io.graphoenix.spi.graphql.operation;
 import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.common.Arguments;
-import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
@@ -55,22 +54,17 @@ public class Field extends AbstractDefinition implements Selection {
     }
 
     public Field mergeSelection(Collection<Field> fields) {
-        if (this.selections == null) {
-            this.selections = new LinkedHashSet<>();
-        }
-        this.selections.addAll(
-                Stream
-                        .concat(
-                                Stream.ofNullable(this.selections)
-                                        .flatMap(Collection::stream)
-                                        .filter(Selection::isField)
-                                        .map(selection -> (Field) selection),
-                                Stream.ofNullable(fields)
-                                        .flatMap(Collection::stream)
-                        )
-                        .filter(distinctByKey(Field::getName))
-                        .collect(Collectors.toList())
-        );
+        this.selections = Stream
+                .concat(
+                        Stream.ofNullable(this.selections)
+                                .flatMap(Collection::stream)
+                                .filter(Selection::isField)
+                                .map(selection -> (Field) selection),
+                        Stream.ofNullable(fields)
+                                .flatMap(Collection::stream)
+                )
+                .filter(distinctByKey(Field::getName))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         return this;
     }
 
@@ -88,7 +82,9 @@ public class Field extends AbstractDefinition implements Selection {
     }
 
     public Field setArguments(Arguments arguments) {
-        this.arguments = new Arguments(arguments);
+        if (arguments != null && arguments.size() > 0) {
+            this.arguments = new Arguments(arguments);
+        }
         return this;
     }
 

@@ -1,4 +1,4 @@
-package io.graphoenix.core.annotation.processor;
+package graphoenix.annotation.processor;
 
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
@@ -30,9 +30,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
-import static io.graphoenix.spi.utils.ElementUtil.getNameFromElement;
-import static io.graphoenix.spi.utils.ElementUtil.getTypeNameFromTypeMirror;
-
 
 public abstract class BaseProcessor extends AbstractProcessor {
 
@@ -177,7 +174,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                         .findFirst()
                                         .ifPresent(variableElement -> {
                                                     FieldDefinition fieldDefinition = new FieldDefinition(executableElement, typeUtils);
-                                                    String typeName = getNameFromElement(typeUtils.asElement(variableElement.asType()));
+                                                    String typeName = ElementUtil.getNameFromElement(typeUtils.asElement(variableElement.asType()));
                                                     documentManager.getDocument().getObjectType(typeName)
                                                             .ifPresentOrElse(
                                                                     objectType -> objectType.addField(fieldDefinition),
@@ -196,7 +193,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                         .findFirst()
                                         .ifPresent(variableElement -> {
                                                     FieldDefinition fieldDefinition = new FieldDefinition(executableElement, typeUtils);
-                                                    String typeName = getNameFromElement(typeUtils.asElement(variableElement.asType()));
+                                                    String typeName = ElementUtil.getNameFromElement(typeUtils.asElement(variableElement.asType()));
                                                     documentManager.getDocument().getImplementsObjectType(typeName)
                                                             .forEach(objectType -> objectType.addField(fieldDefinition));
                                                 }
@@ -218,12 +215,12 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                                                         INPUT_INVOKE_PARAMETER_INPUT_VALUE_NAME_NAME,
                                                                         parameter.getSimpleName().toString(),
                                                                         INPUT_INVOKE_PARAMETER_INPUT_VALUE_CLASS_NAME_NAME,
-                                                                        getTypeNameFromTypeMirror(parameter.asType(), typeUtils)
+                                                                        ElementUtil.getTypeNameFromTypeMirror(parameter.asType(), typeUtils)
                                                                 )
                                                         )
                                                         .collect(Collectors.toList())
                                         ),
-                                        INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME, getTypeNameFromTypeMirror(executableElement.getReturnType(), typeUtils)
+                                        INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME, ElementUtil.getTypeNameFromTypeMirror(executableElement.getReturnType(), typeUtils)
                                 );
 
                                 executableElement.getParameters().stream()

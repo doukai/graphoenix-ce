@@ -7,6 +7,8 @@ import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import org.eclipse.microprofile.graphql.Ignore;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
+import reactor.util.function.Tuple3;
+import reactor.util.function.Tuples;
 
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
@@ -14,6 +16,7 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Types;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -131,6 +134,30 @@ public class InputObjectType extends AbstractDefinition implements Definition {
                                 .flatMap(valueWithVariable -> valueWithVariable.asArray().getValueWithVariables().stream())
                                 .filter(ValueWithVariable::isString)
                                 .map(valueWithVariable -> valueWithVariable.asString().getString())
+                )
+                .collect(Collectors.toList());
+    }
+
+    public boolean isInvokesInput() {
+        return hasDirective(DIRECTIVE_INVOKES_NAME);
+    }
+
+    public List<Tuple3<String, String, String>> getInputInvokes() {
+        return Stream.ofNullable(getDirective(DIRECTIVE_INVOKES_NAME))
+                .flatMap(directive ->
+                        Stream.ofNullable(directive.getArgument(DIRECTIVE_INVOKES_METHODS_NAME))
+                                .filter(ValueWithVariable::isArray)
+                                .map(ValueWithVariable::asArray)
+                                .flatMap(arrayValueWithVariable -> arrayValueWithVariable.getValueWithVariables().stream())
+                                .filter(ValueWithVariable::isObject)
+                                .map(ValueWithVariable::asObject)
+                                .map(objectValueWithVariable ->
+                                        Tuples.of(
+                                                objectValueWithVariable.getValueWithVariable(INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME).asString().getValue(),
+                                                objectValueWithVariable.getValueWithVariable(INPUT_INVOKE_INPUT_VALUE_METHOD_NAME_NAME).asString().getValue(),
+                                                objectValueWithVariable.getValueWithVariable(INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME).asString().getValue()
+                                        )
+                                )
                 )
                 .collect(Collectors.toList());
     }

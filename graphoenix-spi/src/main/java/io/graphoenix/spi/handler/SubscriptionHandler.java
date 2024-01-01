@@ -7,6 +7,4 @@ import reactor.core.publisher.Flux;
 public interface SubscriptionHandler {
 
     Flux<JsonValue> subscription(Operation operation);
-
-    Flux<JsonValue> subscription(OperationHandler operationHandler, Operation operation);
 }

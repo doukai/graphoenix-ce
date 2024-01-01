@@ -31,4 +31,12 @@ public final class NameUtil {
             return "set" + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, fieldName);
         }
     }
+
+    public static String getFieldName(String fieldName) {
+        boolean isKeyword = SourceVersion.isKeyword(fieldName);
+        if (isKeyword) {
+            fieldName = "_" + fieldName;
+        }
+        return fieldName;
+    }
 }

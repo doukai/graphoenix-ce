@@ -1,4 +1,4 @@
-package io.graphoenix.core.handler;
+package io.graphoenix.core.handler.before;
 
 import io.graphoenix.spi.graphql.common.Arguments;
 import io.graphoenix.spi.graphql.common.Directive;

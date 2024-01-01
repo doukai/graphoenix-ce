@@ -6,17 +6,14 @@ import io.graphoenix.spi.graphql.Definition;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class DirectiveDefinition extends AbstractDefinition implements Definition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/DirectiveDefinition.stg");
-    private final Map<String, InputValue> argumentMap = new LinkedHashMap<>();
-    private final Collection<String> directiveLocations = new LinkedHashSet<>();
+    private Map<String, InputValue> argumentMap;
+    private Collection<String> directiveLocations;
 
     public DirectiveDefinition() {
         super();
@@ -50,15 +47,28 @@ public class DirectiveDefinition extends AbstractDefinition implements Definitio
     }
 
     public Collection<InputValue> getArguments() {
-        return argumentMap.values();
+        return Optional.ofNullable(argumentMap).map(Map::values).orElse(null);
     }
 
     public DirectiveDefinition setArguments(Collection<InputValue> arguments) {
-        this.argumentMap.clear();
-        return addArguments(arguments);
+        if (arguments != null && arguments.size() > 0) {
+            this.argumentMap = arguments.stream()
+                    .collect(
+                            Collectors.toMap(
+                                    InputValue::getName,
+                                    inputValue -> inputValue,
+                                    (x, y) -> y,
+                                    LinkedHashMap::new
+                            )
+                    );
+        }
+        return this;
     }
 
     public DirectiveDefinition addArguments(Collection<InputValue> arguments) {
+        if (argumentMap == null) {
+            argumentMap = new LinkedHashMap<>();
+        }
         this.argumentMap.putAll(
                 (Map<? extends String, ? extends InputValue>) arguments.stream()
                         .collect(
@@ -74,6 +84,9 @@ public class DirectiveDefinition extends AbstractDefinition implements Definitio
     }
 
     public DirectiveDefinition addArgument(InputValue argument) {
+        if (argumentMap == null) {
+            argumentMap = new LinkedHashMap<>();
+        }
         this.argumentMap.put(argument.getName(), argument);
         return this;
     }
@@ -83,8 +96,9 @@ public class DirectiveDefinition extends AbstractDefinition implements Definitio
     }
 
     public DirectiveDefinition setDirectiveLocations(Collection<String> directiveLocations) {
-        this.directiveLocations.clear();
-        this.directiveLocations.addAll(directiveLocations);
+        if (directiveLocations != null && directiveLocations.size() > 0) {
+            this.directiveLocations = new LinkedHashSet<>(directiveLocations);
+        }
         return this;
     }
 

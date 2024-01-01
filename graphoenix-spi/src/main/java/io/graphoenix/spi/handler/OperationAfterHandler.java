@@ -4,7 +4,7 @@ import io.graphoenix.spi.graphql.operation.Operation;
 import jakarta.json.JsonValue;
 import reactor.core.publisher.Mono;
 
-public interface MutationHandler {
+public interface OperationAfterHandler {
 
-    Mono<JsonValue> mutation(Operation operation);
+    Mono<JsonValue> handle(Operation operation, JsonValue jsonValue);
 }

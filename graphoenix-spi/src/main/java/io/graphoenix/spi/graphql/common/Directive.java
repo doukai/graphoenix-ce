@@ -1,7 +1,6 @@
 package io.graphoenix.spi.graphql.common;
 
 import graphql.parser.antlr.GraphqlParser;
-import io.graphoenix.spi.graphql.operation.Field;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import org.stringtemplate.v4.ST;
@@ -14,7 +13,7 @@ public class Directive {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/common/Directive.stg");
     private String name;
-    private final Arguments arguments = new Arguments();
+    private Arguments arguments;
 
     public String getName() {
         return name;
@@ -63,8 +62,9 @@ public class Directive {
     }
 
     public Directive setArguments(Arguments arguments) {
-        this.arguments.clear();
-        this.arguments.putAll(arguments);
+        if (arguments != null && arguments.size() > 0) {
+            this.arguments = arguments;
+        }
         return this;
     }
 
@@ -77,26 +77,41 @@ public class Directive {
     }
 
     public Directive addArguments(Arguments arguments) {
+        if (arguments == null) {
+            this.arguments = new Arguments();
+        }
         this.arguments.putAll(arguments);
         return this;
     }
 
     public Directive addArguments(JsonObject jsonObject) {
+        if (arguments == null) {
+            this.arguments = new Arguments();
+        }
         this.arguments.putAll(jsonObject);
         return this;
     }
 
     public Directive addArgument(String name, Object valueWithVariable) {
+        if (arguments == null) {
+            this.arguments = new Arguments();
+        }
         this.arguments.put(name, valueWithVariable);
         return this;
     }
 
     public Directive addArgument(String name, ValueWithVariable valueWithVariable) {
+        if (arguments == null) {
+            this.arguments = new Arguments();
+        }
         this.arguments.put(name, valueWithVariable);
         return this;
     }
 
     public Directive addArgument(String name, JsonValue valueWithVariable) {
+        if (arguments == null) {
+            this.arguments = new Arguments();
+        }
         this.arguments.put(name, valueWithVariable);
         return this;
     }

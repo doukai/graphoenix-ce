@@ -1,8 +1,9 @@
-package io.graphoenix.core.annotation.processor;
+package graphoenix.annotation.processor;
 
 import com.google.auto.service.AutoService;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.GraphQLConfigRegister;
+import io.graphoenix.java.implementer.InputInvokeHandlerBuilder;
 import io.nozdormu.spi.context.BeanContext;
 import org.tinylog.Logger;
 
@@ -37,6 +38,7 @@ public class ApplicationProcessor extends BaseProcessor {
             return false;
         }
         DocumentManager documentManager = BeanContext.get(DocumentManager.class);
+        InputInvokeHandlerBuilder inputInvokeHandlerBuilder = BeanContext.get(InputInvokeHandlerBuilder.class);
         roundInit(roundEnv);
 
         try {
@@ -47,6 +49,8 @@ public class ApplicationProcessor extends BaseProcessor {
             Writer writer = mainGraphQL.openWriter();
             writer.write(documentManager.getDocument().toString());
             writer.close();
+
+            inputInvokeHandlerBuilder.writeToFiler(filer);
 
         } catch (IOException | URISyntaxException e) {
             Logger.error(e);

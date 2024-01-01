@@ -7,10 +7,7 @@ import io.graphoenix.spi.graphql.type.VariableDefinition;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.graphoenix.spi.constant.Hammurabi.OPERATION_QUERY_NAME;
@@ -19,7 +16,7 @@ public class Operation extends AbstractDefinition implements Definition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/operation/Operation.stg");
     private String operationType;
-    private final Map<String, VariableDefinition> variableDefinitionMap = new LinkedHashMap<>();
+    private Map<String, VariableDefinition> variableDefinitionMap;
     private final Collection<Selection> selections = new LinkedHashSet<>();
 
     public Operation() {
@@ -61,19 +58,32 @@ public class Operation extends AbstractDefinition implements Definition {
     }
 
     public VariableDefinition getVariableDefinition(String name) {
-        return variableDefinitionMap.get(name);
+        return Optional.ofNullable(variableDefinitionMap).map(stringVariableDefinitionMap -> stringVariableDefinitionMap.get(name)).orElse(null);
     }
 
     public Collection<VariableDefinition> getVariableDefinitions() {
-        return variableDefinitionMap.values();
+        return Optional.ofNullable(variableDefinitionMap).map(Map::values).orElse(null);
     }
 
     public Operation setVariableDefinitions(Collection<VariableDefinition> variableDefinitions) {
-        this.variableDefinitionMap.clear();
-        return addVariableDefinitions(variableDefinitions);
+        if (variableDefinitions != null && variableDefinitions.size() > 0) {
+            this.variableDefinitionMap = variableDefinitions.stream()
+                    .collect(
+                            Collectors.toMap(
+                                    variableDefinition -> variableDefinition.getVariable().getName(),
+                                    variableDefinition -> variableDefinition,
+                                    (x, y) -> y,
+                                    LinkedHashMap::new
+                            )
+                    );
+        }
+        return this;
     }
 
     public Operation addVariableDefinitions(Collection<VariableDefinition> variableDefinitions) {
+        if (this.variableDefinitionMap == null) {
+            this.variableDefinitionMap = new LinkedHashMap<>();
+        }
         this.variableDefinitionMap.putAll(
                 (Map<? extends String, ? extends VariableDefinition>) variableDefinitions.stream()
                         .collect(
@@ -89,6 +99,9 @@ public class Operation extends AbstractDefinition implements Definition {
     }
 
     public Operation addVariableDefinition(VariableDefinition variableDefinition) {
+        if (this.variableDefinitionMap == null) {
+            this.variableDefinitionMap = new LinkedHashMap<>();
+        }
         this.variableDefinitionMap.put(variableDefinition.getVariable().getName(), variableDefinition);
         return this;
     }
@@ -101,6 +114,13 @@ public class Operation extends AbstractDefinition implements Definition {
         return selections.stream()
                 .filter(Selection::isField)
                 .map(Selection::asField)
+                .collect(Collectors.toList());
+    }
+
+    public Collection<Fragment> getFragments() {
+        return selections.stream()
+                .filter(Selection::isFragment)
+                .map(Selection::asFragment)
                 .collect(Collectors.toList());
     }
 

@@ -30,7 +30,7 @@ public abstract class AbstractDefinition implements Definition {
 
     private String name;
     private String description;
-    private Map<String, Directive> directiveMap = new LinkedHashMap<>();
+    private Map<String, Directive> directiveMap;
 
     public AbstractDefinition() {
     }
@@ -97,7 +97,7 @@ public abstract class AbstractDefinition implements Definition {
     public <T extends AbstractDefinition> T merge(AbstractDefinition... abstractDefinitions) {
         this.directiveMap = Stream
                 .concat(
-                        Stream.ofNullable(directiveMap.values()),
+                        Stream.ofNullable(directiveMap).map(Map::values),
                         Stream.of(abstractDefinitions).flatMap(item -> Stream.ofNullable(item.getDirectives()))
                 )
                 .flatMap(Collection::stream)
@@ -147,7 +147,7 @@ public abstract class AbstractDefinition implements Definition {
 
     @Override
     public boolean hasDirective(String name) {
-        return directiveMap.containsKey(name);
+        return directiveMap != null && directiveMap.containsKey(name);
     }
 
     @Override
@@ -156,7 +156,7 @@ public abstract class AbstractDefinition implements Definition {
     }
 
     public <T extends AbstractDefinition> T setDirectives(Collection<Directive> directives) {
-        if (directives.size() > 0) {
+        if (directives != null && directives.size() > 0) {
             this.directiveMap = directives.stream()
                     .collect(
                             Collectors.toMap(
@@ -198,7 +198,8 @@ public abstract class AbstractDefinition implements Definition {
 
     @Override
     public Optional<String> getPackageName() {
-        return Optional.ofNullable(directiveMap.get(DIRECTIVE_PACKAGE_NAME))
+        return Optional.ofNullable(directiveMap)
+                .map(map -> map.get(DIRECTIVE_PACKAGE_NAME))
                 .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME)))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> (StringValue) valueWithVariable)
@@ -207,7 +208,8 @@ public abstract class AbstractDefinition implements Definition {
 
     @Override
     public Optional<String> getClassName() {
-        return Optional.ofNullable(directiveMap.get(DIRECTIVE_CLASS_NAME))
+        return Optional.ofNullable(directiveMap)
+                .map(map -> map.get(DIRECTIVE_CLASS_NAME))
                 .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME)))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> (StringValue) valueWithVariable)
@@ -216,7 +218,8 @@ public abstract class AbstractDefinition implements Definition {
 
     @Override
     public boolean classExists() {
-        return Optional.ofNullable(directiveMap.get(DIRECTIVE_CLASS_NAME))
+        return Optional.ofNullable(directiveMap)
+                .map(map -> map.get(DIRECTIVE_CLASS_NAME))
                 .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_CLASS_ARGUMENT_EXISTS_NAME)))
                 .filter(ValueWithVariable::isBoolean)
                 .map(valueWithVariable -> (BooleanValue) valueWithVariable)
@@ -226,7 +229,8 @@ public abstract class AbstractDefinition implements Definition {
 
     @Override
     public Optional<String> getAnnotationName() {
-        return Optional.ofNullable(directiveMap.get(DIRECTIVE_ANNOTATION_NAME))
+        return Optional.ofNullable(directiveMap)
+                .map(map -> map.get(DIRECTIVE_ANNOTATION_NAME))
                 .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME)))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> (StringValue) valueWithVariable)

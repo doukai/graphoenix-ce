@@ -1,5 +1,6 @@
-package io.graphoenix.core.handler;
+package io.graphoenix.core.handler.before;
 
+import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.common.*;
 import io.graphoenix.spi.graphql.operation.Field;

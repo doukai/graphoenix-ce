@@ -1,5 +1,6 @@
-package io.graphoenix.core.handler;
+package io.graphoenix.core.handler.before;
 
+import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Fragment;
@@ -58,9 +59,7 @@ public class FragmentHandler implements OperationBeforeHandler {
     public Flux<Selection> fragmentToFields(Fragment fragment) {
         return PublisherBeanContext.get(DocumentManager.class)
                 .map(DocumentManager::getDocument)
-                .flatMap(document ->
-                        Mono.justOrEmpty(document.getFragmentDefinition(fragment.getFragmentName()))
-                )
+                .flatMap(document -> Mono.justOrEmpty(document.getFragmentDefinition(fragment.getFragmentName())))
                 .defaultIfEmpty(documentManager.getDocument().getFragmentDefinitionOrError(fragment.getFragmentName()))
                 .flatMapMany(fragmentDefinition -> Flux.fromIterable(fragmentDefinition.getSelections()));
     }
