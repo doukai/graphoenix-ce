@@ -1,6 +1,5 @@
 package io.graphoenix.java.implementer;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
 import com.squareup.javapoet.*;
 import io.graphoenix.core.config.PackageConfig;
@@ -137,17 +136,18 @@ public class InputInvokeHandlerBuilder {
     }
 
     private List<MethodSpec> buildTypeInvokeMethods() {
-        return Stream.concat(
-                documentManager.getDocument().getInputObjectTypes()
-                        .filter(inputObjectType -> inputObjectType.getName().endsWith(SUFFIX_ARGUMENTS))
-                        .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, true)),
-                documentManager.getDocument().getInputObjectTypes()
-                        .filter(inputObjectType ->
-                                inputObjectType.getName().endsWith(SUFFIX_INPUT) && documentManager.getDocument().getDefinition(inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_INPUT))).isObject() ||
-                                        inputObjectType.getName().endsWith(SUFFIX_EXPRESSION) && documentManager.getDocument().getDefinition(inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_EXPRESSION))).isObject()
-                        )
-                        .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, false))
-        )
+        return Stream
+                .concat(
+                        documentManager.getDocument().getInputObjectTypes()
+                                .filter(inputObjectType -> inputObjectType.getName().endsWith(SUFFIX_ARGUMENTS))
+                                .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, true)),
+                        documentManager.getDocument().getInputObjectTypes()
+                                .filter(inputObjectType ->
+                                        inputObjectType.getName().endsWith(SUFFIX_INPUT) && documentManager.getDocument().getDefinition(inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_INPUT))).isObject() ||
+                                                inputObjectType.getName().endsWith(SUFFIX_EXPRESSION) && documentManager.getDocument().getDefinition(inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_EXPRESSION))).isObject()
+                                )
+                                .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, false))
+                )
                 .collect(Collectors.toList());
     }
 
@@ -231,9 +231,8 @@ public class InputInvokeHandlerBuilder {
                                                 .indent()
                                                 .add(".flatMap(entry -> {\n")
                                                 .indent()
-                                                .add("String fieldName = entry.getKey();\n")
                                                 .add(CodeBlock.builder()
-                                                        .beginControlFlow("switch (fieldName)")
+                                                        .beginControlFlow("switch (entry.getKey())")
                                                         .indent()
                                                         .add(CodeBlock.join(
                                                                 Streams
@@ -271,11 +270,11 @@ public class InputInvokeHandlerBuilder {
                                                                                                             inputValueType.getName().endsWith(SUFFIX_EXPRESSION) && documentManager.getDocument().getDefinition(inputValueType.getName().substring(0, inputValueType.getName().lastIndexOf(SUFFIX_EXPRESSION))).isObject();
                                                                                                 }
                                                                                         )
-                                                                                        .filter(inputValue -> !inputValue.getType().hasList())
+                                                                                        .filter(inputValue -> inputValue.getType().hasList())
                                                                                         .map(inputValue -> {
                                                                                                     InputObjectType inputValueType = documentManager.getInputValueTypeDefinition(inputValue).asInputObject();
                                                                                                     CodeBlock caseCodeBlock = CodeBlock.of("case $S:\n", inputValue.getName());
-                                                                                                    CodeBlock invokeCodeBlock = CodeBlock.of("return $T.from($T.justOrEmpty($L.$L()).map($T::size).flatMapMany(size -> $T.range(0, size))).flatMap(index -> $L($T.get($L.$L(), index), entry.getValue().asArray().getValueWithVariables().get(index).asObject())).collectList().doOnNext($L -> $L.$L($L));",
+                                                                                                    CodeBlock invokeCodeBlock = CodeBlock.of("return $T.from($T.justOrEmpty($L.$L()).map($T::size).flatMapMany(size -> $T.range(0, size))).flatMap(index -> $L(new $T<>($L.$L()).get(index), entry.getValue().asArray().getValueWithVariables().get(index).asObject())).collectList().doOnNext($L -> $L.$L($L));",
                                                                                                             ClassName.get(Flux.class),
                                                                                                             ClassName.get(Mono.class),
                                                                                                             resultParameterName,
@@ -283,7 +282,7 @@ public class InputInvokeHandlerBuilder {
                                                                                                             ClassName.get(Collection.class),
                                                                                                             ClassName.get(Flux.class),
                                                                                                             typeNameToFieldName(inputValueType.getName()),
-                                                                                                            ClassName.get(Iterables.class),
+                                                                                                            ClassName.get(ArrayList.class),
                                                                                                             resultParameterName,
                                                                                                             getFieldGetterMethodName(inputValue.getName()),
                                                                                                             getFieldName(inputValue.getName()),

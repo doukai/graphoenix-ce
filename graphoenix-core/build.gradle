@@ -27,12 +27,12 @@ repositories {
 dependencies {
     compile project(':graphoenix-spi')
     compile project(':graphoenix-json')
+    compile 'com.google.auto.service:auto-service:1.0.1'
 
     implementation 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
     implementation 'io.nozdormu:nozdormu-interceptor:0.0.1-SNAPSHOT'
     implementation 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
     implementation 'com.google.guava:guava:31.1-jre'
-    implementation 'com.google.auto.service:auto-service:1.0.1'
 
     annotationProcessor project(':graphoenix-spi')
     annotationProcessor 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'

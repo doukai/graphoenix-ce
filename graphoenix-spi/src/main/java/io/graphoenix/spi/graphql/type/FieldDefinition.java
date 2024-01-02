@@ -1,20 +1,26 @@
 package io.graphoenix.spi.graphql.type;
 
 import graphql.parser.antlr.GraphqlParser;
+import io.graphoenix.spi.error.GraphQLErrorType;
+import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.common.ArrayValueWithVariable;
 import io.graphoenix.spi.graphql.common.Directive;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
+import reactor.util.function.Tuple3;
+import reactor.util.function.Tuples;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Types;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
+import static io.graphoenix.spi.error.GraphQLErrorType.*;
 import static io.graphoenix.spi.utils.ElementUtil.*;
 
 public class FieldDefinition extends AbstractDefinition {
@@ -160,6 +166,48 @@ public class FieldDefinition extends AbstractDefinition {
 
     public boolean isInvokeField() {
         return hasDirective(DIRECTIVE_INVOKE_NAME);
+    }
+
+    public Optional<String> getInvokeClassName() {
+        return Stream.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
+                .flatMap(directive ->
+                        Stream.ofNullable(directive.getArgument(DIRECTIVE_INVOKE_ARGUMENT_CLASS_NAME_NAME))
+                )
+                .filter(ValueWithVariable::isString)
+                .findFirst()
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
+    }
+
+    public String getInvokeClassNameOrError() {
+        return getInvokeClassName().orElseThrow(() -> new GraphQLErrors(CLASS_NAME_ARGUMENT_NOT_EXIST.bind(toString())));
+    }
+
+    public Optional<String> getInvokeMethodName() {
+        return Stream.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
+                .flatMap(directive ->
+                        Stream.ofNullable(directive.getArgument(DIRECTIVE_INVOKE_ARGUMENT_METHOD_NAME_NAME))
+                )
+                .filter(ValueWithVariable::isString)
+                .findFirst()
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
+    }
+
+    public String getInvokeMethodNameOrError() {
+        return getInvokeClassName().orElseThrow(() -> new GraphQLErrors(METHOD_NAME_ARGUMENT_NOT_EXIST.bind(toString())));
+    }
+
+    public Optional<String> getInvokeReturnClassName() {
+        return Stream.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
+                .flatMap(directive ->
+                        Stream.ofNullable(directive.getArgument(DIRECTIVE_INVOKE_ARGUMENT_RETURN_CLASS_NAME_NAME))
+                )
+                .filter(ValueWithVariable::isString)
+                .findFirst()
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
+    }
+
+    public String getInvokeReturnClassNameOrError() {
+        return getInvokeClassName().orElseThrow(() -> new GraphQLErrors(RETURN_CLASS_NAME_ARGUMENT_NOT_EXIST.bind(toString())));
     }
 
     public boolean isFunctionField() {
