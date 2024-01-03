@@ -4,6 +4,7 @@ import io.graphoenix.spi.graphql.common.Arguments;
 import io.graphoenix.spi.graphql.common.Directive;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.operation.Field;
+import io.graphoenix.spi.graphql.operation.Fragment;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.VariableDefinition;
 import io.graphoenix.spi.handler.OperationBeforeHandler;
@@ -19,17 +20,36 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @ApplicationScoped
-@Priority(100)
-public class DefaultValueHandler implements OperationBeforeHandler {
+@Priority(0)
+public class VariableHandler implements OperationBeforeHandler {
 
     @Override
+    public Mono<Operation> query(Operation operation, Map<String, JsonValue> variables) {
+        return handle(operation, variables);
+    }
+
+    @Override
+    public Mono<Operation> mutation(Operation operation, Map<String, JsonValue> variables) {
+        return handle(operation, variables);
+    }
+
+    @Override
+    public Mono<Operation> subscription(Operation operation, Map<String, JsonValue> variables) {
+        return handle(operation, variables);
+    }
+
     public Mono<Operation> handle(Operation operation, Map<String, JsonValue> variables) {
         Map<String, JsonValue> mergedVariables = mergeDefaultValues(operation.getVariableDefinitions(), variables);
         return Mono.just(
                 operation
                         .setSelections(
-                                replaceFieldsVariables(operation.getFields(), mergedVariables)
-                                        .map(field -> (Field) field.setDirectives(replaceDirectivesVariables(field.getDirectives(), mergedVariables).collect(Collectors.toList())))
+                                Stream
+                                        .concat(
+                                                replaceFieldsVariables(operation.getFields(), mergedVariables)
+                                                        .map(field -> (Field) field.setDirectives(replaceDirectivesVariables(field.getDirectives(), mergedVariables).collect(Collectors.toList()))),
+                                                operation.getFragments().stream()
+                                                        .map(fragment -> (Fragment) fragment.setDirectives(replaceDirectivesVariables(fragment.getDirectives(), mergedVariables).collect(Collectors.toList())))
+                                        )
                                         .collect(Collectors.toList())
 
                         )

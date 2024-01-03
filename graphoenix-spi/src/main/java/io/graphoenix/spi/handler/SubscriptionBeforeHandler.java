@@ -8,5 +8,5 @@ import java.util.Map;
 
 public interface SubscriptionBeforeHandler {
 
-    Mono<Operation> handle(Operation operation, Map<String, JsonValue> variables);
+    Mono<Operation> subscription(Operation operation, Map<String, JsonValue> variables);
 }

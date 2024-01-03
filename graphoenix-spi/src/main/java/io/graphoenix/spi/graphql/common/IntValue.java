@@ -31,6 +31,10 @@ public class IntValue implements ValueWithVariable, JsonNumber {
         return value;
     }
 
+    public Integer getIntegerValue() {
+        return value.intValue();
+    }
+
     public void setValue(Number value) {
         this.value = value;
     }

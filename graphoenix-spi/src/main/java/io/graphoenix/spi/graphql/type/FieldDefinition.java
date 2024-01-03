@@ -218,6 +218,26 @@ public class FieldDefinition extends AbstractDefinition {
         return hasDirective(DIRECTIVE_CONNECTION_NAME);
     }
 
+    public Optional<String> getConnectionField() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_CONNECTION_NAME).getArgument(DIRECTIVE_CONNECTION_ARGUMENT_FIELD_NAME))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
+    }
+
+    public String getConnectionFieldOrError() {
+        return getConnectionField().orElseThrow(() -> new GraphQLErrors(CONNECTION_FIELD_NOT_EXIST.bind(toString())));
+    }
+
+    public Optional<String> getConnectionAgg() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_CONNECTION_NAME).getArgument(DIRECTIVE_CONNECTION_ARGUMENT_AGG_NAME))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
+    }
+
+    public String getConnectionAggOrError() {
+        return getConnectionAgg().orElseThrow(() -> new GraphQLErrors(CONNECTION_AGG_FIELD_NOT_EXIST.bind(toString())));
+    }
+
     public boolean isAggregateField() {
         return hasDirective(DIRECTIVE_AGGREGATE_NAME);
     }

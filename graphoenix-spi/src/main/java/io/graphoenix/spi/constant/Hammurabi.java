@@ -32,6 +32,10 @@ public class Hammurabi {
     public static final String FIELD_TYPENAME_NAME = "__typename";
     public static final String FIELD_TOTAL_COUNT_NAME = "totalCount";
     public static final String FIELD_PAGE_INFO_NAME = "pageInfo";
+    public static final String FIELD_HAS_NEXT_PAGE_NAME = "hasNextPage";
+    public static final String FIELD_HAS_PREVIOUS_PAGE_NAME = "hasPreviousPage";
+    public static final String FIELD_START_CURSOR_NAME = "startCursor";
+    public static final String FIELD_END_CURSOR_NAME = "endCursor";
     public static final String FIELD_EDGES_NAME = "edges";
     public static final String FIELD_NODE_NAME = "node";
     public static final String FIELD_CURSOR_NAME = "cursor";

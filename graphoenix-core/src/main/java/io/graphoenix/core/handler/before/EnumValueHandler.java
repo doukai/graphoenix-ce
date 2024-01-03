@@ -31,6 +31,20 @@ public class EnumValueHandler implements OperationBeforeHandler {
     }
 
     @Override
+    public Mono<Operation> query(Operation operation, Map<String, JsonValue> variables) {
+        return handle(operation, variables);
+    }
+
+    @Override
+    public Mono<Operation> mutation(Operation operation, Map<String, JsonValue> variables) {
+        return handle(operation, variables);
+    }
+
+    @Override
+    public Mono<Operation> subscription(Operation operation, Map<String, JsonValue> variables) {
+        return handle(operation, variables);
+    }
+
     public Mono<Operation> handle(Operation operation, Map<String, JsonValue> variables) {
         return Mono.just(
                 operation

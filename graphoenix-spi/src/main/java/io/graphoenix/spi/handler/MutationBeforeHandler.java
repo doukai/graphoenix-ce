@@ -8,5 +8,5 @@ import java.util.Map;
 
 public interface MutationBeforeHandler {
 
-    Mono<Operation> handle(Operation operation, Map<String, JsonValue> variables);
+    Mono<Operation> mutation(Operation operation, Map<String, JsonValue> variables);
 }

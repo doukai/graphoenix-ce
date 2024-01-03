@@ -874,8 +874,7 @@ public class DocumentBuilder {
 
     public ObjectType objectToEdge(ObjectType objectType) {
         FieldDefinition cursorFieldDefinition = objectType.getCursorField()
-                .or(objectType::getIDField)
-                .orElseThrow(() -> new GraphQLErrors(TYPE_ID_FIELD_NOT_EXIST.bind(objectType.getName())));
+                .orElseGet(objectType::getIDFieldOrError);
 
         return new ObjectType(objectType.getName() + InputType.EDGE)
                 .addField(new FieldDefinition(FIELD_NODE_NAME).setType(new TypeName(objectType.getName())))

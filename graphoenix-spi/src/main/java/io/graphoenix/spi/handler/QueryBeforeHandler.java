@@ -8,5 +8,5 @@ import java.util.Map;
 
 public interface QueryBeforeHandler {
 
-    Mono<Operation> handle(Operation operation, Map<String, JsonValue> variables);
+    Mono<Operation> query(Operation operation, Map<String, JsonValue> variables);
 }
