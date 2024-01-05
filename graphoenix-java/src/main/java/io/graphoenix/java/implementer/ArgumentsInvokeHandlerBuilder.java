@@ -216,8 +216,7 @@ public class ArgumentsInvokeHandlerBuilder {
                 CodeBlock.join(
                         Stream.of(
                                 CodeBlock.of(
-                                        "return $T.from($T.justOrEmpty($L)).flatMap($T::fromIterable)",
-                                        ClassName.get(Flux.class),
+                                        "return $T.justOrEmpty($L).flatMapMany($T::fromIterable)",
                                         ClassName.get(Mono.class),
                                         isOperationType ? "operation.getFields()" : "parentField.getFields()",
                                         ClassName.get(Flux.class)

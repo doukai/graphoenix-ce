@@ -212,16 +212,14 @@ public class InputInvokeHandlerBuilder {
                                 .of(
                                         arguments ?
                                                 CodeBlock.of(
-                                                        ".flatMap(result -> $T.from($T.justOrEmpty(arguments)).map($T::getArguments).map($T::entrySet).flatMap($T::fromIterable)",
-                                                        ClassName.get(Flux.class),
+                                                        ".flatMap(result -> $T.justOrEmpty(arguments).map($T::getArguments).map($T::entrySet).flatMapMany($T::fromIterable)",
                                                         ClassName.get(Mono.class),
                                                         ClassName.get(Arguments.class),
                                                         ClassName.get(Map.class),
                                                         ClassName.get(Flux.class)
                                                 ) :
                                                 CodeBlock.of(
-                                                        ".flatMap(result -> $T.from($T.justOrEmpty(objectValueWithVariable)).map($T::getObjectValueWithVariable).map($T::entrySet).flatMap($T::fromIterable)",
-                                                        ClassName.get(Flux.class),
+                                                        ".flatMap(result -> $T.justOrEmpty(objectValueWithVariable).map($T::getObjectValueWithVariable).map($T::entrySet).flatMapMany($T::fromIterable)",
                                                         ClassName.get(Mono.class),
                                                         ClassName.get(ObjectValueWithVariable.class),
                                                         ClassName.get(Map.class),
@@ -274,8 +272,7 @@ public class InputInvokeHandlerBuilder {
                                                                                                 .map(inputValue -> {
                                                                                                             InputObjectType inputValueType = documentManager.getInputValueTypeDefinition(inputValue).asInputObject();
                                                                                                             CodeBlock caseCodeBlock = CodeBlock.of("case $S:\n", inputValue.getName());
-                                                                                                            CodeBlock invokeCodeBlock = CodeBlock.of("return $T.from($T.justOrEmpty($L.$L()).map($T::size).flatMapMany(size -> $T.range(0, size))).flatMap(index -> $L(new $T<>($L.$L()).get(index), entry.getValue().asArray().getValueWithVariables().get(index).asObject())).collectList().doOnNext($L -> $L.$L($L));",
-                                                                                                                    ClassName.get(Flux.class),
+                                                                                                            CodeBlock invokeCodeBlock = CodeBlock.of("return $T.justOrEmpty($L.$L()).map($T::size).flatMapMany(size -> $T.range(0, size)).flatMap(index -> $L(new $T<>($L.$L()).get(index), entry.getValue().asArray().getValueWithVariables().get(index).asObject())).collectList().doOnNext($L -> $L.$L($L));",
                                                                                                                     ClassName.get(Mono.class),
                                                                                                                     resultParameterName,
                                                                                                                     getFieldGetterMethodName(inputValue.getName()),

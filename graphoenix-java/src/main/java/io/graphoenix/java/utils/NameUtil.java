@@ -33,6 +33,11 @@ public final class NameUtil {
     }
 
     public static String getFieldName(String fieldName) {
+        if (fieldName.startsWith("get")) {
+            fieldName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, fieldName.replaceFirst("get", ""));
+        } else if (fieldName.startsWith("set")) {
+            fieldName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, fieldName.replaceFirst("set", ""));
+        }
         boolean isKeyword = SourceVersion.isKeyword(fieldName);
         if (isKeyword) {
             fieldName = "_" + fieldName;

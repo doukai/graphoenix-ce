@@ -6,6 +6,7 @@ import io.graphoenix.core.handler.GraphQLConfigRegister;
 import io.graphoenix.java.implementer.ArgumentsInvokeHandlerBuilder;
 import io.graphoenix.java.implementer.ConnectionHandlerBuilder;
 import io.graphoenix.java.implementer.InputInvokeHandlerBuilder;
+import io.graphoenix.java.implementer.InvokeHandlerBuilder;
 import io.nozdormu.spi.context.BeanContext;
 import org.tinylog.Logger;
 
@@ -43,6 +44,7 @@ public class ApplicationProcessor extends BaseProcessor {
         InputInvokeHandlerBuilder inputInvokeHandlerBuilder = BeanContext.get(InputInvokeHandlerBuilder.class);
         ArgumentsInvokeHandlerBuilder argumentsInvokeHandlerBuilder = BeanContext.get(ArgumentsInvokeHandlerBuilder.class);
         ConnectionHandlerBuilder connectionHandlerBuilder = BeanContext.get(ConnectionHandlerBuilder.class);
+        InvokeHandlerBuilder invokeHandlerBuilder = BeanContext.get(InvokeHandlerBuilder.class);
         roundInit(roundEnv);
 
         try {
@@ -57,6 +59,7 @@ public class ApplicationProcessor extends BaseProcessor {
             inputInvokeHandlerBuilder.writeToFiler(filer);
             argumentsInvokeHandlerBuilder.writeToFiler(filer);
             connectionHandlerBuilder.writeToFiler(filer);
+            invokeHandlerBuilder.writeToFiler(filer);
 
         } catch (IOException | URISyntaxException e) {
             Logger.error(e);
