@@ -6,6 +6,7 @@ import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.common.ArrayValueWithVariable;
 import io.graphoenix.spi.graphql.common.Directive;
+import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
@@ -193,7 +194,28 @@ public class FieldDefinition extends AbstractDefinition {
     }
 
     public String getInvokeMethodNameOrError() {
-        return getInvokeClassName().orElseThrow(() -> new GraphQLErrors(METHOD_NAME_ARGUMENT_NOT_EXIST.bind(toString())));
+        return getInvokeMethodName().orElseThrow(() -> new GraphQLErrors(METHOD_NAME_ARGUMENT_NOT_EXIST.bind(toString())));
+    }
+
+    public Stream<Map.Entry<String, String>> getInvokeParameters() {
+        return Stream.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
+                .flatMap(directive ->
+                        Stream.ofNullable(directive.getArgument(DIRECTIVE_INVOKE_ARGUMENT_PARAMETER_NAME))
+                )
+                .filter(ValueWithVariable::isArray)
+                .flatMap(valueWithVariable -> valueWithVariable.asArray().getValueWithVariables().stream())
+                .filter(ValueWithVariable::isObject)
+                .map(ValueWithVariable::asObject)
+                .map(objectValueWithVariable ->
+                        new AbstractMap.SimpleEntry<>(
+                                objectValueWithVariable.getString(INPUT_INVOKE_PARAMETER_INPUT_VALUE_NAME_NAME),
+                                objectValueWithVariable.getString(INPUT_INVOKE_PARAMETER_INPUT_VALUE_CLASS_NAME_NAME)
+                        )
+                );
+    }
+
+    public List<Map.Entry<String, String>> getInvokeParametersList() {
+        return getInvokeParameters().collect(Collectors.toList());
     }
 
     public Optional<String> getInvokeReturnClassName() {
@@ -207,7 +229,7 @@ public class FieldDefinition extends AbstractDefinition {
     }
 
     public String getInvokeReturnClassNameOrError() {
-        return getInvokeClassName().orElseThrow(() -> new GraphQLErrors(RETURN_CLASS_NAME_ARGUMENT_NOT_EXIST.bind(toString())));
+        return getInvokeReturnClassName().orElseThrow(() -> new GraphQLErrors(RETURN_CLASS_NAME_ARGUMENT_NOT_EXIST.bind(toString())));
     }
 
     public boolean isFunctionField() {

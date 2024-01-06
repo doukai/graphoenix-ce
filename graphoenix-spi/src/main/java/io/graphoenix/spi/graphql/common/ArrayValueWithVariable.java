@@ -22,7 +22,8 @@ public class ArrayValueWithVariable extends AbstractList<JsonValue> implements V
     }
 
     public ArrayValueWithVariable(ValueWithVariable valueWithVariable) {
-        this.valueWithVariables = Collections.singletonList(valueWithVariable);
+        this.valueWithVariables = new ArrayList<>();
+        this.valueWithVariables.add(valueWithVariable);
     }
 
     public ArrayValueWithVariable(GraphqlParser.ArrayValueWithVariableContext arrayValueWithVariableContext) {

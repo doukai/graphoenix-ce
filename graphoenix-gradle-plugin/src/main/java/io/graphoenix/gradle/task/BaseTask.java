@@ -513,11 +513,11 @@ public class BaseTask extends DefaultTask {
     protected String getTypeName(Type type) {
         try {
             if (type.isArrayType()) {
-                return getTypeName(type.asArrayType().getElementType()) + "[]";
+                return getInvokeFieldTypeName(getTypeName(type.asArrayType().getElementType()) + "[]").getTypeName().getName();
             } else if (type.isPrimitiveType()) {
-                return type.asPrimitiveType().resolve().name();
+                return getInvokeFieldTypeName(type.asPrimitiveType()).getTypeName().getName();
             } else if (type.isClassOrInterfaceType()) {
-                return type.asClassOrInterfaceType().resolve().asReferenceType().getQualifiedName();
+                return getInvokeFieldTypeName(type.asClassOrInterfaceType().resolve().asReferenceType()).getTypeName().getName();
             }
         } catch (UnsolvedSymbolException e) {
             Logger.warn(e);
@@ -757,6 +757,8 @@ public class BaseTask extends DefaultTask {
             return new ListType(getInvokeFieldArgumentTypeName(type.asListType().getType()));
         } else if (type.isNonNull()) {
             return new ListType(getInvokeFieldArgumentTypeName(type.asNonNullType().getType()));
+        } else if (documentManager.getDocument().getDefinition(type.asTypeName().getName()).isLeaf()) {
+            return new TypeName(type.asTypeName().getName());
         } else {
             return new TypeName(type.asTypeName().getName() + SUFFIX_INPUT);
         }
@@ -787,7 +789,9 @@ public class BaseTask extends DefaultTask {
     }
 
     private io.graphoenix.spi.graphql.type.Type getInvokeFieldTypeName(ResolvedReferenceType resolvedReferenceType) {
-        if (resolvedReferenceType.getQualifiedName().equals(Collection.class.getCanonicalName()) ||
+        if (resolvedReferenceType.getQualifiedName().equals(Mono.class.getCanonicalName())) {
+            return getInvokeFieldTypeName(resolvedReferenceType.typeParametersValues().get(0).asReferenceType());
+        } else if (resolvedReferenceType.getQualifiedName().equals(Collection.class.getCanonicalName()) ||
                 resolvedReferenceType.getQualifiedName().equals(List.class.getCanonicalName()) ||
                 resolvedReferenceType.getQualifiedName().equals(Set.class.getCanonicalName()) ||
                 resolvedReferenceType.getQualifiedName().equals(Flux.class.getCanonicalName())) {

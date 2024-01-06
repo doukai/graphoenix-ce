@@ -197,7 +197,7 @@ public class ArgumentsInvokeHandlerBuilder {
             operationTypeName = documentManager.getDocument().getSubscriptionOperationTypeOrError().getName();
             typeParameterName = OPERATION_SUBSCRIPTION_NAME;
         } else {
-            operationTypeName = documentManager.getDocument().getSubscriptionOperationTypeOrError().getName();
+            operationTypeName = documentManager.getDocument().getQueryOperationTypeOrError().getName();
         }
         MethodSpec.Builder builder = MethodSpec.methodBuilder(typeParameterName)
                 .addModifiers(Modifier.PUBLIC);
@@ -212,103 +212,104 @@ public class ArgumentsInvokeHandlerBuilder {
                     .addParameter(ClassName.get(Field.class), "parentField");
         }
 
-        return builder.addStatement(
-                CodeBlock.join(
-                        Stream.of(
-                                CodeBlock.of(
-                                        "return $T.justOrEmpty($L).flatMapMany($T::fromIterable)",
+        return builder
+                .addStatement(
+                        CodeBlock.builder()
+                                .add("return $T.justOrEmpty($L)\n",
                                         ClassName.get(Mono.class),
-                                        isOperationType ? "operation.getFields()" : "parentField.getFields()",
+                                        isOperationType ? "operation.getFields()" : "parentField.getFields()"
+                                )
+                                .add(".flatMapMany($T::fromIterable)\n",
                                         ClassName.get(Flux.class)
-                                ),
-                                CodeBlock.builder()
-                                        .add(".flatMap(field -> {\n")
-                                        .indent()
-                                        .add(CodeBlock.builder()
+                                )
+                                .add(".flatMap(field -> {\n")
+                                .indent()
+                                .add(
+                                        CodeBlock.builder()
                                                 .beginControlFlow("switch (field.getName())")
-                                                .indent()
-                                                .add(CodeBlock.join(
-                                                                Streams.concat(
-                                                                        objectType.getFields().stream()
-                                                                                .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
-                                                                                .filter(fieldDefinition -> !fieldDefinition.isFetchField())
-                                                                                .filter(fieldDefinition -> !fieldDefinition.isFunctionField())
-                                                                                .filter(fieldDefinition -> fieldDefinition.getArguments() != null)
-                                                                                .filter(fieldDefinition -> documentManager.getFieldTypeDefinition(fieldDefinition).isObject())
-                                                                                .filter(fieldDefinition -> !fieldDefinition.getType().hasList())
-                                                                                .map(fieldDefinition -> {
-                                                                                            String fieldTypeName = documentManager.getFieldTypeDefinition(fieldDefinition).getName();
-                                                                                            String methodName = typeNameToFieldName(fieldTypeName) + operationTypeName + SUFFIX_ARGUMENTS;
-                                                                                            String argumentInputName = fieldTypeName + operationTypeName + SUFFIX_ARGUMENTS;
-                                                                                            return CodeBlock.builder().add("case $S:\n", fieldDefinition.getName())
-                                                                                                    .indent()
-                                                                                                    .add("return $T.justOrEmpty(field.getArguments())\n", ClassName.get(Mono.class))
-                                                                                                    .indent()
-                                                                                                    .add(".flatMap(arguments -> inputInvokeHandler.$L(jsonb.fromJson(arguments.toJson(), $T.class), field.getArguments()))\n",
-                                                                                                            methodName,
-                                                                                                            toClassName(documentManager.getDocument().getInputObjectTypeOrError(argumentInputName).getClassNameOrError())
-                                                                                                    )
-                                                                                                    .add(".doOnNext($L -> field.updateArguments(jsonProvider.createReader(new $T(jsonb.toJson($L))).readObject()))\n",
-                                                                                                            methodName,
-                                                                                                            ClassName.get(StringReader.class),
-                                                                                                            methodName
-                                                                                                    )
-                                                                                                    .add(".then($L(field));",
-                                                                                                            typeNameToFieldName(fieldTypeName)
-                                                                                                    )
-                                                                                                    .unindent()
-                                                                                                    .unindent()
-                                                                                                    .build();
-                                                                                        }
-                                                                                ),
-                                                                        objectType.getFields().stream()
-                                                                                .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
-                                                                                .filter(fieldDefinition -> !fieldDefinition.isFetchField())
-                                                                                .filter(fieldDefinition -> !fieldDefinition.isFunctionField())
-                                                                                .filter(fieldDefinition -> fieldDefinition.getArguments() != null)
-                                                                                .filter(fieldDefinition -> documentManager.getFieldTypeDefinition(fieldDefinition).isObject())
-                                                                                .filter(fieldDefinition -> fieldDefinition.getType().hasList())
-                                                                                .map(fieldDefinition -> {
-                                                                                            String fieldTypeName = documentManager.getFieldTypeDefinition(fieldDefinition).getName();
-                                                                                            String methodName = typeNameToFieldName(fieldTypeName) + SUFFIX_LIST + operationTypeName + SUFFIX_ARGUMENTS;
-                                                                                            String argumentInputName = fieldTypeName + SUFFIX_LIST + operationTypeName + SUFFIX_ARGUMENTS;
-                                                                                            return CodeBlock.builder().add("case $S:\n", fieldDefinition.getName())
-                                                                                                    .indent()
-                                                                                                    .add("return $T.justOrEmpty(field.getArguments())\n", ClassName.get(Mono.class))
-                                                                                                    .indent()
-                                                                                                    .add(".flatMap(arguments -> inputInvokeHandler.$L(jsonb.fromJson(arguments.toJson(), $T.class), field.getArguments()))\n",
-                                                                                                            methodName,
-                                                                                                            toClassName(documentManager.getDocument().getInputObjectTypeOrError(argumentInputName).getClassNameOrError())
-                                                                                                    )
-                                                                                                    .add(".doOnNext($L -> field.updateArguments(jsonProvider.createReader(new $T(jsonb.toJson($L))).readObject()))\n",
-                                                                                                            methodName,
-                                                                                                            ClassName.get(StringReader.class),
-                                                                                                            methodName
-                                                                                                    )
-                                                                                                    .add(".then($L(field));",
-                                                                                                            typeNameToFieldName(fieldTypeName)
-                                                                                                    )
-                                                                                                    .unindent()
-                                                                                                    .unindent()
-                                                                                                    .build();
-                                                                                        }
-                                                                                ),
-                                                                        Stream.of(CodeBlock.builder().add(CodeBlock.of("default:\n")).indent().add(CodeBlock.of("return $T.empty();\n", ClassName.get(Flux.class))).unindent().build())
-                                                                ).collect(Collectors.toList()),
+                                                .add(
+                                                        CodeBlock.join(
+                                                                Streams
+                                                                        .concat(
+                                                                                objectType.getFields().stream()
+                                                                                        .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
+                                                                                        .filter(fieldDefinition -> !fieldDefinition.isFetchField())
+                                                                                        .filter(fieldDefinition -> !fieldDefinition.isFunctionField())
+                                                                                        .filter(fieldDefinition -> fieldDefinition.getArguments() != null)
+                                                                                        .filter(fieldDefinition -> documentManager.getFieldTypeDefinition(fieldDefinition).isObject())
+                                                                                        .filter(fieldDefinition -> !fieldDefinition.getType().hasList())
+                                                                                        .map(fieldDefinition -> {
+                                                                                                    String fieldTypeName = documentManager.getFieldTypeDefinition(fieldDefinition).getName();
+                                                                                                    String methodName = typeNameToFieldName(fieldTypeName) + operationTypeName + SUFFIX_ARGUMENTS;
+                                                                                                    String argumentInputName = fieldTypeName + operationTypeName + SUFFIX_ARGUMENTS;
+                                                                                                    return CodeBlock.builder().add("case $S:\n", fieldDefinition.getName())
+                                                                                                            .indent()
+                                                                                                            .add("return $T.justOrEmpty(field.getArguments())\n", ClassName.get(Mono.class))
+                                                                                                            .indent()
+                                                                                                            .add(".flatMap(arguments -> inputInvokeHandler.$L(jsonb.fromJson(arguments.toJson(), $T.class), field.getArguments()))\n",
+                                                                                                                    methodName,
+                                                                                                                    toClassName(documentManager.getDocument().getInputObjectTypeOrError(argumentInputName).getClassNameOrError())
+                                                                                                            )
+                                                                                                            .add(".doOnNext($L -> field.updateArguments(jsonProvider.createReader(new $T(jsonb.toJson($L))).readObject()))\n",
+                                                                                                                    methodName,
+                                                                                                                    ClassName.get(StringReader.class),
+                                                                                                                    methodName
+                                                                                                            )
+                                                                                                            .add(".then($L(field));",
+                                                                                                                    typeNameToFieldName(fieldTypeName)
+                                                                                                            )
+                                                                                                            .unindent()
+                                                                                                            .unindent()
+                                                                                                            .build();
+                                                                                                }
+                                                                                        ),
+                                                                                objectType.getFields().stream()
+                                                                                        .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
+                                                                                        .filter(fieldDefinition -> !fieldDefinition.isFetchField())
+                                                                                        .filter(fieldDefinition -> !fieldDefinition.isFunctionField())
+                                                                                        .filter(fieldDefinition -> fieldDefinition.getArguments() != null)
+                                                                                        .filter(fieldDefinition -> documentManager.getFieldTypeDefinition(fieldDefinition).isObject())
+                                                                                        .filter(fieldDefinition -> fieldDefinition.getType().hasList())
+                                                                                        .map(fieldDefinition -> {
+                                                                                                    String fieldTypeName = documentManager.getFieldTypeDefinition(fieldDefinition).getName();
+                                                                                                    String methodName = typeNameToFieldName(fieldTypeName) + SUFFIX_LIST + operationTypeName + SUFFIX_ARGUMENTS;
+                                                                                                    String argumentInputName = fieldTypeName + SUFFIX_LIST + operationTypeName + SUFFIX_ARGUMENTS;
+                                                                                                    return CodeBlock.builder().add("case $S:\n", fieldDefinition.getName())
+                                                                                                            .indent()
+                                                                                                            .add("return $T.justOrEmpty(field.getArguments())\n", ClassName.get(Mono.class))
+                                                                                                            .indent()
+                                                                                                            .add(".flatMap(arguments -> inputInvokeHandler.$L(jsonb.fromJson(arguments.toJson(), $T.class), field.getArguments()))\n",
+                                                                                                                    methodName,
+                                                                                                                    toClassName(documentManager.getDocument().getInputObjectTypeOrError(argumentInputName).getClassNameOrError())
+                                                                                                            )
+                                                                                                            .add(".doOnNext($L -> field.updateArguments(jsonProvider.createReader(new $T(jsonb.toJson($L))).readObject()))\n",
+                                                                                                                    methodName,
+                                                                                                                    ClassName.get(StringReader.class),
+                                                                                                                    methodName
+                                                                                                            )
+                                                                                                            .add(".then($L(field));",
+                                                                                                                    typeNameToFieldName(fieldTypeName)
+                                                                                                            )
+                                                                                                            .unindent()
+                                                                                                            .unindent()
+                                                                                                            .build();
+                                                                                                }
+                                                                                        ),
+                                                                                Stream.of(CodeBlock.builder().add(CodeBlock.of("default:\n")).indent().add(CodeBlock.of("return $T.empty();\n", ClassName.get(Flux.class))).unindent().build())
+                                                                        )
+                                                                        .collect(Collectors.toList()),
                                                                 System.lineSeparator()
                                                         )
                                                 )
-                                                .unindent()
                                                 .endControlFlow()
                                                 .build()
-                                        )
-                                        .unindent()
-                                        .add("})")
-                                        .build(),
-                                CodeBlock.of(isOperationType ? ".then().thenReturn(operation)" : ".then()")
-                        ).collect(Collectors.toList()),
-                        System.lineSeparator()
+                                )
+                                .unindent()
+                                .add("})\n")
+                                .add(isOperationType ? ".then()\n" : ".then()")
+                                .add(isOperationType ? ".thenReturn(operation)" : "")
+                                .build()
                 )
-        ).build();
+                .build();
     }
 }

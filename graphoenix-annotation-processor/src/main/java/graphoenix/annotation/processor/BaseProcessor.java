@@ -30,6 +30,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
+import static io.graphoenix.spi.utils.ElementUtil.getNameFromElement;
 
 public abstract class BaseProcessor extends AbstractProcessor {
 
@@ -174,7 +175,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                         .findFirst()
                                         .ifPresent(variableElement -> {
                                                     FieldDefinition fieldDefinition = new FieldDefinition(executableElement, typeUtils);
-                                                    String typeName = ElementUtil.getNameFromElement(typeUtils.asElement(variableElement.asType()));
+                                                    String typeName = getNameFromElement(typeUtils.asElement(variableElement.asType()));
                                                     documentManager.getDocument().getObjectType(typeName)
                                                             .ifPresentOrElse(
                                                                     objectType -> objectType.addField(fieldDefinition),
@@ -193,7 +194,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                         .findFirst()
                                         .ifPresent(variableElement -> {
                                                     FieldDefinition fieldDefinition = new FieldDefinition(executableElement, typeUtils);
-                                                    String typeName = ElementUtil.getNameFromElement(typeUtils.asElement(variableElement.asType()));
+                                                    String typeName = getNameFromElement(typeUtils.asElement(variableElement.asType()));
                                                     documentManager.getDocument().getImplementsObjectType(typeName)
                                                             .forEach(objectType -> objectType.addField(fieldDefinition));
                                                 }
@@ -228,7 +229,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                                 variableElement.getAnnotation(Source.class) != null &&
                                                         typeUtils.asElement(variableElement.asType()).getAnnotation(Input.class) != null
                                         )
-                                        .map(ElementUtil::getNameFromElement)
+                                        .map(variableElement -> getNameFromElement(typeUtils.asElement(variableElement.asType())))
                                         .map(inputName ->
                                                 documentManager.getDocument().getInputObjectType(inputName)
                                                         .orElseGet(() ->
@@ -256,7 +257,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                                 variableElement.getAnnotation(Source.class) != null &&
                                                         typeUtils.asElement(variableElement.asType()).getAnnotation(Input.class) != null
                                         )
-                                        .map(ElementUtil::getNameFromElement)
+                                        .map(variableElement -> getNameFromElement(typeUtils.asElement(variableElement.asType())))
                                         .map(inputName ->
                                                 documentManager.getDocument().getInputObjectType(inputName)
                                                         .orElseGet(() ->

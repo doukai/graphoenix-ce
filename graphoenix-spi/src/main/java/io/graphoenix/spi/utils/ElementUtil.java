@@ -68,10 +68,11 @@ public final class ElementUtil {
             if (mutationAnnotation != null && !mutationAnnotation.value().isBlank()) {
                 return mutationAnnotation.value();
             }
-        } else if (element.getSimpleName().toString().startsWith("get")) {
-            return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, element.getSimpleName().toString().replaceFirst("get", ""));
-        } else if (element.getSimpleName().toString().startsWith("set")) {
-            return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, element.getSimpleName().toString().replaceFirst("set", ""));
+            if (element.getSimpleName().toString().startsWith("get")) {
+                return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, element.getSimpleName().toString().replaceFirst("get", ""));
+            } else if (element.getSimpleName().toString().startsWith("set")) {
+                return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, element.getSimpleName().toString().replaceFirst("set", ""));
+            }
         }
         return element.getSimpleName().toString();
     }

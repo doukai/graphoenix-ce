@@ -124,6 +124,10 @@ public class User implements Meta {
 
   private Integer ageMin;
 
+  private String nickName;
+
+  private Collection<String> address;
+
   public String getId() {
     return this.id;
   }
@@ -555,5 +559,21 @@ public class User implements Meta {
 
   public void setAgeMin(Integer ageMin) {
     this.ageMin = ageMin;
+  }
+
+  public String getNickName() {
+    return this.nickName;
+  }
+
+  public void setNickName(String nickName) {
+    this.nickName = nickName;
+  }
+
+  public Collection<String> getAddress() {
+    return this.address;
+  }
+
+  public void setAddress(Collection<String> address) {
+    this.address = address;
   }
 }

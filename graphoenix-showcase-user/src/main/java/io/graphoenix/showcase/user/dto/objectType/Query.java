@@ -2,6 +2,8 @@ package io.graphoenix.showcase.user.dto.objectType;
 
 import com.dslplatform.json.CompiledJson;
 import jakarta.annotation.Generated;
+import java.lang.String;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.Type;
 
@@ -68,6 +70,12 @@ public class Query {
   private Collection<OrganizationOrganizationRelation> organizationOrganizationRelationList;
 
   private OrganizationOrganizationRelationConnection organizationOrganizationRelationConnection;
+
+  private LocalDateTime currentTime;
+
+  private String appName;
+
+  private Collection<String> loginName;
 
   public User getUser() {
     return this.user;
@@ -317,5 +325,29 @@ public class Query {
   public void setOrganizationOrganizationRelationConnection(
       OrganizationOrganizationRelationConnection organizationOrganizationRelationConnection) {
     this.organizationOrganizationRelationConnection = organizationOrganizationRelationConnection;
+  }
+
+  public LocalDateTime getCurrentTime() {
+    return this.currentTime;
+  }
+
+  public void setCurrentTime(LocalDateTime currentTime) {
+    this.currentTime = currentTime;
+  }
+
+  public String getAppName() {
+    return this.appName;
+  }
+
+  public void setAppName(String appName) {
+    this.appName = appName;
+  }
+
+  public Collection<String> getLoginName() {
+    return this.loginName;
+  }
+
+  public void setLoginName(Collection<String> loginName) {
+    this.loginName = loginName;
   }
 }
