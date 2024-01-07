@@ -164,6 +164,8 @@ public class Hammurabi {
     public static final String DIRECTIVE_FORMAT_ARGUMENT_VALUE_NAME = "value";
     public static final String DIRECTIVE_FORMAT_ARGUMENT_LOCALE_NAME = "locale";
 
+    public static final String DIRECTIVE_HIDE_NAME = "hide";
+
 
     public static final String DIRECTIVE_MERGE_NAME = "merge";
     public static final String DIRECTIVE_MERGE_ARGUMENT_ARGUMENTS_NAME = "arguments";

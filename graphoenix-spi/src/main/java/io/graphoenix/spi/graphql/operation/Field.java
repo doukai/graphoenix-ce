@@ -12,9 +12,11 @@ import org.stringtemplate.v4.STGroupFile;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
 public class Field extends AbstractDefinition implements Selection {
@@ -176,6 +178,32 @@ public class Field extends AbstractDefinition implements Selection {
         }
         this.selections.addAll(selections);
         return this;
+    }
+
+    public boolean hasFormat() {
+        return hasDirective(DIRECTIVE_FORMAT_NAME);
+    }
+
+    public Optional<String> getFormatValue() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_FORMAT_NAME).getArgument(DIRECTIVE_FORMAT_ARGUMENT_VALUE_NAME))
+                .map(valueWithVariable -> valueWithVariable.asString().getString());
+    }
+
+    public String getFormatValueOrNull() {
+        return getFormatValue().orElse(null);
+    }
+
+    public Optional<String> getFormatLocale() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_FORMAT_NAME).getArgument(DIRECTIVE_FORMAT_ARGUMENT_LOCALE_NAME))
+                .map(valueWithVariable -> valueWithVariable.asString().getString());
+    }
+
+    public String getFormatLocaleOrNull() {
+        return getFormatLocale().orElse(null);
+    }
+
+    public boolean isHide() {
+        return hasDirective(DIRECTIVE_HIDE_NAME);
     }
 
     @Override

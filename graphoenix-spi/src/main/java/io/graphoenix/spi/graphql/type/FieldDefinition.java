@@ -360,6 +360,28 @@ public class FieldDefinition extends AbstractDefinition {
         return getDirective(DIRECTIVE_FETCH_NAME).getArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME).asString().getString();
     }
 
+    public boolean hasFormat() {
+        return hasDirective(DIRECTIVE_FORMAT_NAME);
+    }
+
+    public Optional<String> getFormatValue() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_FORMAT_NAME).getArgument(DIRECTIVE_FORMAT_ARGUMENT_VALUE_NAME))
+                .map(valueWithVariable -> valueWithVariable.asString().getString());
+    }
+
+    public String getFormatValueOrNull() {
+        return getFormatValue().orElse(null);
+    }
+
+    public Optional<String> getFormatLocale() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_FORMAT_NAME).getArgument(DIRECTIVE_FORMAT_ARGUMENT_LOCALE_NAME))
+                .map(valueWithVariable -> valueWithVariable.asString().getString());
+    }
+
+    public String getFormatLocaleOrNull() {
+        return getFormatLocale().orElse(null);
+    }
+
     @Override
     public String toString() {
         ST st = stGroupFile.getInstanceOf("fieldDefinitionDefinition");

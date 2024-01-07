@@ -97,7 +97,7 @@ public class InvokeHandlerBuilder {
                 .addModifiers(Modifier.PUBLIC)
                 .addSuperinterface(OperationAfterHandler.class)
                 .addAnnotation(ApplicationScoped.class)
-                .addAnnotation(AnnotationSpec.builder(Priority.class).addMember("value", "$T.MAX_VALUE - 100", ClassName.get(Integer.class)).build())
+                .addAnnotation(AnnotationSpec.builder(Priority.class).addMember("value", "$T.MAX_VALUE - 200", ClassName.get(Integer.class)).build())
                 .addField(
                         FieldSpec.builder(
                                 ClassName.get(Jsonb.class),
