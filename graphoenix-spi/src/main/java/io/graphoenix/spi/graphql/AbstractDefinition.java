@@ -200,7 +200,7 @@ public abstract class AbstractDefinition implements Definition {
     public Optional<String> getPackageName() {
         return Optional.ofNullable(directiveMap)
                 .map(map -> map.get(DIRECTIVE_PACKAGE_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME)))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME)))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> (StringValue) valueWithVariable)
                 .map(StringValue::getString);
@@ -210,7 +210,7 @@ public abstract class AbstractDefinition implements Definition {
     public Optional<String> getClassName() {
         return Optional.ofNullable(directiveMap)
                 .map(map -> map.get(DIRECTIVE_CLASS_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME)))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME)))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> (StringValue) valueWithVariable)
                 .map(StringValue::getString);
@@ -220,7 +220,7 @@ public abstract class AbstractDefinition implements Definition {
     public boolean classExists() {
         return Optional.ofNullable(directiveMap)
                 .map(map -> map.get(DIRECTIVE_CLASS_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_CLASS_ARGUMENT_EXISTS_NAME)))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_CLASS_ARGUMENT_EXISTS_NAME)))
                 .filter(ValueWithVariable::isBoolean)
                 .map(valueWithVariable -> (BooleanValue) valueWithVariable)
                 .map(BooleanValue::getValue)
@@ -231,7 +231,7 @@ public abstract class AbstractDefinition implements Definition {
     public Optional<String> getAnnotationName() {
         return Optional.ofNullable(directiveMap)
                 .map(map -> map.get(DIRECTIVE_ANNOTATION_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME)))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME)))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> (StringValue) valueWithVariable)
                 .map(StringValue::getString);

@@ -66,7 +66,7 @@ public class EnumValueHandler implements OperationBeforeHandler {
                                                 .map(Arguments::getArguments)
                                                 .flatMap(jsonValues -> jsonValues.entrySet().stream())
                                                 .peek(valueWithVariableEntry -> {
-                                                            InputValue inputValue = objectType.getField(field.getName()).getArgument(valueWithVariableEntry.getKey());
+                                                            InputValue inputValue = objectType.getField(field.getName()).getArgumentOrNull(valueWithVariableEntry.getKey());
                                                             valueWithVariableEntry.setValue(replaceEnumValue(inputValue, valueWithVariableEntry.getValue()));
                                                         }
                                                 )

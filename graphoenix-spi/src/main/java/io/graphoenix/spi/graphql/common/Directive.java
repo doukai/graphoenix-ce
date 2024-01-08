@@ -8,6 +8,7 @@ import org.stringtemplate.v4.STGroupFile;
 
 import javax.lang.model.element.AnnotationMirror;
 import java.util.Map;
+import java.util.Optional;
 
 public class Directive {
 
@@ -49,8 +50,12 @@ public class Directive {
         return arguments;
     }
 
-    public ValueWithVariable getArgument(String name) {
-        return arguments.getArgument(name);
+    public ValueWithVariable getArgumentOrNull(String name) {
+        return arguments.getArgumentOrNull(name);
+    }
+
+    public Optional<ValueWithVariable> getArgument(String name) {
+        return Optional.ofNullable(getArgumentOrNull(name));
     }
 
     public boolean hasArgument(String name) {

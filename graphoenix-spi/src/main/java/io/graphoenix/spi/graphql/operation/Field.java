@@ -9,10 +9,7 @@ import jakarta.json.JsonValue;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -180,12 +177,24 @@ public class Field extends AbstractDefinition implements Selection {
         return this;
     }
 
+    public boolean hasArgument(String name) {
+        return arguments != null && arguments.containsKey(name);
+    }
+
+    public boolean hasGroupBy() {
+        return hasArgument(INPUT_VALUE_GROUP_BY_NAME);
+    }
+
+    public List<String> getGroupBy() {
+        return arguments.get(INPUT_VALUE_GROUP_BY_NAME).asJsonArray().stream().map(JsonValue::toString).collect(Collectors.toList());
+    }
+
     public boolean hasFormat() {
         return hasDirective(DIRECTIVE_FORMAT_NAME);
     }
 
     public Optional<String> getFormatValue() {
-        return Optional.ofNullable(getDirective(DIRECTIVE_FORMAT_NAME).getArgument(DIRECTIVE_FORMAT_ARGUMENT_VALUE_NAME))
+        return Optional.ofNullable(getDirective(DIRECTIVE_FORMAT_NAME).getArgumentOrNull(DIRECTIVE_FORMAT_ARGUMENT_VALUE_NAME))
                 .map(valueWithVariable -> valueWithVariable.asString().getString());
     }
 
@@ -194,7 +203,7 @@ public class Field extends AbstractDefinition implements Selection {
     }
 
     public Optional<String> getFormatLocale() {
-        return Optional.ofNullable(getDirective(DIRECTIVE_FORMAT_NAME).getArgument(DIRECTIVE_FORMAT_ARGUMENT_LOCALE_NAME))
+        return Optional.ofNullable(getDirective(DIRECTIVE_FORMAT_NAME).getArgumentOrNull(DIRECTIVE_FORMAT_ARGUMENT_LOCALE_NAME))
                 .map(valueWithVariable -> valueWithVariable.asString().getString());
     }
 

@@ -105,14 +105,14 @@ public class SelectionHandler implements OperationAfterHandler {
                                         return buildFormat(path + "/" + selectionName, fieldTypeDefinition.asObject(), field, jsonValue.asJsonObject().get(selectionName));
                                     }
                                 } else {
-                                    if (field.hasFormat() || fieldDefinition.hasFormat()) {
+                                    if (field.hasFormat()) {
                                         if (fieldDefinition.getType().hasList()) {
                                             return IntStream.range(0, jsonValue.asJsonObject().get(selectionName).asJsonArray().size())
                                                     .mapToObj(index ->
                                                             jsonProvider.createObjectBuilder()
                                                                     .add("op", "replace")
                                                                     .add("path", path + "/" + selectionName + "/" + index)
-                                                                    .add("value", formatField(field, fieldTypeDefinition, jsonValue.asJsonObject().getValue(selectionName).asJsonArray().get(index)))
+                                                                    .add("value", formatField(fieldTypeDefinition, field.getFormatValueOrNull(), field.getFormatLocaleOrNull(), jsonValue.asJsonObject().getValue(selectionName).asJsonArray().get(index)))
                                                                     .build()
                                                     );
                                         } else {
@@ -120,7 +120,26 @@ public class SelectionHandler implements OperationAfterHandler {
                                                     jsonProvider.createObjectBuilder()
                                                             .add("op", "replace")
                                                             .add("path", path + "/" + selectionName)
-                                                            .add("value", formatField(field, fieldTypeDefinition, jsonValue.asJsonObject().get(selectionName)))
+                                                            .add("value", formatField(fieldTypeDefinition, field.getFormatValueOrNull(), field.getFormatLocaleOrNull(), jsonValue.asJsonObject().get(selectionName)))
+                                                            .build()
+                                            );
+                                        }
+                                    } else if (fieldDefinition.hasFormat()) {
+                                        if (fieldDefinition.getType().hasList()) {
+                                            return IntStream.range(0, jsonValue.asJsonObject().get(selectionName).asJsonArray().size())
+                                                    .mapToObj(index ->
+                                                            jsonProvider.createObjectBuilder()
+                                                                    .add("op", "replace")
+                                                                    .add("path", path + "/" + selectionName + "/" + index)
+                                                                    .add("value", formatField(fieldTypeDefinition, fieldDefinition.getFormatValueOrNull(), fieldDefinition.getFormatLocaleOrNull(), jsonValue.asJsonObject().getValue(selectionName).asJsonArray().get(index)))
+                                                                    .build()
+                                                    );
+                                        } else {
+                                            return Stream.of(
+                                                    jsonProvider.createObjectBuilder()
+                                                            .add("op", "replace")
+                                                            .add("path", path + "/" + selectionName)
+                                                            .add("value", formatField(fieldTypeDefinition, fieldDefinition.getFormatValueOrNull(), fieldDefinition.getFormatLocaleOrNull(), jsonValue.asJsonObject().get(selectionName)))
                                                             .build()
                                             );
                                         }
@@ -132,44 +151,31 @@ public class SelectionHandler implements OperationAfterHandler {
                 );
     }
 
-    public JsonValue formatField(Field field, Definition fieldTypeDefinition, JsonValue jsonValue) {
-        String value = field.getFormatValueOrNull();
-        String locale = field.getFormatLocaleOrNull();
-        JsonValue scalarJsonValue;
+    public JsonValue formatField(Definition fieldTypeDefinition, String value, String locale, JsonValue jsonValue) {
         switch (fieldTypeDefinition.getName()) {
             case SCALA_BOOLEAN_NAME:
-                scalarJsonValue = scalarFormatter.format(value, locale, jsonb.fromJson(jsonValue.toString(), Boolean.class));
-                break;
+                return scalarFormatter.format(value, locale, jsonb.fromJson(jsonValue.toString(), Boolean.class));
             case SCALA_ID_NAME:
             case SCALA_STRING_NAME:
-                scalarJsonValue = scalarFormatter.format(value, locale, jsonb.fromJson(jsonValue.toString(), String.class));
-                break;
+                return scalarFormatter.format(value, locale, jsonb.fromJson(jsonValue.toString(), String.class));
             case SCALA_DATE_NAME:
-                scalarJsonValue = scalarFormatter.format(value, locale, jsonb.fromJson(jsonValue.toString(), LocalDate.class));
-                break;
+                return scalarFormatter.format(value, locale, jsonb.fromJson(jsonValue.toString(), LocalDate.class));
             case SCALA_TIME_NAME:
-                scalarJsonValue = scalarFormatter.format(value, locale, jsonb.fromJson(jsonValue.toString(), LocalTime.class));
-                break;
+                return scalarFormatter.format(value, locale, jsonb.fromJson(jsonValue.toString(), LocalTime.class));
             case SCALA_DATE_TIME_NAME:
             case SCALA_TIMESTAMP_NAME:
-                scalarJsonValue = scalarFormatter.format(value, locale, jsonb.fromJson(jsonValue.toString(), LocalDateTime.class));
-                break;
+                return scalarFormatter.format(value, locale, jsonb.fromJson(jsonValue.toString(), LocalDateTime.class));
             case SCALA_INT_NAME:
-                scalarJsonValue = scalarFormatter.format(value, locale, jsonb.fromJson(jsonValue.toString(), Integer.class));
-                break;
+                return scalarFormatter.format(value, locale, jsonb.fromJson(jsonValue.toString(), Integer.class));
             case SCALA_BIG_INTEGER_NAME:
-                scalarJsonValue = scalarFormatter.format(value, locale, jsonb.fromJson(jsonValue.toString(), BigInteger.class));
-                break;
+                return scalarFormatter.format(value, locale, jsonb.fromJson(jsonValue.toString(), BigInteger.class));
             case SCALA_FLOAT_NAME:
-                scalarJsonValue = scalarFormatter.format(value, locale, jsonb.fromJson(jsonValue.toString(), Float.class));
-                break;
+                return scalarFormatter.format(value, locale, jsonb.fromJson(jsonValue.toString(), Float.class));
             case SCALA_BIG_DECIMAL_NAME:
-                scalarJsonValue = scalarFormatter.format(value, locale, jsonb.fromJson(jsonValue.toString(), BigDecimal.class));
-                break;
+                return scalarFormatter.format(value, locale, jsonb.fromJson(jsonValue.toString(), BigDecimal.class));
             default:
-                throw new GraphQLErrors(GraphQLErrorType.UNSUPPORTED_FIELD_TYPE.bind(field.toString()));
+                throw new GraphQLErrors(GraphQLErrorType.UNSUPPORTED_FIELD_TYPE.bind(fieldTypeDefinition.toString()));
         }
-        return scalarJsonValue;
     }
 
     public Stream<JsonObject> hideField(String path, ObjectType objectType, Field parentField, JsonValue jsonValue) {

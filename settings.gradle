@@ -7,4 +7,5 @@ include 'graphoenix-java'
 include 'graphoenix-gradle-plugin'
 include 'graphoenix-annotation-processor'
 include 'graphoenix-showcase-user-app'
+include 'graphoenix-sql'
 

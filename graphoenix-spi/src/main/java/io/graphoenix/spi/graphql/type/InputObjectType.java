@@ -129,7 +129,7 @@ public class InputObjectType extends AbstractDefinition implements Definition {
     public Collection<String> getInterfaces() {
         return Stream.ofNullable(getDirective(DIRECTIVE_IMPLEMENTS_NAME))
                 .flatMap(directive ->
-                        Stream.ofNullable(directive.getArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME))
+                        Stream.ofNullable(directive.getArgumentOrNull(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME))
                                 .filter(ValueWithVariable::isArray)
                                 .flatMap(valueWithVariable -> valueWithVariable.asArray().getValueWithVariables().stream())
                                 .filter(ValueWithVariable::isString)
@@ -145,7 +145,7 @@ public class InputObjectType extends AbstractDefinition implements Definition {
     public List<Tuple3<String, String, String>> getInputInvokes() {
         return Stream.ofNullable(getDirective(DIRECTIVE_INVOKES_NAME))
                 .flatMap(directive ->
-                        Stream.ofNullable(directive.getArgument(DIRECTIVE_INVOKES_METHODS_NAME))
+                        Stream.ofNullable(directive.getArgumentOrNull(DIRECTIVE_INVOKES_METHODS_NAME))
                                 .filter(ValueWithVariable::isArray)
                                 .map(ValueWithVariable::asArray)
                                 .flatMap(arrayValueWithVariable -> arrayValueWithVariable.getValueWithVariables().stream())

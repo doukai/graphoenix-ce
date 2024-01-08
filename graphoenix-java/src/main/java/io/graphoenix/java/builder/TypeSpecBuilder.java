@@ -579,7 +579,7 @@ public class TypeSpecBuilder {
             );
         }
         if (inputValue.getDefaultValue() != null) {
-            builder.defaultValue(buildDefaultValue(inputValue, inputValue.getDefaultValue()));
+            builder.defaultValue(buildDefaultValue(inputValue, inputValue.getDefaultValue().toString()));
         } else {
             builder.defaultValue(buildAnnotationDefaultValue(inputValue, level));
         }

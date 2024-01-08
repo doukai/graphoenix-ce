@@ -1,10 +1,9 @@
 plugins {
     id 'java'
 }
-apply plugin: 'maven'
 
-group 'io.graphoenix'
-version '0.0.1-SNAPSHOT'
+group = 'io.graphoenix'
+version = '0.0.1-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -16,15 +15,15 @@ dependencies {
     implementation project(':graphoenix-core')
     implementation 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
     implementation 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
-    implementation 'com.squareup:javapoet:1.13.0'
-    implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'com.github.jsqlparser:jsqlparser:4.8'
+    implementation 'com.github.vertical-blank:sql-formatter:2.0.3'
 
     annotationProcessor project(':graphoenix-core')
     annotationProcessor 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
     annotationProcessor 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
 test {

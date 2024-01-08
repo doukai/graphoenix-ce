@@ -2,10 +2,12 @@ package io.graphoenix.spi.utils;
 
 import com.google.common.base.CaseFormat;
 import io.graphoenix.spi.graphql.common.Directive;
+import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.type.InputValue;
 import io.graphoenix.spi.graphql.type.ListType;
 import io.graphoenix.spi.graphql.type.NonNullType;
 import io.graphoenix.spi.graphql.type.TypeName;
+import jakarta.json.spi.JsonProvider;
 import org.eclipse.microprofile.graphql.*;
 import org.eclipse.microprofile.graphql.Enum;
 import reactor.core.publisher.Flux;
@@ -21,6 +23,7 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
 
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -86,10 +89,10 @@ public final class ElementUtil {
         }
     }
 
-    public static String getDefaultValueFromElement(Element element) {
+    public static ValueWithVariable getDefaultValueFromElement(Element element) {
         DefaultValue defaultValue = element.getAnnotation(DefaultValue.class);
         if (defaultValue != null) {
-            return defaultValue.value();
+            return ValueWithVariable.of(JsonProvider.provider().createReader(new StringReader(defaultValue.value())).readValue());
         } else {
             return null;
         }
