@@ -67,7 +67,8 @@ public class QueryTranslator {
                                                                                 operationType,
                                                                                 operationType.getField(item.getName()),
                                                                                 item,
-                                                                                0)
+                                                                                0
+                                                                        )
                                                                 )
                                                 )
                                         )
@@ -75,7 +76,7 @@ public class QueryTranslator {
                         ),
                         new Alias("data")
                 )
-                .withFromItem(typeToTable(operationType, 0));
+                .withFromItem(dualTable());
     }
 
     public PlainSelect objectFieldToPlainSelect(ObjectType objectType, FieldDefinition fieldDefinition, Field field, int level) {
@@ -415,9 +416,6 @@ public class QueryTranslator {
     }
 
     protected Table typeToTable(ObjectType objectType, int level) {
-        if (documentManager.isOperationType(objectType)) {
-            return dualTable();
-        }
         return graphqlTypeToTable(objectType.getName(), level);
     }
 }
