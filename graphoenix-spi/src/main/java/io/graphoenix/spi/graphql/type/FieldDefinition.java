@@ -154,7 +154,7 @@ public class FieldDefinition extends AbstractDefinition {
         return Optional.ofNullable(getDirective(DIRECTIVE_TYPE_NAME))
                 .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_TYPE_ARGUMENT_NAME_NAME)))
                 .filter(ValueWithVariable::isString)
-                .map(valueWithVariable -> valueWithVariable.asString().getString());
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
 
     public String getTypeNameWithoutID() {
@@ -170,12 +170,9 @@ public class FieldDefinition extends AbstractDefinition {
     }
 
     public Optional<String> getInvokeClassName() {
-        return Stream.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
-                .flatMap(directive ->
-                        Stream.ofNullable(directive.getArgumentOrNull(DIRECTIVE_INVOKE_ARGUMENT_CLASS_NAME_NAME))
-                )
+        return Optional.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_INVOKE_ARGUMENT_CLASS_NAME_NAME)))
                 .filter(ValueWithVariable::isString)
-                .findFirst()
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
 
@@ -184,12 +181,9 @@ public class FieldDefinition extends AbstractDefinition {
     }
 
     public Optional<String> getInvokeMethodName() {
-        return Stream.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
-                .flatMap(directive ->
-                        Stream.ofNullable(directive.getArgumentOrNull(DIRECTIVE_INVOKE_ARGUMENT_METHOD_NAME_NAME))
-                )
+        return Optional.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_INVOKE_ARGUMENT_METHOD_NAME_NAME)))
                 .filter(ValueWithVariable::isString)
-                .findFirst()
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
 
@@ -199,9 +193,7 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Stream<Map.Entry<String, String>> getInvokeParameters() {
         return Stream.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
-                .flatMap(directive ->
-                        Stream.ofNullable(directive.getArgumentOrNull(DIRECTIVE_INVOKE_ARGUMENT_PARAMETER_NAME))
-                )
+                .flatMap(directive -> Stream.ofNullable(directive.getArgumentOrNull(DIRECTIVE_INVOKE_ARGUMENT_PARAMETER_NAME)))
                 .filter(ValueWithVariable::isArray)
                 .flatMap(valueWithVariable -> valueWithVariable.asArray().getValueWithVariables().stream())
                 .filter(ValueWithVariable::isObject)
@@ -219,12 +211,9 @@ public class FieldDefinition extends AbstractDefinition {
     }
 
     public Optional<String> getInvokeReturnClassName() {
-        return Stream.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
-                .flatMap(directive ->
-                        Stream.ofNullable(directive.getArgumentOrNull(DIRECTIVE_INVOKE_ARGUMENT_RETURN_CLASS_NAME_NAME))
-                )
+        return Optional.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_INVOKE_ARGUMENT_RETURN_CLASS_NAME_NAME)))
                 .filter(ValueWithVariable::isString)
-                .findFirst()
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
 
@@ -236,12 +225,35 @@ public class FieldDefinition extends AbstractDefinition {
         return hasDirective(DIRECTIVE_FUNC_NAME);
     }
 
+    public Optional<String> getFunctionName() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_FUNC_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FUNC_ARGUMENT_NAME_NAME)))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asEnum().getValue());
+    }
+
+    public String getFunctionNameOrError() {
+        return getFormatLocale().orElseThrow(() -> new GraphQLErrors(FUNC_NAME_NOT_EXIST.bind(toString())));
+    }
+
+    public Optional<String> getFunctionField() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_FUNC_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FUNC_ARGUMENT_FIELD_NAME)))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
+    }
+
+    public String getFunctionFieldOrError() {
+        return getFormatLocale().orElseThrow(() -> new GraphQLErrors(FUNC_FIELD_NOT_EXIST.bind(toString())));
+    }
+
     public boolean isConnectionField() {
         return hasDirective(DIRECTIVE_CONNECTION_NAME);
     }
 
     public Optional<String> getConnectionField() {
-        return Optional.ofNullable(getDirective(DIRECTIVE_CONNECTION_NAME).getArgumentOrNull(DIRECTIVE_CONNECTION_ARGUMENT_FIELD_NAME))
+        return Optional.ofNullable(getDirective(DIRECTIVE_CONNECTION_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_CONNECTION_ARGUMENT_FIELD_NAME)))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -251,7 +263,8 @@ public class FieldDefinition extends AbstractDefinition {
     }
 
     public Optional<String> getConnectionAgg() {
-        return Optional.ofNullable(getDirective(DIRECTIVE_CONNECTION_NAME).getArgumentOrNull(DIRECTIVE_CONNECTION_ARGUMENT_AGG_NAME))
+        return Optional.ofNullable(getDirective(DIRECTIVE_CONNECTION_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_CONNECTION_ARGUMENT_AGG_NAME)))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -276,38 +289,65 @@ public class FieldDefinition extends AbstractDefinition {
         return hasDirective(DIRECTIVE_MAP_NAME) && getDirective(DIRECTIVE_MAP_NAME).hasArgument(DIRECTIVE_MAP_ARGUMENT_WITH_NAME);
     }
 
-    public String getMapFrom() {
-        return getDirective(DIRECTIVE_MAP_NAME).getArgumentOrNull(DIRECTIVE_MAP_ARGUMENT_FROM_NAME).asString().getString();
+    public Optional<String> getMapFrom() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_MAP_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_MAP_ARGUMENT_FROM_NAME)))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
+    }
+
+    public String getMapFromOrError() {
+        return getMapFrom().orElseThrow(() -> new GraphQLErrors(MAP_FROM_ARGUMENT_NOT_EXIST.bind(toString())));
     }
 
     public Optional<String> getMapTo() {
-        return Optional.ofNullable(getDirective(DIRECTIVE_MAP_NAME).getArgumentOrNull(DIRECTIVE_MAP_ARGUMENT_TO_NAME))
-                .map(valueWithVariable -> valueWithVariable.asString().getString());
+        return Optional.ofNullable(getDirective(DIRECTIVE_MAP_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_MAP_ARGUMENT_TO_NAME)))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
 
     public String getMapToOrError() {
-        return getMapTo().orElseThrow(() -> new RuntimeException("map to argument not found: " + getName()));
+        return getMapTo().orElseThrow(() -> new GraphQLErrors(MAP_TO_ARGUMENT_NOT_EXIST.bind(toString())));
     }
 
-    public String getMapWithType() {
-        return getDirective(DIRECTIVE_MAP_NAME)
-                .getArgumentOrNull(DIRECTIVE_MAP_ARGUMENT_WITH_NAME).asObject()
-                .getValueWithVariable(INPUT_WITH_INPUT_VALUE_TYPE_NAME).asString()
-                .getString();
+    public Optional<String> getMapWithType() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_MAP_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_MAP_ARGUMENT_WITH_NAME)))
+                .filter(ValueWithVariable::isObject)
+                .map(valueWithVariable -> valueWithVariable.asObject().getValueWithVariableOrNull(INPUT_WITH_INPUT_VALUE_TYPE_NAME))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
 
-    public String getMapWithFrom() {
-        return getDirective(DIRECTIVE_MAP_NAME)
-                .getArgumentOrNull(DIRECTIVE_MAP_ARGUMENT_WITH_NAME).asObject()
-                .getValueWithVariable(DIRECTIVE_MAP_ARGUMENT_FROM_NAME).asString()
-                .getString();
+    public String getMapWithTypeOrError() {
+        return getMapWithType().orElseThrow(() -> new GraphQLErrors(MAP_WITH_TYPE_ARGUMENT_NOT_EXIST.bind(toString())));
     }
 
-    public String getMapWithTo() {
-        return getDirective(DIRECTIVE_MAP_NAME)
-                .getArgumentOrNull(DIRECTIVE_MAP_ARGUMENT_WITH_NAME).asObject()
-                .getValueWithVariable(DIRECTIVE_MAP_ARGUMENT_TO_NAME).asString()
-                .getString();
+    public Optional<String> getMapWithFrom() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_MAP_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_MAP_ARGUMENT_WITH_NAME)))
+                .filter(ValueWithVariable::isObject)
+                .map(valueWithVariable -> valueWithVariable.asObject().getValueWithVariableOrNull(DIRECTIVE_MAP_ARGUMENT_FROM_NAME))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
+    }
+
+    public String getMapWithFromOrError() {
+        return getMapWithFrom().orElseThrow(() -> new GraphQLErrors(MAP_WITH_FROM_ARGUMENT_NOT_EXIST.bind(toString())));
+    }
+
+    public Optional<String> getMapWithTo() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_MAP_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_MAP_ARGUMENT_WITH_NAME)))
+                .filter(ValueWithVariable::isObject)
+                .map(valueWithVariable -> valueWithVariable.asObject().getValueWithVariableOrNull(DIRECTIVE_MAP_ARGUMENT_FROM_NAME))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
+    }
+
+    public String getMapWithToOrError() {
+        return getMapWithTo().orElseThrow(() -> new GraphQLErrors(MAP_WITH_TO_ARGUMENT_NOT_EXIST.bind(toString())));
     }
 
     public boolean isFetchField() {
@@ -322,42 +362,76 @@ public class FieldDefinition extends AbstractDefinition {
         return hasDirective(DIRECTIVE_FETCH_NAME) && getDirective(DIRECTIVE_FETCH_NAME).hasArgument(DIRECTIVE_FETCH_ARGUMENT_WITH_NAME);
     }
 
-    public String getFetchFrom() {
-        return getDirective(DIRECTIVE_FETCH_NAME).getArgumentOrNull(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME).asString().getString();
+    public Optional<String> getFetchFrom() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_FETCH_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME)))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
+    }
+
+    public String getFetchFromOrError() {
+        return getFetchFrom().orElseThrow(() -> new GraphQLErrors(FETCH_FROM_ARGUMENT_NOT_EXIST.bind(toString())));
     }
 
     public Optional<String> getFetchTo() {
-        return Optional.ofNullable(getDirective(DIRECTIVE_FETCH_NAME).getArgumentOrNull(DIRECTIVE_FETCH_ARGUMENT_TO_NAME))
-                .map(valueWithVariable -> valueWithVariable.asString().getString());
+        return Optional.ofNullable(getDirective(DIRECTIVE_FETCH_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FETCH_ARGUMENT_TO_NAME)))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
 
     public String getFetchToOrError() {
-        return getFetchTo().orElseThrow(() -> new RuntimeException("fetch to argument not found: " + getName()));
+        return getFetchTo().orElseThrow(() -> new GraphQLErrors(FETCH_TO_ARGUMENT_NOT_EXIST.bind(toString())));
     }
 
-    public String getFetchWithType() {
-        return getDirective(DIRECTIVE_FETCH_NAME)
-                .getArgumentOrNull(DIRECTIVE_FETCH_ARGUMENT_WITH_NAME).asObject()
-                .getValueWithVariable(DIRECTIVE_FETCH_ARGUMENT_WITH_TYPE_NAME).asString()
-                .getString();
+    public Optional<String> getFetchWithType() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_FETCH_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FETCH_ARGUMENT_WITH_NAME)))
+                .filter(ValueWithVariable::isObject)
+                .map(valueWithVariable -> valueWithVariable.asObject().getValueWithVariableOrNull(DIRECTIVE_FETCH_ARGUMENT_WITH_TYPE_NAME))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
 
-    public String getFetchWithFrom() {
-        return getDirective(DIRECTIVE_FETCH_NAME)
-                .getArgumentOrNull(DIRECTIVE_FETCH_ARGUMENT_WITH_NAME).asObject()
-                .getValueWithVariable(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME).asString()
-                .getString();
+    public String getFetchWithTypeOrError() {
+        return getFetchWithType().orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TYPE_ARGUMENT_NOT_EXIST.bind(toString())));
     }
 
-    public String getFetchWithTo() {
-        return getDirective(DIRECTIVE_FETCH_NAME)
-                .getArgumentOrNull(DIRECTIVE_FETCH_ARGUMENT_WITH_NAME).asObject()
-                .getValueWithVariable(DIRECTIVE_FETCH_ARGUMENT_TO_NAME).asString()
-                .getString();
+    public Optional<String> getFetchWithFrom() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_FETCH_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FETCH_ARGUMENT_WITH_NAME)))
+                .filter(ValueWithVariable::isObject)
+                .map(valueWithVariable -> valueWithVariable.asObject().getValueWithVariableOrNull(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
 
-    public String getFetchProtocol() {
-        return getDirective(DIRECTIVE_FETCH_NAME).getArgumentOrNull(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME).asString().getString();
+    public String getFetchWithFromOrError() {
+        return getFetchWithFrom().orElseThrow(() -> new GraphQLErrors(FETCH_WITH_FROM_ARGUMENT_NOT_EXIST.bind(toString())));
+    }
+
+    public Optional<String> getFetchWithTo() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_FETCH_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FETCH_ARGUMENT_WITH_NAME)))
+                .filter(ValueWithVariable::isObject)
+                .map(valueWithVariable -> valueWithVariable.asObject().getValueWithVariableOrNull(DIRECTIVE_FETCH_ARGUMENT_TO_NAME))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
+    }
+
+    public String getFetchWithToOrError() {
+        return getFetchWithTo().orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TO_ARGUMENT_NOT_EXIST.bind(toString())));
+    }
+
+    public Optional<String> getFetchProtocol() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_FETCH_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME)))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
+    }
+
+    public String getFetchProtocolOrError() {
+        return getFetchProtocol().orElseThrow(() -> new GraphQLErrors(FETCH_PROTOCOL_ARGUMENT_NOT_EXIST.bind(toString())));
     }
 
     public boolean hasFormat() {
@@ -365,8 +439,10 @@ public class FieldDefinition extends AbstractDefinition {
     }
 
     public Optional<String> getFormatValue() {
-        return Optional.ofNullable(getDirective(DIRECTIVE_FORMAT_NAME).getArgumentOrNull(DIRECTIVE_FORMAT_ARGUMENT_VALUE_NAME))
-                .map(valueWithVariable -> valueWithVariable.asString().getString());
+        return Optional.ofNullable(getDirective(DIRECTIVE_FORMAT_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FORMAT_ARGUMENT_VALUE_NAME)))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
 
     public String getFormatValueOrNull() {
@@ -374,8 +450,10 @@ public class FieldDefinition extends AbstractDefinition {
     }
 
     public Optional<String> getFormatLocale() {
-        return Optional.ofNullable(getDirective(DIRECTIVE_FORMAT_NAME).getArgumentOrNull(DIRECTIVE_FORMAT_ARGUMENT_LOCALE_NAME))
-                .map(valueWithVariable -> valueWithVariable.asString().getString());
+        return Optional.ofNullable(getDirective(DIRECTIVE_FORMAT_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FORMAT_ARGUMENT_LOCALE_NAME)))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
 
     public String getFormatLocaleOrNull() {

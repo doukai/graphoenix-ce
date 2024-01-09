@@ -194,8 +194,10 @@ public class Field extends AbstractDefinition implements Selection {
     }
 
     public Optional<String> getFormatValue() {
-        return Optional.ofNullable(getDirective(DIRECTIVE_FORMAT_NAME).getArgumentOrNull(DIRECTIVE_FORMAT_ARGUMENT_VALUE_NAME))
-                .map(valueWithVariable -> valueWithVariable.asString().getString());
+        return Optional.ofNullable(getDirective(DIRECTIVE_FORMAT_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FORMAT_ARGUMENT_VALUE_NAME)))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
 
     public String getFormatValueOrNull() {
@@ -203,8 +205,10 @@ public class Field extends AbstractDefinition implements Selection {
     }
 
     public Optional<String> getFormatLocale() {
-        return Optional.ofNullable(getDirective(DIRECTIVE_FORMAT_NAME).getArgumentOrNull(DIRECTIVE_FORMAT_ARGUMENT_LOCALE_NAME))
-                .map(valueWithVariable -> valueWithVariable.asString().getString());
+        return Optional.ofNullable(getDirective(DIRECTIVE_FORMAT_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FORMAT_ARGUMENT_LOCALE_NAME)))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
 
     public String getFormatLocaleOrNull() {

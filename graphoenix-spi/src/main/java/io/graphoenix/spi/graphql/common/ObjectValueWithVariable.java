@@ -129,8 +129,12 @@ public class ObjectValueWithVariable extends AbstractMap<String, JsonValue> impl
                 .collect(Collectors.toSet());
     }
 
-    public ValueWithVariable getValueWithVariable(String name) {
+    public ValueWithVariable getValueWithVariableOrNull(String name) {
         return objectValueWithVariable.get(name);
+    }
+
+    public Optional<ValueWithVariable> getValueWithVariable(String name) {
+        return Optional.ofNullable(objectValueWithVariable.get(name));
     }
 
     @Override

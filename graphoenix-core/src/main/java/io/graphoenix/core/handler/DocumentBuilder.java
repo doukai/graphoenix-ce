@@ -2,7 +2,6 @@ package io.graphoenix.core.handler;
 
 import com.google.common.collect.Streams;
 import io.graphoenix.core.config.PackageConfig;
-import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.Document;
 import io.graphoenix.spi.graphql.FieldsType;
@@ -19,7 +18,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
-import static io.graphoenix.spi.error.GraphQLErrorType.TYPE_ID_FIELD_NOT_EXIST;
 import static io.graphoenix.spi.utils.NameUtil.*;
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
@@ -257,18 +255,18 @@ public class DocumentBuilder {
     }
 
     public ObjectType buildMapWithObject(ObjectType objectType, FieldDefinition fieldDefinition) {
-        ObjectType relationObjectType = new ObjectType(fieldDefinition.getMapWithType())
+        ObjectType relationObjectType = new ObjectType(fieldDefinition.getMapWithTypeOrError())
                 .addField(new FieldDefinition(FIELD_ID_NAME).setType(new TypeName(SCALA_ID_NAME)))
                 .addField(
-                        new FieldDefinition(fieldDefinition.getMapWithFrom())
+                        new FieldDefinition(fieldDefinition.getMapWithFromOrError())
                                 .setType(documentManager.getFieldMapFromFieldDefinition(objectType, fieldDefinition).getTypeNameWithoutID()))
                 .addField(
                         new FieldDefinition(typeNameToFieldName(objectType.getName()))
                                 .setType(new TypeName(objectType.getName()))
                                 .addDirective(
                                         new Directive(DIRECTIVE_MAP_NAME)
-                                                .addArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME, fieldDefinition.getMapWithFrom())
-                                                .addArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME, fieldDefinition.getMapFrom())
+                                                .addArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME, fieldDefinition.getMapWithFromOrError())
+                                                .addArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME, fieldDefinition.getMapFromOrError())
                                                 .addArgument(DIRECTIVE_MAP_ARGUMENT_ANCHOR_NAME, true)
                                 )
                 )
@@ -278,14 +276,14 @@ public class DocumentBuilder {
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_CLASS_NAME)
-                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + fieldDefinition.getMapWithType())
+                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + fieldDefinition.getMapWithTypeOrError())
                 );
 
         documentManager.getFieldMapToFieldDefinition(fieldDefinition)
                 .ifPresentOrElse(mapToFieldDefinition ->
                                 relationObjectType
                                         .addField(
-                                                new FieldDefinition(fieldDefinition.getMapWithTo())
+                                                new FieldDefinition(fieldDefinition.getMapWithToOrError())
                                                         .setType(new TypeName(mapToFieldDefinition.getTypeNameWithoutID()))
                                         )
                                         .addField(
@@ -293,13 +291,13 @@ public class DocumentBuilder {
                                                         .setType(fieldDefinition.getType().getTypeName())
                                                         .addDirective(
                                                                 new Directive(DIRECTIVE_MAP_NAME)
-                                                                        .addArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME, fieldDefinition.getMapWithTo())
+                                                                        .addArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME, fieldDefinition.getMapWithToOrError())
                                                                         .addArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME, fieldDefinition.getMapToOrError())
                                                                         .addArgument(DIRECTIVE_MAP_ARGUMENT_ANCHOR_NAME, true)
                                                         )
                                         ),
                         () -> relationObjectType
-                                .addField(new FieldDefinition(fieldDefinition.getMapWithTo())
+                                .addField(new FieldDefinition(fieldDefinition.getMapWithToOrError())
                                         .setType(fieldDefinition.getType().getTypeName()))
                 );
 
@@ -307,10 +305,10 @@ public class DocumentBuilder {
     }
 
     public ObjectType buildFetchWithObject(ObjectType objectType, FieldDefinition fieldDefinition) {
-        ObjectType relationObjectType = new ObjectType(fieldDefinition.getFetchWithType())
+        ObjectType relationObjectType = new ObjectType(fieldDefinition.getFetchWithTypeOrError())
                 .addField(new FieldDefinition(FIELD_ID_NAME).setType(new TypeName(SCALA_ID_NAME)))
                 .addField(
-                        new FieldDefinition(fieldDefinition.getFetchWithFrom())
+                        new FieldDefinition(fieldDefinition.getFetchWithFromOrError())
                                 .setType(documentManager.getFieldFetchFromFieldDefinition(objectType, fieldDefinition).getTypeNameWithoutID()))
                 .addField(
                         new FieldDefinition(typeNameToFieldName(objectType.getName()))
@@ -318,14 +316,14 @@ public class DocumentBuilder {
                                 .addDirective(
                                         fieldDefinition.isFetchAnchor() ?
                                                 new Directive(DIRECTIVE_MAP_NAME)
-                                                        .addArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME, fieldDefinition.getFetchWithFrom())
-                                                        .addArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME, fieldDefinition.getFetchFrom())
+                                                        .addArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME, fieldDefinition.getFetchWithFromOrError())
+                                                        .addArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME, fieldDefinition.getFetchFromOrError())
                                                         .addArgument(DIRECTIVE_MAP_ARGUMENT_ANCHOR_NAME, true) :
                                                 new Directive(DIRECTIVE_FETCH_NAME)
-                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME, fieldDefinition.getFetchWithFrom())
-                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME, fieldDefinition.getFetchFrom())
+                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME, fieldDefinition.getFetchWithFromOrError())
+                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME, fieldDefinition.getFetchFromOrError())
                                                         .addArgument(DIRECTIVE_FETCH_ARGUMENT_ANCHOR_NAME, true)
-                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, new EnumValue(fieldDefinition.getFetchProtocol()))
+                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, new EnumValue(fieldDefinition.getFetchProtocolOrError()))
                                 )
                 )
                 .addDirective(
@@ -334,14 +332,14 @@ public class DocumentBuilder {
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_CLASS_NAME)
-                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + fieldDefinition.getFetchWithType())
+                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + fieldDefinition.getFetchWithTypeOrError())
                 );
 
         documentManager.getFieldFetchToFieldDefinition(fieldDefinition)
                 .ifPresentOrElse(fetchToFieldDefinition ->
                                 relationObjectType
                                         .addField(
-                                                new FieldDefinition(fieldDefinition.getFetchWithTo())
+                                                new FieldDefinition(fieldDefinition.getFetchWithToOrError())
                                                         .setType(new TypeName(fetchToFieldDefinition.getTypeNameWithoutID()))
                                         )
                                         .addField(
@@ -349,14 +347,14 @@ public class DocumentBuilder {
                                                         .setType(fieldDefinition.getType().getTypeName())
                                                         .addDirective(
                                                                 new Directive(DIRECTIVE_FETCH_NAME)
-                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME, fieldDefinition.getFetchWithTo())
+                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME, fieldDefinition.getFetchWithToOrError())
                                                                         .addArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME, fieldDefinition.getFetchTo())
                                                                         .addArgument(DIRECTIVE_FETCH_ARGUMENT_ANCHOR_NAME, true)
-                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, new EnumValue(fieldDefinition.getFetchProtocol()))
+                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, new EnumValue(fieldDefinition.getFetchProtocolOrError()))
                                                         )
                                         ),
                         () -> relationObjectType
-                                .addField(new FieldDefinition(fieldDefinition.getFetchWithTo())
+                                .addField(new FieldDefinition(fieldDefinition.getFetchWithToOrError())
                                         .setType(fieldDefinition.getType().getTypeName()))
                 );
 
@@ -408,9 +406,9 @@ public class DocumentBuilder {
                                 .filter(FieldDefinition::isFetchField)
                                 .filter(FieldDefinition::isFetchAnchor)
                                 .filter(FieldDefinition -> !FieldDefinition.hasFetchWith())
-                                .filter(fieldDefinition -> objectType.getFields().stream().noneMatch(item -> item.getName().equals(fieldDefinition.getFetchFrom())))
+                                .filter(fieldDefinition -> objectType.getFields().stream().noneMatch(item -> item.getName().equals(fieldDefinition.getFetchFromOrError())))
                                 .map(fieldDefinition ->
-                                        new FieldDefinition(fieldDefinition.getFetchFrom())
+                                        new FieldDefinition(fieldDefinition.getFetchFromOrError())
                                                 .setType(
                                                         documentManager.getFieldTypeDefinition(fieldDefinition).asObject()
                                                                 .getField(fieldDefinition.getFetchToOrError())
@@ -424,17 +422,17 @@ public class DocumentBuilder {
                                 .filter(FieldDefinition::isFetchField)
                                 .filter(FieldDefinition::hasFetchWith)
                                 .map(fieldDefinition ->
-                                        (FieldDefinition) new FieldDefinition(typeNameToFieldName(fieldDefinition.getFetchWithType()))
-                                                .setType(new ListType(new TypeName(fieldDefinition.getFetchWithType())))
+                                        (FieldDefinition) new FieldDefinition(typeNameToFieldName(fieldDefinition.getFetchWithTypeOrError()))
+                                                .setType(new ListType(new TypeName(fieldDefinition.getFetchWithTypeOrError())))
                                                 .addDirective(
                                                         fieldDefinition.isFetchAnchor() ?
                                                                 new Directive(DIRECTIVE_MAP_NAME)
-                                                                        .addArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME, fieldDefinition.getFetchFrom())
-                                                                        .addArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME, fieldDefinition.getFetchWithFrom()) :
+                                                                        .addArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME, fieldDefinition.getFetchFromOrError())
+                                                                        .addArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME, fieldDefinition.getFetchWithFromOrError()) :
                                                                 new Directive(DIRECTIVE_FETCH_NAME)
-                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME, fieldDefinition.getFetchFrom())
-                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME, fieldDefinition.getFetchWithFrom())
-                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, new EnumValue(fieldDefinition.getFetchProtocol()))
+                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME, fieldDefinition.getFetchFromOrError())
+                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME, fieldDefinition.getFetchWithFromOrError())
+                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, new EnumValue(fieldDefinition.getFetchProtocolOrError()))
                                                 )
                                 )
                                 .collect(Collectors.toList())
@@ -444,9 +442,9 @@ public class DocumentBuilder {
                                 .filter(FieldDefinition::isMapField)
                                 .filter(FieldDefinition::isMapAnchor)
                                 .filter(fieldDefinition -> !fieldDefinition.hasMapWith())
-                                .filter(fieldDefinition -> objectType.getFields().stream().noneMatch(item -> item.getName().equals(fieldDefinition.getMapFrom())))
+                                .filter(fieldDefinition -> objectType.getFields().stream().noneMatch(item -> item.getName().equals(fieldDefinition.getMapFromOrError())))
                                 .map(fieldDefinition ->
-                                        new FieldDefinition(fieldDefinition.getMapFrom())
+                                        new FieldDefinition(fieldDefinition.getMapFromOrError())
                                                 .setType(
                                                         documentManager.getFieldTypeDefinition(fieldDefinition).asObject()
                                                                 .getField(fieldDefinition.getMapToOrError())
@@ -460,12 +458,12 @@ public class DocumentBuilder {
                                 .filter(FieldDefinition::isMapField)
                                 .filter(FieldDefinition::hasMapWith)
                                 .map(fieldDefinition ->
-                                        (FieldDefinition) new FieldDefinition(typeNameToFieldName(fieldDefinition.getMapWithType()))
-                                                .setType(new ListType(new TypeName(fieldDefinition.getMapWithType())))
+                                        (FieldDefinition) new FieldDefinition(typeNameToFieldName(fieldDefinition.getMapWithTypeOrError()))
+                                                .setType(new ListType(new TypeName(fieldDefinition.getMapWithTypeOrError())))
                                                 .addDirective(
                                                         new Directive(DIRECTIVE_MAP_NAME)
-                                                                .addArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME, fieldDefinition.getMapFrom())
-                                                                .addArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME, fieldDefinition.getMapWithFrom())
+                                                                .addArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME, fieldDefinition.getMapFromOrError())
+                                                                .addArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME, fieldDefinition.getMapWithFromOrError())
                                                 )
                                 )
                                 .collect(Collectors.toList())

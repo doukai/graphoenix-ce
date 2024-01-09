@@ -3,7 +3,6 @@ package io.graphoenix.core.handler;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.Document;
-import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.*;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -52,11 +51,11 @@ public class DocumentManager {
     }
 
     public ObjectType getFieldMapWithTypeDefinition(FieldDefinition fieldDefinition) {
-        return document.getDefinition(fieldDefinition.getMapWithType()).asObject();
+        return document.getDefinition(fieldDefinition.getMapWithTypeOrError()).asObject();
     }
 
     public FieldDefinition getFieldMapFromFieldDefinition(ObjectType objectType, FieldDefinition fieldDefinition) {
-        return objectType.getField(fieldDefinition.getMapFrom());
+        return objectType.getField(fieldDefinition.getMapFromOrError());
     }
 
     public Optional<FieldDefinition> getFieldMapToFieldDefinition(FieldDefinition fieldDefinition) {
@@ -64,11 +63,11 @@ public class DocumentManager {
     }
 
     public ObjectType getFieldFetchWithTypeDefinition(FieldDefinition fieldDefinition) {
-        return document.getDefinition(fieldDefinition.getFetchWithType()).asObject();
+        return document.getDefinition(fieldDefinition.getFetchWithTypeOrError()).asObject();
     }
 
     public FieldDefinition getFieldFetchFromFieldDefinition(ObjectType objectType, FieldDefinition fieldDefinition) {
-        return objectType.getField(fieldDefinition.getFetchFrom());
+        return objectType.getField(fieldDefinition.getFetchFromOrError());
     }
 
     public Optional<FieldDefinition> getFieldFetchToFieldDefinition(FieldDefinition fieldDefinition) {

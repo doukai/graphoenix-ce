@@ -172,13 +172,7 @@ public class ObjectType extends AbstractDefinition implements Definition, Fields
     }
 
     public FieldDefinition getIDFieldOrError() {
-        return Optional.of(fieldDefinitionMap.values())
-                .flatMap(fieldDefinitions ->
-                        fieldDefinitions.stream()
-                                .filter(fieldDefinition -> fieldDefinition.getType().getTypeName().getName().equals(SCALA_ID_NAME))
-                                .findFirst()
-                )
-                .orElseThrow(() -> new GraphQLErrors(TYPE_ID_FIELD_NOT_EXIST.bind(this.getName())));
+        return getIDField().orElseThrow(() -> new GraphQLErrors(TYPE_ID_FIELD_NOT_EXIST.bind(this.getName())));
     }
 
     public Optional<FieldDefinition> getCursorField() {
