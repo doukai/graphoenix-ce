@@ -14,10 +14,7 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Types;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -89,8 +86,12 @@ public class InputObjectType extends AbstractDefinition implements Definition {
         return this;
     }
 
-    public InputValue getInputValue(String name) {
+    public InputValue getInputValueOrNull(String name) {
         return inputValueMap.get(name);
+    }
+
+    public Optional<InputValue> getInputValue(String name) {
+        return Optional.ofNullable(getInputValueOrNull(name));
     }
 
     public Collection<InputValue> getInputValues() {

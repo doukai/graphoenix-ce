@@ -42,11 +42,13 @@ public class QueryTranslator {
 
     private final DocumentManager documentManager;
     private final PackageManager packageManager;
+    private final ArgumentsTranslator argumentsTranslator;
 
     @Inject
-    public QueryTranslator(DocumentManager documentManager, PackageManager packageManager) {
+    public QueryTranslator(DocumentManager documentManager, PackageManager packageManager, ArgumentsTranslator argumentsTranslator) {
         this.documentManager = documentManager;
         this.packageManager = packageManager;
+        this.argumentsTranslator = argumentsTranslator;
     }
 
     public Select operationToSelect(Operation operation) {
@@ -111,8 +113,12 @@ public class QueryTranslator {
 
         if (!documentManager.isOperationType(objectType)) {
             Table parentTable = typeToTable(objectType, level - 1);
+            Optional<Expression> whereExpression = argumentsTranslator.argumentsToWhereExpression(objectType, fieldDefinition, field, level);
             if (fieldDefinition.hasMapWith()) {
                 Table withTable = graphqlTypeToTable(fieldDefinition.getMapWithTypeOrError(), level);
+                EqualsTo equalsTo = new EqualsTo()
+                        .withLeftExpression(graphqlFieldToColumn(withTable, fieldDefinition.getMapWithFromOrError()))
+                        .withRightExpression(graphqlFieldToColumn(parentTable, fieldDefinition.getMapFromOrError()));
                 return plainSelect
                         .addJoins(
                                 new Join()
@@ -131,16 +137,19 @@ public class QueryTranslator {
                                         )
                         )
                         .withWhere(
-                                new EqualsTo()
-                                        .withLeftExpression(graphqlFieldToColumn(withTable, fieldDefinition.getMapWithFromOrError()))
-                                        .withRightExpression(graphqlFieldToColumn(parentTable, fieldDefinition.getMapFromOrError()))
+                                whereExpression
+                                        .map(expression -> (Expression) new MultiAndExpression(Arrays.asList(expression, equalsTo)))
+                                        .orElse(equalsTo)
                         );
             } else {
+                EqualsTo equalsTo = new EqualsTo()
+                        .withLeftExpression(graphqlFieldToColumn(table, fieldDefinition.getMapToOrError()))
+                        .withRightExpression(graphqlFieldToColumn(parentTable, fieldDefinition.getMapFromOrError()));
                 return plainSelect
                         .withWhere(
-                                new EqualsTo()
-                                        .withLeftExpression(graphqlFieldToColumn(table, fieldDefinition.getMapToOrError()))
-                                        .withRightExpression(graphqlFieldToColumn(parentTable, fieldDefinition.getMapFromOrError()))
+                                whereExpression
+                                        .map(expression -> (Expression) new MultiAndExpression(Arrays.asList(expression, equalsTo)))
+                                        .orElse(equalsTo)
                         );
             }
         }
@@ -212,6 +221,17 @@ public class QueryTranslator {
                         )
                 );
             }
+
+            Optional<Expression> whereExpression = argumentsTranslator.argumentsToWhereExpression(objectType, fieldDefinition, field, level);
+            MultiAndExpression multiAndExpression = new MultiAndExpression(
+                    Arrays.asList(
+                            new EqualsTo()
+                                    .withLeftExpression(graphqlFieldToColumn(withTable, fieldDefinition.getMapWithFromOrError()))
+                                    .withRightExpression(graphqlFieldToColumn(table, fieldDefinition.getMapFromOrError())),
+                            new IsNullExpression()
+                                    .withLeftExpression(graphqlFieldToColumn(withTable, FIELD_DEPRECATED_NAME))
+                    )
+            );
             return jsonExtractFunction(
                     new ParenthesedSelect()
                             .withSelect(
@@ -219,15 +239,9 @@ public class QueryTranslator {
                                             .addSelectItem(selectExpression)
                                             .withFromItem(withTable)
                                             .withWhere(
-                                                    new MultiAndExpression(
-                                                            Arrays.asList(
-                                                                    new EqualsTo()
-                                                                            .withLeftExpression(graphqlFieldToColumn(withTable, fieldDefinition.getMapWithFromOrError()))
-                                                                            .withRightExpression(graphqlFieldToColumn(table, fieldDefinition.getMapFromOrError())),
-                                                                    new IsNullExpression()
-                                                                            .withLeftExpression(graphqlFieldToColumn(withTable, FIELD_DEPRECATED_NAME))
-                                                            )
-                                                    )
+                                                    whereExpression
+                                                            .map(expression -> (Expression) new MultiAndExpression(Arrays.asList(expression, multiAndExpression)))
+                                                            .orElse(multiAndExpression)
                                             )
                             )
             );

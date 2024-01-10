@@ -92,7 +92,7 @@ public class EnumValueHandler implements OperationBeforeHandler {
             return new ObjectValueWithVariable(
                     valueWithVariable.asObject().getObjectValueWithVariable().entrySet().stream()
                             .peek(valueWithVariableEntry -> {
-                                        InputValue fieldInputValue = documentManager.getInputValueTypeDefinition(inputValue).asInputObject().getInputValue(valueWithVariableEntry.getKey());
+                                        InputValue fieldInputValue = documentManager.getInputValueTypeDefinition(inputValue).asInputObject().getInputValueOrNull(valueWithVariableEntry.getKey());
                                         valueWithVariableEntry.setValue(replaceEnumValue(fieldInputValue, valueWithVariableEntry.getValue()));
                                     }
                             )

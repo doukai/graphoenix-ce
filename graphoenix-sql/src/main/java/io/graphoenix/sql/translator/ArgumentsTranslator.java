@@ -49,50 +49,109 @@ public class ArgumentsTranslator {
         this.documentManager = documentManager;
     }
 
-    protected Optional<Expression> argumentsToMultipleExpression(FieldDefinition fieldDefinition, Field field, int level) {
+    public Optional<Expression> argumentsToWhereExpression(ObjectType objectType, FieldDefinition fieldDefinition, Field field, int level) {
         ObjectType fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition).asObject();
-        Map<InputValue, ValueWithVariable> inputValueValueWithVariableMap = Stream.ofNullable(fieldDefinition.getArguments())
-                .flatMap(Collection::stream)
-                .flatMap(inputValue ->
-                        Optional.ofNullable(field.getArguments())
-                                .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
-                                .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
-                                .stream()
-                                .map(valueWithVariable -> new AbstractMap.SimpleEntry<>(inputValue, valueWithVariable))
-                )
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        if (fieldTypeDefinition.isObject()) {
+            Map<InputValue, ValueWithVariable> inputValueValueWithVariableMap = Stream.ofNullable(fieldDefinition.getArguments())
+                    .flatMap(Collection::stream)
+                    .flatMap(inputValue ->
+                            Optional.ofNullable(field.getArguments())
+                                    .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
+                                    .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
+                                    .stream()
+                                    .map(valueWithVariable -> new AbstractMap.SimpleEntry<>(inputValue, valueWithVariable))
+                    )
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        List<Expression> expressionList = fieldTypeDefinition.getFields().stream()
-                .flatMap(item ->
-                        inputValueValueWithVariableMap.entrySet().stream()
-                                .filter(entry -> entry.getKey().getName().equals(item.getName()))
-                                .flatMap(entry -> inputValueToExpression(fieldTypeDefinition, item, entry.getKey(), entry.getValue(), level).stream())
-                )
-                .collect(Collectors.toList());
+            List<Expression> expressionList = Stream
+                    .concat(
+                            fieldTypeDefinition.getFields().stream()
+                                    .flatMap(item ->
+                                            inputValueValueWithVariableMap.entrySet().stream()
+                                                    .filter(entry -> entry.getKey().getName().equals(item.getName()))
+                                                    .flatMap(entry -> inputValueToWhereExpression(fieldTypeDefinition, item, entry.getKey(), entry.getValue(), level).stream())
+                                    ),
+                            inputValueValueWithVariableMap.entrySet().stream()
+                                    .filter(entry -> entry.getKey().getName().equals(INPUT_VALUE_EXS_NAME))
+                                    .flatMap(entry ->
+                                            Stream.of(entry.getValue())
+                                                    .filter(ValueWithVariable::isArray)
+                                                    .flatMap(valueWithVariable -> valueWithVariable.asArray().getValueWithVariables().stream())
+                                                    .flatMap(valueWithVariable -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), valueWithVariable, level).stream())
+                                    )
+                    )
+                    .collect(Collectors.toList());
 
-        if (expressionList.isEmpty()) {
-            return Optional.empty();
-        } else if (expressionList.size() == 1) {
-            if (isNot(field.getArguments())) {
-                return Optional.of(new NotExpression(expressionList.get(0)));
-            }
-            return Optional.of(expressionList.get(0));
-        } else {
-            if (isOr(field.getArguments())) {
-                if (isNot(field.getArguments())) {
-                    return Optional.of(new NotExpression(new MultiOrExpression(expressionList)));
-                }
-                return Optional.of(new MultiOrExpression(expressionList));
+            Expression expression;
+            if (expressionList.isEmpty()) {
+                return Optional.empty();
+            } else if (expressionList.size() == 1) {
+                expression = expressionList.get(0);
             } else {
-                if (isNot(field.getArguments())) {
-                    return Optional.of(new NotExpression(new MultiAndExpression(expressionList)));
+                if (isOr(field.getArguments())) {
+                    expression = new MultiOrExpression(expressionList);
+                } else {
+                    expression = new MultiAndExpression(expressionList);
                 }
-                return Optional.of(new MultiAndExpression(expressionList));
             }
+            if (isNot(field.getArguments())) {
+                return Optional.of(new NotExpression(expression));
+            }
+            return Optional.of(expression);
+        } else {
+            return fieldDefinition.getArgument(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME)
+                    .flatMap(inputValue ->
+                            Optional.ofNullable(field.getArguments())
+                                    .map(arguments ->
+                                            arguments.getArgument(inputValue.getName())
+                                                    .filter(ValueWithVariable::isEnum)
+                                                    .map(opr -> opr.asEnum().getValue())
+                                                    .orElseGet(() ->
+                                                            arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                                    .map(val -> INPUT_OPERATOR_INPUT_VALUE_EQ)
+                                                                    .orElseGet(() ->
+                                                                            arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                                                    .map(val -> INPUT_OPERATOR_INPUT_VALUE_EQ)
+                                                                                    .orElseGet(() ->
+                                                                                            arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
+                                                                                                    .map(val -> INPUT_OPERATOR_INPUT_VALUE_IN)
+                                                                                                    .orElseGet(() -> inputValue.getDefaultValue().asEnum().getValue())
+                                                                                    )
+                                                                    )
+                                                    )
+                                    )
+                    )
+                    .flatMap(opr ->
+                            Optional.of(field.getArguments())
+                                    .flatMap(arguments -> {
+                                                if (fieldDefinition.getType().hasList()) {
+                                                    Column column = graphqlFieldToColumn(fieldDefinition.getMapWithTypeOrError(), fieldDefinition.getMapWithToOrError(), level);
+                                                    return arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                            .flatMap(val ->
+                                                                    valToExpression(column, opr, val, skipNull(arguments))
+                                                            )
+                                                            .or(() ->
+                                                                    arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
+                                                                            .flatMap(arr -> arrToExpression(column, opr, fieldDefinition.getArgumentOrNull(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(arguments)))
+                                                            );
+                                                } else {
+                                                    Column column = graphqlFieldToColumn(objectType.getName(), fieldDefinition.getName(), level);
+                                                    return arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                            .flatMap(val ->
+                                                                    valToExpression(column, opr, val, skipNull(arguments))
+                                                            )
+                                                            .or(() ->
+                                                                    arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
+                                                                            .flatMap(arr -> arrToExpression(column, opr, fieldDefinition.getArgumentOrNull(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(arguments)))
+                                                            );
+                                                }
+                                            }
+                                    )
+                    );
         }
     }
 
-    protected Optional<Expression> inputValueToExpression(ObjectType objectType, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable, int level) {
+    public Optional<Expression> inputValueToWhereExpression(ObjectType objectType, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable, int level) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
         if (fieldTypeDefinition.isObject()) {
@@ -109,11 +168,22 @@ public class ArgumentsTranslator {
                     )
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-            List<Expression> expressionList = fieldTypeDefinition.asObject().getFields().stream()
-                    .flatMap(item ->
+            List<Expression> expressionList = Stream
+                    .concat(
+                            fieldTypeDefinition.asObject().getFields().stream()
+                                    .flatMap(item ->
+                                            inputValueValueWithVariableMap.entrySet().stream()
+                                                    .filter(entry -> entry.getKey().getName().equals(item.getName()))
+                                                    .flatMap(entry -> inputValueToWhereExpression(fieldTypeDefinition.asObject(), item, entry.getKey(), entry.getValue(), level + 1).stream())
+                                    ),
                             inputValueValueWithVariableMap.entrySet().stream()
-                                    .filter(entry -> entry.getKey().getName().equals(item.getName()))
-                                    .flatMap(entry -> inputValueToExpression(fieldTypeDefinition.asObject(), item, entry.getKey(), entry.getValue(), level + 1).stream())
+                                    .filter(entry -> entry.getKey().getName().equals(INPUT_VALUE_EXS_NAME))
+                                    .flatMap(entry ->
+                                            Stream.of(entry.getValue())
+                                                    .filter(ValueWithVariable::isArray)
+                                                    .flatMap(field -> field.asArray().getValueWithVariables().stream())
+                                                    .flatMap(field -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), field, level + 1).stream())
+                                    )
                     )
                     .collect(Collectors.toList());
 
@@ -121,30 +191,21 @@ public class ArgumentsTranslator {
             if (expressionList.isEmpty()) {
                 return Optional.empty();
             } else if (expressionList.size() == 1) {
-                if (isNot(valueWithVariable)) {
-                    expression = new NotExpression(expressionList.get(0));
-                } else {
-                    expression = expressionList.get(0);
-                }
+                expression = expressionList.get(0);
             } else {
                 if (isOr(valueWithVariable)) {
-                    if (isNot(valueWithVariable)) {
-                        expression = new NotExpression(new MultiOrExpression(expressionList));
-                    } else {
-                        expression = new MultiOrExpression(expressionList);
-                    }
+                    expression = new MultiOrExpression(expressionList);
                 } else {
-                    if (isNot(valueWithVariable)) {
-                        expression = new NotExpression(new MultiAndExpression(expressionList));
-                    } else {
-                        expression = new MultiAndExpression(expressionList);
-                    }
+                    expression = new MultiAndExpression(expressionList);
                 }
+            }
+            if (isNot(valueWithVariable)) {
+                expression = new NotExpression(expression);
             }
             return Optional.of(existsExpression(selectFromFieldType(objectType, fieldDefinition, expression, level)));
         } else {
             InputObjectType inputObject = documentManager.getInputValueTypeDefinition(inputValue).asInputObject();
-            return Optional.of(inputObject.getInputValue(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME))
+            return inputObject.getInputValue(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME)
                     .flatMap(item ->
                             Optional.ofNullable(valueWithVariable)
                                     .filter(ValueWithVariable::isObject)
@@ -168,22 +229,35 @@ public class ArgumentsTranslator {
                                                     )
                                     )
                     )
-                    .flatMap(opr -> {
-                                Column column = graphqlFieldToColumn(objectType.getName(), fieldDefinition.getName(), level);
-                                return Optional.of(valueWithVariable)
-                                        .filter(ValueWithVariable::isObject)
-                                        .map(ValueWithVariable::asObject)
-                                        .flatMap(objectValueWithVariable ->
-                                                objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
-                                                        .flatMap(val ->
-                                                                valToExpression(column, opr, val, skipNull(objectValueWithVariable))
-                                                        )
-                                                        .or(() ->
-                                                                objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
-                                                                        .flatMap(arr -> arrToExpression(column, opr, inputObject.getInputValue(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(objectValueWithVariable)))
-                                                        )
-                                        );
-                            }
+                    .flatMap(opr ->
+                            Optional.of(valueWithVariable)
+                                    .filter(ValueWithVariable::isObject)
+                                    .map(ValueWithVariable::asObject)
+                                    .flatMap(objectValueWithVariable -> {
+                                                if (fieldDefinition.getType().hasList()) {
+                                                    Column column = graphqlFieldToColumn(fieldDefinition.getMapWithTypeOrError(), fieldDefinition.getMapWithToOrError(), level);
+                                                    return objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                            .flatMap(val ->
+                                                                    valToExpression(column, opr, val, skipNull(objectValueWithVariable))
+                                                            )
+                                                            .or(() ->
+                                                                    objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
+                                                                            .flatMap(arr -> arrToExpression(column, opr, inputObject.getInputValueOrNull(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(objectValueWithVariable)))
+                                                            )
+                                                            .map(expression -> existsExpression(selectFromFieldType(objectType, fieldDefinition, expression, level)));
+                                                } else {
+                                                    Column column = graphqlFieldToColumn(objectType.getName(), fieldDefinition.getName(), level);
+                                                    return objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                            .flatMap(val ->
+                                                                    valToExpression(column, opr, val, skipNull(objectValueWithVariable))
+                                                            )
+                                                            .or(() ->
+                                                                    objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
+                                                                            .flatMap(arr -> arrToExpression(column, opr, inputObject.getInputValueOrNull(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(objectValueWithVariable)))
+                                                            );
+                                                }
+                                            }
+                                    )
                     );
         }
     }
@@ -543,7 +617,7 @@ public class ArgumentsTranslator {
                 .map(field -> field.asBoolean().getValue())
                 .orElse(false);
     }
-    
+
     protected boolean skipNull(ValueWithVariable valueWithVariable) {
         return Optional.ofNullable(valueWithVariable)
                 .filter(ValueWithVariable::isObject)
