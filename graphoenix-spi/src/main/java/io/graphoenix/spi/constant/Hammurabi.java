@@ -46,13 +46,28 @@ public class Hammurabi {
 
     public static final String INPUT_CONDITIONAL_NAME = "Conditional";
     public static final String INPUT_CONDITIONAL_INPUT_VALUE_AND = "AND";
+    public static final String INPUT_CONDITIONAL_INPUT_VALUE_OR = "OR";
 
 
     public static final String INPUT_OPERATOR_NAME = "Operator";
     public static final String INPUT_OPERATOR_INPUT_VALUE_EQ = "EQ";
+    public static final String INPUT_OPERATOR_INPUT_VALUE_NEQ = "NEQ";
+    public static final String INPUT_OPERATOR_INPUT_VALUE_LK = "LK";
+    public static final String INPUT_OPERATOR_INPUT_VALUE_NLK = "NLK";
+    public static final String INPUT_OPERATOR_INPUT_VALUE_GT = "GT";
+    public static final String INPUT_OPERATOR_INPUT_VALUE_GTE = "GTE";
+    public static final String INPUT_OPERATOR_INPUT_VALUE_LT = "LT";
+    public static final String INPUT_OPERATOR_INPUT_VALUE_LTE = "LTE";
+    public static final String INPUT_OPERATOR_INPUT_VALUE_NIL = "NIL";
+    public static final String INPUT_OPERATOR_INPUT_VALUE_NNIL = "NNIL";
+    public static final String INPUT_OPERATOR_INPUT_VALUE_IN = "IN";
+    public static final String INPUT_OPERATOR_INPUT_VALUE_NIN = "NIN";
+    public static final String INPUT_OPERATOR_INPUT_VALUE_BT = "BT";
+    public static final String INPUT_OPERATOR_INPUT_VALUE_NBT = "NBT";
     public static final String INPUT_OPERATOR_INPUT_VALUE_OPR_NAME = "opr";
     public static final String INPUT_OPERATOR_INPUT_VALUE_VAL_NAME = "val";
     public static final String INPUT_OPERATOR_INPUT_VALUE_ARR_NAME = "arr";
+    public static final String INPUT_OPERATOR_INPUT_VALUE_SKIP_NULL_NAME = "skipNull";
 
 
     public static final String INPUT_VALUE_DEPRECATED_NAME = "includeDeprecated";

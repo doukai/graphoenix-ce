@@ -1,105 +1,560 @@
 package io.graphoenix.sql.translator;
 
-import graphql.parser.antlr.GraphqlParser;
+import com.google.common.collect.Lists;
 import io.graphoenix.core.handler.DocumentManager;
-import io.graphoenix.core.handler.PackageManager;
+import io.graphoenix.spi.error.GraphQLErrorType;
+import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.Definition;
+import io.graphoenix.spi.graphql.common.Arguments;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
+import io.graphoenix.spi.graphql.type.InputObjectType;
 import io.graphoenix.spi.graphql.type.InputValue;
 import io.graphoenix.spi.graphql.type.ObjectType;
+import io.graphoenix.sql.expression.JsonTableFunction;
+import io.graphoenix.sql.utils.DBValueUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.StringValue;
-import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
+import net.sf.jsqlparser.expression.*;
+import net.sf.jsqlparser.expression.operators.relational.*;
+import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.schema.Table;
+import net.sf.jsqlparser.statement.create.table.ColDataType;
+import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
+import net.sf.jsqlparser.statement.select.AllColumns;
+import net.sf.jsqlparser.statement.select.Join;
+import net.sf.jsqlparser.statement.select.ParenthesedSelect;
+import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.util.cnfexpression.MultiAndExpression;
+import net.sf.jsqlparser.util.cnfexpression.MultiOrExpression;
 
-import java.util.AbstractMap;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.graphoenix.spi.constant.Hammurabi.INPUT_OPERATOR_INPUT_VALUE_EQ;
-import static io.graphoenix.spi.constant.Hammurabi.INPUT_OPERATOR_INPUT_VALUE_OPR_NAME;
-import static io.graphoenix.sql.utils.DBNameUtil.graphqlFieldToColumn;
+import static io.graphoenix.spi.constant.Hammurabi.*;
+import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_FIELD_TYPE;
+import static io.graphoenix.sql.utils.DBNameUtil.*;
+import static io.graphoenix.sql.utils.DBValueUtil.getValueFromArrayVariable;
 import static io.graphoenix.sql.utils.DBValueUtil.leafValueToDBValue;
 
 @ApplicationScoped
 public class ArgumentsTranslator {
 
     private final DocumentManager documentManager;
-    private final PackageManager packageManager;
 
     @Inject
-    public ArgumentsTranslator(DocumentManager documentManager, PackageManager packageManager) {
+    public ArgumentsTranslator(DocumentManager documentManager) {
         this.documentManager = documentManager;
-        this.packageManager = packageManager;
     }
 
     protected Optional<Expression> argumentsToMultipleExpression(FieldDefinition fieldDefinition, Field field, int level) {
-        ObjectType objectType = documentManager.getFieldTypeDefinition(fieldDefinition).asObject();
-        Map<InputValue, ValueWithVariable> arguments = Stream.ofNullable(fieldDefinition.getArguments())
+        ObjectType fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition).asObject();
+        Map<InputValue, ValueWithVariable> inputValueValueWithVariableMap = Stream.ofNullable(fieldDefinition.getArguments())
                 .flatMap(Collection::stream)
                 .flatMap(inputValue ->
-                        field.getArguments().getArgument(inputValue.getName())
+                        Optional.ofNullable(field.getArguments())
+                                .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
                                 .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
                                 .stream()
                                 .map(valueWithVariable -> new AbstractMap.SimpleEntry<>(inputValue, valueWithVariable))
                 )
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        objectType.getFields().stream()
+        List<Expression> expressionList = fieldTypeDefinition.getFields().stream()
                 .flatMap(item ->
-                        arguments.entrySet().stream()
+                        inputValueValueWithVariableMap.entrySet().stream()
                                 .filter(entry -> entry.getKey().getName().equals(item.getName()))
-                                .map(entry -> {
-
-                                        }
-                                )
+                                .flatMap(entry -> inputValueToExpression(fieldTypeDefinition, item, entry.getKey(), entry.getValue(), level).stream())
                 )
-                .map(entry ->)
+                .collect(Collectors.toList());
 
-
-    }
-
-
-    protected Expression inputValueToExpression(ObjectType objectType, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable, int level) {
-        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        if (fieldTypeDefinition.isObject()) {
-
+        if (expressionList.isEmpty()) {
+            return Optional.empty();
+        } else if (expressionList.size() == 1) {
+            if (isNot(field.getArguments())) {
+                return Optional.of(new NotExpression(expressionList.get(0)));
+            }
+            return Optional.of(expressionList.get(0));
         } else {
-            documentManager.getInputValueTypeDefinition(inputValue).asInputObject().getInputValues().stream()
-                    .filter(item -> item.getName().equals(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME))
-                    .map(item ->
-                            Optional.ofNullable(valueWithVariable.asObject().getValueWithVariableOrNull(item.getName()))
-                                    .orElseGet(item::getDefaultValue)
-                    )
-                    .filter(ValueWithVariable::isEnum)
-                    .map(ValueWithVariable::asEnum)
-                    .map(enumValue -> {
-                                switch (enumValue.getValue()) {
-                                    case INPUT_OPERATOR_INPUT_VALUE_EQ:
-                                        return new EqualsTo()
-                                                .withLeftExpression(graphqlFieldToColumn(objectType.getName(), fieldDefinition.getName(), level))
-                                                .withRightExpression(leafValueToDBValue(valueWithVariable));
-                                }
-                            }
-                    )
+            if (isOr(field.getArguments())) {
+                if (isNot(field.getArguments())) {
+                    return Optional.of(new NotExpression(new MultiOrExpression(expressionList)));
+                }
+                return Optional.of(new MultiOrExpression(expressionList));
+            } else {
+                if (isNot(field.getArguments())) {
+                    return Optional.of(new NotExpression(new MultiAndExpression(expressionList)));
+                }
+                return Optional.of(new MultiAndExpression(expressionList));
+            }
         }
     }
 
-    protected Expression scalarExpressionToExpression(FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable) {
-
-
+    protected Optional<Expression> inputValueToExpression(ObjectType objectType, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable, int level) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        switch (fieldTypeDefinition.getName()) {
+        Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
+        if (fieldTypeDefinition.isObject()) {
+            Map<InputValue, ValueWithVariable> inputValueValueWithVariableMap = Stream.ofNullable(inputValueTypeDefinition.asInputObject().getInputValues())
+                    .flatMap(Collection::stream)
+                    .flatMap(item ->
+                            Optional.ofNullable(valueWithVariable)
+                                    .filter(ValueWithVariable::isObject)
+                                    .map(ValueWithVariable::asObject)
+                                    .flatMap(objectValueWithVariable -> objectValueWithVariable.getValueWithVariable(item.getName()))
+                                    .or(() -> Optional.ofNullable(item.getDefaultValue()))
+                                    .stream()
+                                    .map(field -> new AbstractMap.SimpleEntry<>(item, field))
+                    )
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
+            List<Expression> expressionList = fieldTypeDefinition.asObject().getFields().stream()
+                    .flatMap(item ->
+                            inputValueValueWithVariableMap.entrySet().stream()
+                                    .filter(entry -> entry.getKey().getName().equals(item.getName()))
+                                    .flatMap(entry -> inputValueToExpression(fieldTypeDefinition.asObject(), item, entry.getKey(), entry.getValue(), level + 1).stream())
+                    )
+                    .collect(Collectors.toList());
+
+            Expression expression;
+            if (expressionList.isEmpty()) {
+                return Optional.empty();
+            } else if (expressionList.size() == 1) {
+                if (isNot(valueWithVariable)) {
+                    expression = new NotExpression(expressionList.get(0));
+                } else {
+                    expression = expressionList.get(0);
+                }
+            } else {
+                if (isOr(valueWithVariable)) {
+                    if (isNot(valueWithVariable)) {
+                        expression = new NotExpression(new MultiOrExpression(expressionList));
+                    } else {
+                        expression = new MultiOrExpression(expressionList);
+                    }
+                } else {
+                    if (isNot(valueWithVariable)) {
+                        expression = new NotExpression(new MultiAndExpression(expressionList));
+                    } else {
+                        expression = new MultiAndExpression(expressionList);
+                    }
+                }
+            }
+            return Optional.of(existsExpression(selectFromFieldType(objectType, fieldDefinition, expression, level)));
+        } else {
+            InputObjectType inputObject = documentManager.getInputValueTypeDefinition(inputValue).asInputObject();
+            return Optional.of(inputObject.getInputValue(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME))
+                    .flatMap(item ->
+                            Optional.ofNullable(valueWithVariable)
+                                    .filter(ValueWithVariable::isObject)
+                                    .map(ValueWithVariable::asObject)
+                                    .map(objectValueWithVariable ->
+                                            objectValueWithVariable.getValueWithVariable(item.getName())
+                                                    .filter(ValueWithVariable::isEnum)
+                                                    .map(opr -> opr.asEnum().getValue())
+                                                    .orElseGet(() ->
+                                                            objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                                    .map(val -> INPUT_OPERATOR_INPUT_VALUE_EQ)
+                                                                    .orElseGet(() ->
+                                                                            objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                                                    .map(val -> INPUT_OPERATOR_INPUT_VALUE_EQ)
+                                                                                    .orElseGet(() ->
+                                                                                            objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
+                                                                                                    .map(val -> INPUT_OPERATOR_INPUT_VALUE_IN)
+                                                                                                    .orElseGet(() -> item.getDefaultValue().asEnum().getValue())
+                                                                                    )
+                                                                    )
+                                                    )
+                                    )
+                    )
+                    .flatMap(opr -> {
+                                Column column = graphqlFieldToColumn(objectType.getName(), fieldDefinition.getName(), level);
+                                return Optional.of(valueWithVariable)
+                                        .filter(ValueWithVariable::isObject)
+                                        .map(ValueWithVariable::asObject)
+                                        .flatMap(objectValueWithVariable ->
+                                                objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                        .flatMap(val ->
+                                                                valToExpression(column, opr, val, skipNull(objectValueWithVariable))
+                                                        )
+                                                        .or(() ->
+                                                                objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
+                                                                        .flatMap(arr -> arrToExpression(column, opr, inputObject.getInputValue(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(objectValueWithVariable)))
+                                                        )
+                                        );
+                            }
+                    );
         }
-
-
     }
 
+    protected PlainSelect selectFromFieldType(ObjectType objectType,
+                                              FieldDefinition fieldDefinition,
+                                              Expression expression,
+                                              int level) {
+        Table parentTable = typeToTable(objectType, level - 1);
+        ObjectType fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition).asObject();
+        Table table = typeToTable(fieldTypeDefinition, level);
+
+        PlainSelect plainSelect = new PlainSelect()
+                .addSelectItems(new AllColumns())
+                .withFromItem(table);
+
+        if (fieldDefinition.hasMapWith()) {
+            Table withTable = graphqlTypeToTable(fieldDefinition.getMapWithTypeOrError(), level);
+            return plainSelect
+                    .addJoins(
+                            new Join()
+                                    .withLeft(true)
+                                    .setFromItem(withTable)
+                                    .addOnExpression(
+                                            new MultiAndExpression(
+                                                    Arrays.asList(
+                                                            new EqualsTo()
+                                                                    .withLeftExpression(graphqlFieldToColumn(withTable, fieldDefinition.getMapWithToOrError()))
+                                                                    .withRightExpression(graphqlFieldToColumn(table, fieldDefinition.getMapToOrError())),
+                                                            new IsNullExpression()
+                                                                    .withLeftExpression(graphqlFieldToColumn(withTable, FIELD_DEPRECATED_NAME))
+                                                    )
+                                            )
+                                    )
+                    )
+                    .withWhere(
+                            new MultiAndExpression(
+                                    Arrays.asList(
+                                            new EqualsTo()
+                                                    .withLeftExpression(graphqlFieldToColumn(withTable, fieldDefinition.getMapWithFromOrError()))
+                                                    .withRightExpression(graphqlFieldToColumn(parentTable, fieldDefinition.getMapFromOrError())),
+                                            expression
+                                    )
+                            )
+                    );
+        } else {
+            return plainSelect
+                    .withWhere(
+                            new MultiAndExpression(
+                                    Arrays.asList(
+                                            new EqualsTo()
+                                                    .withLeftExpression(graphqlFieldToColumn(table, fieldDefinition.getMapToOrError()))
+                                                    .withRightExpression(graphqlFieldToColumn(parentTable, fieldDefinition.getMapFromOrError())),
+                                            expression
+                                    )
+                            )
+                    );
+        }
+    }
+
+    public Optional<Expression> valToExpression(Column column, String opr, ValueWithVariable val, boolean skipNull) {
+        if (skipNull && val.isNull()) {
+            return Optional.empty();
+        }
+        Expression value = leafValueToDBValue(val);
+        Expression where;
+        switch (opr) {
+            case INPUT_OPERATOR_INPUT_VALUE_EQ:
+                where = new EqualsTo()
+                        .withLeftExpression(column)
+                        .withRightExpression(value);
+                break;
+            case INPUT_OPERATOR_INPUT_VALUE_NEQ:
+                where = new NotExpression(
+                        new EqualsTo()
+                                .withLeftExpression(column)
+                                .withRightExpression(value)
+                );
+                break;
+            case INPUT_OPERATOR_INPUT_VALUE_LK:
+                where = new LikeExpression()
+                        .withLeftExpression(column)
+                        .withRightExpression(value);
+                break;
+            case INPUT_OPERATOR_INPUT_VALUE_NLK:
+                where = new NotExpression(
+                        new LikeExpression()
+                                .withLeftExpression(column)
+                                .withRightExpression(value)
+                );
+                break;
+            case INPUT_OPERATOR_INPUT_VALUE_GT:
+                where = new GreaterThan()
+                        .withLeftExpression(column)
+                        .withRightExpression(value);
+                break;
+            case INPUT_OPERATOR_INPUT_VALUE_GTE:
+                where = new GreaterThanEquals()
+                        .withLeftExpression(column)
+                        .withRightExpression(value);
+                break;
+            case INPUT_OPERATOR_INPUT_VALUE_LT:
+                where = new MinorThan()
+                        .withLeftExpression(column)
+                        .withRightExpression(value);
+                break;
+            case INPUT_OPERATOR_INPUT_VALUE_NIL:
+                where = new IsNullExpression()
+                        .withLeftExpression(column);
+                break;
+            case INPUT_OPERATOR_INPUT_VALUE_NNIL:
+                where = new IsNullExpression()
+                        .withNot(true)
+                        .withLeftExpression(column);
+                break;
+            default:
+                throw new GraphQLErrors(GraphQLErrorType.UNSUPPORTED_OPERATOR.bind(opr));
+        }
+        if (skipNull) {
+            return Optional.of(skipNullExpression(value, where));
+        }
+        return Optional.of(where);
+    }
+
+    public Optional<Expression> arrToExpression(Column column, String opr, InputValue inputValue, ValueWithVariable arr, boolean skipNull) {
+        if (skipNull && arr.isNull()) {
+            return Optional.empty();
+        }
+        if (arr.isVariable()) {
+            Expression where;
+            switch (opr) {
+                case INPUT_OPERATOR_INPUT_VALUE_IN:
+                    where = new InExpression()
+                            .withLeftExpression(column)
+                            .withRightExpression(selectValueFromJsonArray(inputValue, arr));
+                    break;
+                case INPUT_OPERATOR_INPUT_VALUE_NIN:
+                    where = new InExpression()
+                            .withNot(true)
+                            .withLeftExpression(column)
+                            .withRightExpression(selectValueFromJsonArray(inputValue, arr));
+                    break;
+                case INPUT_OPERATOR_INPUT_VALUE_BT:
+                    where = new MultiAndExpression(
+                            Arrays.asList(
+                                    new GreaterThanEquals()
+                                            .withLeftExpression(column)
+                                            .withRightExpression(getValueFromArrayVariable(arr, 0)),
+                                    new MinorThanEquals()
+                                            .withLeftExpression(column)
+                                            .withRightExpression(getValueFromArrayVariable(arr, 1))
+                            )
+                    );
+                    break;
+                case INPUT_OPERATOR_INPUT_VALUE_NBT:
+                    where = new MultiAndExpression(
+                            Arrays.asList(
+                                    new MinorThanEquals()
+                                            .withLeftExpression(column)
+                                            .withRightExpression(getValueFromArrayVariable(arr, 0)),
+                                    new GreaterThanEquals()
+                                            .withLeftExpression(column)
+                                            .withRightExpression(getValueFromArrayVariable(arr, 1))
+                            )
+                    );
+                    break;
+                default:
+                    throw new GraphQLErrors(GraphQLErrorType.UNSUPPORTED_OPERATOR.bind(opr));
+            }
+            if (skipNull) {
+                return Optional.of(skipNullExpression(leafValueToDBValue(arr), where));
+            }
+            return Optional.of(where);
+        } else {
+            List<ValueWithVariable> valList = arr.isNull() ?
+                    Collections.singletonList(arr) :
+                    arr.asArray().getValueWithVariables();
+
+            Expression value = new ExpressionList<>(valList.stream().map(DBValueUtil::leafValueToDBValue).collect(Collectors.toList()));
+            Expression where;
+            switch (opr) {
+                case INPUT_OPERATOR_INPUT_VALUE_IN:
+                    where = new InExpression()
+                            .withLeftExpression(column)
+                            .withRightExpression(value);
+                    break;
+                case INPUT_OPERATOR_INPUT_VALUE_NIN:
+                    where = new InExpression()
+                            .withNot(true)
+                            .withLeftExpression(column)
+                            .withRightExpression(value);
+                    break;
+                case INPUT_OPERATOR_INPUT_VALUE_BT:
+                    where = new MultiOrExpression(
+                            Lists.partition(valList, 2).stream()
+                                    .map(valueWithVariables -> {
+                                                if (valueWithVariables.size() == 2) {
+                                                    return new MultiAndExpression(
+                                                            Arrays.asList(
+                                                                    new GreaterThanEquals()
+                                                                            .withLeftExpression(column)
+                                                                            .withRightExpression(leafValueToDBValue(valueWithVariables.get(0))),
+                                                                    new MinorThanEquals()
+                                                                            .withLeftExpression(column)
+                                                                            .withRightExpression(leafValueToDBValue(valueWithVariables.get(1)))
+                                                            )
+                                                    );
+                                                } else {
+                                                    return new GreaterThanEquals()
+                                                            .withLeftExpression(column)
+                                                            .withRightExpression(leafValueToDBValue(valueWithVariables.get(0)));
+                                                }
+                                            }
+                                    )
+                                    .collect(Collectors.toList())
+                    );
+                    break;
+                case INPUT_OPERATOR_INPUT_VALUE_NBT:
+                    where = new MultiOrExpression(
+                            Lists.partition(valList, 2).stream()
+                                    .map(valueWithVariables -> {
+                                                if (valueWithVariables.size() == 2) {
+                                                    return new MultiAndExpression(
+                                                            Arrays.asList(
+                                                                    new MinorThanEquals()
+                                                                            .withLeftExpression(column)
+                                                                            .withRightExpression(leafValueToDBValue(valueWithVariables.get(0))),
+                                                                    new GreaterThanEquals()
+                                                                            .withLeftExpression(column)
+                                                                            .withRightExpression(leafValueToDBValue(valueWithVariables.get(1)))
+                                                            )
+                                                    );
+                                                } else {
+                                                    return new MinorThanEquals()
+                                                            .withLeftExpression(column)
+                                                            .withRightExpression(leafValueToDBValue(valueWithVariables.get(0)));
+                                                }
+                                            }
+                                    )
+                                    .collect(Collectors.toList())
+                    );
+                    break;
+                default:
+                    throw new GraphQLErrors(GraphQLErrorType.UNSUPPORTED_OPERATOR.bind(opr));
+            }
+            return Optional.of(where);
+        }
+    }
+
+    protected Expression skipNullExpression(Expression value, Expression where) {
+        return new Function().withName("IF").withParameters(new IsNullExpression().withLeftExpression(value), new LongValue(1), where);
+    }
+
+    protected ParenthesedSelect selectValueFromJsonArray(InputValue inputValue, ValueWithVariable valueWithVariable) {
+        Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
+        ColDataType colDataType = new ColDataType();
+        if (inputValueTypeDefinition.isEnum()) {
+            colDataType.setDataType("INT");
+        } else if (inputValueTypeDefinition.isScalar()) {
+            switch (inputValueTypeDefinition.getName()) {
+                case SCALA_ID_NAME:
+                case SCALA_STRING_NAME:
+                    colDataType
+                            .withDataType("VARCHAR")
+                            .setArgumentsStringList(Collections.singletonList("255"));
+                    break;
+                case SCALA_BOOLEAN_NAME:
+                    colDataType.setDataType("BOOL");
+                    break;
+                case SCALA_INT_NAME:
+                    colDataType.setDataType("INT");
+                    break;
+                case SCALA_FLOAT_NAME:
+                    colDataType.setDataType("FLOAT");
+                    break;
+                case SCALA_BIG_INTEGER_NAME:
+                    colDataType.setDataType("BIGINT");
+                    break;
+                case SCALA_BIG_DECIMAL_NAME:
+                    colDataType.setDataType("DECIMAL");
+                    break;
+                case SCALA_DATE_NAME:
+                    colDataType.setDataType("DATE");
+                    break;
+                case SCALA_TIME_NAME:
+                    colDataType.setDataType("TIME");
+                    break;
+                case SCALA_DATE_TIME_NAME:
+                    colDataType.setDataType("DATETIME");
+                    break;
+                case SCALA_TIMESTAMP_NAME:
+                    colDataType.setDataType("TIMESTAMP");
+                    break;
+            }
+        } else {
+            throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(inputValueTypeDefinition.getName()));
+        }
+        return new ParenthesedSelect()
+                .withSelect(
+                        new PlainSelect()
+                                .addSelectItem(new AllColumns())
+                                .withFromItem(
+                                        new JsonTableFunction()
+                                                .withJson(leafValueToDBValue(valueWithVariable))
+                                                .withPath(new StringValue("$[*]"))
+                                                .withColumnDefinitions(
+                                                        new ColumnDefinition()
+                                                                .withColumnName(graphqlFieldNameToColumnName(inputValue.getName()))
+                                                                .withColDataType(colDataType)
+                                                                .addColumnSpecs("PATH", "'$'")
+                                                )
+                                                .withAlias(new Alias(inputValue.getName()))
+                                )
+                );
+    }
+
+    protected ExistsExpression existsExpression(PlainSelect plainSelect) {
+        return new ExistsExpression()
+                .withRightExpression(
+                        new ParenthesedSelect()
+                                .withSelect(plainSelect)
+                );
+    }
+
+    protected boolean isOr(Arguments arguments) {
+        return Optional.ofNullable(arguments)
+                .flatMap(result -> result.getArgument(INPUT_VALUE_COND_NAME))
+                .filter(ValueWithVariable::isEnum)
+                .map(field -> field.asEnum().getValue().equals(INPUT_CONDITIONAL_INPUT_VALUE_OR))
+                .orElse(false);
+    }
+
+    protected boolean isOr(ValueWithVariable valueWithVariable) {
+        return Optional.ofNullable(valueWithVariable)
+                .filter(ValueWithVariable::isObject)
+                .map(ValueWithVariable::asObject)
+                .flatMap(objectValueWithVariable -> objectValueWithVariable.getValueWithVariable(INPUT_VALUE_COND_NAME))
+                .filter(ValueWithVariable::isEnum)
+                .map(field -> field.asEnum().getValue().equals(INPUT_CONDITIONAL_INPUT_VALUE_OR))
+                .orElse(false);
+    }
+
+    protected boolean isNot(Arguments arguments) {
+        return Optional.ofNullable(arguments)
+                .flatMap(result -> result.getArgument(INPUT_VALUE_NOT_NAME))
+                .filter(ValueWithVariable::isBoolean)
+                .map(field -> field.asBoolean().getValue())
+                .orElse(false);
+    }
+
+    protected boolean isNot(ValueWithVariable valueWithVariable) {
+        return Optional.ofNullable(valueWithVariable)
+                .filter(ValueWithVariable::isObject)
+                .map(ValueWithVariable::asObject)
+                .flatMap(objectValueWithVariable -> objectValueWithVariable.getValueWithVariable(INPUT_VALUE_NOT_NAME))
+                .filter(ValueWithVariable::isBoolean)
+                .map(field -> field.asBoolean().getValue())
+                .orElse(false);
+    }
+    
+    protected boolean skipNull(ValueWithVariable valueWithVariable) {
+        return Optional.ofNullable(valueWithVariable)
+                .filter(ValueWithVariable::isObject)
+                .map(ValueWithVariable::asObject)
+                .flatMap(objectValueWithVariable -> objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_SKIP_NULL_NAME))
+                .filter(ValueWithVariable::isBoolean)
+                .map(field -> field.asBoolean().getValue())
+                .orElse(false);
+    }
+
+    protected Table typeToTable(ObjectType objectType, int level) {
+        return graphqlTypeToTable(objectType.getName(), level);
+    }
 }

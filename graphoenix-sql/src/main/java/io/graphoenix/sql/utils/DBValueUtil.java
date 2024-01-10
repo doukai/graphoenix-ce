@@ -14,7 +14,7 @@ import static io.graphoenix.sql.utils.DBNameUtil.*;
 
 public final class DBValueUtil {
 
-    public static Expression objectFieldVariableToDBValue(InputValue inputValue, ValueWithVariable valueWithVariable) {
+    public static Expression getValueFromObjectVariable(ValueWithVariable valueWithVariable, InputValue inputValue) {
         return new Function()
                 .withName("JSON_EXTRACT")
                 .withParameters(
@@ -25,7 +25,7 @@ public final class DBValueUtil {
                 );
     }
 
-    public static Expression arrayFieldVariableToDBValue(int index, ValueWithVariable valueWithVariable) {
+    public static Expression getValueFromArrayVariable(ValueWithVariable valueWithVariable, int index) {
         return new Function()
                 .withName("JSON_EXTRACT")
                 .withParameters(
