@@ -555,7 +555,7 @@ public class DocumentBuilder {
         if (fieldTypeDefinition.isLeaf()) {
             if (fieldDefinition.getType().hasList()) {
                 fieldDefinition
-                        .addArgument(new InputValue(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME).setType(new TypeName(INPUT_OPERATOR_NAME)).setDefaultValue(INPUT_OPERATOR_INPUT_VALUE_EQ))
+                        .addArgument(new InputValue(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME).setType(new TypeName(INPUT_OPERATOR_NAME)).setDefaultValue(new EnumValue(INPUT_OPERATOR_INPUT_VALUE_EQ)))
                         .addArgument(new InputValue(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME).setType(fieldDefinition.getType().getTypeName()))
                         .addArgument(new InputValue(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME).setType(new ListType(fieldDefinition.getType().getTypeName())))
                         .addArgument(new InputValue(INPUT_VALUE_FIRST_NAME).setType(new TypeName(SCALA_INT_NAME)))
@@ -619,7 +619,7 @@ public class DocumentBuilder {
             return new InputValue(fieldDefinition.getName()).setType(argumentType);
         } else if (inputType.equals(InputType.EXPRESSION) || inputType.equals(InputType.QUERY_ARGUMENTS) || inputType.equals(InputType.SUBSCRIPTION_ARGUMENTS)) {
             if (fieldDefinition.getName().equals(FIELD_DEPRECATED_NAME)) {
-                return new InputValue(INPUT_VALUE_DEPRECATED_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false);
+                return new InputValue(INPUT_VALUE_INCLUDE_DEPRECATED_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false);
             }
             Type argumentType;
             switch (fieldTypeDefinition.getName()) {
@@ -837,7 +837,7 @@ public class DocumentBuilder {
 
     public InputObjectType enumToExpression(EnumType enumType) {
         return new InputObjectType(enumType.getName() + InputType.EXPRESSION)
-                .addInputValue(new InputValue(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME).setType(new TypeName(INPUT_OPERATOR_NAME)).setDefaultValue(INPUT_OPERATOR_INPUT_VALUE_EQ))
+                .addInputValue(new InputValue(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME).setType(new TypeName(INPUT_OPERATOR_NAME)).setDefaultValue(new EnumValue(INPUT_OPERATOR_INPUT_VALUE_EQ)))
                 .addInputValue(new InputValue(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME).setType(new TypeName(enumType.getName())))
                 .addInputValue(new InputValue(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME).setType(new ListType(new TypeName(enumType.getName()))))
                 .addDirective(
@@ -1621,7 +1621,7 @@ public class DocumentBuilder {
                     );
             if (isList) {
                 fieldDefinition
-                        .addArgument(new InputValue(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME).setType(new TypeName(INPUT_OPERATOR_NAME)).setDefaultValue(INPUT_OPERATOR_INPUT_VALUE_EQ))
+                        .addArgument(new InputValue(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME).setType(new TypeName(INPUT_OPERATOR_NAME)).setDefaultValue(new EnumValue(INPUT_OPERATOR_INPUT_VALUE_EQ)))
                         .addArgument(new InputValue(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME).setType(new TypeName(fieldTypeName)))
                         .addArgument(new InputValue(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME).setType(new ListType(new TypeName(fieldTypeName))));
             }

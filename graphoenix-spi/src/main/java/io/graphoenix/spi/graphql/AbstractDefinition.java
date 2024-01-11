@@ -58,7 +58,9 @@ public abstract class AbstractDefinition implements Definition {
 
     public AbstractDefinition(GraphqlParser.NameContext nameContext, GraphqlParser.DescriptionContext description, GraphqlParser.DirectivesContext directivesContext) {
         this(description, directivesContext);
-        this.name = nameContext.getText();
+        if (nameContext != null) {
+            this.name = nameContext.getText();
+        }
     }
 
     public AbstractDefinition(GraphqlParser.NameContext nameContext, GraphqlParser.DescriptionContext description) {

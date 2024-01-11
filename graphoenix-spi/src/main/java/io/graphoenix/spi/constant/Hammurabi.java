@@ -42,6 +42,8 @@ public class Hammurabi {
 
 
     public static final String INPUT_SORT_NAME = "Sort";
+    public static final String INPUT_SORT_NAME_VALUE_ASC = "ASC";
+    public static final String INPUT_SORT_NAME_VALUE_DESC = "DESC";
 
 
     public static final String INPUT_CONDITIONAL_NAME = "Conditional";
@@ -70,7 +72,7 @@ public class Hammurabi {
     public static final String INPUT_OPERATOR_INPUT_VALUE_SKIP_NULL_NAME = "skipNull";
 
 
-    public static final String INPUT_VALUE_DEPRECATED_NAME = "includeDeprecated";
+    public static final String INPUT_VALUE_INCLUDE_DEPRECATED_NAME = "includeDeprecated";
     public static final String INPUT_VALUE_NOT_NAME = "not";
     public static final String INPUT_VALUE_EXS_NAME = "exs";
     public static final String INPUT_VALUE_LIST_NAME = "list";
@@ -101,7 +103,7 @@ public class Hammurabi {
     public static final String INPUT_INVOKE_PARAMETER_INPUT_VALUE_CLASS_NAME_NAME = "className";
 
 
-    public static final String[] INPUT_VALUE_EXCLUDE = {INPUT_VALUE_DEPRECATED_NAME, INPUT_VALUE_FIRST_NAME, INPUT_VALUE_LAST_NAME, INPUT_VALUE_OFFSET_NAME, INPUT_VALUE_AFTER_NAME, INPUT_VALUE_BEFORE_NAME, INPUT_VALUE_GROUP_BY_NAME, INPUT_VALUE_ORDER_BY_NAME, INPUT_VALUE_SORT_NAME, INPUT_VALUE_LIST_NAME, INPUT_VALUE_WHERE_NAME, INPUT_VALUE_NOT_NAME};
+    public static final String[] INPUT_VALUE_EXCLUDE = {INPUT_VALUE_INCLUDE_DEPRECATED_NAME, INPUT_VALUE_FIRST_NAME, INPUT_VALUE_LAST_NAME, INPUT_VALUE_OFFSET_NAME, INPUT_VALUE_AFTER_NAME, INPUT_VALUE_BEFORE_NAME, INPUT_VALUE_GROUP_BY_NAME, INPUT_VALUE_ORDER_BY_NAME, INPUT_VALUE_SORT_NAME, INPUT_VALUE_LIST_NAME, INPUT_VALUE_WHERE_NAME, INPUT_VALUE_NOT_NAME};
 
 
     public static final String DIRECTIVE_CURSOR_NAME = "cursor";

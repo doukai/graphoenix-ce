@@ -341,7 +341,7 @@ public class FieldDefinition extends AbstractDefinition {
         return Optional.ofNullable(getDirective(DIRECTIVE_MAP_NAME))
                 .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_MAP_ARGUMENT_WITH_NAME)))
                 .filter(ValueWithVariable::isObject)
-                .map(valueWithVariable -> valueWithVariable.asObject().getValueWithVariableOrNull(DIRECTIVE_MAP_ARGUMENT_FROM_NAME))
+                .map(valueWithVariable -> valueWithVariable.asObject().getValueWithVariableOrNull(DIRECTIVE_MAP_ARGUMENT_TO_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
