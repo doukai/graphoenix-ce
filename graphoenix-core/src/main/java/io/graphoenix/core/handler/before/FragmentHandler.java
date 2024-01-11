@@ -47,7 +47,8 @@ public class FragmentHandler implements OperationBeforeHandler {
     }
 
     public Mono<Operation> handle(Operation operation, Map<String, JsonValue> variables) {
-        return handle(operation.getSelections()).collectList()
+        return handle(operation.getSelections())
+                .collectList()
                 .map(operation::setSelections);
     }
 

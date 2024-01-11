@@ -14,7 +14,6 @@ public class JsonArrayAggregateFunction extends Function implements Expression {
 
     private Limit limit = new Limit();
 
-
     public Expression getExpression() {
         return expression;
     }

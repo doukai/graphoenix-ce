@@ -81,15 +81,16 @@ public class ArgumentsTranslator {
                                                     .flatMap(valueWithVariable -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), valueWithVariable, level).stream())
                                     ),
                             inputValueValueWithVariableMap.entrySet().stream()
-                                    .filter(entry -> entry.getKey().getName().equals(INPUT_VALUE_INCLUDE_DEPRECATED_NAME))
-                                    .findFirst()
-                                    .filter(entry -> entry.getValue().isBoolean())
-                                    .filter(entry -> !entry.getValue().asBoolean().getValue())
-                                    .map(entry ->
+                                    .anyMatch(entry ->
+                                            entry.getKey().getName().equals(INPUT_VALUE_INCLUDE_DEPRECATED_NAME) &&
+                                                    entry.getValue().isBoolean() &&
+                                                    entry.getValue().asBoolean().getValue()
+                                    ) ?
+                                    Stream.empty() :
+                                    Stream.of(
                                             new IsNullExpression()
                                                     .withLeftExpression(graphqlFieldToColumn(fieldTypeDefinition.asObject().getName(), FIELD_DEPRECATED_NAME, level))
                                     )
-                                    .stream()
                     )
                     .collect(Collectors.toList());
 
@@ -181,15 +182,16 @@ public class ArgumentsTranslator {
                                                     .flatMap(field -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), field, level + 1).stream())
                                     ),
                             inputValueValueWithVariableMap.entrySet().stream()
-                                    .filter(entry -> entry.getKey().getName().equals(INPUT_VALUE_INCLUDE_DEPRECATED_NAME))
-                                    .findFirst()
-                                    .filter(entry -> entry.getValue().isBoolean())
-                                    .filter(entry -> !entry.getValue().asBoolean().getValue())
-                                    .map(entry ->
+                                    .anyMatch(entry ->
+                                            entry.getKey().getName().equals(INPUT_VALUE_INCLUDE_DEPRECATED_NAME) &&
+                                                    entry.getValue().isBoolean() &&
+                                                    entry.getValue().asBoolean().getValue()
+                                    ) ?
+                                    Stream.empty() :
+                                    Stream.of(
                                             new IsNullExpression()
                                                     .withLeftExpression(graphqlFieldToColumn(fieldTypeDefinition.asObject().getName(), FIELD_DEPRECATED_NAME, level))
                                     )
-                                    .stream()
                     )
                     .collect(Collectors.toList());
 
