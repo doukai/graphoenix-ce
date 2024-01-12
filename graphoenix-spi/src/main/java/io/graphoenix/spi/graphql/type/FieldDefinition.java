@@ -228,12 +228,12 @@ public class FieldDefinition extends AbstractDefinition {
     public Optional<String> getFunctionName() {
         return Optional.ofNullable(getDirective(DIRECTIVE_FUNC_NAME))
                 .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FUNC_ARGUMENT_NAME_NAME)))
-                .filter(ValueWithVariable::isString)
+                .filter(ValueWithVariable::isEnum)
                 .map(valueWithVariable -> valueWithVariable.asEnum().getValue());
     }
 
     public String getFunctionNameOrError() {
-        return getFormatLocale().orElseThrow(() -> new GraphQLErrors(FUNC_NAME_NOT_EXIST.bind(toString())));
+        return getFunctionName().orElseThrow(() -> new GraphQLErrors(FUNC_NAME_NOT_EXIST.bind(toString())));
     }
 
     public Optional<String> getFunctionField() {
@@ -244,7 +244,7 @@ public class FieldDefinition extends AbstractDefinition {
     }
 
     public String getFunctionFieldOrError() {
-        return getFormatLocale().orElseThrow(() -> new GraphQLErrors(FUNC_FIELD_NOT_EXIST.bind(toString())));
+        return getFunctionField().orElseThrow(() -> new GraphQLErrors(FUNC_FIELD_NOT_EXIST.bind(toString())));
     }
 
     public boolean isConnectionField() {

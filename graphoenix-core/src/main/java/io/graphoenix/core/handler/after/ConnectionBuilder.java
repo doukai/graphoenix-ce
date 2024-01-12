@@ -30,13 +30,13 @@ import static jakarta.json.JsonValue.NULL;
 
 @ApplicationScoped
 @Priority(Integer.MAX_VALUE - 300)
-public class ConnectionHandler implements OperationAfterHandler {
+public class ConnectionBuilder implements OperationAfterHandler {
 
     private final DocumentManager documentManager;
     private final JsonProvider jsonProvider;
 
     @Inject
-    public ConnectionHandler(DocumentManager documentManager, JsonProvider jsonProvider) {
+    public ConnectionBuilder(DocumentManager documentManager, JsonProvider jsonProvider) {
         this.documentManager = documentManager;
         this.jsonProvider = jsonProvider;
     }

@@ -161,7 +161,7 @@ public class ConnectionSplitter implements OperationBeforeHandler {
                             FieldDefinition connectionAggDefinition = objectType.getField(fieldDefinition.getConnectionAggOrError());
                             ObjectType fieldTypeDefinition = documentManager.getFieldTypeDefinition(connectionAggDefinition).asObject();
                             return new Field(connectionAggDefinition.getName())
-                                    .addSelection(new Field(fieldTypeDefinition.getIDFieldOrError() + SUFFIX_COUNT))
+                                    .addSelection(new Field(fieldTypeDefinition.getIDFieldOrError().getName() + SUFFIX_COUNT))
                                     .setArguments(
                                             Stream.ofNullable(field.getArguments())
                                                     .flatMap(arguments -> arguments.getArguments().entrySet().stream())

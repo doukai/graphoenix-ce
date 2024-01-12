@@ -64,6 +64,7 @@ public class QueryTranslator {
                                         .filter(packageManager::isLocalPackage)
                                         .filter(field -> !operationType.getField(field.getName()).isFetchField())
                                         .filter(field -> !operationType.getField(field.getName()).isInvokeField())
+                                        .filter(field -> !operationType.getField(field.getName()).isConnectionField())
                                         .map(field ->
                                                 new JsonKeyValuePair(
                                                         new StringValue(Optional.ofNullable(field.getAlias()).orElse(field.getName())).toString(),
@@ -104,6 +105,7 @@ public class QueryTranslator {
                             field.getFields().stream()
                                     .filter(subField -> !fieldTypeDefinition.asObject().getField(subField.getName()).isFetchField())
                                     .filter(subField -> !fieldTypeDefinition.asObject().getField(subField.getName()).isInvokeField())
+                                    .filter(subField -> !fieldTypeDefinition.asObject().getField(subField.getName()).isConnectionField())
                                     .map(subField ->
                                             new JsonKeyValuePair(
                                                     new StringValue(Optional.ofNullable(subField.getAlias()).orElse(subField.getName())).toString(),
@@ -204,7 +206,7 @@ public class QueryTranslator {
         if (fieldDefinition.getType().hasList()) {
             Table table = typeToTable(objectType, level);
             ObjectType withType = documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getMapWithTypeOrError());
-            FieldDefinition withToFieldDefinition = objectType.getField(fieldDefinition.getMapWithToOrError());
+            FieldDefinition withToFieldDefinition = withType.getField(fieldDefinition.getMapWithToOrError());
             Table withTable = typeToTable(withType, level);
             Expression column = fieldToColumn(withType, withToFieldDefinition, level);
             Expression selectExpression;
