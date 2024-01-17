@@ -10,6 +10,8 @@ import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals;
 import net.sf.jsqlparser.statement.SetStatement;
 
+import java.util.Optional;
+
 import static io.graphoenix.sql.utils.DBNameUtil.*;
 
 public final class DBValueUtil {
@@ -53,6 +55,13 @@ public final class DBValueUtil {
             return variableToJdbcNamedParameter(valueWithVariable.asVariable());
         }
         throw new GraphQLErrors(GraphQLErrorType.UNSUPPORTED_VALUE.bind(valueWithVariable.toString()));
+    }
+
+    public static Optional<Expression> idValueToDBValue(ValueWithVariable valueWithVariable) {
+        if (valueWithVariable.isNull()) {
+            return Optional.empty();
+        }
+        return Optional.of(leafValueToDBValue(valueWithVariable));
     }
 
     public static JdbcNamedParameter variableToJdbcNamedParameter(Variable variable) {
