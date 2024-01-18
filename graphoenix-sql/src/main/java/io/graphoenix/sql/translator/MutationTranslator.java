@@ -1,10 +1,8 @@
 package io.graphoenix.sql.translator;
 
-import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.spi.graphql.Definition;
-import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Operation;
@@ -16,9 +14,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
-import net.sf.jsqlparser.expression.UserVariable;
+import net.sf.jsqlparser.expression.NullValue;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
+import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
@@ -28,6 +27,7 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Values;
 import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.statement.update.UpdateSet;
+import net.sf.jsqlparser.util.cnfexpression.MultiAndExpression;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -166,29 +166,98 @@ public class MutationTranslator {
                                     .map(field -> new AbstractMap.SimpleEntry<>(fieldInput, field))
                     )
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+            Statement removeMapStatement = removeMapStatement(
+                    objectType,
+                    fieldDefinition,
+                    level,
+                    parentIdExpression, inputValueValueWithVariableMap.entrySet().stream()
+                            .filter(entry -> entry.getKey().getName().equals(fieldDefinition.getMapFromOrError()))
+                            .findFirst()
+                            .map(Map.Entry::getValue)
+                            .map(DBValueUtil::leafValueToDBValue)
+                            .orElse(null),
+                    null
+            );
+
         }
+
 
     }
 
-    public Statement removeWithTypeStatement(ObjectType objectType, Expression parentIdExpression, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable, int level) {
-        ObjectType fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition).asObject();
+    public Statement removeMapStatement(ObjectType objectType,
+                                        FieldDefinition fieldDefinition,
+                                        int level,
+                                        Expression parentIdExpression,
+                                        Expression fromValueExpression,
+                                        List<Expression> idValueExpressionList) {
         Table parentTable = typeToTable(objectType, level - 1);
-        Table table = typeToTable(fieldTypeDefinition, level);
+        Column parentColumn = graphqlFieldToColumn(parentTable, fieldDefinition.getMapFromOrError());
+        Column parentIdColumn = graphqlFieldToColumn(parentTable, objectType.getIDFieldOrError().getName());
+        Expression parentColumnExpression;
+
+        if (fieldDefinition.getMapFromOrError().equals(objectType.getIDFieldOrError().getName())) {
+            parentColumnExpression = parentIdExpression;
+        } else {
+            parentColumnExpression = selectFieldByIdExpression(parentTable, parentColumn, parentIdColumn, parentIdExpression);
+        }
+
         if (fieldDefinition.hasMapWith()) {
             String mapWithType = fieldDefinition.getMapWithTypeOrError();
             Table withTable = graphqlTypeToTable(mapWithType, level);
-            Expression parentColumnExpression;
-            if (fieldDefinition.getMapFromOrError().equals(objectType.getIDFieldOrError().getName())) {
-                parentColumnExpression = parentIdExpression;
+            Column withParentColumn = graphqlFieldToColumn(withTable, fieldDefinition.getMapWithFromOrError());
+            EqualsTo withParentColumnEqualsTo = new EqualsTo().withLeftExpression(withParentColumn);
+            if (fromValueExpression != null) {
+                withParentColumnEqualsTo.setRightExpression(fromValueExpression);
             } else {
-                Column parentColumn = graphqlFieldToColumn(parentTable, fieldDefinition.getMapFromOrError());
-                Column parentIdColumn = graphqlFieldToColumn(parentTable, objectType.getIDFieldOrError().getName());
-                parentColumnExpression = selectFieldByIdExpression(parentTable, parentColumn, parentIdColumn, parentIdExpression);
+                withParentColumnEqualsTo.setRightExpression(parentColumnExpression);
+            }
+            return removeExpression(withTable, withParentColumnEqualsTo);
+        } else {
+            Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+            Table table = typeToTable(fieldTypeDefinition.asObject());
+            Column column = graphqlFieldToColumn(table, fieldDefinition.getMapFromOrError());
+            EqualsTo parentColumnEqualsTo = new EqualsTo().withLeftExpression(column);
+
+            if (fromValueExpression != null) {
+                parentColumnEqualsTo.setRightExpression(fromValueExpression);
+            } else {
+                parentColumnEqualsTo.setRightExpression(parentColumnExpression);
             }
 
-
+            if (fieldDefinition.isMapAnchor()) {
+                return updateExpression(
+                        parentTable,
+                        Collections.singletonList(new UpdateSet(parentColumn, new NullValue())),
+                        new EqualsTo()
+                                .withLeftExpression(parentIdColumn)
+                                .withRightExpression(parentIdExpression)
+                );
+            } else {
+                if (idValueExpressionList != null && !idValueExpressionList.isEmpty()) {
+                    Column idColumn = graphqlFieldToColumn(table, fieldTypeDefinition.asObject().getIDFieldOrError().getName());
+                    return updateExpression(
+                            table,
+                            Collections.singletonList(new UpdateSet(column, new NullValue())),
+                            new MultiAndExpression(
+                                    Arrays.asList(
+                                            parentColumnEqualsTo,
+                                            new InExpression()
+                                                    .withLeftExpression(idColumn)
+                                                    .withNot(true)
+                                                    .withRightExpression(new ExpressionList<>(idValueExpressionList))
+                                    )
+                            )
+                    );
+                } else {
+                    return updateExpression(
+                            table,
+                            Collections.singletonList(new UpdateSet(column, new NullValue())),
+                            parentColumnEqualsTo
+                    );
+                }
+            }
         }
-
     }
 
     protected Insert insertExpression(Table table,
