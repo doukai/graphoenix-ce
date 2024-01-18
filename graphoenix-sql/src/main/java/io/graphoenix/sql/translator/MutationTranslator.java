@@ -31,6 +31,7 @@ import net.sf.jsqlparser.util.cnfexpression.MultiAndExpression;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
@@ -150,10 +151,16 @@ public class MutationTranslator {
 
     }
 
-    public Stream<Statement> inputValueToWhereExpression(ObjectType objectType, Expression parentIdExpression, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable, int level) {
+    public Stream<Statement> inputValueToWhereExpression(ObjectType objectType,
+                                                         Expression parentIdExpression,
+                                                         FieldDefinition fieldDefinition,
+                                                         InputValue inputValue,
+                                                         ValueWithVariable valueWithVariable,
+                                                         int level,
+                                                         int index) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
         if (fieldTypeDefinition.isObject()) {
+            Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
             Map<InputValue, ValueWithVariable> inputValueValueWithVariableMap = Stream.ofNullable(inputValueTypeDefinition.asInputObject().getInputValues())
                     .flatMap(Collection::stream)
                     .flatMap(fieldInput ->
@@ -167,11 +174,16 @@ public class MutationTranslator {
                     )
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
+            Optional<Map.Entry<InputValue, ValueWithVariable>> whereInputValueEntry = inputValueValueWithVariableMap.entrySet().stream()
+                    .filter(entry -> entry.getKey().getName().equals(INPUT_VALUE_WHERE_NAME))
+                    .filter(entry -> entry.getValue().isObject())
+                    .findFirst();
+
             Statement removeMapStatement = removeMapStatement(
                     objectType,
                     fieldDefinition,
-                    level,
-                    parentIdExpression, inputValueValueWithVariableMap.entrySet().stream()
+                    parentIdExpression,
+                    inputValueValueWithVariableMap.entrySet().stream()
                             .filter(entry -> entry.getKey().getName().equals(fieldDefinition.getMapFromOrError()))
                             .findFirst()
                             .map(Map.Entry::getValue)
@@ -180,22 +192,177 @@ public class MutationTranslator {
                     null
             );
 
+            Map<String, ValueWithVariable> leafValueWithVariableMap = fieldTypeDefinition.asObject().getFields().stream()
+                    .filter(subField -> !subField.getType().hasList())
+                    .filter(subField -> !documentManager.getFieldTypeDefinition(subField).isObject())
+                    .flatMap(subField ->
+                            inputValueValueWithVariableMap.entrySet().stream()
+                                    .filter(entry -> entry.getKey().getName().equals(subField.getName()))
+                    )
+                    .map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey().getName(), entry.getValue()))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+            Table table = typeToTable(fieldTypeDefinition.asObject(), level);
+
+            Statement leafFieldStatement = whereInputValueEntry
+                    .flatMap(entry -> argumentsTranslator.inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), entry.getValue(), 0))
+                    .map(whereExpression ->
+                            (Statement) updateExpression(
+                                    table,
+                                    leafValueWithVariableMap.entrySet().stream()
+                                            .map(entry ->
+                                                    new UpdateSet(
+                                                            graphqlFieldToColumn(table, entry.getKey()),
+                                                            leafValueToDBValue(entry.getValue()))
+                                            )
+                                            .collect(Collectors.toList()),
+                                    whereExpression
+                            )
+                    )
+                    .orElseGet(() ->
+                            insertExpression(
+                                    table,
+                                    leafValueWithVariableMap.keySet().stream()
+                                            .map(name -> graphqlFieldToColumn(table, name))
+                                            .collect(Collectors.toList()),
+                                    leafValueWithVariableMap.values().stream()
+                                            .map(DBValueUtil::leafValueToDBValue)
+                                            .collect(Collectors.toList()),
+                                    true
+                            )
+                    );
+
+            String idName = fieldTypeDefinition.asObject().getIDFieldOrError().getName();
+
+            Expression idExpression = inputValueValueWithVariableMap.entrySet().stream()
+                    .filter(entry -> entry.getKey().getName().equals(idName))
+                    .findFirst()
+                    .map(Map.Entry::getValue)
+                    .flatMap(DBValueUtil::idValueToDBValue)
+                    .or(() ->
+                            whereInputValueEntry
+                                    .flatMap(entry -> entry.getValue().asObject().getValueWithVariable(idName))
+                                    .flatMap(DBValueUtil::idValueToDBValue)
+                    )
+                    .orElseGet(() -> createInsertIdUserVariable(fieldTypeDefinition.asObject().getName(), idName, level, index));
+
+
+            Stream<Statement> objectFieldStatementStream = fieldTypeDefinition.asObject().getFields().stream()
+                    .filter(subField -> !subField.isFetchField())
+                    .filter(subField -> !subField.getType().hasList())
+                    .filter(subField -> documentManager.getFieldTypeDefinition(subField).isObject())
+                    .flatMap(subField ->
+                            inputValueValueWithVariableMap.entrySet().stream()
+                                    .filter(entry -> entry.getKey().getName().equals(subField.getName()))
+                                    .flatMap(entry ->
+                                            inputValueToWhereExpression(
+                                                    fieldTypeDefinition.asObject(),
+                                                    idExpression,
+                                                    subField,
+                                                    entry.getKey(),
+                                                    entry.getValue(),
+                                                    level + 1,
+                                                    index
+                                            )
+                                    )
+                    );
+
+            Statement mergeMapStatement = mergeMapStatement(
+                    objectType,
+                    fieldDefinition,
+                    parentIdExpression,
+                    idExpression,
+                    inputValueValueWithVariableMap.entrySet().stream()
+                            .filter(entry -> entry.getKey().getName().equals(fieldDefinition.getMapFromOrError()))
+                            .findFirst()
+                            .map(Map.Entry::getValue)
+                            .map(DBValueUtil::leafValueToDBValue)
+                            .orElse(null),
+                    inputValueValueWithVariableMap.entrySet().stream()
+                            .filter(entry -> entry.getKey().getName().equals(fieldDefinition.getMapToOrError()))
+                            .findFirst()
+                            .map(Map.Entry::getValue)
+                            .map(DBValueUtil::leafValueToDBValue)
+                            .orElse(null)
+            );
+
+            Stream<Statement> listObjectFieldStatementStream = fieldTypeDefinition.asObject().getFields().stream()
+                    .filter(subField -> !subField.isFetchField())
+                    .filter(subField -> !subField.getType().hasList())
+                    .filter(subField -> documentManager.getFieldTypeDefinition(subField).isObject())
+
         }
 
 
     }
 
+    public Stream<Statement> arrayInputValueToWhereExpression(ObjectType objectType,
+                                                              Expression parentIdExpression,
+                                                              FieldDefinition fieldDefinition,
+                                                              InputValue inputValue,
+                                                              ValueWithVariable valueWithVariable,
+                                                              Expression fromValueExpression,
+                                                              int level) {
+
+        Statement removeMapStatement = removeMapStatement(
+                objectType,
+                fieldDefinition,
+                parentIdExpression,
+                fromValueExpression,
+                null
+        );
+
+        if (valueWithVariable == null || !valueWithVariable.isArray()) {
+            return Stream.of(removeMapStatement);
+        }
+
+        IntStream.range(0, valueWithVariable.asArray().size())
+                .mapToObj(index ->
+                        inputValueToWhereExpression(
+                                objectType,
+                                parentIdExpression,
+                                fieldDefinition,
+                                inputValue,
+                                valueWithVariable.asArray().getValueWithVariables().get(index),
+                                level,
+                                index
+                        )
+                )
+                .flatMap(statementStream -> statementStream);
+
+        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+        String idFieldName = fieldTypeDefinition.asObject().getIDFieldOrError().getName();
+
+
+        List<Expression> idValueExpressionList = IntStream.range(0, valueWithVariable.asArray().size())
+                .filter(index -> valueWithVariable.asArray().getValueWithVariables().get(index).isObject())
+                .mapToObj(index ->
+                        valueWithVariable.asArray().getValueWithVariables().get(index).asObject().getValueWithVariable(idFieldName)
+                                .flatMap(DBValueUtil::idValueToDBValue)
+                                .orElseGet(() -> createInsertIdUserVariable(fieldTypeDefinition.asObject().getName(), idFieldName, level, index))
+                )
+                .collect(Collectors.toList());
+
+        removeMapStatement(
+                objectType,
+                fieldDefinition,
+                parentIdExpression,
+                fromValueExpression,
+                idValueExpressionList
+        );
+
+    }
+
     public Statement removeMapStatement(ObjectType objectType,
                                         FieldDefinition fieldDefinition,
-                                        int level,
                                         Expression parentIdExpression,
                                         Expression fromValueExpression,
                                         List<Expression> idValueExpressionList) {
-        Table parentTable = typeToTable(objectType, level - 1);
+        Table parentTable = typeToTable(objectType);
         Column parentColumn = graphqlFieldToColumn(parentTable, fieldDefinition.getMapFromOrError());
         Column parentIdColumn = graphqlFieldToColumn(parentTable, objectType.getIDFieldOrError().getName());
-        Expression parentColumnExpression;
 
+        Expression parentColumnExpression;
         if (fieldDefinition.getMapFromOrError().equals(objectType.getIDFieldOrError().getName())) {
             parentColumnExpression = parentIdExpression;
         } else {
@@ -204,9 +371,11 @@ public class MutationTranslator {
 
         if (fieldDefinition.hasMapWith()) {
             String mapWithType = fieldDefinition.getMapWithTypeOrError();
-            Table withTable = graphqlTypeToTable(mapWithType, level);
+            Table withTable = graphqlTypeToTable(mapWithType);
             Column withParentColumn = graphqlFieldToColumn(withTable, fieldDefinition.getMapWithFromOrError());
-            EqualsTo withParentColumnEqualsTo = new EqualsTo().withLeftExpression(withParentColumn);
+
+            EqualsTo withParentColumnEqualsTo = new EqualsTo()
+                    .withLeftExpression(withParentColumn);
             if (fromValueExpression != null) {
                 withParentColumnEqualsTo.setRightExpression(fromValueExpression);
             } else {
@@ -217,8 +386,9 @@ public class MutationTranslator {
             Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
             Table table = typeToTable(fieldTypeDefinition.asObject());
             Column column = graphqlFieldToColumn(table, fieldDefinition.getMapFromOrError());
-            EqualsTo parentColumnEqualsTo = new EqualsTo().withLeftExpression(column);
 
+            EqualsTo parentColumnEqualsTo = new EqualsTo()
+                    .withLeftExpression(column);
             if (fromValueExpression != null) {
                 parentColumnEqualsTo.setRightExpression(fromValueExpression);
             } else {
@@ -260,9 +430,66 @@ public class MutationTranslator {
         }
     }
 
+    public Statement mergeMapStatement(ObjectType objectType,
+                                       FieldDefinition fieldDefinition,
+                                       Expression parentIdExpression,
+                                       Expression idExpression,
+                                       Expression fromValueExpression,
+                                       Expression toValueExpression) {
+        Table parentTable = typeToTable(objectType);
+        Column parentColumn = graphqlFieldToColumn(parentTable, fieldDefinition.getMapFromOrError());
+        Column parentIdColumn = graphqlFieldToColumn(parentTable, objectType.getIDFieldOrError().getName());
+        Expression parentColumnExpression;
+        if (fieldDefinition.getMapFromOrError().equals(objectType.getIDFieldOrError().getName())) {
+            parentColumnExpression = parentIdExpression;
+        } else {
+            parentColumnExpression = selectFieldByIdExpression(parentTable, parentColumn, parentIdColumn, parentIdExpression);
+        }
+
+        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+        Table table = typeToTable(fieldTypeDefinition.asObject());
+        Column column = graphqlFieldToColumn(table, fieldDefinition.getMapToOrError());
+        Column idColumn = graphqlFieldToColumn(table, fieldTypeDefinition.asObject().getIDFieldOrError().getName());
+        Expression columnExpression;
+        if (column.getColumnName().equals(idColumn.getColumnName())) {
+            columnExpression = idExpression;
+        } else {
+            columnExpression = selectFieldByIdExpression(table, column, idColumn, idExpression);
+        }
+
+        if (fieldDefinition.hasMapWith()) {
+            String mapWithType = fieldDefinition.getMapWithTypeOrError();
+            Table withTable = graphqlTypeToTable(mapWithType);
+            Column withParentColumn = graphqlFieldToColumn(withTable, fieldDefinition.getMapWithFromOrError());
+            Column withColumn = graphqlFieldToColumn(withTable, fieldDefinition.getMapWithToOrError());
+
+            if (fromValueExpression != null && toValueExpression != null) {
+                return insertExpression(withTable, Arrays.asList(withParentColumn, withColumn), Arrays.asList(fromValueExpression, toValueExpression));
+            } else if (fromValueExpression != null) {
+                return insertExpression(withTable, Arrays.asList(withParentColumn, withColumn), Arrays.asList(fromValueExpression, columnExpression));
+            } else if (toValueExpression != null) {
+                return insertExpression(withTable, Arrays.asList(withParentColumn, withColumn), Arrays.asList(parentColumnExpression, toValueExpression));
+            } else {
+                return insertExpression(withTable, Arrays.asList(withParentColumn, withColumn), Arrays.asList(parentColumnExpression, columnExpression));
+            }
+        } else {
+            if (fieldDefinition.isMapAnchor()) {
+                EqualsTo parentIdEqualsTo = new EqualsTo()
+                        .withLeftExpression(parentIdColumn)
+                        .withRightExpression(parentIdExpression);
+                return updateExpression(parentTable, Collections.singletonList(new UpdateSet(parentColumn, Objects.requireNonNullElse(toValueExpression, columnExpression))), parentIdEqualsTo);
+            } else {
+                EqualsTo idEqualsTo = new EqualsTo()
+                        .withLeftExpression(idColumn)
+                        .withRightExpression(idExpression);
+                return updateExpression(table, Collections.singletonList(new UpdateSet(column, Objects.requireNonNullElse(fromValueExpression, parentColumnExpression))), idEqualsTo);
+            }
+        }
+    }
+
     protected Insert insertExpression(Table table,
                                       List<Column> columnList,
-                                      ExpressionList<Expression> expressionList) {
+                                      List<Expression> expressionList) {
         return insertExpression(table, columnList, expressionList, false);
     }
 
