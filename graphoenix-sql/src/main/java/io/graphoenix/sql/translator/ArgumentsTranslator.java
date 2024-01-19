@@ -148,7 +148,7 @@ public class ArgumentsTranslator {
         }
     }
 
-    public Optional<Expression> inputValueToWhereExpression(ObjectType objectType, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable, int level) {
+    protected Optional<Expression> inputValueToWhereExpression(ObjectType objectType, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable, int level) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
         if (fieldTypeDefinition.isObject()) {
@@ -328,7 +328,7 @@ public class ArgumentsTranslator {
         }
     }
 
-    public Optional<Expression> valToExpression(Column column, String opr, ValueWithVariable val, boolean skipNull) {
+    protected Optional<Expression> valToExpression(Column column, String opr, ValueWithVariable val, boolean skipNull) {
         if (skipNull && val.isNull()) {
             return Optional.empty();
         }
@@ -397,7 +397,7 @@ public class ArgumentsTranslator {
         return Optional.of(where);
     }
 
-    public Optional<Expression> arrToExpression(Column column, String opr, InputValue inputValue, ValueWithVariable arr, boolean skipNull) {
+    protected Optional<Expression> arrToExpression(Column column, String opr, InputValue inputValue, ValueWithVariable arr, boolean skipNull) {
         if (skipNull && arr.isNull()) {
             return Optional.empty();
         }

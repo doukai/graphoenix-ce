@@ -86,11 +86,11 @@ public class QueryTranslator {
                 .withFromItem(dualTable());
     }
 
-    public PlainSelect objectFieldToPlainSelect(ObjectType objectType, FieldDefinition fieldDefinition, Field field, int level) {
+    protected PlainSelect objectFieldToPlainSelect(ObjectType objectType, FieldDefinition fieldDefinition, Field field, int level) {
         return objectFieldToPlainSelect(objectType, fieldDefinition, field, false, level);
     }
 
-    public PlainSelect objectFieldToPlainSelect(ObjectType objectType, FieldDefinition fieldDefinition, Field field, boolean groupBy, int level) {
+    protected PlainSelect objectFieldToPlainSelect(ObjectType objectType, FieldDefinition fieldDefinition, Field field, boolean groupBy, int level) {
         if (field.getFields() == null || field.getFields().isEmpty()) {
             throw new GraphQLErrors(OBJECT_SELECTION_NOT_EXIST.bind(field.toString()));
         }
@@ -244,11 +244,11 @@ public class QueryTranslator {
         return plainSelect;
     }
 
-    public Expression fieldToExpression(ObjectType objectType, FieldDefinition fieldDefinition, Field field, int level) {
+    protected Expression fieldToExpression(ObjectType objectType, FieldDefinition fieldDefinition, Field field, int level) {
         return fieldToExpression(objectType, fieldDefinition, field, false, level);
     }
 
-    public Expression fieldToExpression(ObjectType objectType, FieldDefinition fieldDefinition, Field field, boolean over, int level) {
+    protected Expression fieldToExpression(ObjectType objectType, FieldDefinition fieldDefinition, Field field, boolean over, int level) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject()) {
             return new ParenthesedSelect()

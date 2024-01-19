@@ -144,6 +144,8 @@ public class Hammurabi {
     public static final String DIRECTIVE_TYPE_ARGUMENT_NAME_NAME = "name";
     public static final String DIRECTIVE_TYPE_ARGUMENT_AUTO_INCREMENT_NAME = "autoIncrement";
     public static final String DIRECTIVE_TYPE_ARGUMENT_DEFAULT_NAME = "default";
+    public static final String DIRECTIVE_TYPE_ARGUMENT_LENGTH_NAME = "length";
+    public static final String DIRECTIVE_TYPE_ARGUMENT_DECIMALS_NAME = "decimals";
 
 
     public static final String DIRECTIVE_FETCH_NAME = "fetch";

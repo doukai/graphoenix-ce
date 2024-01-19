@@ -157,6 +157,35 @@ public class FieldDefinition extends AbstractDefinition {
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
 
+    public Optional<String> getTypeDefault() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_TYPE_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_TYPE_ARGUMENT_DEFAULT_NAME)))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
+    }
+
+    public Optional<Integer> getTypeLength() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_TYPE_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_TYPE_ARGUMENT_LENGTH_NAME)))
+                .filter(ValueWithVariable::isInt)
+                .map(valueWithVariable -> valueWithVariable.asInt().getIntegerValue());
+    }
+
+    public Optional<Integer> getTypeDecimals() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_TYPE_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_TYPE_ARGUMENT_DECIMALS_NAME)))
+                .filter(ValueWithVariable::isInt)
+                .map(valueWithVariable -> valueWithVariable.asInt().getIntegerValue());
+    }
+
+    public boolean isAutoIncrementType() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_TYPE_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_TYPE_ARGUMENT_AUTO_INCREMENT_NAME)))
+                .filter(ValueWithVariable::isBoolean)
+                .map(valueWithVariable -> valueWithVariable.asBoolean().getValue())
+                .orElse(false);
+    }
+
     public String getTypeNameWithoutID() {
         String fieldTypeName = getTypeName().orElseGet(() -> getType().getTypeName().getName());
         if (SCALA_ID_NAME.equals(fieldTypeName)) {

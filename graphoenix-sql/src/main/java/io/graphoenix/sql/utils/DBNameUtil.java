@@ -32,28 +32,8 @@ public final class DBNameUtil {
         return String.join("_", CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, graphqlTypeName), CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, graphqlFieldName));
     }
 
-    public static String graphqlTypeToDBType(String graphqlType) {
-        return nameToDBEscape(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, graphqlType));
-    }
-
-    public static String directiveToTableOption(String argumentName, String argumentValue) {
-        return String.format("%s=%s", CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, argumentName), stringValueToDBVarchar(CharMatcher.anyOf("\"").trimFrom(argumentValue)));
-    }
-
-    public static String directiveToColumnDefinition(String argumentName, String argumentValue) {
-        return String.format("%s %s", CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, argumentName), stringValueToDBVarchar(CharMatcher.anyOf("\"").trimFrom(argumentValue)));
-    }
-
-    public static String booleanDirectiveTocColumnDefinition(String argumentName) {
-        return CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, argumentName);
-    }
-
     public static String graphqlDescriptionToDBComment(String description) {
         return stringValueToDBVarchar(CharMatcher.anyOf("\"").or(CharMatcher.anyOf("\"\"\"")).trimFrom(description));
-    }
-
-    public static String graphqlStringValueToDBOption(String argumentName) {
-        return CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, CharMatcher.anyOf("\"").trimFrom(argumentName));
     }
 
     public static String stringValueToDBVarchar(String stringValue) {
