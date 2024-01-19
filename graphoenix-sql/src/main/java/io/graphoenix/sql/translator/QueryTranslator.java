@@ -16,6 +16,7 @@ import jakarta.inject.Inject;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
+import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.expression.operators.relational.IsNullExpression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
@@ -27,12 +28,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.OBJECT_SELECTION_NOT_EXIST;
 import static io.graphoenix.sql.utils.DBNameUtil.*;
-import static io.graphoenix.sql.utils.DBValueUtil.leafValueToDBValue;
+import static io.graphoenix.sql.utils.DBValueUtil.*;
 import static net.sf.jsqlparser.expression.AnalyticType.OVER;
 import static net.sf.jsqlparser.expression.JsonFunctionType.ARRAY;
 import static net.sf.jsqlparser.expression.JsonFunctionType.MYSQL_OBJECT;
@@ -61,10 +63,14 @@ public class QueryTranslator {
                 .addSelectItem(
                         jsonObjectFunction(
                                 operation.getFields().stream()
-                                        .filter(packageManager::isLocalPackage)
-                                        .filter(field -> !operationType.getField(field.getName()).isFetchField())
-                                        .filter(field -> !operationType.getField(field.getName()).isInvokeField())
-                                        .filter(field -> !operationType.getField(field.getName()).isConnectionField())
+                                        .filter(field -> {
+                                                    FieldDefinition fieldDefinition = operationType.getField(field.getName());
+                                                    return packageManager.isLocalPackage(fieldDefinition) &&
+                                                            !fieldDefinition.isFetchField() &&
+                                                            !fieldDefinition.isInvokeField() &&
+                                                            !fieldDefinition.isConnectionField();
+                                                }
+                                        )
                                         .map(field ->
                                                 new JsonKeyValuePair(
                                                         new StringValue(Optional.ofNullable(field.getAlias()).orElse(field.getName())).toString(),
@@ -140,7 +146,57 @@ public class QueryTranslator {
                 .withFromItem(fromItem)
                 .setGroupByElement(argumentsToGroupBy(fieldDefinition, field, level));
 
-        Optional<Expression> whereExpression = argumentsTranslator.argumentsToWhereExpression(objectType, fieldDefinition, field, level);
+        Optional<Expression> whereExpression;
+        if (documentManager.isMutationOperationType(objectType)) {
+            String idName = fieldTypeDefinition.asObject().getIDFieldOrError().getName();
+            whereExpression = fieldDefinition.getArgument(INPUT_VALUE_WHERE_NAME)
+                    .flatMap(inputValue ->
+                            field.getArguments().getArgument(inputValue.getName())
+                                    .flatMap(valueWithVariable -> argumentsTranslator.inputValueToWhereExpression(objectType, fieldDefinition, inputValue, valueWithVariable, level))
+                    )
+                    .or(() ->
+                            fieldDefinition.getArgument(INPUT_VALUE_LIST_NAME)
+                                    .flatMap(inputValue ->
+                                            field.getArguments().getArgument(inputValue.getName())
+                                                    .filter(valueWithVariable -> !valueWithVariable.isNull())
+                                                    .map(valueWithVariable -> {
+                                                                if (valueWithVariable.isVariable()) {
+                                                                    return createGreaterThanLastInsertIDExpression(fieldTypeDefinition.getName(), idName);
+                                                                } else {
+                                                                    return new InExpression()
+                                                                            .withRightExpression(
+                                                                                    new Parenthesis(
+                                                                                            new ExpressionList<>(
+                                                                                                    IntStream.range(0, valueWithVariable.asArray().getValueWithVariables().size())
+                                                                                                            .mapToObj(index ->
+                                                                                                                    valueWithVariable.asArray().getValueWithVariables().get(index).asObject()
+                                                                                                                            .getValueWithVariable(idName)
+                                                                                                                            .flatMap(DBValueUtil::idValueToDBValue)
+                                                                                                                            .orElseGet(() -> createInsertIdUserVariable(fieldTypeDefinition.getName(), idName, 0, index))
+                                                                                                            )
+                                                                                                            .collect(Collectors.toList())
+                                                                                            )
+                                                                                    )
+                                                                            );
+                                                                }
+                                                            }
+                                                    )
+                                    )
+                                    .or(() ->
+                                            fieldDefinition.getArgument(idName)
+                                                    .map(inputValue ->
+                                                            new EqualsTo()
+                                                                    .withRightExpression(
+                                                                            field.getArguments().getArgument(inputValue.getName())
+                                                                                    .flatMap(DBValueUtil::idValueToDBValue)
+                                                                                    .orElseGet(() -> createInsertIdUserVariable(fieldTypeDefinition.getName(), idName, 0, 0))
+                                                                    )
+                                                    )
+                                    )
+                    );
+        } else {
+            whereExpression = argumentsTranslator.argumentsToWhereExpression(objectType, fieldDefinition, field, level);
+        }
         if (!documentManager.isOperationType(objectType)) {
             Table parentTable = typeToTable(objectType, level - 1);
             if (fieldDefinition.hasMapWith()) {
