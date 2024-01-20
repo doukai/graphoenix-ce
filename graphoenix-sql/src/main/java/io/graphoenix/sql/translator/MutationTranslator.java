@@ -209,8 +209,9 @@ public class MutationTranslator {
                             true
                     )
             );
+        } else {
+            return inputValueMapToMutationStatementStream(objectType, parentIdExpression, fieldDefinition, inputValueValueWithVariableMap, level, index);
         }
-        return inputValueMapToMutationStatementStream(objectType, parentIdExpression, fieldDefinition, inputValueValueWithVariableMap, level, index);
     }
 
     protected Stream<Statement> inputValueMapToMutationStatementStream(ObjectType objectType,
@@ -293,6 +294,8 @@ public class MutationTranslator {
                 .or(() ->
                         whereInputValueEntry
                                 .flatMap(entry -> entry.getValue().asObject().getValueWithVariable(idName))
+                                .filter(ValueWithVariable::isObject)
+                                .flatMap(valueWithVariable -> valueWithVariable.asObject().getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
                                 .flatMap(DBValueUtil::idValueToDBValue)
                 )
                 .orElseGet(() -> createInsertIdUserVariable(fieldTypeDefinition.asObject().getName(), idName, level, index));
@@ -359,6 +362,7 @@ public class MutationTranslator {
                                                 subField,
                                                 entry.getKey(),
                                                 entry.getValue(),
+                                                whereInputValueEntry.isPresent(),
                                                 fromValueWithVariable
                                                         .map(DBValueUtil::leafValueToDBValue)
                                                         .orElse(null),
@@ -402,9 +406,10 @@ public class MutationTranslator {
                                                                     FieldDefinition fieldDefinition,
                                                                     InputValue inputValue,
                                                                     ValueWithVariable valueWithVariable,
+                                                                    boolean merge,
                                                                     Expression fromValueExpression,
                                                                     int level) {
-
+        Stream<Statement> mutationStatementStream = Stream.empty();
         if (valueWithVariable.isVariable()) {
             Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
             Table table = typeToTable(fieldTypeDefinition.asObject());
@@ -416,7 +421,7 @@ public class MutationTranslator {
                     .filter(subField -> !documentManager.getFieldTypeDefinition(subField).isObject())
                     .collect(Collectors.toList());
 
-            return Stream.of(
+            mutationStatementStream = Stream.of(
                     insertSelectExpression(
                             table,
                             leafFieldDefinitionList.stream()
@@ -425,67 +430,166 @@ public class MutationTranslator {
                             selectVariablesFromJsonObjectArray(leafFieldDefinitionList, inputValue)
                     )
             );
+        } else if (valueWithVariable.isArray()) {
+            if (merge) {
+                List<ValueWithVariable> mergeValueWithVariableList = valueWithVariable.asArray().getValueWithVariables().stream()
+                        .filter(ValueWithVariable::isObject)
+                        .map(ValueWithVariable::asObject)
+                        .filter(objectValueWithVariable -> !objectValueWithVariable.containsKey(FIELD_DEPRECATED_NAME))
+                        .collect(Collectors.toList());
+
+                if (!mergeValueWithVariableList.isEmpty()) {
+                    mutationStatementStream = IntStream.range(0, mergeValueWithVariableList.size())
+                            .mapToObj(index ->
+                                    objectToMutationStatementStream(
+                                            objectType,
+                                            parentIdExpression,
+                                            fieldDefinition,
+                                            inputValue,
+                                            valueWithVariable.asArray().getValueWithVariables().get(index),
+                                            level,
+                                            index
+                                    )
+                            )
+                            .flatMap(statementStream -> statementStream);
+                }
+            } else {
+                mutationStatementStream = IntStream.range(0, valueWithVariable.asArray().size())
+                        .mapToObj(index ->
+                                objectToMutationStatementStream(
+                                        objectType,
+                                        parentIdExpression,
+                                        fieldDefinition,
+                                        inputValue,
+                                        valueWithVariable.asArray().getValueWithVariables().get(index),
+                                        level,
+                                        index
+                                )
+                        )
+                        .flatMap(statementStream -> statementStream);
+            }
         }
 
-        Stream<Statement> mutationStatementStream = IntStream.range(0, valueWithVariable.asArray().size())
-                .mapToObj(index ->
-                        objectToMutationStatementStream(
-                                objectType,
-                                parentIdExpression,
-                                fieldDefinition,
-                                inputValue,
-                                valueWithVariable.asArray().getValueWithVariables().get(index),
-                                level,
-                                index
+        if (merge) {
+            Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+            String idName = fieldTypeDefinition.asObject().getIDFieldOrError().getName();
+            if (fieldDefinition.hasMapWith()) {
+                List<ValueWithVariable> idValueWithVariableList = valueWithVariable.asArray().getValueWithVariables().stream()
+                        .filter(ValueWithVariable::isObject)
+                        .map(ValueWithVariable::asObject)
+                        .flatMap(objectValueWithVariable ->
+                                objectValueWithVariable.getValueWithVariable(idName)
+                                        .or(() ->
+                                                objectValueWithVariable.getValueWithVariable(INPUT_VALUE_WHERE_NAME)
+                                                        .filter(ValueWithVariable::isObject)
+                                                        .map(ValueWithVariable::asObject)
+                                                        .flatMap(where -> where.getValueWithVariable(idName))
+                                                        .filter(ValueWithVariable::isObject)
+                                                        .map(ValueWithVariable::asObject)
+                                                        .flatMap(id -> id.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
+                                        )
+                                        .stream()
                         )
-                )
-                .flatMap(statementStream -> statementStream);
+                        .collect(Collectors.toList());
 
-        if (fieldDefinition.hasMapWith()) {
-            Statement removeMapStatement = removeMapStatement(
-                    objectType,
-                    fieldDefinition,
-                    parentIdExpression,
-                    fromValueExpression,
-                    null
-            );
-            if (valueWithVariable.isArray()) {
+                Stream<Statement> removeMapStatementStream = Stream.empty();
+                if (!idValueWithVariableList.isEmpty()) {
+                    removeMapStatementStream = Stream.of(
+                            removeMapStatement(
+                                    objectType,
+                                    fieldDefinition,
+                                    parentIdExpression,
+                                    fromValueExpression,
+                                    idValueWithVariableList.stream()
+                                            .map(DBValueUtil::leafValueToDBValue)
+                                            .collect(Collectors.toList())
+                            )
+                    );
+                }
+                return Stream
+                        .concat(
+                                removeMapStatementStream,
+                                mutationStatementStream
+                        );
+            } else {
+                List<ValueWithVariable> removeIdValueWithVariableList = valueWithVariable.asArray().getValueWithVariables().stream()
+                        .filter(ValueWithVariable::isObject)
+                        .map(ValueWithVariable::asObject)
+                        .filter(objectValueWithVariable -> objectValueWithVariable.containsKey(FIELD_DEPRECATED_NAME))
+                        .flatMap(objectValueWithVariable ->
+                                objectValueWithVariable.getValueWithVariable(idName)
+                                        .or(() ->
+                                                objectValueWithVariable.getValueWithVariable(INPUT_VALUE_WHERE_NAME)
+                                                        .filter(ValueWithVariable::isObject)
+                                                        .map(ValueWithVariable::asObject)
+                                                        .flatMap(where -> where.getValueWithVariable(idName))
+                                                        .filter(ValueWithVariable::isObject)
+                                                        .map(ValueWithVariable::asObject)
+                                                        .flatMap(id -> id.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
+                                        )
+                                        .stream()
+                        )
+                        .collect(Collectors.toList());
+
+                Stream<Statement> removeMapStatementStream = Stream.empty();
+                if (!removeIdValueWithVariableList.isEmpty()) {
+                    removeMapStatementStream = Stream.of(
+                            removeMapStatement(
+                                    objectType,
+                                    fieldDefinition,
+                                    parentIdExpression,
+                                    fromValueExpression,
+                                    removeIdValueWithVariableList.stream()
+                                            .map(DBValueUtil::leafValueToDBValue)
+                                            .collect(Collectors.toList()),
+                                    false
+                            )
+                    );
+                }
+                return Stream
+                        .concat(
+                                mutationStatementStream,
+                                removeMapStatementStream
+                        );
+            }
+        } else {
+            if (fieldDefinition.hasMapWith()) {
+                Statement removeMapStatement = removeMapStatement(
+                        objectType,
+                        fieldDefinition,
+                        parentIdExpression,
+                        fromValueExpression,
+                        null
+                );
                 return Stream
                         .concat(
                                 Stream.of(removeMapStatement),
                                 mutationStatementStream
                         );
             } else {
-                return Stream.of(removeMapStatement);
-            }
-        } else {
-            Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-            String idFieldName = fieldTypeDefinition.asObject().getIDFieldOrError().getName();
-            List<Expression> idValueExpressionList = IntStream.range(0, valueWithVariable.asArray().size())
-                    .filter(index -> valueWithVariable.asArray().getValueWithVariables().get(index).isObject())
-                    .mapToObj(index ->
-                            valueWithVariable.asArray().getValueWithVariables().get(index).asObject().getValueWithVariable(idFieldName)
-                                    .flatMap(DBValueUtil::idValueToDBValue)
-                                    .orElseGet(() -> createInsertIdUserVariable(fieldTypeDefinition.asObject().getName(), idFieldName, level, index))
-                    )
-                    .collect(Collectors.toList());
+                Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+                String idFieldName = fieldTypeDefinition.asObject().getIDFieldOrError().getName();
+                List<Expression> idValueExpressionList = IntStream.range(0, valueWithVariable.asArray().size())
+                        .filter(index -> valueWithVariable.asArray().getValueWithVariables().get(index).isObject())
+                        .mapToObj(index ->
+                                valueWithVariable.asArray().getValueWithVariables().get(index).asObject().getValueWithVariable(idFieldName)
+                                        .flatMap(DBValueUtil::idValueToDBValue)
+                                        .orElseGet(() -> createInsertIdUserVariable(fieldTypeDefinition.asObject().getName(), idFieldName, level, index))
+                        )
+                        .collect(Collectors.toList());
 
-            Statement removeMapStatement = removeMapStatement(
-                    objectType,
-                    fieldDefinition,
-                    parentIdExpression,
-                    fromValueExpression,
-                    idValueExpressionList
-            );
-
-            if (valueWithVariable.isArray()) {
+                Statement removeMapStatement = removeMapStatement(
+                        objectType,
+                        fieldDefinition,
+                        parentIdExpression,
+                        fromValueExpression,
+                        idValueExpressionList
+                );
                 return Stream
                         .concat(
                                 mutationStatementStream,
                                 Stream.of(removeMapStatement)
                         );
-            } else {
-                return Stream.of(removeMapStatement);
             }
         }
     }
@@ -523,7 +627,7 @@ public class MutationTranslator {
                                     mergeLeafMapStatement(
                                             objectType,
                                             fieldDefinition,
-                                            valueWithVariable,
+                                            item,
                                             parentIdExpression,
                                             fromValueExpression
                                     )
@@ -537,6 +641,15 @@ public class MutationTranslator {
                                            Expression parentIdExpression,
                                            Expression fromValueExpression,
                                            List<Expression> idValueExpressionList) {
+        return removeMapStatement(objectType, fieldDefinition, parentIdExpression, fromValueExpression, idValueExpressionList, true);
+    }
+
+    protected Statement removeMapStatement(ObjectType objectType,
+                                           FieldDefinition fieldDefinition,
+                                           Expression parentIdExpression,
+                                           Expression fromValueExpression,
+                                           List<Expression> idValueExpressionList,
+                                           boolean notIn) {
         Table parentTable = typeToTable(objectType);
         Column parentColumn = graphqlFieldToColumn(parentTable, fieldDefinition.getMapFromOrError());
         Column parentIdColumn = graphqlFieldToColumn(parentTable, objectType.getIDFieldOrError().getName());
@@ -560,7 +673,22 @@ public class MutationTranslator {
             } else {
                 withParentColumnEqualsTo.setRightExpression(parentColumnExpression);
             }
-            return removeExpression(withTable, withParentColumnEqualsTo);
+            if (idValueExpressionList != null && !idValueExpressionList.isEmpty()) {
+                Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+                Table table = typeToTable(fieldTypeDefinition.asObject());
+                Column column = graphqlFieldToColumn(table, fieldDefinition.getMapToOrError());
+                Column idColumn = graphqlFieldToColumn(table, fieldTypeDefinition.asObject().getIDFieldOrError().getName());
+                Column withColumn = graphqlFieldToColumn(withTable, fieldDefinition.getMapWithToOrError());
+                InExpression inExpression = new InExpression().withLeftExpression(withColumn);
+                if (column.getColumnName().equals(idColumn.getColumnName())) {
+                    inExpression.setRightExpression(new Parenthesis(new ExpressionList<>(idValueExpressionList)));
+                } else {
+                    inExpression.setRightExpression(selectFieldByIdExpressionList(table, column, idColumn, idValueExpressionList));
+                }
+                return removeExpression(withTable, new MultiAndExpression(Arrays.asList(withParentColumnEqualsTo, inExpression)));
+            } else {
+                return removeExpression(withTable, withParentColumnEqualsTo);
+            }
         } else {
             Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
             Table table = typeToTable(fieldTypeDefinition.asObject());
@@ -593,7 +721,7 @@ public class MutationTranslator {
                                             parentColumnEqualsTo,
                                             new InExpression()
                                                     .withLeftExpression(idColumn)
-                                                    .withNot(true)
+                                                    .withNot(notIn)
                                                     .withRightExpression(new ExpressionList<>(idValueExpressionList))
                                     )
                             )
@@ -694,16 +822,11 @@ public class MutationTranslator {
         }
     }
 
-    protected Insert insertExpression(Table table,
-                                      List<Column> columnList,
-                                      List<Expression> expressionList) {
+    protected Insert insertExpression(Table table, List<Column> columnList, List<Expression> expressionList) {
         return insertExpression(table, columnList, expressionList, false);
     }
 
-    protected Insert insertExpression(Table table,
-                                      List<Column> columnList,
-                                      List<Expression> expressionList,
-                                      boolean useDuplicate) {
+    protected Insert insertExpression(Table table, List<Column> columnList, List<Expression> expressionList, boolean useDuplicate) {
         Insert insert = new Insert()
                 .withTable(table)
                 .addColumns(columnList)
@@ -722,9 +845,7 @@ public class MutationTranslator {
     }
 
 
-    protected Insert insertSelectExpression(Table table,
-                                            List<Column> columnList,
-                                            Select select) {
+    protected Insert insertSelectExpression(Table table, List<Column> columnList, Select select) {
         Insert insert = new Insert()
                 .withTable(table)
                 .addColumns(columnList)
@@ -767,6 +888,24 @@ public class MutationTranslator {
                 );
     }
 
+    protected ParenthesedSelect selectFieldByIdExpressionList(Table table, Column selectColumn, Column idColumn, List<Expression> idFieldValueExpressionList) {
+        return new ParenthesedSelect()
+                .withSelect(
+                        new PlainSelect()
+                                .addSelectItem(selectColumn)
+                                .withFromItem(table)
+                                .withWhere(
+                                        new InExpression()
+                                                .withLeftExpression(idColumn)
+                                                .withRightExpression(
+                                                        new Parenthesis(
+                                                                new ExpressionList<>(idFieldValueExpressionList)
+                                                        )
+                                                )
+                                )
+                );
+    }
+
     protected Select selectVariablesFromJsonObjectArray(List<FieldDefinition> fieldDefinitionList, InputValue inputValue) {
         return new PlainSelect()
                 .addSelectItems(new AllColumns())
@@ -790,10 +929,7 @@ public class MutationTranslator {
                 );
     }
 
-    protected Select selectVariablesFromJsonArray(Expression parentColumnExpression,
-                                                  FieldDefinition fieldDefinition,
-                                                  ValueWithVariable valueWithVariable) {
-
+    protected Select selectVariablesFromJsonArray(Expression parentColumnExpression, FieldDefinition fieldDefinition, ValueWithVariable valueWithVariable) {
         return new PlainSelect()
                 .addSelectItems(parentColumnExpression, new Column(fieldDefinition.getName()))
                 .withFromItem(
