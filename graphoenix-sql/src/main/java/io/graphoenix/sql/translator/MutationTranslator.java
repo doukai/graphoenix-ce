@@ -300,14 +300,20 @@ public class MutationTranslator {
                 )
                 .orElseGet(() -> createInsertIdUserVariable(fieldTypeDefinition.asObject().getName(), idName, level, index));
 
-        Optional<ValueWithVariable> fromValueWithVariable = inputValueValueWithVariableMap.entrySet().stream()
-                .filter(entry -> entry.getKey().getName().equals(fieldDefinition.getMapFromOrError()))
-                .findFirst()
+        Optional<ValueWithVariable> fromValueWithVariable = fieldDefinition.getMapFrom()
+                .flatMap(from ->
+                        inputValueValueWithVariableMap.entrySet().stream()
+                                .filter(entry -> entry.getKey().getName().equals(from))
+                                .findFirst()
+                )
                 .map(Map.Entry::getValue);
 
-        Optional<ValueWithVariable> toValueWithVariable = inputValueValueWithVariableMap.entrySet().stream()
-                .filter(entry -> entry.getKey().getName().equals(fieldDefinition.getMapToOrError()))
-                .findFirst()
+        Optional<ValueWithVariable> toValueWithVariable = fieldDefinition.getMapTo()
+                .flatMap(to ->
+                        inputValueValueWithVariableMap.entrySet().stream()
+                                .filter(entry -> entry.getKey().getName().equals(to))
+                                .findFirst()
+                )
                 .map(Map.Entry::getValue);
 
         Stream<Statement> objectFieldMergeMapStatementStream = Stream.empty();
@@ -350,7 +356,7 @@ public class MutationTranslator {
 
         Stream<Statement> listObjectFieldMutationStatementStream = fieldTypeDefinition.asObject().getFields().stream()
                 .filter(subField -> !subField.isFetchField())
-                .filter(subField -> !subField.getType().hasList())
+                .filter(subField -> subField.getType().hasList())
                 .filter(subField -> documentManager.getFieldTypeDefinition(subField).isObject())
                 .flatMap(subField ->
                         inputValueValueWithVariableMap.entrySet().stream()
@@ -373,7 +379,7 @@ public class MutationTranslator {
 
         Stream<Statement> listLeafFieldMutationStatementStream = fieldTypeDefinition.asObject().getFields().stream()
                 .filter(subField -> !subField.isFetchField())
-                .filter(subField -> !subField.getType().hasList())
+                .filter(subField -> subField.getType().hasList())
                 .filter(subField -> !documentManager.getFieldTypeDefinition(subField).isObject())
                 .flatMap(subField ->
                         inputValueValueWithVariableMap.entrySet().stream()
@@ -837,7 +843,7 @@ public class MutationTranslator {
         if (useDuplicate && !columnList.isEmpty()) {
             insert.withDuplicateUpdateSets(
                     columnList.stream()
-                            .map(column -> new UpdateSet(column, new Values(new ExpressionList<>(column))))
+                            .map(column -> new UpdateSet(column, new Values().addExpressions(column)))
                             .collect(Collectors.toList())
             );
         }
@@ -853,7 +859,7 @@ public class MutationTranslator {
         if (!columnList.isEmpty()) {
             insert.withDuplicateUpdateSets(
                     columnList.stream()
-                            .map(column -> new UpdateSet(column, new Values(new ExpressionList<>(column))))
+                            .map(column -> new UpdateSet(column, new Values().addExpressions(column)))
                             .collect(Collectors.toList())
             );
         }

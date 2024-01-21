@@ -44,7 +44,11 @@ public class TypeTranslator {
         this.packageManager = packageManager;
     }
 
-    public Stream<String> createTablesSQL() {
+    public String createTablesSQL() {
+        return createTablesSQLStream().collect(Collectors.joining(";"));
+    }
+
+    public Stream<String> createTablesSQLStream() {
         return documentManager.getDocument().getObjectTypes()
                 .filter(packageManager::isLocalPackage)
                 .filter(objectType -> !documentManager.isOperationType(objectType))

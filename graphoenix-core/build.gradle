@@ -33,6 +33,8 @@ dependencies {
     implementation 'io.nozdormu:nozdormu-interceptor:0.0.1-SNAPSHOT'
     implementation 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
     implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'com.aventrix.jnanoid:jnanoid:2.0.0'
+    implementation 'com.github.ben-manes.caffeine:caffeine:3.1.1'
 
     annotationProcessor project(':graphoenix-spi')
     annotationProcessor 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'

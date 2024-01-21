@@ -164,6 +164,7 @@ public class QueryTranslator {
                                                                     return createGreaterThanLastInsertIDExpression(fieldTypeDefinition.getName(), idName);
                                                                 } else {
                                                                     return new InExpression()
+                                                                            .withLeftExpression(graphqlFieldToColumn(table, idName))
                                                                             .withRightExpression(
                                                                                     new Parenthesis(
                                                                                             new ExpressionList<>(
@@ -186,6 +187,7 @@ public class QueryTranslator {
                                             fieldDefinition.getArgument(idName)
                                                     .map(inputValue ->
                                                             new EqualsTo()
+                                                                    .withLeftExpression(graphqlFieldToColumn(table, idName))
                                                                     .withRightExpression(
                                                                             field.getArguments().getArgument(inputValue.getName())
                                                                                     .flatMap(DBValueUtil::idValueToDBValue)
