@@ -3,6 +3,7 @@ package io.graphoenix.spi.graphql;
 import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.operation.FragmentDefinition;
+import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.*;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
@@ -329,6 +330,17 @@ public class Document {
 
     public FragmentDefinition getFragmentDefinitionOrError(String name) {
         return getFragmentDefinition(name).orElseThrow(() -> new GraphQLErrors(FRAGMENT_NOT_EXIST.bind(name)));
+    }
+
+    public Optional<Operation> getOperation() {
+        return getDefinitions().stream()
+                .filter(Definition::isOperation)
+                .map(Definition::asOperation)
+                .findFirst();
+    }
+
+    public Operation getOperationOrError() {
+        return getOperation().orElseThrow(() -> new GraphQLErrors(OPERATION_NOT_EXIST));
     }
 
     public Stream<InputObjectType> getImplementsInputObject(String name) {

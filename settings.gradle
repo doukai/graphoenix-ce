@@ -9,4 +9,5 @@ include 'graphoenix-annotation-processor'
 include 'graphoenix-showcase-user-app'
 include 'graphoenix-sql'
 include 'graphoenix-r2dbc'
+include 'graphoenix-http-server'
 

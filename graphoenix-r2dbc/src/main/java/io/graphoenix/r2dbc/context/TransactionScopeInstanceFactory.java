@@ -32,7 +32,7 @@ public class TransactionScopeInstanceFactory extends CacheScopeInstanceFactory {
     }
 
     @Override
-    protected String cacheId() {
+    protected String getCacheId() {
         return TRANSACTION_ID;
     }
 }

@@ -16,18 +16,21 @@ public abstract class CacheScopeInstanceFactory extends ScopeInstanceFactory {
     private AsyncLoadingCache<String, ScopeInstances> buildCache() {
         return Caffeine.newBuilder()
                 .expireAfterAccess(getTimeout())
-                .evictionListener((key, value, cause) -> Logger.info("cache id: {} eviction", key))
-                .removalListener((key, value, cause) -> Logger.info("cache id: {} removed", key))
+                .evictionListener((key, value, cause) -> Logger.info("{} id: {} eviction", getCacheId(), key))
+                .removalListener((key, value, cause) -> Logger.info("{} id: {} removed", getCacheId(), key))
                 .buildAsync(key -> new ScopeInstances());
     }
 
     protected abstract Duration getTimeout();
 
-    protected abstract String cacheId();
+    protected abstract String getCacheId();
 
     @Override
     public Mono<ScopeInstances> getScopeInstances() {
-        return Mono.deferContextual(contextView -> Mono.justOrEmpty(contextView.getOrEmpty(cacheId())).flatMap(id -> Mono.fromFuture(CACHE.get((String) id))));
+        return Mono.deferContextual(contextView ->
+                Mono.justOrEmpty(contextView.getOrEmpty(getCacheId()))
+                        .flatMap(id -> Mono.fromFuture(CACHE.get((String) id)))
+        );
     }
 
     public void invalidate(String id) {

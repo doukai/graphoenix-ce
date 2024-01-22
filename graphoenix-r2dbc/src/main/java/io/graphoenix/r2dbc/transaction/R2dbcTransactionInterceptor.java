@@ -3,8 +3,11 @@ package io.graphoenix.r2dbc.transaction;
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import io.graphoenix.r2dbc.connection.ConnectionProvider;
 import io.r2dbc.spi.Connection;
+import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
 import jakarta.transaction.InvalidTransactionException;
 import jakarta.transaction.NotSupportedException;
@@ -15,19 +18,33 @@ import org.tinylog.Logger;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.context.Context;
+import reactor.util.context.ContextView;
 
 import java.util.Arrays;
 
+import static io.graphoenix.r2dbc.context.TransactionScopeInstanceFactory.TRANSACTION_ID;
+import static io.graphoenix.r2dbc.transaction.TransactionType.IN_TRANSACTION;
+import static io.graphoenix.r2dbc.transaction.TransactionType.NO_TRANSACTION;
+
 @ApplicationScoped
-public class R2dbcTransactionInterceptorProcessor {
+@Transactional
+@Priority(0)
+@Interceptor
+public class R2dbcTransactionInterceptor {
+    public static final String TRANSACTION_TYPE = "transactionType";
+
+    public static boolean inTransaction(ContextView contextView) {
+        return contextView.hasKey(TRANSACTION_ID) && contextView.hasKey(TRANSACTION_TYPE) && contextView.get(TRANSACTION_TYPE).equals(IN_TRANSACTION);
+    }
 
     private final ConnectionProvider connectionProvider;
 
     @Inject
-    public R2dbcTransactionInterceptorProcessor(ConnectionProvider connectionProvider) {
+    public R2dbcTransactionInterceptor(ConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
     }
 
+    @AroundInvoke
     @SuppressWarnings({"unchecked"})
     public Object aroundInvoke(InvocationContext invocationContext) {
         Transactional.TxType txType;
@@ -58,7 +75,7 @@ public class R2dbcTransactionInterceptorProcessor {
                                 .transformDeferredContextual(
                                         (mono, contextView) -> {
                                             try {
-                                                return contextView.hasKey(TRANSACTION_ID) && contextView.hasKey(TRANSACTION_TYPE) && contextView.get(TRANSACTION_TYPE).equals(IN_TRANSACTION) ?
+                                                return inTransaction(contextView) ?
                                                         (Mono<Object>) invocationContext.proceed() :
                                                         Mono
                                                                 .usingWhen(
@@ -72,12 +89,16 @@ public class R2dbcTransactionInterceptorProcessor {
                                                                                 return Mono.error(e);
                                                                             }
                                                                         },
-                                                                        connection -> Mono.from(connection.commitTransaction()).thenEmpty(connection.close()),
+                                                                        connection -> Mono.from(connection.commitTransaction())
+                                                                                .thenEmpty(connection.close()),
                                                                         (connection, throwable) -> {
                                                                             Logger.error(throwable);
-                                                                            return Mono.from(errorProcess(connection, throwable, rollbackOn, dontRollbackOn)).thenEmpty(connection.close()).thenEmpty(Mono.error(throwable));
+                                                                            return Mono.from(errorProcess(connection, throwable, rollbackOn, dontRollbackOn))
+                                                                                    .thenEmpty(connection.close())
+                                                                                    .thenEmpty(Mono.error(throwable));
                                                                         },
-                                                                        connection -> Mono.from(connection.rollbackTransaction()).thenEmpty(connection.close())
+                                                                        connection -> Mono.from(connection.rollbackTransaction())
+                                                                                .thenEmpty(connection.close())
                                                                 )
                                                                 .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), TRANSACTION_TYPE, IN_TRANSACTION));
                                             } catch (Exception e) {
@@ -98,12 +119,16 @@ public class R2dbcTransactionInterceptorProcessor {
                                                 return Mono.error(e);
                                             }
                                         },
-                                        connection -> Mono.from(connection.commitTransaction()).thenEmpty(connection.close()),
+                                        connection -> Mono.from(connection.commitTransaction())
+                                                .thenEmpty(connection.close()),
                                         (connection, throwable) -> {
                                             Logger.error(throwable);
-                                            return Mono.from(errorProcess(connection, throwable, rollbackOn, dontRollbackOn)).thenEmpty(connection.close()).thenEmpty(Mono.error(throwable));
+                                            return Mono.from(errorProcess(connection, throwable, rollbackOn, dontRollbackOn))
+                                                    .thenEmpty(connection.close())
+                                                    .thenEmpty(Mono.error(throwable));
                                         },
-                                        connection -> Mono.from(connection.rollbackTransaction()).thenEmpty(connection.close())
+                                        connection -> Mono.from(connection.rollbackTransaction())
+                                                .thenEmpty(connection.close())
                                 )
                                 .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), TRANSACTION_TYPE, IN_TRANSACTION));
                     case MANDATORY:
@@ -111,7 +136,7 @@ public class R2dbcTransactionInterceptorProcessor {
                                 .transformDeferredContextual(
                                         (mono, contextView) -> {
                                             try {
-                                                return contextView.hasKey(TRANSACTION_ID) && contextView.hasKey(TRANSACTION_TYPE) && contextView.get(TRANSACTION_TYPE).equals(IN_TRANSACTION) ?
+                                                return inTransaction(contextView) ?
                                                         (Mono<Object>) invocationContext.proceed() :
                                                         Mono.error(new TransactionRequiredException());
                                             } catch (Exception e) {
@@ -125,7 +150,8 @@ public class R2dbcTransactionInterceptorProcessor {
                                         connectionProvider.get(),
                                         connection -> {
                                             try {
-                                                return Mono.from(connection.setAutoCommit(true)).then((Mono<Object>) invocationContext.proceed());
+                                                return Mono.from(connection.setAutoCommit(true))
+                                                        .then((Mono<Object>) invocationContext.proceed());
                                             } catch (Exception e) {
                                                 return Mono.error(e);
                                             }
@@ -138,13 +164,14 @@ public class R2dbcTransactionInterceptorProcessor {
                                 .transformDeferredContextual(
                                         (mono, contextView) -> {
                                             try {
-                                                return contextView.hasKey(TRANSACTION_ID) && contextView.hasKey(TRANSACTION_TYPE) && contextView.get(TRANSACTION_TYPE).equals(IN_TRANSACTION) ?
+                                                return inTransaction(contextView) ?
                                                         (Mono<Object>) invocationContext.proceed() :
                                                         Mono.usingWhen(
                                                                 connectionProvider.get(),
                                                                 connection -> {
                                                                     try {
-                                                                        return Mono.from(connection.setAutoCommit(true)).then((Mono<Object>) invocationContext.proceed());
+                                                                        return Mono.from(connection.setAutoCommit(true))
+                                                                                .then((Mono<Object>) invocationContext.proceed());
                                                                     } catch (Exception e) {
                                                                         return Mono.error(e);
                                                                     }
@@ -160,14 +187,15 @@ public class R2dbcTransactionInterceptorProcessor {
                         return Mono.empty()
                                 .transformDeferredContextual(
                                         (mono, contextView) ->
-                                                contextView.hasKey(TRANSACTION_ID) && contextView.hasKey(TRANSACTION_TYPE) && contextView.get(TRANSACTION_TYPE).equals(IN_TRANSACTION) ?
+                                                inTransaction(contextView) ?
                                                         Mono.error(new InvalidTransactionException()) :
                                                         Mono
                                                                 .usingWhen(
                                                                         connectionProvider.get(),
                                                                         connection -> {
                                                                             try {
-                                                                                return Mono.from(connection.setAutoCommit(true)).then((Mono<Object>) invocationContext.proceed());
+                                                                                return Mono.from(connection.setAutoCommit(true))
+                                                                                        .then((Mono<Object>) invocationContext.proceed());
                                                                             } catch (Exception e) {
                                                                                 return Mono.error(e);
                                                                             }
@@ -179,14 +207,14 @@ public class R2dbcTransactionInterceptorProcessor {
                     default:
                         throw new NotSupportedException();
                 }
-            } else if (invocationContext.getMethod().getReturnType().isAssignableFrom(Publisher.class)) {
+            } else if (invocationContext.getMethod().getReturnType().isAssignableFrom(Flux.class)) {
                 switch (txType) {
                     case REQUIRED:
                         return Flux.empty()
                                 .transformDeferredContextual(
                                         (flux, contextView) -> {
                                             try {
-                                                return contextView.hasKey(TRANSACTION_ID) && contextView.hasKey(TRANSACTION_TYPE) && contextView.get(TRANSACTION_TYPE).equals(IN_TRANSACTION) ?
+                                                return inTransaction(contextView) ?
                                                         (Flux<Object>) invocationContext.proceed() :
                                                         Flux
                                                                 .usingWhen(
@@ -201,12 +229,16 @@ public class R2dbcTransactionInterceptorProcessor {
                                                                                 return Flux.error(e);
                                                                             }
                                                                         },
-                                                                        connection -> Flux.from(connection.commitTransaction()).thenEmpty(connection.close()),
+                                                                        connection -> Flux.from(connection.commitTransaction())
+                                                                                .thenEmpty(connection.close()),
                                                                         (connection, throwable) -> {
                                                                             Logger.error(throwable);
-                                                                            return Flux.from(errorProcess(connection, throwable, rollbackOn, dontRollbackOn)).thenEmpty(connection.close()).thenEmpty(Flux.error(throwable));
+                                                                            return Flux.from(errorProcess(connection, throwable, rollbackOn, dontRollbackOn))
+                                                                                    .thenEmpty(connection.close())
+                                                                                    .thenEmpty(Flux.error(throwable));
                                                                         },
-                                                                        connection -> Flux.from(connection.rollbackTransaction()).thenEmpty(connection.close())
+                                                                        connection -> Flux.from(connection.rollbackTransaction())
+                                                                                .thenEmpty(connection.close())
                                                                 )
                                                                 .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), TRANSACTION_TYPE, IN_TRANSACTION));
                                             } catch (Exception e) {
@@ -227,12 +259,16 @@ public class R2dbcTransactionInterceptorProcessor {
                                                 return Flux.error(e);
                                             }
                                         },
-                                        connection -> Flux.from(connection.commitTransaction()).thenEmpty(connection.close()),
+                                        connection -> Flux.from(connection.commitTransaction())
+                                                .thenEmpty(connection.close()),
                                         (connection, throwable) -> {
                                             Logger.error(throwable);
-                                            return Flux.from(errorProcess(connection, throwable, rollbackOn, dontRollbackOn)).thenEmpty(connection.close()).thenEmpty(Flux.error(throwable));
+                                            return Flux.from(errorProcess(connection, throwable, rollbackOn, dontRollbackOn))
+                                                    .thenEmpty(connection.close())
+                                                    .thenEmpty(Flux.error(throwable));
                                         },
-                                        connection -> Flux.from(connection.rollbackTransaction()).thenEmpty(connection.close())
+                                        connection -> Flux.from(connection.rollbackTransaction())
+                                                .thenEmpty(connection.close())
                                 )
                                 .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), TRANSACTION_TYPE, IN_TRANSACTION));
                     case MANDATORY:
@@ -240,7 +276,7 @@ public class R2dbcTransactionInterceptorProcessor {
                                 .transformDeferredContextual(
                                         (flux, contextView) -> {
                                             try {
-                                                return contextView.hasKey(TRANSACTION_ID) && contextView.hasKey(TRANSACTION_TYPE) && contextView.get(TRANSACTION_TYPE).equals(IN_TRANSACTION) ?
+                                                return inTransaction(contextView) ?
                                                         (Flux<Object>) invocationContext.proceed() :
                                                         Flux.error(new TransactionRequiredException());
                                             } catch (Exception e) {
@@ -254,7 +290,8 @@ public class R2dbcTransactionInterceptorProcessor {
                                         connectionProvider.get(),
                                         connection -> {
                                             try {
-                                                return Flux.from(connection.setAutoCommit(true)).thenMany((Flux<Object>) invocationContext.proceed());
+                                                return Flux.from(connection.setAutoCommit(true))
+                                                        .thenMany((Flux<Object>) invocationContext.proceed());
                                             } catch (Exception e) {
                                                 return Flux.error(e);
                                             }
@@ -267,14 +304,15 @@ public class R2dbcTransactionInterceptorProcessor {
                                 .transformDeferredContextual(
                                         (flux, contextView) -> {
                                             try {
-                                                return contextView.hasKey(TRANSACTION_ID) && contextView.hasKey(TRANSACTION_TYPE) && contextView.get(TRANSACTION_TYPE).equals(IN_TRANSACTION) ?
+                                                return inTransaction(contextView) ?
                                                         (Flux<Object>) invocationContext.proceed() :
                                                         Flux
                                                                 .usingWhen(
                                                                         connectionProvider.get(),
                                                                         connection -> {
                                                                             try {
-                                                                                return Flux.from(connection.setAutoCommit(true)).thenMany((Flux<Object>) invocationContext.proceed());
+                                                                                return Flux.from(connection.setAutoCommit(true))
+                                                                                        .thenMany((Flux<Object>) invocationContext.proceed());
                                                                             } catch (Exception e) {
                                                                                 return Flux.error(e);
                                                                             }
@@ -291,14 +329,15 @@ public class R2dbcTransactionInterceptorProcessor {
                         return Flux.empty()
                                 .transformDeferredContextual(
                                         (flux, contextView) ->
-                                                contextView.hasKey(TRANSACTION_ID) && contextView.hasKey(TRANSACTION_TYPE) && contextView.get(TRANSACTION_TYPE).equals(IN_TRANSACTION) ?
+                                                inTransaction(contextView) ?
                                                         Flux.error(new InvalidTransactionException()) :
                                                         Flux
                                                                 .usingWhen(
                                                                         connectionProvider.get(),
                                                                         connection -> {
                                                                             try {
-                                                                                return Flux.from(connection.setAutoCommit(true)).thenMany((Flux<Object>) invocationContext.proceed());
+                                                                                return Flux.from(connection.setAutoCommit(true))
+                                                                                        .thenMany((Flux<Object>) invocationContext.proceed());
                                                                             } catch (Exception e) {
                                                                                 return Flux.error(e);
                                                                             }
@@ -315,7 +354,7 @@ public class R2dbcTransactionInterceptorProcessor {
         } catch (Exception exception) {
             if (invocationContext.getMethod().getReturnType().isAssignableFrom(Mono.class)) {
                 return Mono.error(exception);
-            } else if (invocationContext.getMethod().getReturnType().isAssignableFrom(Publisher.class)) {
+            } else if (invocationContext.getMethod().getReturnType().isAssignableFrom(Flux.class)) {
                 return Flux.error(exception);
             } else {
                 throw new RuntimeException(exception);
@@ -323,7 +362,7 @@ public class R2dbcTransactionInterceptorProcessor {
         }
     }
 
-    Publisher<Void> errorProcess(Connection connection, Throwable throwable, Class<? extends Exception>[] rollbackOn, Class<? extends Exception>[] dontRollbackOn) {
+    private Publisher<Void> errorProcess(Connection connection, Throwable throwable, Class<? extends Exception>[] rollbackOn, Class<? extends Exception>[] dontRollbackOn) {
         if (rollbackOn != null && rollbackOn.length > 0) {
             if (Arrays.stream(rollbackOn).anyMatch(exception -> exception.equals(throwable.getClass()))) {
                 return connection.rollbackTransaction();

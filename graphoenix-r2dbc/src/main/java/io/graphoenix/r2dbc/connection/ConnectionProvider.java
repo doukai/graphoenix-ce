@@ -6,6 +6,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import reactor.core.publisher.Mono;
 
+import static io.graphoenix.r2dbc.transaction.R2dbcTransactionInterceptor.inTransaction;
+
 @ApplicationScoped
 public class ConnectionProvider {
 
@@ -23,5 +25,11 @@ public class ConnectionProvider {
         return transactionScopeInstanceFactory
                 .get(Connection.class, connectionCreator::createConnection)
                 .switchIfEmpty(connectionCreator.createConnection());
+    }
+
+    public Mono<Void> close(Connection connection) {
+        return Mono.deferContextual(contextView -> Mono.just(inTransaction(contextView)))
+                .filter(inTransaction -> !inTransaction)
+                .flatMap(inTransaction -> Mono.from(connection.close()));
     }
 }

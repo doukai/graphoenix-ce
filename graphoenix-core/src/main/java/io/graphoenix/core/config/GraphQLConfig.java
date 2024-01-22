@@ -21,6 +21,9 @@ public class GraphQLConfig {
     @Optional
     private Boolean build = true;
 
+    @Optional
+    private String defaultOperationHandlerName;
+
     public String getGraphQL() {
         return graphQL;
     }
@@ -59,5 +62,13 @@ public class GraphQLConfig {
 
     public void setBuild(Boolean build) {
         this.build = build;
+    }
+
+    public String getDefaultOperationHandlerName() {
+        return defaultOperationHandlerName;
+    }
+
+    public void setDefaultOperationHandlerName(String defaultOperationHandlerName) {
+        this.defaultOperationHandlerName = defaultOperationHandlerName;
     }
 }

@@ -2,8 +2,8 @@ plugins {
     id 'java'
 }
 
-group 'io.graphoenix'
-version '0.0.1-SNAPSHOT'
+group = 'io.graphoenix'
+version = '0.0.1-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -12,27 +12,26 @@ repositories {
 }
 
 dependencies {
+    compile 'io.projectreactor.netty:reactor-netty-http:1.1.13'
+
     implementation project(':graphoenix-core')
     implementation project(':graphoenix-json')
-    implementation project(':graphoenix-sql')
     implementation 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
     implementation 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
     implementation 'io.nozdormu:nozdormu-interceptor:0.0.1-SNAPSHOT'
-    implementation 'io.r2dbc:r2dbc-spi:1.0.0.RELEASE'
-    implementation 'io.r2dbc:r2dbc-pool:1.0.1.RELEASE'
+    implementation 'io.projectreactor.netty:reactor-netty-core:1.0.24'
     implementation 'com.aventrix.jnanoid:jnanoid:2.0.0'
 
     annotationProcessor project(':graphoenix-core')
     annotationProcessor project(':graphoenix-json')
-    annotationProcessor project(':graphoenix-sql')
     annotationProcessor 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
     annotationProcessor 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
     annotationProcessor 'io.nozdormu:nozdormu-interceptor:0.0.1-SNAPSHOT'
-    annotationProcessor 'io.r2dbc:r2dbc-spi:1.0.0.RELEASE'
-    annotationProcessor 'io.r2dbc:r2dbc-pool:1.0.1.RELEASE'
+    annotationProcessor 'io.projectreactor.netty:reactor-netty-core:1.0.24'
+    annotationProcessor 'io.projectreactor.netty:reactor-netty-http:1.1.13'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
 test {

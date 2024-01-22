@@ -23,7 +23,7 @@ public final class TypeNameUtil {
                         .map(String::trim)
                         .reduce(new ArrayList<String>(),
                                 (argumentTypeNameList, argumentClassName) -> {
-                                    if (argumentTypeNameList.size() > 0) {
+                                    if (!argumentTypeNameList.isEmpty()) {
                                         int lastIndex = argumentTypeNameList.size() - 1;
                                         String lastArgumentClassName = argumentTypeNameList.get(lastIndex);
                                         if (lastArgumentClassName.contains("<") && !lastArgumentClassName.contains(">")) {
