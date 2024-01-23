@@ -28,7 +28,7 @@ public class SessionScopeInstanceFactory extends CacheScopeInstanceFactory {
 
     @Override
     protected Duration getTimeout() {
-        return Duration.ofMillis(httpServerConfig.getSessionTimeoutMillis());
+        return Duration.ofMillis(httpServerConfig.getSessionTimeOutMillis());
     }
 
     @Override

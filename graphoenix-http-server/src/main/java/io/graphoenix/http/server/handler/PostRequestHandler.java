@@ -1,0 +1,132 @@
+package io.graphoenix.http.server.handler;
+
+import io.graphoenix.core.dto.GraphQLRequest;
+import io.graphoenix.http.server.codec.MimeType;
+import io.graphoenix.http.server.context.RequestScopeInstanceFactory;
+import io.graphoenix.spi.graphql.Document;
+import io.graphoenix.spi.graphql.operation.Operation;
+import io.graphoenix.spi.handler.OperationHandler;
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.QueryStringDecoder;
+import io.nozdormu.spi.context.PublisherBeanContext;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.json.JsonValue;
+import org.reactivestreams.Publisher;
+import org.tinylog.Logger;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.netty.http.server.HttpServerRequest;
+import reactor.netty.http.server.HttpServerResponse;
+import reactor.util.context.Context;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
+
+import static io.graphoenix.http.server.context.RequestScopeInstanceFactory.REQUEST_ID;
+import static io.graphoenix.http.server.utils.ResponseUtil.error;
+import static io.netty.handler.codec.http.HttpHeaderNames.ACCEPT;
+import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
+
+@ApplicationScoped
+public class PostRequestHandler extends BaseHandler {
+
+    private final OperationHandler operationHandler;
+    private final RequestScopeInstanceFactory requestScopeInstanceFactory;
+
+    @Inject
+    public PostRequestHandler(OperationHandler operationHandler, RequestScopeInstanceFactory requestScopeInstanceFactory) {
+        this.operationHandler = operationHandler;
+        this.requestScopeInstanceFactory = requestScopeInstanceFactory;
+    }
+
+    public Publisher<Void> handle(HttpServerRequest request, HttpServerResponse response) {
+        String requestId = request.requestId();
+
+        String accept = request.requestHeaders().get(ACCEPT);
+        String contentType = request.requestHeaders().get(CONTENT_TYPE);
+        QueryStringDecoder decoder = new QueryStringDecoder(request.uri());
+
+        if (contentType.startsWith(MimeType.Application.JSON)) {
+            return response
+                    .addHeader(CONTENT_TYPE, MimeType.Application.JSON)
+                    .sendString(
+                            requestScopeInstanceFactory.compute(requestId, HttpServerRequest.class, request)
+                                    .then(requestScopeInstanceFactory.compute(requestId, HttpServerResponse.class, response))
+                                    .then(
+                                            request.receive().aggregate().asString()
+                                                    .map(GraphQLRequest::fromJson)
+                                                    .flatMap(graphQLRequest ->
+                                                            Mono.just(new Document(graphQLRequest.getQuery()))
+                                                                    .flatMap(document -> PublisherBeanContext.compute(Document.class, document))
+                                                                    .flatMap(document -> requestScopeInstanceFactory.compute(requestId, Operation.class, document.getOperationOrError()))
+                                                                    .flatMap(operation -> Mono.from(operationHandler.handle(operation, graphQLRequest.getVariables())))
+                                                    )
+                                                    .map(JsonValue::toString)
+                                                    .doOnSuccess(jsonString -> response.status(HttpResponseStatus.OK))
+                                                    .onErrorResume(throwable -> this.errorHandler(throwable, response))
+                                                    .contextWrite(Context.of(REQUEST_ID, requestId))
+                                    )
+                    );
+        } else if (contentType.startsWith(MimeType.Application.GRAPHQL)) {
+            return response
+                    .addHeader(CONTENT_TYPE, MimeType.Application.JSON)
+                    .sendString(
+                            requestScopeInstanceFactory.compute(requestId, HttpServerRequest.class, request)
+                                    .then(requestScopeInstanceFactory.compute(requestId, HttpServerResponse.class, response))
+                                    .then(
+                                            request.receive().aggregate().asString()
+                                                    .map(GraphQLRequest::new)
+                                                    .flatMap(graphQLRequest ->
+                                                            Mono.just(new Document(graphQLRequest.getQuery()))
+                                                                    .flatMap(document -> PublisherBeanContext.compute(Document.class, document))
+                                                                    .flatMap(document -> requestScopeInstanceFactory.compute(requestId, Operation.class, document.getOperationOrError()))
+                                                                    .flatMap(operation -> Mono.from(operationHandler.handle(operation, graphQLRequest.getVariables())))
+                                                    )
+                                                    .map(JsonValue::toString)
+                                                    .doOnSuccess(jsonString -> response.status(HttpResponseStatus.OK))
+                                                    .onErrorResume(throwable -> this.errorHandler(throwable, response))
+                                                    .contextWrite(Context.of(REQUEST_ID, requestId))
+                                    )
+                    );
+        } else if (contentType.startsWith(MimeType.Text.PLAIN) && accept.startsWith(MimeType.Text.EVENT_STREAM)) {
+            String token = Optional.ofNullable(request.requestHeaders().get("X-GraphQL-Event-Stream-Token")).orElseGet(() -> decoder.parameters().containsKey("token") ? decoder.parameters().get("token").get(0) : null);
+            String operationId = decoder.parameters().containsKey("operationId") ? decoder.parameters().get("operationId").get(0) : null;
+            return response.sse()
+                    .addHeader(HttpHeaderNames.CACHE_CONTROL, "no-cache")
+                    .addHeader(HttpHeaderNames.CONNECTION, "keep-alive")
+                    .status(HttpResponseStatus.ACCEPTED)
+                    .send(
+                            requestScopeInstanceFactory.compute(requestId, HttpServerRequest.class, request)
+                                    .then(requestScopeInstanceFactory.compute(requestId, HttpServerResponse.class, response))
+                                    .thenMany(
+                                            request.receive().aggregate().asString()
+                                                    .map(GraphQLRequest::fromJson)
+                                                    .flatMapMany(graphQLRequest ->
+                                                            Mono.just(new Document(graphQLRequest.getQuery()))
+                                                                    .flatMap(document -> PublisherBeanContext.compute(Document.class, document))
+                                                                    .flatMap(document -> requestScopeInstanceFactory.compute(requestId, Operation.class, document.getOperationOrError()))
+                                                                    .flatMapMany(operation -> Flux.from(operationHandler.handle(operation, graphQLRequest.getVariables(), token, operationId)))
+                                                    )
+                                                    .map(JsonValue::toString)
+                                                    .onErrorResume(throwable -> this.errorSSEHandler(throwable, response, operationId))
+                                                    .map(eventString -> ByteBufAllocator.DEFAULT.buffer().writeBytes(eventString.getBytes(StandardCharsets.UTF_8)))
+                                                    .contextWrite(Context.of(REQUEST_ID, requestId))
+                                    ),
+                            byteBuf -> true
+                    );
+        } else {
+            IllegalArgumentException illegalArgumentException = new IllegalArgumentException("unsupported content-type: " + contentType);
+            Logger.error(illegalArgumentException);
+            return response
+                    .addHeader(CONTENT_TYPE, MimeType.Application.JSON)
+                    .status(HttpResponseStatus.BAD_REQUEST)
+                    .sendString(
+                            Mono.just(error(illegalArgumentException))
+                                    .contextWrite(Context.of(REQUEST_ID, requestId))
+                    );
+        }
+    }
+}
