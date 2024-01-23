@@ -4,9 +4,9 @@ import io.graphoenix.r2dbc.config.R2DBCConfig;
 import io.r2dbc.spi.ConnectionFactories;
 import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.ConnectionFactoryOptions;
+import io.r2dbc.spi.Option;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.mariadb.r2dbc.MariadbConnectionFactoryProvider;
 
 @ApplicationScoped
 public class ConnectionFactoryCreator {
@@ -34,7 +34,7 @@ public class ConnectionFactoryCreator {
                     .option(ConnectionFactoryOptions.CONNECT_TIMEOUT, r2DBCConfig.getConnectTimeout())
                     .option(ConnectionFactoryOptions.LOCK_WAIT_TIMEOUT, r2DBCConfig.getLockWaitTimeout())
                     .option(ConnectionFactoryOptions.STATEMENT_TIMEOUT, r2DBCConfig.getStatementTimeout())
-                    .option(MariadbConnectionFactoryProvider.ALLOW_MULTI_QUERIES, r2DBCConfig.getAllowMultiQueries())
+                    .option(Option.valueOf("allowMultiQueries"), r2DBCConfig.getAllowMultiQueries())
                     .build();
 
             return ConnectionFactories.get(options);

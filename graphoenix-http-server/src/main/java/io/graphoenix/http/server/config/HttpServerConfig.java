@@ -28,10 +28,10 @@ public class HttpServerConfig {
     private Integer soBackLog = 128;
 
     @Optional
-    private Integer connectTimeOutMillis;
+    private Integer connectTimeOutMillis = 30 * 1000;
 
     @Optional
-    private Integer sessionTimeOutMillis;
+    private Integer sessionTimeOutMillis = 30 * 60 * 1000;
 
     public String getGraphqlContextPath() {
         if (graphqlContextPath.startsWith("/")) {

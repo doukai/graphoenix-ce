@@ -19,7 +19,6 @@ public class ConnectionPoolCreator {
     }
 
     private ConnectionPool createConnectionPool(R2DBCConfig r2DBCConfig) {
-
         ConnectionPoolConfiguration poolConfiguration = ConnectionPoolConfiguration
                 .builder(connectionFactoryCreator.createFactory())
                 .acquireRetry(r2DBCConfig.getAcquireRetry())

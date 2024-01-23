@@ -6,10 +6,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import reactor.core.publisher.Mono;
 
-import static io.graphoenix.r2dbc.transaction.R2dbcTransactionInterceptor.inTransaction;
-
 @ApplicationScoped
 public class ConnectionProvider {
+    public static final String IN_TRANSACTION = "inTransaction";
 
     private final ConnectionCreator connectionCreator;
 
@@ -27,8 +26,15 @@ public class ConnectionProvider {
                 .switchIfEmpty(connectionCreator.createConnection());
     }
 
+    public Mono<Boolean> inTransaction() {
+        return Mono.deferContextual(contextView ->
+                Mono.justOrEmpty(contextView.getOrEmpty(IN_TRANSACTION))
+                        .map(inTransaction -> (Boolean) inTransaction)
+        );
+    }
+
     public Mono<Void> close(Connection connection) {
-        return Mono.deferContextual(contextView -> Mono.just(inTransaction(contextView)))
+        return inTransaction()
                 .filter(inTransaction -> !inTransaction)
                 .flatMap(inTransaction -> Mono.from(connection.close()));
     }

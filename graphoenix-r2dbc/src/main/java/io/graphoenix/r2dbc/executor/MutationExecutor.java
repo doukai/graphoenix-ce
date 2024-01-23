@@ -7,7 +7,6 @@ import io.r2dbc.spi.Batch;
 import io.r2dbc.spi.Statement;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 import org.tinylog.Logger;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -28,9 +27,10 @@ public class MutationExecutor {
     }
 
     public Mono<String> executeMutationsInBatch(Stream<String> sqlStream) {
-        return connectionProvider.get()
-                .flatMap(connection -> Mono.from(connection.setAutoCommit(true)).thenReturn(connection))
-                .flatMapMany(connection -> {
+        return Flux
+                .usingWhen(
+                        connectionProvider.get(),
+                        connection -> {
                             Batch batch = connection.createBatch();
                             sqlStream.forEach(sql -> {
                                         Logger.info("execute statement:\r\n{}", sql);
@@ -38,7 +38,8 @@ public class MutationExecutor {
                                     }
                             );
                             return Flux.from(batch.execute());
-                        }
+                        },
+                        connectionProvider::close
                 )
                 .onErrorResume(Mono::error)
                 .last()
@@ -47,17 +48,18 @@ public class MutationExecutor {
 
     public Flux<Integer> executeMutationsInBatchByGroup(Stream<String> sqlStream, int itemCount) {
         List<List<String>> sqlListGroup = Lists.partition(sqlStream.collect(Collectors.toList()), itemCount);
-        return connectionProvider.get()
-                .flatMap(connection -> Mono.from(connection.setAutoCommit(true)).thenReturn(connection))
-                .flatMapMany(connection ->
-                        Flux.fromIterable(sqlListGroup)
+        return Flux
+                .usingWhen(
+                        connectionProvider.get(),
+                        connection -> Flux.fromIterable(sqlListGroup)
                                 .flatMap(sqlList -> {
                                             Batch batch = connection.createBatch();
                                             Logger.info("execute statement count:\r\n{}", sqlList.size());
                                             sqlList.forEach(batch::add);
                                             return Flux.from(batch.execute()).then().thenReturn(sqlList.size());
                                         }
-                                )
+                                ),
+                        connectionProvider::close
                 );
     }
 
@@ -65,11 +67,11 @@ public class MutationExecutor {
         return executeMutations(sqlStream, null);
     }
 
-    @Transactional
     public Mono<String> executeMutations(Stream<String> sqlStream, Map<String, Object> parameters) {
-        return connectionProvider.get()
-                .flatMap(connection ->
-                        Flux.fromStream(sqlStream)
+        return Mono
+                .usingWhen(
+                        connectionProvider.get(),
+                        connection -> Flux.fromStream(sqlStream)
                                 .collectList()
                                 .flatMap(sqlList -> {
                                             if (sqlList.isEmpty()) {
@@ -92,7 +94,8 @@ public class MutationExecutor {
                                                     .flatMap(ResultUtil::getUpdateCountFromResult)
                                                     .then(Mono.from(queryStatement.execute()));
                                         }
-                                )
+                                ),
+                        connectionProvider::close
                 )
                 .flatMap(ResultUtil::getJsonStringFromResult);
     }
@@ -101,10 +104,11 @@ public class MutationExecutor {
         return executeMutations(sql, null);
     }
 
-    @Transactional
     public Mono<String> executeMutations(String sql, Map<String, Object> parameters) {
-        return connectionProvider.get()
-                .flatMap(connection -> {
+        return Mono
+                .usingWhen(
+                        connectionProvider.get(),
+                        connection -> {
                             Logger.info("execute statement:\r\n{}", sql);
                             Logger.info("sql parameters:\r\n{}", parameters);
                             Statement statement = connection.createStatement(sql);
@@ -112,7 +116,8 @@ public class MutationExecutor {
                                 parameters.forEach(statement::bind);
                             }
                             return Mono.from(statement.execute());
-                        }
+                        },
+                        connectionProvider::close
                 )
                 .flatMap(ResultUtil::getJsonStringFromResult);
     }
