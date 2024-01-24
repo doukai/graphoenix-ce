@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+@ApplicationScoped
 @Initialized(ApplicationScoped.class)
 @Priority(0)
 public class BannerScopeEvent implements ScopeEvent {

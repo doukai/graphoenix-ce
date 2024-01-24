@@ -28,6 +28,9 @@ public class R2DBCConfig {
     private String password;
 
     @Optional
+    private Boolean createTables = true;
+
+    @Optional
     private Boolean ssl;
 
     @Optional
@@ -137,6 +140,14 @@ public class R2DBCConfig {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Boolean getCreateTables() {
+        return createTables;
+    }
+
+    public void setCreateTables(Boolean createTables) {
+        this.createTables = createTables;
     }
 
     public Boolean getSsl() {
