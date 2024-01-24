@@ -6,6 +6,8 @@ import io.r2dbc.pool.ConnectionPoolConfiguration;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.time.Duration;
+
 @ApplicationScoped
 public class ConnectionPoolCreator {
 
@@ -22,15 +24,15 @@ public class ConnectionPoolCreator {
         ConnectionPoolConfiguration poolConfiguration = ConnectionPoolConfiguration
                 .builder(connectionFactoryCreator.createFactory())
                 .acquireRetry(r2DBCConfig.getAcquireRetry())
-                .backgroundEvictionInterval(r2DBCConfig.getBackgroundEvictionInterval())
+                .backgroundEvictionInterval(Duration.ofMillis(r2DBCConfig.getBackgroundEvictionIntervalMillis()))
                 .initialSize(r2DBCConfig.getInitialSize())
                 .maxSize(r2DBCConfig.getMaxSize())
                 .minIdle(r2DBCConfig.getMinIdle())
-                .maxAcquireTime(r2DBCConfig.getMaxAcquireTime())
-                .maxCreateConnectionTime(r2DBCConfig.getMaxCreateConnectionTime())
-                .maxIdleTime(r2DBCConfig.getMaxIdleTime())
-                .maxLifeTime(r2DBCConfig.getMaxLifeTime())
-                .maxLifeTime(r2DBCConfig.getMaxLifeTime())
+                .maxAcquireTime(Duration.ofMillis(r2DBCConfig.getMaxAcquireTimeMillis()))
+                .maxCreateConnectionTime(Duration.ofMillis(r2DBCConfig.getMaxCreateConnectionTimeMillis()))
+                .maxIdleTime(Duration.ofMillis(r2DBCConfig.getMaxIdleTimeMillis()))
+                .maxLifeTime(Duration.ofMillis(r2DBCConfig.getMaxLifeTimeMillis()))
+                .maxLifeTime(Duration.ofMillis(r2DBCConfig.getMaxLifeTimeMillis()))
                 .build();
 
         return new ConnectionPool(poolConfiguration);

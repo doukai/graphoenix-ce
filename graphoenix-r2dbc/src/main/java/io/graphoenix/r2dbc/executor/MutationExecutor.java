@@ -1,9 +1,11 @@
 package io.graphoenix.r2dbc.executor;
 
 import com.google.common.collect.Lists;
+import io.graphoenix.r2dbc.connection.ConnectionCreator;
 import io.graphoenix.r2dbc.connection.ConnectionProvider;
 import io.graphoenix.r2dbc.utils.ResultUtil;
 import io.r2dbc.spi.Batch;
+import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.Statement;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -21,15 +23,18 @@ public class MutationExecutor {
 
     private final ConnectionProvider connectionProvider;
 
+    private final ConnectionCreator connectionCreator;
+
     @Inject
-    public MutationExecutor(ConnectionProvider connectionProvider) {
+    public MutationExecutor(ConnectionProvider connectionProvider, ConnectionCreator connectionCreator) {
         this.connectionProvider = connectionProvider;
+        this.connectionCreator = connectionCreator;
     }
 
     public Mono<String> executeMutationsInBatch(Stream<String> sqlStream) {
         return Flux
                 .usingWhen(
-                        connectionProvider.get(),
+                        connectionCreator.createConnection(),
                         connection -> {
                             Batch batch = connection.createBatch();
                             sqlStream.forEach(sql -> {
@@ -39,7 +44,7 @@ public class MutationExecutor {
                             );
                             return Flux.from(batch.execute());
                         },
-                        connectionProvider::close
+                        Connection::close
                 )
                 .onErrorResume(Mono::error)
                 .last()
@@ -50,7 +55,7 @@ public class MutationExecutor {
         List<List<String>> sqlListGroup = Lists.partition(sqlStream.collect(Collectors.toList()), itemCount);
         return Flux
                 .usingWhen(
-                        connectionProvider.get(),
+                        connectionCreator.createConnection(),
                         connection -> Flux.fromIterable(sqlListGroup)
                                 .flatMap(sqlList -> {
                                             Batch batch = connection.createBatch();
@@ -59,7 +64,7 @@ public class MutationExecutor {
                                             return Flux.from(batch.execute()).then().thenReturn(sqlList.size());
                                         }
                                 ),
-                        connectionProvider::close
+                        Connection::close
                 );
     }
 

@@ -3,8 +3,6 @@ package io.graphoenix.r2dbc.config;
 import com.typesafe.config.Optional;
 import org.eclipse.microprofile.config.inject.ConfigProperties;
 
-import java.time.Duration;
-
 @ConfigProperties(prefix = "r2dbc")
 public class R2DBCConfig {
 
@@ -33,13 +31,13 @@ public class R2DBCConfig {
     private Boolean ssl;
 
     @Optional
-    private Duration connectTimeout;
+    private Integer connectTimeoutMillis = 10 * 1000;
 
     @Optional
-    private Duration lockWaitTimeout;
+    private Integer lockWaitTimeoutMillis = -1;
 
     @Optional
-    private Duration statementTimeout;
+    private Integer statementTimeoutMillis = -1;
 
     @Optional
     private Boolean allowMultiQueries = true;
@@ -51,7 +49,7 @@ public class R2DBCConfig {
     private Integer acquireRetry;
 
     @Optional
-    private Duration backgroundEvictionInterval;
+    private Integer backgroundEvictionIntervalMillis = -1;
 
     @Optional
     private Integer initialSize;
@@ -63,19 +61,19 @@ public class R2DBCConfig {
     private Integer minIdle;
 
     @Optional
-    private Duration maxAcquireTime;
+    private Integer maxAcquireTimeMillis = -1;
 
     @Optional
-    private Duration maxCreateConnectionTime;
+    private Integer maxCreateConnectionTimeMillis = -1;
 
     @Optional
-    private Duration maxIdleTime;
+    private Integer maxIdleTimeMillis = -1;
 
     @Optional
-    private Duration maxLifeTime;
+    private Integer maxLifeTimeMillis = -1;
 
     @Optional
-    private Duration maxValidationTime;
+    private Integer maxValidationTimeMillis = -1;
 
     public String getUrl() {
         return url;
@@ -149,28 +147,28 @@ public class R2DBCConfig {
         this.ssl = ssl;
     }
 
-    public Duration getConnectTimeout() {
-        return connectTimeout;
+    public Integer getConnectTimeoutMillis() {
+        return connectTimeoutMillis;
     }
 
-    public void setConnectTimeout(Duration connectTimeout) {
-        this.connectTimeout = connectTimeout;
+    public void setConnectTimeoutMillis(Integer connectTimeoutMillis) {
+        this.connectTimeoutMillis = connectTimeoutMillis;
     }
 
-    public Duration getLockWaitTimeout() {
-        return lockWaitTimeout;
+    public Integer getLockWaitTimeoutMillis() {
+        return lockWaitTimeoutMillis;
     }
 
-    public void setLockWaitTimeout(Duration lockWaitTimeout) {
-        this.lockWaitTimeout = lockWaitTimeout;
+    public void setLockWaitTimeoutMillis(Integer lockWaitTimeoutMillis) {
+        this.lockWaitTimeoutMillis = lockWaitTimeoutMillis;
     }
 
-    public Duration getStatementTimeout() {
-        return statementTimeout;
+    public Integer getStatementTimeoutMillis() {
+        return statementTimeoutMillis;
     }
 
-    public void setStatementTimeout(Duration statementTimeout) {
-        this.statementTimeout = statementTimeout;
+    public void setStatementTimeoutMillis(Integer statementTimeoutMillis) {
+        this.statementTimeoutMillis = statementTimeoutMillis;
     }
 
     public Boolean getAllowMultiQueries() {
@@ -197,12 +195,12 @@ public class R2DBCConfig {
         this.acquireRetry = acquireRetry;
     }
 
-    public Duration getBackgroundEvictionInterval() {
-        return backgroundEvictionInterval;
+    public Integer getBackgroundEvictionIntervalMillis() {
+        return backgroundEvictionIntervalMillis;
     }
 
-    public void setBackgroundEvictionInterval(Duration backgroundEvictionInterval) {
-        this.backgroundEvictionInterval = backgroundEvictionInterval;
+    public void setBackgroundEvictionIntervalMillis(Integer backgroundEvictionIntervalMillis) {
+        this.backgroundEvictionIntervalMillis = backgroundEvictionIntervalMillis;
     }
 
     public Integer getInitialSize() {
@@ -229,43 +227,43 @@ public class R2DBCConfig {
         this.minIdle = minIdle;
     }
 
-    public Duration getMaxAcquireTime() {
-        return maxAcquireTime;
+    public Integer getMaxAcquireTimeMillis() {
+        return maxAcquireTimeMillis;
     }
 
-    public void setMaxAcquireTime(Duration maxAcquireTime) {
-        this.maxAcquireTime = maxAcquireTime;
+    public void setMaxAcquireTimeMillis(Integer maxAcquireTimeMillis) {
+        this.maxAcquireTimeMillis = maxAcquireTimeMillis;
     }
 
-    public Duration getMaxCreateConnectionTime() {
-        return maxCreateConnectionTime;
+    public Integer getMaxCreateConnectionTimeMillis() {
+        return maxCreateConnectionTimeMillis;
     }
 
-    public void setMaxCreateConnectionTime(Duration maxCreateConnectionTime) {
-        this.maxCreateConnectionTime = maxCreateConnectionTime;
+    public void setMaxCreateConnectionTimeMillis(Integer maxCreateConnectionTimeMillis) {
+        this.maxCreateConnectionTimeMillis = maxCreateConnectionTimeMillis;
     }
 
-    public Duration getMaxIdleTime() {
-        return maxIdleTime;
+    public Integer getMaxIdleTimeMillis() {
+        return maxIdleTimeMillis;
     }
 
-    public void setMaxIdleTime(Duration maxIdleTime) {
-        this.maxIdleTime = maxIdleTime;
+    public void setMaxIdleTimeMillis(Integer maxIdleTimeMillis) {
+        this.maxIdleTimeMillis = maxIdleTimeMillis;
     }
 
-    public Duration getMaxLifeTime() {
-        return maxLifeTime;
+    public Integer getMaxLifeTimeMillis() {
+        return maxLifeTimeMillis;
     }
 
-    public void setMaxLifeTime(Duration maxLifeTime) {
-        this.maxLifeTime = maxLifeTime;
+    public void setMaxLifeTimeMillis(Integer maxLifeTimeMillis) {
+        this.maxLifeTimeMillis = maxLifeTimeMillis;
     }
 
-    public Duration getMaxValidationTime() {
-        return maxValidationTime;
+    public Integer getMaxValidationTimeMillis() {
+        return maxValidationTimeMillis;
     }
 
-    public void setMaxValidationTime(Duration maxValidationTime) {
-        this.maxValidationTime = maxValidationTime;
+    public void setMaxValidationTimeMillis(Integer maxValidationTimeMillis) {
+        this.maxValidationTimeMillis = maxValidationTimeMillis;
     }
 }

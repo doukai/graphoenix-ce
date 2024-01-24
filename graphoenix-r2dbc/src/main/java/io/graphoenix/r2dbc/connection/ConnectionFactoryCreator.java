@@ -8,6 +8,8 @@ import io.r2dbc.spi.Option;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.time.Duration;
+
 @ApplicationScoped
 public class ConnectionFactoryCreator {
 
@@ -31,9 +33,9 @@ public class ConnectionFactoryCreator {
                     .option(ConnectionFactoryOptions.USER, r2DBCConfig.getUser())
                     .option(ConnectionFactoryOptions.PASSWORD, r2DBCConfig.getPassword())
                     .option(ConnectionFactoryOptions.SSL, r2DBCConfig.getSsl())
-                    .option(ConnectionFactoryOptions.CONNECT_TIMEOUT, r2DBCConfig.getConnectTimeout())
-                    .option(ConnectionFactoryOptions.LOCK_WAIT_TIMEOUT, r2DBCConfig.getLockWaitTimeout())
-                    .option(ConnectionFactoryOptions.STATEMENT_TIMEOUT, r2DBCConfig.getStatementTimeout())
+                    .option(ConnectionFactoryOptions.CONNECT_TIMEOUT, Duration.ofMillis(r2DBCConfig.getConnectTimeoutMillis()))
+                    .option(ConnectionFactoryOptions.LOCK_WAIT_TIMEOUT, Duration.ofMillis(r2DBCConfig.getLockWaitTimeoutMillis()))
+                    .option(ConnectionFactoryOptions.STATEMENT_TIMEOUT, Duration.ofMillis(r2DBCConfig.getStatementTimeoutMillis()))
                     .option(Option.valueOf("allowMultiQueries"), r2DBCConfig.getAllowMultiQueries())
                     .build();
 

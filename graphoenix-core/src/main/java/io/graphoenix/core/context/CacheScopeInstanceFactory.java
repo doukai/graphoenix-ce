@@ -16,14 +16,33 @@ public abstract class CacheScopeInstanceFactory extends ScopeInstanceFactory {
     private AsyncLoadingCache<String, ScopeInstances> buildCache() {
         return Caffeine.newBuilder()
                 .expireAfterAccess(getTimeout())
-                .evictionListener((key, value, cause) -> Logger.info("{} id: {} eviction", getCacheId(), key))
-                .removalListener((key, value, cause) -> Logger.info("{} id: {} removed", getCacheId(), key))
-                .buildAsync(key -> new ScopeInstances());
+                .evictionListener((key, value, cause) -> {
+                            Logger.info("{} key: {} eviction", getCacheId(), key);
+                            onEviction(key, value);
+                        }
+                )
+                .removalListener((key, value, cause) -> {
+                            Logger.info("{} key: {} removed", getCacheId(), key);
+                            onRemoval(key, value);
+                        }
+                )
+                .buildAsync(key -> {
+                            Logger.info("{} key: {} build", getCacheId(), key);
+                            onBuild(key);
+                            return new ScopeInstances();
+                        }
+                );
     }
 
     protected abstract Duration getTimeout();
 
     protected abstract String getCacheId();
+
+    protected abstract void onBuild(String key);
+
+    protected abstract void onEviction(Object key, Object value);
+
+    protected abstract void onRemoval(Object key, Object value);
 
     @Override
     public Mono<ScopeInstances> getScopeInstances() {

@@ -38,3 +38,11 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+jar {
+    manifest {
+        attributes(
+                "Graphoenix-Database": "R2DBC"
+        )
+    }
+}

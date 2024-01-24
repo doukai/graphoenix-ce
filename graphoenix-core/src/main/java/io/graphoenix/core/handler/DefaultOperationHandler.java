@@ -10,6 +10,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Default;
 import jakarta.inject.Provider;
 import jakarta.json.JsonValue;
+import jakarta.transaction.Transactional;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -120,6 +121,7 @@ public class DefaultOperationHandler implements OperationHandler {
                 );
     }
 
+    @Transactional
     public Mono<JsonValue> mutation(Operation operation, Map<String, JsonValue> variables) {
         return Flux.fromIterable(operationBeforeHandlerProviderList)
                 .reduce(
