@@ -21,7 +21,6 @@ public class PackageManager {
     @Inject
     public PackageManager(PackageConfig packageConfig) {
         this.packageConfig = packageConfig;
-        getDefaultPackageName().ifPresent(packageConfig::setPackageName);
     }
 
     public Optional<String> getDefaultPackageName() {
