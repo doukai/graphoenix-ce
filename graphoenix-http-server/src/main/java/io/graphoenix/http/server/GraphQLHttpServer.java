@@ -4,7 +4,7 @@ import io.graphoenix.http.server.config.HttpServerConfig;
 import io.graphoenix.http.server.context.RequestScopeInstanceFactory;
 import io.graphoenix.http.server.handler.GetRequestHandler;
 import io.graphoenix.http.server.handler.PostRequestHandler;
-import io.graphoenix.spi.handler.Runner;
+import io.graphoenix.spi.bootstrap.Runner;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpMethod;
