@@ -35,6 +35,9 @@ dependencies {
     implementation 'com.google.guava:guava:31.1-jre'
     implementation 'com.aventrix.jnanoid:jnanoid:2.0.0'
     implementation 'com.github.ben-manes.caffeine:caffeine:3.1.1'
+    implementation 'org.tinylog:tinylog-impl:2.4.1'
+    implementation 'org.tinylog:slf4j-tinylog:2.4.1'
+    implementation 'org.tinylog:jcl-tinylog:2.4.1'
 
     annotationProcessor project(':graphoenix-spi')
     annotationProcessor 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'

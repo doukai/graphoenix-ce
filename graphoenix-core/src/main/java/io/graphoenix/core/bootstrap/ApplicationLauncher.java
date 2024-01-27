@@ -24,17 +24,17 @@ public class ApplicationLauncher implements Launcher {
 
     private final PackageManager packageManager;
     private final PackageConfig packageConfig;
-    private final List<Runnable> serverList;
+    private final List<Runner> runnerList;
 
     @Inject
     public ApplicationLauncher(PackageManager packageManager, PackageConfig packageConfig) {
         this.packageManager = packageManager;
         this.packageConfig = packageConfig;
-        this.serverList = new ArrayList<>();
+        this.runnerList = new ArrayList<>();
     }
 
     public ApplicationLauncher addServers(Runner... servers) {
-        this.serverList.addAll(List.of(servers));
+        this.runnerList.addAll(List.of(servers));
         return this;
     }
 
@@ -52,12 +52,14 @@ public class ApplicationLauncher implements Launcher {
             packageManager.getDefaultPackageName().ifPresent(packageConfig::setPackageName);
         }
 
-        ExecutorService executorService = Executors.newCachedThreadPool();
-        CountDownLatch latch = new CountDownLatch(1);
-        if (serverList.isEmpty()) {
-            serverList.addAll(BeanContext.getMap(Runner.class).values());
-        } else {
-            for (Runnable server : serverList) {
+        if (runnerList.isEmpty()) {
+            runnerList.addAll(BeanContext.getMap(Runner.class).values());
+        }
+
+        if (!runnerList.isEmpty()) {
+            ExecutorService executorService = Executors.newCachedThreadPool();
+            CountDownLatch latch = new CountDownLatch(1);
+            for (Runner runner : runnerList) {
                 executorService.execute(
                         new Thread(() -> {
                             try {
@@ -65,18 +67,18 @@ public class ApplicationLauncher implements Launcher {
                             } catch (InterruptedException e) {
                                 Logger.error(e);
                             }
-                            server.run();
+                            runner.run();
                         })
                 );
             }
+
+            ScopeEventResolver.initialized(Map.of("args", args), ApplicationScoped.class)
+                    .then(Mono.fromRunnable(latch::countDown))
+                    .doOnTerminate(() -> ScopeEventResolver.beforeDestroyed(ApplicationScoped.class).block())
+                    .doAfterTerminate(() -> ScopeEventResolver.destroyed(ApplicationScoped.class).block())
+                    .block();
+
+            executorService.shutdown();
         }
-
-        ScopeEventResolver.initialized(Map.of("args", args), ApplicationScoped.class)
-                .then(Mono.fromRunnable(latch::countDown))
-                .doOnTerminate(() -> ScopeEventResolver.beforeDestroyed(ApplicationScoped.class).block())
-                .doAfterTerminate(() -> ScopeEventResolver.destroyed(ApplicationScoped.class).block())
-                .block();
-
-        executorService.shutdown();
     }
 }

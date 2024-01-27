@@ -7,20 +7,22 @@ import io.nozdormu.spi.context.BeanContext;
 public enum App {
     APP;
 
+    private final Launcher launcher = BeanContext.get(Launcher.class);
+
     public Launcher addServers(Runner... servers) {
-        return BeanContext.get(Launcher.class).addServers(servers);
+        return launcher.addServers(servers);
     }
 
     public Launcher with(Runner... servers) {
-        return BeanContext.get(Launcher.class).with(servers);
+        return launcher.with(servers);
     }
 
     @SafeVarargs
     public final Launcher with(Class<? extends Runner>... classes) {
-        return BeanContext.get(Launcher.class).with(classes);
+        return launcher.with(classes);
     }
 
     public void run(String... args) {
-        BeanContext.get(Launcher.class).run(args);
+        launcher.run(args);
     }
 }

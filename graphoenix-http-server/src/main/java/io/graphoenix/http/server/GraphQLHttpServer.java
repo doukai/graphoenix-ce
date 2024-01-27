@@ -15,6 +15,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import reactor.netty.ConnectionObserver;
+import reactor.netty.DisposableServer;
 import reactor.netty.http.HttpOperations;
 import reactor.netty.http.server.HttpServer;
 
@@ -56,7 +57,7 @@ public class GraphQLHttpServer implements Runner {
                 .allowedRequestMethods(HttpMethod.POST)
                 .build();
 
-        HttpServer.create()
+        DisposableServer server = HttpServer.create()
                 .option(ChannelOption.SO_BACKLOG, httpServerConfig.getSoBackLog())
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, httpServerConfig.getConnectTimeOutMillis())
                 .childOption(ChannelOption.TCP_NODELAY, httpServerConfig.getTcpNoDelay())
@@ -75,8 +76,8 @@ public class GraphQLHttpServer implements Runner {
                         }
                 )
                 .port(httpServerConfig.getPort())
-                .bindNow()
-                .onDispose()
-                .block();
+                .bindNow();
+
+        server.onDispose().block();
     }
 }

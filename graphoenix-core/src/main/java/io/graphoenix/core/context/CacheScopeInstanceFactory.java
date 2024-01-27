@@ -11,11 +11,15 @@ import java.time.Duration;
 
 public abstract class CacheScopeInstanceFactory extends ScopeInstanceFactory {
 
-    private final AsyncLoadingCache<String, ScopeInstances> CACHE = buildCache();
+    private final AsyncLoadingCache<String, ScopeInstances> CACHE;
 
-    private AsyncLoadingCache<String, ScopeInstances> buildCache() {
+    public CacheScopeInstanceFactory(Duration timeout) {
+        CACHE = buildCache(timeout);
+    }
+
+    private AsyncLoadingCache<String, ScopeInstances> buildCache(Duration timeout) {
         return Caffeine.newBuilder()
-                .expireAfterAccess(getTimeout())
+                .expireAfterAccess(timeout)
                 .evictionListener((key, value, cause) -> {
                             Logger.info("{} key: {} eviction", getCacheId(), key);
                             onEviction(key, value);
@@ -34,8 +38,6 @@ public abstract class CacheScopeInstanceFactory extends ScopeInstanceFactory {
                 );
     }
 
-    protected abstract Duration getTimeout();
-
     protected abstract String getCacheId();
 
     protected abstract void onBuild(String key);
@@ -50,6 +52,13 @@ public abstract class CacheScopeInstanceFactory extends ScopeInstanceFactory {
                 Mono.justOrEmpty(contextView.getOrEmpty(getCacheId()))
                         .flatMap(id -> Mono.fromFuture(CACHE.get((String) id)))
         );
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T, E extends T> Mono<T> compute(String id, Class<T> beanClass, String name, E instance) {
+        return Mono.fromFuture(CACHE.get(id))
+                .map(scopeInstances -> (T) scopeInstances.get(beanClass).compute(name, (k, v) -> instance));
     }
 
     public void invalidate(String id) {

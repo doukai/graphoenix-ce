@@ -1,5 +1,6 @@
 package io.graphoenix.showcase.user;
 
+import io.graphoenix.http.server.GraphQLHttpServer;
 import io.graphoenix.spi.annotation.Application;
 
 import static io.graphoenix.core.bootstrap.App.APP;
@@ -8,6 +9,6 @@ import static io.graphoenix.core.bootstrap.App.APP;
 public class UserApplication {
 
     public static void main(String[] args) {
-        APP.run(args);
+        APP.with(GraphQLHttpServer.class).run(args);
     }
 }

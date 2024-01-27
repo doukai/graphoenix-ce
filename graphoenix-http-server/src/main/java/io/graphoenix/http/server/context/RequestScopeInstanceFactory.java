@@ -7,8 +7,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import jakarta.transaction.TransactionScoped;
-import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.util.Map;
@@ -18,21 +16,9 @@ import java.util.Map;
 public class RequestScopeInstanceFactory extends CacheScopeInstanceFactory {
     public static final String REQUEST_ID = "requestId";
 
-    private final HttpServerConfig httpServerConfig;
-
     @Inject
     public RequestScopeInstanceFactory(HttpServerConfig httpServerConfig) {
-        this.httpServerConfig = httpServerConfig;
-    }
-
-    @Override
-    public <T, E extends T> Mono<T> compute(String s, Class<T> aClass, String s1, E e) {
-        return null;
-    }
-
-    @Override
-    protected Duration getTimeout() {
-        return Duration.ofMillis(httpServerConfig.getConnectTimeOutMillis());
+        super(Duration.ofMillis(httpServerConfig.getConnectTimeOutMillis()));
     }
 
     @Override
