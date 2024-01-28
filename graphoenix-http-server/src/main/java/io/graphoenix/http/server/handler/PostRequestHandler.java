@@ -60,9 +60,13 @@ public class PostRequestHandler extends BaseHandler {
                                                     .map(GraphQLRequest::fromJson)
                                                     .flatMap(graphQLRequest ->
                                                             Mono.just(new Document(graphQLRequest.getQuery()))
-                                                                    .flatMap(document -> PublisherBeanContext.compute(Document.class, document))
-                                                                    .flatMap(document -> requestScopeInstanceFactory.compute(requestId, Operation.class, document.getOperationOrError()))
-                                                                    .flatMap(operation -> Mono.from(operationHandler.handle(operation, graphQLRequest.getVariables())))
+                                                                    .flatMap(document ->
+                                                                            requestScopeInstanceFactory.compute(requestId, Operation.class, document.getOperationOrError())
+                                                                                    .flatMap(operation ->
+                                                                                            Mono.from(operationHandler.handle(operation, graphQLRequest.getVariables()))
+                                                                                    )
+                                                                                    .contextWrite(PublisherBeanContext.of(Document.class, document))
+                                                                    )
                                                     )
                                                     .map(JsonValue::toString)
                                                     .doOnSuccess(jsonString -> response.status(HttpResponseStatus.OK))
@@ -81,9 +85,11 @@ public class PostRequestHandler extends BaseHandler {
                                                     .map(GraphQLRequest::new)
                                                     .flatMap(graphQLRequest ->
                                                             Mono.just(new Document(graphQLRequest.getQuery()))
-                                                                    .flatMap(document -> PublisherBeanContext.compute(Document.class, document))
-                                                                    .flatMap(document -> requestScopeInstanceFactory.compute(requestId, Operation.class, document.getOperationOrError()))
-                                                                    .flatMap(operation -> Mono.from(operationHandler.handle(operation, graphQLRequest.getVariables())))
+                                                                    .flatMap(document ->
+                                                                            requestScopeInstanceFactory.compute(requestId, Operation.class, document.getOperationOrError())
+                                                                                    .flatMap(operation -> Mono.from(operationHandler.handle(operation, graphQLRequest.getVariables())))
+                                                                                    .contextWrite(PublisherBeanContext.of(Document.class, document))
+                                                                    )
                                                     )
                                                     .map(JsonValue::toString)
                                                     .doOnSuccess(jsonString -> response.status(HttpResponseStatus.OK))
@@ -105,10 +111,12 @@ public class PostRequestHandler extends BaseHandler {
                                             request.receive().aggregate().asString()
                                                     .map(GraphQLRequest::fromJson)
                                                     .flatMapMany(graphQLRequest ->
-                                                            Mono.just(new Document(graphQLRequest.getQuery()))
-                                                                    .flatMap(document -> PublisherBeanContext.compute(Document.class, document))
-                                                                    .flatMap(document -> requestScopeInstanceFactory.compute(requestId, Operation.class, document.getOperationOrError()))
-                                                                    .flatMapMany(operation -> Flux.from(operationHandler.handle(operation, graphQLRequest.getVariables(), token, operationId)))
+                                                            Flux.just(new Document(graphQLRequest.getQuery()))
+                                                                    .flatMap(document ->
+                                                                            requestScopeInstanceFactory.compute(requestId, Operation.class, document.getOperationOrError())
+                                                                                    .flatMapMany(operation -> Flux.from(operationHandler.handle(operation, graphQLRequest.getVariables(), token, operationId)))
+                                                                                    .contextWrite(PublisherBeanContext.of(Document.class, document))
+                                                                    )
                                                     )
                                                     .map(JsonValue::toString)
                                                     .onErrorResume(throwable -> this.errorSSEHandler(throwable, response, operationId))

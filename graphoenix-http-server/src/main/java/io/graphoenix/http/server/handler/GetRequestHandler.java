@@ -20,7 +20,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.server.HttpServerRequest;
 import reactor.netty.http.server.HttpServerResponse;
-import reactor.util.context.Context;
 
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
@@ -71,13 +70,12 @@ public class GetRequestHandler extends BaseHandler {
                             requestScopeInstanceFactory.compute(requestId, HttpServerRequest.class, request)
                                     .then(requestScopeInstanceFactory.compute(requestId, HttpServerResponse.class, response))
                                     .then(requestScopeInstanceFactory.compute(requestId, Operation.class, operation))
-                                    .then(PublisherBeanContext.compute(Document.class, document))
                                     .thenMany(
                                             Flux.from(operationHandler.handle(operation, graphQLRequest.getVariables(), token, operationId))
                                                     .map(JsonValue::toString)
                                                     .onErrorResume(throwable -> this.errorSSEHandler(throwable, response, operationId))
                                                     .map(eventString -> ByteBufAllocator.DEFAULT.buffer().writeBytes(eventString.getBytes(StandardCharsets.UTF_8)))
-                                                    .contextWrite(Context.of(REQUEST_ID, requestId))
+                                                    .contextWrite(PublisherBeanContext.of(Document.class, document).put(REQUEST_ID, requestId))
                                     ),
                             byteBuf -> true
                     );
@@ -88,13 +86,12 @@ public class GetRequestHandler extends BaseHandler {
                             requestScopeInstanceFactory.compute(requestId, HttpServerRequest.class, request)
                                     .then(requestScopeInstanceFactory.compute(requestId, HttpServerResponse.class, response))
                                     .then(requestScopeInstanceFactory.compute(requestId, Operation.class, operation))
-                                    .then(PublisherBeanContext.compute(Document.class, document))
                                     .then(
                                             Mono.from(operationHandler.handle(operation, graphQLRequest.getVariables()))
                                                     .map(JsonValue::toString)
                                                     .doOnSuccess(jsonString -> response.status(HttpResponseStatus.OK))
                                                     .onErrorResume(throwable -> this.errorHandler(throwable, response))
-                                                    .contextWrite(Context.of(REQUEST_ID, requestId))
+                                                    .contextWrite(PublisherBeanContext.of(Document.class, document).put(REQUEST_ID, requestId))
                                     )
                     );
         }
