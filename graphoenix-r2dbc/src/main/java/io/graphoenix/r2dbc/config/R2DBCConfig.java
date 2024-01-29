@@ -31,7 +31,7 @@ public class R2DBCConfig {
     private Boolean createTables = true;
 
     @Optional
-    private Boolean ssl;
+    private Boolean ssl = false;
 
     @Optional
     private Integer connectTimeoutMillis = 10 * 1000;
@@ -49,7 +49,7 @@ public class R2DBCConfig {
     private Boolean usePool = false;
 
     @Optional
-    private Integer acquireRetry;
+    private Integer acquireRetry = 1;
 
     @Optional
     private Integer backgroundEvictionIntervalMillis = -1;

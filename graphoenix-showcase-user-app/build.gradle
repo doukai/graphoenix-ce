@@ -14,7 +14,6 @@ repositories {
 dependencies {
     implementation project(':graphoenix-core')
     implementation project(":graphoenix-showcase-user")
-    implementation project(":graphoenix-sql")
     implementation project(":graphoenix-r2dbc")
     implementation project(":graphoenix-http-server")
     implementation 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
