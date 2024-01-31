@@ -147,6 +147,14 @@ public class Field extends AbstractDefinition implements Selection {
                 .collect(Collectors.toList());
     }
 
+    public Collection<Fragment> getFragments() {
+        return Stream.ofNullable(selections)
+                .flatMap(Collection::stream)
+                .filter(Selection::isFragment)
+                .map(Selection::asFragment)
+                .collect(Collectors.toList());
+    }
+
     public Field getField(String name) {
         return this.selections.stream()
                 .filter(Selection::isField)
@@ -156,7 +164,7 @@ public class Field extends AbstractDefinition implements Selection {
                 .orElse(null);
     }
 
-    public Field setSelections(Collection<Selection> selections) {
+    public Field setSelections(Collection<? extends Selection> selections) {
         this.selections = new LinkedHashSet<>(selections);
         return this;
     }

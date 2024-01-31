@@ -68,7 +68,7 @@ public class User implements Meta {
 
   private Collection<RoleUserRelation> roleUserRelation;
 
-  private Collection<MobileNumbersUserRelation> mobileNumbersUserRelation;
+  private Collection<UserMobileNumbersRelation> userMobileNumbersRelation;
 
   private Role rolesAggregate;
 
@@ -86,9 +86,9 @@ public class User implements Meta {
 
   private RoleUserRelationConnection roleUserRelationConnection;
 
-  private MobileNumbersUserRelation mobileNumbersUserRelationAggregate;
+  private UserMobileNumbersRelation userMobileNumbersRelationAggregate;
 
-  private MobileNumbersUserRelationConnection mobileNumbersUserRelationConnection;
+  private UserMobileNumbersRelationConnection userMobileNumbersRelationConnection;
 
   private Integer idCount;
 
@@ -330,13 +330,13 @@ public class User implements Meta {
     this.roleUserRelation = roleUserRelation;
   }
 
-  public Collection<MobileNumbersUserRelation> getMobileNumbersUserRelation() {
-    return this.mobileNumbersUserRelation;
+  public Collection<UserMobileNumbersRelation> getUserMobileNumbersRelation() {
+    return this.userMobileNumbersRelation;
   }
 
-  public void setMobileNumbersUserRelation(
-      Collection<MobileNumbersUserRelation> mobileNumbersUserRelation) {
-    this.mobileNumbersUserRelation = mobileNumbersUserRelation;
+  public void setUserMobileNumbersRelation(
+      Collection<UserMobileNumbersRelation> userMobileNumbersRelation) {
+    this.userMobileNumbersRelation = userMobileNumbersRelation;
   }
 
   public Role getRolesAggregate() {
@@ -407,22 +407,22 @@ public class User implements Meta {
     this.roleUserRelationConnection = roleUserRelationConnection;
   }
 
-  public MobileNumbersUserRelation getMobileNumbersUserRelationAggregate() {
-    return this.mobileNumbersUserRelationAggregate;
+  public UserMobileNumbersRelation getUserMobileNumbersRelationAggregate() {
+    return this.userMobileNumbersRelationAggregate;
   }
 
-  public void setMobileNumbersUserRelationAggregate(
-      MobileNumbersUserRelation mobileNumbersUserRelationAggregate) {
-    this.mobileNumbersUserRelationAggregate = mobileNumbersUserRelationAggregate;
+  public void setUserMobileNumbersRelationAggregate(
+      UserMobileNumbersRelation userMobileNumbersRelationAggregate) {
+    this.userMobileNumbersRelationAggregate = userMobileNumbersRelationAggregate;
   }
 
-  public MobileNumbersUserRelationConnection getMobileNumbersUserRelationConnection() {
-    return this.mobileNumbersUserRelationConnection;
+  public UserMobileNumbersRelationConnection getUserMobileNumbersRelationConnection() {
+    return this.userMobileNumbersRelationConnection;
   }
 
-  public void setMobileNumbersUserRelationConnection(
-      MobileNumbersUserRelationConnection mobileNumbersUserRelationConnection) {
-    this.mobileNumbersUserRelationConnection = mobileNumbersUserRelationConnection;
+  public void setUserMobileNumbersRelationConnection(
+      UserMobileNumbersRelationConnection userMobileNumbersRelationConnection) {
+    this.userMobileNumbersRelationConnection = userMobileNumbersRelationConnection;
   }
 
   public Integer getIdCount() {

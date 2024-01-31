@@ -45,11 +45,11 @@ public @interface Mutation {
   RoleUserRelationListMutationArguments roleUserRelationList(
       ) default @RoleUserRelationListMutationArguments;
 
-  MobileNumbersUserRelationMutationArguments mobileNumbersUserRelation(
-      ) default @MobileNumbersUserRelationMutationArguments;
+  UserMobileNumbersRelationMutationArguments userMobileNumbersRelation(
+      ) default @UserMobileNumbersRelationMutationArguments;
 
-  MobileNumbersUserRelationListMutationArguments mobileNumbersUserRelationList(
-      ) default @MobileNumbersUserRelationListMutationArguments;
+  UserMobileNumbersRelationListMutationArguments userMobileNumbersRelationList(
+      ) default @UserMobileNumbersRelationListMutationArguments;
 
   RoleTypeRelationMutationArguments roleTypeRelation() default @RoleTypeRelationMutationArguments;
 

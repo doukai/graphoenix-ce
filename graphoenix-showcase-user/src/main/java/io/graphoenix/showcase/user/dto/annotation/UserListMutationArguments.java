@@ -60,7 +60,7 @@ public @interface UserListMutationArguments {
 
   RoleUserRelationInput1[] roleUserRelation() default {};
 
-  MobileNumbersUserRelationInput1[] mobileNumbersUserRelation() default {};
+  UserMobileNumbersRelationInput1[] userMobileNumbersRelation() default {};
 
   UserInput1[] list() default {};
 
@@ -112,7 +112,7 @@ public @interface UserListMutationArguments {
 
   String $roleUserRelation() default "";
 
-  String $mobileNumbersUserRelation() default "";
+  String $userMobileNumbersRelation() default "";
 
   String $list() default "";
 

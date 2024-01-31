@@ -51,7 +51,6 @@ public class EnumValueHandler implements OperationBeforeHandler {
                         .setSelections(
                                 replaceEnumValue(documentManager.getOperationTypeOrError(operation), operation.getFields())
                                         .collect(Collectors.toList())
-
                         )
         );
     }

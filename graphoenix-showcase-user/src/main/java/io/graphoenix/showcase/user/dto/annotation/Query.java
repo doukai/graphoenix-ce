@@ -64,14 +64,14 @@ public @interface Query {
   RoleUserRelationConnectionQueryArguments roleUserRelationConnection(
       ) default @RoleUserRelationConnectionQueryArguments;
 
-  MobileNumbersUserRelationQueryArguments mobileNumbersUserRelation(
-      ) default @MobileNumbersUserRelationQueryArguments;
+  UserMobileNumbersRelationQueryArguments userMobileNumbersRelation(
+      ) default @UserMobileNumbersRelationQueryArguments;
 
-  MobileNumbersUserRelationListQueryArguments mobileNumbersUserRelationList(
-      ) default @MobileNumbersUserRelationListQueryArguments;
+  UserMobileNumbersRelationListQueryArguments userMobileNumbersRelationList(
+      ) default @UserMobileNumbersRelationListQueryArguments;
 
-  MobileNumbersUserRelationConnectionQueryArguments mobileNumbersUserRelationConnection(
-      ) default @MobileNumbersUserRelationConnectionQueryArguments;
+  UserMobileNumbersRelationConnectionQueryArguments userMobileNumbersRelationConnection(
+      ) default @UserMobileNumbersRelationConnectionQueryArguments;
 
   RoleTypeRelationQueryArguments roleTypeRelation() default @RoleTypeRelationQueryArguments;
 

@@ -215,7 +215,7 @@ public class DocumentBuilder {
                                                         DIRECTIVE_MAP_ARGUMENT_WITH_NAME,
                                                         ObjectValueWithVariable.of(
                                                                 INPUT_WITH_INPUT_VALUE_TYPE_NAME,
-                                                                getRelationTypeName(objectType.getName(), fieldDefinition.getName()),
+                                                                getFieldRelationTypeName(objectType.getName(), fieldDefinition.getName()),
                                                                 INPUT_WITH_INPUT_VALUE_FROM_NAME,
                                                                 getTypeRefFieldName(objectType.getName()),
                                                                 INPUT_WITH_INPUT_VALUE_TO_NAME,

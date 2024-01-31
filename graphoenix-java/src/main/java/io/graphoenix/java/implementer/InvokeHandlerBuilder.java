@@ -320,9 +320,9 @@ public class InvokeHandlerBuilder {
                                 .unindent()
                                 .add("})\n")
                                 .add(".then()\n")
+                                .add(".thenReturn($L)", typeParameterName)
                                 .unindent()
                                 .add(")\n")
-                                .add(".thenReturn($L)", typeParameterName)
                                 .build()
                 )
                 .build();

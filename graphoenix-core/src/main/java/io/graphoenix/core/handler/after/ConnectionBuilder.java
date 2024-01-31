@@ -74,12 +74,15 @@ public class ConnectionBuilder implements OperationAfterHandler {
         );
     }
 
-    public Stream<JsonObject> buildConnections(String path, ObjectType objectType, Field parentField, JsonValue jsonValue) {
+    public Stream<JsonValue> buildConnections(String path, ObjectType objectType, Field parentField, JsonValue jsonValue) {
+        if (jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
+            return Stream.empty();
+        }
+        FieldDefinition fieldDefinition = objectType.getField(parentField.getName());
         return Stream.ofNullable(parentField.getFields())
                 .flatMap(Collection::stream)
                 .flatMap(field -> {
                             String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
-                            FieldDefinition fieldDefinition = objectType.getField(field.getName());
                             Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
                             if (fieldTypeDefinition.isObject()) {
                                 if (fieldDefinition.getType().hasList()) {

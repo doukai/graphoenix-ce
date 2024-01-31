@@ -53,11 +53,11 @@ public class Query {
 
   private RoleUserRelationConnection roleUserRelationConnection;
 
-  private MobileNumbersUserRelation mobileNumbersUserRelation;
+  private UserMobileNumbersRelation userMobileNumbersRelation;
 
-  private Collection<MobileNumbersUserRelation> mobileNumbersUserRelationList;
+  private Collection<UserMobileNumbersRelation> userMobileNumbersRelationList;
 
-  private MobileNumbersUserRelationConnection mobileNumbersUserRelationConnection;
+  private UserMobileNumbersRelationConnection userMobileNumbersRelationConnection;
 
   private RoleTypeRelation roleTypeRelation;
 
@@ -249,30 +249,30 @@ public class Query {
     this.roleUserRelationConnection = roleUserRelationConnection;
   }
 
-  public MobileNumbersUserRelation getMobileNumbersUserRelation() {
-    return this.mobileNumbersUserRelation;
+  public UserMobileNumbersRelation getUserMobileNumbersRelation() {
+    return this.userMobileNumbersRelation;
   }
 
-  public void setMobileNumbersUserRelation(MobileNumbersUserRelation mobileNumbersUserRelation) {
-    this.mobileNumbersUserRelation = mobileNumbersUserRelation;
+  public void setUserMobileNumbersRelation(UserMobileNumbersRelation userMobileNumbersRelation) {
+    this.userMobileNumbersRelation = userMobileNumbersRelation;
   }
 
-  public Collection<MobileNumbersUserRelation> getMobileNumbersUserRelationList() {
-    return this.mobileNumbersUserRelationList;
+  public Collection<UserMobileNumbersRelation> getUserMobileNumbersRelationList() {
+    return this.userMobileNumbersRelationList;
   }
 
-  public void setMobileNumbersUserRelationList(
-      Collection<MobileNumbersUserRelation> mobileNumbersUserRelationList) {
-    this.mobileNumbersUserRelationList = mobileNumbersUserRelationList;
+  public void setUserMobileNumbersRelationList(
+      Collection<UserMobileNumbersRelation> userMobileNumbersRelationList) {
+    this.userMobileNumbersRelationList = userMobileNumbersRelationList;
   }
 
-  public MobileNumbersUserRelationConnection getMobileNumbersUserRelationConnection() {
-    return this.mobileNumbersUserRelationConnection;
+  public UserMobileNumbersRelationConnection getUserMobileNumbersRelationConnection() {
+    return this.userMobileNumbersRelationConnection;
   }
 
-  public void setMobileNumbersUserRelationConnection(
-      MobileNumbersUserRelationConnection mobileNumbersUserRelationConnection) {
-    this.mobileNumbersUserRelationConnection = mobileNumbersUserRelationConnection;
+  public void setUserMobileNumbersRelationConnection(
+      UserMobileNumbersRelationConnection userMobileNumbersRelationConnection) {
+    this.userMobileNumbersRelationConnection = userMobileNumbersRelationConnection;
   }
 
   public RoleTypeRelation getRoleTypeRelation() {

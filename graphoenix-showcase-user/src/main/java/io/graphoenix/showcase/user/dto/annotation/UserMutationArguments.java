@@ -60,7 +60,7 @@ public @interface UserMutationArguments {
 
   RoleUserRelationInput1[] roleUserRelation() default {};
 
-  MobileNumbersUserRelationInput1[] mobileNumbersUserRelation() default {};
+  UserMobileNumbersRelationInput1[] userMobileNumbersRelation() default {};
 
   UserExpression1 where() default @UserExpression1;
 
@@ -110,7 +110,7 @@ public @interface UserMutationArguments {
 
   String $roleUserRelation() default "";
 
-  String $mobileNumbersUserRelation() default "";
+  String $userMobileNumbersRelation() default "";
 
   String $where() default "";
 }

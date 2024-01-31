@@ -65,8 +65,8 @@ public @interface UserExpression1 {
 
   RoleUserRelationExpression2 roleUserRelation() default @RoleUserRelationExpression2;
 
-  MobileNumbersUserRelationExpression2 mobileNumbersUserRelation(
-      ) default @MobileNumbersUserRelationExpression2;
+  UserMobileNumbersRelationExpression2 userMobileNumbersRelation(
+      ) default @UserMobileNumbersRelationExpression2;
 
   boolean not() default false;
 
@@ -120,7 +120,7 @@ public @interface UserExpression1 {
 
   String $roleUserRelation() default "";
 
-  String $mobileNumbersUserRelation() default "";
+  String $userMobileNumbersRelation() default "";
 
   String $not() default "";
 

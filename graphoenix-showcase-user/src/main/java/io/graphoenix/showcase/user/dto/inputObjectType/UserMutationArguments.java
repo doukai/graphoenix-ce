@@ -64,7 +64,7 @@ public class UserMutationArguments implements MetaInput {
 
   private Collection<RoleUserRelationInput> roleUserRelation;
 
-  private Collection<MobileNumbersUserRelationInput> mobileNumbersUserRelation;
+  private Collection<UserMobileNumbersRelationInput> userMobileNumbersRelation;
 
   private UserExpression where;
 
@@ -268,13 +268,13 @@ public class UserMutationArguments implements MetaInput {
     this.roleUserRelation = roleUserRelation;
   }
 
-  public Collection<MobileNumbersUserRelationInput> getMobileNumbersUserRelation() {
-    return this.mobileNumbersUserRelation;
+  public Collection<UserMobileNumbersRelationInput> getUserMobileNumbersRelation() {
+    return this.userMobileNumbersRelation;
   }
 
-  public void setMobileNumbersUserRelation(
-      Collection<MobileNumbersUserRelationInput> mobileNumbersUserRelation) {
-    this.mobileNumbersUserRelation = mobileNumbersUserRelation;
+  public void setUserMobileNumbersRelation(
+      Collection<UserMobileNumbersRelationInput> userMobileNumbersRelation) {
+    this.userMobileNumbersRelation = userMobileNumbersRelation;
   }
 
   public UserExpression getWhere() {

@@ -120,7 +120,8 @@ public class QueryTranslator {
                                                             fieldTypeDefinition.asObject().getField(subField.getName()),
                                                             subField,
                                                             field.hasGroupBy(),
-                                                            level + 1),
+                                                            level
+                                                    ),
                                                     false,
                                                     false
                                             )
@@ -254,7 +255,7 @@ public class QueryTranslator {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject()) {
             return new ParenthesedSelect()
-                    .withSelect(objectFieldToPlainSelect(objectType, fieldDefinition, field, level));
+                    .withSelect(objectFieldToPlainSelect(objectType, fieldDefinition, field, level + 1));
         } else {
             return leafFieldToExpression(objectType, fieldDefinition, field, over, level);
         }

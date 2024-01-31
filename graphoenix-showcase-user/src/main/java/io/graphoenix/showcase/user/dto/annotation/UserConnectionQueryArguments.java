@@ -65,8 +65,8 @@ public @interface UserConnectionQueryArguments {
 
   RoleUserRelationExpression1 roleUserRelation() default @RoleUserRelationExpression1;
 
-  MobileNumbersUserRelationExpression1 mobileNumbersUserRelation(
-      ) default @MobileNumbersUserRelationExpression1;
+  UserMobileNumbersRelationExpression1 userMobileNumbersRelation(
+      ) default @UserMobileNumbersRelationExpression1;
 
   UserOrderBy1 orderBy() default @UserOrderBy1;
 
@@ -134,7 +134,7 @@ public @interface UserConnectionQueryArguments {
 
   String $roleUserRelation() default "";
 
-  String $mobileNumbersUserRelation() default "";
+  String $userMobileNumbersRelation() default "";
 
   String $orderBy() default "";
 

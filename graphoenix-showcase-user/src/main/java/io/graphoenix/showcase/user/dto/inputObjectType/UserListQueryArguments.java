@@ -66,7 +66,7 @@ public class UserListQueryArguments implements MetaExpression {
 
   private RoleUserRelationExpression roleUserRelation;
 
-  private MobileNumbersUserRelationExpression mobileNumbersUserRelation;
+  private UserMobileNumbersRelationExpression userMobileNumbersRelation;
 
   private UserOrderBy orderBy;
 
@@ -288,13 +288,13 @@ public class UserListQueryArguments implements MetaExpression {
     this.roleUserRelation = roleUserRelation;
   }
 
-  public MobileNumbersUserRelationExpression getMobileNumbersUserRelation() {
-    return this.mobileNumbersUserRelation;
+  public UserMobileNumbersRelationExpression getUserMobileNumbersRelation() {
+    return this.userMobileNumbersRelation;
   }
 
-  public void setMobileNumbersUserRelation(
-      MobileNumbersUserRelationExpression mobileNumbersUserRelation) {
-    this.mobileNumbersUserRelation = mobileNumbersUserRelation;
+  public void setUserMobileNumbersRelation(
+      UserMobileNumbersRelationExpression userMobileNumbersRelation) {
+    this.userMobileNumbersRelation = userMobileNumbersRelation;
   }
 
   public UserOrderBy getOrderBy() {

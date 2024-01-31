@@ -63,29 +63,34 @@ public class VariableHandler implements OperationBeforeHandler {
     public Stream<Field> replaceFieldsVariables(Collection<Field> fields, Map<String, JsonValue> variables) {
         return Stream.ofNullable(fields)
                 .flatMap(Collection::stream)
-                .flatMap(field ->
-                        Stream
-                                .concat(
-                                        Stream.of(
-                                                field.setArguments(
-                                                        Stream.ofNullable(field.getArguments())
-                                                                .map(Arguments::getArguments)
-                                                                .flatMap(jsonValues -> jsonValues.entrySet().stream())
-                                                                .peek(valueWithVariableEntry -> {
-                                                                            if (valueWithVariableEntry.getValue().isVariable()) {
-                                                                                valueWithVariableEntry.setValue(ValueWithVariable.of(variables.get(valueWithVariableEntry.getKey())));
-                                                                            }
-                                                                        }
-                                                                )
-                                                                .collect(
-                                                                        Collectors.toMap(
-                                                                                Map.Entry::getKey,
-                                                                                Map.Entry::getValue
-                                                                        )
-                                                                )
+                .map(field ->
+                        field
+                                .setArguments(
+                                        Stream.ofNullable(field.getArguments())
+                                                .map(Arguments::getArguments)
+                                                .flatMap(jsonValues -> jsonValues.entrySet().stream())
+                                                .peek(valueWithVariableEntry -> {
+                                                            if (valueWithVariableEntry.getValue().isVariable()) {
+                                                                valueWithVariableEntry.setValue(ValueWithVariable.of(variables.get(valueWithVariableEntry.getKey())));
+                                                            }
+                                                        }
                                                 )
-                                        ),
-                                        replaceFieldsVariables(field.getFields(), variables)
+                                                .collect(
+                                                        Collectors.toMap(
+                                                                Map.Entry::getKey,
+                                                                Map.Entry::getValue
+                                                        )
+                                                )
+                                )
+                                .setSelections(
+                                        Stream
+                                                .concat(
+                                                        replaceFieldsVariables(field.getFields(), variables)
+                                                                .map(subField -> (Field) subField.setDirectives(replaceDirectivesVariables(subField.getDirectives(), variables).collect(Collectors.toList()))),
+                                                        field.getFragments().stream()
+                                                                .map(fragment -> (Fragment) fragment.setDirectives(replaceDirectivesVariables(fragment.getDirectives(), variables).collect(Collectors.toList())))
+                                                )
+                                                .collect(Collectors.toList())
                                 )
                 );
     }
@@ -94,23 +99,24 @@ public class VariableHandler implements OperationBeforeHandler {
         return Stream.ofNullable(directives)
                 .flatMap(Collection::stream)
                 .map(directive ->
-                        directive.setArguments(
-                                Stream.ofNullable(directive.getArguments())
-                                        .map(Arguments::getArguments)
-                                        .flatMap(jsonValues -> jsonValues.entrySet().stream())
-                                        .peek(valueWithVariableEntry -> {
-                                                    if (valueWithVariableEntry.getValue().isVariable()) {
-                                                        valueWithVariableEntry.setValue(ValueWithVariable.of(variables.get(valueWithVariableEntry.getKey())));
-                                                    }
-                                                }
-                                        )
-                                        .collect(
-                                                Collectors.toMap(
-                                                        Map.Entry::getKey,
-                                                        Map.Entry::getValue
+                        directive
+                                .setArguments(
+                                        Stream.ofNullable(directive.getArguments())
+                                                .map(Arguments::getArguments)
+                                                .flatMap(jsonValues -> jsonValues.entrySet().stream())
+                                                .peek(valueWithVariableEntry -> {
+                                                            if (valueWithVariableEntry.getValue().isVariable()) {
+                                                                valueWithVariableEntry.setValue(ValueWithVariable.of(variables.get(valueWithVariableEntry.getKey())));
+                                                            }
+                                                        }
                                                 )
-                                        )
-                        )
+                                                .collect(
+                                                        Collectors.toMap(
+                                                                Map.Entry::getKey,
+                                                                Map.Entry::getValue
+                                                        )
+                                                )
+                                )
                 );
     }
 

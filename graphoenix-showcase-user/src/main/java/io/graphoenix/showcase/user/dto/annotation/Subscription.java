@@ -67,14 +67,14 @@ public @interface Subscription {
   RoleUserRelationConnectionSubscriptionArguments roleUserRelationConnection(
       ) default @RoleUserRelationConnectionSubscriptionArguments;
 
-  MobileNumbersUserRelationSubscriptionArguments mobileNumbersUserRelation(
-      ) default @MobileNumbersUserRelationSubscriptionArguments;
+  UserMobileNumbersRelationSubscriptionArguments userMobileNumbersRelation(
+      ) default @UserMobileNumbersRelationSubscriptionArguments;
 
-  MobileNumbersUserRelationListSubscriptionArguments mobileNumbersUserRelationList(
-      ) default @MobileNumbersUserRelationListSubscriptionArguments;
+  UserMobileNumbersRelationListSubscriptionArguments userMobileNumbersRelationList(
+      ) default @UserMobileNumbersRelationListSubscriptionArguments;
 
-  MobileNumbersUserRelationConnectionSubscriptionArguments mobileNumbersUserRelationConnection(
-      ) default @MobileNumbersUserRelationConnectionSubscriptionArguments;
+  UserMobileNumbersRelationConnectionSubscriptionArguments userMobileNumbersRelationConnection(
+      ) default @UserMobileNumbersRelationConnectionSubscriptionArguments;
 
   RoleTypeRelationSubscriptionArguments roleTypeRelation(
       ) default @RoleTypeRelationSubscriptionArguments;

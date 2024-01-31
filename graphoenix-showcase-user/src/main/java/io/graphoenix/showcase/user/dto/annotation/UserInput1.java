@@ -60,7 +60,7 @@ public @interface UserInput1 {
 
   RoleUserRelationInput2[] roleUserRelation() default {};
 
-  MobileNumbersUserRelationInput2[] mobileNumbersUserRelation() default {};
+  UserMobileNumbersRelationInput2[] userMobileNumbersRelation() default {};
 
   UserExpression2 where() default @UserExpression2;
 
@@ -110,7 +110,7 @@ public @interface UserInput1 {
 
   String $roleUserRelation() default "";
 
-  String $mobileNumbersUserRelation() default "";
+  String $userMobileNumbersRelation() default "";
 
   String $where() default "";
 }

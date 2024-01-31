@@ -58,13 +58,13 @@ public class FragmentHandler implements OperationBeforeHandler {
                 .flatMapMany(Flux::fromIterable)
                 .flatMap(selection -> {
                             if (selection.isField()) {
-                                return Flux
-                                        .concat(
-                                                Mono.just(selection.asField()),
-                                                handle(selection.asField().getSelections())
-                                        );
+                                return handle(selection.asField().getSelections())
+                                        .collectList()
+                                        .map(selection.asField()::setSelections);
                             } else if (selection.isFragment()) {
-                                return fragmentToFields(selection.asFragment()).collectList().flatMapMany(this::handle);
+                                return fragmentToFields(selection.asFragment())
+                                        .collectList()
+                                        .flatMapMany(this::handle);
                             } else {
                                 return Flux.error(new GraphQLErrors(UNSUPPORTED_SELECTION.bind(selection.toString())));
                             }

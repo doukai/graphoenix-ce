@@ -65,8 +65,8 @@ public @interface UserSubscriptionArguments {
 
   RoleUserRelationExpression1 roleUserRelation() default @RoleUserRelationExpression1;
 
-  MobileNumbersUserRelationExpression1 mobileNumbersUserRelation(
-      ) default @MobileNumbersUserRelationExpression1;
+  UserMobileNumbersRelationExpression1 userMobileNumbersRelation(
+      ) default @UserMobileNumbersRelationExpression1;
 
   String[] groupBy() default {};
 
@@ -122,7 +122,7 @@ public @interface UserSubscriptionArguments {
 
   String $roleUserRelation() default "";
 
-  String $mobileNumbersUserRelation() default "";
+  String $userMobileNumbersRelation() default "";
 
   String $groupBy() default "";
 
