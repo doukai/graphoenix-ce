@@ -3,10 +3,12 @@ package io.graphoenix.showcase.user.api;
 import io.graphoenix.showcase.user.dto.inputObjectType.RoleExpression;
 import io.graphoenix.showcase.user.dto.inputObjectType.RoleInput;
 import io.graphoenix.showcase.user.dto.inputObjectType.UserQueryArguments;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.graphql.GraphQLApi;
 import org.eclipse.microprofile.graphql.Source;
 import reactor.core.publisher.Mono;
 
+@ApplicationScoped
 @GraphQLApi
 public class InputApi {
 

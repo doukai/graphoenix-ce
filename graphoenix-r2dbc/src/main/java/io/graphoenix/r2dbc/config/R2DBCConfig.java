@@ -55,13 +55,13 @@ public class R2DBCConfig {
     private Integer backgroundEvictionIntervalMillis = -1;
 
     @Optional
-    private Integer initialSize;
+    private Integer initialSize = 10;
 
     @Optional
-    private Integer maxSize;
+    private Integer maxSize = 10;
 
     @Optional
-    private Integer minIdle;
+    private Integer minIdle = 10;
 
     @Optional
     private Integer maxAcquireTimeMillis = -1;

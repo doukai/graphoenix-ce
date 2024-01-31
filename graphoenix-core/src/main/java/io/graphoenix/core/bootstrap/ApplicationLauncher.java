@@ -9,6 +9,7 @@ import io.nozdormu.spi.event.ScopeEventResolver;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.tinylog.Logger;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -72,10 +73,20 @@ public class ApplicationLauncher implements Launcher {
                 );
             }
 
+            Runtime.getRuntime().addShutdownHook(
+                    new Thread(() ->
+                            Flux
+                                    .concat(
+                                            ScopeEventResolver.beforeDestroyed(ApplicationScoped.class),
+                                            ScopeEventResolver.destroyed(ApplicationScoped.class)
+                                    )
+                                    .then()
+                                    .block()
+                    )
+            );
+
             ScopeEventResolver.initialized(Map.of("args", args), ApplicationScoped.class)
                     .then(Mono.fromRunnable(latch::countDown))
-                    .doOnTerminate(() -> ScopeEventResolver.beforeDestroyed(ApplicationScoped.class).block())
-                    .doAfterTerminate(() -> ScopeEventResolver.destroyed(ApplicationScoped.class).block())
                     .block();
 
             executorService.shutdown();

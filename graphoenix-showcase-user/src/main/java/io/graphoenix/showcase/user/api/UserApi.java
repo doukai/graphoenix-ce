@@ -2,6 +2,7 @@ package io.graphoenix.showcase.user.api;
 
 import io.graphoenix.showcase.user.dto.objectType.Role;
 import io.graphoenix.showcase.user.dto.objectType.User;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.graphql.GraphQLApi;
 import org.eclipse.microprofile.graphql.Query;
 import org.eclipse.microprofile.graphql.Source;
@@ -10,6 +11,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
+@ApplicationScoped
 @GraphQLApi
 public class UserApi {
 

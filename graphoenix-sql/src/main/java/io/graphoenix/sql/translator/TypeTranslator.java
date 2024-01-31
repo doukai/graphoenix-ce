@@ -147,7 +147,18 @@ public class TypeTranslator {
 
         fieldDefinition.getTypeDefault()
                 .ifPresentOrElse(
-                        columnSpecs::add,
+                        (typeDefault) -> {
+                            if (fieldTypeName.equals(SCALA_ID_NAME) ||
+                                    fieldTypeName.equals(SCALA_STRING_NAME) ||
+                                    fieldTypeName.equals(SCALA_DATE_NAME) ||
+                                    fieldTypeName.equals(SCALA_TIME_NAME) ||
+                                    fieldTypeName.equals(SCALA_DATE_TIME_NAME) ||
+                                    fieldTypeName.equals(SCALA_TIMESTAMP_NAME)) {
+                                columnSpecs.add("DEFAULT  " + stringValueToDBVarchar(typeDefault));
+                            } else {
+                                columnSpecs.add("DEFAULT  " + typeDefault);
+                            }
+                        },
                         () -> {
                             if (fieldTypeName.equals(SCALA_DATE_NAME) ||
                                     fieldTypeName.equals(SCALA_TIME_NAME) ||
