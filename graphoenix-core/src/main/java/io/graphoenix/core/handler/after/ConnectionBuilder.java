@@ -98,7 +98,7 @@ public class ConnectionBuilder implements OperationAfterHandler {
 
                     JsonObject patchItem = jsonProvider.createObjectBuilder()
                             .add("op", "add")
-                            .add("path", path + "/" + selectionName)
+                            .add("path", path)
                             .add("value", connectionJsonValue)
                             .build();
                     JsonValue edgesJsonValue = connectionJsonValue.asJsonObject().get(FIELD_EDGES_NAME);

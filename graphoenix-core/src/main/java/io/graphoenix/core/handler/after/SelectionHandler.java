@@ -73,10 +73,11 @@ public class SelectionHandler implements OperationAfterHandler {
                                         .filter(Field::hasFormat)
                                         .flatMap(field -> {
                                                     String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
-                                                    return Stream.concat(
-                                                            buildFormat("/" + selectionName, operationType, field, jsonValue.asJsonObject().get(selectionName)),
-                                                            hideField("/" + selectionName, operationType, field, jsonValue.asJsonObject().get(selectionName))
-                                                    );
+                                                    return Stream
+                                                            .concat(
+                                                                    buildFormat("/" + selectionName, operationType.getField(field.getName()), field, jsonValue.asJsonObject().get(selectionName)),
+                                                                    hideField("/" + selectionName, operationType.getField(field.getName()), field, jsonValue.asJsonObject().get(selectionName))
+                                                            );
                                                 }
                                         )
                                         .collect(JsonCollectors.toJsonArray())
@@ -86,69 +87,68 @@ public class SelectionHandler implements OperationAfterHandler {
         );
     }
 
-    public Stream<JsonObject> buildFormat(String path, ObjectType objectType, Field parentField, JsonValue jsonValue) {
-        return Stream.ofNullable(parentField.getFields())
-                .flatMap(Collection::stream)
-                .flatMap(field -> {
-                            String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
-                            if (jsonValue.asJsonObject().get(selectionName).getValueType().equals(JsonValue.ValueType.NULL)) {
-                                return Stream.empty();
-                            } else {
-                                FieldDefinition fieldDefinition = objectType.getField(field.getName());
-                                Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-                                if (fieldTypeDefinition.isObject()) {
-                                    if (fieldDefinition.getType().hasList()) {
-                                        return IntStream.range(0, jsonValue.asJsonObject().get(selectionName).asJsonArray().size())
-                                                .mapToObj(index -> buildFormat(path + "/" + selectionName + "/" + index, fieldTypeDefinition.asObject(), field, jsonValue.asJsonObject().getValue(selectionName).asJsonArray().get(index)))
-                                                .flatMap(stream -> stream);
-                                    } else {
-                                        return buildFormat(path + "/" + selectionName, fieldTypeDefinition.asObject(), field, jsonValue.asJsonObject().get(selectionName));
-                                    }
-                                } else {
-                                    if (field.hasFormat()) {
-                                        if (fieldDefinition.getType().hasList()) {
-                                            return IntStream.range(0, jsonValue.asJsonObject().get(selectionName).asJsonArray().size())
-                                                    .mapToObj(index ->
-                                                            jsonProvider.createObjectBuilder()
-                                                                    .add("op", "replace")
-                                                                    .add("path", path + "/" + selectionName + "/" + index)
-                                                                    .add("value", formatField(fieldTypeDefinition, field.getFormatValueOrNull(), field.getFormatLocaleOrNull(), jsonValue.asJsonObject().getValue(selectionName).asJsonArray().get(index)))
-                                                                    .build()
-                                                    );
-                                        } else {
-                                            return Stream.of(
-                                                    jsonProvider.createObjectBuilder()
-                                                            .add("op", "replace")
-                                                            .add("path", path + "/" + selectionName)
-                                                            .add("value", formatField(fieldTypeDefinition, field.getFormatValueOrNull(), field.getFormatLocaleOrNull(), jsonValue.asJsonObject().get(selectionName)))
-                                                            .build()
-                                            );
-                                        }
-                                    } else if (fieldDefinition.hasFormat()) {
-                                        if (fieldDefinition.getType().hasList()) {
-                                            return IntStream.range(0, jsonValue.asJsonObject().get(selectionName).asJsonArray().size())
-                                                    .mapToObj(index ->
-                                                            jsonProvider.createObjectBuilder()
-                                                                    .add("op", "replace")
-                                                                    .add("path", path + "/" + selectionName + "/" + index)
-                                                                    .add("value", formatField(fieldTypeDefinition, fieldDefinition.getFormatValueOrNull(), fieldDefinition.getFormatLocaleOrNull(), jsonValue.asJsonObject().getValue(selectionName).asJsonArray().get(index)))
-                                                                    .build()
-                                                    );
-                                        } else {
-                                            return Stream.of(
-                                                    jsonProvider.createObjectBuilder()
-                                                            .add("op", "replace")
-                                                            .add("path", path + "/" + selectionName)
-                                                            .add("value", formatField(fieldTypeDefinition, fieldDefinition.getFormatValueOrNull(), fieldDefinition.getFormatLocaleOrNull(), jsonValue.asJsonObject().get(selectionName)))
-                                                            .build()
-                                            );
-                                        }
-                                    }
-                                    return Stream.empty();
+    public Stream<JsonObject> buildFormat(String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
+        if (jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
+            return Stream.empty();
+        }
+
+        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+        if (fieldTypeDefinition.isObject()) {
+            if (fieldDefinition.getType().hasList()) {
+                return IntStream.range(0, jsonValue.asJsonArray().size())
+                        .mapToObj(index -> buildFormat(path + "/" + index, fieldDefinition, field, jsonValue.asJsonArray().get(index)))
+                        .flatMap(stream -> stream);
+            } else {
+                return Stream.ofNullable(field.getFields())
+                        .flatMap(Collection::stream)
+                        .flatMap(subField -> {
+                                    String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
+                                    return buildFormat(path + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonObject().get(subSelectionName));
                                 }
-                            }
-                        }
-                );
+                        );
+            }
+        } else {
+            if (field.hasFormat()) {
+                if (fieldDefinition.getType().hasList()) {
+                    return IntStream.range(0, jsonValue.asJsonArray().size())
+                            .mapToObj(index ->
+                                    jsonProvider.createObjectBuilder()
+                                            .add("op", "replace")
+                                            .add("path", path + "/" + index)
+                                            .add("value", formatField(fieldTypeDefinition, field.getFormatValueOrNull(), field.getFormatLocaleOrNull(), jsonValue.asJsonArray().get(index)))
+                                            .build()
+                            );
+                } else {
+                    return Stream.of(
+                            jsonProvider.createObjectBuilder()
+                                    .add("op", "replace")
+                                    .add("path", path)
+                                    .add("value", formatField(fieldTypeDefinition, field.getFormatValueOrNull(), field.getFormatLocaleOrNull(), jsonValue))
+                                    .build()
+                    );
+                }
+            } else if (fieldDefinition.hasFormat()) {
+                if (fieldDefinition.getType().hasList()) {
+                    return IntStream.range(0, jsonValue.asJsonArray().size())
+                            .mapToObj(index ->
+                                    jsonProvider.createObjectBuilder()
+                                            .add("op", "replace")
+                                            .add("path", path + "/" + index)
+                                            .add("value", formatField(fieldTypeDefinition, fieldDefinition.getFormatValueOrNull(), fieldDefinition.getFormatLocaleOrNull(), jsonValue.asJsonArray().get(index)))
+                                            .build()
+                            );
+                } else {
+                    return Stream.of(
+                            jsonProvider.createObjectBuilder()
+                                    .add("op", "replace")
+                                    .add("path", path)
+                                    .add("value", formatField(fieldTypeDefinition, fieldDefinition.getFormatValueOrNull(), fieldDefinition.getFormatLocaleOrNull(), jsonValue))
+                                    .build()
+                    );
+                }
+            }
+            return Stream.empty();
+        }
     }
 
     public JsonValue formatField(Definition fieldTypeDefinition, String value, String locale, JsonValue jsonValue) {
@@ -178,38 +178,37 @@ public class SelectionHandler implements OperationAfterHandler {
         }
     }
 
-    public Stream<JsonObject> hideField(String path, ObjectType objectType, Field parentField, JsonValue jsonValue) {
-        return Stream.ofNullable(parentField.getFields())
-                .flatMap(Collection::stream)
-                .flatMap(field -> {
-                            String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
-                            if (field.isHide()) {
-                                return Stream.of(
-                                        jsonProvider.createObjectBuilder()
-                                                .add("op", "remove")
-                                                .add("path", path + "/" + selectionName)
-                                                .build()
-                                );
-                            } else {
-                                FieldDefinition fieldDefinition = objectType.getField(field.getName());
-                                Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-                                if (jsonValue.asJsonObject().get(selectionName).getValueType().equals(JsonValue.ValueType.NULL)) {
-                                    return Stream.empty();
-                                } else {
-                                    if (fieldTypeDefinition.isObject()) {
-                                        if (fieldDefinition.getType().hasList()) {
-                                            return IntStream.range(0, jsonValue.asJsonObject().get(selectionName).asJsonArray().size())
-                                                    .mapToObj(index -> hideField(path + "/" + selectionName + "/" + index, fieldTypeDefinition.asObject(), field, jsonValue.asJsonObject().getValue(selectionName).asJsonArray().get(index)))
-                                                    .flatMap(stream -> stream);
-                                        } else {
-                                            return hideField(path + "/" + selectionName, fieldTypeDefinition.asObject(), field, jsonValue.asJsonObject().get(selectionName));
-                                        }
-                                    } else {
-                                        return Stream.empty();
+    public Stream<JsonObject> hideField(String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
+        if (jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
+            return Stream.empty();
+        }
+
+        if (field.isHide()) {
+            return Stream.of(
+                    jsonProvider.createObjectBuilder()
+                            .add("op", "remove")
+                            .add("path", path)
+                            .build()
+            );
+        } else {
+            Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+            if (fieldTypeDefinition.isObject()) {
+                if (fieldDefinition.getType().hasList()) {
+                    return IntStream.range(0, jsonValue.asJsonArray().size())
+                            .mapToObj(index -> hideField(path + "/" + index, fieldDefinition, field, jsonValue.asJsonArray().get(index)))
+                            .flatMap(stream -> stream);
+                } else {
+                    return Stream.ofNullable(field.getFields())
+                            .flatMap(Collection::stream)
+                            .flatMap(subField -> {
+                                        String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
+                                        return hideField(path + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonObject().get(subSelectionName));
                                     }
-                                }
-                            }
-                        }
-                );
+                            );
+                }
+            } else {
+                return Stream.empty();
+            }
+        }
     }
 }
