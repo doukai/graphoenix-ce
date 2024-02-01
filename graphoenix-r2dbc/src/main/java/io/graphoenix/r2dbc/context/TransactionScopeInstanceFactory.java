@@ -28,16 +28,16 @@ public class TransactionScopeInstanceFactory extends CacheScopeInstanceFactory {
 
     @Override
     protected void onBuild(String key) {
-        ScopeEventResolver.initialized(Map.of("key", key), TransactionScoped.class).block();
+        ScopeEventResolver.initialized(Map.of("key", key), TransactionScoped.class).subscribe();
     }
 
     @Override
     protected void onEviction(Object key, Object value) {
-        ScopeEventResolver.beforeDestroyed(Map.of("key", key, "value", value), TransactionScoped.class).block();
+        ScopeEventResolver.beforeDestroyed(Map.of("key", key, "value", value), TransactionScoped.class).subscribe();
     }
 
     @Override
     protected void onRemoval(Object key, Object value) {
-        ScopeEventResolver.destroyed(Map.of("key", key, "value", value), TransactionScoped.class).block();
+        ScopeEventResolver.destroyed(Map.of("key", key, "value", value), TransactionScoped.class).subscribe();
     }
 }

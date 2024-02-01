@@ -58,9 +58,9 @@ public class DefaultOperationHandler implements OperationHandler {
             .map(name -> BeanContext.get(QueryHandler.class, name))
             .orElseGet(() -> BeanContext.get(QueryHandler.class));
 
-    private static final Provider<MutationHandler> mutationHandler = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
-            .map(name -> BeanContext.getProvider(MutationHandler.class, name))
-            .orElseGet(() -> BeanContext.getProvider(MutationHandler.class));
+    private static final MutationHandler mutationHandler = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
+            .map(name -> BeanContext.get(MutationHandler.class, name))
+            .orElseGet(() -> BeanContext.get(MutationHandler.class));
 
     private static int getPriority(Class<?> type) {
         return Optional.ofNullable(type.getAnnotation(Priority.class)).map(Priority::value).orElse(Integer.MAX_VALUE);
@@ -138,7 +138,7 @@ public class DefaultOperationHandler implements OperationHandler {
                                 .flatMap(operationMono -> operationMono)
                 )
                 .flatMap(operationAfterHandler ->
-                        mutationHandler.get().mutation(operationAfterHandler)
+                        mutationHandler.mutation(operationAfterHandler)
                                 .flatMap(jsonValue ->
                                         Flux.fromIterable(mutationAfterHandlerList)
                                                 .reduce(

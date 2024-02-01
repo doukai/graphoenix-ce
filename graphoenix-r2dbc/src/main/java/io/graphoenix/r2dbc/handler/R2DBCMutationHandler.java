@@ -4,6 +4,7 @@ import io.graphoenix.r2dbc.executor.MutationExecutor;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.handler.MutationHandler;
 import io.graphoenix.sql.translator.MutationTranslator;
+import io.graphoenix.sql.translator.QueryTranslator;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -21,19 +22,25 @@ public class R2DBCMutationHandler implements MutationHandler {
 
     private final MutationExecutor mutationExecutor;
 
+    private final QueryTranslator queryTranslator;
+
     private final JsonProvider jsonProvider;
 
     @Inject
-    public R2DBCMutationHandler(MutationTranslator mutationTranslator, MutationExecutor mutationExecutor, JsonProvider jsonProvider) {
+    public R2DBCMutationHandler(MutationTranslator mutationTranslator, MutationExecutor mutationExecutor, QueryTranslator queryTranslator, JsonProvider jsonProvider) {
         this.mutationTranslator = mutationTranslator;
         this.mutationExecutor = mutationExecutor;
+        this.queryTranslator = queryTranslator;
         this.jsonProvider = jsonProvider;
     }
 
     @Override
     public Mono<JsonValue> mutation(Operation operation) {
-        return Mono.justOrEmpty(mutationTranslator.operationToStatementSQL(operation))
-                .flatMap(mutationExecutor::executeMutations)
+        return mutationExecutor
+                .executeMutations(
+                        mutationTranslator.operationToStatementSQLStream(operation),
+                        queryTranslator.operationToSelectSQL(operation)
+                )
                 .map(json -> jsonProvider.createReader(new StringReader(json)).readValue());
     }
 }

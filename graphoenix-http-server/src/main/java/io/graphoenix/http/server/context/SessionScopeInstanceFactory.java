@@ -28,16 +28,16 @@ public class SessionScopeInstanceFactory extends CacheScopeInstanceFactory {
 
     @Override
     protected void onBuild(String key) {
-        ScopeEventResolver.initialized(Map.of("key", key), SessionScoped.class).block();
+        ScopeEventResolver.initialized(Map.of("key", key), SessionScoped.class).subscribe();
     }
 
     @Override
     protected void onEviction(Object key, Object value) {
-        ScopeEventResolver.beforeDestroyed(Map.of("key", key, "value", value), SessionScoped.class).block();
+        ScopeEventResolver.beforeDestroyed(Map.of("key", key, "value", value), SessionScoped.class).subscribe();
     }
 
     @Override
     protected void onRemoval(Object key, Object value) {
-        ScopeEventResolver.destroyed(Map.of("key", key, "value", value), SessionScoped.class).block();
+        ScopeEventResolver.destroyed(Map.of("key", key, "value", value), SessionScoped.class).subscribe();
     }
 }

@@ -135,7 +135,8 @@ public class VariableHandler implements OperationBeforeHandler {
                         Collectors.toMap(
                                 Map.Entry::getKey,
                                 Map.Entry::getValue,
-                                (v1, v2) -> v2)
+                                (v1, v2) -> v2
+                        )
                 );
     }
 }

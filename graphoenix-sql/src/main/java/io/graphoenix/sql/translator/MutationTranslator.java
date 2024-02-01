@@ -45,38 +45,32 @@ public class MutationTranslator {
 
     private final DocumentManager documentManager;
     private final PackageManager packageManager;
-    private final QueryTranslator queryTranslator;
     private final ArgumentsTranslator argumentsTranslator;
 
     @Inject
-    public MutationTranslator(DocumentManager documentManager, PackageManager packageManager, QueryTranslator queryTranslator, ArgumentsTranslator argumentsTranslator) {
+    public MutationTranslator(DocumentManager documentManager, PackageManager packageManager, ArgumentsTranslator argumentsTranslator) {
         this.documentManager = documentManager;
         this.packageManager = packageManager;
-        this.queryTranslator = queryTranslator;
         this.argumentsTranslator = argumentsTranslator;
     }
 
-    public String operationToStatementSQL(Operation operation) {
-        return operationToStatementStream(operation).map(Object::toString).collect(Collectors.joining(";"));
+    public Stream<String> operationToStatementSQLStream(Operation operation) {
+        return operationToStatementStream(operation).map(Object::toString);
     }
 
     public Stream<Statement> operationToStatementStream(Operation operation) {
         ObjectType operationType = documentManager.getOperationTypeOrError(operation);
-        return Stream
-                .concat(
-                        operation.getFields().stream()
-                                .filter(field -> {
-                                            FieldDefinition fieldDefinition = operationType.getField(field.getName());
-                                            return packageManager.isLocalPackage(fieldDefinition) &&
-                                                    !fieldDefinition.isFetchField() &&
-                                                    !fieldDefinition.isInvokeField() &&
-                                                    !fieldDefinition.isFunctionField() &&
-                                                    !fieldDefinition.isConnectionField();
-                                        }
-                                )
-                                .flatMap(field -> fieldToMutationStatementStream(operationType, operationType.getField(field.getName()), field)),
-                        Stream.of(queryTranslator.operationToSelect(operation))
-                );
+        return operation.getFields().stream()
+                .filter(field -> {
+                            FieldDefinition fieldDefinition = operationType.getField(field.getName());
+                            return packageManager.isLocalPackage(fieldDefinition) &&
+                                    !fieldDefinition.isFetchField() &&
+                                    !fieldDefinition.isInvokeField() &&
+                                    !fieldDefinition.isFunctionField() &&
+                                    !fieldDefinition.isConnectionField();
+                        }
+                )
+                .flatMap(field -> fieldToMutationStatementStream(operationType, operationType.getField(field.getName()), field));
     }
 
     protected Stream<Statement> fieldToMutationStatementStream(ObjectType objectType, FieldDefinition fieldDefinition, Field field) {
