@@ -36,14 +36,14 @@ public class BannerScopeEvent implements ScopeEvent {
             if (resource != null) {
                 String banner = Files.readString(Path.of(resource.toURI()), StandardCharsets.US_ASCII);
                 Enumeration<URL> resources = getClass().getClassLoader().getResources("META-INF/MANIFEST.MF");
-                String version = "";
+                List<String> version = new ArrayList<>();
                 List<String> database = new ArrayList<>();
                 List<String> protocol = new ArrayList<>();
                 while (resources.hasMoreElements()) {
                     Manifest manifest = new Manifest(resources.nextElement().openStream());
                     Attributes mainAttributes = manifest.getMainAttributes();
                     if (mainAttributes.containsKey(VERSION_KEY)) {
-                        version = mainAttributes.getValue(VERSION_KEY);
+                        version.add(mainAttributes.getValue(VERSION_KEY));
                     }
 
                     if (mainAttributes.containsKey(DATABASE_KEY)) {
@@ -57,7 +57,7 @@ public class BannerScopeEvent implements ScopeEvent {
 
                 Logger.info(
                         banner
-                                .replace("${" + VERSION_KEY + "}", version)
+                                .replace("${" + VERSION_KEY + "}", String.join(", ", version))
                                 .replace("${" + DATABASE_KEY + "}", String.join(", ", database))
                                 .replace("${" + PROTOCOL_KEY + "}", String.join(", ", protocol))
                 );

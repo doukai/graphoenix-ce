@@ -64,7 +64,7 @@ public class ConnectionBuilder implements OperationAfterHandler {
                                 operation.getFields().stream()
                                         .flatMap(field -> {
                                                     String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
-                                                    return buildConnections("/" + selectionName, operationType, field, jsonValue.asJsonObject().get(selectionName));
+                                                    return buildConnections("/" + selectionName, operationType.getField(field.getName()), field, jsonValue);
                                                 }
                                         )
                                         .collect(JsonCollectors.toJsonArray())
@@ -74,61 +74,68 @@ public class ConnectionBuilder implements OperationAfterHandler {
         );
     }
 
-    public Stream<JsonValue> buildConnections(String path, ObjectType objectType, Field parentField, JsonValue jsonValue) {
+    public Stream<JsonValue> buildConnections(String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
         if (jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
             return Stream.empty();
         }
-        FieldDefinition fieldDefinition = objectType.getField(parentField.getName());
-        return Stream.ofNullable(parentField.getFields())
-                .flatMap(Collection::stream)
-                .flatMap(field -> {
-                            String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
-                            Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-                            if (fieldTypeDefinition.isObject()) {
-                                if (fieldDefinition.getType().hasList()) {
-                                    if (jsonValue.asJsonObject().getValue(selectionName).getValueType().equals(JsonValue.ValueType.NULL)) {
-                                        return Stream.empty();
-                                    } else {
-                                        return IntStream.range(0, jsonValue.asJsonObject().getValue(selectionName).asJsonArray().size())
-                                                .mapToObj(index -> buildConnections(path + "/" + selectionName + "/" + index, fieldTypeDefinition.asObject(), field, jsonValue.asJsonObject().getValue(selectionName).asJsonArray().get(index)))
-                                                .flatMap(stream -> stream);
-                                    }
-                                } else {
-                                    if (fieldDefinition.isConnectionField()) {
-                                        String filedName = fieldDefinition.getConnectionFieldOrError();
-                                        String aggName = fieldDefinition.getConnectionAggOrError();
-                                        JsonValue connectionJsonValue = buildConnection(field, fieldDefinition, jsonValue.asJsonObject().getValue(filedName), jsonValue.asJsonObject().getValue(aggName));
 
-                                        JsonObject patchItem = jsonProvider.createObjectBuilder()
-                                                .add("op", "add")
-                                                .add("path", path + "/" + selectionName)
-                                                .add("value", connectionJsonValue)
-                                                .build();
-                                        JsonValue edgesJsonValue = connectionJsonValue.asJsonObject().get(FIELD_EDGES_NAME);
-                                        if (edgesJsonValue.getValueType().equals(JsonValue.ValueType.ARRAY)) {
-                                            return Stream.concat(
-                                                    Stream.of(patchItem),
-                                                    IntStream.range(0, edgesJsonValue.asJsonArray().size())
-                                                            .filter(index -> !edgesJsonValue.asJsonArray().get(index).getValueType().equals(JsonValue.ValueType.NULL))
-                                                            .filter(index -> !edgesJsonValue.asJsonArray().get(index).asJsonObject().getValue(FIELD_NODE_NAME).getValueType().equals(JsonValue.ValueType.NULL))
-                                                            .mapToObj(index -> buildConnections(path + "/" + selectionName + "/" + FIELD_EDGES_NAME + "/" + index + "/" + FIELD_NODE_NAME, fieldTypeDefinition.asObject(), field.getField(FIELD_EDGES_NAME).getField(FIELD_NODE_NAME), edgesJsonValue.asJsonArray().get(index).asJsonObject().getValue(FIELD_NODE_NAME)))
-                                                            .flatMap(stream -> stream)
-                                            );
-                                        } else {
-                                            return Stream.of(patchItem);
-                                        }
-                                    } else {
-                                        return buildConnections(path + "/" + selectionName, fieldTypeDefinition.asObject(), field, jsonValue.asJsonObject().get(selectionName));
+        String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
+        if (jsonValue.asJsonObject().get(selectionName).getValueType().equals(JsonValue.ValueType.NULL)) {
+            return Stream.empty();
+        }
+
+        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+        if (fieldTypeDefinition.isObject()) {
+            if (fieldDefinition.getType().hasList()) {
+                return IntStream.range(0, jsonValue.asJsonObject().get(selectionName).asJsonArray().size())
+                        .mapToObj(index -> buildConnections(path + "/" + index, fieldDefinition, field, jsonValue.asJsonObject().get(selectionName).asJsonArray().get(index)))
+                        .flatMap(stream -> stream);
+            } else {
+                if (fieldDefinition.isConnectionField()) {
+                    String filedName = fieldDefinition.getConnectionFieldOrError();
+                    String aggName = fieldDefinition.getConnectionAggOrError();
+                    JsonValue connectionJsonValue = buildConnection(fieldDefinition, field, jsonValue.asJsonObject().get(filedName), jsonValue.asJsonObject().get(aggName));
+
+                    JsonObject patchItem = jsonProvider.createObjectBuilder()
+                            .add("op", "add")
+                            .add("path", path + "/" + selectionName)
+                            .add("value", connectionJsonValue)
+                            .build();
+                    JsonValue edgesJsonValue = connectionJsonValue.asJsonObject().get(FIELD_EDGES_NAME);
+                    if (edgesJsonValue.getValueType().equals(JsonValue.ValueType.ARRAY)) {
+                        return Stream.concat(
+                                Stream.of(patchItem),
+                                IntStream.range(0, edgesJsonValue.asJsonArray().size())
+                                        .filter(index -> !edgesJsonValue.asJsonArray().get(index).getValueType().equals(JsonValue.ValueType.NULL))
+                                        .filter(index -> !edgesJsonValue.asJsonArray().get(index).asJsonObject().get(FIELD_NODE_NAME).getValueType().equals(JsonValue.ValueType.NULL))
+                                        .mapToObj(index ->
+                                                buildConnections(
+                                                        path + "/" + FIELD_EDGES_NAME + "/" + index + "/" + FIELD_NODE_NAME,
+                                                        documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(FIELD_EDGES_NAME)).asObject().getField(FIELD_NODE_NAME),
+                                                        field.getField(FIELD_EDGES_NAME).getField(FIELD_NODE_NAME),
+                                                        edgesJsonValue.asJsonArray().get(index).asJsonObject().get(FIELD_NODE_NAME))
+                                        )
+                                        .flatMap(stream -> stream)
+                        );
+                    } else {
+                        return Stream.of(patchItem);
+                    }
+                } else {
+                    return Stream.ofNullable(field.getFields())
+                            .flatMap(Collection::stream)
+                            .flatMap(subField -> {
+                                        String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
+                                        return buildConnections(path + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonObject().get(selectionName));
                                     }
-                                }
-                            } else {
-                                return Stream.empty();
-                            }
-                        }
-                );
+                            );
+                }
+            }
+        } else {
+            return Stream.empty();
+        }
     }
 
-    public JsonValue buildConnection(Field connectionField, FieldDefinition connectionFieldDefinition, JsonValue fieldJsonValue, JsonValue aggJsonValue) {
+    public JsonValue buildConnection(FieldDefinition connectionFieldDefinition, Field connectionField, JsonValue fieldJsonValue, JsonValue aggJsonValue) {
         if (connectionField.getFields() != null && !connectionField.getFields().isEmpty()) {
             JsonObjectBuilder connectionObjectBuilder = jsonProvider.createObjectBuilder();
             ObjectType connectionFieldTypeDefinition = documentManager.getFieldTypeDefinition(connectionFieldDefinition).asObject();

@@ -152,13 +152,15 @@ public class QueryTranslator {
             String idName = fieldTypeDefinition.asObject().getIDFieldOrError().getName();
             whereExpression = fieldDefinition.getArgument(INPUT_VALUE_WHERE_NAME)
                     .flatMap(inputValue ->
-                            field.getArguments().getArgument(inputValue.getName())
+                            Optional.ofNullable(field.getArguments())
+                                    .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
                                     .flatMap(valueWithVariable -> argumentsTranslator.inputValueToWhereExpression(objectType, fieldDefinition, inputValue, valueWithVariable, level))
                     )
                     .or(() ->
                             fieldDefinition.getArgument(INPUT_VALUE_LIST_NAME)
                                     .flatMap(inputValue ->
-                                            field.getArguments().getArgument(inputValue.getName())
+                                            Optional.ofNullable(field.getArguments())
+                                                    .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
                                                     .filter(valueWithVariable -> !valueWithVariable.isNull())
                                                     .map(valueWithVariable -> {
                                                                 if (valueWithVariable.isVariable()) {
@@ -190,7 +192,8 @@ public class QueryTranslator {
                                                             new EqualsTo()
                                                                     .withLeftExpression(graphqlFieldToColumn(table, idName))
                                                                     .withRightExpression(
-                                                                            field.getArguments().getArgument(inputValue.getName())
+                                                                            Optional.ofNullable(field.getArguments())
+                                                                                    .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
                                                                                     .flatMap(DBValueUtil::idValueToDBValue)
                                                                                     .orElseGet(() -> createInsertIdUserVariable(fieldTypeDefinition.getName(), idName, 0, 0))
                                                                     )
@@ -421,7 +424,8 @@ public class QueryTranslator {
                 Table table = typeToTable(fieldTypeDefinition.asObject(), level);
                 return fieldDefinition.getArgument(INPUT_VALUE_ORDER_BY_NAME)
                         .flatMap(inputValue ->
-                                field.getArguments().getArgument(inputValue.getName())
+                                Optional.ofNullable(field.getArguments())
+                                        .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
                                         .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
                         )
                         .filter(ValueWithVariable::isObject)
@@ -437,7 +441,10 @@ public class QueryTranslator {
                         .orElseGet(() ->
                                 Stream.of(
                                         new OrderByElement()
-                                                .withAsc(!field.getArguments().hasArgument(INPUT_VALUE_LAST_NAME))
+                                                .withAsc(!Optional.ofNullable(field.getArguments())
+                                                        .map(arguments -> arguments.hasArgument(INPUT_VALUE_LAST_NAME))
+                                                        .orElse(false)
+                                                )
                                                 .withExpression(graphqlFieldToColumn(table, fieldTypeDefinition.asObject().getCursorField().orElseGet(() -> fieldTypeDefinition.asObject().getIDFieldOrError()).getName()))
                                 )
                         )
@@ -446,7 +453,8 @@ public class QueryTranslator {
                 Table withTable = graphqlTypeToTable(fieldDefinition.getMapWithTypeOrError(), level);
                 return fieldDefinition.getArgument(INPUT_VALUE_SORT_NAME)
                         .flatMap(inputValue ->
-                                field.getArguments().getArgument(inputValue.getName())
+                                Optional.ofNullable(field.getArguments())
+                                        .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
                                         .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
                         )
                         .filter(ValueWithVariable::isEnum)
@@ -467,13 +475,15 @@ public class QueryTranslator {
         if (fieldDefinition.getArguments() != null) {
             return fieldDefinition.getArgument(INPUT_VALUE_FIRST_NAME)
                     .flatMap(inputValue ->
-                            field.getArguments().getArgument(inputValue.getName())
+                            Optional.ofNullable(field.getArguments())
+                                    .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
                                     .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
                     )
                     .or(() ->
                             fieldDefinition.getArgument(INPUT_VALUE_LAST_NAME)
                                     .flatMap(inputValue ->
-                                            field.getArguments().getArgument(inputValue.getName())
+                                            Optional.ofNullable(field.getArguments())
+                                                    .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
                                                     .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
                                     )
                     )
@@ -484,7 +494,8 @@ public class QueryTranslator {
                                     .withOffset(
                                             fieldDefinition.getArgument(INPUT_VALUE_FIRST_NAME)
                                                     .flatMap(inputValue ->
-                                                            field.getArguments().getArgument(inputValue.getName())
+                                                            Optional.ofNullable(field.getArguments())
+                                                                    .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
                                                                     .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
                                                     )
                                                     .filter(ValueWithVariable::isInt)

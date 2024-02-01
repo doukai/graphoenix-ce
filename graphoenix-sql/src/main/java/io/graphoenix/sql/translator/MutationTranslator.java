@@ -93,7 +93,8 @@ public class MutationTranslator {
                                         .filter(subField -> !documentManager.getFieldTypeDefinition(subField).isObject())
                                         .collect(Collectors.toList());
 
-                                return field.getArguments().getArgument(inputValue.getName())
+                                return Optional.ofNullable(field.getArguments())
+                                        .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
                                         .filter(valueWithVariable -> !valueWithVariable.isNull())
                                         .map(valueWithVariable -> {
                                                     if (valueWithVariable.isVariable()) {
