@@ -443,6 +443,11 @@ public class MutationTranslator {
                         .filter(ValueWithVariable::isObject)
                         .map(ValueWithVariable::asObject)
                         .filter(objectValueWithVariable -> !objectValueWithVariable.containsKey(FIELD_DEPRECATED_NAME))
+                        .filter(objectValueWithVariable ->
+                                objectValueWithVariable.getValueWithVariable(FIELD_DEPRECATED_NAME)
+                                        .map(isDeprecated -> isDeprecated.asBoolean().getValue())
+                                        .orElse(false)
+                        )
                         .collect(Collectors.toList());
 
                 if (!mergeValueWithVariableList.isEmpty()) {
@@ -523,6 +528,11 @@ public class MutationTranslator {
                         .filter(ValueWithVariable::isObject)
                         .map(ValueWithVariable::asObject)
                         .filter(objectValueWithVariable -> objectValueWithVariable.containsKey(FIELD_DEPRECATED_NAME))
+                        .filter(objectValueWithVariable ->
+                                objectValueWithVariable.getValueWithVariable(FIELD_DEPRECATED_NAME)
+                                        .map(isDeprecated -> isDeprecated.asBoolean().getValue())
+                                        .orElse(false)
+                        )
                         .flatMap(objectValueWithVariable ->
                                 objectValueWithVariable.getValueWithVariable(idName)
                                         .or(() ->
