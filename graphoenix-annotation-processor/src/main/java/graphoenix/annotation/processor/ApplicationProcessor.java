@@ -3,9 +3,11 @@ package graphoenix.annotation.processor;
 import com.google.auto.service.AutoService;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.GraphQLConfigRegister;
+import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.java.implementer.ArgumentsInvokeHandlerBuilder;
 import io.graphoenix.java.implementer.InputInvokeHandlerBuilder;
 import io.graphoenix.java.implementer.InvokeHandlerBuilder;
+import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.nozdormu.spi.context.BeanContext;
 import org.tinylog.Logger;
 
@@ -40,9 +42,7 @@ public class ApplicationProcessor extends BaseProcessor {
             return false;
         }
         DocumentManager documentManager = BeanContext.get(DocumentManager.class);
-        InputInvokeHandlerBuilder inputInvokeHandlerBuilder = BeanContext.get(InputInvokeHandlerBuilder.class);
-        ArgumentsInvokeHandlerBuilder argumentsInvokeHandlerBuilder = BeanContext.get(ArgumentsInvokeHandlerBuilder.class);
-        InvokeHandlerBuilder invokeHandlerBuilder = BeanContext.get(InvokeHandlerBuilder.class);
+        PackageManager packageManager = BeanContext.get(PackageManager.class);
         roundInit(roundEnv);
 
         try {
@@ -54,10 +54,18 @@ public class ApplicationProcessor extends BaseProcessor {
             writer.write(documentManager.getDocument().toString());
             writer.close();
 
-            inputInvokeHandlerBuilder.writeToFiler(filer);
-            argumentsInvokeHandlerBuilder.writeToFiler(filer);
-            invokeHandlerBuilder.writeToFiler(filer);
-
+            if (documentManager.getDocument().getObjectTypes()
+                    .flatMap(objectType -> objectType.getFields().stream())
+                    .filter(packageManager::isLocalPackage)
+                    .anyMatch(FieldDefinition::isInvokeField)
+            ) {
+                InputInvokeHandlerBuilder inputInvokeHandlerBuilder = BeanContext.get(InputInvokeHandlerBuilder.class);
+                ArgumentsInvokeHandlerBuilder argumentsInvokeHandlerBuilder = BeanContext.get(ArgumentsInvokeHandlerBuilder.class);
+                InvokeHandlerBuilder invokeHandlerBuilder = BeanContext.get(InvokeHandlerBuilder.class);
+                inputInvokeHandlerBuilder.writeToFiler(filer);
+                argumentsInvokeHandlerBuilder.writeToFiler(filer);
+                invokeHandlerBuilder.writeToFiler(filer);
+            }
         } catch (IOException | URISyntaxException e) {
             Logger.error(e);
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
