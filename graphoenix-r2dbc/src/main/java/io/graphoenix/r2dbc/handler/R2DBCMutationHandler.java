@@ -1,5 +1,6 @@
 package io.graphoenix.r2dbc.handler;
 
+import io.graphoenix.r2dbc.config.R2DBCConfig;
 import io.graphoenix.r2dbc.executor.MutationExecutor;
 import io.graphoenix.r2dbc.executor.QueryExecutor;
 import io.graphoenix.spi.graphql.operation.Operation;
@@ -20,6 +21,8 @@ import java.io.StringReader;
 @Named("r2dbc")
 public class R2DBCMutationHandler implements MutationHandler {
 
+    private final R2DBCConfig r2DBCConfig;
+
     private final MutationTranslator mutationTranslator;
 
     private final MutationExecutor mutationExecutor;
@@ -31,7 +34,8 @@ public class R2DBCMutationHandler implements MutationHandler {
     private final JsonProvider jsonProvider;
 
     @Inject
-    public R2DBCMutationHandler(MutationTranslator mutationTranslator, MutationExecutor mutationExecutor, QueryTranslator queryTranslator, QueryExecutor queryExecutor, JsonProvider jsonProvider) {
+    public R2DBCMutationHandler(R2DBCConfig r2DBCConfig, MutationTranslator mutationTranslator, MutationExecutor mutationExecutor, QueryTranslator queryTranslator, QueryExecutor queryExecutor, JsonProvider jsonProvider) {
+        this.r2DBCConfig = r2DBCConfig;
         this.mutationTranslator = mutationTranslator;
         this.mutationExecutor = mutationExecutor;
         this.queryTranslator = queryTranslator;
@@ -41,9 +45,16 @@ public class R2DBCMutationHandler implements MutationHandler {
 
     @Override
     public Mono<JsonValue> mutation(Operation operation) {
-        return mutationExecutor.executeMutations(mutationTranslator.operationToStatementSQLStream(operation))
-                .doOnSuccess(count -> Logger.info("mutation count: {}", count))
-                .then(queryExecutor.executeQuery(queryTranslator.operationToSelectSQL(operation)))
-                .map(json -> jsonProvider.createReader(new StringReader(json)).readValue());
+        if (r2DBCConfig.getAllowMultiQueries()) {
+            return mutationExecutor.executeMutations(mutationTranslator.operationToStatementSQLStream(operation))
+                    .doOnSuccess(count -> Logger.info("mutation count: {}", count))
+                    .then(queryExecutor.executeQuery(queryTranslator.operationToSelectSQL(operation)))
+                    .map(json -> jsonProvider.createReader(new StringReader(json)).readValue());
+        } else {
+            return mutationExecutor.executeMutationsFlux(mutationTranslator.operationToStatementSQLStream(operation))
+                    .doOnNext(count -> Logger.info("mutation count: {}", count))
+                    .then(queryExecutor.executeQuery(queryTranslator.operationToSelectSQL(operation)))
+                    .map(json -> jsonProvider.createReader(new StringReader(json)).readValue());
+        }
     }
 }

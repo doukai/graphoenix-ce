@@ -92,4 +92,28 @@ public class MutationExecutor {
                         connectionProvider::close
                 );
     }
+
+    public Flux<Long> executeMutationsFlux(Stream<String> mutationSqlStream) {
+        return executeMutationsFlux(mutationSqlStream, null);
+    }
+
+    public Flux<Long> executeMutationsFlux(Stream<String> mutationSqlStream, Map<String, Object> parameters) {
+        return Flux
+                .usingWhen(
+                        connectionProvider.get(),
+                        connection -> Flux.fromStream(mutationSqlStream)
+                                .flatMap(sql -> {
+                                            Logger.info("execute mutation:\r\n{}", sql);
+                                            Logger.info("sql parameters:\r\n{}", parameters);
+                                            Statement mutationStatement = connection.createStatement(sql);
+                                            if (parameters != null) {
+                                                parameters.forEach(mutationStatement::bind);
+                                            }
+                                            return Flux.from(mutationStatement.execute())
+                                                    .flatMap(ResultUtil::getUpdateCountFromResult);
+                                        }
+                                ),
+                        connectionProvider::close
+                );
+    }
 }
