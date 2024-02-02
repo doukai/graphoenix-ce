@@ -96,7 +96,15 @@ public class SelectionHandler implements OperationAfterHandler {
         if (fieldTypeDefinition.isObject()) {
             if (fieldDefinition.getType().hasList()) {
                 return IntStream.range(0, jsonValue.asJsonArray().size())
-                        .mapToObj(index -> buildFormat(path + "/" + index, fieldDefinition, field, jsonValue.asJsonArray().get(index)))
+                        .mapToObj(index ->
+                                Stream.ofNullable(field.getFields())
+                                        .flatMap(Collection::stream)
+                                        .flatMap(subField -> {
+                                                    String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
+                                                    return buildFormat(path + "/" + index + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonArray().get(index));
+                                                }
+                                        )
+                        )
                         .flatMap(stream -> stream);
             } else {
                 return Stream.ofNullable(field.getFields())

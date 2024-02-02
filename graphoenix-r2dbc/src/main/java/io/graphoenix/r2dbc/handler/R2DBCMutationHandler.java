@@ -53,6 +53,8 @@ public class R2DBCMutationHandler implements MutationHandler {
         } else {
             return mutationExecutor.executeMutationsFlux(mutationTranslator.operationToStatementSQLStream(operation))
                     .doOnNext(count -> Logger.info("mutation count: {}", count))
+                    .reduce(Long::sum)
+                    .doOnSuccess(count -> Logger.info("mutation total count: {}", count))
                     .then(queryExecutor.executeQuery(queryTranslator.operationToSelectSQL(operation)))
                     .map(json -> jsonProvider.createReader(new StringReader(json)).readValue());
         }

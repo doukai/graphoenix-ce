@@ -88,7 +88,15 @@ public class ConnectionBuilder implements OperationAfterHandler {
         if (fieldTypeDefinition.isObject()) {
             if (fieldDefinition.getType().hasList()) {
                 return IntStream.range(0, jsonValue.asJsonObject().get(selectionName).asJsonArray().size())
-                        .mapToObj(index -> buildConnections(path + "/" + index, fieldDefinition, field, jsonValue.asJsonObject().get(selectionName).asJsonArray().get(index)))
+                        .mapToObj(index ->
+                                Stream.ofNullable(field.getFields())
+                                        .flatMap(Collection::stream)
+                                        .flatMap(subField -> {
+                                                    String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
+                                                    return buildConnections(path + "/" + index + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonObject().get(selectionName).asJsonArray().get(index));
+                                                }
+                                        )
+                        )
                         .flatMap(stream -> stream);
             } else {
                 if (fieldDefinition.isConnectionField()) {

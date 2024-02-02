@@ -247,6 +247,14 @@ public class QueryTranslator {
             }
         }
         whereExpression.ifPresent(plainSelect::setWhere);
+        if (!fieldDefinition.getType().hasList()) {
+            plainSelect
+                    .setLimit(
+                            new Limit()
+                                    .withOffset(new LongValue(0))
+                                    .withRowCount(new LongValue(1))
+                    );
+        }
         return plainSelect;
     }
 
