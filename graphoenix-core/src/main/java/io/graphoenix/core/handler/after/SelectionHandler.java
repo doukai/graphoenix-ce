@@ -101,7 +101,7 @@ public class SelectionHandler implements OperationAfterHandler {
                                         .flatMap(Collection::stream)
                                         .flatMap(subField -> {
                                                     String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
-                                                    return buildFormat(path + "/" + index + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonArray().get(index));
+                                                    return buildFormat(path + "/" + index + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonArray().get(index).asJsonObject().get(subSelectionName));
                                                 }
                                         )
                         )
