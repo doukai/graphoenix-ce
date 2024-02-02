@@ -74,8 +74,10 @@ public class FragmentHandler implements OperationBeforeHandler {
 
     public Flux<Selection> fragmentToFields(Fragment fragment) {
         return PublisherBeanContext.get(Document.class)
-                .flatMap(document -> Mono.justOrEmpty(document.getFragmentDefinition(fragment.getFragmentName())))
-                .defaultIfEmpty(documentManager.getDocument().getFragmentDefinitionOrError(fragment.getFragmentName()))
+                .map(document ->
+                        document.getFragmentDefinition(fragment.getFragmentName())
+                                .orElseGet(() -> documentManager.getDocument().getFragmentDefinitionOrError(fragment.getFragmentName()))
+                )
                 .flatMapMany(fragmentDefinition -> Flux.fromIterable(fragmentDefinition.getSelections()));
     }
 }

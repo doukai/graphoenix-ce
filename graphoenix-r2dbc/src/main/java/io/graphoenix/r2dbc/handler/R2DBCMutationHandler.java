@@ -1,6 +1,7 @@
 package io.graphoenix.r2dbc.handler;
 
 import io.graphoenix.r2dbc.executor.MutationExecutor;
+import io.graphoenix.r2dbc.executor.QueryExecutor;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.handler.MutationHandler;
 import io.graphoenix.sql.translator.MutationTranslator;
@@ -10,6 +11,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
+import org.tinylog.Logger;
 import reactor.core.publisher.Mono;
 
 import java.io.StringReader;
@@ -24,23 +26,24 @@ public class R2DBCMutationHandler implements MutationHandler {
 
     private final QueryTranslator queryTranslator;
 
+    private final QueryExecutor queryExecutor;
+
     private final JsonProvider jsonProvider;
 
     @Inject
-    public R2DBCMutationHandler(MutationTranslator mutationTranslator, MutationExecutor mutationExecutor, QueryTranslator queryTranslator, JsonProvider jsonProvider) {
+    public R2DBCMutationHandler(MutationTranslator mutationTranslator, MutationExecutor mutationExecutor, QueryTranslator queryTranslator, QueryExecutor queryExecutor, JsonProvider jsonProvider) {
         this.mutationTranslator = mutationTranslator;
         this.mutationExecutor = mutationExecutor;
         this.queryTranslator = queryTranslator;
+        this.queryExecutor = queryExecutor;
         this.jsonProvider = jsonProvider;
     }
 
     @Override
     public Mono<JsonValue> mutation(Operation operation) {
-        return mutationExecutor
-                .executeMutations(
-                        mutationTranslator.operationToStatementSQLStream(operation),
-                        queryTranslator.operationToSelectSQL(operation)
-                )
+        return mutationExecutor.executeMutations(mutationTranslator.operationToStatementSQLStream(operation))
+                .doOnSuccess(count -> Logger.info("mutation count: {}", count))
+                .then(queryExecutor.executeQuery(queryTranslator.operationToSelectSQL(operation)))
                 .map(json -> jsonProvider.createReader(new StringReader(json)).readValue());
     }
 }

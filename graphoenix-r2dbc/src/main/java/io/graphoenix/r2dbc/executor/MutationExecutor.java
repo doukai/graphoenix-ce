@@ -1,10 +1,8 @@
 package io.graphoenix.r2dbc.executor;
 
-import io.graphoenix.r2dbc.connection.ConnectionCreator;
 import io.graphoenix.r2dbc.connection.ConnectionProvider;
 import io.graphoenix.r2dbc.utils.ResultUtil;
 import io.r2dbc.spi.Batch;
-import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.Statement;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -20,43 +18,35 @@ public class MutationExecutor {
 
     private final ConnectionProvider connectionProvider;
 
-    private final ConnectionCreator connectionCreator;
-
     @Inject
-    public MutationExecutor(ConnectionProvider connectionProvider, ConnectionCreator connectionCreator) {
+    public MutationExecutor(ConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
-        this.connectionCreator = connectionCreator;
     }
 
-    public Mono<String> executeMutationsInBatch(Stream<String> mutationSqlStream, String querySQL) {
-        return Mono
+    public Flux<Long> executeMutationsInBatch(Stream<String> mutationSqlStream) {
+        return Flux
                 .usingWhen(
-                        connectionCreator.createConnection(),
+                        connectionProvider.get(),
                         connection ->
                                 Flux.fromStream(mutationSqlStream)
                                         .collectList()
                                         .filter(sqlList -> !sqlList.isEmpty())
-                                        .flatMap(sqlList -> {
+                                        .flatMapMany(sqlList -> {
                                                     Batch batch = connection.createBatch();
                                                     Logger.info("execute statement count:\r\n{}", sqlList.size());
                                                     sqlList.forEach(batch::add);
                                                     return Flux.from(batch.execute())
-                                                            .flatMap(ResultUtil::getUpdateCountFromResult)
-                                                            .doOnNext(count -> Logger.info("mutation count: {}", count))
-                                                            .then(
-                                                                    Mono.from(connection.createStatement(querySQL).execute())
-                                                                            .flatMap(ResultUtil::getJsonStringFromResult)
-                                                            );
+                                                            .flatMap(ResultUtil::getUpdateCountFromResult);
                                                 }
                                         ),
-                        Connection::close
+                        connectionProvider::close
                 );
     }
 
-    public Mono<String> executeMutationsInBatchByGroup(Stream<String> mutationSqlStream, String querySQL, int groupSize) {
-        return Mono
+    public Flux<Long> executeMutationsInBatchByGroup(Stream<String> mutationSqlStream, int groupSize) {
+        return Flux
                 .usingWhen(
-                        connectionCreator.createConnection(),
+                        connectionProvider.get(),
                         connection ->
                                 Flux.fromStream(mutationSqlStream)
                                         .window(groupSize)
@@ -68,25 +58,19 @@ public class MutationExecutor {
                                                                     Logger.info("execute statement count:\r\n{}", sqlList.size());
                                                                     sqlList.forEach(batch::add);
                                                                     return Flux.from(batch.execute())
-                                                                            .flatMap(ResultUtil::getUpdateCountFromResult)
-                                                                            .doOnNext(count -> Logger.info("mutation count: {}", count));
+                                                                            .flatMap(ResultUtil::getUpdateCountFromResult);
                                                                 }
                                                         )
-                                        )
-                                        .then()
-                                        .then(
-                                                Mono.from(connection.createStatement(querySQL).execute())
-                                                        .flatMap(ResultUtil::getJsonStringFromResult)
                                         ),
-                        Connection::close
+                        connectionProvider::close
                 );
     }
 
-    public Mono<String> executeMutations(Stream<String> mutationSqlStream, String querySQL) {
-        return executeMutations(mutationSqlStream, querySQL, null);
+    public Mono<Long> executeMutations(Stream<String> mutationSqlStream) {
+        return executeMutations(mutationSqlStream, null);
     }
 
-    public Mono<String> executeMutations(Stream<String> mutationSqlStream, String querySQL, Map<String, Object> parameters) {
+    public Mono<Long> executeMutations(Stream<String> mutationSqlStream, Map<String, Object> parameters) {
         return Mono
                 .usingWhen(
                         connectionProvider.get(),
@@ -98,18 +82,11 @@ public class MutationExecutor {
                                             Logger.info("execute mutation:\r\n{}", mutation);
                                             Logger.info("sql parameters:\r\n{}", parameters);
                                             Statement mutationStatement = connection.createStatement(mutation);
-                                            Statement queryStatement = connection.createStatement(querySQL);
                                             if (parameters != null) {
                                                 parameters.forEach(mutationStatement::bind);
-                                                parameters.forEach(queryStatement::bind);
                                             }
                                             return Mono.from(mutationStatement.execute())
-                                                    .flatMap(ResultUtil::getUpdateCountFromResult)
-                                                    .doOnSuccess(count -> Logger.info("mutation count: {}", count))
-                                                    .then(
-                                                            Mono.from(queryStatement.execute())
-                                                                    .flatMap(ResultUtil::getJsonStringFromResult)
-                                                    );
+                                                    .flatMap(ResultUtil::getUpdateCountFromResult);
                                         }
                                 ),
                         connectionProvider::close
