@@ -297,9 +297,9 @@ public class InputInvokeHandlerBuilder {
                 .unindent()
                 .add("})\n")
                 .add(".then()\n")
-                .add(".thenReturn($L)", typeParameterName)
+                .add(".thenReturn($L)\n", typeParameterName)
                 .unindent()
-                .add(")\n");
+                .add(")");
         builder.addStatement(codeBlockBuilder.build());
         return builder.build();
     }

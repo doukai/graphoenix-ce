@@ -79,13 +79,9 @@ public class ConnectionBuilder implements OperationAfterHandler {
             return Stream.empty();
         }
 
-        String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
-        if (jsonValue.asJsonObject().get(selectionName).getValueType().equals(JsonValue.ValueType.NULL)) {
-            return Stream.empty();
-        }
-
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject()) {
+            String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
             if (fieldDefinition.getType().hasList()) {
                 return IntStream.range(0, jsonValue.asJsonObject().get(selectionName).asJsonArray().size())
                         .mapToObj(index ->
@@ -101,8 +97,12 @@ public class ConnectionBuilder implements OperationAfterHandler {
             } else {
                 if (fieldDefinition.isConnectionField()) {
                     String filedName = fieldDefinition.getConnectionFieldOrError();
+                    if (jsonValue.asJsonObject().get(filedName).getValueType().equals(JsonValue.ValueType.NULL)) {
+                        return Stream.empty();
+                    }
                     String aggName = fieldDefinition.getConnectionAggOrError();
-                    JsonValue connectionJsonValue = buildConnection(fieldDefinition, field, jsonValue.asJsonObject().get(filedName), jsonValue.asJsonObject().get(aggName));
+                    FieldDefinition nodeFieldDefinition = documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(FIELD_EDGES_NAME)).asObject().getField(FIELD_NODE_NAME);
+                    JsonValue connectionJsonValue = buildConnection(nodeFieldDefinition, field, jsonValue.asJsonObject().get(filedName), jsonValue.asJsonObject().get(aggName));
 
                     JsonObject patchItem = jsonProvider.createObjectBuilder()
                             .add("op", "add")
@@ -119,7 +119,7 @@ public class ConnectionBuilder implements OperationAfterHandler {
                                         .mapToObj(index ->
                                                 buildConnections(
                                                         path + "/" + FIELD_EDGES_NAME + "/" + index + "/" + FIELD_NODE_NAME,
-                                                        documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(FIELD_EDGES_NAME)).asObject().getField(FIELD_NODE_NAME),
+                                                        nodeFieldDefinition,
                                                         field.getField(FIELD_EDGES_NAME).getField(FIELD_NODE_NAME),
                                                         edgesJsonValue.asJsonArray().get(index).asJsonObject().get(FIELD_NODE_NAME))
                                         )
@@ -133,7 +133,7 @@ public class ConnectionBuilder implements OperationAfterHandler {
                             .flatMap(Collection::stream)
                             .flatMap(subField -> {
                                         String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
-                                        return buildConnections(path + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonObject().get(selectionName));
+                                        return buildConnections(path + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue);
                                     }
                             );
                 }
@@ -143,12 +143,12 @@ public class ConnectionBuilder implements OperationAfterHandler {
         }
     }
 
-    public JsonValue buildConnection(FieldDefinition connectionFieldDefinition, Field connectionField, JsonValue fieldJsonValue, JsonValue aggJsonValue) {
+    public JsonValue buildConnection(FieldDefinition nodeFieldDefinition, Field connectionField, JsonValue fieldJsonValue, JsonValue aggJsonValue) {
         if (connectionField.getFields() != null && !connectionField.getFields().isEmpty()) {
             JsonObjectBuilder connectionObjectBuilder = jsonProvider.createObjectBuilder();
-            ObjectType connectionFieldTypeDefinition = documentManager.getFieldTypeDefinition(connectionFieldDefinition).asObject();
-            FieldDefinition cursorFieldDefinition = connectionFieldTypeDefinition.getCursorField()
-                    .orElseGet(connectionFieldTypeDefinition::getIDFieldOrError);
+            ObjectType nodeFieldTypeDefinition = documentManager.getFieldTypeDefinition(nodeFieldDefinition).asObject();
+            FieldDefinition cursorFieldDefinition = nodeFieldTypeDefinition.getCursorField()
+                    .orElseGet(nodeFieldTypeDefinition::getIDFieldOrError);
 
             for (Field field : connectionField.getFields()) {
                 int size = fieldJsonValue.getValueType().equals(JsonValue.ValueType.NULL) ? 0 : fieldJsonValue.asJsonArray().size();
@@ -178,7 +178,7 @@ public class ConnectionBuilder implements OperationAfterHandler {
 
                 switch (field.getName()) {
                     case FIELD_TOTAL_COUNT_NAME:
-                        FieldDefinition idField = connectionFieldTypeDefinition.getIDFieldOrError();
+                        FieldDefinition idField = nodeFieldTypeDefinition.getIDFieldOrError();
                         connectionObjectBuilder.add(FIELD_TOTAL_COUNT_NAME, aggJsonValue.asJsonObject().get(idField.getName() + SUFFIX_COUNT));
                         break;
                     case FIELD_EDGES_NAME:

@@ -106,14 +106,14 @@ public class DefaultOperationHandler implements OperationHandler {
                                         Flux.fromIterable(queryAfterHandlerList)
                                                 .reduce(
                                                         Mono.just(jsonValue),
-                                                        (pre, cur) -> pre.flatMap(result -> cur.query(operationAfterHandler, jsonValue))
+                                                        (pre, cur) -> pre.flatMap(result -> cur.query(operationAfterHandler, result))
                                                 )
                                                 .flatMap(jsonValueMono -> jsonValueMono)
                                                 .flatMap(jsonValueAfterHandler ->
                                                         Flux.fromIterable(operationAfterHandlerList)
                                                                 .reduce(
                                                                         Mono.just(jsonValueAfterHandler),
-                                                                        (pre, cur) -> pre.flatMap(result -> cur.query(operationAfterHandler, jsonValueAfterHandler))
+                                                                        (pre, cur) -> pre.flatMap(result -> cur.query(operationAfterHandler, result))
                                                                 )
                                                                 .flatMap(operationMono -> operationMono)
                                                 )
@@ -143,14 +143,14 @@ public class DefaultOperationHandler implements OperationHandler {
                                         Flux.fromIterable(mutationAfterHandlerList)
                                                 .reduce(
                                                         Mono.just(jsonValue),
-                                                        (pre, cur) -> pre.flatMap(result -> cur.mutation(operationAfterHandler, jsonValue))
+                                                        (pre, cur) -> pre.flatMap(result -> cur.mutation(operationAfterHandler, result))
                                                 )
                                                 .flatMap(jsonValueMono -> jsonValueMono)
                                                 .flatMap(jsonValueAfterHandler ->
                                                         Flux.fromIterable(operationAfterHandlerList)
                                                                 .reduce(
                                                                         Mono.just(jsonValueAfterHandler),
-                                                                        (pre, cur) -> pre.flatMap(result -> cur.mutation(operationAfterHandler, jsonValueAfterHandler))
+                                                                        (pre, cur) -> pre.flatMap(result -> cur.mutation(operationAfterHandler, result))
                                                                 )
                                                                 .flatMap(operationMono -> operationMono)
                                                 )
