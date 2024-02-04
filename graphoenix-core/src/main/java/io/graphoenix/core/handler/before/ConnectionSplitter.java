@@ -6,6 +6,7 @@ import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
+import io.graphoenix.spi.graphql.common.Directive;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Operation;
@@ -147,7 +148,8 @@ public class ConnectionSplitter implements OperationBeforeHandler {
                                                             }
                                                     )
                                                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
-                                    );
+                                    )
+                                    .addDirective(new Directive(DIRECTIVE_HIDE_NAME));
                         }
                 );
     }
@@ -168,7 +170,8 @@ public class ConnectionSplitter implements OperationBeforeHandler {
                                                     .filter(entry -> !entry.getKey().equals(INPUT_VALUE_FIRST_NAME) && !entry.getKey().equals(INPUT_VALUE_LAST_NAME))
                                                     .map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue()))
                                                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
-                                    );
+                                    )
+                                    .addDirective(new Directive(DIRECTIVE_HIDE_NAME));
                         }
                 );
     }

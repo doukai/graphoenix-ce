@@ -95,10 +95,6 @@ public class Field extends AbstractDefinition implements Selection {
         return setArguments(new Arguments(objectValueWithVariableMap));
     }
 
-    public Field updateArguments(JsonObject jsonObject) {
-        return setArguments(new Arguments(ValueWithVariable.updateJsonObject(this.arguments, jsonObject)));
-    }
-
     public Field addArguments(Arguments arguments) {
         if (this.arguments == null) {
             this.arguments = new Arguments();

@@ -25,12 +25,12 @@ import static io.graphoenix.r2dbc.context.TransactionScopeInstanceFactory.TRANSA
 
 @ApplicationScoped
 @Named("r2dbc")
-public class R2dbcTransactionInterceptor implements TransactionInterceptorProcessor {
+public class R2DBCTransactionInterceptor implements TransactionInterceptorProcessor {
 
     private final ConnectionProvider connectionProvider;
 
     @Inject
-    public R2dbcTransactionInterceptor(ConnectionProvider connectionProvider) {
+    public R2DBCTransactionInterceptor(ConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
     }
 

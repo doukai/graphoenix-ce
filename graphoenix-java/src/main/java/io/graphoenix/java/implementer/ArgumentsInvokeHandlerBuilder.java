@@ -4,6 +4,7 @@ import com.google.common.collect.Streams;
 import com.squareup.javapoet.*;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
+import io.graphoenix.core.handler.OperationBuilder;
 import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.java.utils.TypeNameUtil;
 import io.graphoenix.spi.graphql.AbstractDefinition;
@@ -97,6 +98,14 @@ public class ArgumentsInvokeHandlerBuilder {
                 .addAnnotation(AnnotationSpec.builder(Priority.class).addMember("value", "300").build())
                 .addField(
                         FieldSpec.builder(
+                                ClassName.get(OperationBuilder.class),
+                                "operationBuilder",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addField(
+                        FieldSpec.builder(
                                 ClassName.get(Jsonb.class),
                                 "jsonb",
                                 Modifier.PRIVATE,
@@ -147,6 +156,7 @@ public class ArgumentsInvokeHandlerBuilder {
         MethodSpec.Builder builder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Inject.class)
+                .addParameter(ClassName.get(OperationBuilder.class), "operationBuilder")
                 .addParameter(ClassName.get(Jsonb.class), "jsonb")
                 .addParameter(ClassName.get(JsonProvider.class), "jsonProvider")
                 .addParameter(ClassName.get(packageConfig.getHandlerPackageName(), "InputInvokeHandler"), "inputInvokeHandler")
@@ -161,6 +171,7 @@ public class ArgumentsInvokeHandlerBuilder {
                                 )
                                 .collect(Collectors.toList())
                 )
+                .addStatement("this.operationBuilder = operationBuilder")
                 .addStatement("this.jsonb = jsonb")
                 .addStatement("this.jsonProvider = jsonProvider")
                 .addStatement("this.inputInvokeHandler = inputInvokeHandler");
@@ -250,7 +261,7 @@ public class ArgumentsInvokeHandlerBuilder {
                                                                                                                     methodName,
                                                                                                                     toClassName(documentManager.getDocument().getInputObjectTypeOrError(argumentInputName).getClassNameOrError())
                                                                                                             )
-                                                                                                            .add(".doOnNext($L -> field.updateArguments(jsonProvider.createReader(new $T(jsonb.toJson($L))).readObject()))\n",
+                                                                                                            .add(".doOnNext($L -> field.setArguments(operationBuilder.updateJsonObject(field.getArguments(), jsonProvider.createReader(new $T(jsonb.toJson($L))).readObject())))\n",
                                                                                                                     methodName,
                                                                                                                     ClassName.get(StringReader.class),
                                                                                                                     methodName
@@ -282,7 +293,7 @@ public class ArgumentsInvokeHandlerBuilder {
                                                                                                                     methodName,
                                                                                                                     toClassName(documentManager.getDocument().getInputObjectTypeOrError(argumentInputName).getClassNameOrError())
                                                                                                             )
-                                                                                                            .add(".doOnNext($L -> field.updateArguments(jsonProvider.createReader(new $T(jsonb.toJson($L))).readObject()))\n",
+                                                                                                            .add(".doOnNext($L -> field.setArguments(operationBuilder.updateJsonObject(field.getArguments(), jsonProvider.createReader(new $T(jsonb.toJson($L))).readObject())))\n",
                                                                                                                     methodName,
                                                                                                                     ClassName.get(StringReader.class),
                                                                                                                     methodName

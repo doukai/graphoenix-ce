@@ -5,6 +5,7 @@ import com.google.common.collect.Streams;
 import com.squareup.javapoet.*;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
+import io.graphoenix.core.handler.OperationBuilder;
 import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.java.utils.TypeNameUtil;
 import io.graphoenix.spi.graphql.AbstractDefinition;
@@ -100,6 +101,22 @@ public class InvokeHandlerBuilder {
                 .addAnnotation(AnnotationSpec.builder(Priority.class).addMember("value", "$T.MAX_VALUE - 200", ClassName.get(Integer.class)).build())
                 .addField(
                         FieldSpec.builder(
+                                ClassName.get(DocumentManager.class),
+                                "documentManager",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(OperationBuilder.class),
+                                "operationBuilder",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addField(
+                        FieldSpec.builder(
                                 ClassName.get(Jsonb.class),
                                 "jsonb",
                                 Modifier.PRIVATE,
@@ -142,6 +159,8 @@ public class InvokeHandlerBuilder {
         MethodSpec.Builder builder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Inject.class)
+                .addParameter(ClassName.get(DocumentManager.class), "documentManager")
+                .addParameter(ClassName.get(OperationBuilder.class), "operationBuilder")
                 .addParameter(ClassName.get(Jsonb.class), "jsonb")
                 .addParameter(ClassName.get(JsonProvider.class), "jsonProvider")
                 .addParameters(
@@ -155,6 +174,8 @@ public class InvokeHandlerBuilder {
                                 )
                                 .collect(Collectors.toList())
                 )
+                .addStatement("this.documentManager = documentManager")
+                .addStatement("this.operationBuilder = operationBuilder")
                 .addStatement("this.jsonb = jsonb")
                 .addStatement("this.jsonProvider = jsonProvider");
 
@@ -338,6 +359,9 @@ public class InvokeHandlerBuilder {
                 .addParameter(ClassName.get(JsonValue.class), "jsonValue");
 
         return builder
+                .addStatement("$T operationType = documentManager.getOperationTypeOrError(operation)",
+                        ClassName.get(ObjectType.class)
+                )
                 .addStatement(
                         CodeBlock.builder()
                                 .add("return $T.justOrEmpty(operation.getFields())\n",
@@ -407,7 +431,7 @@ public class InvokeHandlerBuilder {
                                                                                                                 .indent();
                                                                                                     }
                                                                                                     return codeBlockBuilder
-                                                                                                            .add(".map($L -> new $T<>(selectionName, jsonProvider.createReader(new $T(jsonb.toJson($L))).readValue()));",
+                                                                                                            .add(".map($L -> new $T<>(selectionName, operationBuilder.updateJsonValue(field, operationType.getField(field.getName()), jsonProvider.createReader(new $T(jsonb.toJson($L))).readValue())));",
                                                                                                                     methodName,
                                                                                                                     ClassName.get(AbstractMap.SimpleEntry.class),
                                                                                                                     ClassName.get(StringReader.class),
@@ -435,7 +459,7 @@ public class InvokeHandlerBuilder {
                                                                                                                     toClassName(fieldTypeDefinition.getClassNameOrError())
                                                                                                             )
                                                                                                             .indent()
-                                                                                                            .add(".map($L -> new $T<>(selectionName, jsonProvider.createReader(new $T(jsonb.toJson($L))).readValue()));",
+                                                                                                            .add(".map($L -> new $T<>(selectionName, operationBuilder.updateJsonValue(field, operationType.getField(field.getName()), jsonProvider.createReader(new $T(jsonb.toJson($L))).readValue())));",
                                                                                                                     methodName,
                                                                                                                     ClassName.get(AbstractMap.SimpleEntry.class),
                                                                                                                     ClassName.get(StringReader.class),
@@ -482,7 +506,7 @@ public class InvokeHandlerBuilder {
                                                                                                             .add(".defaultIfEmpty($T.NULL)\n",
                                                                                                                     ClassName.get(JsonValue.class)
                                                                                                             )
-                                                                                                            .add(".map(jsonArray -> new $T<>(selectionName, jsonArray));",
+                                                                                                            .add(".map(jsonArray -> new $T<>(selectionName, operationBuilder.updateJsonValue(field, operationType.getField(field.getName()), jsonArray)));",
                                                                                                                     ClassName.get(AbstractMap.SimpleEntry.class)
                                                                                                             )
                                                                                                             .unindent()

@@ -70,7 +70,6 @@ public class SelectionHandler implements OperationAfterHandler {
                 jsonProvider
                         .createPatchBuilder(
                                 operation.getFields().stream()
-                                        .filter(Field::hasFormat)
                                         .flatMap(field -> {
                                                     String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
                                                     return Stream
@@ -203,7 +202,15 @@ public class SelectionHandler implements OperationAfterHandler {
             if (fieldTypeDefinition.isObject()) {
                 if (fieldDefinition.getType().hasList()) {
                     return IntStream.range(0, jsonValue.asJsonArray().size())
-                            .mapToObj(index -> hideField(path + "/" + index, fieldDefinition, field, jsonValue.asJsonArray().get(index)))
+                            .mapToObj(index ->
+                                    Stream.ofNullable(field.getFields())
+                                            .flatMap(Collection::stream)
+                                            .flatMap(subField -> {
+                                                        String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
+                                                        return hideField(path + "/" + index + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonArray().get(index).asJsonObject().get(subSelectionName));
+                                                    }
+                                            )
+                            )
                             .flatMap(stream -> stream);
                 } else {
                     return Stream.ofNullable(field.getFields())

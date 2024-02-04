@@ -3,7 +3,6 @@ package io.graphoenix.spi.graphql.common;
 import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.error.GraphQLErrors;
 import jakarta.json.*;
-import jakarta.json.stream.JsonCollectors;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
@@ -13,11 +12,9 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_VALUE;
 import static javax.lang.model.element.ElementKind.ENUM_CONSTANT;
@@ -223,32 +220,5 @@ public interface ValueWithVariable extends JsonValue {
 
     default Variable asVariable() {
         return (Variable) this;
-    }
-
-    static JsonObject updateJsonObject(JsonObject original, JsonObject jsonObject) {
-        return jsonObject.entrySet().stream()
-                .filter(entry ->
-                        !entry.getValue().getValueType().equals(ValueType.NULL) ||
-                                entry.getValue().getValueType().equals(ValueType.NULL) && original != null && original.containsKey(entry.getKey())
-                )
-                .map(entry ->
-                        new AbstractMap.SimpleEntry<>(
-                                entry.getKey(),
-                                updateJsonValue(original != null ? original.get(entry.getKey()) : null, entry.getValue())
-                        )
-                )
-                .collect(JsonCollectors.toJsonObject());
-    }
-
-    static JsonValue updateJsonValue(JsonValue original, JsonValue jsonValue) {
-        if (jsonValue.getValueType().equals(ValueType.OBJECT)) {
-            return updateJsonObject(original != null ? original.asJsonObject() : null, jsonValue.asJsonObject());
-        } else if (jsonValue.getValueType().equals(ValueType.ARRAY)) {
-            return IntStream.range(0, jsonValue.asJsonArray().size())
-                    .mapToObj(index -> updateJsonValue(original != null ? original.asJsonArray().get(index) : null, jsonValue.asJsonArray().get(index)))
-                    .collect(JsonCollectors.toJsonArray());
-        } else {
-            return jsonValue;
-        }
     }
 }

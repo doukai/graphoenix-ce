@@ -500,7 +500,7 @@ public class QueryTranslator {
                             new Limit()
                                     .withRowCount(leafValueToDBValue(valueWithVariable))
                                     .withOffset(
-                                            fieldDefinition.getArgument(INPUT_VALUE_FIRST_NAME)
+                                            fieldDefinition.getArgument(INPUT_VALUE_OFFSET_NAME)
                                                     .flatMap(inputValue ->
                                                             Optional.ofNullable(field.getArguments())
                                                                     .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
