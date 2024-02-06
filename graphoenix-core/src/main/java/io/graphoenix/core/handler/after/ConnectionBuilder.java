@@ -133,7 +133,7 @@ public class ConnectionBuilder implements OperationAfterHandler {
                             .flatMap(Collection::stream)
                             .flatMap(subField -> {
                                         String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
-                                        return buildConnections(path + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue);
+                                        return buildConnections(path + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonObject().get(selectionName));
                                     }
                             );
                 }

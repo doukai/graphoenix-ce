@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
     compile 'io.projectreactor:reactor-core:3.4.16'
-    compile 'com.dslplatform:dsl-json:1.9.9'
+    compile 'com.dslplatform:dsl-json:1.10.0'
     compile 'org.eclipse.microprofile.graphql:microprofile-graphql-api:1.1.0'
     compile 'jakarta.json:jakarta.json-api:2.1.1'
     compile 'jakarta.json.bind:jakarta.json.bind-api:3.0.0'

@@ -95,6 +95,12 @@ public class EnumValueHandler implements OperationBeforeHandler {
                                         valueWithVariableEntry.setValue(replaceEnumValue(fieldInputValue, valueWithVariableEntry.getValue()));
                                     }
                             )
+                            .collect(
+                                    Collectors.toMap(
+                                            Map.Entry::getKey,
+                                            Map.Entry::getValue
+                                    )
+                            )
             );
         } else {
             Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);

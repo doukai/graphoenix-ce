@@ -18,7 +18,7 @@ public @interface RoleInput2 {
 
   String name() default "";
 
-  RoleType[] type() default {};
+  RoleType[] roleType() default {};
 
   boolean isDeprecated() default false;
 

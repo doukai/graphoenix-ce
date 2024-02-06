@@ -18,7 +18,7 @@ public @interface RoleInput1 {
 
   String name() default "";
 
-  RoleType[] type() default {};
+  RoleType[] roleType() default {};
 
   UserInput2[] users() default {};
 
@@ -40,7 +40,7 @@ public @interface RoleInput1 {
 
   String __typename() default "Role";
 
-  RoleTypeRelationInput2[] roleTypeRelation() default {};
+  RoleRoleTypeRelationInput2[] roleRoleTypeRelation() default {};
 
   RoleUserRelationInput2[] roleUserRelation() default {};
 
@@ -50,7 +50,7 @@ public @interface RoleInput1 {
 
   String $name() default "";
 
-  String $type() default "";
+  String $roleType() default "";
 
   String $users() default "";
 
@@ -72,7 +72,7 @@ public @interface RoleInput1 {
 
   String $__typename() default "";
 
-  String $roleTypeRelation() default "";
+  String $roleRoleTypeRelation() default "";
 
   String $roleUserRelation() default "";
 

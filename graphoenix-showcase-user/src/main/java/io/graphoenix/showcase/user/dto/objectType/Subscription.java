@@ -57,11 +57,11 @@ public class Subscription {
 
   private UserMobileNumbersRelationConnection userMobileNumbersRelationConnection;
 
-  private RoleTypeRelation roleTypeRelation;
+  private RoleRoleTypeRelation roleRoleTypeRelation;
 
-  private Collection<RoleTypeRelation> roleTypeRelationList;
+  private Collection<RoleRoleTypeRelation> roleRoleTypeRelationList;
 
-  private RoleTypeRelationConnection roleTypeRelationConnection;
+  private RoleRoleTypeRelationConnection roleRoleTypeRelationConnection;
 
   private OrganizationOrganizationRelation organizationOrganizationRelation;
 
@@ -267,28 +267,30 @@ public class Subscription {
     this.userMobileNumbersRelationConnection = userMobileNumbersRelationConnection;
   }
 
-  public RoleTypeRelation getRoleTypeRelation() {
-    return this.roleTypeRelation;
+  public RoleRoleTypeRelation getRoleRoleTypeRelation() {
+    return this.roleRoleTypeRelation;
   }
 
-  public void setRoleTypeRelation(RoleTypeRelation roleTypeRelation) {
-    this.roleTypeRelation = roleTypeRelation;
+  public void setRoleRoleTypeRelation(RoleRoleTypeRelation roleRoleTypeRelation) {
+    this.roleRoleTypeRelation = roleRoleTypeRelation;
   }
 
-  public Collection<RoleTypeRelation> getRoleTypeRelationList() {
-    return this.roleTypeRelationList;
+  public Collection<RoleRoleTypeRelation> getRoleRoleTypeRelationList() {
+    return this.roleRoleTypeRelationList;
   }
 
-  public void setRoleTypeRelationList(Collection<RoleTypeRelation> roleTypeRelationList) {
-    this.roleTypeRelationList = roleTypeRelationList;
+  public void setRoleRoleTypeRelationList(
+      Collection<RoleRoleTypeRelation> roleRoleTypeRelationList) {
+    this.roleRoleTypeRelationList = roleRoleTypeRelationList;
   }
 
-  public RoleTypeRelationConnection getRoleTypeRelationConnection() {
-    return this.roleTypeRelationConnection;
+  public RoleRoleTypeRelationConnection getRoleRoleTypeRelationConnection() {
+    return this.roleRoleTypeRelationConnection;
   }
 
-  public void setRoleTypeRelationConnection(RoleTypeRelationConnection roleTypeRelationConnection) {
-    this.roleTypeRelationConnection = roleTypeRelationConnection;
+  public void setRoleRoleTypeRelationConnection(
+      RoleRoleTypeRelationConnection roleRoleTypeRelationConnection) {
+    this.roleRoleTypeRelationConnection = roleRoleTypeRelationConnection;
   }
 
   public OrganizationOrganizationRelation getOrganizationOrganizationRelation() {

@@ -21,7 +21,7 @@ public class RoleInput implements MetaInput {
 
   private String name;
 
-  private Collection<RoleType> type;
+  private Collection<RoleType> roleType;
 
   private Collection<UserInput> users;
 
@@ -44,7 +44,7 @@ public class RoleInput implements MetaInput {
   @DefaultValue("\"Role\"")
   private String __typename;
 
-  private Collection<RoleTypeRelationInput> roleTypeRelation;
+  private Collection<RoleRoleTypeRelationInput> roleRoleTypeRelation;
 
   private Collection<RoleUserRelationInput> roleUserRelation;
 
@@ -66,12 +66,12 @@ public class RoleInput implements MetaInput {
     this.name = name;
   }
 
-  public Collection<RoleType> getType() {
-    return this.type;
+  public Collection<RoleType> getRoleType() {
+    return this.roleType;
   }
 
-  public void setType(Collection<RoleType> type) {
-    this.type = type;
+  public void setRoleType(Collection<RoleType> roleType) {
+    this.roleType = roleType;
   }
 
   public Collection<UserInput> getUsers() {
@@ -168,12 +168,12 @@ public class RoleInput implements MetaInput {
     this.__typename = __typename;
   }
 
-  public Collection<RoleTypeRelationInput> getRoleTypeRelation() {
-    return this.roleTypeRelation;
+  public Collection<RoleRoleTypeRelationInput> getRoleRoleTypeRelation() {
+    return this.roleRoleTypeRelation;
   }
 
-  public void setRoleTypeRelation(Collection<RoleTypeRelationInput> roleTypeRelation) {
-    this.roleTypeRelation = roleTypeRelation;
+  public void setRoleRoleTypeRelation(Collection<RoleRoleTypeRelationInput> roleRoleTypeRelation) {
+    this.roleRoleTypeRelation = roleRoleTypeRelation;
   }
 
   public Collection<RoleUserRelationInput> getRoleUserRelation() {

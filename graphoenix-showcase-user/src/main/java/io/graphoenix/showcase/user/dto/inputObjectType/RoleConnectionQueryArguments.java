@@ -22,7 +22,7 @@ public class RoleConnectionQueryArguments implements MetaExpression {
 
   private StringExpression name;
 
-  private RoleTypeExpression type;
+  private RoleTypeExpression roleType;
 
   private UserExpression users;
 
@@ -45,7 +45,7 @@ public class RoleConnectionQueryArguments implements MetaExpression {
 
   private StringExpression __typename;
 
-  private RoleTypeRelationExpression roleTypeRelation;
+  private RoleRoleTypeRelationExpression roleRoleTypeRelation;
 
   private RoleUserRelationExpression roleUserRelation;
 
@@ -87,12 +87,12 @@ public class RoleConnectionQueryArguments implements MetaExpression {
     this.name = name;
   }
 
-  public RoleTypeExpression getType() {
-    return this.type;
+  public RoleTypeExpression getRoleType() {
+    return this.roleType;
   }
 
-  public void setType(RoleTypeExpression type) {
-    this.type = type;
+  public void setRoleType(RoleTypeExpression roleType) {
+    this.roleType = roleType;
   }
 
   public UserExpression getUsers() {
@@ -187,12 +187,12 @@ public class RoleConnectionQueryArguments implements MetaExpression {
     this.__typename = __typename;
   }
 
-  public RoleTypeRelationExpression getRoleTypeRelation() {
-    return this.roleTypeRelation;
+  public RoleRoleTypeRelationExpression getRoleRoleTypeRelation() {
+    return this.roleRoleTypeRelation;
   }
 
-  public void setRoleTypeRelation(RoleTypeRelationExpression roleTypeRelation) {
-    this.roleTypeRelation = roleTypeRelation;
+  public void setRoleRoleTypeRelation(RoleRoleTypeRelationExpression roleRoleTypeRelation) {
+    this.roleRoleTypeRelation = roleRoleTypeRelation;
   }
 
   public RoleUserRelationExpression getRoleUserRelation() {

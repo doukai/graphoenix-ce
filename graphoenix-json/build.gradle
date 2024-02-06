@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
     compile 'org.eclipse.parsson:jakarta.json:1.1.1'
-    compile 'com.dslplatform:dsl-json-java8:1.9.9'
+    compile 'com.dslplatform:dsl-json-java8:1.10.0'
 
     implementation project(':graphoenix-spi')
     implementation 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'

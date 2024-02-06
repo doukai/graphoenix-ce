@@ -20,7 +20,7 @@ public @interface RoleExpression1 {
 
   StringExpression2 name() default @StringExpression2;
 
-  RoleTypeExpression2 type() default @RoleTypeExpression2;
+  RoleTypeExpression2 roleType() default @RoleTypeExpression2;
 
   UserExpression2 users() default @UserExpression2;
 
@@ -42,7 +42,7 @@ public @interface RoleExpression1 {
 
   StringExpression2 __typename() default @StringExpression2;
 
-  RoleTypeRelationExpression2 roleTypeRelation() default @RoleTypeRelationExpression2;
+  RoleRoleTypeRelationExpression2 roleRoleTypeRelation() default @RoleRoleTypeRelationExpression2;
 
   RoleUserRelationExpression2 roleUserRelation() default @RoleUserRelationExpression2;
 
@@ -56,7 +56,7 @@ public @interface RoleExpression1 {
 
   String $name() default "";
 
-  String $type() default "";
+  String $roleType() default "";
 
   String $users() default "";
 
@@ -78,7 +78,7 @@ public @interface RoleExpression1 {
 
   String $__typename() default "";
 
-  String $roleTypeRelation() default "";
+  String $roleRoleTypeRelation() default "";
 
   String $roleUserRelation() default "";
 

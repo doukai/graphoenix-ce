@@ -25,7 +25,7 @@ public class Role implements Meta {
   private String name;
 
   @NonNull
-  private Collection<RoleType> type;
+  private Collection<RoleType> roleType;
 
   private Collection<User> users;
 
@@ -47,7 +47,7 @@ public class Role implements Meta {
 
   private String __typename;
 
-  private Collection<RoleTypeRelation> roleTypeRelation;
+  private Collection<RoleRoleTypeRelation> roleRoleTypeRelation;
 
   private Collection<RoleUserRelation> roleUserRelation;
 
@@ -55,9 +55,9 @@ public class Role implements Meta {
 
   private UserConnection usersConnection;
 
-  private RoleTypeRelation roleTypeRelationAggregate;
+  private RoleRoleTypeRelation roleRoleTypeRelationAggregate;
 
-  private RoleTypeRelationConnection roleTypeRelationConnection;
+  private RoleRoleTypeRelationConnection roleRoleTypeRelationConnection;
 
   private RoleUserRelation roleUserRelationAggregate;
 
@@ -91,12 +91,12 @@ public class Role implements Meta {
     this.name = name;
   }
 
-  public Collection<RoleType> getType() {
-    return this.type;
+  public Collection<RoleType> getRoleType() {
+    return this.roleType;
   }
 
-  public void setType(Collection<RoleType> type) {
-    this.type = type;
+  public void setRoleType(Collection<RoleType> roleType) {
+    this.roleType = roleType;
   }
 
   public Collection<User> getUsers() {
@@ -195,12 +195,12 @@ public class Role implements Meta {
     this.__typename = __typename;
   }
 
-  public Collection<RoleTypeRelation> getRoleTypeRelation() {
-    return this.roleTypeRelation;
+  public Collection<RoleRoleTypeRelation> getRoleRoleTypeRelation() {
+    return this.roleRoleTypeRelation;
   }
 
-  public void setRoleTypeRelation(Collection<RoleTypeRelation> roleTypeRelation) {
-    this.roleTypeRelation = roleTypeRelation;
+  public void setRoleRoleTypeRelation(Collection<RoleRoleTypeRelation> roleRoleTypeRelation) {
+    this.roleRoleTypeRelation = roleRoleTypeRelation;
   }
 
   public Collection<RoleUserRelation> getRoleUserRelation() {
@@ -227,20 +227,21 @@ public class Role implements Meta {
     this.usersConnection = usersConnection;
   }
 
-  public RoleTypeRelation getRoleTypeRelationAggregate() {
-    return this.roleTypeRelationAggregate;
+  public RoleRoleTypeRelation getRoleRoleTypeRelationAggregate() {
+    return this.roleRoleTypeRelationAggregate;
   }
 
-  public void setRoleTypeRelationAggregate(RoleTypeRelation roleTypeRelationAggregate) {
-    this.roleTypeRelationAggregate = roleTypeRelationAggregate;
+  public void setRoleRoleTypeRelationAggregate(RoleRoleTypeRelation roleRoleTypeRelationAggregate) {
+    this.roleRoleTypeRelationAggregate = roleRoleTypeRelationAggregate;
   }
 
-  public RoleTypeRelationConnection getRoleTypeRelationConnection() {
-    return this.roleTypeRelationConnection;
+  public RoleRoleTypeRelationConnection getRoleRoleTypeRelationConnection() {
+    return this.roleRoleTypeRelationConnection;
   }
 
-  public void setRoleTypeRelationConnection(RoleTypeRelationConnection roleTypeRelationConnection) {
-    this.roleTypeRelationConnection = roleTypeRelationConnection;
+  public void setRoleRoleTypeRelationConnection(
+      RoleRoleTypeRelationConnection roleRoleTypeRelationConnection) {
+    this.roleRoleTypeRelationConnection = roleRoleTypeRelationConnection;
   }
 
   public RoleUserRelation getRoleUserRelationAggregate() {

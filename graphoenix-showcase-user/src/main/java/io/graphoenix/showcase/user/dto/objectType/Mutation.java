@@ -41,9 +41,9 @@ public class Mutation {
 
   private Collection<UserMobileNumbersRelation> userMobileNumbersRelationList;
 
-  private RoleTypeRelation roleTypeRelation;
+  private RoleRoleTypeRelation roleRoleTypeRelation;
 
-  private Collection<RoleTypeRelation> roleTypeRelationList;
+  private Collection<RoleRoleTypeRelation> roleRoleTypeRelationList;
 
   private OrganizationOrganizationRelation organizationOrganizationRelation;
 
@@ -180,20 +180,21 @@ public class Mutation {
     this.userMobileNumbersRelationList = userMobileNumbersRelationList;
   }
 
-  public RoleTypeRelation getRoleTypeRelation() {
-    return this.roleTypeRelation;
+  public RoleRoleTypeRelation getRoleRoleTypeRelation() {
+    return this.roleRoleTypeRelation;
   }
 
-  public void setRoleTypeRelation(RoleTypeRelation roleTypeRelation) {
-    this.roleTypeRelation = roleTypeRelation;
+  public void setRoleRoleTypeRelation(RoleRoleTypeRelation roleRoleTypeRelation) {
+    this.roleRoleTypeRelation = roleRoleTypeRelation;
   }
 
-  public Collection<RoleTypeRelation> getRoleTypeRelationList() {
-    return this.roleTypeRelationList;
+  public Collection<RoleRoleTypeRelation> getRoleRoleTypeRelationList() {
+    return this.roleRoleTypeRelationList;
   }
 
-  public void setRoleTypeRelationList(Collection<RoleTypeRelation> roleTypeRelationList) {
-    this.roleTypeRelationList = roleTypeRelationList;
+  public void setRoleRoleTypeRelationList(
+      Collection<RoleRoleTypeRelation> roleRoleTypeRelationList) {
+    this.roleRoleTypeRelationList = roleRoleTypeRelationList;
   }
 
   public OrganizationOrganizationRelation getOrganizationOrganizationRelation() {

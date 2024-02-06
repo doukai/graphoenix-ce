@@ -20,7 +20,7 @@ public @interface RoleSubscriptionArguments {
 
   StringExpression1 name() default @StringExpression1;
 
-  RoleTypeExpression1 type() default @RoleTypeExpression1;
+  RoleTypeExpression1 roleType() default @RoleTypeExpression1;
 
   UserExpression1 users() default @UserExpression1;
 
@@ -42,7 +42,7 @@ public @interface RoleSubscriptionArguments {
 
   StringExpression1 __typename() default @StringExpression1;
 
-  RoleTypeRelationExpression1 roleTypeRelation() default @RoleTypeRelationExpression1;
+  RoleRoleTypeRelationExpression1 roleRoleTypeRelation() default @RoleRoleTypeRelationExpression1;
 
   RoleUserRelationExpression1 roleUserRelation() default @RoleUserRelationExpression1;
 
@@ -58,7 +58,7 @@ public @interface RoleSubscriptionArguments {
 
   String $name() default "";
 
-  String $type() default "";
+  String $roleType() default "";
 
   String $users() default "";
 
@@ -80,7 +80,7 @@ public @interface RoleSubscriptionArguments {
 
   String $__typename() default "";
 
-  String $roleTypeRelation() default "";
+  String $roleRoleTypeRelation() default "";
 
   String $roleUserRelation() default "";
 

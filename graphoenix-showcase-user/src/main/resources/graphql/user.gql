@@ -27,7 +27,7 @@ enum Sex {
 type Role {
     id: ID
     name: String!
-    type: [RoleType]!
+    roleType: [RoleType]!
     users: [User!]
 }
 
