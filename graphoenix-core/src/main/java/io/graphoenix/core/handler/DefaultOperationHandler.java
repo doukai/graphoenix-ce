@@ -5,9 +5,9 @@ import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.handler.*;
 import io.nozdormu.spi.context.BeanContext;
-import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Default;
+import jakarta.inject.Provider;
 import jakarta.json.JsonValue;
 import jakarta.transaction.Transactional;
 import org.reactivestreams.Publisher;
@@ -46,10 +46,6 @@ public class DefaultOperationHandler implements OperationHandler {
     private static final Provider<MutationHandler> mutationHandlerProvider = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
             .map(name -> BeanContext.getProvider(MutationHandler.class, name))
             .orElseGet(() -> BeanContext.getProvider(MutationHandler.class));
-
-    private static int getPriority(Class<?> type) {
-        return Optional.ofNullable(type.getAnnotation(Priority.class)).map(Priority::value).orElse(Integer.MAX_VALUE);
-    }
 
     @Override
     public Publisher<JsonValue> handle(Operation operation, Map<String, JsonValue> variables) {

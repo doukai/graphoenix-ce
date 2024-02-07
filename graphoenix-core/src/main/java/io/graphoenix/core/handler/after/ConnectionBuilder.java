@@ -75,12 +75,11 @@ public class ConnectionBuilder implements OperationAfterHandler {
     }
 
     public Stream<JsonValue> buildConnections(String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
-        if (jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
-            return Stream.empty();
-        }
-
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject()) {
+            if (jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
+                return Stream.empty();
+            }
             String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
             if (fieldDefinition.getType().hasList()) {
                 return IntStream.range(0, jsonValue.asJsonObject().get(selectionName).asJsonArray().size())
@@ -117,11 +116,18 @@ public class ConnectionBuilder implements OperationAfterHandler {
                                         .filter(index -> !edgesJsonValue.asJsonArray().get(index).getValueType().equals(JsonValue.ValueType.NULL))
                                         .filter(index -> !edgesJsonValue.asJsonArray().get(index).asJsonObject().get(FIELD_NODE_NAME).getValueType().equals(JsonValue.ValueType.NULL))
                                         .mapToObj(index ->
-                                                buildConnections(
-                                                        path + "/" + FIELD_EDGES_NAME + "/" + index + "/" + FIELD_NODE_NAME,
-                                                        nodeFieldDefinition,
-                                                        field.getField(FIELD_EDGES_NAME).getField(FIELD_NODE_NAME),
-                                                        edgesJsonValue.asJsonArray().get(index).asJsonObject().get(FIELD_NODE_NAME))
+                                                Stream.ofNullable(field.getField(FIELD_EDGES_NAME).getField(FIELD_NODE_NAME).getFields())
+                                                        .flatMap(Collection::stream)
+                                                        .flatMap(subField -> {
+                                                                    String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
+                                                                    return buildConnections(
+                                                                            path + "/" + FIELD_EDGES_NAME + "/" + index + "/" + FIELD_NODE_NAME + "/" + subSelectionName,
+                                                                            documentManager.getFieldTypeDefinition(nodeFieldDefinition).asObject().getField(subField.getName()),
+                                                                            subField,
+                                                                            edgesJsonValue.asJsonArray().get(index).asJsonObject().get(FIELD_NODE_NAME).asJsonObject().get(selectionName)
+                                                                    );
+                                                                }
+                                                        )
                                         )
                                         .flatMap(stream -> stream)
                         );
