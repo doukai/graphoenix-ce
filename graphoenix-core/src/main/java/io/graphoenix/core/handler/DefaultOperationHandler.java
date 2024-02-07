@@ -8,7 +8,6 @@ import io.nozdormu.spi.context.BeanContext;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Default;
-import jakarta.inject.Provider;
 import jakarta.json.JsonValue;
 import jakarta.transaction.Transactional;
 import org.reactivestreams.Publisher;
