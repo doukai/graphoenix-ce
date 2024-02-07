@@ -54,7 +54,7 @@ public class ApplicationLauncher implements Launcher {
         }
 
         if (runnerList.isEmpty()) {
-            runnerList.addAll(BeanContext.getMap(Runner.class).values());
+            runnerList.addAll(BeanContext.getList(Runner.class));
         }
 
         if (!runnerList.isEmpty()) {

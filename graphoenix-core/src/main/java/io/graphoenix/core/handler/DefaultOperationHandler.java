@@ -15,11 +15,9 @@ import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_OPERATION_TYPE;
@@ -30,37 +28,25 @@ public class DefaultOperationHandler implements OperationHandler {
 
     private static final GraphQLConfig graphQLConfig = BeanContext.get(GraphQLConfig.class);
 
-    private static final List<OperationBeforeHandler> operationBeforeHandlerList = BeanContext.getMap(OperationBeforeHandler.class).values().stream()
-            .sorted(Comparator.comparing(handler -> getPriority(handler.getClass())))
-            .collect(Collectors.toList());
+    private static final List<Provider<OperationBeforeHandler>> operationBeforeHandlerProviderList = BeanContext.getPriorityProviderList(OperationBeforeHandler.class);
 
-    private static final List<OperationAfterHandler> operationAfterHandlerList = BeanContext.getMap(OperationAfterHandler.class).values().stream()
-            .sorted(Comparator.comparing(handler -> getPriority(handler.getClass())))
-            .collect(Collectors.toList());
+    private static final List<Provider<OperationAfterHandler>> operationAfterHandlerProviderList = BeanContext.getPriorityProviderList(OperationAfterHandler.class);
 
-    private static final List<QueryBeforeHandler> queryBeforeHandlerList = BeanContext.getMap(QueryBeforeHandler.class).values().stream()
-            .sorted(Comparator.comparing(handler -> getPriority(handler.getClass())))
-            .collect(Collectors.toList());
+    private static final List<Provider<QueryBeforeHandler>> queryBeforeHandlerProviderList = BeanContext.getPriorityProviderList(QueryBeforeHandler.class);
 
-    private static final List<QueryAfterHandler> queryAfterHandlerList = BeanContext.getMap(QueryAfterHandler.class).values().stream()
-            .sorted(Comparator.comparing(handler -> getPriority(handler.getClass())))
-            .collect(Collectors.toList());
+    private static final List<Provider<QueryAfterHandler>> queryAfterHandlerProviderList = BeanContext.getPriorityProviderList(QueryAfterHandler.class);
 
-    private static final List<MutationBeforeHandler> mutationBeforeHandlerList = BeanContext.getMap(MutationBeforeHandler.class).values().stream()
-            .sorted(Comparator.comparing(handler -> getPriority(handler.getClass())))
-            .collect(Collectors.toList());
+    private static final List<Provider<MutationBeforeHandler>> mutationBeforeHandlerProviderList = BeanContext.getPriorityProviderList(MutationBeforeHandler.class);
 
-    private static final List<MutationAfterHandler> mutationAfterHandlerList = BeanContext.getMap(MutationAfterHandler.class).values().stream()
-            .sorted(Comparator.comparing(handler -> getPriority(handler.getClass())))
-            .collect(Collectors.toList());
+    private static final List<Provider<MutationAfterHandler>> mutationAfterHandlerProviderList = BeanContext.getPriorityProviderList(MutationAfterHandler.class);
 
-    private static final QueryHandler queryHandler = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
-            .map(name -> BeanContext.get(QueryHandler.class, name))
-            .orElseGet(() -> BeanContext.get(QueryHandler.class));
+    private static final Provider<QueryHandler> queryHandlerProvider = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
+            .map(name -> BeanContext.getProvider(QueryHandler.class, name))
+            .orElseGet(() -> BeanContext.getProvider(QueryHandler.class));
 
-    private static final MutationHandler mutationHandler = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
-            .map(name -> BeanContext.get(MutationHandler.class, name))
-            .orElseGet(() -> BeanContext.get(MutationHandler.class));
+    private static final Provider<MutationHandler> mutationHandlerProvider = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
+            .map(name -> BeanContext.getProvider(MutationHandler.class, name))
+            .orElseGet(() -> BeanContext.getProvider(MutationHandler.class));
 
     private static int getPriority(Class<?> type) {
         return Optional.ofNullable(type.getAnnotation(Priority.class)).map(Priority::value).orElse(Integer.MAX_VALUE);
@@ -86,34 +72,34 @@ public class DefaultOperationHandler implements OperationHandler {
     }
 
     public Mono<JsonValue> query(Operation operation, Map<String, JsonValue> variables) {
-        return Flux.fromIterable(operationBeforeHandlerList)
+        return Flux.fromIterable(operationBeforeHandlerProviderList)
                 .reduce(
                         Mono.just(operation),
-                        (pre, cur) -> pre.flatMap(result -> cur.query(result, variables))
+                        (pre, cur) -> pre.flatMap(result -> cur.get().query(result, variables))
                 )
                 .flatMap(operationMono -> operationMono)
                 .flatMap(operationAfterHandler ->
-                        Flux.fromIterable(queryBeforeHandlerList)
+                        Flux.fromIterable(queryBeforeHandlerProviderList)
                                 .reduce(
                                         Mono.just(operationAfterHandler),
-                                        (pre, cur) -> pre.flatMap(result -> cur.query(result, variables))
+                                        (pre, cur) -> pre.flatMap(result -> cur.get().query(result, variables))
                                 )
                                 .flatMap(operationMono -> operationMono)
                 )
                 .flatMap(operationAfterHandler ->
-                        queryHandler.query(operationAfterHandler)
+                        queryHandlerProvider.get().query(operationAfterHandler)
                                 .flatMap(jsonValue ->
-                                        Flux.fromIterable(queryAfterHandlerList)
+                                        Flux.fromIterable(queryAfterHandlerProviderList)
                                                 .reduce(
                                                         Mono.just(jsonValue),
-                                                        (pre, cur) -> pre.flatMap(result -> cur.query(operationAfterHandler, result))
+                                                        (pre, cur) -> pre.flatMap(result -> cur.get().query(operationAfterHandler, result))
                                                 )
                                                 .flatMap(jsonValueMono -> jsonValueMono)
                                                 .flatMap(jsonValueAfterHandler ->
-                                                        Flux.fromIterable(operationAfterHandlerList)
+                                                        Flux.fromIterable(operationAfterHandlerProviderList)
                                                                 .reduce(
                                                                         Mono.just(jsonValueAfterHandler),
-                                                                        (pre, cur) -> pre.flatMap(result -> cur.query(operationAfterHandler, result))
+                                                                        (pre, cur) -> pre.flatMap(result -> cur.get().query(operationAfterHandler, result))
                                                                 )
                                                                 .flatMap(operationMono -> operationMono)
                                                 )
@@ -123,34 +109,34 @@ public class DefaultOperationHandler implements OperationHandler {
 
     @Transactional
     public Mono<JsonValue> mutation(Operation operation, Map<String, JsonValue> variables) {
-        return Flux.fromIterable(operationBeforeHandlerList)
+        return Flux.fromIterable(operationBeforeHandlerProviderList)
                 .reduce(
                         Mono.just(operation),
-                        (pre, cur) -> pre.flatMap(result -> cur.mutation(result, variables))
+                        (pre, cur) -> pre.flatMap(result -> cur.get().mutation(result, variables))
                 )
                 .flatMap(operationMono -> operationMono)
                 .flatMap(operationAfterHandler ->
-                        Flux.fromIterable(mutationBeforeHandlerList)
+                        Flux.fromIterable(mutationBeforeHandlerProviderList)
                                 .reduce(
                                         Mono.just(operationAfterHandler),
-                                        (pre, cur) -> pre.flatMap(result -> cur.mutation(result, variables))
+                                        (pre, cur) -> pre.flatMap(result -> cur.get().mutation(result, variables))
                                 )
                                 .flatMap(operationMono -> operationMono)
                 )
                 .flatMap(operationAfterHandler ->
-                        mutationHandler.mutation(operationAfterHandler)
+                        mutationHandlerProvider.get().mutation(operationAfterHandler)
                                 .flatMap(jsonValue ->
-                                        Flux.fromIterable(mutationAfterHandlerList)
+                                        Flux.fromIterable(mutationAfterHandlerProviderList)
                                                 .reduce(
                                                         Mono.just(jsonValue),
-                                                        (pre, cur) -> pre.flatMap(result -> cur.mutation(operationAfterHandler, result))
+                                                        (pre, cur) -> pre.flatMap(result -> cur.get().mutation(operationAfterHandler, result))
                                                 )
                                                 .flatMap(jsonValueMono -> jsonValueMono)
                                                 .flatMap(jsonValueAfterHandler ->
-                                                        Flux.fromIterable(operationAfterHandlerList)
+                                                        Flux.fromIterable(operationAfterHandlerProviderList)
                                                                 .reduce(
                                                                         Mono.just(jsonValueAfterHandler),
-                                                                        (pre, cur) -> pre.flatMap(result -> cur.mutation(operationAfterHandler, result))
+                                                                        (pre, cur) -> pre.flatMap(result -> cur.get().mutation(operationAfterHandler, result))
                                                                 )
                                                                 .flatMap(operationMono -> operationMono)
                                                 )
