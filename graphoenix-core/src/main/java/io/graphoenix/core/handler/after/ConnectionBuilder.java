@@ -75,11 +75,11 @@ public class ConnectionBuilder implements OperationAfterHandler {
     }
 
     public Stream<JsonValue> buildConnections(String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
+        if (jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
+            return Stream.empty();
+        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject()) {
-            if (jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
-                return Stream.empty();
-            }
             String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
             if (fieldDefinition.getType().hasList()) {
                 return IntStream.range(0, jsonValue.asJsonObject().get(selectionName).asJsonArray().size())

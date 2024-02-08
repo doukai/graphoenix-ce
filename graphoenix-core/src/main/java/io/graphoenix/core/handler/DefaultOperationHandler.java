@@ -99,7 +99,8 @@ public class DefaultOperationHandler implements OperationHandler {
                                                                 .flatMap(operationMono -> operationMono)
                                                 )
                                 )
-                );
+                )
+                .switchIfEmpty(Mono.just(JsonValue.EMPTY_JSON_OBJECT));
     }
 
     @Transactional
@@ -136,7 +137,8 @@ public class DefaultOperationHandler implements OperationHandler {
                                                                 .flatMap(operationMono -> operationMono)
                                                 )
                                 )
-                );
+                )
+                .switchIfEmpty(Mono.just(JsonValue.EMPTY_JSON_OBJECT));
     }
 
     public Flux<JsonValue> subscription(Operation operation, Map<String, JsonValue> variables, String token, String operationId) {
