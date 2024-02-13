@@ -107,6 +107,8 @@ public interface Definition {
 
     Optional<String> getAnnotationName();
 
+    String getPackageNameOrError();
+
     String getClassNameOrError();
 
     String toString();

@@ -19,8 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
-import static io.graphoenix.spi.error.GraphQLErrorType.ANNOTATION_NAME_ARGUMENT_NOT_EXIST;
-import static io.graphoenix.spi.error.GraphQLErrorType.CLASS_NAME_ARGUMENT_NOT_EXIST;
+import static io.graphoenix.spi.error.GraphQLErrorType.*;
 import static io.graphoenix.spi.utils.DocumentUtil.getStringValue;
 import static io.graphoenix.spi.utils.ElementUtil.*;
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
@@ -237,6 +236,11 @@ public abstract class AbstractDefinition implements Definition {
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> (StringValue) valueWithVariable)
                 .map(StringValue::getString);
+    }
+
+    @Override
+    public String getPackageNameOrError() {
+        return getPackageName().orElseThrow(() -> new GraphQLErrors(PACKAGE_NAME_ARGUMENT_NOT_EXIST));
     }
 
     @Override
