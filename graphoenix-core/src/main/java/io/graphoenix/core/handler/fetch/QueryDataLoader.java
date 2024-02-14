@@ -38,13 +38,20 @@ public class QueryDataLoader {
     private final JsonProvider jsonProvider;
 
     private final Map<String, Map<String, List<Tuple2<Field, String>>>> fetchMap = new HashMap<>();
-
-    private final Map<String, Map<String, Map<String, Field>>> operationFetchMap = new HashMap<>();
+    
 
     @Inject
     public QueryDataLoader(DocumentManager documentManager, JsonProvider jsonProvider) {
         this.documentManager = documentManager;
         this.jsonProvider = jsonProvider;
+    }
+
+    private void register(String path, FieldDefinition fieldDefinition, Field field) {
+        String packageName = fieldDefinition.getPackageNameOrError();
+        String protocol = fieldDefinition.getFetchProtocolOrError();
+        fetchMap.computeIfAbsent(packageName, k -> new HashMap<>());
+        fetchMap.get(packageName).computeIfAbsent(protocol, k -> new ArrayList<>());
+        fetchMap.get(packageName).get(protocol).add(Tuples.of(field.setAlias(getAliasFromPath(path)), ""));
     }
 
     private void register(String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
@@ -154,7 +161,7 @@ public class QueryDataLoader {
                                 .flatMap(protocolMap -> Flux.just((protocolMap.entrySet()))
                                         .flatMap(entries -> Flux.fromStream(entries.stream()))
                                         .flatMap(protocolEntry ->
-                                                fetchHandlerMap.get(packageEntry.getKey())
+                                                fetchHandlerMap.get(protocolEntry.getKey())
                                                         .request(
                                                                 packageEntry.getKey(),
                                                                 new Operation()
@@ -168,25 +175,36 @@ public class QueryDataLoader {
                                                                 Flux.fromStream(
                                                                         protocolEntry.getValue().stream()
                                                                                 .map(tuple2 -> {
+                                                                                            String path = getPathFromAlias(tuple2.getT1().getAlias());
+                                                                                            JsonValue fieldJsonValue = jsonValue.asJsonObject().get(tuple2.getT1().getAlias());
                                                                                             if (tuple2.getT2().isBlank()) {
                                                                                                 return jsonProvider.createObjectBuilder()
                                                                                                         .add("op", "add")
-                                                                                                        .add("value", jsonValue.asJsonObject().getJsonObject(getPathFromAlias(tuple2.getT1().getAlias())))
+                                                                                                        .add("path", path)
+                                                                                                        .add("value", fieldJsonValue)
                                                                                                         .build();
                                                                                             } else {
-                                                                                                if (jsonValue.getValueType().equals(JsonValue.ValueType.ARRAY)) {
+                                                                                                if (fieldJsonValue.getValueType().equals(JsonValue.ValueType.ARRAY)) {
                                                                                                     return jsonProvider.createObjectBuilder()
                                                                                                             .add("op", "add")
+                                                                                                            .add("path", path)
                                                                                                             .add("value",
-                                                                                                                    jsonValue.asJsonObject().getJsonArray(getPathFromAlias(tuple2.getT1().getAlias())).stream()
+                                                                                                                    fieldJsonValue.asJsonArray().stream()
                                                                                                                             .map(item -> item.asJsonObject().get(tuple2.getT2()))
                                                                                                                             .collect(JsonCollectors.toJsonArray())
                                                                                                             )
                                                                                                             .build();
+                                                                                                } else if (fieldJsonValue.getValueType().equals(JsonValue.ValueType.OBJECT)) {
+                                                                                                    return jsonProvider.createObjectBuilder()
+                                                                                                            .add("op", "add")
+                                                                                                            .add("path", path)
+                                                                                                            .add("value", fieldJsonValue.asJsonObject().get(tuple2.getT2()))
+                                                                                                            .build();
                                                                                                 } else {
                                                                                                     return jsonProvider.createObjectBuilder()
                                                                                                             .add("op", "add")
-                                                                                                            .add("value", jsonValue.asJsonObject().getJsonObject(getPathFromAlias(tuple2.getT1().getAlias())).get(tuple2.getT2()))
+                                                                                                            .add("path", path)
+                                                                                                            .add("value", fieldJsonValue)
                                                                                                             .build();
                                                                                                 }
                                                                                             }
@@ -195,7 +213,6 @@ public class QueryDataLoader {
                                                                 )
                                                         )
                                         )
-
                                 )
                 )
                 .collectList()
