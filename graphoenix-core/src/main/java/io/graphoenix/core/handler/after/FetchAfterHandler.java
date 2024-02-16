@@ -15,22 +15,14 @@ import io.nozdormu.spi.context.BeanContext;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonCollectors;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuple2;
-import reactor.util.function.Tuple3;
-import reactor.util.function.Tuple4;
-import reactor.util.function.Tuples;
 
-import java.util.AbstractMap;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -73,97 +65,94 @@ public class FetchAfterHandler implements OperationAfterHandler {
     public Mono<JsonValue> handle(Operation operation, JsonValue jsonValue) {
         ObjectType operationType = documentManager.getOperationTypeOrError(operation);
         return Flux
-                .concat(
-                        Flux
-                                .fromIterable(
-                                        operation.getFields().stream()
-                                                .flatMap(field -> {
-                                                            String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
-                                                            return buildFetchFields(operationType, "/" + selectionName, operationType.getField(field.getName()), field, jsonValue);
-                                                        }
-                                                )
-                                                .collect(
+                .fromIterable(
+                        operation.getFields().stream()
+                                .flatMap(field -> {
+                                            String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
+                                            return buildFetchFields(operationType, "/" + selectionName, operationType.getField(field.getName()), field, jsonValue);
+                                        }
+                                )
+                                .collect(
+                                        Collectors.groupingBy(
+                                                FetchItem::getPackageName,
+                                                Collectors.mapping(
+                                                        fetchItem -> fetchItem,
                                                         Collectors.groupingBy(
-                                                                Tuple4::getT1,
+                                                                FetchItem::getProtocol,
                                                                 Collectors.mapping(
-                                                                        tuple4 -> Tuples.of(tuple4.getT2(), tuple4.getT3(), tuple4.getT4()),
-                                                                        Collectors.groupingBy(
-                                                                                Tuple3::getT1,
-                                                                                Collectors.mapping(
-                                                                                        tuple3 -> Tuples.of(tuple3.getT2(), tuple3.getT3()),
-                                                                                        Collectors.toList()
-                                                                                )
-                                                                        )
+                                                                        fetchItem -> fetchItem,
+                                                                        Collectors.toList()
                                                                 )
                                                         )
                                                 )
-                                                .entrySet()
+                                        )
                                 )
-                                .flatMap(packageEntries ->
-                                        Flux.fromIterable(packageEntries.getValue().entrySet())
-                                                .flatMap(protocolEntries ->
-                                                        fetchHandlerMap.get(protocolEntries.getKey())
-                                                                .request(
-                                                                        packageEntries.getKey(),
-                                                                        new Operation()
-                                                                                .setSelections(
-                                                                                        protocolEntries.getValue().stream()
-                                                                                                .map(Tuple2::getT1)
-                                                                                                .collect(Collectors.toList())
-                                                                                )
-                                                                )
-                                                                .flatMapMany(fetchJsonValue ->
-                                                                        Flux.fromStream(
-                                                                                protocolEntries.getValue().stream()
-                                                                                        .map(tuple2 -> {
-                                                                                                    String path = getPathFromAlias(tuple2.getT1().getAlias());
-                                                                                                    JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(tuple2.getT1().getAlias());
-                                                                                                    if (tuple2.getT2().isBlank()) {
-                                                                                                        return jsonProvider.createObjectBuilder()
-                                                                                                                .add("op", "add")
-                                                                                                                .add("path", path)
-                                                                                                                .add("value", fieldJsonValue)
-                                                                                                                .build();
-                                                                                                    } else {
-                                                                                                        if (fieldJsonValue.getValueType().equals(JsonValue.ValueType.ARRAY)) {
-                                                                                                            return jsonProvider.createObjectBuilder()
-                                                                                                                    .add("op", "add")
-                                                                                                                    .add("path", path)
-                                                                                                                    .add("value",
-                                                                                                                            fieldJsonValue.asJsonArray().stream()
-                                                                                                                                    .filter(item -> item.getValueType().equals(JsonValue.ValueType.OBJECT))
-                                                                                                                                    .map(item -> item.asJsonObject().get(tuple2.getT2()))
-                                                                                                                                    .collect(JsonCollectors.toJsonArray())
-                                                                                                                    )
-                                                                                                                    .build();
-                                                                                                        } else if (fieldJsonValue.getValueType().equals(JsonValue.ValueType.OBJECT)) {
-                                                                                                            return jsonProvider.createObjectBuilder()
-                                                                                                                    .add("op", "add")
-                                                                                                                    .add("path", path)
-                                                                                                                    .add("value", fieldJsonValue.asJsonObject().get(tuple2.getT2()))
-                                                                                                                    .build();
-                                                                                                        } else {
-                                                                                                            return jsonProvider.createObjectBuilder()
-                                                                                                                    .add("op", "add")
-                                                                                                                    .add("path", path)
-                                                                                                                    .add("value", fieldJsonValue)
-                                                                                                                    .build();
-                                                                                                        }
-                                                                                                    }
-                                                                                                }
-                                                                                        )
-                                                                        )
+                                .entrySet()
+                )
+                .flatMap(packageEntries ->
+                        Flux.fromIterable(packageEntries.getValue().entrySet())
+                                .flatMap(protocolEntries ->
+                                        fetchHandlerMap.get(protocolEntries.getKey())
+                                                .request(
+                                                        packageEntries.getKey(),
+                                                        new Operation()
+                                                                .setSelections(
+                                                                        protocolEntries.getValue().stream()
+                                                                                .map(FetchItem::getFetchField)
+                                                                                .filter(Objects::nonNull)
+                                                                                .collect(Collectors.toList())
                                                                 )
                                                 )
-                                ),
-                        Flux.fromStream(
-                                operation.getFields().stream()
-                                        .flatMap(field -> {
-                                                    String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
-                                                    return buildNullFetchFields("/" + selectionName, operationType.getField(field.getName()), field, jsonValue);
-                                                }
-                                        )
-                        )
+                                                .flatMapMany(fetchJsonValue ->
+                                                        Flux.fromStream(
+                                                                protocolEntries.getValue().stream()
+                                                                        .map(fetchItem -> {
+                                                                                    String path = fetchItem.getPath();
+                                                                                    if (fetchItem.getFetchField() == null) {
+                                                                                        return jsonProvider.createObjectBuilder()
+                                                                                                .add("op", "add")
+                                                                                                .add("path", path)
+                                                                                                .add("value", NULL)
+                                                                                                .build();
+                                                                                    } else if (fetchItem.getTarget() == null) {
+                                                                                        JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(fetchItem.getFetchField().getAlias());
+                                                                                        return jsonProvider.createObjectBuilder()
+                                                                                                .add("op", "add")
+                                                                                                .add("path", path)
+                                                                                                .add("value", fieldJsonValue)
+                                                                                                .build();
+                                                                                    } else {
+                                                                                        JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(fetchItem.getFetchField().getAlias());
+                                                                                        if (fieldJsonValue.getValueType().equals(JsonValue.ValueType.ARRAY)) {
+                                                                                            return jsonProvider.createObjectBuilder()
+                                                                                                    .add("op", "add")
+                                                                                                    .add("path", path)
+                                                                                                    .add("value",
+                                                                                                            fieldJsonValue.asJsonArray().stream()
+                                                                                                                    .filter(item -> item.getValueType().equals(JsonValue.ValueType.OBJECT))
+                                                                                                                    .map(item -> item.asJsonObject().get(fetchItem.getTarget()))
+                                                                                                                    .collect(JsonCollectors.toJsonArray())
+                                                                                                    )
+                                                                                                    .build();
+                                                                                        } else if (fieldJsonValue.getValueType().equals(JsonValue.ValueType.OBJECT)) {
+                                                                                            return jsonProvider.createObjectBuilder()
+                                                                                                    .add("op", "add")
+                                                                                                    .add("path", path)
+                                                                                                    .add("value", fieldJsonValue.asJsonObject().get(fetchItem.getTarget()))
+                                                                                                    .build();
+                                                                                        } else {
+                                                                                            return jsonProvider.createObjectBuilder()
+                                                                                                    .add("op", "add")
+                                                                                                    .add("path", path)
+                                                                                                    .add("value", fieldJsonValue)
+                                                                                                    .build();
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                        )
+                                                        )
+                                                )
+                                )
                 )
                 .collectList()
                 .map(patchList ->
@@ -173,25 +162,24 @@ public class FetchAfterHandler implements OperationAfterHandler {
                 );
     }
 
-    public Stream<Tuple4<String, String, Field, String>> buildFetchFields(ObjectType objectType, String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
+    public Stream<FetchItem> buildFetchFields(ObjectType objectType, String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (documentManager.isOperationType(objectType) && !packageManager.isLocalPackage(fieldDefinition)) {
             String packageName = fieldDefinition.getPackageNameOrError();
             String protocol = fieldDefinition.getFetchProtocolOrError();
-            return Stream.of(Tuples.of(packageName, protocol, field.setAlias(getAliasFromPath(path)), ""));
+            return Stream.of(new FetchItem(packageName, protocol, path, field.setAlias(getAliasFromPath(path)), null));
         } else if (fieldDefinition.isFetchField()) {
             String fetchFrom = fieldDefinition.getFetchFromOrError();
-            if (jsonValue.asJsonObject().isNull(fetchFrom)) {
-                return Stream.empty();
-            }
             String protocol = fieldDefinition.getFetchProtocolOrError();
             Field fetchField = new Field();
             if (fieldDefinition.hasFetchWith()) {
                 ObjectType fetchWithType = documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getFetchWithTypeOrError());
+                String packageName = fetchWithType.getPackageNameOrError();
+                if (jsonValue.asJsonObject().isNull(fetchFrom)) {
+                    return Stream.of(new FetchItem(packageName, protocol, path, null, null));
+                }
                 String fetchWithFrom = fieldDefinition.getFetchWithFromOrError();
                 String fetchWithTo = fieldDefinition.getFetchWithToOrError();
-                String packageName = fetchWithType.getPackageNameOrError();
-
                 fetchField
                         .setAlias(getAliasFromPath(path))
                         .setArguments(
@@ -240,9 +228,12 @@ public class FetchAfterHandler implements OperationAfterHandler {
                         )
                         .orElse(fetchWithTo);
 
-                return Stream.of(Tuples.of(packageName, protocol, fetchField, target));
+                return Stream.of(new FetchItem(packageName, protocol, path, fetchField, target));
             } else {
                 String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
+                if (jsonValue.asJsonObject().isNull(fetchFrom)) {
+                    return Stream.of(new FetchItem(packageName, protocol, path, null, null));
+                }
                 String fetchTo = fieldDefinition.getFetchToOrError();
                 fetchField
                         .setAlias(getAliasFromPath(path))
@@ -272,7 +263,7 @@ public class FetchAfterHandler implements OperationAfterHandler {
                         .setSelections(field.getSelections())
                         .setName(typeNameToFieldName(objectType.getName()) + (fieldDefinition.getType().hasList() ? SUFFIX_LIST : ""));
 
-                return Stream.of(Tuples.of(packageName, protocol, fetchField, ""));
+                return Stream.of(new FetchItem(packageName, protocol, path, fetchField, null));
             }
         } else if (fieldTypeDefinition.isObject()) {
             String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
@@ -301,46 +292,6 @@ public class FetchAfterHandler implements OperationAfterHandler {
         return Stream.empty();
     }
 
-    public Stream<JsonObject> buildNullFetchFields(String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
-        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        if (fieldDefinition.isFetchField()) {
-            String fetchFrom = fieldDefinition.getFetchFromOrError();
-            if (jsonValue.asJsonObject().isNull(fetchFrom)) {
-                return Stream.of(
-                        jsonProvider.createObjectBuilder()
-                                .add("op", "add")
-                                .add("path", path)
-                                .add("value", NULL)
-                                .build()
-                );
-            }
-        } else if (fieldTypeDefinition.isObject()) {
-            String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
-            if (fieldDefinition.getType().hasList()) {
-                return IntStream.range(0, jsonValue.asJsonObject().get(selectionName).asJsonArray().size())
-                        .mapToObj(index ->
-                                Stream.ofNullable(field.getFields())
-                                        .flatMap(Collection::stream)
-                                        .flatMap(subField -> {
-                                                    String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
-                                                    return buildNullFetchFields(path + "/" + index + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonObject().get(selectionName).asJsonArray().get(index));
-                                                }
-                                        )
-                        )
-                        .flatMap(stream -> stream);
-            } else {
-                return Stream.ofNullable(field.getFields())
-                        .flatMap(Collection::stream)
-                        .flatMap(subField -> {
-                                    String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
-                                    return buildNullFetchFields(path + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonObject().get(selectionName));
-                                }
-                        );
-            }
-        }
-        return Stream.empty();
-    }
-
     private String getKey(JsonValue jsonValue) {
         if (jsonValue.getValueType().equals(JsonValue.ValueType.STRING)) {
             return ((JsonString) jsonValue).getString();
@@ -353,7 +304,69 @@ public class FetchAfterHandler implements OperationAfterHandler {
         return path.replaceAll("/", "_");
     }
 
-    private String getPathFromAlias(String alias) {
-        return alias.replaceAll("_", "/");
+    static class FetchItem {
+
+        private String packageName;
+
+        private String protocol;
+
+        private String path;
+
+        private Field fetchField;
+
+        private String target;
+
+        public FetchItem(String packageName, String protocol, String path, Field fetchField, String target) {
+            this.packageName = packageName;
+            this.protocol = protocol;
+            this.path = path;
+            this.fetchField = fetchField;
+            this.target = target;
+        }
+
+        public String getPackageName() {
+            return packageName;
+        }
+
+        public FetchItem setPackageName(String packageName) {
+            this.packageName = packageName;
+            return this;
+        }
+
+        public String getProtocol() {
+            return protocol;
+        }
+
+        public FetchItem setProtocol(String protocol) {
+            this.protocol = protocol;
+            return this;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public FetchItem setPath(String path) {
+            this.path = path;
+            return this;
+        }
+
+        public Field getFetchField() {
+            return fetchField;
+        }
+
+        public FetchItem setFetchField(Field fetchField) {
+            this.fetchField = fetchField;
+            return this;
+        }
+
+        public String getTarget() {
+            return target;
+        }
+
+        public FetchItem setTarget(String target) {
+            this.target = target;
+            return this;
+        }
     }
 }
