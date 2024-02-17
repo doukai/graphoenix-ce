@@ -2,6 +2,7 @@ package io.graphoenix.core.handler.after;
 
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.PackageManager;
+import io.graphoenix.core.handler.fetch.FetchItem;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.common.EnumValue;
@@ -69,7 +70,7 @@ public class FetchAfterHandler implements OperationAfterHandler {
                         operation.getFields().stream()
                                 .flatMap(field -> {
                                             String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
-                                            return buildFetchFields(operationType, "/" + selectionName, operationType.getField(field.getName()), field, jsonValue);
+                                            return buildFetchItems(operationType, "/" + selectionName, operationType.getField(field.getName()), field, jsonValue);
                                         }
                                 )
                                 .collect(
@@ -162,7 +163,7 @@ public class FetchAfterHandler implements OperationAfterHandler {
                 );
     }
 
-    public Stream<FetchItem> buildFetchFields(ObjectType objectType, String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
+    public Stream<FetchItem> buildFetchItems(ObjectType objectType, String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (documentManager.isOperationType(objectType) && !packageManager.isLocalPackage(fieldDefinition)) {
             String packageName = fieldDefinition.getPackageNameOrError();
@@ -261,7 +262,7 @@ public class FetchAfterHandler implements OperationAfterHandler {
                                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y))
                         )
                         .setSelections(field.getSelections())
-                        .setName(typeNameToFieldName(objectType.getName()) + (fieldDefinition.getType().hasList() ? SUFFIX_LIST : ""));
+                        .setName(typeNameToFieldName(fieldTypeDefinition.getName()) + (fieldDefinition.getType().hasList() ? SUFFIX_LIST : ""));
 
                 return Stream.of(new FetchItem(packageName, protocol, path, fetchField, null));
             }
@@ -274,7 +275,7 @@ public class FetchAfterHandler implements OperationAfterHandler {
                                         .flatMap(Collection::stream)
                                         .flatMap(subField -> {
                                                     String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
-                                                    return buildFetchFields(fieldTypeDefinition.asObject(), path + "/" + index + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonObject().get(selectionName).asJsonArray().get(index));
+                                                    return buildFetchItems(fieldTypeDefinition.asObject(), path + "/" + index + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonObject().get(selectionName).asJsonArray().get(index));
                                                 }
                                         )
                         )
@@ -284,7 +285,7 @@ public class FetchAfterHandler implements OperationAfterHandler {
                         .flatMap(Collection::stream)
                         .flatMap(subField -> {
                                     String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
-                                    return buildFetchFields(fieldTypeDefinition.asObject(), path + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonObject().get(selectionName));
+                                    return buildFetchItems(fieldTypeDefinition.asObject(), path + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonObject().get(selectionName));
                                 }
                         );
             }
@@ -302,71 +303,5 @@ public class FetchAfterHandler implements OperationAfterHandler {
 
     private String getAliasFromPath(String path) {
         return path.replaceAll("/", "_");
-    }
-
-    static class FetchItem {
-
-        private String packageName;
-
-        private String protocol;
-
-        private String path;
-
-        private Field fetchField;
-
-        private String target;
-
-        public FetchItem(String packageName, String protocol, String path, Field fetchField, String target) {
-            this.packageName = packageName;
-            this.protocol = protocol;
-            this.path = path;
-            this.fetchField = fetchField;
-            this.target = target;
-        }
-
-        public String getPackageName() {
-            return packageName;
-        }
-
-        public FetchItem setPackageName(String packageName) {
-            this.packageName = packageName;
-            return this;
-        }
-
-        public String getProtocol() {
-            return protocol;
-        }
-
-        public FetchItem setProtocol(String protocol) {
-            this.protocol = protocol;
-            return this;
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public FetchItem setPath(String path) {
-            this.path = path;
-            return this;
-        }
-
-        public Field getFetchField() {
-            return fetchField;
-        }
-
-        public FetchItem setFetchField(Field fetchField) {
-            this.fetchField = fetchField;
-            return this;
-        }
-
-        public String getTarget() {
-            return target;
-        }
-
-        public FetchItem setTarget(String target) {
-            this.target = target;
-            return this;
-        }
     }
 }
