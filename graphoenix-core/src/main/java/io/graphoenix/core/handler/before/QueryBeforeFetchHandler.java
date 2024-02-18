@@ -89,7 +89,8 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                 .entrySet()
                 )
                 .flatMap(packageEntries ->
-                        Flux.fromIterable(packageEntries.getValue().entrySet())
+                        Flux
+                                .fromIterable(packageEntries.getValue().entrySet())
                                 .flatMap(protocolEntries ->
                                         fetchHandlerMap.get(protocolEntries.getKey())
                                                 .request(
@@ -104,32 +105,37 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                 )
                                                 )
                                                 .flatMapMany(fetchJsonValue ->
-                                                        Flux.fromIterable(
+                                                        Flux
+                                                                .fromIterable(
                                                                         protocolEntries.getValue().stream()
                                                                                 .collect(
                                                                                         Collectors.groupingBy(
                                                                                                 FetchItem::getField,
                                                                                                 Collectors.mapping(
-                                                                                                        fetchItem -> {
-                                                                                                            String path = fetchItem.getPath();
-                                                                                                            JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(fetchItem.getFetchField().getAlias());
-                                                                                                            return jsonProvider.createObjectBuilder()
-                                                                                                                    .add("op", "add")
-                                                                                                                    .add("path", path)
-                                                                                                                    .add("value",
-                                                                                                                            jsonProvider.createObjectBuilder()
-                                                                                                                                    .add(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME, new EnumValue(INPUT_OPERATOR_INPUT_VALUE_IN))
+                                                                                                        fetchItem -> fetchItem,
+                                                                                                        Collectors.groupingBy(
+                                                                                                                FetchItem::getPath,
+                                                                                                                Collectors.mapping(
+                                                                                                                        fetchItem -> {
+                                                                                                                            JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(fetchItem.getFetchField().getAlias());
+                                                                                                                            return jsonProvider.createObjectBuilder()
                                                                                                                                     .add(
-                                                                                                                                            INPUT_OPERATOR_INPUT_VALUE_ARR_NAME,
-                                                                                                                                            fieldJsonValue.asJsonArray().stream()
-                                                                                                                                                    .filter(item -> item.getValueType().equals(JsonValue.ValueType.OBJECT))
-                                                                                                                                                    .map(item -> item.asJsonObject().get(fetchItem.getTarget()))
-                                                                                                                                                    .collect(JsonCollectors.toJsonArray())
+                                                                                                                                            fetchItem.getFetchFrom(),
+                                                                                                                                            jsonProvider.createObjectBuilder()
+                                                                                                                                                    .add(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME, new EnumValue(INPUT_OPERATOR_INPUT_VALUE_IN))
+                                                                                                                                                    .add(
+                                                                                                                                                            INPUT_OPERATOR_INPUT_VALUE_ARR_NAME,
+                                                                                                                                                            fieldJsonValue.asJsonArray().stream()
+                                                                                                                                                                    .filter(item -> item.getValueType().equals(JsonValue.ValueType.OBJECT))
+                                                                                                                                                                    .map(item -> item.asJsonObject().get(fetchItem.getTarget()))
+                                                                                                                                                                    .collect(JsonCollectors.toJsonArray())
+                                                                                                                                                    )
                                                                                                                                     )
-                                                                                                                    )
-                                                                                                                    .build();
-                                                                                                        },
-                                                                                                        Collectors.toList()
+                                                                                                                                    .build();
+                                                                                                                        },
+                                                                                                                        Collectors.toList()
+                                                                                                                )
+                                                                                                        )
                                                                                                 )
                                                                                         )
                                                                                 )
@@ -138,8 +144,34 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                 .map(entry ->
                                                                         entry.getKey()
                                                                                 .setArguments(
-                                                                                        jsonProvider.createPatchBuilder(
-                                                                                                        entry.getValue().stream()
+                                                                                        jsonProvider
+                                                                                                .createPatchBuilder(
+                                                                                                        entry.getValue().entrySet().stream()
+                                                                                                                .map(pathEntry ->
+                                                                                                                        jsonProvider.createObjectBuilder()
+                                                                                                                                .add("op", "add")
+                                                                                                                                .add("path", pathEntry.getKey() + "/" + INPUT_VALUE_EXS_NAME)
+                                                                                                                                .add(
+                                                                                                                                        "value",
+                                                                                                                                        Stream.ofNullable(entry.getKey().getArguments().getValue(pathEntry.getKey() + "/" + INPUT_VALUE_EXS_NAME))
+                                                                                                                                                .filter(jsonValue -> jsonValue.getValueType().equals(JsonValue.ValueType.ARRAY))
+                                                                                                                                                .findFirst()
+                                                                                                                                                .map(JsonValue::asJsonArray)
+                                                                                                                                                .map(jsonArray ->
+                                                                                                                                                        Stream
+                                                                                                                                                                .concat(
+                                                                                                                                                                        jsonArray.stream(),
+                                                                                                                                                                        pathEntry.getValue().stream()
+                                                                                                                                                                )
+                                                                                                                                                                .collect(JsonCollectors.toJsonArray())
+                                                                                                                                                )
+                                                                                                                                                .orElseGet(() ->
+                                                                                                                                                        pathEntry.getValue().stream()
+                                                                                                                                                                .collect(JsonCollectors.toJsonArray())
+                                                                                                                                                )
+                                                                                                                                )
+                                                                                                                                .build()
+                                                                                                                )
                                                                                                                 .collect(JsonCollectors.toJsonArray())
                                                                                                 )
                                                                                                 .build()
@@ -178,7 +210,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                             buildFetchItems(
                                                                                     path,
                                                                                     field,
-                                                                                    "/" + subFieldDefinition.getName(),
+                                                                                    "",
                                                                                     subFieldDefinition,
                                                                                     inputValue,
                                                                                     valueWithVariable
@@ -195,6 +227,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldDefinition.isFetchField()) {
             String protocol = fieldDefinition.getFetchProtocolOrError().toLowerCase();
+            String fetchFrom = fieldDefinition.getFetchFromOrError();
             Field fetchField = new Field();
             if (fieldDefinition.hasFetchWith()) {
                 ObjectType fetchWithType = documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getFetchWithTypeOrError());
@@ -202,7 +235,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                 String fetchWithFrom = fieldDefinition.getFetchWithFromOrError();
                 String fetchWithTo = fieldDefinition.getFetchWithToOrError();
                 fetchField
-                        .setAlias(getAliasFromPath(fieldPath) + "__" + getAliasFromPath(path))
+                        .setAlias(getAliasFromPath(fieldPath) + "__" + getAliasFromPath(path + "/" + fetchFrom))
                         .setArguments(
                                 Map.of(
                                         fetchWithType.getFields().stream()
@@ -225,18 +258,18 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                         .addSelection(new Field(fetchWithFrom))
                         .setName(typeNameToFieldName(fetchWithType.getName()) + SUFFIX_LIST);
 
-                return Stream.of(new FetchItem(packageName, protocol, path, fetchField, fetchWithFrom, fieldPath, field));
+                return Stream.of(new FetchItem(packageName, protocol, path, fetchField, fetchWithFrom, field, fetchFrom));
             } else {
                 String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
                 String fetchTo = fieldDefinition.getFetchToOrError();
                 valueWithVariable.asObject().put(INPUT_VALUE_GROUP_BY_NAME, Collections.singletonList(fetchTo));
                 fetchField
-                        .setAlias(getAliasFromPath(fieldPath) + "__" + getAliasFromPath(path))
+                        .setAlias(getAliasFromPath(fieldPath) + "__" + getAliasFromPath(path + "/" + fetchFrom))
                         .setArguments(valueWithVariable.asObject())
                         .addSelection(new Field(fetchTo))
                         .setName(typeNameToFieldName(fieldTypeDefinition.getName()) + SUFFIX_LIST);
 
-                return Stream.of(new FetchItem(packageName, protocol, path, fetchField, fetchTo, fieldPath, field));
+                return Stream.of(new FetchItem(packageName, protocol, path, fetchField, fetchTo, field, fetchFrom));
             }
         } else if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             return fieldTypeDefinition.asObject().getFields().stream()
@@ -252,7 +285,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                             buildFetchItems(
                                                                     fieldPath,
                                                                     field,
-                                                                    path + "/" + subFieldDefinition.getName(),
+                                                                    path + "/" + fieldDefinition.getName(),
                                                                     subFieldDefinition,
                                                                     subInputValue,
                                                                     subValueWithVariable

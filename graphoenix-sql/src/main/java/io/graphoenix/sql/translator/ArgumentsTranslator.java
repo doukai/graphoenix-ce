@@ -67,6 +67,7 @@ public class ArgumentsTranslator {
             List<Expression> expressionList = Streams
                     .concat(
                             fieldTypeDefinition.asObject().getFields().stream()
+                                    .filter(subField -> !subField.isFetchField())
                                     .flatMap(subField ->
                                             inputValueValueWithVariableMap.entrySet().stream()
                                                     .filter(entry -> entry.getKey().getName().equals(subField.getName()))
@@ -168,6 +169,7 @@ public class ArgumentsTranslator {
             List<Expression> expressionList = Streams
                     .concat(
                             fieldTypeDefinition.asObject().getFields().stream()
+                                    .filter(subField -> !subField.isFetchField())
                                     .flatMap(subField ->
                                             inputValueValueWithVariableMap.entrySet().stream()
                                                     .filter(entry -> entry.getKey().getName().equals(subField.getName()))

@@ -81,6 +81,9 @@ public class ConnectionBuilder implements OperationAfterHandler {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject()) {
             String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
+            if (jsonValue.asJsonObject().isNull(selectionName)) {
+                return Stream.empty();
+            }
             if (fieldDefinition.getType().hasList()) {
                 return IntStream.range(0, jsonValue.asJsonObject().get(selectionName).asJsonArray().size())
                         .mapToObj(index ->

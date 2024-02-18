@@ -14,9 +14,9 @@ public class FetchItem {
 
     private String target;
 
-    private String fieldPath;
-
     private Field field;
+
+    private String fetchFrom;
 
     public FetchItem(String packageName, String protocol, String path, Field fetchField, String target) {
         this.packageName = packageName;
@@ -26,10 +26,10 @@ public class FetchItem {
         this.target = target;
     }
 
-    public FetchItem(String packageName, String protocol, String path, Field fetchField, String target, String fieldPath, Field field) {
+    public FetchItem(String packageName, String protocol, String path, Field fetchField, String target, Field field, String fetchFrom) {
         this(packageName, protocol, path, fetchField, target);
-        this.fieldPath = fieldPath;
         this.field = field;
+        this.fetchFrom = fetchFrom;
     }
 
     public String getPackageName() {
@@ -77,21 +77,21 @@ public class FetchItem {
         return this;
     }
 
-    public String getFieldPath() {
-        return fieldPath;
-    }
-
-    public FetchItem setFieldPath(String fieldPath) {
-        this.fieldPath = fieldPath;
-        return this;
-    }
-
     public Field getField() {
         return field;
     }
 
     public FetchItem setField(Field field) {
         this.field = field;
+        return this;
+    }
+
+    public String getFetchFrom() {
+        return fetchFrom;
+    }
+
+    public FetchItem setFetchFrom(String fetchFrom) {
+        this.fetchFrom = fetchFrom;
         return this;
     }
 }
