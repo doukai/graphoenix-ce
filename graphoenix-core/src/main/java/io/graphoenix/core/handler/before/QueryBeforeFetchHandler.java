@@ -3,6 +3,7 @@ package io.graphoenix.core.handler.before;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.fetch.FetchItem;
 import io.graphoenix.spi.error.GraphQLErrors;
+import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.common.EnumValue;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
@@ -17,17 +18,13 @@ import io.nozdormu.spi.context.BeanContext;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonCollectors;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,7 +33,7 @@ import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIEL
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 
 @ApplicationScoped
-@Priority(600)
+@Priority(700)
 public class QueryBeforeFetchHandler implements OperationBeforeHandler {
 
     private final DocumentManager documentManager;
@@ -98,6 +95,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                 .request(
                                                         packageEntries.getKey(),
                                                         new Operation()
+                                                                .setOperationType(OPERATION_QUERY_NAME)
                                                                 .setSelections(
                                                                         protocolEntries.getValue().stream()
                                                                                 .map(FetchItem::getFetchField)
@@ -106,28 +104,47 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                 )
                                                 )
                                                 .flatMapMany(fetchJsonValue ->
-                                                        Flux
-                                                                .fromIterable(protocolEntries.getValue())
-                                                                .doOnNext(fetchItem -> {
-                                                                            String path = fetchItem.getPath();
-                                                                            JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(fetchItem.getFetchField().getAlias());
-                                                                            jsonProvider.createPatchBuilder()
-                                                                                    .add(
-                                                                                            path,
-                                                                                            jsonProvider.createObjectBuilder()
-                                                                                                    .add(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME, new EnumValue(INPUT_OPERATOR_INPUT_VALUE_IN))
-                                                                                                    .add(
-                                                                                                            INPUT_OPERATOR_INPUT_VALUE_ARR_NAME,
-                                                                                                            fieldJsonValue.asJsonArray().stream()
-                                                                                                                    .filter(item -> item.getValueType().equals(JsonValue.ValueType.OBJECT))
-                                                                                                                    .map(item -> item.asJsonObject().get(fetchItem.getTarget()))
-                                                                                                                    .collect(JsonCollectors.toJsonArray())
-                                                                                                    )
-                                                                                                    .build()
-                                                                                    )
-                                                                                    .build()
-                                                                                    .apply(fetchItem.getJsonObject());
-                                                                        }
+                                                        Flux.fromIterable(
+                                                                        protocolEntries.getValue().stream()
+                                                                                .collect(
+                                                                                        Collectors.groupingBy(
+                                                                                                FetchItem::getField,
+                                                                                                Collectors.mapping(
+                                                                                                        fetchItem -> {
+                                                                                                            String path = fetchItem.getPath();
+                                                                                                            JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(fetchItem.getFetchField().getAlias());
+                                                                                                            return jsonProvider.createObjectBuilder()
+                                                                                                                    .add("op", "add")
+                                                                                                                    .add("path", path)
+                                                                                                                    .add("value",
+                                                                                                                            jsonProvider.createObjectBuilder()
+                                                                                                                                    .add(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME, new EnumValue(INPUT_OPERATOR_INPUT_VALUE_IN))
+                                                                                                                                    .add(
+                                                                                                                                            INPUT_OPERATOR_INPUT_VALUE_ARR_NAME,
+                                                                                                                                            fieldJsonValue.asJsonArray().stream()
+                                                                                                                                                    .filter(item -> item.getValueType().equals(JsonValue.ValueType.OBJECT))
+                                                                                                                                                    .map(item -> item.asJsonObject().get(fetchItem.getTarget()))
+                                                                                                                                                    .collect(JsonCollectors.toJsonArray())
+                                                                                                                                    )
+                                                                                                                    )
+                                                                                                                    .build();
+                                                                                                        },
+                                                                                                        Collectors.toList()
+                                                                                                )
+                                                                                        )
+                                                                                )
+                                                                                .entrySet()
+                                                                )
+                                                                .map(entry ->
+                                                                        entry.getKey()
+                                                                                .setArguments(
+                                                                                        jsonProvider.createPatchBuilder(
+                                                                                                        entry.getValue().stream()
+                                                                                                                .collect(JsonCollectors.toJsonArray())
+                                                                                                )
+                                                                                                .build()
+                                                                                                .apply(entry.getKey().getArguments())
+                                                                                )
                                                                 )
                                                 )
                                 )
@@ -160,7 +177,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                     .flatMap(valueWithVariable ->
                                                                             buildFetchItems(
                                                                                     path,
-                                                                                    field.getArguments(),
+                                                                                    field,
                                                                                     "/" + subFieldDefinition.getName(),
                                                                                     subFieldDefinition,
                                                                                     inputValue,
@@ -174,10 +191,10 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
         return Stream.empty();
     }
 
-    public Stream<FetchItem> buildFetchItems(String fieldPath, JsonObject jsonObject, String path, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable) {
+    public Stream<FetchItem> buildFetchItems(String fieldPath, Field field, String path, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldDefinition.isFetchField()) {
-            String protocol = fieldDefinition.getFetchProtocolOrError();
+            String protocol = fieldDefinition.getFetchProtocolOrError().toLowerCase();
             Field fetchField = new Field();
             if (fieldDefinition.hasFetchWith()) {
                 ObjectType fetchWithType = documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getFetchWithTypeOrError());
@@ -189,28 +206,37 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                         .setArguments(
                                 Map.of(
                                         fetchWithType.getFields().stream()
-                                                .filter(withTypeFieldDefinition -> withTypeFieldDefinition.getFetchFrom().isPresent())
-                                                .filter(withTypeFieldDefinition -> withTypeFieldDefinition.getFetchFromOrError().equals(fetchWithTo))
+                                                .filter(withTypeFieldDefinition ->
+                                                        Stream
+                                                                .concat(
+                                                                        withTypeFieldDefinition.getMapFrom().stream(),
+                                                                        withTypeFieldDefinition.getFetchFrom().stream()
+                                                                )
+                                                                .anyMatch(name -> name.equals(fetchWithTo))
+                                                )
                                                 .findFirst()
-                                                .orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST.bind(fetchWithTo)))
-                                                .getName(),
-                                        valueWithVariable
+                                                .map(AbstractDefinition::getName)
+                                                .orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST.bind(fetchWithTo))),
+                                        valueWithVariable,
+                                        INPUT_VALUE_GROUP_BY_NAME,
+                                        Collections.singletonList(fetchWithFrom)
                                 )
                         )
                         .addSelection(new Field(fetchWithFrom))
-                        .setName(typeNameToFieldName(fetchWithType.getName()) + (fieldDefinition.getType().hasList() ? SUFFIX_LIST : ""));
+                        .setName(typeNameToFieldName(fetchWithType.getName()) + SUFFIX_LIST);
 
-                return Stream.of(new FetchItem(packageName, protocol, path, fetchField, fetchWithFrom, jsonObject));
+                return Stream.of(new FetchItem(packageName, protocol, path, fetchField, fetchWithFrom, fieldPath, field));
             } else {
                 String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
                 String fetchTo = fieldDefinition.getFetchToOrError();
+                valueWithVariable.asObject().put(INPUT_VALUE_GROUP_BY_NAME, Collections.singletonList(fetchTo));
                 fetchField
                         .setAlias(getAliasFromPath(fieldPath) + "__" + getAliasFromPath(path))
                         .setArguments(valueWithVariable.asObject())
                         .addSelection(new Field(fetchTo))
-                        .setName(typeNameToFieldName(fieldTypeDefinition.getName()) + (fieldDefinition.getType().hasList() ? SUFFIX_LIST : ""));
+                        .setName(typeNameToFieldName(fieldTypeDefinition.getName()) + SUFFIX_LIST);
 
-                return Stream.of(new FetchItem(packageName, protocol, path, fetchField, fetchTo, jsonObject));
+                return Stream.of(new FetchItem(packageName, protocol, path, fetchField, fetchTo, fieldPath, field));
             }
         } else if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             return fieldTypeDefinition.asObject().getFields().stream()
@@ -225,7 +251,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                     .flatMap(subValueWithVariable ->
                                                             buildFetchItems(
                                                                     fieldPath,
-                                                                    valueWithVariable.asObject(),
+                                                                    field,
                                                                     path + "/" + subFieldDefinition.getName(),
                                                                     subFieldDefinition,
                                                                     subInputValue,

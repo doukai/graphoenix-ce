@@ -1,6 +1,8 @@
 package graphoenix.annotation.processor;
 
 import com.google.auto.service.AutoService;
+import io.graphoenix.core.config.GraphQLConfig;
+import io.graphoenix.core.handler.DocumentBuilder;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.GraphQLConfigRegister;
 import io.graphoenix.core.handler.PackageManager;
@@ -41,14 +43,19 @@ public class ApplicationProcessor extends BaseProcessor {
         if (annotations.isEmpty()) {
             return false;
         }
-        DocumentManager documentManager = BeanContext.get(DocumentManager.class);
         PackageManager packageManager = BeanContext.get(PackageManager.class);
+        DocumentManager documentManager = BeanContext.get(DocumentManager.class);
+        DocumentBuilder documentBuilder = BeanContext.get(DocumentBuilder.class);
         roundInit(roundEnv);
 
         try {
+            GraphQLConfig graphQLConfig = BeanContext.get(GraphQLConfig.class);
             GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
             configRegister.registerPackage(ApplicationProcessor.class.getClassLoader(), true);
             registerElements(roundEnv);
+            if (graphQLConfig.getMapToLocalFetch()) {
+                documentBuilder.mapToLocalFetch();
+            }
             FileObject mainGraphQL = filer.createResource(StandardLocation.CLASS_OUTPUT, "", "META-INF/graphql/main.gql");
             Writer writer = mainGraphQL.openWriter();
             writer.write(documentManager.getDocument().toString());

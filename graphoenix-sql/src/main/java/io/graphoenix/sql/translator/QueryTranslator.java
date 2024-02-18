@@ -105,6 +105,9 @@ public class QueryTranslator {
             fromItem = new ParenthesedSelect()
                     .withSelect(objectFieldToPlainSelect(objectType, fieldDefinition, field, true, level))
                     .withAlias(new Alias(graphqlTypeNameToTableAliaName(fieldTypeDefinition.getName(), level)));
+            return plainSelect
+                    .withFromItem(fromItem)
+                    .addSelectItem(selectExpression);
         } else {
             JsonFunction jsonObjectFunction =
                     jsonObjectFunction(
@@ -142,8 +145,12 @@ public class QueryTranslator {
             fromItem = table;
         }
 
+        if (groupBy) {
+            plainSelect.addSelectItem(selectExpression, new Alias(graphqlFieldNameToColumnName(INPUT_VALUE_GROUP_BY_NAME)));
+        } else {
+            plainSelect.addSelectItem(selectExpression);
+        }
         plainSelect
-                .addSelectItem(selectExpression)
                 .withFromItem(fromItem)
                 .setGroupByElement(argumentsToGroupBy(fieldDefinition, field, level));
 

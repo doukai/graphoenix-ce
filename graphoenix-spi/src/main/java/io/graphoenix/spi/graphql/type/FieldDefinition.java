@@ -455,8 +455,8 @@ public class FieldDefinition extends AbstractDefinition {
     public Optional<String> getFetchProtocol() {
         return Optional.ofNullable(getDirective(DIRECTIVE_FETCH_NAME))
                 .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME)))
-                .filter(ValueWithVariable::isString)
-                .map(valueWithVariable -> valueWithVariable.asString().getValue());
+                .filter(ValueWithVariable::isEnum)
+                .map(valueWithVariable -> valueWithVariable.asEnum().getValue());
     }
 
     public String getFetchProtocolOrError() {

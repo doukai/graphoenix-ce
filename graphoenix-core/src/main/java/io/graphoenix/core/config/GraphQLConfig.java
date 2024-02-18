@@ -22,6 +22,9 @@ public class GraphQLConfig {
     private Boolean build = true;
 
     @Optional
+    private Boolean mapToLocalFetch = false;
+
+    @Optional
     private String defaultOperationHandlerName;
 
     public String getGraphQL() {
@@ -62,6 +65,14 @@ public class GraphQLConfig {
 
     public void setBuild(Boolean build) {
         this.build = build;
+    }
+
+    public Boolean getMapToLocalFetch() {
+        return mapToLocalFetch;
+    }
+
+    public void setMapToLocalFetch(Boolean mapToLocalFetch) {
+        this.mapToLocalFetch = mapToLocalFetch;
     }
 
     public String getDefaultOperationHandlerName() {

@@ -113,14 +113,6 @@ public class ObjectValueWithVariable extends AbstractMap<String, JsonValue> impl
         return objectValueWithVariable.putIfAbsent(key, ValueWithVariable.of(value));
     }
 
-    public ValueWithVariable compute(String key, Object value) {
-        return objectValueWithVariable.compute(key, (k, v) -> ValueWithVariable.of(value));
-    }
-
-    public ValueWithVariable computeIfAbsent(String key, Object value) {
-        return objectValueWithVariable.computeIfAbsent(key, k -> ValueWithVariable.of(value));
-    }
-
     @NotNull
     @Override
     public Set<Entry<String, JsonValue>> entrySet() {

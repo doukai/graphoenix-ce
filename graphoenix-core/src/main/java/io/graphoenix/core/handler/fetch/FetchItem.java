@@ -1,7 +1,6 @@
 package io.graphoenix.core.handler.fetch;
 
 import io.graphoenix.spi.graphql.operation.Field;
-import jakarta.json.JsonObject;
 
 public class FetchItem {
 
@@ -15,7 +14,9 @@ public class FetchItem {
 
     private String target;
 
-    private JsonObject jsonObject;
+    private String fieldPath;
+
+    private Field field;
 
     public FetchItem(String packageName, String protocol, String path, Field fetchField, String target) {
         this.packageName = packageName;
@@ -25,9 +26,10 @@ public class FetchItem {
         this.target = target;
     }
 
-    public FetchItem(String packageName, String protocol, String path, Field fetchField, String target, JsonObject jsonObject) {
+    public FetchItem(String packageName, String protocol, String path, Field fetchField, String target, String fieldPath, Field field) {
         this(packageName, protocol, path, fetchField, target);
-        this.jsonObject = jsonObject;
+        this.fieldPath = fieldPath;
+        this.field = field;
     }
 
     public String getPackageName() {
@@ -75,12 +77,21 @@ public class FetchItem {
         return this;
     }
 
-    public JsonObject getJsonObject() {
-        return jsonObject;
+    public String getFieldPath() {
+        return fieldPath;
     }
 
-    public FetchItem setJsonObject(JsonObject jsonObject) {
-        this.jsonObject = jsonObject;
+    public FetchItem setFieldPath(String fieldPath) {
+        this.fieldPath = fieldPath;
+        return this;
+    }
+
+    public Field getField() {
+        return field;
+    }
+
+    public FetchItem setField(Field field) {
+        this.field = field;
         return this;
     }
 }

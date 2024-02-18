@@ -3,6 +3,7 @@ package io.graphoenix.core.handler.after;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.core.handler.fetch.FetchItem;
+import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.common.EnumValue;
@@ -29,6 +30,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
+import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 import static jakarta.json.JsonValue.NULL;
 
@@ -97,6 +99,7 @@ public class FetchAfterHandler implements OperationAfterHandler {
                                                 .request(
                                                         packageEntries.getKey(),
                                                         new Operation()
+                                                                .setOperationType(OPERATION_QUERY_NAME)
                                                                 .setSelections(
                                                                         protocolEntries.getValue().stream()
                                                                                 .map(FetchItem::getFetchField)
@@ -166,12 +169,12 @@ public class FetchAfterHandler implements OperationAfterHandler {
     public Stream<FetchItem> buildFetchItems(ObjectType objectType, String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (documentManager.isOperationType(objectType) && !packageManager.isLocalPackage(fieldDefinition)) {
+            String protocol = fieldDefinition.getFetchProtocolOrError().toLowerCase();
             String packageName = fieldDefinition.getPackageNameOrError();
-            String protocol = fieldDefinition.getFetchProtocolOrError();
             return Stream.of(new FetchItem(packageName, protocol, path, field.setAlias(getAliasFromPath(path)), null));
         } else if (fieldDefinition.isFetchField()) {
+            String protocol = fieldDefinition.getFetchProtocolOrError().toLowerCase();
             String fetchFrom = fieldDefinition.getFetchFromOrError();
-            String protocol = fieldDefinition.getFetchProtocolOrError();
             Field fetchField = new Field();
             if (fieldDefinition.hasFetchWith()) {
                 ObjectType fetchWithType = documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getFetchWithTypeOrError());
@@ -196,22 +199,32 @@ public class FetchAfterHandler implements OperationAfterHandler {
                         )
                         .addSelection(
                                 fieldDefinition.getFetchTo()
-                                        .flatMap(fetchTo ->
+                                        .map(fetchTo ->
                                                 fetchWithType.getFields().stream()
-                                                        .filter(withTypeFieldDefinition -> withTypeFieldDefinition.getFetchFrom().isPresent())
-                                                        .filter(withTypeFieldDefinition -> withTypeFieldDefinition.getFetchFromOrError().equals(fetchWithTo))
+                                                        .filter(withTypeFieldDefinition ->
+                                                                Stream
+                                                                        .concat(
+                                                                                withTypeFieldDefinition.getMapFrom().stream(),
+                                                                                withTypeFieldDefinition.getFetchFrom().stream()
+                                                                        )
+                                                                        .anyMatch(name -> name.equals(fetchWithTo))
+                                                        )
                                                         .findFirst()
                                                         .map(withTypeFieldDefinition ->
                                                                 new Field(withTypeFieldDefinition.getName())
                                                                         .setSelections(field.getSelections())
                                                         )
+                                                        .orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST.bind(fetchWithTo)))
                                         )
                                         .orElseGet(() -> new Field(fetchWithTo))
                                         .setArguments(
                                                 fieldDefinition.getArguments().stream()
                                                         .flatMap(inputValue ->
-                                                                field.getArguments().getArgument(inputValue.getName())
-                                                                        .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
+                                                                Stream.ofNullable(field.getArguments())
+                                                                        .flatMap(arguments ->
+                                                                                arguments.getArgument(inputValue.getName())
+                                                                                        .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
+                                                                        )
                                                                         .map(valueWithVariable -> new AbstractMap.SimpleEntry<>(inputValue.getName(), valueWithVariable))
                                                         )
                                                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y))
@@ -254,8 +267,11 @@ public class FetchAfterHandler implements OperationAfterHandler {
                                                 ),
                                                 fieldDefinition.getArguments().stream()
                                                         .flatMap(inputValue ->
-                                                                field.getArguments().getArgument(inputValue.getName())
-                                                                        .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
+                                                                Stream.ofNullable(field.getArguments())
+                                                                        .flatMap(arguments ->
+                                                                                arguments.getArgument(inputValue.getName())
+                                                                                        .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
+                                                                        )
                                                                         .map(valueWithVariable -> new AbstractMap.SimpleEntry<>(inputValue.getName(), valueWithVariable))
                                                         )
                                         )

@@ -1628,4 +1628,21 @@ public class DocumentBuilder {
             return fieldDefinition;
         }
     }
+
+    public Document mapToLocalFetch() {
+        return mapToLocalFetch(documentManager.getDocument());
+    }
+
+    public Document mapToLocalFetch(Document document) {
+        document.getDefinitions().stream()
+                .filter(Definition::isObject)
+                .flatMap(definition -> definition.asObject().getFields().stream())
+                .filter(FieldDefinition::isMapField)
+                .forEach(fieldDefinition ->
+                        fieldDefinition.getDirective(DIRECTIVE_MAP_NAME)
+                                .setName(DIRECTIVE_FETCH_NAME)
+                                .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, new EnumValue(ENUM_PROTOCOL_ENUM_VALUE_LOCAL))
+                );
+        return document;
+    }
 }
