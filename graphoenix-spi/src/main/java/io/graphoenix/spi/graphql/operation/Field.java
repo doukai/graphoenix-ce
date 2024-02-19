@@ -62,7 +62,7 @@ public class Field extends AbstractDefinition implements Selection {
                         Stream.ofNullable(fields)
                                 .flatMap(Collection::stream)
                 )
-                .filter(distinctByKey(Field::getName))
+                .filter(distinctByKey(field -> Optional.ofNullable(field.getAlias()).orElseGet(field::getName)))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         return this;
     }

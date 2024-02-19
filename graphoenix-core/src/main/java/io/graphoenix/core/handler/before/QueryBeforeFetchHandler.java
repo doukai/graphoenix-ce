@@ -18,6 +18,7 @@ import io.nozdormu.spi.context.BeanContext;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonCollectors;
@@ -144,7 +145,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                 .map(entry ->
                                                                         entry.getKey()
                                                                                 .setArguments(
-                                                                                        jsonProvider
+                                                                                        (JsonObject) jsonProvider
                                                                                                 .createPatchBuilder(
                                                                                                         entry.getValue().entrySet().stream()
                                                                                                                 .map(pathEntry ->
@@ -153,14 +154,15 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                                                                                 .add("path", pathEntry.getKey() + "/" + INPUT_VALUE_EXS_NAME)
                                                                                                                                 .add(
                                                                                                                                         "value",
-                                                                                                                                        Stream.ofNullable(entry.getKey().getArguments().getValue(pathEntry.getKey() + "/" + INPUT_VALUE_EXS_NAME))
+                                                                                                                                        Stream.of(jsonProvider.createPointer(pathEntry.getKey() + "/" + INPUT_VALUE_EXS_NAME))
+                                                                                                                                                .filter(jsonPointer -> jsonPointer.containsValue(entry.getKey().getArguments()))
+                                                                                                                                                .map(jsonPointer -> jsonPointer.getValue(entry.getKey().getArguments()))
                                                                                                                                                 .filter(jsonValue -> jsonValue.getValueType().equals(JsonValue.ValueType.ARRAY))
                                                                                                                                                 .findFirst()
-                                                                                                                                                .map(JsonValue::asJsonArray)
-                                                                                                                                                .map(jsonArray ->
+                                                                                                                                                .map(jsonValue ->
                                                                                                                                                         Stream
                                                                                                                                                                 .concat(
-                                                                                                                                                                        jsonArray.stream(),
+                                                                                                                                                                        jsonValue.asJsonArray().stream(),
                                                                                                                                                                         pathEntry.getValue().stream()
                                                                                                                                                                 )
                                                                                                                                                                 .collect(JsonCollectors.toJsonArray())

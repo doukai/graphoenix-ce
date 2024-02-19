@@ -79,7 +79,7 @@ public class ArgumentsTranslator {
                                             Stream.of(entry.getValue())
                                                     .filter(ValueWithVariable::isArray)
                                                     .flatMap(valueWithVariable -> valueWithVariable.asArray().getValueWithVariables().stream())
-                                                    .flatMap(valueWithVariable -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), valueWithVariable, level).stream())
+                                                    .flatMap(valueWithVariable -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), valueWithVariable, level - 1).stream())
                                     ),
                             inputValueValueWithVariableMap.entrySet().stream()
                                     .anyMatch(entry ->
@@ -181,7 +181,7 @@ public class ArgumentsTranslator {
                                             Stream.of(entry.getValue())
                                                     .filter(ValueWithVariable::isArray)
                                                     .flatMap(field -> field.asArray().getValueWithVariables().stream())
-                                                    .flatMap(field -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), field, level + 1).stream())
+                                                    .flatMap(field -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), field, level).stream())
                                     ),
                             inputValueValueWithVariableMap.entrySet().stream()
                                     .anyMatch(entry ->
@@ -285,6 +285,10 @@ public class ArgumentsTranslator {
         PlainSelect plainSelect = new PlainSelect()
                 .addSelectItems(new AllColumns())
                 .withFromItem(table);
+
+        if (documentManager.isOperationType(objectType)) {
+            return plainSelect.withWhere(expression);
+        }
 
         if (fieldDefinition.hasMapWith()) {
             Table withTable = graphqlTypeToTable(fieldDefinition.getMapWithTypeOrError(), level);

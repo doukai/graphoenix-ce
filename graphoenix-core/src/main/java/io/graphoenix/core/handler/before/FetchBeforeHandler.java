@@ -51,7 +51,7 @@ public class FetchBeforeHandler implements OperationBeforeHandler {
         ObjectType operationType = documentManager.getOperationTypeOrError(operation);
         return Mono.just(
                 operation
-                        .setSelections(
+                        .mergeSelection(
                                 operation.getFields().stream()
                                         .flatMap(field -> buildFetch(operationType.getField(field.getName()), field))
                                         .collect(Collectors.toList())
@@ -61,21 +61,20 @@ public class FetchBeforeHandler implements OperationBeforeHandler {
 
     private Stream<Field> buildFetch(FieldDefinition fieldDefinition, Field field) {
         if (fieldDefinition.isFetchField()) {
-            return Stream.of(field, new Field(fieldDefinition.getFetchFromOrError()).addDirective(new Directive(DIRECTIVE_HIDE_NAME)));
+            return Stream.of(new Field(fieldDefinition.getFetchFromOrError()).addDirective(new Directive(DIRECTIVE_HIDE_NAME)));
         } else {
             Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
             if (fieldTypeDefinition.isObject()) {
                 return Stream.of(
-                        field.setSelections(
+                        field.mergeSelection(
                                 Stream.ofNullable(field.getFields())
                                         .flatMap(Collection::stream)
                                         .flatMap(subField -> buildFetch(fieldTypeDefinition.asObject().getField(subField.getName()), subField))
                                         .collect(Collectors.toList())
                         )
                 );
-            } else {
-                return Stream.of(field);
             }
         }
+        return Stream.empty();
     }
 }

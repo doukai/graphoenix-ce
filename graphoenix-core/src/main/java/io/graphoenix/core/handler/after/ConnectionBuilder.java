@@ -99,7 +99,7 @@ public class ConnectionBuilder implements OperationAfterHandler {
             } else {
                 if (fieldDefinition.isConnectionField()) {
                     String filedName = fieldDefinition.getConnectionFieldOrError();
-                    if (jsonValue.asJsonObject().get(filedName).getValueType().equals(JsonValue.ValueType.NULL)) {
+                    if (jsonValue.asJsonObject().isNull(filedName)) {
                         return Stream.empty();
                     }
                     String aggName = fieldDefinition.getConnectionAggOrError();

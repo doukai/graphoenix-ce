@@ -9,8 +9,10 @@ import org.stringtemplate.v4.STGroupFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.OPERATION_QUERY_NAME;
+import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
 public class Operation extends AbstractDefinition implements Definition {
 
@@ -146,6 +148,23 @@ public class Operation extends AbstractDefinition implements Definition {
 
     public Operation addSelection(Selection selection) {
         this.selections.add(selection);
+        return this;
+    }
+
+    public Operation mergeSelection(Collection<Field> fields) {
+        this.setSelections(
+                Stream
+                        .concat(
+                                Stream.ofNullable(this.selections)
+                                        .flatMap(Collection::stream)
+                                        .filter(Selection::isField)
+                                        .map(selection -> (Field) selection),
+                                Stream.ofNullable(fields)
+                                        .flatMap(Collection::stream)
+                        )
+                        .filter(distinctByKey(field -> Optional.ofNullable(field.getAlias()).orElseGet(field::getName)))
+                        .collect(Collectors.toCollection(LinkedHashSet::new))
+        );
         return this;
     }
 
