@@ -1,5 +1,6 @@
 package io.graphoenix.core.handler.before;
 
+import com.google.common.collect.Streams;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.fetch.FetchItem;
 import io.graphoenix.spi.error.GraphQLErrors;
@@ -54,7 +55,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
 
     @Override
     public Mono<Operation> mutation(Operation operation, Map<String, JsonValue> variables) {
-        return null;
+        return handle(operation, variables);
     }
 
     @Override
@@ -190,7 +191,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
     public Stream<FetchItem> buildFetchItems(String path, FieldDefinition fieldDefinition, Field field) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
-            return Stream
+            return Streams
                     .concat(
                             Stream.ofNullable(field.getFields())
                                     .flatMap(Collection::stream)
@@ -202,6 +203,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                             fieldTypeDefinition.asObject().getFields().stream()
                                     .flatMap(subFieldDefinition ->
                                             fieldDefinition.getArgument(subFieldDefinition.getName()).stream()
+                                                    .filter(inputValue -> inputValue.getName().endsWith(SUFFIX_EXPRESSION))
                                                     .flatMap(inputValue ->
                                                             Stream.ofNullable(field.getArguments())
                                                                     .flatMap(arguments ->
@@ -217,6 +219,37 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                                     inputValue,
                                                                                     valueWithVariable
                                                                             )
+                                                                    )
+                                                    )
+                                    ),
+                            fieldDefinition.getArgument(INPUT_VALUE_WHERE_NAME).stream()
+                                    .flatMap(whereInputValue ->
+                                            Stream.ofNullable(field.getArguments())
+                                                    .flatMap(arguments ->
+                                                            arguments.getArgument(whereInputValue.getName())
+                                                                    .or(() -> Optional.ofNullable(whereInputValue.getDefaultValue())).stream()
+                                                    )
+                                                    .filter(ValueWithVariable::isObject)
+                                                    .map(ValueWithVariable::asObject)
+                                                    .flatMap(objectValueWithVariable ->
+                                                            fieldTypeDefinition.asObject().getFields().stream()
+                                                                    .flatMap(subFieldDefinition ->
+                                                                            documentManager.getInputValueTypeDefinition(whereInputValue).asInputObject().getInputValue(subFieldDefinition.getName()).stream()
+                                                                                    .filter(subInputValue -> subInputValue.getName().endsWith(SUFFIX_EXPRESSION))
+                                                                                    .flatMap(subInputValue ->
+                                                                                            objectValueWithVariable.getValueWithVariable(subInputValue.getName())
+                                                                                                    .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
+                                                                                                    .flatMap(valueWithVariable ->
+                                                                                                            buildFetchItems(
+                                                                                                                    path,
+                                                                                                                    field,
+                                                                                                                    "/" + INPUT_VALUE_WHERE_NAME,
+                                                                                                                    subFieldDefinition,
+                                                                                                                    subInputValue,
+                                                                                                                    valueWithVariable
+                                                                                                            )
+                                                                                                    )
+                                                                                    )
                                                                     )
                                                     )
                                     )
@@ -274,24 +307,56 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                 return Stream.of(new FetchItem(packageName, protocol, path, fetchField, fetchTo, field, fetchFrom));
             }
         } else if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
-            return fieldTypeDefinition.asObject().getFields().stream()
-                    .flatMap(subFieldDefinition ->
-                            inputValue.asInputObject().getInputValue(subFieldDefinition.getName()).stream()
-                                    .flatMap(subInputValue ->
-                                            Stream.ofNullable(valueWithVariable.asObject().getObjectValueWithVariable())
-                                                    .flatMap(objectValue ->
-                                                            Optional.ofNullable(objectValue.get(subInputValue.getName()))
-                                                                    .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
+            return Stream
+                    .concat(
+                            fieldTypeDefinition.asObject().getFields().stream()
+                                    .flatMap(subFieldDefinition ->
+                                            inputValue.asInputObject().getInputValue(subFieldDefinition.getName()).stream()
+                                                    .filter(subInputValue -> subInputValue.getName().endsWith(SUFFIX_EXPRESSION))
+                                                    .flatMap(subInputValue ->
+                                                            Stream.ofNullable(valueWithVariable.asObject().getObjectValueWithVariable())
+                                                                    .flatMap(objectValue ->
+                                                                            Optional.ofNullable(objectValue.get(subInputValue.getName()))
+                                                                                    .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
+                                                                    )
+                                                                    .flatMap(subValueWithVariable ->
+                                                                            buildFetchItems(
+                                                                                    fieldPath,
+                                                                                    field,
+                                                                                    path + "/" + fieldDefinition.getName(),
+                                                                                    subFieldDefinition,
+                                                                                    subInputValue,
+                                                                                    subValueWithVariable
+                                                                            )
+                                                                    )
                                                     )
-                                                    .flatMap(subValueWithVariable ->
-                                                            buildFetchItems(
-                                                                    fieldPath,
-                                                                    field,
-                                                                    path + "/" + fieldDefinition.getName(),
-                                                                    subFieldDefinition,
-                                                                    subInputValue,
-                                                                    subValueWithVariable
-                                                            )
+                                    ),
+                            inputValue.asInputObject().getInputValue(INPUT_VALUE_WHERE_NAME).stream()
+                                    .flatMap(whereInputValue ->
+                                            valueWithVariable.asObject().getValueWithVariable(whereInputValue.getName())
+                                                    .or(() -> Optional.ofNullable(whereInputValue.getDefaultValue())).stream()
+                                                    .filter(ValueWithVariable::isObject)
+                                                    .map(ValueWithVariable::asObject)
+                                                    .flatMap(objectValueWithVariable ->
+                                                            fieldTypeDefinition.asObject().getFields().stream()
+                                                                    .flatMap(subFieldDefinition ->
+                                                                            whereInputValue.asInputObject().getInputValue(subFieldDefinition.getName()).stream()
+                                                                                    .filter(subInputValue -> subInputValue.getName().endsWith(SUFFIX_EXPRESSION))
+                                                                                    .flatMap(subInputValue ->
+                                                                                            objectValueWithVariable.getValueWithVariable(subInputValue.getName())
+                                                                                                    .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
+                                                                                                    .flatMap(subValueWithVariable ->
+                                                                                                            buildFetchItems(
+                                                                                                                    fieldPath,
+                                                                                                                    field,
+                                                                                                                    path + "/" + INPUT_VALUE_WHERE_NAME + "/" + fieldDefinition.getName(),
+                                                                                                                    subFieldDefinition,
+                                                                                                                    subInputValue,
+                                                                                                                    subValueWithVariable
+                                                                                                            )
+                                                                                                    )
+                                                                                    )
+                                                                    )
                                                     )
                                     )
                     );

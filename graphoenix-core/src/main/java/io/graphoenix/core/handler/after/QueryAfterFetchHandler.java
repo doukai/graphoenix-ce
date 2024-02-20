@@ -36,7 +36,7 @@ import static jakarta.json.JsonValue.NULL;
 
 @ApplicationScoped
 @Priority(Integer.MAX_VALUE - 400)
-public class FetchAfterHandler implements OperationAfterHandler {
+public class QueryAfterFetchHandler implements OperationAfterHandler {
 
     private final DocumentManager documentManager;
     private final PackageManager packageManager;
@@ -44,7 +44,7 @@ public class FetchAfterHandler implements OperationAfterHandler {
     private final Map<String, FetchHandler> fetchHandlerMap = BeanContext.getMap(FetchHandler.class);
 
     @Inject
-    public FetchAfterHandler(DocumentManager documentManager, PackageManager packageManager, JsonProvider jsonProvider) {
+    public QueryAfterFetchHandler(DocumentManager documentManager, PackageManager packageManager, JsonProvider jsonProvider) {
         this.documentManager = documentManager;
         this.packageManager = packageManager;
         this.jsonProvider = jsonProvider;
