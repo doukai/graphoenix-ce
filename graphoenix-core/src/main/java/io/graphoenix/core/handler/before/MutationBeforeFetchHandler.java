@@ -1,9 +1,8 @@
 package io.graphoenix.core.handler.before;
 
+import com.google.common.collect.Streams;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.fetch.FetchItem;
-import io.graphoenix.spi.error.GraphQLErrors;
-import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.operation.Field;
@@ -17,18 +16,22 @@ import io.nozdormu.spi.context.BeanContext;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonCollectors;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
-import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST;
 import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 
@@ -48,7 +51,161 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
 
     @Override
     public Mono<Operation> mutation(Operation operation, Map<String, JsonValue> variables) {
-        return null;
+        ObjectType operationType = documentManager.getOperationTypeOrError(operation);
+        return Flux
+                .fromIterable(
+                        operation.getFields().stream()
+                                .flatMap(field -> {
+                                            String selectionName = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
+                                            return buildFetchItems("/" + selectionName, operationType.getField(field.getName()), field);
+                                        }
+                                )
+                                .collect(
+                                        Collectors.groupingBy(
+                                                FetchItem::getPackageName,
+                                                Collectors.mapping(
+                                                        fetchItem -> fetchItem,
+                                                        Collectors.groupingBy(
+                                                                FetchItem::getProtocol,
+                                                                Collectors.mapping(
+                                                                        fetchItem -> fetchItem,
+                                                                        Collectors.toList()
+                                                                )
+                                                        )
+                                                )
+                                        )
+                                )
+                                .entrySet()
+                )
+                .flatMap(packageEntries ->
+                        Flux
+                                .fromIterable(packageEntries.getValue().entrySet())
+                                .flatMap(protocolEntries ->
+                                        fetchHandlerMap.get(protocolEntries.getKey())
+                                                .request(
+                                                        packageEntries.getKey(),
+                                                        new Operation()
+                                                                .setOperationType(OPERATION_QUERY_NAME)
+                                                                .setSelections(
+                                                                        protocolEntries.getValue().stream()
+                                                                                .map(FetchItem::getFetchField)
+                                                                                .filter(Objects::nonNull)
+                                                                                .collect(Collectors.toList())
+                                                                )
+                                                )
+                                                .flatMapMany(fetchJsonValue ->
+                                                        Flux
+                                                                .fromIterable(
+                                                                        protocolEntries.getValue().stream()
+                                                                                .collect(
+                                                                                        Collectors.groupingBy(
+                                                                                                FetchItem::getField,
+                                                                                                Collectors.mapping(
+                                                                                                        fetchItem -> {
+                                                                                                            JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(fetchItem.getFetchField().getAlias());
+                                                                                                            return jsonProvider.createObjectBuilder()
+                                                                                                                    .add("op", "add")
+                                                                                                                    .add("path", fetchItem.getPath() + "/" + fetchItem.getFetchFrom())
+                                                                                                                    .add("value", fieldJsonValue.asJsonObject().get(fetchItem.getTarget()))
+                                                                                                                    .build();
+                                                                                                        },
+                                                                                                        Collectors.toList()
+                                                                                                )
+                                                                                        )
+                                                                                )
+                                                                                .entrySet()
+                                                                )
+                                                                .map(entry ->
+                                                                        entry.getKey()
+                                                                                .setArguments(
+                                                                                        (JsonObject) jsonProvider
+                                                                                                .createPatchBuilder(
+                                                                                                        entry.getValue().stream()
+                                                                                                                .collect(JsonCollectors.toJsonArray())
+                                                                                                )
+                                                                                                .build()
+                                                                                                .apply(entry.getKey().getArguments())
+                                                                                )
+                                                                )
+                                                )
+                                )
+                )
+                .then()
+                .thenReturn(operation);
+    }
+
+    public Stream<FetchItem> buildFetchItems(String path, FieldDefinition fieldDefinition, Field field) {
+        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+        if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
+            return Streams
+                    .concat(
+                            Stream.ofNullable(field.getFields())
+                                    .flatMap(Collection::stream)
+                                    .flatMap(subField -> {
+                                                String selectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
+                                                return buildFetchItems(path + "/" + selectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField);
+                                            }
+                                    ),
+                            fieldTypeDefinition.asObject().getFields().stream()
+                                    .flatMap(subFieldDefinition ->
+                                            fieldDefinition.getArgument(subFieldDefinition.getName()).stream()
+                                                    .filter(inputValue -> inputValue.getName().endsWith(SUFFIX_INPUT))
+                                                    .flatMap(inputValue ->
+                                                            Stream.ofNullable(field.getArguments())
+                                                                    .flatMap(arguments ->
+                                                                            arguments.getArgument(inputValue.getName())
+                                                                                    .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
+                                                                    )
+                                                                    .flatMap(valueWithVariable ->
+                                                                            buildFetchItems(
+                                                                                    path,
+                                                                                    field,
+                                                                                    "",
+                                                                                    subFieldDefinition,
+                                                                                    inputValue,
+                                                                                    valueWithVariable
+                                                                            )
+                                                                    )
+                                                    )
+                                    ),
+                            fieldDefinition.getArgument(INPUT_VALUE_LIST_NAME).stream()
+                                    .flatMap(listInputValue ->
+                                            Stream.ofNullable(field.getArguments())
+                                                    .flatMap(arguments ->
+                                                            arguments.getArgument(listInputValue.getName())
+                                                                    .or(() -> Optional.ofNullable(listInputValue.getDefaultValue())).stream()
+                                                    )
+                                                    .filter(ValueWithVariable::isArray)
+                                                    .map(ValueWithVariable::asArray)
+                                                    .flatMap(arrayValueWithVariable ->
+                                                            IntStream.range(0, arrayValueWithVariable.size())
+                                                                    .mapToObj(index ->
+                                                                            fieldTypeDefinition.asObject().getFields().stream()
+                                                                                    .flatMap(subFieldDefinition ->
+                                                                                            documentManager.getInputValueTypeDefinition(listInputValue).asInputObject().getInputValue(subFieldDefinition.getName()).stream()
+                                                                                                    .filter(subInputValue -> subInputValue.getName().endsWith(SUFFIX_INPUT))
+                                                                                                    .flatMap(subInputValue ->
+                                                                                                            arrayValueWithVariable.getValueWithVariable(index).asObject().getValueWithVariable(subInputValue.getName())
+                                                                                                                    .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
+                                                                                                                    .flatMap(subValueWithVariable ->
+                                                                                                                            buildFetchItems(
+                                                                                                                                    path,
+                                                                                                                                    field,
+                                                                                                                                    "/" + INPUT_VALUE_LIST_NAME + "/" + index,
+                                                                                                                                    subFieldDefinition,
+                                                                                                                                    subInputValue,
+                                                                                                                                    subValueWithVariable
+                                                                                                                            )
+                                                                                                                    )
+                                                                                                    )
+                                                                                    )
+                                                                    )
+                                                                    .flatMap(stream -> stream)
+                                                    )
+                                    )
+                    );
+        }
+        return Stream.empty();
     }
 
     public Stream<FetchItem> buildFetchItems(String fieldPath, Field field, String path, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable) {
@@ -56,136 +213,39 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
             return Stream.empty();
         }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        if (fieldDefinition.isFetchField()) {
+        if (fieldDefinition.isFetchField() && !fieldDefinition.getType().hasList() && fieldDefinition.isFetchAnchor()) {
             String protocol = fieldDefinition.getFetchProtocolOrError().toLowerCase();
             String fetchFrom = fieldDefinition.getFetchFromOrError();
             Field fetchField = new Field();
-            if (fieldDefinition.hasFetchWith()) {
-                ObjectType fetchWithType = documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getFetchWithTypeOrError());
-                String packageName = fetchWithType.getPackageNameOrError();
-                String fetchWithFrom = fieldDefinition.getFetchWithFromOrError();
-                String fetchWithTo = fieldDefinition.getFetchWithToOrError();
+            String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
+            String fetchTo = fieldDefinition.getFetchToOrError();
+            fetchField
+                    .setAlias(getAliasFromPath(fieldPath) + "__" + getAliasFromPath(path + "/" + fetchFrom))
+                    .setArguments(valueWithVariable.asObject())
+                    .addSelection(new Field(fetchTo))
+                    .setName(typeNameToFieldName(fieldTypeDefinition.getName()));
 
-                fetchField
-                        .setAlias(getAliasFromPath(fieldPath) + "__" + getAliasFromPath(path + "/" + fetchFrom))
-                        .addSelection(new Field(fetchWithFrom));
-
-                if (fieldDefinition.getType().hasList()) {
-                    fetchField
-                            .setArguments(
-                                    Map.of(
-                                            INPUT_VALUE_LIST_NAME,
-                                            valueWithVariable.asJsonArray().stream()
-                                                    .map(jsonValue ->
-                                                            jsonProvider.createObjectBuilder()
-                                                                    .add(
-                                                                            fetchWithType.getFields().stream()
-                                                                                    .filter(withTypeFieldDefinition ->
-                                                                                            Stream
-                                                                                                    .concat(
-                                                                                                            withTypeFieldDefinition.getMapFrom().stream(),
-                                                                                                            withTypeFieldDefinition.getFetchFrom().stream()
-                                                                                                    )
-                                                                                                    .anyMatch(name -> name.equals(fetchWithTo))
-                                                                                    )
-                                                                                    .findFirst()
-                                                                                    .map(AbstractDefinition::getName)
-                                                                                    .orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST.bind(fetchWithTo))),
-                                                                            jsonValue
-                                                                    )
-                                                                    .build()
-                                                    )
-                                                    .collect(JsonCollectors.toJsonArray())
-                                    )
-                            )
-                            .setName(typeNameToFieldName(fetchWithType.getName()) + SUFFIX_LIST);
-                } else {
-                    fetchField
-                            .setArguments(
-                                    jsonProvider.createObjectBuilder()
-                                            .add(
-                                                    fetchWithType.getFields().stream()
-                                                            .filter(withTypeFieldDefinition ->
-                                                                    Stream
-                                                                            .concat(
-                                                                                    withTypeFieldDefinition.getMapFrom().stream(),
-                                                                                    withTypeFieldDefinition.getFetchFrom().stream()
-                                                                            )
-                                                                            .anyMatch(name -> name.equals(fetchWithTo))
-                                                            )
-                                                            .findFirst()
-                                                            .map(AbstractDefinition::getName)
-                                                            .orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST.bind(fetchWithTo))),
-                                                    valueWithVariable
-                                            )
-                                            .build()
-                            )
-                            .setName(typeNameToFieldName(fetchWithType.getName()));
-                }
-                return Stream.of(new FetchItem(packageName, protocol, path, fetchField, fetchWithFrom, field, fetchFrom));
-            } else {
-                String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
-                String fetchTo = fieldDefinition.getFetchToOrError();
-                valueWithVariable.asObject().put(INPUT_VALUE_GROUP_BY_NAME, Collections.singletonList(fetchTo));
-                fetchField
-                        .setAlias(getAliasFromPath(fieldPath) + "__" + getAliasFromPath(path + "/" + fetchFrom))
-                        .setArguments(valueWithVariable.asObject())
-                        .addSelection(new Field(fetchTo))
-                        .setName(typeNameToFieldName(fieldTypeDefinition.getName()) + (fieldDefinition.getType().hasList() ? SUFFIX_LIST : ""));
-
-                return Stream.of(new FetchItem(packageName, protocol, path, fetchField, fetchTo, field, fetchFrom));
-            }
+            return Stream.of(new FetchItem(packageName, protocol, path, fetchField, fetchTo, field, fetchFrom));
         } else if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
-            return Stream
-                    .concat(
-                            fieldTypeDefinition.asObject().getFields().stream()
-                                    .flatMap(subFieldDefinition ->
-                                            inputValue.asInputObject().getInputValue(subFieldDefinition.getName()).stream()
-                                                    .filter(subInputValue -> subInputValue.getName().endsWith(SUFFIX_EXPRESSION))
-                                                    .flatMap(subInputValue ->
-                                                            Stream.ofNullable(valueWithVariable.asObject().getObjectValueWithVariable())
-                                                                    .flatMap(objectValue ->
-                                                                            Optional.ofNullable(objectValue.get(subInputValue.getName()))
-                                                                                    .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
-                                                                    )
-                                                                    .flatMap(subValueWithVariable ->
-                                                                            buildFetchItems(
-                                                                                    fieldPath,
-                                                                                    field,
-                                                                                    path + "/" + fieldDefinition.getName(),
-                                                                                    subFieldDefinition,
-                                                                                    subInputValue,
-                                                                                    subValueWithVariable
-                                                                            )
-                                                                    )
+            return fieldTypeDefinition.asObject().getFields().stream()
+                    .flatMap(subFieldDefinition ->
+                            inputValue.asInputObject().getInputValue(subFieldDefinition.getName()).stream()
+                                    .filter(subInputValue -> subInputValue.getName().endsWith(SUFFIX_INPUT))
+                                    .flatMap(subInputValue ->
+                                            Stream.ofNullable(valueWithVariable.asObject().getObjectValueWithVariable())
+                                                    .flatMap(objectValue ->
+                                                            Optional.ofNullable(objectValue.get(subInputValue.getName()))
+                                                                    .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
                                                     )
-                                    ),
-                            inputValue.asInputObject().getInputValue(INPUT_VALUE_WHERE_NAME).stream()
-                                    .flatMap(whereInputValue ->
-                                            valueWithVariable.asObject().getValueWithVariable(whereInputValue.getName())
-                                                    .or(() -> Optional.ofNullable(whereInputValue.getDefaultValue())).stream()
-                                                    .filter(ValueWithVariable::isObject)
-                                                    .map(ValueWithVariable::asObject)
-                                                    .flatMap(objectValueWithVariable ->
-                                                            fieldTypeDefinition.asObject().getFields().stream()
-                                                                    .flatMap(subFieldDefinition ->
-                                                                            documentManager.getInputValueTypeDefinition(whereInputValue).asInputObject().getInputValue(subFieldDefinition.getName()).stream()
-                                                                                    .filter(subInputValue -> subInputValue.getName().endsWith(SUFFIX_EXPRESSION))
-                                                                                    .flatMap(subInputValue ->
-                                                                                            objectValueWithVariable.getValueWithVariable(subInputValue.getName())
-                                                                                                    .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
-                                                                                                    .flatMap(subValueWithVariable ->
-                                                                                                            buildFetchItems(
-                                                                                                                    fieldPath,
-                                                                                                                    field,
-                                                                                                                    path + "/" + INPUT_VALUE_WHERE_NAME + "/" + fieldDefinition.getName(),
-                                                                                                                    subFieldDefinition,
-                                                                                                                    subInputValue,
-                                                                                                                    subValueWithVariable
-                                                                                                            )
-                                                                                                    )
-                                                                                    )
-                                                                    )
+                                                    .flatMap(subValueWithVariable ->
+                                                            buildFetchItems(
+                                                                    fieldPath,
+                                                                    field,
+                                                                    path + "/" + fieldDefinition.getName(),
+                                                                    subFieldDefinition,
+                                                                    subInputValue,
+                                                                    subValueWithVariable
+                                                            )
                                                     )
                                     )
                     );

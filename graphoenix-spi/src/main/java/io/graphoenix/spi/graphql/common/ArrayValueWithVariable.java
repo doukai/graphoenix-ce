@@ -148,6 +148,10 @@ public class ArrayValueWithVariable extends AbstractList<JsonValue> implements V
         return valueWithVariables.get(index);
     }
 
+    public ValueWithVariable getValueWithVariable(int index) {
+        return valueWithVariables.get(index);
+    }
+
     @Override
     public int size() {
         return valueWithVariables.size();
