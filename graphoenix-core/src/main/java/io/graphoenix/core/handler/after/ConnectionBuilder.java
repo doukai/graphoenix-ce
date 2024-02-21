@@ -63,7 +63,7 @@ public class ConnectionBuilder implements OperationAfterHandler {
                         .createPatchBuilder(
                                 operation.getFields().stream()
                                         .flatMap(field -> {
-                                                    String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
+                                                    String selectionName = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
                                                     return buildConnections("/" + selectionName, operationType.getField(field.getName()), field, jsonValue);
                                                 }
                                         )
@@ -80,10 +80,7 @@ public class ConnectionBuilder implements OperationAfterHandler {
         }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject()) {
-            String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
-            if (jsonValue.asJsonObject().isNull(selectionName)) {
-                return Stream.empty();
-            }
+            String selectionName = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
             if (fieldDefinition.getType().hasList()) {
                 return IntStream.range(0, jsonValue.asJsonObject().get(selectionName).asJsonArray().size())
                         .mapToObj(index ->
@@ -99,9 +96,6 @@ public class ConnectionBuilder implements OperationAfterHandler {
             } else {
                 if (fieldDefinition.isConnectionField()) {
                     String filedName = fieldDefinition.getConnectionFieldOrError();
-                    if (jsonValue.asJsonObject().isNull(filedName)) {
-                        return Stream.empty();
-                    }
                     String aggName = fieldDefinition.getConnectionAggOrError();
                     FieldDefinition nodeFieldDefinition = documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(FIELD_EDGES_NAME)).asObject().getField(FIELD_NODE_NAME);
                     JsonValue connectionJsonValue = buildConnection(nodeFieldDefinition, field, jsonValue.asJsonObject().get(filedName), jsonValue.asJsonObject().get(aggName));

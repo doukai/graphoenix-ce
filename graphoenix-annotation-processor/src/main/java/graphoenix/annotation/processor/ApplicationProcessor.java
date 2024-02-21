@@ -73,6 +73,19 @@ public class ApplicationProcessor extends BaseProcessor {
                 argumentsInvokeHandlerBuilder.writeToFiler(filer);
                 invokeHandlerBuilder.writeToFiler(filer);
             }
+
+            if (documentManager.getDocument().getObjectTypes()
+                    .flatMap(objectType -> objectType.getFields().stream())
+                    .filter(packageManager::isLocalPackage)
+                    .anyMatch(FieldDefinition::isInvokeField)
+            ) {
+                InputInvokeHandlerBuilder inputInvokeHandlerBuilder = BeanContext.get(InputInvokeHandlerBuilder.class);
+                ArgumentsInvokeHandlerBuilder argumentsInvokeHandlerBuilder = BeanContext.get(ArgumentsInvokeHandlerBuilder.class);
+                InvokeHandlerBuilder invokeHandlerBuilder = BeanContext.get(InvokeHandlerBuilder.class);
+                inputInvokeHandlerBuilder.writeToFiler(filer);
+                argumentsInvokeHandlerBuilder.writeToFiler(filer);
+                invokeHandlerBuilder.writeToFiler(filer);
+            }
         } catch (IOException | URISyntaxException e) {
             Logger.error(e);
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());

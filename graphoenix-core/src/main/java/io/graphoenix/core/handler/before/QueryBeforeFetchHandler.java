@@ -32,6 +32,7 @@ import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST;
+import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 
 @ApplicationScoped
@@ -69,7 +70,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                 .fromIterable(
                         operation.getFields().stream()
                                 .flatMap(field -> {
-                                            String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
+                                            String selectionName = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
                                             return buildFetchItems("/" + selectionName, operationType.getField(field.getName()), field);
                                         }
                                 )
@@ -340,7 +341,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                     .flatMap(objectValueWithVariable ->
                                                             fieldTypeDefinition.asObject().getFields().stream()
                                                                     .flatMap(subFieldDefinition ->
-                                                                            whereInputValue.asInputObject().getInputValue(subFieldDefinition.getName()).stream()
+                                                                            documentManager.getInputValueTypeDefinition(whereInputValue).asInputObject().getInputValue(subFieldDefinition.getName()).stream()
                                                                                     .filter(subInputValue -> subInputValue.getName().endsWith(SUFFIX_EXPRESSION))
                                                                                     .flatMap(subInputValue ->
                                                                                             objectValueWithVariable.getValueWithVariable(subInputValue.getName())
@@ -362,9 +363,5 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                     );
         }
         return Stream.empty();
-    }
-
-    private String getAliasFromPath(String path) {
-        return path.replaceAll("/", "_");
     }
 }

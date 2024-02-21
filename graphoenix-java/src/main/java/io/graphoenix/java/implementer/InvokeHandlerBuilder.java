@@ -374,7 +374,7 @@ public class InvokeHandlerBuilder {
                                 .indent()
                                 .add(
                                         CodeBlock.builder()
-                                                .add("String selectionName = $T.ofNullable(field.getAlias()).orElse(field.getName());\n", ClassName.get(Optional.class))
+                                                .add("String selectionName = $T.ofNullable(field.getAlias()).orElseGet(field::getName);\n", ClassName.get(Optional.class))
                                                 .beginControlFlow("switch (field.getName())")
                                                 .add(
                                                         CodeBlock.join(

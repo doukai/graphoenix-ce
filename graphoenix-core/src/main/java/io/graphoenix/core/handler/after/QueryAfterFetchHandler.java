@@ -71,7 +71,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
                 .fromIterable(
                         operation.getFields().stream()
                                 .flatMap(field -> {
-                                            String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
+                                            String selectionName = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
                                             return buildFetchItems(operationType, "/" + selectionName, operationType.getField(field.getName()), field, jsonValue);
                                         }
                                 )
@@ -283,7 +283,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
                 return Stream.of(new FetchItem(packageName, protocol, path, fetchField, null));
             }
         } else if (fieldTypeDefinition.isObject()) {
-            String selectionName = Optional.ofNullable(field.getAlias()).orElse(field.getName());
+            String selectionName = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
             if (jsonValue.asJsonObject().isNull(selectionName)) {
                 return Stream.empty();
             }
