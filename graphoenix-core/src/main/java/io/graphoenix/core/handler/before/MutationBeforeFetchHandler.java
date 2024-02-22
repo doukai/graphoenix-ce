@@ -1,6 +1,5 @@
 package io.graphoenix.core.handler.before;
 
-import com.google.common.collect.Streams;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.fetch.FetchItem;
 import io.graphoenix.spi.graphql.Definition;
@@ -16,10 +15,8 @@ import io.nozdormu.spi.context.BeanContext;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
-import jakarta.json.stream.JsonCollectors;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -93,41 +90,6 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
                                                                                 .collect(Collectors.toList())
                                                                 )
                                                 )
-                                                .flatMapMany(fetchJsonValue ->
-                                                        Flux
-                                                                .fromIterable(
-                                                                        protocolEntries.getValue().stream()
-                                                                                .collect(
-                                                                                        Collectors.groupingBy(
-                                                                                                FetchItem::getField,
-                                                                                                Collectors.mapping(
-                                                                                                        fetchItem -> {
-                                                                                                            JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(fetchItem.getFetchField().getAlias());
-                                                                                                            return jsonProvider.createObjectBuilder()
-                                                                                                                    .add("op", "add")
-                                                                                                                    .add("path", fetchItem.getPath() + "/" + fetchItem.getFetchFrom())
-                                                                                                                    .add("value", fieldJsonValue.asJsonObject().get(fetchItem.getTarget()))
-                                                                                                                    .build();
-                                                                                                        },
-                                                                                                        Collectors.toList()
-                                                                                                )
-                                                                                        )
-                                                                                )
-                                                                                .entrySet()
-                                                                )
-                                                                .map(entry ->
-                                                                        entry.getKey()
-                                                                                .setArguments(
-                                                                                        (JsonObject) jsonProvider
-                                                                                                .createPatchBuilder(
-                                                                                                        entry.getValue().stream()
-                                                                                                                .collect(JsonCollectors.toJsonArray())
-                                                                                                )
-                                                                                                .build()
-                                                                                                .apply(entry.getKey().getArguments())
-                                                                                )
-                                                                )
-                                                )
                                 )
                 )
                 .then()
@@ -137,15 +99,8 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
     public Stream<FetchItem> buildFetchItems(String path, FieldDefinition fieldDefinition, Field field) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
-            return Streams
+            return Stream
                     .concat(
-                            Stream.ofNullable(field.getFields())
-                                    .flatMap(Collection::stream)
-                                    .flatMap(subField -> {
-                                                String selectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
-                                                return buildFetchItems(path + "/" + selectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField);
-                                            }
-                                    ),
                             Stream.ofNullable(fieldDefinition.getArguments())
                                     .flatMap(Collection::stream)
                                     .filter(inputValue -> inputValue.getName().endsWith(SUFFIX_INPUT))
@@ -250,7 +205,6 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
                                                             )
                                                     )
                                     )
-
                     );
         }
         return Stream.empty();

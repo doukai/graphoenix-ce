@@ -16,10 +16,12 @@ import reactor.core.publisher.Mono;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_HIDE_NAME;
+import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
 @ApplicationScoped
 @Priority(600)
@@ -51,9 +53,10 @@ public class FetchBeforeHandler implements OperationBeforeHandler {
         ObjectType operationType = documentManager.getOperationTypeOrError(operation);
         return Mono.just(
                 operation
-                        .mergeSelection(
+                        .setSelections(
                                 operation.getFields().stream()
                                         .flatMap(field -> buildFetch(operationType.getField(field.getName()), field))
+                                        .filter(distinctByKey(field -> Optional.ofNullable(field.getAlias()).orElseGet(field::getName)))
                                         .collect(Collectors.toList())
                         )
         );
@@ -61,20 +64,21 @@ public class FetchBeforeHandler implements OperationBeforeHandler {
 
     private Stream<Field> buildFetch(FieldDefinition fieldDefinition, Field field) {
         if (fieldDefinition.isFetchField()) {
-            return Stream.of(new Field(fieldDefinition.getFetchFromOrError()).addDirective(new Directive(DIRECTIVE_HIDE_NAME)));
+            return Stream.of(field, new Field(fieldDefinition.getFetchFromOrError()).addDirective(new Directive(DIRECTIVE_HIDE_NAME)));
         } else {
             Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
             if (fieldTypeDefinition.isObject()) {
                 return Stream.of(
-                        field.mergeSelection(
+                        field.setSelections(
                                 Stream.ofNullable(field.getFields())
                                         .flatMap(Collection::stream)
                                         .flatMap(subField -> buildFetch(fieldTypeDefinition.asObject().getField(subField.getName()), subField))
+                                        .filter(distinctByKey(subField -> Optional.ofNullable(subField.getAlias()).orElseGet(subField::getName)))
                                         .collect(Collectors.toList())
                         )
                 );
             }
         }
-        return Stream.empty();
+        return Stream.of(field);
     }
 }
