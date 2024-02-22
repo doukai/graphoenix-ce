@@ -31,6 +31,7 @@ import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST;
+import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 import static jakarta.json.JsonValue.NULL;
 
@@ -318,9 +319,5 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
         } else {
             return jsonValue.toString();
         }
-    }
-
-    private String getAliasFromPath(String path) {
-        return path.replaceAll("/", "_");
     }
 }

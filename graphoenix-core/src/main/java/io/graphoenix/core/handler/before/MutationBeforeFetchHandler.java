@@ -146,11 +146,12 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
                                                 return buildFetchItems(path + "/" + selectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField);
                                             }
                                     ),
-                            fieldTypeDefinition.asObject().getFields().stream()
-                                    .flatMap(subFieldDefinition ->
-                                            fieldDefinition.getArgument(subFieldDefinition.getName()).stream()
-                                                    .filter(inputValue -> inputValue.getName().endsWith(SUFFIX_INPUT))
-                                                    .flatMap(inputValue ->
+                            Stream.ofNullable(fieldDefinition.getArguments())
+                                    .flatMap(Collection::stream)
+                                    .filter(inputValue -> inputValue.getName().endsWith(SUFFIX_INPUT))
+                                    .flatMap(inputValue ->
+                                            Stream.ofNullable(fieldTypeDefinition.asObject().getField(inputValue.getName()))
+                                                    .flatMap(subFieldDefinition ->
                                                             Stream.ofNullable(field.getArguments())
                                                                     .flatMap(arguments ->
                                                                             arguments.getArgument(inputValue.getName())
@@ -180,11 +181,11 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
                                                     .flatMap(arrayValueWithVariable ->
                                                             IntStream.range(0, arrayValueWithVariable.size())
                                                                     .mapToObj(index ->
-                                                                            fieldTypeDefinition.asObject().getFields().stream()
-                                                                                    .flatMap(subFieldDefinition ->
-                                                                                            documentManager.getInputValueTypeDefinition(listInputValue).asInputObject().getInputValue(subFieldDefinition.getName()).stream()
-                                                                                                    .filter(subInputValue -> subInputValue.getName().endsWith(SUFFIX_INPUT))
-                                                                                                    .flatMap(subInputValue ->
+                                                                            documentManager.getInputValueTypeDefinition(listInputValue).asInputObject().getInputValues().stream()
+                                                                                    .filter(subInputValue -> subInputValue.getName().endsWith(SUFFIX_INPUT))
+                                                                                    .flatMap(subInputValue ->
+                                                                                            Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
+                                                                                                    .flatMap(subFieldDefinition ->
                                                                                                             arrayValueWithVariable.getValueWithVariable(index).asObject().getValueWithVariable(subInputValue.getName())
                                                                                                                     .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
                                                                                                                     .flatMap(subValueWithVariable ->
@@ -227,11 +228,12 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
 
             return Stream.of(new FetchItem(packageName, protocol, path, fetchField, fetchTo, field, fetchFrom));
         } else if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
-            return fieldTypeDefinition.asObject().getFields().stream()
-                    .flatMap(subFieldDefinition ->
-                            inputValue.asInputObject().getInputValue(subFieldDefinition.getName()).stream()
-                                    .filter(subInputValue -> subInputValue.getName().endsWith(SUFFIX_INPUT))
-                                    .flatMap(subInputValue ->
+            Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
+            return inputValueTypeDefinition.asInputObject().getInputValues().stream()
+                    .filter(subInputValue -> subInputValue.getName().endsWith(SUFFIX_INPUT))
+                    .flatMap(subInputValue ->
+                            Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
+                                    .flatMap(subFieldDefinition ->
                                             Stream.ofNullable(valueWithVariable.asObject().getObjectValueWithVariable())
                                                     .flatMap(objectValue ->
                                                             Optional.ofNullable(objectValue.get(subInputValue.getName()))
@@ -248,6 +250,7 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
                                                             )
                                                     )
                                     )
+
                     );
         }
         return Stream.empty();

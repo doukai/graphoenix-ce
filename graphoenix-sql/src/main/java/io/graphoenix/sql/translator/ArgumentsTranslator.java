@@ -66,12 +66,11 @@ public class ArgumentsTranslator {
 
             List<Expression> expressionList = Streams
                     .concat(
-                            fieldTypeDefinition.asObject().getFields().stream()
-                                    .filter(subField -> !subField.isFetchField())
-                                    .flatMap(subField ->
-                                            inputValueValueWithVariableMap.entrySet().stream()
-                                                    .filter(entry -> entry.getKey().getName().equals(subField.getName()))
-                                                    .flatMap(entry -> inputValueToWhereExpression(fieldTypeDefinition.asObject(), subField, entry.getKey(), entry.getValue(), level).stream())
+                            inputValueValueWithVariableMap.entrySet().stream()
+                                    .flatMap(entry ->
+                                            Stream.ofNullable(fieldTypeDefinition.asObject().getField(entry.getKey().getName()))
+                                                    .filter(subField -> !subField.isFetchField())
+                                                    .flatMap(subField -> inputValueToWhereExpression(fieldTypeDefinition.asObject(), subField, entry.getKey(), entry.getValue(), level).stream())
                                     ),
                             inputValueValueWithVariableMap.entrySet().stream()
                                     .filter(entry -> entry.getKey().getName().equals(INPUT_VALUE_EXS_NAME))
@@ -168,12 +167,12 @@ public class ArgumentsTranslator {
 
             List<Expression> expressionList = Streams
                     .concat(
-                            fieldTypeDefinition.asObject().getFields().stream()
-                                    .filter(subField -> !subField.isFetchField())
-                                    .flatMap(subField ->
-                                            inputValueValueWithVariableMap.entrySet().stream()
-                                                    .filter(entry -> entry.getKey().getName().equals(subField.getName()))
-                                                    .flatMap(entry -> inputValueToWhereExpression(fieldTypeDefinition.asObject(), subField, entry.getKey(), entry.getValue(), level + 1).stream())
+                            inputValueValueWithVariableMap.entrySet().stream()
+                                    .flatMap(entry ->
+                                            Stream.ofNullable(fieldTypeDefinition.asObject().getField(entry.getKey().getName()))
+                                                    .filter(subField -> !subField.isFetchField())
+                                                    .flatMap(subField -> inputValueToWhereExpression(fieldTypeDefinition.asObject(), subField, entry.getKey(), entry.getValue(), level + 1).stream())
+
                                     ),
                             inputValueValueWithVariableMap.entrySet().stream()
                                     .filter(entry -> entry.getKey().getName().equals(INPUT_VALUE_EXS_NAME))
