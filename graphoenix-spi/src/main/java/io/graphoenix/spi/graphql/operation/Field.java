@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
-import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
 public class Field extends AbstractDefinition implements Selection {
 
@@ -53,17 +52,42 @@ public class Field extends AbstractDefinition implements Selection {
     }
 
     public Field mergeSelection(Collection<Field> fields) {
-        this.selections = Stream
-                .concat(
-                        Stream.ofNullable(this.selections)
-                                .flatMap(Collection::stream)
-                                .filter(Selection::isField)
-                                .map(selection -> (Field) selection),
-                        Stream.ofNullable(fields)
-                                .flatMap(Collection::stream)
-                )
-                .filter(distinctByKey(field -> Optional.ofNullable(field.getAlias()).orElseGet(field::getName)))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        setSelections(
+                Stream.ofNullable(fields)
+                        .flatMap(Collection::stream)
+                        .reduce(
+                                this.selections,
+                                (pre, cur) ->
+                                        Stream
+                                                .concat(
+                                                        Stream.ofNullable(pre)
+                                                                .flatMap(Collection::stream)
+                                                                .filter(Selection::isField)
+                                                                .map(selection -> (Field) selection)
+                                                                .filter(original ->
+                                                                        !Optional.ofNullable(original.getAlias()).orElseGet(original::getName)
+                                                                                .equals(Optional.ofNullable(cur.getAlias()).orElseGet(cur::getName))
+                                                                ),
+                                                        Stream.of(
+                                                                Stream.ofNullable(pre)
+                                                                        .flatMap(Collection::stream)
+                                                                        .filter(Selection::isField)
+                                                                        .map(selection -> (Field) selection)
+                                                                        .filter(original ->
+                                                                                Optional.ofNullable(original.getAlias()).orElseGet(original::getName)
+                                                                                        .equals(Optional.ofNullable(cur.getAlias()).orElseGet(cur::getName))
+                                                                        )
+                                                                        .findFirst()
+                                                                        .map(original ->
+                                                                                original.mergeSelection(cur.getFields())
+                                                                        )
+                                                                        .orElse(cur)
+                                                        )
+                                                )
+                                                .collect(Collectors.toCollection(LinkedHashSet::new)),
+                                (x, y) -> y
+                        )
+        );
         return this;
     }
 

@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.OPERATION_QUERY_NAME;
-import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
 public class Operation extends AbstractDefinition implements Definition {
 
@@ -152,18 +151,41 @@ public class Operation extends AbstractDefinition implements Definition {
     }
 
     public Operation mergeSelection(Collection<Field> fields) {
-        this.setSelections(
-                Stream
-                        .concat(
-                                Stream.ofNullable(this.selections)
-                                        .flatMap(Collection::stream)
-                                        .filter(Selection::isField)
-                                        .map(selection -> (Field) selection),
-                                Stream.ofNullable(fields)
-                                        .flatMap(Collection::stream)
+        setSelections(
+                Stream.ofNullable(fields)
+                        .flatMap(Collection::stream)
+                        .reduce(
+                                this.selections,
+                                (pre, cur) ->
+                                        Stream
+                                                .concat(
+                                                        Stream.ofNullable(pre)
+                                                                .flatMap(Collection::stream)
+                                                                .filter(Selection::isField)
+                                                                .map(selection -> (Field) selection)
+                                                                .filter(original ->
+                                                                        !Optional.ofNullable(original.getAlias()).orElseGet(original::getName)
+                                                                                .equals(Optional.ofNullable(cur.getAlias()).orElseGet(cur::getName))
+                                                                ),
+                                                        Stream.of(
+                                                                Stream.ofNullable(pre)
+                                                                        .flatMap(Collection::stream)
+                                                                        .filter(Selection::isField)
+                                                                        .map(selection -> (Field) selection)
+                                                                        .filter(original ->
+                                                                                Optional.ofNullable(original.getAlias()).orElseGet(original::getName)
+                                                                                        .equals(Optional.ofNullable(cur.getAlias()).orElseGet(cur::getName))
+                                                                        )
+                                                                        .findFirst()
+                                                                        .map(original ->
+                                                                                original.mergeSelection(cur.getFields())
+                                                                        )
+                                                                        .orElse(cur)
+                                                        )
+                                                )
+                                                .collect(Collectors.toCollection(LinkedHashSet::new)),
+                                (x, y) -> y
                         )
-                        .filter(distinctByKey(field -> Optional.ofNullable(field.getAlias()).orElseGet(field::getName)))
-                        .collect(Collectors.toCollection(LinkedHashSet::new))
         );
         return this;
     }

@@ -144,8 +144,8 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                                                                         .flatMap(stream -> stream)
                                                         )
                                         ),
-                                IntStream.range(0, jsonValue.asJsonArray().size())
-                                        .mapToObj(index ->
+                                jsonValue.asJsonArray().stream()
+                                        .map(item ->
                                                 Stream.ofNullable(fieldDefinition.getArguments())
                                                         .flatMap(Collection::stream)
                                                         .filter(inputValue -> inputValue.getName().endsWith(SUFFIX_INPUT))
@@ -164,12 +164,11 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                                                                                                         subFieldDefinition,
                                                                                                         inputValue,
                                                                                                         valueWithVariable,
-                                                                                                        jsonValue.asJsonArray().get(index)
+                                                                                                        item
                                                                                                 )
                                                                                         )
                                                                         )
-                                                        )
-                                        )
+                                                        ))
                                         .flatMap(stream -> stream)
                         );
             } else {
@@ -311,16 +310,16 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                 }
             }
         } else if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
+            if (jsonValue.asJsonObject().isNull(fieldDefinition.getName())) {
+                return Stream.empty();
+            }
             Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
             return inputValueTypeDefinition.asInputObject().getInputValues().stream()
                     .filter(subInputValue -> subInputValue.getName().endsWith(SUFFIX_INPUT))
                     .flatMap(subInputValue ->
                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                     .flatMap(subFieldDefinition -> {
-                                                if (jsonValue.asJsonObject().isNull(subFieldDefinition.getName())) {
-                                                    return Stream.empty();
-                                                }
-                                                JsonValue fieldJsonValue = jsonValue.asJsonObject().get(subFieldDefinition.getName());
+                                                JsonValue fieldJsonValue = jsonValue.asJsonObject().get(fieldDefinition.getName());
                                                 if (subFieldDefinition.getType().hasList()) {
                                                     return IntStream.range(0, fieldJsonValue.asJsonArray().size())
                                                             .mapToObj(index ->
