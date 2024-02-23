@@ -46,29 +46,27 @@ public class MutationFieldsMergeHandler implements MutationBeforeHandler {
                 operation
                         .mergeSelection(
                                 operation.getFields().stream()
-                                        .flatMap(field -> buildFetch(operationType.getField(field.getName()), field))
+                                        .map(field -> buildFetch(operationType.getField(field.getName()), field))
                                         .collect(Collectors.toList())
                         )
         );
     }
 
-    private Stream<Field> buildFetch(FieldDefinition fieldDefinition, Field field) {
+    private Field buildFetch(FieldDefinition fieldDefinition, Field field) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject()) {
-            return Stream.of(
-                    field.mergeSelection(
-                            Stream.ofNullable(fieldDefinition.getArguments())
-                                    .flatMap(Collection::stream)
-                                    .filter(inputValue -> inputValue.getName().endsWith(SUFFIX_INPUT))
-                                    .flatMap(inputValue ->
-                                            Stream.ofNullable(fieldTypeDefinition.asObject().getField(inputValue.getName()))
-                                                    .flatMap(subFieldDefinition -> buildFetch(subFieldDefinition, inputValue))
-                                    )
-                                    .collect(Collectors.toList())
-                    )
+            return field.mergeSelection(
+                    Stream.ofNullable(fieldDefinition.getArguments())
+                            .flatMap(Collection::stream)
+                            .filter(inputValue -> inputValue.getName().endsWith(SUFFIX_INPUT))
+                            .flatMap(inputValue ->
+                                    Stream.ofNullable(fieldTypeDefinition.asObject().getField(inputValue.getName()))
+                                            .flatMap(subFieldDefinition -> buildFetch(subFieldDefinition, inputValue))
+                            )
+                            .collect(Collectors.toList())
             );
         } else {
-            return Stream.of(field);
+            return field;
         }
     }
 
