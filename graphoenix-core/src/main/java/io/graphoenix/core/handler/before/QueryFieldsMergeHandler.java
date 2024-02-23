@@ -16,21 +16,19 @@ import reactor.core.publisher.Mono;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_HIDE_NAME;
-import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
 @ApplicationScoped
 @Priority(600)
-public class FetchBeforeHandler implements OperationBeforeHandler {
+public class QueryFieldsMergeHandler implements OperationBeforeHandler {
 
     private final DocumentManager documentManager;
 
     @Inject
-    public FetchBeforeHandler(DocumentManager documentManager) {
+    public QueryFieldsMergeHandler(DocumentManager documentManager) {
         this.documentManager = documentManager;
     }
 
@@ -53,10 +51,9 @@ public class FetchBeforeHandler implements OperationBeforeHandler {
         ObjectType operationType = documentManager.getOperationTypeOrError(operation);
         return Mono.just(
                 operation
-                        .setSelections(
+                        .mergeSelection(
                                 operation.getFields().stream()
                                         .flatMap(field -> buildFetch(operationType.getField(field.getName()), field))
-                                        .filter(distinctByKey(field -> Optional.ofNullable(field.getAlias()).orElseGet(field::getName)))
                                         .collect(Collectors.toList())
                         )
         );
@@ -69,11 +66,10 @@ public class FetchBeforeHandler implements OperationBeforeHandler {
             Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
             if (fieldTypeDefinition.isObject()) {
                 return Stream.of(
-                        field.setSelections(
+                        field.mergeSelection(
                                 Stream.ofNullable(field.getFields())
                                         .flatMap(Collection::stream)
                                         .flatMap(subField -> buildFetch(fieldTypeDefinition.asObject().getField(subField.getName()), subField))
-                                        .filter(distinctByKey(subField -> Optional.ofNullable(subField.getAlias()).orElseGet(subField::getName)))
                                         .collect(Collectors.toList())
                         )
                 );

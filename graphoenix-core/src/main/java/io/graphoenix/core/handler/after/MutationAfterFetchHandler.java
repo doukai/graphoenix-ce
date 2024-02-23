@@ -59,7 +59,7 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                         operation.getFields().stream()
                                 .flatMap(field -> {
                                             String selectionName = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
-                                            return buildFetchItems("/" + selectionName, operationType.getField(field.getName()), field, jsonValue);
+                                            return buildFetchItems("/" + selectionName, operationType.getField(field.getName()), field, jsonValue.asJsonObject().get(selectionName));
                                         }
                                 )
                                 .collect(
@@ -101,80 +101,112 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
     }
 
     public Stream<FetchItem> buildFetchItems(String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
+        if (jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
+            return Stream.empty();
+        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
-            return Stream
-                    .concat(
-                            Stream.ofNullable(fieldDefinition.getArguments())
-                                    .flatMap(Collection::stream)
-                                    .filter(inputValue -> inputValue.getName().endsWith(SUFFIX_INPUT))
-                                    .flatMap(inputValue ->
-                                            Stream.ofNullable(fieldTypeDefinition.asObject().getField(inputValue.getName()))
-                                                    .flatMap(subFieldDefinition ->
-                                                            Stream.ofNullable(field.getArguments())
-                                                                    .flatMap(arguments ->
-                                                                            arguments.getArgument(inputValue.getName())
-                                                                                    .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
-                                                                    )
-                                                                    .flatMap(valueWithVariable ->
-                                                                            buildFetchItems(
-                                                                                    path,
-                                                                                    "",
-                                                                                    subFieldDefinition,
-                                                                                    inputValue,
-                                                                                    valueWithVariable,
-                                                                                    jsonValue
-                                                                            )
-                                                                    )
-                                                    )
-                                    ),
-                            fieldDefinition.getArgument(INPUT_VALUE_LIST_NAME).stream()
-                                    .flatMap(listInputValue ->
-                                            Stream.ofNullable(field.getArguments())
-                                                    .flatMap(arguments ->
-                                                            arguments.getArgument(listInputValue.getName())
-                                                                    .or(() -> Optional.ofNullable(listInputValue.getDefaultValue())).stream()
-                                                    )
-                                                    .filter(ValueWithVariable::isArray)
-                                                    .map(ValueWithVariable::asArray)
-                                                    .flatMap(arrayValueWithVariable ->
-                                                            IntStream.range(0, arrayValueWithVariable.size())
-                                                                    .mapToObj(index ->
-                                                                            documentManager.getInputValueTypeDefinition(listInputValue).asInputObject().getInputValues().stream()
-                                                                                    .filter(subInputValue -> subInputValue.getName().endsWith(SUFFIX_INPUT))
-                                                                                    .flatMap(subInputValue ->
-                                                                                            Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
-                                                                                                    .flatMap(subFieldDefinition ->
-                                                                                                            arrayValueWithVariable.getValueWithVariable(index).asObject().getValueWithVariable(subInputValue.getName())
-                                                                                                                    .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
-                                                                                                                    .flatMap(subValueWithVariable ->
-                                                                                                                            buildFetchItems(
-                                                                                                                                    path,
-                                                                                                                                    "/" + INPUT_VALUE_LIST_NAME + "/" + index,
-                                                                                                                                    subFieldDefinition,
-                                                                                                                                    subInputValue,
-                                                                                                                                    subValueWithVariable,
-                                                                                                                                    jsonValue.asJsonArray().get(index)
-                                                                                                                            )
-                                                                                                                    )
-                                                                                                    )
-                                                                                    )
-                                                                    )
-                                                                    .flatMap(stream -> stream)
-                                                    )
-                                    )
-                    );
+            if (fieldDefinition.getType().hasList()) {
+                return Stream
+                        .concat(
+                                fieldDefinition.getArgument(INPUT_VALUE_LIST_NAME).stream()
+                                        .flatMap(listInputValue ->
+                                                Stream.ofNullable(field.getArguments())
+                                                        .flatMap(arguments ->
+                                                                arguments.getArgument(listInputValue.getName())
+                                                                        .or(() -> Optional.ofNullable(listInputValue.getDefaultValue())).stream()
+                                                        )
+                                                        .filter(ValueWithVariable::isArray)
+                                                        .map(ValueWithVariable::asArray)
+                                                        .flatMap(arrayValueWithVariable ->
+                                                                IntStream.range(0, arrayValueWithVariable.size())
+                                                                        .mapToObj(index ->
+                                                                                documentManager.getInputValueTypeDefinition(listInputValue).asInputObject().getInputValues().stream()
+                                                                                        .filter(subInputValue -> subInputValue.getName().endsWith(SUFFIX_INPUT))
+                                                                                        .flatMap(subInputValue ->
+                                                                                                Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
+                                                                                                        .flatMap(subFieldDefinition ->
+                                                                                                                arrayValueWithVariable.getValueWithVariable(index).asObject().getValueWithVariable(subInputValue.getName())
+                                                                                                                        .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
+                                                                                                                        .flatMap(subValueWithVariable ->
+                                                                                                                                buildFetchItems(
+                                                                                                                                        path,
+                                                                                                                                        "/" + INPUT_VALUE_LIST_NAME + "/" + index,
+                                                                                                                                        subFieldDefinition,
+                                                                                                                                        subInputValue,
+                                                                                                                                        subValueWithVariable,
+                                                                                                                                        jsonValue.asJsonArray().get(index)
+                                                                                                                                )
+                                                                                                                        )
+                                                                                                        )
+                                                                                        )
+                                                                        )
+                                                                        .flatMap(stream -> stream)
+                                                        )
+                                        ),
+                                IntStream.range(0, jsonValue.asJsonArray().size())
+                                        .mapToObj(index ->
+                                                Stream.ofNullable(fieldDefinition.getArguments())
+                                                        .flatMap(Collection::stream)
+                                                        .filter(inputValue -> inputValue.getName().endsWith(SUFFIX_INPUT))
+                                                        .flatMap(inputValue ->
+                                                                Stream.ofNullable(fieldTypeDefinition.asObject().getField(inputValue.getName()))
+                                                                        .flatMap(subFieldDefinition ->
+                                                                                Stream.ofNullable(field.getArguments())
+                                                                                        .flatMap(arguments ->
+                                                                                                arguments.getArgument(inputValue.getName())
+                                                                                                        .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
+                                                                                        )
+                                                                                        .flatMap(valueWithVariable ->
+                                                                                                buildFetchItems(
+                                                                                                        path,
+                                                                                                        "",
+                                                                                                        subFieldDefinition,
+                                                                                                        inputValue,
+                                                                                                        valueWithVariable,
+                                                                                                        jsonValue.asJsonArray().get(index)
+                                                                                                )
+                                                                                        )
+                                                                        )
+                                                        )
+                                        )
+                                        .flatMap(stream -> stream)
+                        );
+            } else {
+                return Stream.ofNullable(fieldDefinition.getArguments())
+                        .flatMap(Collection::stream)
+                        .filter(inputValue -> inputValue.getName().endsWith(SUFFIX_INPUT))
+                        .flatMap(inputValue ->
+                                Stream.ofNullable(fieldTypeDefinition.asObject().getField(inputValue.getName()))
+                                        .flatMap(subFieldDefinition ->
+                                                Stream.ofNullable(field.getArguments())
+                                                        .flatMap(arguments ->
+                                                                arguments.getArgument(inputValue.getName())
+                                                                        .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
+                                                        )
+                                                        .flatMap(valueWithVariable ->
+                                                                buildFetchItems(
+                                                                        path,
+                                                                        "",
+                                                                        subFieldDefinition,
+                                                                        inputValue,
+                                                                        valueWithVariable,
+                                                                        jsonValue
+                                                                )
+                                                        )
+                                        )
+                        );
+            }
         }
         return Stream.empty();
     }
-
 
     public Stream<FetchItem> buildFetchItems(String fieldPath, String path, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable, JsonValue jsonValue) {
         if (valueWithVariable.isNull() || jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
             return Stream.empty();
         }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        if (fieldDefinition.isFetchField() && !fieldDefinition.getType().hasList() && fieldDefinition.isFetchAnchor()) {
+        if (fieldDefinition.isFetchField()) {
             String protocol = fieldDefinition.getFetchProtocolOrError().toLowerCase();
             String fetchFrom = fieldDefinition.getFetchFromOrError();
             Field fetchField = new Field();
@@ -284,21 +316,49 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                     .filter(subInputValue -> subInputValue.getName().endsWith(SUFFIX_INPUT))
                     .flatMap(subInputValue ->
                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
-                                    .flatMap(subFieldDefinition ->
-                                            Stream.ofNullable(valueWithVariable.asObject().getObjectValueWithVariable())
-                                                    .flatMap(objectValue ->
-                                                            Optional.ofNullable(objectValue.get(subInputValue.getName()))
-                                                                    .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
-                                                    )
-                                                    .flatMap(subValueWithVariable ->
-                                                            buildFetchItems(
-                                                                    fieldPath,
-                                                                    path + "/" + fieldDefinition.getName(),
-                                                                    subFieldDefinition,
-                                                                    subInputValue,
-                                                                    subValueWithVariable,
-                                                                    jsonValue.asJsonObject().get(fieldDefinition.getName()))
-                                                    )
+                                    .flatMap(subFieldDefinition -> {
+                                                if (jsonValue.asJsonObject().isNull(subFieldDefinition.getName())) {
+                                                    return Stream.empty();
+                                                }
+                                                JsonValue fieldJsonValue = jsonValue.asJsonObject().get(subFieldDefinition.getName());
+                                                if (subFieldDefinition.getType().hasList()) {
+                                                    return IntStream.range(0, fieldJsonValue.asJsonArray().size())
+                                                            .mapToObj(index ->
+                                                                    Stream.ofNullable(valueWithVariable.asArray().getValueWithVariable(index).asObject().getObjectValueWithVariable())
+                                                                            .flatMap(objectValue ->
+                                                                                    Optional.ofNullable(objectValue.get(subInputValue.getName()))
+                                                                                            .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
+                                                                            )
+                                                                            .flatMap(subValueWithVariable ->
+                                                                                    buildFetchItems(
+                                                                                            fieldPath,
+                                                                                            path + "/" + fieldDefinition.getName() + "/" + index,
+                                                                                            subFieldDefinition,
+                                                                                            subInputValue,
+                                                                                            subValueWithVariable,
+                                                                                            fieldJsonValue.asJsonArray().get(index)
+                                                                                    )
+                                                                            )
+                                                            )
+                                                            .flatMap(stream -> stream);
+                                                } else {
+                                                    return Stream.ofNullable(valueWithVariable.asObject().getObjectValueWithVariable())
+                                                            .flatMap(objectValue ->
+                                                                    Optional.ofNullable(objectValue.get(subInputValue.getName()))
+                                                                            .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
+                                                            )
+                                                            .flatMap(subValueWithVariable ->
+                                                                    buildFetchItems(
+                                                                            fieldPath,
+                                                                            path + "/" + fieldDefinition.getName(),
+                                                                            subFieldDefinition,
+                                                                            subInputValue,
+                                                                            subValueWithVariable,
+                                                                            fieldJsonValue
+                                                                    )
+                                                            );
+                                                }
+                                            }
                                     )
                     );
         }
