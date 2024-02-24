@@ -320,10 +320,11 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                     .flatMap(subFieldDefinition -> {
                                                 JsonValue fieldJsonValue = jsonValue.asJsonObject().get(fieldDefinition.getName());
+                                                ValueWithVariable fieldValueWithVariable = valueWithVariable.asObject().getValueWithVariableOrNull(fieldDefinition.getName());
                                                 if (subFieldDefinition.getType().hasList()) {
                                                     return IntStream.range(0, fieldJsonValue.asJsonArray().size())
                                                             .mapToObj(index ->
-                                                                    Stream.ofNullable(valueWithVariable.asArray().getValueWithVariable(index).asObject().getObjectValueWithVariable())
+                                                                    Stream.ofNullable(fieldValueWithVariable.asArray().getValueWithVariable(index).asObject().getObjectValueWithVariable())
                                                                             .flatMap(objectValue ->
                                                                                     Optional.ofNullable(objectValue.get(subInputValue.getName()))
                                                                                             .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
@@ -341,7 +342,7 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                                                             )
                                                             .flatMap(stream -> stream);
                                                 } else {
-                                                    return Stream.ofNullable(valueWithVariable.asObject().getObjectValueWithVariable())
+                                                    return Stream.ofNullable(fieldValueWithVariable.asObject().getObjectValueWithVariable())
                                                             .flatMap(objectValue ->
                                                                     Optional.ofNullable(objectValue.get(subInputValue.getName()))
                                                                             .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()

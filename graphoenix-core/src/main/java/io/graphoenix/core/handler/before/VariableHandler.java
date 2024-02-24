@@ -87,7 +87,8 @@ public class VariableHandler implements OperationBeforeHandler {
                                                 .concat(
                                                         replaceFieldsVariables(field.getFields(), variables)
                                                                 .map(subField -> (Field) subField.setDirectives(replaceDirectivesVariables(subField.getDirectives(), variables).collect(Collectors.toList()))),
-                                                        field.getFragments().stream()
+                                                        Stream.ofNullable(field.getFragments())
+                                                                .flatMap(Collection::stream)
                                                                 .map(fragment -> (Fragment) fragment.setDirectives(replaceDirectivesVariables(fragment.getDirectives(), variables).collect(Collectors.toList())))
                                                 )
                                                 .collect(Collectors.toList())

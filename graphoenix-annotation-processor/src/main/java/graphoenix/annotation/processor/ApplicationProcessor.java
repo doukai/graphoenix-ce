@@ -10,6 +10,7 @@ import io.graphoenix.java.implementer.ArgumentsInvokeHandlerBuilder;
 import io.graphoenix.java.implementer.InputInvokeHandlerBuilder;
 import io.graphoenix.java.implementer.InvokeHandlerBuilder;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
+import io.graphoenix.spi.graphql.type.InputObjectType;
 import io.nozdormu.spi.context.BeanContext;
 import org.tinylog.Logger;
 
@@ -66,25 +67,18 @@ public class ApplicationProcessor extends BaseProcessor {
                     .filter(packageManager::isLocalPackage)
                     .anyMatch(FieldDefinition::isInvokeField)
             ) {
-                InputInvokeHandlerBuilder inputInvokeHandlerBuilder = BeanContext.get(InputInvokeHandlerBuilder.class);
-                ArgumentsInvokeHandlerBuilder argumentsInvokeHandlerBuilder = BeanContext.get(ArgumentsInvokeHandlerBuilder.class);
                 InvokeHandlerBuilder invokeHandlerBuilder = BeanContext.get(InvokeHandlerBuilder.class);
-                inputInvokeHandlerBuilder.writeToFiler(filer);
-                argumentsInvokeHandlerBuilder.writeToFiler(filer);
                 invokeHandlerBuilder.writeToFiler(filer);
             }
 
-            if (documentManager.getDocument().getObjectTypes()
-                    .flatMap(objectType -> objectType.getFields().stream())
+            if (documentManager.getDocument().getInputObjectTypes()
                     .filter(packageManager::isLocalPackage)
-                    .anyMatch(FieldDefinition::isInvokeField)
+                    .anyMatch(InputObjectType::isInvokesInput)
             ) {
                 InputInvokeHandlerBuilder inputInvokeHandlerBuilder = BeanContext.get(InputInvokeHandlerBuilder.class);
                 ArgumentsInvokeHandlerBuilder argumentsInvokeHandlerBuilder = BeanContext.get(ArgumentsInvokeHandlerBuilder.class);
-                InvokeHandlerBuilder invokeHandlerBuilder = BeanContext.get(InvokeHandlerBuilder.class);
                 inputInvokeHandlerBuilder.writeToFiler(filer);
                 argumentsInvokeHandlerBuilder.writeToFiler(filer);
-                invokeHandlerBuilder.writeToFiler(filer);
             }
         } catch (IOException | URISyntaxException e) {
             Logger.error(e);

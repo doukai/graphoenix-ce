@@ -191,7 +191,7 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
                                     .flatMap(subFieldDefinition -> {
                                                 ValueWithVariable fieldValueWithVariable = valueWithVariable.asObject().getValueWithVariableOrNull(fieldDefinition.getName());
                                                 if (subFieldDefinition.getType().hasList()) {
-                                                    return IntStream.range(0, valueWithVariable.asArray().size())
+                                                    return IntStream.range(0, fieldValueWithVariable.asArray().size())
                                                             .mapToObj(index ->
                                                                     Stream.ofNullable(fieldValueWithVariable.asArray().getValueWithVariable(index).asObject().getObjectValueWithVariable())
                                                                             .flatMap(objectValue ->
@@ -211,7 +211,7 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
                                                             )
                                                             .flatMap(stream -> stream);
                                                 } else {
-                                                    return Stream.ofNullable(valueWithVariable.asObject().getObjectValueWithVariable())
+                                                    return Stream.ofNullable(fieldValueWithVariable.asObject().getObjectValueWithVariable())
                                                             .flatMap(objectValue ->
                                                                     Optional.ofNullable(objectValue.get(subInputValue.getName()))
                                                                             .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()

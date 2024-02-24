@@ -112,17 +112,25 @@ public class Operation extends AbstractDefinition implements Definition {
     }
 
     public Collection<Field> getFields() {
-        return selections.stream()
-                .filter(Selection::isField)
-                .map(Selection::asField)
-                .collect(Collectors.toList());
+        return Optional.ofNullable(selections)
+                .map(fields ->
+                        fields.stream()
+                                .filter(Selection::isField)
+                                .map(Selection::asField)
+                                .collect(Collectors.toList())
+                )
+                .orElse(null);
     }
 
     public Collection<Fragment> getFragments() {
-        return selections.stream()
-                .filter(Selection::isFragment)
-                .map(Selection::asFragment)
-                .collect(Collectors.toList());
+        return Optional.ofNullable(selections)
+                .map(fragments ->
+                        fragments.stream()
+                                .filter(Selection::isFragment)
+                                .map(Selection::asFragment)
+                                .collect(Collectors.toList())
+                )
+                .orElse(null);
     }
 
     public Operation setSelections(Collection<? extends Selection> selections) {
@@ -163,25 +171,26 @@ public class Operation extends AbstractDefinition implements Definition {
                                                                 .flatMap(Collection::stream)
                                                                 .filter(Selection::isField)
                                                                 .map(selection -> (Field) selection)
-                                                                .filter(original ->
-                                                                        !Optional.ofNullable(original.getAlias()).orElseGet(original::getName)
-                                                                                .equals(Optional.ofNullable(cur.getAlias()).orElseGet(cur::getName))
+                                                                .map(original -> {
+                                                                            if (Optional.ofNullable(original.getAlias()).orElseGet(original::getName)
+                                                                                    .equals(Optional.ofNullable(cur.getAlias()).orElseGet(cur::getName)))
+                                                                                if (cur.getFields() != null) {
+                                                                                    return original.mergeSelection(cur.getFields());
+                                                                                }
+                                                                            return original;
+                                                                        }
                                                                 ),
-                                                        Stream.of(
-                                                                Stream.ofNullable(pre)
-                                                                        .flatMap(Collection::stream)
-                                                                        .filter(Selection::isField)
-                                                                        .map(selection -> (Field) selection)
-                                                                        .filter(original ->
-                                                                                Optional.ofNullable(original.getAlias()).orElseGet(original::getName)
-                                                                                        .equals(Optional.ofNullable(cur.getAlias()).orElseGet(cur::getName))
-                                                                        )
-                                                                        .findFirst()
-                                                                        .map(original ->
-                                                                                original.mergeSelection(cur.getFields())
-                                                                        )
-                                                                        .orElse(cur)
-                                                        )
+                                                        Stream.ofNullable(cur)
+                                                                .filter(field ->
+                                                                        Stream.ofNullable(pre)
+                                                                                .flatMap(Collection::stream)
+                                                                                .filter(Selection::isField)
+                                                                                .map(selection -> (Field) selection)
+                                                                                .noneMatch(original ->
+                                                                                        Optional.ofNullable(original.getAlias()).orElseGet(original::getName)
+                                                                                                .equals(Optional.ofNullable(field.getAlias()).orElseGet(field::getName))
+                                                                                )
+                                                                )
                                                 )
                                                 .collect(Collectors.toCollection(LinkedHashSet::new)),
                                 (x, y) -> y
