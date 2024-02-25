@@ -58,7 +58,7 @@ public class MutationFieldsMergeHandler implements MutationBeforeHandler {
             return field.mergeSelection(
                     Stream.ofNullable(fieldDefinition.getArguments())
                             .flatMap(Collection::stream)
-                            .filter(inputValue -> inputValue.getName().endsWith(SUFFIX_INPUT))
+                            .filter(inputValue -> inputValue.getType().getTypeName().getName().endsWith(SUFFIX_INPUT))
                             .flatMap(inputValue ->
                                     Stream.ofNullable(fieldTypeDefinition.asObject().getField(inputValue.getName()))
                                             .flatMap(subFieldDefinition -> buildFetch(subFieldDefinition, inputValue))
@@ -77,7 +77,7 @@ public class MutationFieldsMergeHandler implements MutationBeforeHandler {
             Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
             if (fieldTypeDefinition.isObject()) {
                 List<Field> fieldList = documentManager.getInputValueTypeDefinition(inputValue).asInputObject().getInputValues().stream()
-                        .filter(subInputValue -> subInputValue.getName().endsWith(SUFFIX_INPUT))
+                        .filter(subInputValue -> subInputValue.getType().getTypeName().getName().endsWith(SUFFIX_INPUT))
                         .flatMap(subInputValue ->
                                 Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                         .flatMap(subFieldDefinition -> buildFetch(subFieldDefinition, subInputValue))

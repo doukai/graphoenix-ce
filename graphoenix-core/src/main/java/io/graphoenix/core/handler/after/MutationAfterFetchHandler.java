@@ -26,7 +26,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -86,12 +85,13 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                                                 .request(
                                                         packageEntries.getKey(),
                                                         new Operation()
-                                                                .setOperationType(OPERATION_QUERY_NAME)
+                                                                .setOperationType(OPERATION_MUTATION_NAME)
                                                                 .setSelections(
-                                                                        protocolEntries.getValue().stream()
-                                                                                .map(FetchItem::getFetchField)
-                                                                                .filter(Objects::nonNull)
-                                                                                .collect(Collectors.toList())
+                                                                        FetchItem
+                                                                                .mergeFields(
+                                                                                        protocolEntries.getValue().stream()
+                                                                                                .filter(fetchItem -> fetchItem.getFetchField() != null)
+                                                                                )
                                                                 )
                                                 )
                                 )
@@ -122,7 +122,7 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                                                                 IntStream.range(0, arrayValueWithVariable.size())
                                                                         .mapToObj(index ->
                                                                                 documentManager.getInputValueTypeDefinition(listInputValue).asInputObject().getInputValues().stream()
-                                                                                        .filter(subInputValue -> subInputValue.getName().endsWith(SUFFIX_INPUT))
+                                                                                        .filter(subInputValue -> subInputValue.getType().getTypeName().getName().endsWith(SUFFIX_INPUT))
                                                                                         .flatMap(subInputValue ->
                                                                                                 Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                                                                                         .flatMap(subFieldDefinition ->
@@ -148,7 +148,7 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                                         .map(item ->
                                                 Stream.ofNullable(fieldDefinition.getArguments())
                                                         .flatMap(Collection::stream)
-                                                        .filter(inputValue -> inputValue.getName().endsWith(SUFFIX_INPUT))
+                                                        .filter(inputValue -> inputValue.getType().getTypeName().getName().endsWith(SUFFIX_INPUT))
                                                         .flatMap(inputValue ->
                                                                 Stream.ofNullable(fieldTypeDefinition.asObject().getField(inputValue.getName()))
                                                                         .flatMap(subFieldDefinition ->
@@ -174,7 +174,7 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
             } else {
                 return Stream.ofNullable(fieldDefinition.getArguments())
                         .flatMap(Collection::stream)
-                        .filter(inputValue -> inputValue.getName().endsWith(SUFFIX_INPUT))
+                        .filter(inputValue -> inputValue.getType().getTypeName().getName().endsWith(SUFFIX_INPUT))
                         .flatMap(inputValue ->
                                 Stream.ofNullable(fieldTypeDefinition.asObject().getField(inputValue.getName()))
                                         .flatMap(subFieldDefinition ->
@@ -315,7 +315,7 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
             }
             Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
             return inputValueTypeDefinition.asInputObject().getInputValues().stream()
-                    .filter(subInputValue -> subInputValue.getName().endsWith(SUFFIX_INPUT))
+                    .filter(subInputValue -> subInputValue.getType().getTypeName().getName().endsWith(SUFFIX_INPUT))
                     .flatMap(subInputValue ->
                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                     .flatMap(subFieldDefinition -> {

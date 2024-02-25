@@ -431,11 +431,15 @@ public class InvokeHandlerBuilder {
                                                                                                                 .indent();
                                                                                                     }
                                                                                                     return codeBlockBuilder
-                                                                                                            .add(".map($L -> new $T<>(selectionName, operationBuilder.updateJsonValue(field, operationType.getField(field.getName()), jsonProvider.createReader(new $T(jsonb.toJson($L))).readValue())));",
+                                                                                                            .add(".map($L -> new $T<>(selectionName, operationBuilder.updateJsonValue(field, operationType.getField(field.getName()), jsonProvider.createReader(new $T(jsonb.toJson($L))).readValue())))\n",
                                                                                                                     methodName,
                                                                                                                     ClassName.get(AbstractMap.SimpleEntry.class),
                                                                                                                     ClassName.get(StringReader.class),
                                                                                                                     methodName
+                                                                                                            )
+                                                                                                            .add(".defaultIfEmpty(new $T<>(selectionName, $T.NULL));",
+                                                                                                                    ClassName.get(AbstractMap.SimpleEntry.class),
+                                                                                                                    ClassName.get(JsonValue.class)
                                                                                                             )
                                                                                                             .unindent()
                                                                                                             .unindent()
@@ -459,11 +463,15 @@ public class InvokeHandlerBuilder {
                                                                                                                     toClassName(fieldTypeDefinition.getClassNameOrError())
                                                                                                             )
                                                                                                             .indent()
-                                                                                                            .add(".map($L -> new $T<>(selectionName, operationBuilder.updateJsonValue(field, operationType.getField(field.getName()), jsonProvider.createReader(new $T(jsonb.toJson($L))).readValue())));",
+                                                                                                            .add(".map($L -> new $T<>(selectionName, operationBuilder.updateJsonValue(field, operationType.getField(field.getName()), jsonProvider.createReader(new $T(jsonb.toJson($L))).readValue())))\n",
                                                                                                                     methodName,
                                                                                                                     ClassName.get(AbstractMap.SimpleEntry.class),
                                                                                                                     ClassName.get(StringReader.class),
                                                                                                                     methodName
+                                                                                                            )
+                                                                                                            .add(".defaultIfEmpty(new $T<>(selectionName, $T.NULL));",
+                                                                                                                    ClassName.get(AbstractMap.SimpleEntry.class),
+                                                                                                                    ClassName.get(JsonValue.class)
                                                                                                             )
                                                                                                             .unindent()
                                                                                                             .unindent()
