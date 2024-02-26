@@ -181,7 +181,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
                 ObjectType fetchWithType = documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getFetchWithTypeOrError());
                 String packageName = fetchWithType.getPackageNameOrError();
                 if (jsonValue.asJsonObject().isNull(fetchFrom)) {
-                    return Stream.of(new FetchItem(packageName, protocol, path, null, null));
+                    return Stream.of(new FetchItem(packageName, protocol, path));
                 }
                 String fetchWithFrom = fieldDefinition.getFetchWithFromOrError();
                 String fetchWithTo = fieldDefinition.getFetchWithToOrError();
@@ -247,7 +247,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
             } else {
                 String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
                 if (jsonValue.asJsonObject().isNull(fetchFrom)) {
-                    return Stream.of(new FetchItem(packageName, protocol, path, null, null));
+                    return Stream.of(new FetchItem(packageName, protocol, path));
                 }
                 String fetchTo = fieldDefinition.getFetchToOrError();
                 fetchField

@@ -102,15 +102,20 @@ public class MutationTranslator {
                                                                 )
                                                         );
                                                     } else {
-                                                        return valueWithVariable.asArray().getValueWithVariables().stream()
-                                                                .flatMap(item ->
+                                                        return IntStream.range(0, valueWithVariable.asArray().size())
+                                                                .mapToObj(index ->
                                                                         objectToMutationStatementStream(
                                                                                 objectType,
+                                                                                null,
                                                                                 fieldDefinition,
                                                                                 inputValue,
-                                                                                item
+                                                                                valueWithVariable.asArray().getValueWithVariable(index),
+                                                                                0,
+                                                                                index
                                                                         )
-                                                                );
+
+                                                                )
+                                                                .flatMap(stream -> stream);
                                                     }
                                                 }
                                         );

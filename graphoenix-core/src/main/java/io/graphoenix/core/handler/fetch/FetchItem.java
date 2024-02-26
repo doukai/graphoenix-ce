@@ -1,15 +1,18 @@
 package io.graphoenix.core.handler.fetch;
 
 import io.graphoenix.spi.graphql.operation.Field;
+import jakarta.json.JsonValue;
 import jakarta.json.stream.JsonCollectors;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.INPUT_VALUE_LIST_NAME;
+import static io.graphoenix.spi.constant.Hammurabi.SUFFIX_LIST;
+import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
+import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
 public class FetchItem {
 
@@ -20,6 +23,12 @@ public class FetchItem {
     private String path;
 
     private Field fetchField;
+
+    private String typeName;
+
+    private JsonValue jsonValue;
+
+    private String id;
 
     private String target;
 
@@ -33,18 +42,19 @@ public class FetchItem {
         return fetchItemStream
                 .collect(
                         Collectors.groupingBy(
-                                fetchItem -> fetchItem.getFetchField().getName(),
+                                FetchItem::getTypeName,
                                 Collectors.toList()
                         )
                 )
                 .entrySet().stream()
                 .map(entry ->
-                        new Field(entry.getKey())
+                        new Field(typeNameToFieldName(entry.getKey()) + SUFFIX_LIST)
                                 .setArguments(
                                         Map.of(
                                                 INPUT_VALUE_LIST_NAME,
                                                 entry.getValue().stream()
-                                                        .map(fetchItem -> fetchItem.getFetchField().getArguments().asJsonObject())
+                                                        .filter(distinctByKey(FetchItem::getId))
+                                                        .map(FetchItem::getJsonValue)
                                                         .collect(JsonCollectors.toJsonArray())
                                         )
                                 )
@@ -58,30 +68,34 @@ public class FetchItem {
                 .collect(Collectors.toList());
     }
 
-    public static List<FetchItem> mergeItems(Stream<FetchItem> fetchItemStream) {
+    public static Stream<FetchItem> mergeItems(Stream<FetchItem> fetchItemStream) {
         return fetchItemStream
                 .collect(
                         Collectors.groupingBy(
-                                fetchItem -> fetchItem.getFetchField().getName(),
+                                FetchItem::getTypeName,
                                 Collectors.toList()
                         )
                 )
                 .entrySet().stream()
-                .flatMap(entry ->
-                        IntStream.range(0, entry.getValue().size())
-                                .mapToObj(index -> {
-                                            FetchItem fetchItem = entry.getValue().get(index);
-                                            return new FetchItem(null, null, fetchItem.getPath(), new Field(entry.getKey()), fetchItem.getTarget(), fetchItem.getField(), fetchItem.getFetchFrom(), index);
-                                        }
-                                )
-                )
-                .collect(Collectors.toList());
+                .flatMap(entry -> {
+                            List<String> idList = entry.getValue().stream()
+                                    .filter(distinctByKey(FetchItem::getId))
+                                    .map(FetchItem::getId)
+                                    .collect(Collectors.toList());
+                            return entry.getValue().stream()
+                                    .map(fetchItem -> fetchItem.setIndex(idList.indexOf(fetchItem.getId())));
+                        }
+                );
     }
 
-    public FetchItem(String packageName, String protocol, String path, Field fetchField, String target) {
+    public FetchItem(String packageName, String protocol, String path) {
         this.packageName = packageName;
         this.protocol = protocol;
         this.path = path;
+    }
+
+    public FetchItem(String packageName, String protocol, String path, Field fetchField, String target) {
+        this(packageName, protocol, path);
         this.fetchField = fetchField;
         this.target = target;
     }
@@ -92,9 +106,20 @@ public class FetchItem {
         this.fetchFrom = fetchFrom;
     }
 
-    public FetchItem(String packageName, String protocol, String path, Field fetchField, String target, Field field, String fetchFrom, Integer index) {
-        this(packageName, protocol, path, fetchField, target, field, fetchFrom);
-        this.index = index;
+    public FetchItem(String packageName, String protocol, String path, String typeName, JsonValue jsonValue, String id, String target, Field field, String fetchFrom) {
+        this(packageName, protocol, path, typeName, jsonValue, id, target);
+        this.field = field;
+        this.fetchFrom = fetchFrom;
+    }
+
+    public FetchItem(String packageName, String protocol, String path, String typeName, JsonValue jsonValue, String id, String target) {
+        this.packageName = packageName;
+        this.protocol = protocol;
+        this.path = path;
+        this.typeName = typeName;
+        this.jsonValue = jsonValue;
+        this.id = id;
+        this.target = target;
     }
 
     public String getPackageName() {
@@ -130,6 +155,33 @@ public class FetchItem {
 
     public FetchItem setFetchField(Field fetchField) {
         this.fetchField = fetchField;
+        return this;
+    }
+
+    public String getTypeName() {
+        return typeName;
+    }
+
+    public FetchItem setTypeName(String typeName) {
+        this.typeName = typeName;
+        return this;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public FetchItem setId(String id) {
+        this.id = id;
+        return this;
+    }
+
+    public JsonValue getJsonValue() {
+        return jsonValue;
+    }
+
+    public FetchItem setJsonValue(JsonValue jsonValue) {
+        this.jsonValue = jsonValue;
         return this;
     }
 

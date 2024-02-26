@@ -20,21 +20,19 @@ import jakarta.inject.Inject;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
-import jakarta.json.stream.JsonCollectors;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST;
-import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
-import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 
 @ApplicationScoped
 @Priority(Integer.MAX_VALUE - 100)
@@ -87,11 +85,7 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                                                         new Operation()
                                                                 .setOperationType(OPERATION_MUTATION_NAME)
                                                                 .setSelections(
-                                                                        FetchItem
-                                                                                .mergeFields(
-                                                                                        protocolEntries.getValue().stream()
-                                                                                                .filter(fetchItem -> fetchItem.getFetchField() != null)
-                                                                                )
+                                                                        FetchItem.mergeFields(protocolEntries.getValue().stream())
                                                                 )
                                                 )
                                 )
@@ -122,7 +116,6 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                                                                 IntStream.range(0, arrayValueWithVariable.size())
                                                                         .mapToObj(index ->
                                                                                 documentManager.getInputValueTypeDefinition(listInputValue).asInputObject().getInputValues().stream()
-                                                                                        .filter(subInputValue -> subInputValue.getType().getTypeName().getName().endsWith(SUFFIX_INPUT))
                                                                                         .flatMap(subInputValue ->
                                                                                                 Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                                                                                         .flatMap(subFieldDefinition ->
@@ -130,7 +123,6 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                                                                                                                         .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
                                                                                                                         .flatMap(subValueWithVariable ->
                                                                                                                                 buildFetchItems(
-                                                                                                                                        path,
                                                                                                                                         "/" + INPUT_VALUE_LIST_NAME + "/" + index,
                                                                                                                                         subFieldDefinition,
                                                                                                                                         subInputValue,
@@ -148,7 +140,6 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                                         .map(item ->
                                                 Stream.ofNullable(fieldDefinition.getArguments())
                                                         .flatMap(Collection::stream)
-                                                        .filter(inputValue -> inputValue.getType().getTypeName().getName().endsWith(SUFFIX_INPUT))
                                                         .flatMap(inputValue ->
                                                                 Stream.ofNullable(fieldTypeDefinition.asObject().getField(inputValue.getName()))
                                                                         .flatMap(subFieldDefinition ->
@@ -159,7 +150,6 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                                                                                         )
                                                                                         .flatMap(valueWithVariable ->
                                                                                                 buildFetchItems(
-                                                                                                        path,
                                                                                                         "",
                                                                                                         subFieldDefinition,
                                                                                                         inputValue,
@@ -174,7 +164,6 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
             } else {
                 return Stream.ofNullable(fieldDefinition.getArguments())
                         .flatMap(Collection::stream)
-                        .filter(inputValue -> inputValue.getType().getTypeName().getName().endsWith(SUFFIX_INPUT))
                         .flatMap(inputValue ->
                                 Stream.ofNullable(fieldTypeDefinition.asObject().getField(inputValue.getName()))
                                         .flatMap(subFieldDefinition ->
@@ -185,7 +174,6 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                                                         )
                                                         .flatMap(valueWithVariable ->
                                                                 buildFetchItems(
-                                                                        path,
                                                                         "",
                                                                         subFieldDefinition,
                                                                         inputValue,
@@ -200,7 +188,7 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
         return Stream.empty();
     }
 
-    public Stream<FetchItem> buildFetchItems(String fieldPath, String path, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable, JsonValue jsonValue) {
+    public Stream<FetchItem> buildFetchItems(String path, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable, JsonValue jsonValue) {
         if (valueWithVariable.isNull() || jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
             return Stream.empty();
         }
@@ -208,105 +196,127 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
         if (fieldDefinition.isFetchField()) {
             String protocol = fieldDefinition.getFetchProtocolOrError().toLowerCase();
             String fetchFrom = fieldDefinition.getFetchFromOrError();
-            Field fetchField = new Field();
-            if (fieldDefinition.hasFetchWith()) {
-                ObjectType fetchWithType = documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getFetchWithTypeOrError());
-                String packageName = fetchWithType.getPackageNameOrError();
-                String fetchWithFrom = fieldDefinition.getFetchWithFromOrError();
-                String fetchWithTo = fieldDefinition.getFetchWithToOrError();
-                fetchField
-                        .setAlias(getAliasFromPath(fieldPath) + "__" + getAliasFromPath(path + "/" + fetchFrom))
-                        .addSelection(new Field(fetchWithType.getIDFieldOrError().getName()));
-                if (fieldDefinition.getType().hasList()) {
-                    fetchField
-                            .setArguments(
-                                    jsonProvider.createObjectBuilder()
-                                            .add(
-                                                    INPUT_VALUE_LIST_NAME,
-                                                    valueWithVariable.asArray().stream()
-                                                            .map(item ->
-                                                                    jsonProvider.createObjectBuilder()
-                                                                            .add(fetchWithFrom, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fetchWithType.getField(fetchWithFrom)))
-                                                                            .add(
-                                                                                    fetchWithType.getFields().stream()
-                                                                                            .filter(withTypeFieldDefinition ->
-                                                                                                    Stream
-                                                                                                            .concat(
-                                                                                                                    withTypeFieldDefinition.getMapFrom().stream(),
-                                                                                                                    withTypeFieldDefinition.getFetchFrom().stream()
-                                                                                                            )
-                                                                                                            .anyMatch(name -> name.equals(fetchWithTo))
-                                                                                            )
-                                                                                            .findFirst()
-                                                                                            .map(AbstractDefinition::getName)
-                                                                                            .orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST.bind(fetchWithTo))),
-                                                                                    item
-                                                                            )
-                                                                            .build()
-                                                            )
-                                                            .collect(JsonCollectors.toJsonArray())
-                                            )
-                                            .build()
-                            )
-                            .setName(typeNameToFieldName(fetchWithType.getName()) + SUFFIX_LIST);
+            if (fieldTypeDefinition.isObject()) {
+                FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
+                if (fieldDefinition.hasFetchWith()) {
+                    ObjectType fetchWithType = documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getFetchWithTypeOrError());
+                    String packageName = fetchWithType.getPackageNameOrError();
+                    String fetchWithFrom = fieldDefinition.getFetchWithFromOrError();
+                    String fetchWithTo = fieldDefinition.getFetchWithToOrError();
+
+                    if (fieldDefinition.getType().hasList()) {
+                        return valueWithVariable.asArray().stream()
+                                .map(item ->
+                                        jsonProvider.createObjectBuilder()
+                                                .add(fetchWithFrom, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fetchWithType.getField(fetchWithFrom)))
+                                                .add(
+                                                        fetchWithType.getFields().stream()
+                                                                .filter(withTypeFieldDefinition ->
+                                                                        Stream
+                                                                                .concat(
+                                                                                        withTypeFieldDefinition.getMapFrom().stream(),
+                                                                                        withTypeFieldDefinition.getFetchFrom().stream()
+                                                                                )
+                                                                                .anyMatch(name -> name.equals(fetchWithTo))
+                                                                )
+                                                                .findFirst()
+                                                                .map(AbstractDefinition::getName)
+                                                                .orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST.bind(fetchWithTo))),
+                                                        item
+                                                )
+                                                .build()
+                                )
+                                .map(item -> {
+                                            String id;
+                                            if (item.asJsonObject().containsKey(idField.getName())) {
+                                                id = getKey(item.asJsonObject().get(idField.getName()));
+                                            } else {
+                                                id = UUID.randomUUID().toString();
+                                            }
+                                            return new FetchItem(packageName, protocol, path, fetchWithType.getName(), item, id, fetchWithType.getIDFieldOrError().getName());
+                                        }
+                                );
+                    } else {
+                        String id;
+                        if (valueWithVariable.asJsonObject().containsKey(idField.getName())) {
+                            id = getKey(valueWithVariable.asJsonObject().get(idField.getName()));
+                        } else {
+                            id = UUID.randomUUID().toString();
+                        }
+                        JsonValue mutationJsonValue = jsonProvider.createObjectBuilder()
+                                .add(fetchWithFrom, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fetchWithType.getField(fetchWithFrom)))
+                                .add(
+                                        fetchWithType.getFields().stream()
+                                                .filter(withTypeFieldDefinition ->
+                                                        Stream
+                                                                .concat(
+                                                                        withTypeFieldDefinition.getMapFrom().stream(),
+                                                                        withTypeFieldDefinition.getFetchFrom().stream()
+                                                                )
+                                                                .anyMatch(name -> name.equals(fetchWithTo))
+                                                )
+                                                .findFirst()
+                                                .map(AbstractDefinition::getName)
+                                                .orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST.bind(fetchWithTo))),
+                                        valueWithVariable
+                                )
+                                .build();
+                        return Stream.of(new FetchItem(packageName, protocol, path, fetchWithType.getName(), mutationJsonValue, id, fetchWithType.getIDFieldOrError().getName()));
+                    }
                 } else {
-                    fetchField
-                            .setArguments(
-                                    jsonProvider.createObjectBuilder()
-                                            .add(fetchWithFrom, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fetchWithType.getField(fetchWithFrom)))
-                                            .add(
-                                                    fetchWithType.getFields().stream()
-                                                            .filter(withTypeFieldDefinition ->
-                                                                    Stream
-                                                                            .concat(
-                                                                                    withTypeFieldDefinition.getMapFrom().stream(),
-                                                                                    withTypeFieldDefinition.getFetchFrom().stream()
-                                                                            )
-                                                                            .anyMatch(name -> name.equals(fetchWithTo))
-                                                            )
-                                                            .findFirst()
-                                                            .map(AbstractDefinition::getName)
-                                                            .orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST.bind(fetchWithTo))),
-                                                    valueWithVariable
-                                            )
-                                            .build()
-                            )
-                            .setName(typeNameToFieldName(fetchWithType.getName()));
+                    String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
+                    String fetchTo = fieldDefinition.getFetchToOrError();
+                    if (fieldDefinition.getType().hasList()) {
+                        return valueWithVariable.asArray().stream()
+                                .map(item ->
+                                        jsonProvider.createObjectBuilder(item.asJsonObject())
+                                                .add(fetchTo, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fieldTypeDefinition.asObject().getField(fetchTo)))
+                                                .build()
+                                )
+                                .map(item -> {
+                                            String id;
+                                            if (item.asJsonObject().containsKey(idField.getName())) {
+                                                id = getKey(item.asJsonObject().get(idField.getName()));
+                                            } else {
+                                                id = UUID.randomUUID().toString();
+                                            }
+                                            return new FetchItem(packageName, protocol, path, fieldTypeDefinition.getName(), item, id, idField.getName());
+                                        }
+                                );
+                    } else if (!fieldDefinition.isFetchAnchor()) {
+                        String id;
+                        if (valueWithVariable.asJsonObject().containsKey(idField.getName())) {
+                            id = getKey(valueWithVariable.asJsonObject().get(idField.getName()));
+                        } else {
+                            id = UUID.randomUUID().toString();
+                        }
+                        JsonValue mutationJsonValue = jsonProvider.createObjectBuilder(valueWithVariable.asObject())
+                                .add(fetchTo, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fieldTypeDefinition.asObject().getField(fetchTo)))
+                                .build();
+                        return Stream.of(new FetchItem(packageName, protocol, path, fieldTypeDefinition.getName(), mutationJsonValue, id, idField.getName()));
+                    }
                 }
-                return Stream.of(new FetchItem(packageName, protocol, path, fetchField, null));
             } else {
-                String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
-                String fetchTo = fieldDefinition.getFetchToOrError();
-                fetchField
-                        .setAlias(getAliasFromPath(fieldPath) + "__" + getAliasFromPath(path + "/" + fetchFrom))
-                        .addSelection(new Field(fieldTypeDefinition.asObject().getIDFieldOrError().getName()));
-                if (fieldDefinition.getType().hasList()) {
-                    fetchField
-                            .setArguments(
-                                    jsonProvider.createObjectBuilder()
-                                            .add(
-                                                    INPUT_VALUE_LIST_NAME,
-                                                    valueWithVariable.asArray().stream()
-                                                            .map(item ->
-                                                                    jsonProvider.createObjectBuilder(item.asJsonObject())
-                                                                            .add(fetchTo, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fieldTypeDefinition.asObject().getField(fetchTo)))
-                                                                            .build()
-                                                            )
-                                                            .collect(JsonCollectors.toJsonArray())
-                                            )
-                                            .build()
-                            )
-                            .setName(typeNameToFieldName(fieldTypeDefinition.getName()) + SUFFIX_LIST);
-                    return Stream.of(new FetchItem(packageName, protocol, path, fetchField, null));
-                } else if (!fieldDefinition.isFetchAnchor()) {
-                    fetchField
-                            .setArguments(
-                                    jsonProvider.createObjectBuilder(valueWithVariable.asObject())
-                                            .add(fetchTo, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fieldTypeDefinition.asObject().getField(fetchTo)))
-                                            .build()
-                            )
-                            .setName(typeNameToFieldName(fieldTypeDefinition.getName()));
-                    return Stream.of(new FetchItem(packageName, protocol, path, fetchField, null));
+                if (fieldDefinition.hasFetchWith()) {
+                    ObjectType fetchWithType = documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getFetchWithTypeOrError());
+                    String packageName = fetchWithType.getPackageNameOrError();
+                    String fetchWithFrom = fieldDefinition.getFetchWithFromOrError();
+                    String fetchWithTo = fieldDefinition.getFetchWithToOrError();
+
+                    if (fieldDefinition.getType().hasList()) {
+                        return valueWithVariable.asArray().stream()
+                                .map(item ->
+                                        jsonProvider.createObjectBuilder()
+                                                .add(fetchWithFrom, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fetchWithType.getField(fetchWithFrom)))
+                                                .add(fetchWithTo, item)
+                                                .build()
+                                )
+                                .map(item -> {
+                                            String id = UUID.randomUUID().toString();
+                                            return new FetchItem(packageName, protocol, path, fetchWithType.getName(), item, id, fetchWithType.getIDFieldOrError().getName());
+                                        }
+                                );
+                    }
                 }
             }
         } else if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
@@ -315,7 +325,6 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
             }
             Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
             return inputValueTypeDefinition.asInputObject().getInputValues().stream()
-                    .filter(subInputValue -> subInputValue.getType().getTypeName().getName().endsWith(SUFFIX_INPUT))
                     .flatMap(subInputValue ->
                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                     .flatMap(subFieldDefinition -> {
@@ -331,7 +340,6 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                                                                             )
                                                                             .flatMap(subValueWithVariable ->
                                                                                     buildFetchItems(
-                                                                                            fieldPath,
                                                                                             path + "/" + fieldDefinition.getName() + "/" + index,
                                                                                             subFieldDefinition,
                                                                                             subInputValue,
@@ -349,7 +357,6 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                                                             )
                                                             .flatMap(subValueWithVariable ->
                                                                     buildFetchItems(
-                                                                            fieldPath,
                                                                             path + "/" + fieldDefinition.getName(),
                                                                             subFieldDefinition,
                                                                             subInputValue,
@@ -378,5 +385,13 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
             }
         }
         return jsonValue;
+    }
+
+    private String getKey(JsonValue jsonValue) {
+        if (jsonValue.getValueType().equals(JsonValue.ValueType.STRING)) {
+            return ((JsonString) jsonValue).getString();
+        } else {
+            return jsonValue.toString();
+        }
     }
 }

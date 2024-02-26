@@ -16,6 +16,7 @@ import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonCollectors;
@@ -24,14 +25,13 @@ import reactor.core.publisher.Mono;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
-import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 
 @ApplicationScoped
@@ -86,27 +86,20 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
                                                         new Operation()
                                                                 .setOperationType(OPERATION_MUTATION_NAME)
                                                                 .setSelections(
-                                                                        FetchItem
-                                                                                .mergeFields(
-                                                                                        protocolEntries.getValue().stream()
-                                                                                                .filter(fetchItem -> fetchItem.getFetchField() != null)
-                                                                                )
+                                                                        FetchItem.mergeFields(protocolEntries.getValue().stream())
                                                                 )
                                                 )
                                                 .flatMapMany(fetchJsonValue ->
                                                         Flux
                                                                 .fromIterable(
                                                                         FetchItem
-                                                                                .mergeItems(
-                                                                                        protocolEntries.getValue().stream()
-                                                                                                .filter(fetchItem -> fetchItem.getFetchField() != null)
-                                                                                ).stream()
+                                                                                .mergeItems(protocolEntries.getValue().stream())
                                                                                 .collect(
                                                                                         Collectors.groupingBy(
                                                                                                 FetchItem::getField,
                                                                                                 Collectors.mapping(
                                                                                                         fetchItem -> {
-                                                                                                            JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(fetchItem.getFetchField().getAlias()).asJsonArray().get(fetchItem.getIndex());
+                                                                                                            JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(typeNameToFieldName(fetchItem.getTypeName()) + SUFFIX_LIST).asJsonArray().get(fetchItem.getIndex());
                                                                                                             return jsonProvider.createObjectBuilder()
                                                                                                                     .add("op", "add")
                                                                                                                     .add("path", fetchItem.getPath() + "/" + fetchItem.getFetchFrom())
@@ -145,7 +138,6 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
                     .concat(
                             Stream.ofNullable(fieldDefinition.getArguments())
                                     .flatMap(Collection::stream)
-                                    .filter(inputValue -> inputValue.getType().getTypeName().getName().endsWith(SUFFIX_INPUT))
                                     .flatMap(inputValue ->
                                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(inputValue.getName()))
                                                     .flatMap(subFieldDefinition ->
@@ -156,7 +148,6 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
                                                                     )
                                                                     .flatMap(valueWithVariable ->
                                                                             buildFetchItems(
-                                                                                    path,
                                                                                     field,
                                                                                     "",
                                                                                     subFieldDefinition,
@@ -179,7 +170,6 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
                                                             IntStream.range(0, arrayValueWithVariable.size())
                                                                     .mapToObj(index ->
                                                                             documentManager.getInputValueTypeDefinition(listInputValue).asInputObject().getInputValues().stream()
-                                                                                    .filter(subInputValue -> subInputValue.getType().getTypeName().getName().endsWith(SUFFIX_INPUT))
                                                                                     .flatMap(subInputValue ->
                                                                                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                                                                                     .flatMap(subFieldDefinition ->
@@ -187,7 +177,6 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
                                                                                                                     .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
                                                                                                                     .flatMap(subValueWithVariable ->
                                                                                                                             buildFetchItems(
-                                                                                                                                    path,
                                                                                                                                     field,
                                                                                                                                     "/" + INPUT_VALUE_LIST_NAME + "/" + index,
                                                                                                                                     subFieldDefinition,
@@ -206,7 +195,7 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
         return Stream.empty();
     }
 
-    public Stream<FetchItem> buildFetchItems(String fieldPath, Field field, String path, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable) {
+    public Stream<FetchItem> buildFetchItems(Field field, String path, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable) {
         if (valueWithVariable.isNull()) {
             return Stream.empty();
         }
@@ -215,16 +204,29 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
             if (!fieldDefinition.getType().hasList() && fieldDefinition.isFetchAnchor()) {
                 String protocol = fieldDefinition.getFetchProtocolOrError().toLowerCase();
                 String fetchFrom = fieldDefinition.getFetchFromOrError();
-                Field fetchField = new Field();
                 String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
                 String fetchTo = fieldDefinition.getFetchToOrError();
-                fetchField
-                        .setAlias(getAliasFromPath(fieldPath) + "__" + getAliasFromPath(path + "/" + fetchFrom))
-                        .setArguments(valueWithVariable.asObject())
-                        .addSelection(new Field(fetchTo))
-                        .setName(typeNameToFieldName(fieldTypeDefinition.getName()));
+                FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
+                String id;
+                if (valueWithVariable.asJsonObject().containsKey(idField.getName())) {
+                    id = getKey(valueWithVariable.asJsonObject().get(idField.getName()));
+                } else {
+                    id = UUID.randomUUID().toString();
+                }
 
-                return Stream.of(new FetchItem(packageName, protocol, path, fetchField, fetchTo, field, fetchFrom));
+                return Stream.of(
+                        new FetchItem(
+                                packageName,
+                                protocol,
+                                path,
+                                fieldTypeDefinition.getName(),
+                                valueWithVariable.asJsonObject(),
+                                id,
+                                fetchTo,
+                                field,
+                                fetchFrom
+                        )
+                );
             }
         } else if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             if (valueWithVariable.asObject().isNull(fieldDefinition.getName())) {
@@ -232,7 +234,6 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
             }
             Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
             return inputValueTypeDefinition.asInputObject().getInputValues().stream()
-                    .filter(subInputValue -> subInputValue.getType().getTypeName().getName().endsWith(SUFFIX_INPUT))
                     .flatMap(subInputValue ->
                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                     .flatMap(subFieldDefinition -> {
@@ -247,7 +248,6 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
                                                                             )
                                                                             .flatMap(subValueWithVariable ->
                                                                                     buildFetchItems(
-                                                                                            fieldPath,
                                                                                             field,
                                                                                             path + "/" + fieldDefinition.getName() + "/" + index,
                                                                                             subFieldDefinition,
@@ -265,7 +265,6 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
                                                             )
                                                             .flatMap(subValueWithVariable ->
                                                                     buildFetchItems(
-                                                                            fieldPath,
                                                                             field,
                                                                             path + "/" + fieldDefinition.getName(),
                                                                             subFieldDefinition,
@@ -279,5 +278,13 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
                     );
         }
         return Stream.empty();
+    }
+
+    private String getKey(JsonValue jsonValue) {
+        if (jsonValue.getValueType().equals(JsonValue.ValueType.STRING)) {
+            return ((JsonString) jsonValue).getString();
+        } else {
+            return jsonValue.toString();
+        }
     }
 }
