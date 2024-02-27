@@ -181,6 +181,7 @@ public class DocumentBuilder {
         objectType.getFields().stream()
                 .filter(fieldDefinition -> documentManager.getFieldTypeDefinition(fieldDefinition).isObject())
                 .filter(fieldDefinition -> !fieldDefinition.isMapField())
+                .filter(fieldDefinition -> !fieldDefinition.isFetchField())
                 .filter(fieldDefinition -> packageManager.isLocalPackage(documentManager.getFieldTypeDefinition(fieldDefinition)))
                 .forEach(fieldDefinition ->
                         fieldDefinition
@@ -205,6 +206,7 @@ public class DocumentBuilder {
                 .filter(fieldDefinition -> documentManager.getFieldTypeDefinition(fieldDefinition).isLeaf())
                 .filter(fieldDefinition -> fieldDefinition.getType().hasList())
                 .filter(fieldDefinition -> !fieldDefinition.isMapField())
+                .filter(fieldDefinition -> !fieldDefinition.isFetchField())
                 .filter(fieldDefinition -> packageManager.isLocalPackage(documentManager.getFieldTypeDefinition(fieldDefinition)))
                 .forEach(fieldDefinition ->
                         fieldDefinition
@@ -231,6 +233,7 @@ public class DocumentBuilder {
         objectType.getFields().stream()
                 .filter(fieldDefinition -> documentManager.getFieldTypeDefinition(fieldDefinition).isObject())
                 .filter(fieldDefinition -> !fieldDefinition.isMapField())
+                .filter(fieldDefinition -> !fieldDefinition.isFetchField())
                 .filter(fieldDefinition -> !packageManager.isLocalPackage(documentManager.getFieldTypeDefinition(fieldDefinition)))
                 .forEach(fieldDefinition ->
                         fieldDefinition
@@ -323,7 +326,7 @@ public class DocumentBuilder {
                                                         .addArgument(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME, fieldDefinition.getFetchWithFromOrError())
                                                         .addArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME, fieldDefinition.getFetchFromOrError())
                                                         .addArgument(DIRECTIVE_FETCH_ARGUMENT_ANCHOR_NAME, true)
-                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, new EnumValue(fieldDefinition.getFetchProtocolOrError()))
+                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, fieldDefinition.getFetchProtocolOrError())
                                 )
                 )
                 .addDirective(
@@ -350,7 +353,7 @@ public class DocumentBuilder {
                                                                         .addArgument(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME, fieldDefinition.getFetchWithToOrError())
                                                                         .addArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME, fieldDefinition.getFetchTo())
                                                                         .addArgument(DIRECTIVE_FETCH_ARGUMENT_ANCHOR_NAME, true)
-                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, new EnumValue(fieldDefinition.getFetchProtocolOrError()))
+                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, fieldDefinition.getFetchProtocolOrError())
                                                         )
                                         ),
                         () -> relationObjectType
@@ -432,7 +435,7 @@ public class DocumentBuilder {
                                                                 new Directive(DIRECTIVE_FETCH_NAME)
                                                                         .addArgument(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME, fieldDefinition.getFetchFromOrError())
                                                                         .addArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME, fieldDefinition.getFetchWithFromOrError())
-                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, new EnumValue(fieldDefinition.getFetchProtocolOrError()))
+                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, fieldDefinition.getFetchProtocolOrError())
                                                 )
                                 )
                                 .collect(Collectors.toList())

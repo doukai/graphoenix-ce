@@ -6,9 +6,19 @@ import reactor.core.publisher.Mono;
 
 public interface OperationAfterHandler {
 
-    Mono<JsonValue> query(Operation operation, JsonValue jsonValue);
+    default Mono<JsonValue> query(Operation operation, JsonValue jsonValue) {
+        return handle(operation, jsonValue);
+    }
 
-    Mono<JsonValue> mutation(Operation operation, JsonValue jsonValue);
+    default Mono<JsonValue> mutation(Operation operation, JsonValue jsonValue) {
+        return handle(operation, jsonValue);
+    }
 
-    Mono<JsonValue> subscription(Operation operation, JsonValue jsonValue);
+    default Mono<JsonValue> subscription(Operation operation, JsonValue jsonValue) {
+        return handle(operation, jsonValue);
+    }
+
+    default Mono<JsonValue> handle(Operation operation, JsonValue jsonValue) {
+        return Mono.just(jsonValue);
+    }
 }

@@ -52,20 +52,6 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
     }
 
     @Override
-    public Mono<JsonValue> query(Operation operation, JsonValue jsonValue) {
-        return handle(operation, jsonValue);
-    }
-
-    @Override
-    public Mono<JsonValue> mutation(Operation operation, JsonValue jsonValue) {
-        return handle(operation, jsonValue);
-    }
-
-    @Override
-    public Mono<JsonValue> subscription(Operation operation, JsonValue jsonValue) {
-        return handle(operation, jsonValue);
-    }
-
     public Mono<JsonValue> handle(Operation operation, JsonValue jsonValue) {
         ObjectType operationType = documentManager.getOperationTypeOrError(operation);
         return Flux
@@ -170,11 +156,11 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
     public Stream<FetchItem> buildFetchItems(ObjectType objectType, String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (documentManager.isOperationType(objectType) && !packageManager.isLocalPackage(fieldDefinition)) {
-            String protocol = fieldDefinition.getFetchProtocolOrError().toLowerCase();
+            String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
             String packageName = fieldDefinition.getPackageNameOrError();
             return Stream.of(new FetchItem(packageName, protocol, path, field.setAlias(getAliasFromPath(path)), null));
         } else if (fieldDefinition.isFetchField()) {
-            String protocol = fieldDefinition.getFetchProtocolOrError().toLowerCase();
+            String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
             String fetchFrom = fieldDefinition.getFetchFromOrError();
             Field fetchField = new Field();
             if (fieldDefinition.hasFetchWith()) {
@@ -194,7 +180,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
                                                 INPUT_OPERATOR_INPUT_VALUE_OPR_NAME,
                                                 new EnumValue(INPUT_OPERATOR_INPUT_VALUE_EQ),
                                                 INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
-                                                getKey(jsonValue.asJsonObject().get(fetchFrom))
+                                                getId(jsonValue.asJsonObject().get(fetchFrom))
                                         )
                                 )
                         )
@@ -262,7 +248,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
                                                                         INPUT_OPERATOR_INPUT_VALUE_OPR_NAME,
                                                                         new EnumValue(INPUT_OPERATOR_INPUT_VALUE_EQ),
                                                                         INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
-                                                                        getKey(jsonValue.asJsonObject().get(fetchFrom))
+                                                                        getId(jsonValue.asJsonObject().get(fetchFrom))
                                                                 )
                                                         )
                                                 ),
@@ -313,7 +299,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
         return Stream.empty();
     }
 
-    private String getKey(JsonValue jsonValue) {
+    private String getId(JsonValue jsonValue) {
         if (jsonValue.getValueType().equals(JsonValue.ValueType.STRING)) {
             return ((JsonString) jsonValue).getString();
         } else {

@@ -23,21 +23,6 @@ import java.util.stream.Stream;
 @Priority(0)
 public class VariableHandler implements OperationBeforeHandler {
 
-    @Override
-    public Mono<Operation> query(Operation operation, Map<String, JsonValue> variables) {
-        return handle(operation, variables);
-    }
-
-    @Override
-    public Mono<Operation> mutation(Operation operation, Map<String, JsonValue> variables) {
-        return handle(operation, variables);
-    }
-
-    @Override
-    public Mono<Operation> subscription(Operation operation, Map<String, JsonValue> variables) {
-        return handle(operation, variables);
-    }
-
     public Mono<Operation> handle(Operation operation, Map<String, JsonValue> variables) {
         Map<String, JsonValue> mergedVariables = mergeDefaultValues(operation.getVariableDefinitions(), variables);
         return Mono.just(

@@ -4,6 +4,7 @@ import io.graphoenix.spi.graphql.operation.Field;
 import jakarta.json.JsonValue;
 import jakarta.json.stream.JsonCollectors;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -38,8 +39,8 @@ public class FetchItem {
 
     private Integer index;
 
-    public static List<Field> mergeFields(Stream<FetchItem> fetchItemStream) {
-        return fetchItemStream
+    public static List<Field> buildMutationFields(Collection<FetchItem> fetchItems) {
+        return fetchItems.stream()
                 .collect(
                         Collectors.groupingBy(
                                 FetchItem::getTypeName,
@@ -68,8 +69,8 @@ public class FetchItem {
                 .collect(Collectors.toList());
     }
 
-    public static Stream<FetchItem> mergeItems(Stream<FetchItem> fetchItemStream) {
-        return fetchItemStream
+    public static Stream<FetchItem> buildMutationItems(Collection<FetchItem> fetchItems) {
+        return fetchItems.stream()
                 .collect(
                         Collectors.groupingBy(
                                 FetchItem::getTypeName,
@@ -106,20 +107,18 @@ public class FetchItem {
         this.fetchFrom = fetchFrom;
     }
 
-    public FetchItem(String packageName, String protocol, String path, String typeName, JsonValue jsonValue, String id, String target, Field field, String fetchFrom) {
-        this(packageName, protocol, path, typeName, jsonValue, id, target);
-        this.field = field;
-        this.fetchFrom = fetchFrom;
-    }
-
     public FetchItem(String packageName, String protocol, String path, String typeName, JsonValue jsonValue, String id, String target) {
-        this.packageName = packageName;
-        this.protocol = protocol;
-        this.path = path;
+        this(packageName, protocol, path);
         this.typeName = typeName;
         this.jsonValue = jsonValue;
         this.id = id;
         this.target = target;
+    }
+
+    public FetchItem(String packageName, String protocol, String path, String typeName, JsonValue jsonValue, String id, String target, Field field, String fetchFrom) {
+        this(packageName, protocol, path, typeName, jsonValue, id, target);
+        this.field = field;
+        this.fetchFrom = fetchFrom;
     }
 
     public String getPackageName() {

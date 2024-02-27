@@ -10,7 +10,7 @@ import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.InputValue;
 import io.graphoenix.spi.graphql.type.ObjectType;
 import io.graphoenix.spi.handler.FetchHandler;
-import io.graphoenix.spi.handler.MutationBeforeHandler;
+import io.graphoenix.spi.handler.OperationBeforeHandler;
 import io.nozdormu.spi.context.BeanContext;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -35,8 +35,8 @@ import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 
 @ApplicationScoped
-@Priority(200)
-public class MutationBeforeFetchHandler implements MutationBeforeHandler {
+@Priority(900)
+public class MutationBeforeFetchHandler implements OperationBeforeHandler {
 
     private final DocumentManager documentManager;
     private final JsonProvider jsonProvider;
@@ -54,11 +54,7 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
         return Flux
                 .fromIterable(
                         operation.getFields().stream()
-                                .flatMap(field -> {
-                                            String selectionName = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
-                                            return buildFetchItems("/" + selectionName, operationType.getField(field.getName()), field);
-                                        }
-                                )
+                                .flatMap(field -> buildFetchItems(operationType.getField(field.getName()), field))
                                 .collect(
                                         Collectors.groupingBy(
                                                 FetchItem::getPackageName,
@@ -86,14 +82,14 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
                                                         new Operation()
                                                                 .setOperationType(OPERATION_MUTATION_NAME)
                                                                 .setSelections(
-                                                                        FetchItem.mergeFields(protocolEntries.getValue().stream())
+                                                                        FetchItem.buildMutationFields(protocolEntries.getValue())
                                                                 )
                                                 )
                                                 .flatMapMany(fetchJsonValue ->
                                                         Flux
                                                                 .fromIterable(
                                                                         FetchItem
-                                                                                .mergeItems(protocolEntries.getValue().stream())
+                                                                                .buildMutationItems(protocolEntries.getValue())
                                                                                 .collect(
                                                                                         Collectors.groupingBy(
                                                                                                 FetchItem::getField,
@@ -131,7 +127,7 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
                 .thenReturn(operation);
     }
 
-    public Stream<FetchItem> buildFetchItems(String path, FieldDefinition fieldDefinition, Field field) {
+    public Stream<FetchItem> buildFetchItems(FieldDefinition fieldDefinition, Field field) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             return Stream
@@ -202,14 +198,14 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldDefinition.isFetchField()) {
             if (!fieldDefinition.getType().hasList() && fieldDefinition.isFetchAnchor()) {
-                String protocol = fieldDefinition.getFetchProtocolOrError().toLowerCase();
+                String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
                 String fetchFrom = fieldDefinition.getFetchFromOrError();
                 String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
                 String fetchTo = fieldDefinition.getFetchToOrError();
                 FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
                 String id;
                 if (valueWithVariable.asJsonObject().containsKey(idField.getName())) {
-                    id = getKey(valueWithVariable.asJsonObject().get(idField.getName()));
+                    id = getId(valueWithVariable.asJsonObject().get(idField.getName()));
                 } else {
                     id = UUID.randomUUID().toString();
                 }
@@ -280,7 +276,7 @@ public class MutationBeforeFetchHandler implements MutationBeforeHandler {
         return Stream.empty();
     }
 
-    private String getKey(JsonValue jsonValue) {
+    private String getId(JsonValue jsonValue) {
         if (jsonValue.getValueType().equals(JsonValue.ValueType.STRING)) {
             return ((JsonString) jsonValue).getString();
         } else {

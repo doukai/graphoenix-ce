@@ -5,6 +5,7 @@ import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.common.ArrayValueWithVariable;
 import io.graphoenix.spi.graphql.common.Directive;
+import io.graphoenix.spi.graphql.common.EnumValue;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
@@ -452,14 +453,13 @@ public class FieldDefinition extends AbstractDefinition {
         return getFetchWithTo().orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TO_ARGUMENT_NOT_EXIST.bind(toString())));
     }
 
-    public Optional<String> getFetchProtocol() {
+    public Optional<EnumValue> getFetchProtocol() {
         return Optional.ofNullable(getDirective(DIRECTIVE_FETCH_NAME))
                 .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME)))
-                .filter(ValueWithVariable::isEnum)
-                .map(valueWithVariable -> valueWithVariable.asEnum().getValue());
+                .map(valueWithVariable -> valueWithVariable.asEnum());
     }
 
-    public String getFetchProtocolOrError() {
+    public EnumValue getFetchProtocolOrError() {
         return getFetchProtocol().orElseThrow(() -> new GraphQLErrors(FETCH_PROTOCOL_ARGUMENT_NOT_EXIST.bind(toString())));
     }
 

@@ -8,7 +8,7 @@ import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.InputValue;
 import io.graphoenix.spi.graphql.type.ObjectType;
-import io.graphoenix.spi.handler.MutationBeforeHandler;
+import io.graphoenix.spi.handler.OperationBeforeHandler;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -25,8 +25,8 @@ import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_HIDE_NAME;
 import static io.graphoenix.spi.constant.Hammurabi.SUFFIX_INPUT;
 
 @ApplicationScoped
-@Priority(100)
-public class MutationFieldsMergeHandler implements MutationBeforeHandler {
+@Priority(700)
+public class MutationFieldsMergeHandler implements OperationBeforeHandler {
 
     private final DocumentManager documentManager;
 
@@ -37,10 +37,6 @@ public class MutationFieldsMergeHandler implements MutationBeforeHandler {
 
     @Override
     public Mono<Operation> mutation(Operation operation, Map<String, JsonValue> variables) {
-        return handle(operation, variables);
-    }
-
-    public Mono<Operation> handle(Operation operation, Map<String, JsonValue> variables) {
         ObjectType operationType = documentManager.getOperationTypeOrError(operation);
         return Mono.just(
                 operation

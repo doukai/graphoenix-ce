@@ -36,7 +36,7 @@ import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 
 @ApplicationScoped
-@Priority(700)
+@Priority(800)
 public class QueryBeforeFetchHandler implements OperationBeforeHandler {
 
     private final DocumentManager documentManager;
@@ -50,20 +50,6 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
     }
 
     @Override
-    public Mono<Operation> query(Operation operation, Map<String, JsonValue> variables) {
-        return handle(operation, variables);
-    }
-
-    @Override
-    public Mono<Operation> mutation(Operation operation, Map<String, JsonValue> variables) {
-        return handle(operation, variables);
-    }
-
-    @Override
-    public Mono<Operation> subscription(Operation operation, Map<String, JsonValue> variables) {
-        return handle(operation, variables);
-    }
-
     public Mono<Operation> handle(Operation operation, Map<String, JsonValue> variables) {
         ObjectType operationType = documentManager.getOperationTypeOrError(operation);
         return Flux
@@ -264,7 +250,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
     public Stream<FetchItem> buildFetchItems(String fieldPath, Field field, String path, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldDefinition.isFetchField()) {
-            String protocol = fieldDefinition.getFetchProtocolOrError().toLowerCase();
+            String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
             String fetchFrom = fieldDefinition.getFetchFromOrError();
             Field fetchField = new Field();
             if (fieldDefinition.hasFetchWith()) {

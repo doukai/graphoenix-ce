@@ -31,14 +31,6 @@ public class DefaultOperationHandler implements OperationHandler {
 
     private static final List<Provider<OperationAfterHandler>> operationAfterHandlerProviderList = BeanContext.getPriorityProviderList(OperationAfterHandler.class);
 
-    private static final List<Provider<QueryBeforeHandler>> queryBeforeHandlerProviderList = BeanContext.getPriorityProviderList(QueryBeforeHandler.class);
-
-    private static final List<Provider<QueryAfterHandler>> queryAfterHandlerProviderList = BeanContext.getPriorityProviderList(QueryAfterHandler.class);
-
-    private static final List<Provider<MutationBeforeHandler>> mutationBeforeHandlerProviderList = BeanContext.getPriorityProviderList(MutationBeforeHandler.class);
-
-    private static final List<Provider<MutationAfterHandler>> mutationAfterHandlerProviderList = BeanContext.getPriorityProviderList(MutationAfterHandler.class);
-
     private static final Provider<QueryHandler> queryHandlerProvider = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
             .map(name -> BeanContext.getProvider(QueryHandler.class, name))
             .orElseGet(() -> BeanContext.getProvider(QueryHandler.class));
@@ -74,33 +66,17 @@ public class DefaultOperationHandler implements OperationHandler {
                 )
                 .flatMap(operationMono -> operationMono)
                 .flatMap(operationAfterHandler ->
-                        Flux.fromIterable(queryBeforeHandlerProviderList)
-                                .reduce(
-                                        Mono.just(operationAfterHandler),
-                                        (pre, cur) -> pre.flatMap(result -> cur.get().query(result, variables))
-                                )
-                                .flatMap(operationMono -> operationMono)
-                )
-                .flatMap(operationAfterHandler ->
                         queryHandlerProvider.get().query(operationAfterHandler)
                                 .flatMap(jsonValue ->
-                                        Flux.fromIterable(queryAfterHandlerProviderList)
+                                        Flux.fromIterable(operationAfterHandlerProviderList)
                                                 .reduce(
                                                         Mono.just(jsonValue),
                                                         (pre, cur) -> pre.flatMap(result -> cur.get().query(operationAfterHandler, result))
                                                 )
-                                                .flatMap(jsonValueMono -> jsonValueMono)
-                                                .flatMap(jsonValueAfterHandler ->
-                                                        Flux.fromIterable(operationAfterHandlerProviderList)
-                                                                .reduce(
-                                                                        Mono.just(jsonValueAfterHandler),
-                                                                        (pre, cur) -> pre.flatMap(result -> cur.get().query(operationAfterHandler, result))
-                                                                )
-                                                                .flatMap(operationMono -> operationMono)
-                                                )
+                                                .flatMap(operationMono -> operationMono)
                                 )
                 )
-                .switchIfEmpty(Mono.just(JsonValue.EMPTY_JSON_OBJECT));
+                .defaultIfEmpty(JsonValue.EMPTY_JSON_OBJECT);
     }
 
     @Transactional
@@ -112,33 +88,17 @@ public class DefaultOperationHandler implements OperationHandler {
                 )
                 .flatMap(operationMono -> operationMono)
                 .flatMap(operationAfterHandler ->
-                        Flux.fromIterable(mutationBeforeHandlerProviderList)
-                                .reduce(
-                                        Mono.just(operationAfterHandler),
-                                        (pre, cur) -> pre.flatMap(result -> cur.get().mutation(result, variables))
-                                )
-                                .flatMap(operationMono -> operationMono)
-                )
-                .flatMap(operationAfterHandler ->
                         mutationHandlerProvider.get().mutation(operationAfterHandler)
                                 .flatMap(jsonValue ->
-                                        Flux.fromIterable(mutationAfterHandlerProviderList)
+                                        Flux.fromIterable(operationAfterHandlerProviderList)
                                                 .reduce(
                                                         Mono.just(jsonValue),
                                                         (pre, cur) -> pre.flatMap(result -> cur.get().mutation(operationAfterHandler, result))
                                                 )
-                                                .flatMap(jsonValueMono -> jsonValueMono)
-                                                .flatMap(jsonValueAfterHandler ->
-                                                        Flux.fromIterable(operationAfterHandlerProviderList)
-                                                                .reduce(
-                                                                        Mono.just(jsonValueAfterHandler),
-                                                                        (pre, cur) -> pre.flatMap(result -> cur.get().mutation(operationAfterHandler, result))
-                                                                )
-                                                                .flatMap(operationMono -> operationMono)
-                                                )
+                                                .flatMap(operationMono -> operationMono)
                                 )
                 )
-                .switchIfEmpty(Mono.just(JsonValue.EMPTY_JSON_OBJECT));
+                .defaultIfEmpty(JsonValue.EMPTY_JSON_OBJECT);
     }
 
     public Flux<JsonValue> subscription(Operation operation, Map<String, JsonValue> variables, String token, String operationId) {

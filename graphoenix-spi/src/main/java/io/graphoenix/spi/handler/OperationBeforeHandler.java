@@ -8,9 +8,19 @@ import java.util.Map;
 
 public interface OperationBeforeHandler {
 
-    Mono<Operation> query(Operation operation, Map<String, JsonValue> variables);
+    default Mono<Operation> query(Operation operation, Map<String, JsonValue> variables) {
+        return handle(operation, variables);
+    }
 
-    Mono<Operation> mutation(Operation operation, Map<String, JsonValue> variables);
+    default Mono<Operation> mutation(Operation operation, Map<String, JsonValue> variables) {
+        return handle(operation, variables);
+    }
 
-    Mono<Operation> subscription(Operation operation, Map<String, JsonValue> variables);
+    default Mono<Operation> subscription(Operation operation, Map<String, JsonValue> variables) {
+        return handle(operation, variables);
+    }
+
+    default Mono<Operation> handle(Operation operation, Map<String, JsonValue> variables) {
+        return Mono.just(operation);
+    }
 }

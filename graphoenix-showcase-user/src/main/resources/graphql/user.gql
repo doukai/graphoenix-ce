@@ -6,9 +6,9 @@ type User {
     age: Int
     disabled: Boolean
     sex: Sex
-    userProfile: UserProfile
-    organization: Organization
-    roles: [Role!]
+    userProfile: UserProfile @fetch(from: "id", to: "userId", protocol: LOCAL)
+    organization: Organization @fetch(from: "organizationId", to: "id", anchor: true protocol: LOCAL)
+    roles: [Role!] @fetch(from: "id", with: {type: "RoleUserRelation", to: "roleRef", from: "userRef"}, to: "id", protocol: LOCAL)
     mobileNumbers: [String!]
 }
 
@@ -41,5 +41,13 @@ type Organization {
     id: ID
     name: String!
     above: Organization
-    users: [User!]
+    users: [User!] @fetch(from: "id", to: "organizationId", protocol: LOCAL)
+}
+
+type RoleUserRelation {
+    id: ID @type(name: "Int", autoIncrement: true)
+    userRef: String
+    user: User @fetch(from: "userRef", to: "id", anchor: true, protocol: LOCAL)
+    roleRef: String
+    role: Role @fetch(from: "roleRef", to: "id", anchor: true, protocol: LOCAL)
 }

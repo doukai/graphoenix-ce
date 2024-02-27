@@ -50,20 +50,6 @@ public class SelectionHandler implements OperationAfterHandler {
     }
 
     @Override
-    public Mono<JsonValue> query(Operation operation, JsonValue jsonValue) {
-        return handle(operation, jsonValue);
-    }
-
-    @Override
-    public Mono<JsonValue> mutation(Operation operation, JsonValue jsonValue) {
-        return handle(operation, jsonValue);
-    }
-
-    @Override
-    public Mono<JsonValue> subscription(Operation operation, JsonValue jsonValue) {
-        return handle(operation, jsonValue);
-    }
-
     public Mono<JsonValue> handle(Operation operation, JsonValue jsonValue) {
         ObjectType operationType = documentManager.getOperationTypeOrError(operation);
         return Mono.just(

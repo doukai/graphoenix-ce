@@ -12,7 +12,7 @@ import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.InputValue;
 import io.graphoenix.spi.graphql.type.ObjectType;
 import io.graphoenix.spi.handler.FetchHandler;
-import io.graphoenix.spi.handler.MutationAfterHandler;
+import io.graphoenix.spi.handler.OperationAfterHandler;
 import io.nozdormu.spi.context.BeanContext;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -35,8 +35,8 @@ import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST;
 
 @ApplicationScoped
-@Priority(Integer.MAX_VALUE - 100)
-public class MutationAfterFetchHandler implements MutationAfterHandler {
+@Priority(Integer.MAX_VALUE - 500)
+public class MutationAfterFetchHandler implements OperationAfterHandler {
 
     private final DocumentManager documentManager;
     private final JsonProvider jsonProvider;
@@ -56,7 +56,7 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                         operation.getFields().stream()
                                 .flatMap(field -> {
                                             String selectionName = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
-                                            return buildFetchItems("/" + selectionName, operationType.getField(field.getName()), field, jsonValue.asJsonObject().get(selectionName));
+                                            return buildFetchItems(operationType.getField(field.getName()), field, jsonValue.asJsonObject().get(selectionName));
                                         }
                                 )
                                 .collect(
@@ -85,7 +85,7 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                                                         new Operation()
                                                                 .setOperationType(OPERATION_MUTATION_NAME)
                                                                 .setSelections(
-                                                                        FetchItem.mergeFields(protocolEntries.getValue().stream())
+                                                                        FetchItem.buildMutationFields(protocolEntries.getValue())
                                                                 )
                                                 )
                                 )
@@ -94,7 +94,7 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                 .thenReturn(jsonValue);
     }
 
-    public Stream<FetchItem> buildFetchItems(String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
+    public Stream<FetchItem> buildFetchItems(FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
         if (jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
             return Stream.empty();
         }
@@ -194,7 +194,7 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
         }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldDefinition.isFetchField()) {
-            String protocol = fieldDefinition.getFetchProtocolOrError().toLowerCase();
+            String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
             String fetchFrom = fieldDefinition.getFetchFromOrError();
             if (fieldTypeDefinition.isObject()) {
                 FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
@@ -229,7 +229,7 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                                 .map(item -> {
                                             String id;
                                             if (item.asJsonObject().containsKey(idField.getName())) {
-                                                id = getKey(item.asJsonObject().get(idField.getName()));
+                                                id = getId(item.asJsonObject().get(idField.getName()));
                                             } else {
                                                 id = UUID.randomUUID().toString();
                                             }
@@ -239,7 +239,7 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                     } else {
                         String id;
                         if (valueWithVariable.asJsonObject().containsKey(idField.getName())) {
-                            id = getKey(valueWithVariable.asJsonObject().get(idField.getName()));
+                            id = getId(valueWithVariable.asJsonObject().get(idField.getName()));
                         } else {
                             id = UUID.randomUUID().toString();
                         }
@@ -276,7 +276,7 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                                 .map(item -> {
                                             String id;
                                             if (item.asJsonObject().containsKey(idField.getName())) {
-                                                id = getKey(item.asJsonObject().get(idField.getName()));
+                                                id = getId(item.asJsonObject().get(idField.getName()));
                                             } else {
                                                 id = UUID.randomUUID().toString();
                                             }
@@ -286,7 +286,7 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                     } else if (!fieldDefinition.isFetchAnchor()) {
                         String id;
                         if (valueWithVariable.asJsonObject().containsKey(idField.getName())) {
-                            id = getKey(valueWithVariable.asJsonObject().get(idField.getName()));
+                            id = getId(valueWithVariable.asJsonObject().get(idField.getName()));
                         } else {
                             id = UUID.randomUUID().toString();
                         }
@@ -378,16 +378,14 @@ public class MutationAfterFetchHandler implements MutationAfterHandler {
                 typeName.equals(SCALA_BIG_INTEGER_NAME) ||
                 typeName.equals(SCALA_FLOAT_NAME) ||
                 typeName.equals(SCALA_BIG_DECIMAL_NAME)) {
-            if (jsonValue.getValueType().equals(JsonValue.ValueType.NUMBER)) {
-                return jsonValue;
-            } else if (jsonValue.getValueType().equals(JsonValue.ValueType.STRING)) {
+            if (jsonValue.getValueType().equals(JsonValue.ValueType.STRING)) {
                 return jsonProvider.createValue(Integer.valueOf(((JsonString) jsonValue).getString()));
             }
         }
         return jsonValue;
     }
 
-    private String getKey(JsonValue jsonValue) {
+    private String getId(JsonValue jsonValue) {
         if (jsonValue.getValueType().equals(JsonValue.ValueType.STRING)) {
             return ((JsonString) jsonValue).getString();
         } else {
