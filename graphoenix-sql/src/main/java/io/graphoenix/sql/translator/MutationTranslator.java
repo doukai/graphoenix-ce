@@ -252,7 +252,7 @@ public class MutationTranslator {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         Statement leafFieldMutationStatement = whereInputValueEntry
-                .flatMap(entry -> argumentsTranslator.inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), entry.getValue(), level))
+                .flatMap(entry -> argumentsTranslator.inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), entry.getValue(), level - 1))
                 .map(whereExpression ->
                         (Statement) updateExpression(
                                 table,

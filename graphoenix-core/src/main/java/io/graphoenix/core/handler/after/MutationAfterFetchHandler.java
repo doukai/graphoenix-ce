@@ -113,10 +113,11 @@ public class MutationAfterFetchHandler implements OperationAfterHandler {
                 )
                 .collectList()
                 .map(patchList ->
-                        jsonProvider.createPatchBuilder(patchList.stream().collect(JsonCollectors.toJsonArray()))
+                        (JsonValue) jsonProvider.createPatchBuilder(patchList.stream().collect(JsonCollectors.toJsonArray()))
                                 .build()
                                 .apply(jsonValue.asJsonObject())
-                );
+                )
+                .defaultIfEmpty(jsonValue);
     }
 
     public Stream<FetchItem> buildFetchItems(ObjectType objectType, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {

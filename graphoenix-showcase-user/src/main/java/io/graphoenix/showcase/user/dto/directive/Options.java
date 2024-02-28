@@ -13,10 +13,10 @@ import org.eclipse.microprofile.graphql.Name;
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
-@Directive("type")
+@Directive("options")
 @Target({ElementType.FIELD})
-public @interface Type {
-  String name() default "";
+public @interface Options {
+  String type() default "";
 
   @Name("default")
   String _default() default "";

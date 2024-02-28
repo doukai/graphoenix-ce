@@ -145,18 +145,18 @@ public class TypeTranslator {
             }
         }
 
-        fieldDefinition.getTypeDefault()
+        fieldDefinition.getDefault()
                 .ifPresentOrElse(
-                        (typeDefault) -> {
+                        (defaultValue) -> {
                             if (fieldTypeName.equals(SCALA_ID_NAME) ||
                                     fieldTypeName.equals(SCALA_STRING_NAME) ||
                                     fieldTypeName.equals(SCALA_DATE_NAME) ||
                                     fieldTypeName.equals(SCALA_TIME_NAME) ||
                                     fieldTypeName.equals(SCALA_DATE_TIME_NAME) ||
                                     fieldTypeName.equals(SCALA_TIMESTAMP_NAME)) {
-                                columnSpecs.add("DEFAULT  " + stringValueToDBVarchar(typeDefault));
+                                columnSpecs.add("DEFAULT  " + stringValueToDBVarchar(defaultValue));
                             } else {
-                                columnSpecs.add("DEFAULT  " + typeDefault);
+                                columnSpecs.add("DEFAULT  " + defaultValue);
                             }
                         },
                         () -> {
@@ -171,7 +171,7 @@ public class TypeTranslator {
                         }
                 );
 
-        if (fieldDefinition.isAutoIncrementType()) {
+        if (fieldDefinition.isAutoIncrement()) {
             columnSpecs.add("AUTO_INCREMENT");
         }
 
@@ -203,29 +203,29 @@ public class TypeTranslator {
                 case SCALA_ID_NAME:
                 case SCALA_STRING_NAME:
                     colDataType.setDataType("VARCHAR");
-                    argumentsStringList.add(String.valueOf(fieldDefinition.getTypeLength().orElse(255)));
+                    argumentsStringList.add(String.valueOf(fieldDefinition.getLength().orElse(255)));
                     break;
                 case SCALA_BOOLEAN_NAME:
                     colDataType.setDataType("BOOL");
-                    fieldDefinition.getTypeLength().ifPresent(length -> argumentsStringList.add(String.valueOf(length)));
+                    fieldDefinition.getLength().ifPresent(length -> argumentsStringList.add(String.valueOf(length)));
                     break;
                 case SCALA_INT_NAME:
                     colDataType.setDataType("INT");
-                    fieldDefinition.getTypeLength().ifPresent(length -> argumentsStringList.add(String.valueOf(length)));
+                    fieldDefinition.getLength().ifPresent(length -> argumentsStringList.add(String.valueOf(length)));
                     break;
                 case SCALA_FLOAT_NAME:
                     colDataType.setDataType("FLOAT");
-                    fieldDefinition.getTypeLength().ifPresent(length -> argumentsStringList.add(String.valueOf(length)));
-                    fieldDefinition.getTypeDecimals().ifPresent(decimals -> argumentsStringList.add(String.valueOf(decimals)));
+                    fieldDefinition.getLength().ifPresent(length -> argumentsStringList.add(String.valueOf(length)));
+                    fieldDefinition.getDecimals().ifPresent(decimals -> argumentsStringList.add(String.valueOf(decimals)));
                     break;
                 case SCALA_BIG_INTEGER_NAME:
                     colDataType.setDataType("BIGINT");
-                    fieldDefinition.getTypeLength().ifPresent(length -> argumentsStringList.add(String.valueOf(length)));
+                    fieldDefinition.getLength().ifPresent(length -> argumentsStringList.add(String.valueOf(length)));
                     break;
                 case SCALA_BIG_DECIMAL_NAME:
                     colDataType.setDataType("DECIMAL");
-                    fieldDefinition.getTypeLength().ifPresent(length -> argumentsStringList.add(String.valueOf(length)));
-                    fieldDefinition.getTypeDecimals().ifPresent(decimals -> argumentsStringList.add(String.valueOf(decimals)));
+                    fieldDefinition.getLength().ifPresent(length -> argumentsStringList.add(String.valueOf(length)));
+                    fieldDefinition.getDecimals().ifPresent(decimals -> argumentsStringList.add(String.valueOf(decimals)));
                     break;
                 case SCALA_DATE_NAME:
                     colDataType.setDataType("DATE");

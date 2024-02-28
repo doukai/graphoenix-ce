@@ -147,41 +147,41 @@ public class FieldDefinition extends AbstractDefinition {
         return this;
     }
 
-    public boolean hesDataType() {
-        return hasDirective(DIRECTIVE_TYPE_NAME);
+    public boolean hasOptions() {
+        return hasDirective(DIRECTIVE_OPTIONS_NAME);
     }
 
     public Optional<String> getTypeName() {
-        return Optional.ofNullable(getDirective(DIRECTIVE_TYPE_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_TYPE_ARGUMENT_NAME_NAME)))
+        return Optional.ofNullable(getDirective(DIRECTIVE_OPTIONS_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_OPTIONS_ARGUMENT_TYPE_NAME)))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
 
-    public Optional<String> getTypeDefault() {
-        return Optional.ofNullable(getDirective(DIRECTIVE_TYPE_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_TYPE_ARGUMENT_DEFAULT_NAME)))
+    public Optional<String> getDefault() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_OPTIONS_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_OPTIONS_ARGUMENT_DEFAULT_NAME)))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
 
-    public Optional<Integer> getTypeLength() {
-        return Optional.ofNullable(getDirective(DIRECTIVE_TYPE_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_TYPE_ARGUMENT_LENGTH_NAME)))
+    public Optional<Integer> getLength() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_OPTIONS_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_OPTIONS_ARGUMENT_LENGTH_NAME)))
                 .filter(ValueWithVariable::isInt)
                 .map(valueWithVariable -> valueWithVariable.asInt().getIntegerValue());
     }
 
-    public Optional<Integer> getTypeDecimals() {
-        return Optional.ofNullable(getDirective(DIRECTIVE_TYPE_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_TYPE_ARGUMENT_DECIMALS_NAME)))
+    public Optional<Integer> getDecimals() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_OPTIONS_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_OPTIONS_ARGUMENT_DECIMALS_NAME)))
                 .filter(ValueWithVariable::isInt)
                 .map(valueWithVariable -> valueWithVariable.asInt().getIntegerValue());
     }
 
-    public boolean isAutoIncrementType() {
-        return Optional.ofNullable(getDirective(DIRECTIVE_TYPE_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_TYPE_ARGUMENT_AUTO_INCREMENT_NAME)))
+    public boolean isAutoIncrement() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_OPTIONS_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_OPTIONS_ARGUMENT_AUTO_INCREMENT_NAME)))
                 .filter(ValueWithVariable::isBoolean)
                 .map(valueWithVariable -> valueWithVariable.asBoolean().getValue())
                 .orElse(false);
@@ -456,7 +456,7 @@ public class FieldDefinition extends AbstractDefinition {
     public Optional<EnumValue> getFetchProtocol() {
         return Optional.ofNullable(getDirective(DIRECTIVE_FETCH_NAME))
                 .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME)))
-                .map(valueWithVariable -> valueWithVariable.asEnum());
+                .map(ValueWithVariable::asEnum);
     }
 
     public EnumValue getFetchProtocolOrError() {

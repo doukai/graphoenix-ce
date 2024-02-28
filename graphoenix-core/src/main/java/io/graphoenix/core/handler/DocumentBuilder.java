@@ -2,6 +2,8 @@ package io.graphoenix.core.handler;
 
 import com.google.common.collect.Streams;
 import io.graphoenix.core.config.PackageConfig;
+import io.graphoenix.spi.error.GraphQLErrorType;
+import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.Document;
 import io.graphoenix.spi.graphql.FieldsType;
@@ -381,11 +383,11 @@ public class DocumentBuilder {
 
         objectType.getIDField()
                 .ifPresent(fieldDefinition -> {
-                            if (!fieldDefinition.hesDataType()) {
+                            if (!fieldDefinition.hasOptions()) {
                                 fieldDefinition.addDirective(
-                                        new Directive(DIRECTIVE_TYPE_NAME)
-                                                .addArgument(DIRECTIVE_TYPE_ARGUMENT_NAME_NAME, SCALA_INT_NAME)
-                                                .addArgument(DIRECTIVE_TYPE_ARGUMENT_AUTO_INCREMENT_NAME, true)
+                                        new Directive(DIRECTIVE_OPTIONS_NAME)
+                                                .addArgument(DIRECTIVE_OPTIONS_ARGUMENT_TYPE_NAME, SCALA_INT_NAME)
+                                                .addArgument(DIRECTIVE_OPTIONS_ARGUMENT_AUTO_INCREMENT_NAME, true)
                                 );
                             }
                         }
@@ -653,7 +655,7 @@ public class DocumentBuilder {
         } else if (inputType.equals(InputType.ORDER_BY)) {
             return new InputValue(fieldDefinition.getName()).setType(new TypeName(INPUT_SORT_NAME));
         }
-        throw new RuntimeException("unsupported input type:" + inputType);
+        throw new GraphQLErrors(GraphQLErrorType.UNSUPPORTED_FIELD_TYPE.bind(inputType.toString()));
     }
 
     public Set<InputValue> buildInputValuesFromObjectType(FieldsType fieldsType, InputType inputType) {
@@ -700,7 +702,7 @@ public class DocumentBuilder {
     public FieldDefinition buildTypeNameField(ObjectType objectType) {
         return new FieldDefinition(FIELD_TYPENAME_NAME)
                 .setType(new TypeName(SCALA_STRING_NAME))
-                .addDirective(new Directive(DIRECTIVE_TYPE_NAME).addArgument(DIRECTIVE_TYPE_ARGUMENT_DEFAULT_NAME, objectType.getName()));
+                .addDirective(new Directive(DIRECTIVE_OPTIONS_NAME).addArgument(DIRECTIVE_OPTIONS_ARGUMENT_DEFAULT_NAME, objectType.getName()));
     }
 
     public List<InputObjectType> buildInputObjects(Document document) {

@@ -136,12 +136,12 @@ public class Hammurabi {
     public static final String DIRECTIVE_MAP_ARGUMENT_TO_NAME = "to";
 
 
-    public static final String DIRECTIVE_TYPE_NAME = "type";
-    public static final String DIRECTIVE_TYPE_ARGUMENT_NAME_NAME = "name";
-    public static final String DIRECTIVE_TYPE_ARGUMENT_AUTO_INCREMENT_NAME = "autoIncrement";
-    public static final String DIRECTIVE_TYPE_ARGUMENT_DEFAULT_NAME = "default";
-    public static final String DIRECTIVE_TYPE_ARGUMENT_LENGTH_NAME = "length";
-    public static final String DIRECTIVE_TYPE_ARGUMENT_DECIMALS_NAME = "decimals";
+    public static final String DIRECTIVE_OPTIONS_NAME = "options";
+    public static final String DIRECTIVE_OPTIONS_ARGUMENT_TYPE_NAME = "type";
+    public static final String DIRECTIVE_OPTIONS_ARGUMENT_AUTO_INCREMENT_NAME = "autoIncrement";
+    public static final String DIRECTIVE_OPTIONS_ARGUMENT_DEFAULT_NAME = "default";
+    public static final String DIRECTIVE_OPTIONS_ARGUMENT_LENGTH_NAME = "length";
+    public static final String DIRECTIVE_OPTIONS_ARGUMENT_DECIMALS_NAME = "decimals";
 
 
     public static final String DIRECTIVE_FETCH_NAME = "fetch";

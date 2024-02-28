@@ -70,7 +70,7 @@ public class ArgumentsTranslator {
                                     .flatMap(entry ->
                                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(entry.getKey().getName()))
                                                     .filter(subField -> !subField.isFetchField())
-                                                    .flatMap(subField -> inputValueToWhereExpression(fieldTypeDefinition.asObject(), subField, entry.getKey(), entry.getValue(), level).stream())
+                                                    .flatMap(subField -> inputValueToWhereExpression(fieldTypeDefinition.asObject(), subField, entry.getKey(), entry.getValue(), level + 1).stream())
                                     ),
                             inputValueValueWithVariableMap.entrySet().stream()
                                     .filter(entry -> entry.getKey().getName().equals(INPUT_VALUE_EXS_NAME))
@@ -78,7 +78,7 @@ public class ArgumentsTranslator {
                                             Stream.of(entry.getValue())
                                                     .filter(ValueWithVariable::isArray)
                                                     .flatMap(valueWithVariable -> valueWithVariable.asArray().getValueWithVariables().stream())
-                                                    .flatMap(valueWithVariable -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), valueWithVariable, level - 1).stream())
+                                                    .flatMap(valueWithVariable -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), valueWithVariable, level + 1).stream())
                                     ),
                             inputValueValueWithVariableMap.entrySet().stream()
                                     .anyMatch(entry ->
@@ -122,7 +122,7 @@ public class ArgumentsTranslator {
                             Optional.of(field.getArguments())
                                     .flatMap(arguments -> {
                                                 if (fieldDefinition.getType().hasList()) {
-                                                    Column column = graphqlFieldToColumn(fieldDefinition.getMapWithTypeOrError(), fieldDefinition.getMapWithToOrError(), level);
+                                                    Column column = graphqlFieldToColumn(fieldDefinition.getMapWithTypeOrError(), fieldDefinition.getMapWithToOrError(), level + 1);
                                                     return arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
                                                             .flatMap(val ->
                                                                     valToExpression(column, opr, val, skipNull(arguments))
@@ -180,7 +180,7 @@ public class ArgumentsTranslator {
                                             Stream.of(entry.getValue())
                                                     .filter(ValueWithVariable::isArray)
                                                     .flatMap(field -> field.asArray().getValueWithVariables().stream())
-                                                    .flatMap(field -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), field, level).stream())
+                                                    .flatMap(field -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), field, level + 1).stream())
                                     ),
                             inputValueValueWithVariableMap.entrySet().stream()
                                     .anyMatch(entry ->
@@ -197,7 +197,7 @@ public class ArgumentsTranslator {
                     .collect(Collectors.toList());
 
             return expressionListToMultipleExpression(expressionList, isOr(valueWithVariable), isNot(valueWithVariable))
-                    .map(expression -> existsExpression(selectFromFieldType(objectType, fieldDefinition, expression, level)));
+                    .map(expression -> existsExpression(selectFromFieldType(objectType, fieldDefinition, expression, level + 1)));
         } else {
             InputObjectType inputObject = documentManager.getInputValueTypeDefinition(inputValue).asInputObject();
             return inputObject.getInputValue(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME)
@@ -230,7 +230,7 @@ public class ArgumentsTranslator {
                                     .map(ValueWithVariable::asObject)
                                     .flatMap(objectValueWithVariable -> {
                                                 if (fieldDefinition.getType().hasList()) {
-                                                    Column column = graphqlFieldToColumn(fieldDefinition.getMapWithTypeOrError(), fieldDefinition.getMapWithToOrError(), level);
+                                                    Column column = graphqlFieldToColumn(fieldDefinition.getMapWithTypeOrError(), fieldDefinition.getMapWithToOrError(), level + 1);
                                                     return objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
                                                             .flatMap(val ->
                                                                     valToExpression(column, opr, val, skipNull(objectValueWithVariable))
@@ -239,7 +239,7 @@ public class ArgumentsTranslator {
                                                                     objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
                                                                             .flatMap(arr -> arrToExpression(column, opr, inputObject.getInputValueOrNull(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(objectValueWithVariable)))
                                                             )
-                                                            .map(expression -> existsExpression(selectFromFieldType(objectType, fieldDefinition, expression, level)));
+                                                            .map(expression -> existsExpression(selectFromFieldType(objectType, fieldDefinition, expression, level + 1)));
                                                 } else {
                                                     Column column = graphqlFieldToColumn(objectType.getName(), fieldDefinition.getName(), level);
                                                     return objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)

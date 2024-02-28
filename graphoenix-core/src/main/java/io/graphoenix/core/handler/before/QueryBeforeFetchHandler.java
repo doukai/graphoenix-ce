@@ -209,7 +209,6 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                             )
                                                                     )
                                                     )
-
                                     ),
                             fieldDefinition.getArgument(INPUT_VALUE_WHERE_NAME).stream()
                                     .flatMap(whereInputValue ->
@@ -346,7 +345,6 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                                                             )
                                                                                                     )
                                                                                     )
-
                                                                     )
                                                     )
                                     )
