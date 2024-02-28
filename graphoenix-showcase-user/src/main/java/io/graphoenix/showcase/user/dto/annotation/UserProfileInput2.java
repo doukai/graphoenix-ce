@@ -15,6 +15,8 @@ import java.lang.annotation.Target;
 public @interface UserProfileInput2 {
   String id() default "";
 
+  int userId() default 0;
+
   String email() default "";
 
   String address() default "";

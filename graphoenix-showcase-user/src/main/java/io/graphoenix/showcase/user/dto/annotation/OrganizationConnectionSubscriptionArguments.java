@@ -45,9 +45,6 @@ public @interface OrganizationConnectionSubscriptionArguments {
   OrganizationOrganizationRelationExpression1 organizationOrganizationRelation(
       ) default @OrganizationOrganizationRelationExpression1;
 
-  OrganizationUserRelationExpression1 organizationUserRelation(
-      ) default @OrganizationUserRelationExpression1;
-
   OrganizationOrderBy1 orderBy() default @OrganizationOrderBy1;
 
   String[] groupBy() default {};
@@ -95,8 +92,6 @@ public @interface OrganizationConnectionSubscriptionArguments {
   String $__typename() default "";
 
   String $organizationOrganizationRelation() default "";
-
-  String $organizationUserRelation() default "";
 
   String $orderBy() default "";
 

@@ -58,9 +58,7 @@ public class UserInput implements MetaInput {
   @DefaultValue("\"User\"")
   private String __typename;
 
-  private Collection<UserUserProfileRelationInput> userUserProfileRelation;
-
-  private Collection<OrganizationUserRelationInput> organizationUserRelation;
+  private String organizationId;
 
   private Collection<RoleUserRelationInput> roleUserRelation;
 
@@ -242,22 +240,12 @@ public class UserInput implements MetaInput {
     this.__typename = __typename;
   }
 
-  public Collection<UserUserProfileRelationInput> getUserUserProfileRelation() {
-    return this.userUserProfileRelation;
+  public String getOrganizationId() {
+    return this.organizationId;
   }
 
-  public void setUserUserProfileRelation(
-      Collection<UserUserProfileRelationInput> userUserProfileRelation) {
-    this.userUserProfileRelation = userUserProfileRelation;
-  }
-
-  public Collection<OrganizationUserRelationInput> getOrganizationUserRelation() {
-    return this.organizationUserRelation;
-  }
-
-  public void setOrganizationUserRelation(
-      Collection<OrganizationUserRelationInput> organizationUserRelation) {
-    this.organizationUserRelation = organizationUserRelation;
+  public void setOrganizationId(String organizationId) {
+    this.organizationId = organizationId;
   }
 
   public Collection<RoleUserRelationInput> getRoleUserRelation() {

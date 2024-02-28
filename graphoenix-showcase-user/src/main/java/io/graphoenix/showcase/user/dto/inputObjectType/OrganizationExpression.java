@@ -45,8 +45,6 @@ public class OrganizationExpression implements MetaExpression {
 
   private OrganizationOrganizationRelationExpression organizationOrganizationRelation;
 
-  private OrganizationUserRelationExpression organizationUserRelation;
-
   @DefaultValue("false")
   private Boolean not;
 
@@ -178,15 +176,6 @@ public class OrganizationExpression implements MetaExpression {
   public void setOrganizationOrganizationRelation(
       OrganizationOrganizationRelationExpression organizationOrganizationRelation) {
     this.organizationOrganizationRelation = organizationOrganizationRelation;
-  }
-
-  public OrganizationUserRelationExpression getOrganizationUserRelation() {
-    return this.organizationUserRelation;
-  }
-
-  public void setOrganizationUserRelation(
-      OrganizationUserRelationExpression organizationUserRelation) {
-    this.organizationUserRelation = organizationUserRelation;
   }
 
   public Boolean getNot() {

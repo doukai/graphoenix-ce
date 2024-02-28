@@ -18,6 +18,8 @@ import java.lang.annotation.Target;
 public @interface UserProfileExpression {
   StringExpression1 id() default @StringExpression1;
 
+  IntExpression1 userId() default @IntExpression1;
+
   UserExpression1 user() default @UserExpression1;
 
   StringExpression1 email() default @StringExpression1;
@@ -52,6 +54,8 @@ public @interface UserProfileExpression {
   UserProfileExpression1[] exs() default {};
 
   String $id() default "";
+
+  String $userId() default "";
 
   String $user() default "";
 

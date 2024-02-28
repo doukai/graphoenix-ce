@@ -60,9 +60,7 @@ public class UserConnectionQueryArguments implements MetaExpression {
 
   private StringExpression __typename;
 
-  private UserUserProfileRelationExpression userUserProfileRelation;
-
-  private OrganizationUserRelationExpression organizationUserRelation;
+  private StringExpression organizationId;
 
   private RoleUserRelationExpression roleUserRelation;
 
@@ -262,22 +260,12 @@ public class UserConnectionQueryArguments implements MetaExpression {
     this.__typename = __typename;
   }
 
-  public UserUserProfileRelationExpression getUserUserProfileRelation() {
-    return this.userUserProfileRelation;
+  public StringExpression getOrganizationId() {
+    return this.organizationId;
   }
 
-  public void setUserUserProfileRelation(
-      UserUserProfileRelationExpression userUserProfileRelation) {
-    this.userUserProfileRelation = userUserProfileRelation;
-  }
-
-  public OrganizationUserRelationExpression getOrganizationUserRelation() {
-    return this.organizationUserRelation;
-  }
-
-  public void setOrganizationUserRelation(
-      OrganizationUserRelationExpression organizationUserRelation) {
-    this.organizationUserRelation = organizationUserRelation;
+  public void setOrganizationId(StringExpression organizationId) {
+    this.organizationId = organizationId;
   }
 
   public RoleUserRelationExpression getRoleUserRelation() {

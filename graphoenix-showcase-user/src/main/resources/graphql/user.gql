@@ -14,6 +14,7 @@ type User {
 
 type UserProfile {
     id: ID
+    userId: Int
     user: User
     email: String
     address: String

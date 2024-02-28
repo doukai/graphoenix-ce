@@ -3,6 +3,7 @@ package io.graphoenix.core.handler.before;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.common.Directive;
+import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
@@ -18,6 +19,7 @@ import reactor.core.publisher.Mono;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -57,7 +59,14 @@ public class MutationFieldsMergeHandler implements OperationBeforeHandler {
                             .filter(inputValue -> inputValue.getType().getTypeName().getName().endsWith(SUFFIX_INPUT))
                             .flatMap(inputValue ->
                                     Stream.ofNullable(fieldTypeDefinition.asObject().getField(inputValue.getName()))
-                                            .flatMap(subFieldDefinition -> buildFetch(subFieldDefinition, inputValue))
+                                            .flatMap(subFieldDefinition ->
+                                                    Stream.ofNullable(field.getArguments())
+                                                            .flatMap(arguments ->
+                                                                    arguments.getArgument(inputValue.getName())
+                                                                            .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
+                                                            )
+                                                            .flatMap(valueWithVariable -> buildFetch(subFieldDefinition, inputValue, valueWithVariable))
+                                            )
                             )
                             .collect(Collectors.toList())
             );
@@ -66,7 +75,7 @@ public class MutationFieldsMergeHandler implements OperationBeforeHandler {
         }
     }
 
-    private Stream<Field> buildFetch(FieldDefinition fieldDefinition, InputValue inputValue) {
+    private Stream<Field> buildFetch(FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable) {
         if (fieldDefinition.isFetchField()) {
             return Stream.of(new Field(fieldDefinition.getFetchFromOrError()).addDirective(new Directive(DIRECTIVE_HIDE_NAME)));
         } else {
@@ -76,7 +85,15 @@ public class MutationFieldsMergeHandler implements OperationBeforeHandler {
                         .filter(subInputValue -> subInputValue.getType().getTypeName().getName().endsWith(SUFFIX_INPUT))
                         .flatMap(subInputValue ->
                                 Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
-                                        .flatMap(subFieldDefinition -> buildFetch(subFieldDefinition, subInputValue))
+                                        .flatMap(subFieldDefinition ->
+                                                Stream.ofNullable(valueWithVariable)
+                                                        .filter(ValueWithVariable::isObject)
+                                                        .map(ValueWithVariable::asObject)
+                                                        .flatMap(objectValueWithVariable ->
+                                                                objectValueWithVariable.getValueWithVariable(subFieldDefinition.getName()).stream()
+                                                                        .flatMap(subValueWithVariable -> buildFetch(subFieldDefinition, subInputValue, subValueWithVariable))
+                                                        )
+                                        )
                         )
                         .collect(Collectors.toList());
                 if (fieldList.isEmpty()) {

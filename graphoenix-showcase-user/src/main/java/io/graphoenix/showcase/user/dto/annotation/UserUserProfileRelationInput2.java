@@ -15,9 +15,9 @@ import java.lang.annotation.Target;
 public @interface UserUserProfileRelationInput2 {
   String id() default "";
 
-  String userRef() default "";
-
   String userProfileRef() default "";
+
+  String userRef() default "";
 
   boolean isDeprecated() default false;
 

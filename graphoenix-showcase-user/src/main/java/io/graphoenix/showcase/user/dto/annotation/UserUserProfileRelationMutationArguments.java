@@ -15,13 +15,13 @@ import java.lang.annotation.Target;
 public @interface UserUserProfileRelationMutationArguments {
   String id() default "";
 
-  String userRef() default "";
-
-  UserInput1 user() default @UserInput1;
-
   String userProfileRef() default "";
 
   UserProfileInput1 userProfile() default @UserProfileInput1;
+
+  String userRef() default "";
+
+  UserInput1 user() default @UserInput1;
 
   boolean isDeprecated() default false;
 
@@ -45,13 +45,13 @@ public @interface UserUserProfileRelationMutationArguments {
 
   String $id() default "";
 
-  String $userRef() default "";
-
-  String $user() default "";
-
   String $userProfileRef() default "";
 
   String $userProfile() default "";
+
+  String $userRef() default "";
+
+  String $user() default "";
 
   String $isDeprecated() default "";
 

@@ -18,13 +18,13 @@ import java.lang.annotation.Target;
 public @interface UserUserProfileRelationExpression1 {
   StringExpression2 id() default @StringExpression2;
 
-  StringExpression2 userRef() default @StringExpression2;
-
-  UserExpression2 user() default @UserExpression2;
-
   StringExpression2 userProfileRef() default @StringExpression2;
 
   UserProfileExpression2 userProfile() default @UserProfileExpression2;
+
+  StringExpression2 userRef() default @StringExpression2;
+
+  UserExpression2 user() default @UserExpression2;
 
   boolean includeDeprecated() default false;
 
@@ -52,13 +52,13 @@ public @interface UserUserProfileRelationExpression1 {
 
   String $id() default "";
 
-  String $userRef() default "";
-
-  String $user() default "";
-
   String $userProfileRef() default "";
 
   String $userProfile() default "";
+
+  String $userRef() default "";
+
+  String $user() default "";
 
   String $includeDeprecated() default "";
 

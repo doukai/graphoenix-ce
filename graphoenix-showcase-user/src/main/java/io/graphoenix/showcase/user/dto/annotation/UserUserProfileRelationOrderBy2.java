@@ -15,9 +15,9 @@ import java.lang.annotation.Target;
 public @interface UserUserProfileRelationOrderBy2 {
   Sort id() default Sort.ASC;
 
-  Sort userRef() default Sort.ASC;
-
   Sort userProfileRef() default Sort.ASC;
+
+  Sort userRef() default Sort.ASC;
 
   Sort isDeprecated() default Sort.ASC;
 

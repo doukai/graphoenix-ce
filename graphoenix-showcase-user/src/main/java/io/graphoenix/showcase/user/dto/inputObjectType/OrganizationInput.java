@@ -45,8 +45,6 @@ public class OrganizationInput implements MetaInput {
 
   private Collection<OrganizationOrganizationRelationInput> organizationOrganizationRelation;
 
-  private Collection<OrganizationUserRelationInput> organizationUserRelation;
-
   private OrganizationExpression where;
 
   public String getId() {
@@ -174,15 +172,6 @@ public class OrganizationInput implements MetaInput {
   public void setOrganizationOrganizationRelation(
       Collection<OrganizationOrganizationRelationInput> organizationOrganizationRelation) {
     this.organizationOrganizationRelation = organizationOrganizationRelation;
-  }
-
-  public Collection<OrganizationUserRelationInput> getOrganizationUserRelation() {
-    return this.organizationUserRelation;
-  }
-
-  public void setOrganizationUserRelation(
-      Collection<OrganizationUserRelationInput> organizationUserRelation) {
-    this.organizationUserRelation = organizationUserRelation;
   }
 
   public OrganizationExpression getWhere() {

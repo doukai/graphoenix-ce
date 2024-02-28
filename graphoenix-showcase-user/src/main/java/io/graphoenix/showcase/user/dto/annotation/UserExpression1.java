@@ -57,11 +57,7 @@ public @interface UserExpression1 {
 
   StringExpression2 __typename() default @StringExpression2;
 
-  UserUserProfileRelationExpression2 userUserProfileRelation(
-      ) default @UserUserProfileRelationExpression2;
-
-  OrganizationUserRelationExpression2 organizationUserRelation(
-      ) default @OrganizationUserRelationExpression2;
+  StringExpression2 organizationId() default @StringExpression2;
 
   RoleUserRelationExpression2 roleUserRelation() default @RoleUserRelationExpression2;
 
@@ -114,9 +110,7 @@ public @interface UserExpression1 {
 
   String $__typename() default "";
 
-  String $userUserProfileRelation() default "";
-
-  String $organizationUserRelation() default "";
+  String $organizationId() default "";
 
   String $roleUserRelation() default "";
 

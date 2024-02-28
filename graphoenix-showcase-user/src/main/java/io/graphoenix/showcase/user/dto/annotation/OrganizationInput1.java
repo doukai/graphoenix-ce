@@ -41,8 +41,6 @@ public @interface OrganizationInput1 {
 
   OrganizationOrganizationRelationInput2[] organizationOrganizationRelation() default {};
 
-  OrganizationUserRelationInput2[] organizationUserRelation() default {};
-
   OrganizationExpression2 where() default @OrganizationExpression2;
 
   String $id() default "";
@@ -72,8 +70,6 @@ public @interface OrganizationInput1 {
   String $__typename() default "";
 
   String $organizationOrganizationRelation() default "";
-
-  String $organizationUserRelation() default "";
 
   String $where() default "";
 }

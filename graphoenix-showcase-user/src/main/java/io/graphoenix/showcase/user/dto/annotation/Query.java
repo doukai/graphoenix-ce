@@ -38,24 +38,6 @@ public @interface Query {
   OrganizationConnectionQueryArguments organizationConnection(
       ) default @OrganizationConnectionQueryArguments;
 
-  UserUserProfileRelationQueryArguments userUserProfileRelation(
-      ) default @UserUserProfileRelationQueryArguments;
-
-  UserUserProfileRelationListQueryArguments userUserProfileRelationList(
-      ) default @UserUserProfileRelationListQueryArguments;
-
-  UserUserProfileRelationConnectionQueryArguments userUserProfileRelationConnection(
-      ) default @UserUserProfileRelationConnectionQueryArguments;
-
-  OrganizationUserRelationQueryArguments organizationUserRelation(
-      ) default @OrganizationUserRelationQueryArguments;
-
-  OrganizationUserRelationListQueryArguments organizationUserRelationList(
-      ) default @OrganizationUserRelationListQueryArguments;
-
-  OrganizationUserRelationConnectionQueryArguments organizationUserRelationConnection(
-      ) default @OrganizationUserRelationConnectionQueryArguments;
-
   RoleUserRelationQueryArguments roleUserRelation() default @RoleUserRelationQueryArguments;
 
   RoleUserRelationListQueryArguments roleUserRelationList(
@@ -72,6 +54,15 @@ public @interface Query {
 
   UserMobileNumbersRelationConnectionQueryArguments userMobileNumbersRelationConnection(
       ) default @UserMobileNumbersRelationConnectionQueryArguments;
+
+  UserUserProfileRelationQueryArguments userUserProfileRelation(
+      ) default @UserUserProfileRelationQueryArguments;
+
+  UserUserProfileRelationListQueryArguments userUserProfileRelationList(
+      ) default @UserUserProfileRelationListQueryArguments;
+
+  UserUserProfileRelationConnectionQueryArguments userUserProfileRelationConnection(
+      ) default @UserUserProfileRelationConnectionQueryArguments;
 
   RoleRoleTypeRelationQueryArguments roleRoleTypeRelation(
       ) default @RoleRoleTypeRelationQueryArguments;

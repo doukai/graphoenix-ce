@@ -225,19 +225,15 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler {
                 );
             }
         } else if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
-            if (valueWithVariable.asObject().isNull(fieldDefinition.getName())) {
-                return Stream.empty();
-            }
             Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
             return inputValueTypeDefinition.asInputObject().getInputValues().stream()
                     .flatMap(subInputValue ->
                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                     .flatMap(subFieldDefinition -> {
-                                                ValueWithVariable fieldValueWithVariable = valueWithVariable.asObject().getValueWithVariableOrNull(fieldDefinition.getName());
-                                                if (subFieldDefinition.getType().hasList()) {
-                                                    return IntStream.range(0, fieldValueWithVariable.asArray().size())
+                                                if (fieldDefinition.getType().hasList()) {
+                                                    return IntStream.range(0, valueWithVariable.asArray().size())
                                                             .mapToObj(index ->
-                                                                    Stream.ofNullable(fieldValueWithVariable.asArray().getValueWithVariable(index).asObject().getObjectValueWithVariable())
+                                                                    Stream.ofNullable(valueWithVariable.asArray().getValueWithVariable(index).asObject().getObjectValueWithVariable())
                                                                             .flatMap(objectValue ->
                                                                                     Optional.ofNullable(objectValue.get(subInputValue.getName()))
                                                                                             .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
@@ -254,7 +250,7 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler {
                                                             )
                                                             .flatMap(stream -> stream);
                                                 } else {
-                                                    return Stream.ofNullable(fieldValueWithVariable.asObject().getObjectValueWithVariable())
+                                                    return Stream.ofNullable(valueWithVariable.asObject().getObjectValueWithVariable())
                                                             .flatMap(objectValue ->
                                                                     Optional.ofNullable(objectValue.get(subInputValue.getName()))
                                                                             .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()

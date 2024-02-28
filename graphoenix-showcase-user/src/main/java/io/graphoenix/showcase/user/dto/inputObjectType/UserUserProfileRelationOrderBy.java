@@ -11,9 +11,9 @@ import org.eclipse.microprofile.graphql.Input;
 public class UserUserProfileRelationOrderBy {
   private Sort id;
 
-  private Sort userRef;
-
   private Sort userProfileRef;
+
+  private Sort userRef;
 
   private Sort isDeprecated;
 
@@ -41,20 +41,20 @@ public class UserUserProfileRelationOrderBy {
     this.id = id;
   }
 
-  public Sort getUserRef() {
-    return this.userRef;
-  }
-
-  public void setUserRef(Sort userRef) {
-    this.userRef = userRef;
-  }
-
   public Sort getUserProfileRef() {
     return this.userProfileRef;
   }
 
   public void setUserProfileRef(Sort userProfileRef) {
     this.userProfileRef = userProfileRef;
+  }
+
+  public Sort getUserRef() {
+    return this.userRef;
+  }
+
+  public void setUserRef(Sort userRef) {
+    this.userRef = userRef;
   }
 
   public Sort getIsDeprecated() {

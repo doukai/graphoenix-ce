@@ -16,9 +16,9 @@ import java.lang.annotation.Target;
 public @interface UserUserProfileRelationOrderBy1 {
   Sort id() default Sort.ASC;
 
-  Sort userRef() default Sort.ASC;
-
   Sort userProfileRef() default Sort.ASC;
+
+  Sort userRef() default Sort.ASC;
 
   Sort isDeprecated() default Sort.ASC;
 
@@ -40,9 +40,9 @@ public @interface UserUserProfileRelationOrderBy1 {
 
   String $id() default "";
 
-  String $userRef() default "";
-
   String $userProfileRef() default "";
+
+  String $userRef() default "";
 
   String $isDeprecated() default "";
 

@@ -15,6 +15,8 @@ import java.lang.annotation.Target;
 public @interface UserProfileInput1 {
   String id() default "";
 
+  int userId() default 0;
+
   UserInput2 user() default @UserInput2;
 
   String email() default "";
@@ -44,6 +46,8 @@ public @interface UserProfileInput1 {
   UserProfileExpression2 where() default @UserProfileExpression2;
 
   String $id() default "";
+
+  String $userId() default "";
 
   String $user() default "";
 

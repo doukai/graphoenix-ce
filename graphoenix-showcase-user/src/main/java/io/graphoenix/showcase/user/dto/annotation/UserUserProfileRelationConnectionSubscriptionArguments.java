@@ -18,13 +18,13 @@ import java.lang.annotation.Target;
 public @interface UserUserProfileRelationConnectionSubscriptionArguments {
   StringExpression1 id() default @StringExpression1;
 
-  StringExpression1 userRef() default @StringExpression1;
-
-  UserExpression1 user() default @UserExpression1;
-
   StringExpression1 userProfileRef() default @StringExpression1;
 
   UserProfileExpression1 userProfile() default @UserProfileExpression1;
+
+  StringExpression1 userRef() default @StringExpression1;
+
+  UserExpression1 user() default @UserExpression1;
 
   boolean includeDeprecated() default false;
 
@@ -66,13 +66,13 @@ public @interface UserUserProfileRelationConnectionSubscriptionArguments {
 
   String $id() default "";
 
-  String $userRef() default "";
-
-  String $user() default "";
-
   String $userProfileRef() default "";
 
   String $userProfile() default "";
+
+  String $userRef() default "";
+
+  String $user() default "";
 
   String $includeDeprecated() default "";
 

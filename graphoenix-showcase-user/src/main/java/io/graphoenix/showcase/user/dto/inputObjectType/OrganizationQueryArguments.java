@@ -46,8 +46,6 @@ public class OrganizationQueryArguments implements MetaExpression {
 
   private OrganizationOrganizationRelationExpression organizationOrganizationRelation;
 
-  private OrganizationUserRelationExpression organizationUserRelation;
-
   private Collection<String> groupBy;
 
   @DefaultValue("false")
@@ -181,15 +179,6 @@ public class OrganizationQueryArguments implements MetaExpression {
   public void setOrganizationOrganizationRelation(
       OrganizationOrganizationRelationExpression organizationOrganizationRelation) {
     this.organizationOrganizationRelation = organizationOrganizationRelation;
-  }
-
-  public OrganizationUserRelationExpression getOrganizationUserRelation() {
-    return this.organizationUserRelation;
-  }
-
-  public void setOrganizationUserRelation(
-      OrganizationUserRelationExpression organizationUserRelation) {
-    this.organizationUserRelation = organizationUserRelation;
   }
 
   public Collection<String> getGroupBy() {

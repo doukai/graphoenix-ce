@@ -41,8 +41,6 @@ public @interface OrganizationMutationArguments {
 
   OrganizationOrganizationRelationInput1[] organizationOrganizationRelation() default {};
 
-  OrganizationUserRelationInput1[] organizationUserRelation() default {};
-
   OrganizationExpression1 where() default @OrganizationExpression1;
 
   String $id() default "";
@@ -72,8 +70,6 @@ public @interface OrganizationMutationArguments {
   String $__typename() default "";
 
   String $organizationOrganizationRelation() default "";
-
-  String $organizationUserRelation() default "";
 
   String $where() default "";
 }

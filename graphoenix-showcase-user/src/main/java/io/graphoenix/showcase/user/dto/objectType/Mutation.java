@@ -25,14 +25,6 @@ public class Mutation {
 
   private Collection<Organization> organizationList;
 
-  private UserUserProfileRelation userUserProfileRelation;
-
-  private Collection<UserUserProfileRelation> userUserProfileRelationList;
-
-  private OrganizationUserRelation organizationUserRelation;
-
-  private Collection<OrganizationUserRelation> organizationUserRelationList;
-
   private RoleUserRelation roleUserRelation;
 
   private Collection<RoleUserRelation> roleUserRelationList;
@@ -40,6 +32,10 @@ public class Mutation {
   private UserMobileNumbersRelation userMobileNumbersRelation;
 
   private Collection<UserMobileNumbersRelation> userMobileNumbersRelationList;
+
+  private UserUserProfileRelation userUserProfileRelation;
+
+  private Collection<UserUserProfileRelation> userUserProfileRelationList;
 
   private RoleRoleTypeRelation roleRoleTypeRelation;
 
@@ -113,40 +109,6 @@ public class Mutation {
     this.organizationList = organizationList;
   }
 
-  public UserUserProfileRelation getUserUserProfileRelation() {
-    return this.userUserProfileRelation;
-  }
-
-  public void setUserUserProfileRelation(UserUserProfileRelation userUserProfileRelation) {
-    this.userUserProfileRelation = userUserProfileRelation;
-  }
-
-  public Collection<UserUserProfileRelation> getUserUserProfileRelationList() {
-    return this.userUserProfileRelationList;
-  }
-
-  public void setUserUserProfileRelationList(
-      Collection<UserUserProfileRelation> userUserProfileRelationList) {
-    this.userUserProfileRelationList = userUserProfileRelationList;
-  }
-
-  public OrganizationUserRelation getOrganizationUserRelation() {
-    return this.organizationUserRelation;
-  }
-
-  public void setOrganizationUserRelation(OrganizationUserRelation organizationUserRelation) {
-    this.organizationUserRelation = organizationUserRelation;
-  }
-
-  public Collection<OrganizationUserRelation> getOrganizationUserRelationList() {
-    return this.organizationUserRelationList;
-  }
-
-  public void setOrganizationUserRelationList(
-      Collection<OrganizationUserRelation> organizationUserRelationList) {
-    this.organizationUserRelationList = organizationUserRelationList;
-  }
-
   public RoleUserRelation getRoleUserRelation() {
     return this.roleUserRelation;
   }
@@ -178,6 +140,23 @@ public class Mutation {
   public void setUserMobileNumbersRelationList(
       Collection<UserMobileNumbersRelation> userMobileNumbersRelationList) {
     this.userMobileNumbersRelationList = userMobileNumbersRelationList;
+  }
+
+  public UserUserProfileRelation getUserUserProfileRelation() {
+    return this.userUserProfileRelation;
+  }
+
+  public void setUserUserProfileRelation(UserUserProfileRelation userUserProfileRelation) {
+    this.userUserProfileRelation = userUserProfileRelation;
+  }
+
+  public Collection<UserUserProfileRelation> getUserUserProfileRelationList() {
+    return this.userUserProfileRelationList;
+  }
+
+  public void setUserUserProfileRelationList(
+      Collection<UserUserProfileRelation> userUserProfileRelationList) {
+    this.userUserProfileRelationList = userUserProfileRelationList;
   }
 
   public RoleRoleTypeRelation getRoleRoleTypeRelation() {

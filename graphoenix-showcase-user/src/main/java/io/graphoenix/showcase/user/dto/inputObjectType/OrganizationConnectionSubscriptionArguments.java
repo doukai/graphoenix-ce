@@ -47,8 +47,6 @@ public class OrganizationConnectionSubscriptionArguments implements MetaExpressi
 
   private OrganizationOrganizationRelationExpression organizationOrganizationRelation;
 
-  private OrganizationUserRelationExpression organizationUserRelation;
-
   private OrganizationOrderBy orderBy;
 
   private Collection<String> groupBy;
@@ -194,15 +192,6 @@ public class OrganizationConnectionSubscriptionArguments implements MetaExpressi
   public void setOrganizationOrganizationRelation(
       OrganizationOrganizationRelationExpression organizationOrganizationRelation) {
     this.organizationOrganizationRelation = organizationOrganizationRelation;
-  }
-
-  public OrganizationUserRelationExpression getOrganizationUserRelation() {
-    return this.organizationUserRelation;
-  }
-
-  public void setOrganizationUserRelation(
-      OrganizationUserRelationExpression organizationUserRelation) {
-    this.organizationUserRelation = organizationUserRelation;
   }
 
   public OrganizationOrderBy getOrderBy() {

@@ -57,11 +57,7 @@ public @interface UserQueryArguments {
 
   StringExpression1 __typename() default @StringExpression1;
 
-  UserUserProfileRelationExpression1 userUserProfileRelation(
-      ) default @UserUserProfileRelationExpression1;
-
-  OrganizationUserRelationExpression1 organizationUserRelation(
-      ) default @OrganizationUserRelationExpression1;
+  StringExpression1 organizationId() default @StringExpression1;
 
   RoleUserRelationExpression1 roleUserRelation() default @RoleUserRelationExpression1;
 
@@ -116,9 +112,7 @@ public @interface UserQueryArguments {
 
   String $__typename() default "";
 
-  String $userUserProfileRelation() default "";
-
-  String $organizationUserRelation() default "";
+  String $organizationId() default "";
 
   String $roleUserRelation() default "";
 

@@ -62,29 +62,11 @@ public class User implements Meta {
 
   private String __typename;
 
-  private Collection<UserUserProfileRelation> userUserProfileRelation;
-
-  private Collection<OrganizationUserRelation> organizationUserRelation;
+  private String organizationId;
 
   private Collection<RoleUserRelation> roleUserRelation;
 
   private Collection<UserMobileNumbersRelation> userMobileNumbersRelation;
-
-  private Role rolesAggregate;
-
-  private RoleConnection rolesConnection;
-
-  private UserUserProfileRelation userUserProfileRelationAggregate;
-
-  private UserUserProfileRelationConnection userUserProfileRelationConnection;
-
-  private OrganizationUserRelation organizationUserRelationAggregate;
-
-  private OrganizationUserRelationConnection organizationUserRelationConnection;
-
-  private RoleUserRelation roleUserRelationAggregate;
-
-  private RoleUserRelationConnection roleUserRelationConnection;
 
   private UserMobileNumbersRelation userMobileNumbersRelationAggregate;
 
@@ -113,6 +95,12 @@ public class User implements Meta {
   private String nameMax;
 
   private String nameMin;
+
+  private Integer organizationIdCount;
+
+  private String organizationIdMax;
+
+  private String organizationIdMin;
 
   private Integer ageCount;
 
@@ -304,22 +292,12 @@ public class User implements Meta {
     this.__typename = __typename;
   }
 
-  public Collection<UserUserProfileRelation> getUserUserProfileRelation() {
-    return this.userUserProfileRelation;
+  public String getOrganizationId() {
+    return this.organizationId;
   }
 
-  public void setUserUserProfileRelation(
-      Collection<UserUserProfileRelation> userUserProfileRelation) {
-    this.userUserProfileRelation = userUserProfileRelation;
-  }
-
-  public Collection<OrganizationUserRelation> getOrganizationUserRelation() {
-    return this.organizationUserRelation;
-  }
-
-  public void setOrganizationUserRelation(
-      Collection<OrganizationUserRelation> organizationUserRelation) {
-    this.organizationUserRelation = organizationUserRelation;
+  public void setOrganizationId(String organizationId) {
+    this.organizationId = organizationId;
   }
 
   public Collection<RoleUserRelation> getRoleUserRelation() {
@@ -337,74 +315,6 @@ public class User implements Meta {
   public void setUserMobileNumbersRelation(
       Collection<UserMobileNumbersRelation> userMobileNumbersRelation) {
     this.userMobileNumbersRelation = userMobileNumbersRelation;
-  }
-
-  public Role getRolesAggregate() {
-    return this.rolesAggregate;
-  }
-
-  public void setRolesAggregate(Role rolesAggregate) {
-    this.rolesAggregate = rolesAggregate;
-  }
-
-  public RoleConnection getRolesConnection() {
-    return this.rolesConnection;
-  }
-
-  public void setRolesConnection(RoleConnection rolesConnection) {
-    this.rolesConnection = rolesConnection;
-  }
-
-  public UserUserProfileRelation getUserUserProfileRelationAggregate() {
-    return this.userUserProfileRelationAggregate;
-  }
-
-  public void setUserUserProfileRelationAggregate(
-      UserUserProfileRelation userUserProfileRelationAggregate) {
-    this.userUserProfileRelationAggregate = userUserProfileRelationAggregate;
-  }
-
-  public UserUserProfileRelationConnection getUserUserProfileRelationConnection() {
-    return this.userUserProfileRelationConnection;
-  }
-
-  public void setUserUserProfileRelationConnection(
-      UserUserProfileRelationConnection userUserProfileRelationConnection) {
-    this.userUserProfileRelationConnection = userUserProfileRelationConnection;
-  }
-
-  public OrganizationUserRelation getOrganizationUserRelationAggregate() {
-    return this.organizationUserRelationAggregate;
-  }
-
-  public void setOrganizationUserRelationAggregate(
-      OrganizationUserRelation organizationUserRelationAggregate) {
-    this.organizationUserRelationAggregate = organizationUserRelationAggregate;
-  }
-
-  public OrganizationUserRelationConnection getOrganizationUserRelationConnection() {
-    return this.organizationUserRelationConnection;
-  }
-
-  public void setOrganizationUserRelationConnection(
-      OrganizationUserRelationConnection organizationUserRelationConnection) {
-    this.organizationUserRelationConnection = organizationUserRelationConnection;
-  }
-
-  public RoleUserRelation getRoleUserRelationAggregate() {
-    return this.roleUserRelationAggregate;
-  }
-
-  public void setRoleUserRelationAggregate(RoleUserRelation roleUserRelationAggregate) {
-    this.roleUserRelationAggregate = roleUserRelationAggregate;
-  }
-
-  public RoleUserRelationConnection getRoleUserRelationConnection() {
-    return this.roleUserRelationConnection;
-  }
-
-  public void setRoleUserRelationConnection(RoleUserRelationConnection roleUserRelationConnection) {
-    this.roleUserRelationConnection = roleUserRelationConnection;
   }
 
   public UserMobileNumbersRelation getUserMobileNumbersRelationAggregate() {
@@ -519,6 +429,30 @@ public class User implements Meta {
 
   public void setNameMin(String nameMin) {
     this.nameMin = nameMin;
+  }
+
+  public Integer getOrganizationIdCount() {
+    return this.organizationIdCount;
+  }
+
+  public void setOrganizationIdCount(Integer organizationIdCount) {
+    this.organizationIdCount = organizationIdCount;
+  }
+
+  public String getOrganizationIdMax() {
+    return this.organizationIdMax;
+  }
+
+  public void setOrganizationIdMax(String organizationIdMax) {
+    this.organizationIdMax = organizationIdMax;
+  }
+
+  public String getOrganizationIdMin() {
+    return this.organizationIdMin;
+  }
+
+  public void setOrganizationIdMin(String organizationIdMin) {
+    this.organizationIdMin = organizationIdMin;
   }
 
   public Integer getAgeCount() {

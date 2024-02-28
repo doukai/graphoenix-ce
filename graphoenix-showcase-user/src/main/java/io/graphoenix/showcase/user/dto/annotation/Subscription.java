@@ -40,24 +40,6 @@ public @interface Subscription {
   OrganizationConnectionSubscriptionArguments organizationConnection(
       ) default @OrganizationConnectionSubscriptionArguments;
 
-  UserUserProfileRelationSubscriptionArguments userUserProfileRelation(
-      ) default @UserUserProfileRelationSubscriptionArguments;
-
-  UserUserProfileRelationListSubscriptionArguments userUserProfileRelationList(
-      ) default @UserUserProfileRelationListSubscriptionArguments;
-
-  UserUserProfileRelationConnectionSubscriptionArguments userUserProfileRelationConnection(
-      ) default @UserUserProfileRelationConnectionSubscriptionArguments;
-
-  OrganizationUserRelationSubscriptionArguments organizationUserRelation(
-      ) default @OrganizationUserRelationSubscriptionArguments;
-
-  OrganizationUserRelationListSubscriptionArguments organizationUserRelationList(
-      ) default @OrganizationUserRelationListSubscriptionArguments;
-
-  OrganizationUserRelationConnectionSubscriptionArguments organizationUserRelationConnection(
-      ) default @OrganizationUserRelationConnectionSubscriptionArguments;
-
   RoleUserRelationSubscriptionArguments roleUserRelation(
       ) default @RoleUserRelationSubscriptionArguments;
 
@@ -75,6 +57,15 @@ public @interface Subscription {
 
   UserMobileNumbersRelationConnectionSubscriptionArguments userMobileNumbersRelationConnection(
       ) default @UserMobileNumbersRelationConnectionSubscriptionArguments;
+
+  UserUserProfileRelationSubscriptionArguments userUserProfileRelation(
+      ) default @UserUserProfileRelationSubscriptionArguments;
+
+  UserUserProfileRelationListSubscriptionArguments userUserProfileRelationList(
+      ) default @UserUserProfileRelationListSubscriptionArguments;
+
+  UserUserProfileRelationConnectionSubscriptionArguments userUserProfileRelationConnection(
+      ) default @UserUserProfileRelationConnectionSubscriptionArguments;
 
   RoleRoleTypeRelationSubscriptionArguments roleRoleTypeRelation(
       ) default @RoleRoleTypeRelationSubscriptionArguments;

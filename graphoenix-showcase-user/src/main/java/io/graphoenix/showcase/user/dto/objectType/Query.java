@@ -35,18 +35,6 @@ public class Query {
 
   private OrganizationConnection organizationConnection;
 
-  private UserUserProfileRelation userUserProfileRelation;
-
-  private Collection<UserUserProfileRelation> userUserProfileRelationList;
-
-  private UserUserProfileRelationConnection userUserProfileRelationConnection;
-
-  private OrganizationUserRelation organizationUserRelation;
-
-  private Collection<OrganizationUserRelation> organizationUserRelationList;
-
-  private OrganizationUserRelationConnection organizationUserRelationConnection;
-
   private RoleUserRelation roleUserRelation;
 
   private Collection<RoleUserRelation> roleUserRelationList;
@@ -58,6 +46,12 @@ public class Query {
   private Collection<UserMobileNumbersRelation> userMobileNumbersRelationList;
 
   private UserMobileNumbersRelationConnection userMobileNumbersRelationConnection;
+
+  private UserUserProfileRelation userUserProfileRelation;
+
+  private Collection<UserUserProfileRelation> userUserProfileRelationList;
+
+  private UserUserProfileRelationConnection userUserProfileRelationConnection;
 
   private RoleRoleTypeRelation roleRoleTypeRelation;
 
@@ -173,58 +167,6 @@ public class Query {
     this.organizationConnection = organizationConnection;
   }
 
-  public UserUserProfileRelation getUserUserProfileRelation() {
-    return this.userUserProfileRelation;
-  }
-
-  public void setUserUserProfileRelation(UserUserProfileRelation userUserProfileRelation) {
-    this.userUserProfileRelation = userUserProfileRelation;
-  }
-
-  public Collection<UserUserProfileRelation> getUserUserProfileRelationList() {
-    return this.userUserProfileRelationList;
-  }
-
-  public void setUserUserProfileRelationList(
-      Collection<UserUserProfileRelation> userUserProfileRelationList) {
-    this.userUserProfileRelationList = userUserProfileRelationList;
-  }
-
-  public UserUserProfileRelationConnection getUserUserProfileRelationConnection() {
-    return this.userUserProfileRelationConnection;
-  }
-
-  public void setUserUserProfileRelationConnection(
-      UserUserProfileRelationConnection userUserProfileRelationConnection) {
-    this.userUserProfileRelationConnection = userUserProfileRelationConnection;
-  }
-
-  public OrganizationUserRelation getOrganizationUserRelation() {
-    return this.organizationUserRelation;
-  }
-
-  public void setOrganizationUserRelation(OrganizationUserRelation organizationUserRelation) {
-    this.organizationUserRelation = organizationUserRelation;
-  }
-
-  public Collection<OrganizationUserRelation> getOrganizationUserRelationList() {
-    return this.organizationUserRelationList;
-  }
-
-  public void setOrganizationUserRelationList(
-      Collection<OrganizationUserRelation> organizationUserRelationList) {
-    this.organizationUserRelationList = organizationUserRelationList;
-  }
-
-  public OrganizationUserRelationConnection getOrganizationUserRelationConnection() {
-    return this.organizationUserRelationConnection;
-  }
-
-  public void setOrganizationUserRelationConnection(
-      OrganizationUserRelationConnection organizationUserRelationConnection) {
-    this.organizationUserRelationConnection = organizationUserRelationConnection;
-  }
-
   public RoleUserRelation getRoleUserRelation() {
     return this.roleUserRelation;
   }
@@ -273,6 +215,32 @@ public class Query {
   public void setUserMobileNumbersRelationConnection(
       UserMobileNumbersRelationConnection userMobileNumbersRelationConnection) {
     this.userMobileNumbersRelationConnection = userMobileNumbersRelationConnection;
+  }
+
+  public UserUserProfileRelation getUserUserProfileRelation() {
+    return this.userUserProfileRelation;
+  }
+
+  public void setUserUserProfileRelation(UserUserProfileRelation userUserProfileRelation) {
+    this.userUserProfileRelation = userUserProfileRelation;
+  }
+
+  public Collection<UserUserProfileRelation> getUserUserProfileRelationList() {
+    return this.userUserProfileRelationList;
+  }
+
+  public void setUserUserProfileRelationList(
+      Collection<UserUserProfileRelation> userUserProfileRelationList) {
+    this.userUserProfileRelationList = userUserProfileRelationList;
+  }
+
+  public UserUserProfileRelationConnection getUserUserProfileRelationConnection() {
+    return this.userUserProfileRelationConnection;
+  }
+
+  public void setUserUserProfileRelationConnection(
+      UserUserProfileRelationConnection userUserProfileRelationConnection) {
+    this.userUserProfileRelationConnection = userUserProfileRelationConnection;
   }
 
   public RoleRoleTypeRelation getRoleRoleTypeRelation() {

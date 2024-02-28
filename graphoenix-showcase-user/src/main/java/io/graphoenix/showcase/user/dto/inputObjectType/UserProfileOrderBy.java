@@ -11,6 +11,8 @@ import org.eclipse.microprofile.graphql.Input;
 public class UserProfileOrderBy {
   private Sort id;
 
+  private Sort userId;
+
   private Sort email;
 
   private Sort address;
@@ -39,6 +41,14 @@ public class UserProfileOrderBy {
 
   public void setId(Sort id) {
     this.id = id;
+  }
+
+  public Sort getUserId() {
+    return this.userId;
+  }
+
+  public void setUserId(Sort userId) {
+    this.userId = userId;
   }
 
   public Sort getEmail() {

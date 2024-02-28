@@ -15,6 +15,8 @@ import java.lang.annotation.Target;
 public @interface UserProfileListMutationArguments {
   String id() default "";
 
+  int userId() default 0;
+
   UserInput1 user() default @UserInput1;
 
   String email() default "";
@@ -46,6 +48,8 @@ public @interface UserProfileListMutationArguments {
   UserProfileExpression1 where() default @UserProfileExpression1;
 
   String $id() default "";
+
+  String $userId() default "";
 
   String $user() default "";
 

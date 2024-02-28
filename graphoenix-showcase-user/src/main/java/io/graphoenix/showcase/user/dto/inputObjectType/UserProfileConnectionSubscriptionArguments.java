@@ -20,6 +20,8 @@ import org.eclipse.microprofile.graphql.Input;
 public class UserProfileConnectionSubscriptionArguments implements MetaExpression {
   private StringExpression id;
 
+  private IntExpression userId;
+
   private UserExpression user;
 
   private StringExpression email;
@@ -75,6 +77,14 @@ public class UserProfileConnectionSubscriptionArguments implements MetaExpressio
 
   public void setId(StringExpression id) {
     this.id = id;
+  }
+
+  public IntExpression getUserId() {
+    return this.userId;
+  }
+
+  public void setUserId(IntExpression userId) {
+    this.userId = userId;
   }
 
   public UserExpression getUser() {

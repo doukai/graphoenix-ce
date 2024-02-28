@@ -45,9 +45,6 @@ public @interface OrganizationExpression {
   OrganizationOrganizationRelationExpression1 organizationOrganizationRelation(
       ) default @OrganizationOrganizationRelationExpression1;
 
-  OrganizationUserRelationExpression1 organizationUserRelation(
-      ) default @OrganizationUserRelationExpression1;
-
   boolean not() default false;
 
   Conditional cond() default Conditional.AND;
@@ -81,8 +78,6 @@ public @interface OrganizationExpression {
   String $__typename() default "";
 
   String $organizationOrganizationRelation() default "";
-
-  String $organizationUserRelation() default "";
 
   String $not() default "";
 

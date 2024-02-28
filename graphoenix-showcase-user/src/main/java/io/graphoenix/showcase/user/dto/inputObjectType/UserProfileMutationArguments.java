@@ -18,6 +18,8 @@ import org.eclipse.microprofile.graphql.Input;
 public class UserProfileMutationArguments implements MetaInput {
   private String id;
 
+  private Integer userId;
+
   private UserInput user;
 
   private String email;
@@ -53,6 +55,14 @@ public class UserProfileMutationArguments implements MetaInput {
 
   public void setId(String id) {
     this.id = id;
+  }
+
+  public Integer getUserId() {
+    return this.userId;
+  }
+
+  public void setUserId(Integer userId) {
+    this.userId = userId;
   }
 
   public UserInput getUser() {

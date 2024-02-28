@@ -18,13 +18,13 @@ import org.eclipse.microprofile.graphql.Input;
 public class UserUserProfileRelationListMutationArguments implements MetaInput {
   private String id;
 
-  private String userRef;
-
-  private UserInput user;
-
   private String userProfileRef;
 
   private UserProfileInput userProfile;
+
+  private String userRef;
+
+  private UserInput user;
 
   private Boolean isDeprecated;
 
@@ -57,22 +57,6 @@ public class UserUserProfileRelationListMutationArguments implements MetaInput {
     this.id = id;
   }
 
-  public String getUserRef() {
-    return this.userRef;
-  }
-
-  public void setUserRef(String userRef) {
-    this.userRef = userRef;
-  }
-
-  public UserInput getUser() {
-    return this.user;
-  }
-
-  public void setUser(UserInput user) {
-    this.user = user;
-  }
-
   public String getUserProfileRef() {
     return this.userProfileRef;
   }
@@ -87,6 +71,22 @@ public class UserUserProfileRelationListMutationArguments implements MetaInput {
 
   public void setUserProfile(UserProfileInput userProfile) {
     this.userProfile = userProfile;
+  }
+
+  public String getUserRef() {
+    return this.userRef;
+  }
+
+  public void setUserRef(String userRef) {
+    this.userRef = userRef;
+  }
+
+  public UserInput getUser() {
+    return this.user;
+  }
+
+  public void setUser(UserInput user) {
+    this.user = user;
   }
 
   public Boolean getIsDeprecated() {

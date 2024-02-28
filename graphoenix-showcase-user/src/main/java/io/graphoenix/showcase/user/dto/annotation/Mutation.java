@@ -28,18 +28,6 @@ public @interface Mutation {
 
   OrganizationListMutationArguments organizationList() default @OrganizationListMutationArguments;
 
-  UserUserProfileRelationMutationArguments userUserProfileRelation(
-      ) default @UserUserProfileRelationMutationArguments;
-
-  UserUserProfileRelationListMutationArguments userUserProfileRelationList(
-      ) default @UserUserProfileRelationListMutationArguments;
-
-  OrganizationUserRelationMutationArguments organizationUserRelation(
-      ) default @OrganizationUserRelationMutationArguments;
-
-  OrganizationUserRelationListMutationArguments organizationUserRelationList(
-      ) default @OrganizationUserRelationListMutationArguments;
-
   RoleUserRelationMutationArguments roleUserRelation() default @RoleUserRelationMutationArguments;
 
   RoleUserRelationListMutationArguments roleUserRelationList(
@@ -50,6 +38,12 @@ public @interface Mutation {
 
   UserMobileNumbersRelationListMutationArguments userMobileNumbersRelationList(
       ) default @UserMobileNumbersRelationListMutationArguments;
+
+  UserUserProfileRelationMutationArguments userUserProfileRelation(
+      ) default @UserUserProfileRelationMutationArguments;
+
+  UserUserProfileRelationListMutationArguments userUserProfileRelationList(
+      ) default @UserUserProfileRelationListMutationArguments;
 
   RoleRoleTypeRelationMutationArguments roleRoleTypeRelation(
       ) default @RoleRoleTypeRelationMutationArguments;

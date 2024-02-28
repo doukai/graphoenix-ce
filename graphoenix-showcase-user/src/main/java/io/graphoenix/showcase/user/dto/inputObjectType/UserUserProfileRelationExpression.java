@@ -18,13 +18,13 @@ import org.eclipse.microprofile.graphql.Input;
 public class UserUserProfileRelationExpression implements MetaExpression {
   private StringExpression id;
 
-  private StringExpression userRef;
-
-  private UserExpression user;
-
   private StringExpression userProfileRef;
 
   private UserProfileExpression userProfile;
+
+  private StringExpression userRef;
+
+  private UserExpression user;
 
   @DefaultValue("false")
   private Boolean includeDeprecated;
@@ -61,22 +61,6 @@ public class UserUserProfileRelationExpression implements MetaExpression {
     this.id = id;
   }
 
-  public StringExpression getUserRef() {
-    return this.userRef;
-  }
-
-  public void setUserRef(StringExpression userRef) {
-    this.userRef = userRef;
-  }
-
-  public UserExpression getUser() {
-    return this.user;
-  }
-
-  public void setUser(UserExpression user) {
-    this.user = user;
-  }
-
   public StringExpression getUserProfileRef() {
     return this.userProfileRef;
   }
@@ -91,6 +75,22 @@ public class UserUserProfileRelationExpression implements MetaExpression {
 
   public void setUserProfile(UserProfileExpression userProfile) {
     this.userProfile = userProfile;
+  }
+
+  public StringExpression getUserRef() {
+    return this.userRef;
+  }
+
+  public void setUserRef(StringExpression userRef) {
+    this.userRef = userRef;
+  }
+
+  public UserExpression getUser() {
+    return this.user;
+  }
+
+  public void setUser(UserExpression user) {
+    this.user = user;
   }
 
   public Boolean getIncludeDeprecated() {

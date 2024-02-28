@@ -155,7 +155,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
 
     public Stream<FetchItem> buildFetchItems(ObjectType objectType, String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        if (documentManager.isOperationType(objectType) && !packageManager.isLocalPackage(fieldDefinition)) {
+        if (documentManager.isQueryOperationType(objectType) && !packageManager.isLocalPackage(fieldDefinition)) {
             String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
             String packageName = fieldDefinition.getPackageNameOrError();
             return Stream.of(new FetchItem(packageName, protocol, path, field.setAlias(getAliasFromPath(path)), null));
@@ -220,12 +220,19 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
                         .setName(typeNameToFieldName(fetchWithType.getName()) + (fieldDefinition.getType().hasList() ? SUFFIX_LIST : ""));
 
                 String target = fieldDefinition.getFetchTo()
-                        .flatMap(fetchTo ->
+                        .map(fetchTo ->
                                 fetchWithType.getFields().stream()
-                                        .filter(withTypeFieldDefinition -> withTypeFieldDefinition.getFetchFrom().isPresent())
-                                        .filter(withTypeFieldDefinition -> withTypeFieldDefinition.getFetchFromOrError().equals(fetchWithTo))
+                                        .filter(withTypeFieldDefinition ->
+                                                Stream
+                                                        .concat(
+                                                                withTypeFieldDefinition.getMapFrom().stream(),
+                                                                withTypeFieldDefinition.getFetchFrom().stream()
+                                                        )
+                                                        .anyMatch(name -> name.equals(fetchWithTo))
+                                        )
                                         .findFirst()
                                         .map(AbstractDefinition::getName)
+                                        .orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST.bind(fetchWithTo)))
                         )
                         .orElse(fetchWithTo);
 

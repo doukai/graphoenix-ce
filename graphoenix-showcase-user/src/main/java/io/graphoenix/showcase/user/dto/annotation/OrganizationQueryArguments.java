@@ -45,9 +45,6 @@ public @interface OrganizationQueryArguments {
   OrganizationOrganizationRelationExpression1 organizationOrganizationRelation(
       ) default @OrganizationOrganizationRelationExpression1;
 
-  OrganizationUserRelationExpression1 organizationUserRelation(
-      ) default @OrganizationUserRelationExpression1;
-
   String[] groupBy() default {};
 
   boolean not() default false;
@@ -83,8 +80,6 @@ public @interface OrganizationQueryArguments {
   String $__typename() default "";
 
   String $organizationOrganizationRelation() default "";
-
-  String $organizationUserRelation() default "";
 
   String $groupBy() default "";
 

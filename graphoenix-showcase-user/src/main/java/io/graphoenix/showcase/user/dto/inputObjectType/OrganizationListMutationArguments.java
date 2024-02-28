@@ -45,8 +45,6 @@ public class OrganizationListMutationArguments implements MetaInput {
 
   private Collection<OrganizationOrganizationRelationInput> organizationOrganizationRelation;
 
-  private Collection<OrganizationUserRelationInput> organizationUserRelation;
-
   private Collection<OrganizationInput> list;
 
   private OrganizationExpression where;
@@ -176,15 +174,6 @@ public class OrganizationListMutationArguments implements MetaInput {
   public void setOrganizationOrganizationRelation(
       Collection<OrganizationOrganizationRelationInput> organizationOrganizationRelation) {
     this.organizationOrganizationRelation = organizationOrganizationRelation;
-  }
-
-  public Collection<OrganizationUserRelationInput> getOrganizationUserRelation() {
-    return this.organizationUserRelation;
-  }
-
-  public void setOrganizationUserRelation(
-      Collection<OrganizationUserRelationInput> organizationUserRelation) {
-    this.organizationUserRelation = organizationUserRelation;
   }
 
   public Collection<OrganizationInput> getList() {

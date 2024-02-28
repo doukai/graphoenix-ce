@@ -54,9 +54,7 @@ public @interface UserListMutationArguments {
 
   String __typename() default "User";
 
-  UserUserProfileRelationInput1[] userUserProfileRelation() default {};
-
-  OrganizationUserRelationInput1[] organizationUserRelation() default {};
+  String organizationId() default "";
 
   RoleUserRelationInput1[] roleUserRelation() default {};
 
@@ -106,9 +104,7 @@ public @interface UserListMutationArguments {
 
   String $__typename() default "";
 
-  String $userUserProfileRelation() default "";
-
-  String $organizationUserRelation() default "";
+  String $organizationId() default "";
 
   String $roleUserRelation() default "";
 

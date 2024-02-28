@@ -47,19 +47,9 @@ public class Organization implements Meta {
 
   private Collection<OrganizationOrganizationRelation> organizationOrganizationRelation;
 
-  private Collection<OrganizationUserRelation> organizationUserRelation;
-
-  private User usersAggregate;
-
-  private UserConnection usersConnection;
-
   private OrganizationOrganizationRelation organizationOrganizationRelationAggregate;
 
   private OrganizationOrganizationRelationConnection organizationOrganizationRelationConnection;
-
-  private OrganizationUserRelation organizationUserRelationAggregate;
-
-  private OrganizationUserRelationConnection organizationUserRelationConnection;
 
   private Integer idCount;
 
@@ -202,31 +192,6 @@ public class Organization implements Meta {
     this.organizationOrganizationRelation = organizationOrganizationRelation;
   }
 
-  public Collection<OrganizationUserRelation> getOrganizationUserRelation() {
-    return this.organizationUserRelation;
-  }
-
-  public void setOrganizationUserRelation(
-      Collection<OrganizationUserRelation> organizationUserRelation) {
-    this.organizationUserRelation = organizationUserRelation;
-  }
-
-  public User getUsersAggregate() {
-    return this.usersAggregate;
-  }
-
-  public void setUsersAggregate(User usersAggregate) {
-    this.usersAggregate = usersAggregate;
-  }
-
-  public UserConnection getUsersConnection() {
-    return this.usersConnection;
-  }
-
-  public void setUsersConnection(UserConnection usersConnection) {
-    this.usersConnection = usersConnection;
-  }
-
   public OrganizationOrganizationRelation getOrganizationOrganizationRelationAggregate() {
     return this.organizationOrganizationRelationAggregate;
   }
@@ -244,24 +209,6 @@ public class Organization implements Meta {
   public void setOrganizationOrganizationRelationConnection(
       OrganizationOrganizationRelationConnection organizationOrganizationRelationConnection) {
     this.organizationOrganizationRelationConnection = organizationOrganizationRelationConnection;
-  }
-
-  public OrganizationUserRelation getOrganizationUserRelationAggregate() {
-    return this.organizationUserRelationAggregate;
-  }
-
-  public void setOrganizationUserRelationAggregate(
-      OrganizationUserRelation organizationUserRelationAggregate) {
-    this.organizationUserRelationAggregate = organizationUserRelationAggregate;
-  }
-
-  public OrganizationUserRelationConnection getOrganizationUserRelationConnection() {
-    return this.organizationUserRelationConnection;
-  }
-
-  public void setOrganizationUserRelationConnection(
-      OrganizationUserRelationConnection organizationUserRelationConnection) {
-    this.organizationUserRelationConnection = organizationUserRelationConnection;
   }
 
   public Integer getIdCount() {

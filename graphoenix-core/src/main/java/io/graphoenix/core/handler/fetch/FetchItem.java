@@ -7,6 +7,7 @@ import jakarta.json.stream.JsonCollectors;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -40,30 +41,37 @@ public class FetchItem {
     private Integer index;
 
     public static List<Field> buildMutationFields(Collection<FetchItem> fetchItems) {
-        return fetchItems.stream()
-                .collect(
-                        Collectors.groupingBy(
-                                FetchItem::getTypeName,
-                                Collectors.toList()
-                        )
-                )
-                .entrySet().stream()
-                .map(entry ->
-                        new Field(typeNameToFieldName(entry.getKey()) + SUFFIX_LIST)
-                                .setArguments(
-                                        Map.of(
-                                                INPUT_VALUE_LIST_NAME,
-                                                entry.getValue().stream()
-                                                        .filter(distinctByKey(FetchItem::getId))
-                                                        .map(FetchItem::getJsonValue)
-                                                        .collect(JsonCollectors.toJsonArray())
+        return Stream
+                .concat(
+                        fetchItems.stream()
+                                .map(FetchItem::getFetchField)
+                                .filter(Objects::nonNull),
+                        fetchItems.stream()
+                                .filter(fetchItem -> fetchItem.getFetchField() == null)
+                                .collect(
+                                        Collectors.groupingBy(
+                                                FetchItem::getTypeName,
+                                                Collectors.toList()
                                         )
                                 )
-                                .mergeSelection(
-                                        entry.getValue().stream()
-                                                .filter(fetchItem -> fetchItem.getTarget() != null)
-                                                .map(fetchItem -> new Field(fetchItem.getTarget()))
-                                                .collect(Collectors.toList())
+                                .entrySet().stream()
+                                .map(entry ->
+                                        new Field(typeNameToFieldName(entry.getKey()) + SUFFIX_LIST)
+                                                .setArguments(
+                                                        Map.of(
+                                                                INPUT_VALUE_LIST_NAME,
+                                                                entry.getValue().stream()
+                                                                        .filter(distinctByKey(FetchItem::getId))
+                                                                        .map(FetchItem::getJsonValue)
+                                                                        .collect(JsonCollectors.toJsonArray())
+                                                        )
+                                                )
+                                                .mergeSelection(
+                                                        entry.getValue().stream()
+                                                                .filter(fetchItem -> fetchItem.getTarget() != null)
+                                                                .map(fetchItem -> new Field(fetchItem.getTarget()))
+                                                                .collect(Collectors.toList())
+                                                )
                                 )
                 )
                 .collect(Collectors.toList());
