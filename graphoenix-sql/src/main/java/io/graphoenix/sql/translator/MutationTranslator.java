@@ -228,7 +228,7 @@ public class MutationTranslator {
                                                                        int level,
                                                                        int index) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        Table table = typeToTable(fieldTypeDefinition.asObject());
+        Table table = typeToTable(fieldTypeDefinition.asObject(), level);
 
         List<FieldDefinition> leafFieldDefinitionList = fieldTypeDefinition.asObject().getFields().stream()
                 .filter(subField -> !subField.isInvokeField())
@@ -252,7 +252,7 @@ public class MutationTranslator {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         Statement leafFieldMutationStatement = whereInputValueEntry
-                .flatMap(entry -> argumentsTranslator.inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), entry.getValue(), level - 1))
+                .flatMap(entry -> argumentsTranslator.inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), entry.getValue(), level))
                 .map(whereExpression ->
                         (Statement) updateExpression(
                                 table,
@@ -1014,5 +1014,9 @@ public class MutationTranslator {
 
     protected Table typeToTable(ObjectType objectType) {
         return graphqlTypeToTable(objectType.getName());
+    }
+
+    protected Table typeToTable(ObjectType objectType, int level) {
+        return graphqlTypeToTable(objectType.getName(), level);
     }
 }

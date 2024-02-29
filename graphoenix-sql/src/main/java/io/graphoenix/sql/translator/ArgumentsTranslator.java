@@ -70,7 +70,12 @@ public class ArgumentsTranslator {
                                     .flatMap(entry ->
                                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(entry.getKey().getName()))
                                                     .filter(subField -> !subField.isFetchField())
-                                                    .flatMap(subField -> inputValueToWhereExpression(fieldTypeDefinition.asObject(), subField, entry.getKey(), entry.getValue(), level + 1).stream())
+                                                    .flatMap(subField ->
+                                                            documentManager.getFieldTypeDefinition(subField).isObject() ?
+                                                                    inputValueToWhereExpression(fieldTypeDefinition.asObject(), subField, entry.getKey(), entry.getValue(), level + 1).stream()
+                                                                            .map(expression -> existsExpression(selectFromFieldType(fieldTypeDefinition.asObject(), subField, expression, level + 1))) :
+                                                                    inputValueToWhereExpression(fieldTypeDefinition.asObject(), subField, entry.getKey(), entry.getValue(), level).stream()
+                                                    )
                                     ),
                             inputValueValueWithVariableMap.entrySet().stream()
                                     .filter(entry -> entry.getKey().getName().equals(INPUT_VALUE_EXS_NAME))
@@ -78,7 +83,7 @@ public class ArgumentsTranslator {
                                             Stream.of(entry.getValue())
                                                     .filter(ValueWithVariable::isArray)
                                                     .flatMap(valueWithVariable -> valueWithVariable.asArray().getValueWithVariables().stream())
-                                                    .flatMap(valueWithVariable -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), valueWithVariable, level + 1).stream())
+                                                    .flatMap(valueWithVariable -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), valueWithVariable, level).stream())
                                     ),
                             inputValueValueWithVariableMap.entrySet().stream()
                                     .anyMatch(entry ->
@@ -122,7 +127,7 @@ public class ArgumentsTranslator {
                             Optional.of(field.getArguments())
                                     .flatMap(arguments -> {
                                                 if (fieldDefinition.getType().hasList()) {
-                                                    Column column = graphqlFieldToColumn(fieldDefinition.getMapWithTypeOrError(), fieldDefinition.getMapWithToOrError(), level + 1);
+                                                    Column column = graphqlFieldToColumn(fieldDefinition.getMapWithTypeOrError(), fieldDefinition.getMapWithToOrError(), level);
                                                     return arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
                                                             .flatMap(val ->
                                                                     valToExpression(column, opr, val, skipNull(arguments))
@@ -171,8 +176,12 @@ public class ArgumentsTranslator {
                                     .flatMap(entry ->
                                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(entry.getKey().getName()))
                                                     .filter(subField -> !subField.isFetchField())
-                                                    .flatMap(subField -> inputValueToWhereExpression(fieldTypeDefinition.asObject(), subField, entry.getKey(), entry.getValue(), level + 1).stream())
-
+                                                    .flatMap(subField ->
+                                                            documentManager.getFieldTypeDefinition(subField).isObject() ?
+                                                                    inputValueToWhereExpression(fieldTypeDefinition.asObject(), subField, entry.getKey(), entry.getValue(), level + 1).stream()
+                                                                            .map(expression -> existsExpression(selectFromFieldType(fieldTypeDefinition.asObject(), subField, expression, level + 1))) :
+                                                                    inputValueToWhereExpression(fieldTypeDefinition.asObject(), subField, entry.getKey(), entry.getValue(), level).stream()
+                                                    )
                                     ),
                             inputValueValueWithVariableMap.entrySet().stream()
                                     .filter(entry -> entry.getKey().getName().equals(INPUT_VALUE_EXS_NAME))
@@ -180,7 +189,7 @@ public class ArgumentsTranslator {
                                             Stream.of(entry.getValue())
                                                     .filter(ValueWithVariable::isArray)
                                                     .flatMap(field -> field.asArray().getValueWithVariables().stream())
-                                                    .flatMap(field -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), field, level + 1).stream())
+                                                    .flatMap(field -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), field, level).stream())
                                     ),
                             inputValueValueWithVariableMap.entrySet().stream()
                                     .anyMatch(entry ->
@@ -196,8 +205,7 @@ public class ArgumentsTranslator {
                     )
                     .collect(Collectors.toList());
 
-            return expressionListToMultipleExpression(expressionList, isOr(valueWithVariable), isNot(valueWithVariable))
-                    .map(expression -> existsExpression(selectFromFieldType(objectType, fieldDefinition, expression, level + 1)));
+            return expressionListToMultipleExpression(expressionList, isOr(valueWithVariable), isNot(valueWithVariable));
         } else {
             InputObjectType inputObject = documentManager.getInputValueTypeDefinition(inputValue).asInputObject();
             return inputObject.getInputValue(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME)
@@ -230,7 +238,7 @@ public class ArgumentsTranslator {
                                     .map(ValueWithVariable::asObject)
                                     .flatMap(objectValueWithVariable -> {
                                                 if (fieldDefinition.getType().hasList()) {
-                                                    Column column = graphqlFieldToColumn(fieldDefinition.getMapWithTypeOrError(), fieldDefinition.getMapWithToOrError(), level + 1);
+                                                    Column column = graphqlFieldToColumn(fieldDefinition.getMapWithTypeOrError(), fieldDefinition.getMapWithToOrError(), level);
                                                     return objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
                                                             .flatMap(val ->
                                                                     valToExpression(column, opr, val, skipNull(objectValueWithVariable))
@@ -239,7 +247,7 @@ public class ArgumentsTranslator {
                                                                     objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
                                                                             .flatMap(arr -> arrToExpression(column, opr, inputObject.getInputValueOrNull(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(objectValueWithVariable)))
                                                             )
-                                                            .map(expression -> existsExpression(selectFromFieldType(objectType, fieldDefinition, expression, level + 1)));
+                                                            .map(expression -> existsExpression(selectFromFieldType(objectType, fieldDefinition, expression, level)));
                                                 } else {
                                                     Column column = graphqlFieldToColumn(objectType.getName(), fieldDefinition.getName(), level);
                                                     return objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
@@ -277,59 +285,67 @@ public class ArgumentsTranslator {
     }
 
     protected PlainSelect selectFromFieldType(ObjectType objectType, FieldDefinition fieldDefinition, Expression expression, int level) {
-        Table parentTable = typeToTable(objectType, level - 1);
-        ObjectType fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition).asObject();
-        Table table = typeToTable(fieldTypeDefinition, level);
+        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+        if (fieldTypeDefinition.isObject()) {
+            Table parentTable = typeToTable(objectType, level - 1);
+            Table table = typeToTable(fieldTypeDefinition.asObject(), level);
 
-        PlainSelect plainSelect = new PlainSelect()
-                .addSelectItems(new AllColumns())
-                .withFromItem(table);
+            PlainSelect plainSelect = new PlainSelect()
+                    .addSelectItems(new AllColumns())
+                    .withFromItem(table);
 
-        if (documentManager.isOperationType(objectType)) {
-            return plainSelect.withWhere(expression);
-        }
+            if (documentManager.isOperationType(objectType)) {
+                return plainSelect.withWhere(expression);
+            }
 
-        if (fieldDefinition.hasMapWith()) {
-            Table withTable = graphqlTypeToTable(fieldDefinition.getMapWithTypeOrError(), level);
-            return plainSelect
-                    .addJoins(
-                            new Join()
-                                    .withLeft(true)
-                                    .setFromItem(withTable)
-                                    .addOnExpression(
-                                            new MultiAndExpression(
-                                                    Arrays.asList(
-                                                            new EqualsTo()
-                                                                    .withLeftExpression(graphqlFieldToColumn(withTable, fieldDefinition.getMapWithToOrError()))
-                                                                    .withRightExpression(graphqlFieldToColumn(table, fieldDefinition.getMapToOrError())),
-                                                            new IsNullExpression()
-                                                                    .withLeftExpression(graphqlFieldToColumn(withTable, FIELD_DEPRECATED_NAME))
-                                                    )
-                                            )
-                                    )
-                    )
-                    .withWhere(
-                            new MultiAndExpression(
-                                    Arrays.asList(
-                                            new EqualsTo()
-                                                    .withLeftExpression(graphqlFieldToColumn(withTable, fieldDefinition.getMapWithFromOrError()))
-                                                    .withRightExpression(graphqlFieldToColumn(parentTable, fieldDefinition.getMapFromOrError())),
-                                            expression
-                                    )
-                            )
-                    );
+            if (fieldDefinition.hasMapWith()) {
+                Table withTable = graphqlTypeToTable(fieldDefinition.getMapWithTypeOrError(), level);
+                return plainSelect
+                        .addJoins(
+                                new Join()
+                                        .withLeft(true)
+                                        .setFromItem(withTable)
+                                        .addOnExpression(
+                                                new MultiAndExpression(
+                                                        Arrays.asList(
+                                                                new EqualsTo()
+                                                                        .withLeftExpression(graphqlFieldToColumn(withTable, fieldDefinition.getMapWithToOrError()))
+                                                                        .withRightExpression(graphqlFieldToColumn(table, fieldDefinition.getMapToOrError())),
+                                                                new IsNullExpression()
+                                                                        .withLeftExpression(graphqlFieldToColumn(withTable, FIELD_DEPRECATED_NAME))
+                                                        )
+                                                )
+                                        )
+                        )
+                        .withWhere(
+                                new MultiAndExpression(
+                                        Arrays.asList(
+                                                new EqualsTo()
+                                                        .withLeftExpression(graphqlFieldToColumn(withTable, fieldDefinition.getMapWithFromOrError()))
+                                                        .withRightExpression(graphqlFieldToColumn(parentTable, fieldDefinition.getMapFromOrError())),
+                                                expression
+                                        )
+                                )
+                        );
+            } else {
+                return plainSelect
+                        .withWhere(
+                                new MultiAndExpression(
+                                        Arrays.asList(
+                                                new EqualsTo()
+                                                        .withLeftExpression(graphqlFieldToColumn(table, fieldDefinition.getMapToOrError()))
+                                                        .withRightExpression(graphqlFieldToColumn(parentTable, fieldDefinition.getMapFromOrError())),
+                                                expression
+                                        )
+                                )
+                        );
+            }
         } else {
-            return plainSelect
-                    .withWhere(
-                            new MultiAndExpression(
-                                    Arrays.asList(
-                                            new EqualsTo()
-                                                    .withLeftExpression(graphqlFieldToColumn(table, fieldDefinition.getMapToOrError()))
-                                                    .withRightExpression(graphqlFieldToColumn(parentTable, fieldDefinition.getMapFromOrError())),
-                                            expression
-                                    )
-                            )
-                    );
+            Table table = graphqlTypeToTable(fieldDefinition.getMapWithTypeOrError(), level);
+            return new PlainSelect()
+                    .addSelectItems(new AllColumns())
+                    .withFromItem(table)
+                    .withWhere(expression);
         }
     }
 
@@ -633,6 +649,14 @@ public class ArgumentsTranslator {
                 .filter(ValueWithVariable::isObject)
                 .map(ValueWithVariable::asObject)
                 .flatMap(objectValueWithVariable -> objectValueWithVariable.getValueWithVariable(INPUT_VALUE_NOT_NAME))
+                .filter(ValueWithVariable::isBoolean)
+                .map(field -> field.asBoolean().getValue())
+                .orElse(false);
+    }
+
+    protected boolean skipNull(Arguments arguments) {
+        return Optional.ofNullable(arguments)
+                .flatMap(result -> result.getArgument(INPUT_OPERATOR_INPUT_VALUE_SKIP_NULL_NAME))
                 .filter(ValueWithVariable::isBoolean)
                 .map(field -> field.asBoolean().getValue())
                 .orElse(false);
