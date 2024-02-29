@@ -58,7 +58,7 @@ public class UserExpression implements MetaExpression {
 
   private StringExpression __typename;
 
-  private StringExpression organizationId;
+  private OrganizationUserRelationExpression organizationUserRelation;
 
   private RoleUserRelationExpression roleUserRelation;
 
@@ -244,12 +244,13 @@ public class UserExpression implements MetaExpression {
     this.__typename = __typename;
   }
 
-  public StringExpression getOrganizationId() {
-    return this.organizationId;
+  public OrganizationUserRelationExpression getOrganizationUserRelation() {
+    return this.organizationUserRelation;
   }
 
-  public void setOrganizationId(StringExpression organizationId) {
-    this.organizationId = organizationId;
+  public void setOrganizationUserRelation(
+      OrganizationUserRelationExpression organizationUserRelation) {
+    this.organizationUserRelation = organizationUserRelation;
   }
 
   public RoleUserRelationExpression getRoleUserRelation() {

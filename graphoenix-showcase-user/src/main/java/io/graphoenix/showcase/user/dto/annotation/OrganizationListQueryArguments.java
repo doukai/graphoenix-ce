@@ -18,6 +18,8 @@ import java.lang.annotation.Target;
 public @interface OrganizationListQueryArguments {
   StringExpression1 id() default @StringExpression1;
 
+  IntExpression1 parentId() default @IntExpression1;
+
   StringExpression1 name() default @StringExpression1;
 
   OrganizationExpression1 above() default @OrganizationExpression1;
@@ -42,8 +44,8 @@ public @interface OrganizationListQueryArguments {
 
   StringExpression1 __typename() default @StringExpression1;
 
-  OrganizationOrganizationRelationExpression1 organizationOrganizationRelation(
-      ) default @OrganizationOrganizationRelationExpression1;
+  OrganizationUserRelationExpression1 organizationUserRelation(
+      ) default @OrganizationUserRelationExpression1;
 
   OrganizationOrderBy1 orderBy() default @OrganizationOrderBy1;
 
@@ -66,6 +68,8 @@ public @interface OrganizationListQueryArguments {
   String before() default "";
 
   String $id() default "";
+
+  String $parentId() default "";
 
   String $name() default "";
 
@@ -91,7 +95,7 @@ public @interface OrganizationListQueryArguments {
 
   String $__typename() default "";
 
-  String $organizationOrganizationRelation() default "";
+  String $organizationUserRelation() default "";
 
   String $orderBy() default "";
 

@@ -38,6 +38,15 @@ public @interface Query {
   OrganizationConnectionQueryArguments organizationConnection(
       ) default @OrganizationConnectionQueryArguments;
 
+  OrganizationUserRelationQueryArguments organizationUserRelation(
+      ) default @OrganizationUserRelationQueryArguments;
+
+  OrganizationUserRelationListQueryArguments organizationUserRelationList(
+      ) default @OrganizationUserRelationListQueryArguments;
+
+  OrganizationUserRelationConnectionQueryArguments organizationUserRelationConnection(
+      ) default @OrganizationUserRelationConnectionQueryArguments;
+
   RoleUserRelationQueryArguments roleUserRelation() default @RoleUserRelationQueryArguments;
 
   RoleUserRelationListQueryArguments roleUserRelationList(
@@ -72,13 +81,4 @@ public @interface Query {
 
   RoleRoleTypeRelationConnectionQueryArguments roleRoleTypeRelationConnection(
       ) default @RoleRoleTypeRelationConnectionQueryArguments;
-
-  OrganizationOrganizationRelationQueryArguments organizationOrganizationRelation(
-      ) default @OrganizationOrganizationRelationQueryArguments;
-
-  OrganizationOrganizationRelationListQueryArguments organizationOrganizationRelationList(
-      ) default @OrganizationOrganizationRelationListQueryArguments;
-
-  OrganizationOrganizationRelationConnectionQueryArguments organizationOrganizationRelationConnection(
-      ) default @OrganizationOrganizationRelationConnectionQueryArguments;
 }

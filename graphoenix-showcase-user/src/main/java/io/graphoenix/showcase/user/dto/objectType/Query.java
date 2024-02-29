@@ -35,6 +35,12 @@ public class Query {
 
   private OrganizationConnection organizationConnection;
 
+  private OrganizationUserRelation organizationUserRelation;
+
+  private Collection<OrganizationUserRelation> organizationUserRelationList;
+
+  private OrganizationUserRelationConnection organizationUserRelationConnection;
+
   private RoleUserRelation roleUserRelation;
 
   private Collection<RoleUserRelation> roleUserRelationList;
@@ -58,12 +64,6 @@ public class Query {
   private Collection<RoleRoleTypeRelation> roleRoleTypeRelationList;
 
   private RoleRoleTypeRelationConnection roleRoleTypeRelationConnection;
-
-  private OrganizationOrganizationRelation organizationOrganizationRelation;
-
-  private Collection<OrganizationOrganizationRelation> organizationOrganizationRelationList;
-
-  private OrganizationOrganizationRelationConnection organizationOrganizationRelationConnection;
 
   private LocalDateTime currentTime;
 
@@ -167,6 +167,32 @@ public class Query {
     this.organizationConnection = organizationConnection;
   }
 
+  public OrganizationUserRelation getOrganizationUserRelation() {
+    return this.organizationUserRelation;
+  }
+
+  public void setOrganizationUserRelation(OrganizationUserRelation organizationUserRelation) {
+    this.organizationUserRelation = organizationUserRelation;
+  }
+
+  public Collection<OrganizationUserRelation> getOrganizationUserRelationList() {
+    return this.organizationUserRelationList;
+  }
+
+  public void setOrganizationUserRelationList(
+      Collection<OrganizationUserRelation> organizationUserRelationList) {
+    this.organizationUserRelationList = organizationUserRelationList;
+  }
+
+  public OrganizationUserRelationConnection getOrganizationUserRelationConnection() {
+    return this.organizationUserRelationConnection;
+  }
+
+  public void setOrganizationUserRelationConnection(
+      OrganizationUserRelationConnection organizationUserRelationConnection) {
+    this.organizationUserRelationConnection = organizationUserRelationConnection;
+  }
+
   public RoleUserRelation getRoleUserRelation() {
     return this.roleUserRelation;
   }
@@ -267,34 +293,6 @@ public class Query {
   public void setRoleRoleTypeRelationConnection(
       RoleRoleTypeRelationConnection roleRoleTypeRelationConnection) {
     this.roleRoleTypeRelationConnection = roleRoleTypeRelationConnection;
-  }
-
-  public OrganizationOrganizationRelation getOrganizationOrganizationRelation() {
-    return this.organizationOrganizationRelation;
-  }
-
-  public void setOrganizationOrganizationRelation(
-      OrganizationOrganizationRelation organizationOrganizationRelation) {
-    this.organizationOrganizationRelation = organizationOrganizationRelation;
-  }
-
-  public Collection<OrganizationOrganizationRelation> getOrganizationOrganizationRelationList() {
-    return this.organizationOrganizationRelationList;
-  }
-
-  public void setOrganizationOrganizationRelationList(
-      Collection<OrganizationOrganizationRelation> organizationOrganizationRelationList) {
-    this.organizationOrganizationRelationList = organizationOrganizationRelationList;
-  }
-
-  public OrganizationOrganizationRelationConnection getOrganizationOrganizationRelationConnection(
-      ) {
-    return this.organizationOrganizationRelationConnection;
-  }
-
-  public void setOrganizationOrganizationRelationConnection(
-      OrganizationOrganizationRelationConnection organizationOrganizationRelationConnection) {
-    this.organizationOrganizationRelationConnection = organizationOrganizationRelationConnection;
   }
 
   public LocalDateTime getCurrentTime() {

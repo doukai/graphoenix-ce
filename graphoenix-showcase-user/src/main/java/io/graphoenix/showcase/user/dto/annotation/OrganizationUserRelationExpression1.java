@@ -1,7 +1,7 @@
 package io.graphoenix.showcase.user.dto.annotation;
 
-import io.graphoenix.core.dto.annotation.IntExpression1;
-import io.graphoenix.core.dto.annotation.StringExpression1;
+import io.graphoenix.core.dto.annotation.IntExpression2;
+import io.graphoenix.core.dto.annotation.StringExpression2;
 import io.graphoenix.core.dto.enumType.Conditional;
 import jakarta.annotation.Generated;
 import java.lang.String;
@@ -15,40 +15,46 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-public @interface OrganizationOrganizationRelationQueryArguments {
-  StringExpression1 id() default @StringExpression1;
+public @interface OrganizationUserRelationExpression1 {
+  StringExpression2 id() default @StringExpression2;
 
-  StringExpression1 organizationRef() default @StringExpression1;
+  StringExpression2 userRef() default @StringExpression2;
 
-  OrganizationExpression1 organization() default @OrganizationExpression1;
+  UserExpression2 user() default @UserExpression2;
+
+  StringExpression2 organizationRef() default @StringExpression2;
+
+  OrganizationExpression2 organization() default @OrganizationExpression2;
 
   boolean includeDeprecated() default false;
 
-  IntExpression1 version() default @IntExpression1;
+  IntExpression2 version() default @IntExpression2;
 
-  IntExpression1 realmId() default @IntExpression1;
+  IntExpression2 realmId() default @IntExpression2;
 
-  StringExpression1 createUserId() default @StringExpression1;
+  StringExpression2 createUserId() default @StringExpression2;
 
-  StringExpression1 createTime() default @StringExpression1;
+  StringExpression2 createTime() default @StringExpression2;
 
-  StringExpression1 updateUserId() default @StringExpression1;
+  StringExpression2 updateUserId() default @StringExpression2;
 
-  StringExpression1 updateTime() default @StringExpression1;
+  StringExpression2 updateTime() default @StringExpression2;
 
-  StringExpression1 createGroupId() default @StringExpression1;
+  StringExpression2 createGroupId() default @StringExpression2;
 
-  StringExpression1 __typename() default @StringExpression1;
-
-  String[] groupBy() default {};
+  StringExpression2 __typename() default @StringExpression2;
 
   boolean not() default false;
 
   Conditional cond() default Conditional.AND;
 
-  OrganizationOrganizationRelationExpression1[] exs() default {};
+  OrganizationUserRelationExpression2[] exs() default {};
 
   String $id() default "";
+
+  String $userRef() default "";
+
+  String $user() default "";
 
   String $organizationRef() default "";
 
@@ -71,8 +77,6 @@ public @interface OrganizationOrganizationRelationQueryArguments {
   String $createGroupId() default "";
 
   String $__typename() default "";
-
-  String $groupBy() default "";
 
   String $not() default "";
 

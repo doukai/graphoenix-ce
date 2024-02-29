@@ -47,6 +47,4 @@ public @interface UserInput2 {
   String createGroupId() default "";
 
   String __typename() default "User";
-
-  String organizationId() default "";
 }

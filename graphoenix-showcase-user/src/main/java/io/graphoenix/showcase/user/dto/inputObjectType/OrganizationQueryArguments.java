@@ -19,6 +19,8 @@ import org.eclipse.microprofile.graphql.Input;
 public class OrganizationQueryArguments implements MetaExpression {
   private StringExpression id;
 
+  private IntExpression parentId;
+
   private StringExpression name;
 
   private OrganizationExpression above;
@@ -44,7 +46,7 @@ public class OrganizationQueryArguments implements MetaExpression {
 
   private StringExpression __typename;
 
-  private OrganizationOrganizationRelationExpression organizationOrganizationRelation;
+  private OrganizationUserRelationExpression organizationUserRelation;
 
   private Collection<String> groupBy;
 
@@ -62,6 +64,14 @@ public class OrganizationQueryArguments implements MetaExpression {
 
   public void setId(StringExpression id) {
     this.id = id;
+  }
+
+  public IntExpression getParentId() {
+    return this.parentId;
+  }
+
+  public void setParentId(IntExpression parentId) {
+    this.parentId = parentId;
   }
 
   public StringExpression getName() {
@@ -172,13 +182,13 @@ public class OrganizationQueryArguments implements MetaExpression {
     this.__typename = __typename;
   }
 
-  public OrganizationOrganizationRelationExpression getOrganizationOrganizationRelation() {
-    return this.organizationOrganizationRelation;
+  public OrganizationUserRelationExpression getOrganizationUserRelation() {
+    return this.organizationUserRelation;
   }
 
-  public void setOrganizationOrganizationRelation(
-      OrganizationOrganizationRelationExpression organizationOrganizationRelation) {
-    this.organizationOrganizationRelation = organizationOrganizationRelation;
+  public void setOrganizationUserRelation(
+      OrganizationUserRelationExpression organizationUserRelation) {
+    this.organizationUserRelation = organizationUserRelation;
   }
 
   public Collection<String> getGroupBy() {

@@ -15,8 +15,12 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-public @interface OrganizationOrganizationRelationExpression {
+public @interface OrganizationUserRelationConnectionQueryArguments {
   StringExpression1 id() default @StringExpression1;
+
+  StringExpression1 userRef() default @StringExpression1;
+
+  UserExpression1 user() default @UserExpression1;
 
   StringExpression1 organizationRef() default @StringExpression1;
 
@@ -40,13 +44,31 @@ public @interface OrganizationOrganizationRelationExpression {
 
   StringExpression1 __typename() default @StringExpression1;
 
+  OrganizationUserRelationOrderBy1 orderBy() default @OrganizationUserRelationOrderBy1;
+
+  String[] groupBy() default {};
+
   boolean not() default false;
 
   Conditional cond() default Conditional.AND;
 
-  OrganizationOrganizationRelationExpression1[] exs() default {};
+  OrganizationUserRelationExpression1[] exs() default {};
+
+  int first() default 0;
+
+  int last() default 0;
+
+  int offset() default 0;
+
+  String after() default "";
+
+  String before() default "";
 
   String $id() default "";
+
+  String $userRef() default "";
+
+  String $user() default "";
 
   String $organizationRef() default "";
 
@@ -70,9 +92,23 @@ public @interface OrganizationOrganizationRelationExpression {
 
   String $__typename() default "";
 
+  String $orderBy() default "";
+
+  String $groupBy() default "";
+
   String $not() default "";
 
   String $cond() default "";
 
   String $exs() default "";
+
+  String $first() default "";
+
+  String $last() default "";
+
+  String $offset() default "";
+
+  String $after() default "";
+
+  String $before() default "";
 }

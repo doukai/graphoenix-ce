@@ -15,8 +15,12 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-public @interface OrganizationOrganizationRelationConnectionQueryArguments {
+public @interface OrganizationUserRelationListQueryArguments {
   StringExpression1 id() default @StringExpression1;
+
+  StringExpression1 userRef() default @StringExpression1;
+
+  UserExpression1 user() default @UserExpression1;
 
   StringExpression1 organizationRef() default @StringExpression1;
 
@@ -40,8 +44,7 @@ public @interface OrganizationOrganizationRelationConnectionQueryArguments {
 
   StringExpression1 __typename() default @StringExpression1;
 
-  OrganizationOrganizationRelationOrderBy1 orderBy(
-      ) default @OrganizationOrganizationRelationOrderBy1;
+  OrganizationUserRelationOrderBy1 orderBy() default @OrganizationUserRelationOrderBy1;
 
   String[] groupBy() default {};
 
@@ -49,7 +52,7 @@ public @interface OrganizationOrganizationRelationConnectionQueryArguments {
 
   Conditional cond() default Conditional.AND;
 
-  OrganizationOrganizationRelationExpression1[] exs() default {};
+  OrganizationUserRelationExpression1[] exs() default {};
 
   int first() default 0;
 
@@ -62,6 +65,10 @@ public @interface OrganizationOrganizationRelationConnectionQueryArguments {
   String before() default "";
 
   String $id() default "";
+
+  String $userRef() default "";
+
+  String $user() default "";
 
   String $organizationRef() default "";
 

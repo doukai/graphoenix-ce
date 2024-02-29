@@ -13,8 +13,10 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-public @interface OrganizationOrganizationRelationOrderBy {
+public @interface OrganizationUserRelationOrderBy {
   Sort id() default Sort.ASC;
+
+  Sort userRef() default Sort.ASC;
 
   Sort organizationRef() default Sort.ASC;
 
@@ -37,6 +39,8 @@ public @interface OrganizationOrganizationRelationOrderBy {
   Sort __typename() default Sort.ASC;
 
   String $id() default "";
+
+  String $userRef() default "";
 
   String $organizationRef() default "";
 

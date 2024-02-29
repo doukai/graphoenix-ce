@@ -54,7 +54,7 @@ public @interface UserInput {
 
   String __typename() default "User";
 
-  String organizationId() default "";
+  OrganizationUserRelationInput1[] organizationUserRelation() default {};
 
   RoleUserRelationInput1[] roleUserRelation() default {};
 
@@ -102,7 +102,7 @@ public @interface UserInput {
 
   String $__typename() default "";
 
-  String $organizationId() default "";
+  String $organizationUserRelation() default "";
 
   String $roleUserRelation() default "";
 

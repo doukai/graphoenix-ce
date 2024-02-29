@@ -83,7 +83,7 @@ public class ArgumentsTranslator {
                                             Stream.of(entry.getValue())
                                                     .filter(ValueWithVariable::isArray)
                                                     .flatMap(valueWithVariable -> valueWithVariable.asArray().getValueWithVariables().stream())
-                                                    .flatMap(valueWithVariable -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), valueWithVariable, level).stream())
+                                                    .flatMap(valueWithVariable -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), valueWithVariable, level, true).stream())
                                     ),
                             inputValueValueWithVariableMap.entrySet().stream()
                                     .anyMatch(entry ->
@@ -154,6 +154,10 @@ public class ArgumentsTranslator {
     }
 
     protected Optional<Expression> inputValueToWhereExpression(ObjectType objectType, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable, int level) {
+        return inputValueToWhereExpression(objectType, fieldDefinition, inputValue, valueWithVariable, level, false);
+    }
+
+    protected Optional<Expression> inputValueToWhereExpression(ObjectType objectType, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable, int level, boolean exs) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
         if (fieldTypeDefinition.isObject()) {
@@ -189,9 +193,9 @@ public class ArgumentsTranslator {
                                             Stream.of(entry.getValue())
                                                     .filter(ValueWithVariable::isArray)
                                                     .flatMap(field -> field.asArray().getValueWithVariables().stream())
-                                                    .flatMap(field -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), field, level).stream())
+                                                    .flatMap(field -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), field, level, true).stream())
                                     ),
-                            inputValueValueWithVariableMap.entrySet().stream()
+                            exs || inputValueValueWithVariableMap.entrySet().stream()
                                     .anyMatch(entry ->
                                             entry.getKey().getName().equals(INPUT_VALUE_INCLUDE_DEPRECATED_NAME) &&
                                                     entry.getValue().isBoolean() &&

@@ -8,14 +8,19 @@ import java.lang.Integer;
 import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Input;
 
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
-public class OrganizationOrganizationRelationMutationArguments implements MetaInput {
+public class OrganizationUserRelationListMutationArguments implements MetaInput {
   private String id;
+
+  private String userRef;
+
+  private UserInput user;
 
   private String organizationRef;
 
@@ -37,10 +42,12 @@ public class OrganizationOrganizationRelationMutationArguments implements MetaIn
 
   private String createGroupId;
 
-  @DefaultValue("\"OrganizationOrganizationRelation\"")
+  @DefaultValue("\"OrganizationUserRelation\"")
   private String __typename;
 
-  private OrganizationOrganizationRelationExpression where;
+  private Collection<OrganizationUserRelationInput> list;
+
+  private OrganizationUserRelationExpression where;
 
   public String getId() {
     return this.id;
@@ -48,6 +55,22 @@ public class OrganizationOrganizationRelationMutationArguments implements MetaIn
 
   public void setId(String id) {
     this.id = id;
+  }
+
+  public String getUserRef() {
+    return this.userRef;
+  }
+
+  public void setUserRef(String userRef) {
+    this.userRef = userRef;
+  }
+
+  public UserInput getUser() {
+    return this.user;
+  }
+
+  public void setUser(UserInput user) {
+    this.user = user;
   }
 
   public String getOrganizationRef() {
@@ -152,11 +175,19 @@ public class OrganizationOrganizationRelationMutationArguments implements MetaIn
     this.__typename = __typename;
   }
 
-  public OrganizationOrganizationRelationExpression getWhere() {
+  public Collection<OrganizationUserRelationInput> getList() {
+    return this.list;
+  }
+
+  public void setList(Collection<OrganizationUserRelationInput> list) {
+    this.list = list;
+  }
+
+  public OrganizationUserRelationExpression getWhere() {
     return this.where;
   }
 
-  public void setWhere(OrganizationOrganizationRelationExpression where) {
+  public void setWhere(OrganizationUserRelationExpression where) {
     this.where = where;
   }
 }

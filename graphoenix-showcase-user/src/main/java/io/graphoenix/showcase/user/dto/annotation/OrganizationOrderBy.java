@@ -16,6 +16,8 @@ import java.lang.annotation.Target;
 public @interface OrganizationOrderBy {
   Sort id() default Sort.ASC;
 
+  Sort parentId() default Sort.ASC;
+
   Sort name() default Sort.ASC;
 
   Sort isDeprecated() default Sort.ASC;
@@ -37,6 +39,8 @@ public @interface OrganizationOrderBy {
   Sort __typename() default Sort.ASC;
 
   String $id() default "";
+
+  String $parentId() default "";
 
   String $name() default "";
 

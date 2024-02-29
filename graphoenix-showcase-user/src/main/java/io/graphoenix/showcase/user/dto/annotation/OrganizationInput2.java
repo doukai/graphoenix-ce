@@ -15,6 +15,8 @@ import java.lang.annotation.Target;
 public @interface OrganizationInput2 {
   String id() default "";
 
+  int parentId() default 0;
+
   String name() default "";
 
   boolean isDeprecated() default false;

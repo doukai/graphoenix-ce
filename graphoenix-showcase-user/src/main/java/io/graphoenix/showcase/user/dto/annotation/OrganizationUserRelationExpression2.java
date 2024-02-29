@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-public @interface OrganizationOrganizationRelationExpression2 {
+public @interface OrganizationUserRelationExpression2 {
   boolean includeDeprecated() default false;
 
   boolean not() default false;

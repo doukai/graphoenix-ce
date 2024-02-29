@@ -12,8 +12,10 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-public @interface OrganizationOrganizationRelationInput2 {
+public @interface OrganizationUserRelationInput2 {
   String id() default "";
+
+  String userRef() default "";
 
   String organizationRef() default "";
 
@@ -33,5 +35,5 @@ public @interface OrganizationOrganizationRelationInput2 {
 
   String createGroupId() default "";
 
-  String __typename() default "OrganizationOrganizationRelation";
+  String __typename() default "OrganizationUserRelation";
 }

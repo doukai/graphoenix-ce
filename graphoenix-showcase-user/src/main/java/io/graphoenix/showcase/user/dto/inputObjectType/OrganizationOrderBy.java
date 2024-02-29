@@ -11,6 +11,8 @@ import org.eclipse.microprofile.graphql.Input;
 public class OrganizationOrderBy {
   private Sort id;
 
+  private Sort parentId;
+
   private Sort name;
 
   private Sort isDeprecated;
@@ -37,6 +39,14 @@ public class OrganizationOrderBy {
 
   public void setId(Sort id) {
     this.id = id;
+  }
+
+  public Sort getParentId() {
+    return this.parentId;
+  }
+
+  public void setParentId(Sort parentId) {
+    this.parentId = parentId;
   }
 
   public Sort getName() {

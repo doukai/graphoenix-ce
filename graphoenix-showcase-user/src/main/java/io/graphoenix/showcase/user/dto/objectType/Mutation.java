@@ -25,6 +25,10 @@ public class Mutation {
 
   private Collection<Organization> organizationList;
 
+  private OrganizationUserRelation organizationUserRelation;
+
+  private Collection<OrganizationUserRelation> organizationUserRelationList;
+
   private RoleUserRelation roleUserRelation;
 
   private Collection<RoleUserRelation> roleUserRelationList;
@@ -40,10 +44,6 @@ public class Mutation {
   private RoleRoleTypeRelation roleRoleTypeRelation;
 
   private Collection<RoleRoleTypeRelation> roleRoleTypeRelationList;
-
-  private OrganizationOrganizationRelation organizationOrganizationRelation;
-
-  private Collection<OrganizationOrganizationRelation> organizationOrganizationRelationList;
 
   public User getUser() {
     return this.user;
@@ -107,6 +107,23 @@ public class Mutation {
 
   public void setOrganizationList(Collection<Organization> organizationList) {
     this.organizationList = organizationList;
+  }
+
+  public OrganizationUserRelation getOrganizationUserRelation() {
+    return this.organizationUserRelation;
+  }
+
+  public void setOrganizationUserRelation(OrganizationUserRelation organizationUserRelation) {
+    this.organizationUserRelation = organizationUserRelation;
+  }
+
+  public Collection<OrganizationUserRelation> getOrganizationUserRelationList() {
+    return this.organizationUserRelationList;
+  }
+
+  public void setOrganizationUserRelationList(
+      Collection<OrganizationUserRelation> organizationUserRelationList) {
+    this.organizationUserRelationList = organizationUserRelationList;
   }
 
   public RoleUserRelation getRoleUserRelation() {
@@ -174,23 +191,5 @@ public class Mutation {
   public void setRoleRoleTypeRelationList(
       Collection<RoleRoleTypeRelation> roleRoleTypeRelationList) {
     this.roleRoleTypeRelationList = roleRoleTypeRelationList;
-  }
-
-  public OrganizationOrganizationRelation getOrganizationOrganizationRelation() {
-    return this.organizationOrganizationRelation;
-  }
-
-  public void setOrganizationOrganizationRelation(
-      OrganizationOrganizationRelation organizationOrganizationRelation) {
-    this.organizationOrganizationRelation = organizationOrganizationRelation;
-  }
-
-  public Collection<OrganizationOrganizationRelation> getOrganizationOrganizationRelationList() {
-    return this.organizationOrganizationRelationList;
-  }
-
-  public void setOrganizationOrganizationRelationList(
-      Collection<OrganizationOrganizationRelation> organizationOrganizationRelationList) {
-    this.organizationOrganizationRelationList = organizationOrganizationRelationList;
   }
 }

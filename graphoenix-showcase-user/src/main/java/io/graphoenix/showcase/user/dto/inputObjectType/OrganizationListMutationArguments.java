@@ -18,6 +18,8 @@ import org.eclipse.microprofile.graphql.Input;
 public class OrganizationListMutationArguments implements MetaInput {
   private String id;
 
+  private Integer parentId;
+
   private String name;
 
   private OrganizationInput above;
@@ -43,7 +45,7 @@ public class OrganizationListMutationArguments implements MetaInput {
   @DefaultValue("\"Organization\"")
   private String __typename;
 
-  private Collection<OrganizationOrganizationRelationInput> organizationOrganizationRelation;
+  private Collection<OrganizationUserRelationInput> organizationUserRelation;
 
   private Collection<OrganizationInput> list;
 
@@ -55,6 +57,14 @@ public class OrganizationListMutationArguments implements MetaInput {
 
   public void setId(String id) {
     this.id = id;
+  }
+
+  public Integer getParentId() {
+    return this.parentId;
+  }
+
+  public void setParentId(Integer parentId) {
+    this.parentId = parentId;
   }
 
   public String getName() {
@@ -167,13 +177,13 @@ public class OrganizationListMutationArguments implements MetaInput {
     this.__typename = __typename;
   }
 
-  public Collection<OrganizationOrganizationRelationInput> getOrganizationOrganizationRelation() {
-    return this.organizationOrganizationRelation;
+  public Collection<OrganizationUserRelationInput> getOrganizationUserRelation() {
+    return this.organizationUserRelation;
   }
 
-  public void setOrganizationOrganizationRelation(
-      Collection<OrganizationOrganizationRelationInput> organizationOrganizationRelation) {
-    this.organizationOrganizationRelation = organizationOrganizationRelation;
+  public void setOrganizationUserRelation(
+      Collection<OrganizationUserRelationInput> organizationUserRelation) {
+    this.organizationUserRelation = organizationUserRelation;
   }
 
   public Collection<OrganizationInput> getList() {

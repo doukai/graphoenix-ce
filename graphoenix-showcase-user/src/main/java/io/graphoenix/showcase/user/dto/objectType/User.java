@@ -62,11 +62,23 @@ public class User implements Meta {
 
   private String __typename;
 
-  private String organizationId;
+  private Collection<OrganizationUserRelation> organizationUserRelation;
 
   private Collection<RoleUserRelation> roleUserRelation;
 
   private Collection<UserMobileNumbersRelation> userMobileNumbersRelation;
+
+  private Role rolesAggregate;
+
+  private RoleConnection rolesConnection;
+
+  private OrganizationUserRelation organizationUserRelationAggregate;
+
+  private OrganizationUserRelationConnection organizationUserRelationConnection;
+
+  private RoleUserRelation roleUserRelationAggregate;
+
+  private RoleUserRelationConnection roleUserRelationConnection;
 
   private UserMobileNumbersRelation userMobileNumbersRelationAggregate;
 
@@ -95,12 +107,6 @@ public class User implements Meta {
   private String nameMax;
 
   private String nameMin;
-
-  private Integer organizationIdCount;
-
-  private String organizationIdMax;
-
-  private String organizationIdMin;
 
   private Integer ageCount;
 
@@ -292,12 +298,13 @@ public class User implements Meta {
     this.__typename = __typename;
   }
 
-  public String getOrganizationId() {
-    return this.organizationId;
+  public Collection<OrganizationUserRelation> getOrganizationUserRelation() {
+    return this.organizationUserRelation;
   }
 
-  public void setOrganizationId(String organizationId) {
-    this.organizationId = organizationId;
+  public void setOrganizationUserRelation(
+      Collection<OrganizationUserRelation> organizationUserRelation) {
+    this.organizationUserRelation = organizationUserRelation;
   }
 
   public Collection<RoleUserRelation> getRoleUserRelation() {
@@ -315,6 +322,56 @@ public class User implements Meta {
   public void setUserMobileNumbersRelation(
       Collection<UserMobileNumbersRelation> userMobileNumbersRelation) {
     this.userMobileNumbersRelation = userMobileNumbersRelation;
+  }
+
+  public Role getRolesAggregate() {
+    return this.rolesAggregate;
+  }
+
+  public void setRolesAggregate(Role rolesAggregate) {
+    this.rolesAggregate = rolesAggregate;
+  }
+
+  public RoleConnection getRolesConnection() {
+    return this.rolesConnection;
+  }
+
+  public void setRolesConnection(RoleConnection rolesConnection) {
+    this.rolesConnection = rolesConnection;
+  }
+
+  public OrganizationUserRelation getOrganizationUserRelationAggregate() {
+    return this.organizationUserRelationAggregate;
+  }
+
+  public void setOrganizationUserRelationAggregate(
+      OrganizationUserRelation organizationUserRelationAggregate) {
+    this.organizationUserRelationAggregate = organizationUserRelationAggregate;
+  }
+
+  public OrganizationUserRelationConnection getOrganizationUserRelationConnection() {
+    return this.organizationUserRelationConnection;
+  }
+
+  public void setOrganizationUserRelationConnection(
+      OrganizationUserRelationConnection organizationUserRelationConnection) {
+    this.organizationUserRelationConnection = organizationUserRelationConnection;
+  }
+
+  public RoleUserRelation getRoleUserRelationAggregate() {
+    return this.roleUserRelationAggregate;
+  }
+
+  public void setRoleUserRelationAggregate(RoleUserRelation roleUserRelationAggregate) {
+    this.roleUserRelationAggregate = roleUserRelationAggregate;
+  }
+
+  public RoleUserRelationConnection getRoleUserRelationConnection() {
+    return this.roleUserRelationConnection;
+  }
+
+  public void setRoleUserRelationConnection(RoleUserRelationConnection roleUserRelationConnection) {
+    this.roleUserRelationConnection = roleUserRelationConnection;
   }
 
   public UserMobileNumbersRelation getUserMobileNumbersRelationAggregate() {
@@ -429,30 +486,6 @@ public class User implements Meta {
 
   public void setNameMin(String nameMin) {
     this.nameMin = nameMin;
-  }
-
-  public Integer getOrganizationIdCount() {
-    return this.organizationIdCount;
-  }
-
-  public void setOrganizationIdCount(Integer organizationIdCount) {
-    this.organizationIdCount = organizationIdCount;
-  }
-
-  public String getOrganizationIdMax() {
-    return this.organizationIdMax;
-  }
-
-  public void setOrganizationIdMax(String organizationIdMax) {
-    this.organizationIdMax = organizationIdMax;
-  }
-
-  public String getOrganizationIdMin() {
-    return this.organizationIdMin;
-  }
-
-  public void setOrganizationIdMin(String organizationIdMin) {
-    this.organizationIdMin = organizationIdMin;
   }
 
   public Integer getAgeCount() {

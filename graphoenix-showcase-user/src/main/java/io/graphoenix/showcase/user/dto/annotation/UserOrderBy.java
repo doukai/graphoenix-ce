@@ -46,8 +46,6 @@ public @interface UserOrderBy {
 
   Sort __typename() default Sort.ASC;
 
-  Sort organizationId() default Sort.ASC;
-
   String $id() default "";
 
   String $login() default "";
@@ -79,6 +77,4 @@ public @interface UserOrderBy {
   String $createGroupId() default "";
 
   String $__typename() default "";
-
-  String $organizationId() default "";
 }

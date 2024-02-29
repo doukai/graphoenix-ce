@@ -33,6 +33,12 @@ public class Subscription {
 
   private OrganizationConnection organizationConnection;
 
+  private OrganizationUserRelation organizationUserRelation;
+
+  private Collection<OrganizationUserRelation> organizationUserRelationList;
+
+  private OrganizationUserRelationConnection organizationUserRelationConnection;
+
   private RoleUserRelation roleUserRelation;
 
   private Collection<RoleUserRelation> roleUserRelationList;
@@ -56,12 +62,6 @@ public class Subscription {
   private Collection<RoleRoleTypeRelation> roleRoleTypeRelationList;
 
   private RoleRoleTypeRelationConnection roleRoleTypeRelationConnection;
-
-  private OrganizationOrganizationRelation organizationOrganizationRelation;
-
-  private Collection<OrganizationOrganizationRelation> organizationOrganizationRelationList;
-
-  private OrganizationOrganizationRelationConnection organizationOrganizationRelationConnection;
 
   public User getUser() {
     return this.user;
@@ -157,6 +157,32 @@ public class Subscription {
 
   public void setOrganizationConnection(OrganizationConnection organizationConnection) {
     this.organizationConnection = organizationConnection;
+  }
+
+  public OrganizationUserRelation getOrganizationUserRelation() {
+    return this.organizationUserRelation;
+  }
+
+  public void setOrganizationUserRelation(OrganizationUserRelation organizationUserRelation) {
+    this.organizationUserRelation = organizationUserRelation;
+  }
+
+  public Collection<OrganizationUserRelation> getOrganizationUserRelationList() {
+    return this.organizationUserRelationList;
+  }
+
+  public void setOrganizationUserRelationList(
+      Collection<OrganizationUserRelation> organizationUserRelationList) {
+    this.organizationUserRelationList = organizationUserRelationList;
+  }
+
+  public OrganizationUserRelationConnection getOrganizationUserRelationConnection() {
+    return this.organizationUserRelationConnection;
+  }
+
+  public void setOrganizationUserRelationConnection(
+      OrganizationUserRelationConnection organizationUserRelationConnection) {
+    this.organizationUserRelationConnection = organizationUserRelationConnection;
   }
 
   public RoleUserRelation getRoleUserRelation() {
@@ -259,33 +285,5 @@ public class Subscription {
   public void setRoleRoleTypeRelationConnection(
       RoleRoleTypeRelationConnection roleRoleTypeRelationConnection) {
     this.roleRoleTypeRelationConnection = roleRoleTypeRelationConnection;
-  }
-
-  public OrganizationOrganizationRelation getOrganizationOrganizationRelation() {
-    return this.organizationOrganizationRelation;
-  }
-
-  public void setOrganizationOrganizationRelation(
-      OrganizationOrganizationRelation organizationOrganizationRelation) {
-    this.organizationOrganizationRelation = organizationOrganizationRelation;
-  }
-
-  public Collection<OrganizationOrganizationRelation> getOrganizationOrganizationRelationList() {
-    return this.organizationOrganizationRelationList;
-  }
-
-  public void setOrganizationOrganizationRelationList(
-      Collection<OrganizationOrganizationRelation> organizationOrganizationRelationList) {
-    this.organizationOrganizationRelationList = organizationOrganizationRelationList;
-  }
-
-  public OrganizationOrganizationRelationConnection getOrganizationOrganizationRelationConnection(
-      ) {
-    return this.organizationOrganizationRelationConnection;
-  }
-
-  public void setOrganizationOrganizationRelationConnection(
-      OrganizationOrganizationRelationConnection organizationOrganizationRelationConnection) {
-    this.organizationOrganizationRelationConnection = organizationOrganizationRelationConnection;
   }
 }

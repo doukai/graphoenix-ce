@@ -6,9 +6,9 @@ type User {
     age: Int
     disabled: Boolean
     sex: Sex
-    userProfile: UserProfile @fetch(from: "id", to: "userId", protocol: LOCAL)
-    organization: Organization @fetch(from: "organizationId", to: "id", anchor: true protocol: LOCAL)
-    roles: [Role!] @fetch(from: "id", with: {type: "RoleUserRelation", to: "roleRef", from: "userRef"}, to: "id", protocol: LOCAL)
+    userProfile: UserProfile @map(from: "id", to: "userId")
+    organization: Organization
+    roles: [Role!]
     mobileNumbers: [String!]
 }
 
@@ -40,15 +40,8 @@ enum RoleType {
 
 type Organization {
     id: ID
+    parentId: Int
     name: String!
-    above: Organization
-    users: [User!] @fetch(from: "id", to: "organizationId", protocol: LOCAL)
-}
-
-type RoleUserRelation {
-    id: ID @options(type: "Int", autoIncrement: true)
-    userRef: String
-    user: User @fetch(from: "userRef", to: "id", anchor: true, protocol: LOCAL)
-    roleRef: String
-    role: Role @fetch(from: "roleRef", to: "id", anchor: true, protocol: LOCAL)
+    above: Organization @map(from: "id", to: "parentId")
+    users: [User!]
 }

@@ -18,6 +18,8 @@ import java.lang.annotation.Target;
 public @interface OrganizationExpression1 {
   StringExpression2 id() default @StringExpression2;
 
+  IntExpression2 parentId() default @IntExpression2;
+
   StringExpression2 name() default @StringExpression2;
 
   OrganizationExpression2 above() default @OrganizationExpression2;
@@ -42,8 +44,8 @@ public @interface OrganizationExpression1 {
 
   StringExpression2 __typename() default @StringExpression2;
 
-  OrganizationOrganizationRelationExpression2 organizationOrganizationRelation(
-      ) default @OrganizationOrganizationRelationExpression2;
+  OrganizationUserRelationExpression2 organizationUserRelation(
+      ) default @OrganizationUserRelationExpression2;
 
   boolean not() default false;
 
@@ -52,6 +54,8 @@ public @interface OrganizationExpression1 {
   OrganizationExpression2[] exs() default {};
 
   String $id() default "";
+
+  String $parentId() default "";
 
   String $name() default "";
 
@@ -77,7 +81,7 @@ public @interface OrganizationExpression1 {
 
   String $__typename() default "";
 
-  String $organizationOrganizationRelation() default "";
+  String $organizationUserRelation() default "";
 
   String $not() default "";
 

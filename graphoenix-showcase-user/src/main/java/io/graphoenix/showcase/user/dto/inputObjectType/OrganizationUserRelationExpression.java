@@ -15,8 +15,12 @@ import org.eclipse.microprofile.graphql.Input;
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
-public class OrganizationOrganizationRelationExpression implements MetaExpression {
+public class OrganizationUserRelationExpression implements MetaExpression {
   private StringExpression id;
+
+  private StringExpression userRef;
+
+  private UserExpression user;
 
   private StringExpression organizationRef;
 
@@ -47,7 +51,7 @@ public class OrganizationOrganizationRelationExpression implements MetaExpressio
   @DefaultValue("AND")
   private Conditional cond;
 
-  private Collection<OrganizationOrganizationRelationExpression> exs;
+  private Collection<OrganizationUserRelationExpression> exs;
 
   public StringExpression getId() {
     return this.id;
@@ -55,6 +59,22 @@ public class OrganizationOrganizationRelationExpression implements MetaExpressio
 
   public void setId(StringExpression id) {
     this.id = id;
+  }
+
+  public StringExpression getUserRef() {
+    return this.userRef;
+  }
+
+  public void setUserRef(StringExpression userRef) {
+    this.userRef = userRef;
+  }
+
+  public UserExpression getUser() {
+    return this.user;
+  }
+
+  public void setUser(UserExpression user) {
+    this.user = user;
   }
 
   public StringExpression getOrganizationRef() {
@@ -173,11 +193,11 @@ public class OrganizationOrganizationRelationExpression implements MetaExpressio
     this.cond = cond;
   }
 
-  public Collection<OrganizationOrganizationRelationExpression> getExs() {
+  public Collection<OrganizationUserRelationExpression> getExs() {
     return this.exs;
   }
 
-  public void setExs(Collection<OrganizationOrganizationRelationExpression> exs) {
+  public void setExs(Collection<OrganizationUserRelationExpression> exs) {
     this.exs = exs;
   }
 }

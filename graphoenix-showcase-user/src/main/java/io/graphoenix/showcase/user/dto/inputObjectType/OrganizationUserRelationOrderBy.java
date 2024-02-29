@@ -8,8 +8,10 @@ import org.eclipse.microprofile.graphql.Input;
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
-public class OrganizationOrganizationRelationOrderBy {
+public class OrganizationUserRelationOrderBy {
   private Sort id;
+
+  private Sort userRef;
 
   private Sort organizationRef;
 
@@ -37,6 +39,14 @@ public class OrganizationOrganizationRelationOrderBy {
 
   public void setId(Sort id) {
     this.id = id;
+  }
+
+  public Sort getUserRef() {
+    return this.userRef;
+  }
+
+  public void setUserRef(Sort userRef) {
+    this.userRef = userRef;
   }
 
   public Sort getOrganizationRef() {

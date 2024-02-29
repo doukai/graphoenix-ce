@@ -18,13 +18,13 @@ import java.lang.annotation.Target;
 public @interface RoleUserRelationExpression1 {
   StringExpression2 id() default @StringExpression2;
 
-  StringExpression2 roleRef() default @StringExpression2;
-
-  RoleExpression2 role() default @RoleExpression2;
-
   StringExpression2 userRef() default @StringExpression2;
 
   UserExpression2 user() default @UserExpression2;
+
+  StringExpression2 roleRef() default @StringExpression2;
+
+  RoleExpression2 role() default @RoleExpression2;
 
   boolean includeDeprecated() default false;
 
@@ -52,13 +52,13 @@ public @interface RoleUserRelationExpression1 {
 
   String $id() default "";
 
-  String $roleRef() default "";
-
-  String $role() default "";
-
   String $userRef() default "";
 
   String $user() default "";
+
+  String $roleRef() default "";
+
+  String $role() default "";
 
   String $includeDeprecated() default "";
 

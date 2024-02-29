@@ -15,6 +15,8 @@ import java.lang.annotation.Target;
 public @interface OrganizationOrderBy2 {
   Sort id() default Sort.ASC;
 
+  Sort parentId() default Sort.ASC;
+
   Sort name() default Sort.ASC;
 
   Sort isDeprecated() default Sort.ASC;

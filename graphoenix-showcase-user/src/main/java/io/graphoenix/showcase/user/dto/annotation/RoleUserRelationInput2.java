@@ -15,9 +15,9 @@ import java.lang.annotation.Target;
 public @interface RoleUserRelationInput2 {
   String id() default "";
 
-  String roleRef() default "";
-
   String userRef() default "";
+
+  String roleRef() default "";
 
   boolean isDeprecated() default false;
 

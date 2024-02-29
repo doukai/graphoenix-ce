@@ -9,17 +9,17 @@ import org.eclipse.microprofile.graphql.Type;
 @Type
 @CompiledJson
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
-public class OrganizationOrganizationRelationEdge {
-  private OrganizationOrganizationRelation node;
+public class OrganizationUserRelationEdge {
+  private OrganizationUserRelation node;
 
   @Id
   private String cursor;
 
-  public OrganizationOrganizationRelation getNode() {
+  public OrganizationUserRelation getNode() {
     return this.node;
   }
 
-  public void setNode(OrganizationOrganizationRelation node) {
+  public void setNode(OrganizationUserRelation node) {
     this.node = node;
   }
 

@@ -14,9 +14,13 @@ import org.eclipse.microprofile.graphql.Type;
 @Type
 @CompiledJson
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
-public class OrganizationOrganizationRelation implements Meta {
+public class OrganizationUserRelation implements Meta {
   @Id
   private String id;
+
+  private String userRef;
+
+  private User user;
 
   private String organizationRef;
 
@@ -46,6 +50,12 @@ public class OrganizationOrganizationRelation implements Meta {
 
   private Integer idMin;
 
+  private Integer userRefCount;
+
+  private String userRefMax;
+
+  private String userRefMin;
+
   private Integer organizationRefCount;
 
   private String organizationRefMax;
@@ -58,6 +68,22 @@ public class OrganizationOrganizationRelation implements Meta {
 
   public void setId(String id) {
     this.id = id;
+  }
+
+  public String getUserRef() {
+    return this.userRef;
+  }
+
+  public void setUserRef(String userRef) {
+    this.userRef = userRef;
+  }
+
+  public User getUser() {
+    return this.user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
   }
 
   public String getOrganizationRef() {
@@ -186,6 +212,30 @@ public class OrganizationOrganizationRelation implements Meta {
 
   public void setIdMin(Integer idMin) {
     this.idMin = idMin;
+  }
+
+  public Integer getUserRefCount() {
+    return this.userRefCount;
+  }
+
+  public void setUserRefCount(Integer userRefCount) {
+    this.userRefCount = userRefCount;
+  }
+
+  public String getUserRefMax() {
+    return this.userRefMax;
+  }
+
+  public void setUserRefMax(String userRefMax) {
+    this.userRefMax = userRefMax;
+  }
+
+  public String getUserRefMin() {
+    return this.userRefMin;
+  }
+
+  public void setUserRefMin(String userRefMin) {
+    this.userRefMin = userRefMin;
   }
 
   public Integer getOrganizationRefCount() {

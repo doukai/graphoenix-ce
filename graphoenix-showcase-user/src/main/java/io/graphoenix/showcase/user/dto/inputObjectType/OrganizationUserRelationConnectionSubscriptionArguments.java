@@ -7,6 +7,7 @@ import io.graphoenix.core.dto.inputObjectType.MetaExpression;
 import io.graphoenix.core.dto.inputObjectType.StringExpression;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
+import java.lang.Integer;
 import java.lang.Override;
 import java.lang.String;
 import java.util.Collection;
@@ -16,8 +17,12 @@ import org.eclipse.microprofile.graphql.Input;
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
-public class OrganizationOrganizationRelationSubscriptionArguments implements MetaExpression {
+public class OrganizationUserRelationConnectionSubscriptionArguments implements MetaExpression {
   private StringExpression id;
+
+  private StringExpression userRef;
+
+  private UserExpression user;
 
   private StringExpression organizationRef;
 
@@ -42,6 +47,8 @@ public class OrganizationOrganizationRelationSubscriptionArguments implements Me
 
   private StringExpression __typename;
 
+  private OrganizationUserRelationOrderBy orderBy;
+
   private Collection<String> groupBy;
 
   @DefaultValue("false")
@@ -50,7 +57,17 @@ public class OrganizationOrganizationRelationSubscriptionArguments implements Me
   @DefaultValue("AND")
   private Conditional cond;
 
-  private Collection<OrganizationOrganizationRelationExpression> exs;
+  private Collection<OrganizationUserRelationExpression> exs;
+
+  private Integer first;
+
+  private Integer last;
+
+  private Integer offset;
+
+  private String after;
+
+  private String before;
 
   public StringExpression getId() {
     return this.id;
@@ -58,6 +75,22 @@ public class OrganizationOrganizationRelationSubscriptionArguments implements Me
 
   public void setId(StringExpression id) {
     this.id = id;
+  }
+
+  public StringExpression getUserRef() {
+    return this.userRef;
+  }
+
+  public void setUserRef(StringExpression userRef) {
+    this.userRef = userRef;
+  }
+
+  public UserExpression getUser() {
+    return this.user;
+  }
+
+  public void setUser(UserExpression user) {
+    this.user = user;
   }
 
   public StringExpression getOrganizationRef() {
@@ -160,6 +193,14 @@ public class OrganizationOrganizationRelationSubscriptionArguments implements Me
     this.__typename = __typename;
   }
 
+  public OrganizationUserRelationOrderBy getOrderBy() {
+    return this.orderBy;
+  }
+
+  public void setOrderBy(OrganizationUserRelationOrderBy orderBy) {
+    this.orderBy = orderBy;
+  }
+
   public Collection<String> getGroupBy() {
     return this.groupBy;
   }
@@ -184,11 +225,51 @@ public class OrganizationOrganizationRelationSubscriptionArguments implements Me
     this.cond = cond;
   }
 
-  public Collection<OrganizationOrganizationRelationExpression> getExs() {
+  public Collection<OrganizationUserRelationExpression> getExs() {
     return this.exs;
   }
 
-  public void setExs(Collection<OrganizationOrganizationRelationExpression> exs) {
+  public void setExs(Collection<OrganizationUserRelationExpression> exs) {
     this.exs = exs;
+  }
+
+  public Integer getFirst() {
+    return this.first;
+  }
+
+  public void setFirst(Integer first) {
+    this.first = first;
+  }
+
+  public Integer getLast() {
+    return this.last;
+  }
+
+  public void setLast(Integer last) {
+    this.last = last;
+  }
+
+  public Integer getOffset() {
+    return this.offset;
+  }
+
+  public void setOffset(Integer offset) {
+    this.offset = offset;
+  }
+
+  public String getAfter() {
+    return this.after;
+  }
+
+  public void setAfter(String after) {
+    this.after = after;
+  }
+
+  public String getBefore() {
+    return this.before;
+  }
+
+  public void setBefore(String before) {
+    this.before = before;
   }
 }

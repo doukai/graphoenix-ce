@@ -10,12 +10,12 @@ import org.eclipse.microprofile.graphql.Type;
 @Type
 @CompiledJson
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
-public class OrganizationOrganizationRelationConnection {
+public class OrganizationUserRelationConnection {
   private Integer totalCount;
 
   private PageInfo pageInfo;
 
-  private Collection<OrganizationOrganizationRelationEdge> edges;
+  private Collection<OrganizationUserRelationEdge> edges;
 
   public Integer getTotalCount() {
     return this.totalCount;
@@ -33,11 +33,11 @@ public class OrganizationOrganizationRelationConnection {
     this.pageInfo = pageInfo;
   }
 
-  public Collection<OrganizationOrganizationRelationEdge> getEdges() {
+  public Collection<OrganizationUserRelationEdge> getEdges() {
     return this.edges;
   }
 
-  public void setEdges(Collection<OrganizationOrganizationRelationEdge> edges) {
+  public void setEdges(Collection<OrganizationUserRelationEdge> edges) {
     this.edges = edges;
   }
 }

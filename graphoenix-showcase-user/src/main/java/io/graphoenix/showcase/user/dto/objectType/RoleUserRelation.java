@@ -18,13 +18,13 @@ public class RoleUserRelation implements Meta {
   @Id
   private String id;
 
-  private String roleRef;
-
-  private Role role;
-
   private String userRef;
 
   private User user;
+
+  private String roleRef;
+
+  private Role role;
 
   private Boolean isDeprecated;
 
@@ -50,17 +50,17 @@ public class RoleUserRelation implements Meta {
 
   private Integer idMin;
 
-  private Integer roleRefCount;
-
-  private String roleRefMax;
-
-  private String roleRefMin;
-
   private Integer userRefCount;
 
   private String userRefMax;
 
   private String userRefMin;
+
+  private Integer roleRefCount;
+
+  private String roleRefMax;
+
+  private String roleRefMin;
 
   public String getId() {
     return this.id;
@@ -68,22 +68,6 @@ public class RoleUserRelation implements Meta {
 
   public void setId(String id) {
     this.id = id;
-  }
-
-  public String getRoleRef() {
-    return this.roleRef;
-  }
-
-  public void setRoleRef(String roleRef) {
-    this.roleRef = roleRef;
-  }
-
-  public Role getRole() {
-    return this.role;
-  }
-
-  public void setRole(Role role) {
-    this.role = role;
   }
 
   public String getUserRef() {
@@ -100,6 +84,22 @@ public class RoleUserRelation implements Meta {
 
   public void setUser(User user) {
     this.user = user;
+  }
+
+  public String getRoleRef() {
+    return this.roleRef;
+  }
+
+  public void setRoleRef(String roleRef) {
+    this.roleRef = roleRef;
+  }
+
+  public Role getRole() {
+    return this.role;
+  }
+
+  public void setRole(Role role) {
+    this.role = role;
   }
 
   @Override
@@ -214,30 +214,6 @@ public class RoleUserRelation implements Meta {
     this.idMin = idMin;
   }
 
-  public Integer getRoleRefCount() {
-    return this.roleRefCount;
-  }
-
-  public void setRoleRefCount(Integer roleRefCount) {
-    this.roleRefCount = roleRefCount;
-  }
-
-  public String getRoleRefMax() {
-    return this.roleRefMax;
-  }
-
-  public void setRoleRefMax(String roleRefMax) {
-    this.roleRefMax = roleRefMax;
-  }
-
-  public String getRoleRefMin() {
-    return this.roleRefMin;
-  }
-
-  public void setRoleRefMin(String roleRefMin) {
-    this.roleRefMin = roleRefMin;
-  }
-
   public Integer getUserRefCount() {
     return this.userRefCount;
   }
@@ -260,5 +236,29 @@ public class RoleUserRelation implements Meta {
 
   public void setUserRefMin(String userRefMin) {
     this.userRefMin = userRefMin;
+  }
+
+  public Integer getRoleRefCount() {
+    return this.roleRefCount;
+  }
+
+  public void setRoleRefCount(Integer roleRefCount) {
+    this.roleRefCount = roleRefCount;
+  }
+
+  public String getRoleRefMax() {
+    return this.roleRefMax;
+  }
+
+  public void setRoleRefMax(String roleRefMax) {
+    this.roleRefMax = roleRefMax;
+  }
+
+  public String getRoleRefMin() {
+    return this.roleRefMin;
+  }
+
+  public void setRoleRefMin(String roleRefMin) {
+    this.roleRefMin = roleRefMin;
   }
 }

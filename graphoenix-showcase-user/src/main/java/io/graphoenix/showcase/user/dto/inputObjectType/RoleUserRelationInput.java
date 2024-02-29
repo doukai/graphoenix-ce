@@ -17,13 +17,13 @@ import org.eclipse.microprofile.graphql.Input;
 public class RoleUserRelationInput implements MetaInput {
   private String id;
 
-  private String roleRef;
-
-  private RoleInput role;
-
   private String userRef;
 
   private UserInput user;
+
+  private String roleRef;
+
+  private RoleInput role;
 
   private Boolean isDeprecated;
 
@@ -54,22 +54,6 @@ public class RoleUserRelationInput implements MetaInput {
     this.id = id;
   }
 
-  public String getRoleRef() {
-    return this.roleRef;
-  }
-
-  public void setRoleRef(String roleRef) {
-    this.roleRef = roleRef;
-  }
-
-  public RoleInput getRole() {
-    return this.role;
-  }
-
-  public void setRole(RoleInput role) {
-    this.role = role;
-  }
-
   public String getUserRef() {
     return this.userRef;
   }
@@ -84,6 +68,22 @@ public class RoleUserRelationInput implements MetaInput {
 
   public void setUser(UserInput user) {
     this.user = user;
+  }
+
+  public String getRoleRef() {
+    return this.roleRef;
+  }
+
+  public void setRoleRef(String roleRef) {
+    this.roleRef = roleRef;
+  }
+
+  public RoleInput getRole() {
+    return this.role;
+  }
+
+  public void setRole(RoleInput role) {
+    this.role = role;
   }
 
   public Boolean getIsDeprecated() {

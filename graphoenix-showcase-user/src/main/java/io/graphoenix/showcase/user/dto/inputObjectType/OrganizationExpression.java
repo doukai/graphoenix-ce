@@ -18,6 +18,8 @@ import org.eclipse.microprofile.graphql.Input;
 public class OrganizationExpression implements MetaExpression {
   private StringExpression id;
 
+  private IntExpression parentId;
+
   private StringExpression name;
 
   private OrganizationExpression above;
@@ -43,7 +45,7 @@ public class OrganizationExpression implements MetaExpression {
 
   private StringExpression __typename;
 
-  private OrganizationOrganizationRelationExpression organizationOrganizationRelation;
+  private OrganizationUserRelationExpression organizationUserRelation;
 
   @DefaultValue("false")
   private Boolean not;
@@ -59,6 +61,14 @@ public class OrganizationExpression implements MetaExpression {
 
   public void setId(StringExpression id) {
     this.id = id;
+  }
+
+  public IntExpression getParentId() {
+    return this.parentId;
+  }
+
+  public void setParentId(IntExpression parentId) {
+    this.parentId = parentId;
   }
 
   public StringExpression getName() {
@@ -169,13 +179,13 @@ public class OrganizationExpression implements MetaExpression {
     this.__typename = __typename;
   }
 
-  public OrganizationOrganizationRelationExpression getOrganizationOrganizationRelation() {
-    return this.organizationOrganizationRelation;
+  public OrganizationUserRelationExpression getOrganizationUserRelation() {
+    return this.organizationUserRelation;
   }
 
-  public void setOrganizationOrganizationRelation(
-      OrganizationOrganizationRelationExpression organizationOrganizationRelation) {
-    this.organizationOrganizationRelation = organizationOrganizationRelation;
+  public void setOrganizationUserRelation(
+      OrganizationUserRelationExpression organizationUserRelation) {
+    this.organizationUserRelation = organizationUserRelation;
   }
 
   public Boolean getNot() {

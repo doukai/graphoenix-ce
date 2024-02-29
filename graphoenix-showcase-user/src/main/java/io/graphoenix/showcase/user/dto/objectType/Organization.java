@@ -20,6 +20,8 @@ public class Organization implements Meta {
   @Id
   private String id;
 
+  private Integer parentId;
+
   @NonNull
   private String name;
 
@@ -45,11 +47,15 @@ public class Organization implements Meta {
 
   private String __typename;
 
-  private Collection<OrganizationOrganizationRelation> organizationOrganizationRelation;
+  private Collection<OrganizationUserRelation> organizationUserRelation;
 
-  private OrganizationOrganizationRelation organizationOrganizationRelationAggregate;
+  private User usersAggregate;
 
-  private OrganizationOrganizationRelationConnection organizationOrganizationRelationConnection;
+  private UserConnection usersConnection;
+
+  private OrganizationUserRelation organizationUserRelationAggregate;
+
+  private OrganizationUserRelationConnection organizationUserRelationConnection;
 
   private Integer idCount;
 
@@ -63,12 +69,30 @@ public class Organization implements Meta {
 
   private String nameMin;
 
+  private Integer parentIdCount;
+
+  private Integer parentIdSum;
+
+  private Integer parentIdAvg;
+
+  private Integer parentIdMax;
+
+  private Integer parentIdMin;
+
   public String getId() {
     return this.id;
   }
 
   public void setId(String id) {
     this.id = id;
+  }
+
+  public Integer getParentId() {
+    return this.parentId;
+  }
+
+  public void setParentId(Integer parentId) {
+    this.parentId = parentId;
   }
 
   public String getName() {
@@ -183,32 +207,47 @@ public class Organization implements Meta {
     this.__typename = __typename;
   }
 
-  public Collection<OrganizationOrganizationRelation> getOrganizationOrganizationRelation() {
-    return this.organizationOrganizationRelation;
+  public Collection<OrganizationUserRelation> getOrganizationUserRelation() {
+    return this.organizationUserRelation;
   }
 
-  public void setOrganizationOrganizationRelation(
-      Collection<OrganizationOrganizationRelation> organizationOrganizationRelation) {
-    this.organizationOrganizationRelation = organizationOrganizationRelation;
+  public void setOrganizationUserRelation(
+      Collection<OrganizationUserRelation> organizationUserRelation) {
+    this.organizationUserRelation = organizationUserRelation;
   }
 
-  public OrganizationOrganizationRelation getOrganizationOrganizationRelationAggregate() {
-    return this.organizationOrganizationRelationAggregate;
+  public User getUsersAggregate() {
+    return this.usersAggregate;
   }
 
-  public void setOrganizationOrganizationRelationAggregate(
-      OrganizationOrganizationRelation organizationOrganizationRelationAggregate) {
-    this.organizationOrganizationRelationAggregate = organizationOrganizationRelationAggregate;
+  public void setUsersAggregate(User usersAggregate) {
+    this.usersAggregate = usersAggregate;
   }
 
-  public OrganizationOrganizationRelationConnection getOrganizationOrganizationRelationConnection(
-      ) {
-    return this.organizationOrganizationRelationConnection;
+  public UserConnection getUsersConnection() {
+    return this.usersConnection;
   }
 
-  public void setOrganizationOrganizationRelationConnection(
-      OrganizationOrganizationRelationConnection organizationOrganizationRelationConnection) {
-    this.organizationOrganizationRelationConnection = organizationOrganizationRelationConnection;
+  public void setUsersConnection(UserConnection usersConnection) {
+    this.usersConnection = usersConnection;
+  }
+
+  public OrganizationUserRelation getOrganizationUserRelationAggregate() {
+    return this.organizationUserRelationAggregate;
+  }
+
+  public void setOrganizationUserRelationAggregate(
+      OrganizationUserRelation organizationUserRelationAggregate) {
+    this.organizationUserRelationAggregate = organizationUserRelationAggregate;
+  }
+
+  public OrganizationUserRelationConnection getOrganizationUserRelationConnection() {
+    return this.organizationUserRelationConnection;
+  }
+
+  public void setOrganizationUserRelationConnection(
+      OrganizationUserRelationConnection organizationUserRelationConnection) {
+    this.organizationUserRelationConnection = organizationUserRelationConnection;
   }
 
   public Integer getIdCount() {
@@ -257,5 +296,45 @@ public class Organization implements Meta {
 
   public void setNameMin(String nameMin) {
     this.nameMin = nameMin;
+  }
+
+  public Integer getParentIdCount() {
+    return this.parentIdCount;
+  }
+
+  public void setParentIdCount(Integer parentIdCount) {
+    this.parentIdCount = parentIdCount;
+  }
+
+  public Integer getParentIdSum() {
+    return this.parentIdSum;
+  }
+
+  public void setParentIdSum(Integer parentIdSum) {
+    this.parentIdSum = parentIdSum;
+  }
+
+  public Integer getParentIdAvg() {
+    return this.parentIdAvg;
+  }
+
+  public void setParentIdAvg(Integer parentIdAvg) {
+    this.parentIdAvg = parentIdAvg;
+  }
+
+  public Integer getParentIdMax() {
+    return this.parentIdMax;
+  }
+
+  public void setParentIdMax(Integer parentIdMax) {
+    this.parentIdMax = parentIdMax;
+  }
+
+  public Integer getParentIdMin() {
+    return this.parentIdMin;
+  }
+
+  public void setParentIdMin(Integer parentIdMin) {
+    this.parentIdMin = parentIdMin;
   }
 }

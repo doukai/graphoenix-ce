@@ -15,6 +15,8 @@ import java.lang.annotation.Target;
 public @interface OrganizationListMutationArguments {
   String id() default "";
 
+  int parentId() default 0;
+
   String name() default "";
 
   OrganizationInput1 above() default @OrganizationInput1;
@@ -39,13 +41,15 @@ public @interface OrganizationListMutationArguments {
 
   String __typename() default "Organization";
 
-  OrganizationOrganizationRelationInput1[] organizationOrganizationRelation() default {};
+  OrganizationUserRelationInput1[] organizationUserRelation() default {};
 
   OrganizationInput1[] list() default {};
 
   OrganizationExpression1 where() default @OrganizationExpression1;
 
   String $id() default "";
+
+  String $parentId() default "";
 
   String $name() default "";
 
@@ -71,7 +75,7 @@ public @interface OrganizationListMutationArguments {
 
   String $__typename() default "";
 
-  String $organizationOrganizationRelation() default "";
+  String $organizationUserRelation() default "";
 
   String $list() default "";
 

@@ -14,8 +14,12 @@ import org.eclipse.microprofile.graphql.Input;
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
-public class OrganizationOrganizationRelationInput implements MetaInput {
+public class OrganizationUserRelationInput implements MetaInput {
   private String id;
+
+  private String userRef;
+
+  private UserInput user;
 
   private String organizationRef;
 
@@ -37,10 +41,10 @@ public class OrganizationOrganizationRelationInput implements MetaInput {
 
   private String createGroupId;
 
-  @DefaultValue("\"OrganizationOrganizationRelation\"")
+  @DefaultValue("\"OrganizationUserRelation\"")
   private String __typename;
 
-  private OrganizationOrganizationRelationExpression where;
+  private OrganizationUserRelationExpression where;
 
   public String getId() {
     return this.id;
@@ -48,6 +52,22 @@ public class OrganizationOrganizationRelationInput implements MetaInput {
 
   public void setId(String id) {
     this.id = id;
+  }
+
+  public String getUserRef() {
+    return this.userRef;
+  }
+
+  public void setUserRef(String userRef) {
+    this.userRef = userRef;
+  }
+
+  public UserInput getUser() {
+    return this.user;
+  }
+
+  public void setUser(UserInput user) {
+    this.user = user;
   }
 
   public String getOrganizationRef() {
@@ -152,11 +172,11 @@ public class OrganizationOrganizationRelationInput implements MetaInput {
     this.__typename = __typename;
   }
 
-  public OrganizationOrganizationRelationExpression getWhere() {
+  public OrganizationUserRelationExpression getWhere() {
     return this.where;
   }
 
-  public void setWhere(OrganizationOrganizationRelationExpression where) {
+  public void setWhere(OrganizationUserRelationExpression where) {
     this.where = where;
   }
 }

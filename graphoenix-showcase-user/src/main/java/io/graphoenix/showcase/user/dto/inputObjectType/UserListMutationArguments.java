@@ -58,7 +58,7 @@ public class UserListMutationArguments implements MetaInput {
   @DefaultValue("\"User\"")
   private String __typename;
 
-  private String organizationId;
+  private Collection<OrganizationUserRelationInput> organizationUserRelation;
 
   private Collection<RoleUserRelationInput> roleUserRelation;
 
@@ -242,12 +242,13 @@ public class UserListMutationArguments implements MetaInput {
     this.__typename = __typename;
   }
 
-  public String getOrganizationId() {
-    return this.organizationId;
+  public Collection<OrganizationUserRelationInput> getOrganizationUserRelation() {
+    return this.organizationUserRelation;
   }
 
-  public void setOrganizationId(String organizationId) {
-    this.organizationId = organizationId;
+  public void setOrganizationUserRelation(
+      Collection<OrganizationUserRelationInput> organizationUserRelation) {
+    this.organizationUserRelation = organizationUserRelation;
   }
 
   public Collection<RoleUserRelationInput> getRoleUserRelation() {

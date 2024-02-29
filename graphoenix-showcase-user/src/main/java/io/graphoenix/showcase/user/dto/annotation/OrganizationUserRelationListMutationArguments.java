@@ -12,12 +12,16 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-public @interface OrganizationOrganizationRelationInput1 {
+public @interface OrganizationUserRelationListMutationArguments {
   String id() default "";
+
+  String userRef() default "";
+
+  UserInput1 user() default @UserInput1;
 
   String organizationRef() default "";
 
-  OrganizationInput2 organization() default @OrganizationInput2;
+  OrganizationInput1 organization() default @OrganizationInput1;
 
   boolean isDeprecated() default false;
 
@@ -35,12 +39,17 @@ public @interface OrganizationOrganizationRelationInput1 {
 
   String createGroupId() default "";
 
-  String __typename() default "OrganizationOrganizationRelation";
+  String __typename() default "OrganizationUserRelation";
 
-  OrganizationOrganizationRelationExpression2 where(
-      ) default @OrganizationOrganizationRelationExpression2;
+  OrganizationUserRelationInput1[] list() default {};
+
+  OrganizationUserRelationExpression1 where() default @OrganizationUserRelationExpression1;
 
   String $id() default "";
+
+  String $userRef() default "";
+
+  String $user() default "";
 
   String $organizationRef() default "";
 
@@ -63,6 +72,8 @@ public @interface OrganizationOrganizationRelationInput1 {
   String $createGroupId() default "";
 
   String $__typename() default "";
+
+  String $list() default "";
 
   String $where() default "";
 }

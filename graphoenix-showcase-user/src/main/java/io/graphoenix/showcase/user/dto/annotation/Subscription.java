@@ -40,6 +40,15 @@ public @interface Subscription {
   OrganizationConnectionSubscriptionArguments organizationConnection(
       ) default @OrganizationConnectionSubscriptionArguments;
 
+  OrganizationUserRelationSubscriptionArguments organizationUserRelation(
+      ) default @OrganizationUserRelationSubscriptionArguments;
+
+  OrganizationUserRelationListSubscriptionArguments organizationUserRelationList(
+      ) default @OrganizationUserRelationListSubscriptionArguments;
+
+  OrganizationUserRelationConnectionSubscriptionArguments organizationUserRelationConnection(
+      ) default @OrganizationUserRelationConnectionSubscriptionArguments;
+
   RoleUserRelationSubscriptionArguments roleUserRelation(
       ) default @RoleUserRelationSubscriptionArguments;
 
@@ -75,13 +84,4 @@ public @interface Subscription {
 
   RoleRoleTypeRelationConnectionSubscriptionArguments roleRoleTypeRelationConnection(
       ) default @RoleRoleTypeRelationConnectionSubscriptionArguments;
-
-  OrganizationOrganizationRelationSubscriptionArguments organizationOrganizationRelation(
-      ) default @OrganizationOrganizationRelationSubscriptionArguments;
-
-  OrganizationOrganizationRelationListSubscriptionArguments organizationOrganizationRelationList(
-      ) default @OrganizationOrganizationRelationListSubscriptionArguments;
-
-  OrganizationOrganizationRelationConnectionSubscriptionArguments organizationOrganizationRelationConnection(
-      ) default @OrganizationOrganizationRelationConnectionSubscriptionArguments;
 }

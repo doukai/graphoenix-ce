@@ -15,16 +15,16 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-public @interface RoleUserRelationListSubscriptionArguments {
+public @interface OrganizationUserRelationConnectionSubscriptionArguments {
   StringExpression1 id() default @StringExpression1;
 
   StringExpression1 userRef() default @StringExpression1;
 
   UserExpression1 user() default @UserExpression1;
 
-  StringExpression1 roleRef() default @StringExpression1;
+  StringExpression1 organizationRef() default @StringExpression1;
 
-  RoleExpression1 role() default @RoleExpression1;
+  OrganizationExpression1 organization() default @OrganizationExpression1;
 
   boolean includeDeprecated() default false;
 
@@ -44,7 +44,7 @@ public @interface RoleUserRelationListSubscriptionArguments {
 
   StringExpression1 __typename() default @StringExpression1;
 
-  RoleUserRelationOrderBy1 orderBy() default @RoleUserRelationOrderBy1;
+  OrganizationUserRelationOrderBy1 orderBy() default @OrganizationUserRelationOrderBy1;
 
   String[] groupBy() default {};
 
@@ -52,7 +52,7 @@ public @interface RoleUserRelationListSubscriptionArguments {
 
   Conditional cond() default Conditional.AND;
 
-  RoleUserRelationExpression1[] exs() default {};
+  OrganizationUserRelationExpression1[] exs() default {};
 
   int first() default 0;
 
@@ -70,9 +70,9 @@ public @interface RoleUserRelationListSubscriptionArguments {
 
   String $user() default "";
 
-  String $roleRef() default "";
+  String $organizationRef() default "";
 
-  String $role() default "";
+  String $organization() default "";
 
   String $includeDeprecated() default "";
 

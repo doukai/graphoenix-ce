@@ -57,7 +57,8 @@ public @interface UserSubscriptionArguments {
 
   StringExpression1 __typename() default @StringExpression1;
 
-  StringExpression1 organizationId() default @StringExpression1;
+  OrganizationUserRelationExpression1 organizationUserRelation(
+      ) default @OrganizationUserRelationExpression1;
 
   RoleUserRelationExpression1 roleUserRelation() default @RoleUserRelationExpression1;
 
@@ -112,7 +113,7 @@ public @interface UserSubscriptionArguments {
 
   String $__typename() default "";
 
-  String $organizationId() default "";
+  String $organizationUserRelation() default "";
 
   String $roleUserRelation() default "";
 
