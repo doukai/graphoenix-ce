@@ -46,7 +46,7 @@ type Organization {
 }
 
 type RoleUserRelation {
-    id: ID @type(name: "Int", autoIncrement: true)
+    id: ID @options(type: "Int", autoIncrement: true)
     userRef: String
     user: User @fetch(from: "userRef", to: "id", anchor: true, protocol: LOCAL)
     roleRef: String
