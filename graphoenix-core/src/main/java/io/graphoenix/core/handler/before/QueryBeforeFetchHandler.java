@@ -108,18 +108,22 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                                                                 Collectors.mapping(
                                                                                                                         fetchItem -> {
                                                                                                                             JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(fetchItem.getFetchField().getAlias());
+                                                                                                                            List<JsonValue> jsonValueList = fieldJsonValue.asJsonArray().stream()
+                                                                                                                                    .filter(item -> item.getValueType().equals(JsonValue.ValueType.OBJECT))
+                                                                                                                                    .map(item -> item.asJsonObject().get(fetchItem.getTarget()))
+                                                                                                                                    .collect(Collectors.toList());
+                                                                                                                            JsonArray jsonArray;
+                                                                                                                            if (jsonValueList.isEmpty()) {
+                                                                                                                                jsonArray = jsonProvider.createArrayBuilder(Collections.singletonList(JsonValue.NULL)).build();
+                                                                                                                            } else {
+                                                                                                                                jsonArray = jsonProvider.createArrayBuilder(jsonValueList).build();
+                                                                                                                            }
                                                                                                                             return jsonProvider.createObjectBuilder()
                                                                                                                                     .add(
                                                                                                                                             fetchItem.getFetchFrom(),
                                                                                                                                             jsonProvider.createObjectBuilder()
                                                                                                                                                     .add(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME, new EnumValue(INPUT_OPERATOR_INPUT_VALUE_IN))
-                                                                                                                                                    .add(
-                                                                                                                                                            INPUT_OPERATOR_INPUT_VALUE_ARR_NAME,
-                                                                                                                                                            fieldJsonValue.asJsonArray().stream()
-                                                                                                                                                                    .filter(item -> item.getValueType().equals(JsonValue.ValueType.OBJECT))
-                                                                                                                                                                    .map(item -> item.asJsonObject().get(fetchItem.getTarget()))
-                                                                                                                                                                    .collect(JsonCollectors.toJsonArray())
-                                                                                                                                                    )
+                                                                                                                                                    .add(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME, jsonArray)
                                                                                                                                     )
                                                                                                                                     .build();
                                                                                                                         },
@@ -137,30 +141,24 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                                         (JsonObject) jsonProvider
                                                                                                 .createPatchBuilder(
                                                                                                         entry.getValue().entrySet().stream()
-                                                                                                                .map(pathEntry -> {
-                                                                                                                            List<JsonValue> jsonValueList = Stream
-                                                                                                                                    .concat(
-                                                                                                                                            Stream.of(jsonProvider.createPointer(pathEntry.getKey() + "/" + INPUT_VALUE_EXS_NAME))
-                                                                                                                                                    .filter(jsonPointer -> jsonPointer.containsValue(entry.getKey().getArguments()))
-                                                                                                                                                    .map(jsonPointer -> jsonPointer.getValue(entry.getKey().getArguments()))
-                                                                                                                                                    .filter(jsonValue -> jsonValue.getValueType().equals(JsonValue.ValueType.ARRAY))
-                                                                                                                                                    .flatMap(jsonValue -> jsonValue.asJsonArray().stream()),
-                                                                                                                                            pathEntry.getValue().stream()
-                                                                                                                                    )
-                                                                                                                                    .collect(Collectors.toList());
-                                                                                                                            JsonArray jsonArray;
-                                                                                                                            if (jsonValueList.isEmpty()) {
-                                                                                                                                jsonArray = jsonProvider.createArrayBuilder(Collections.singletonList(JsonValue.NULL)).build();
-                                                                                                                            } else {
-                                                                                                                                jsonArray = jsonProvider.createArrayBuilder(jsonValueList).build();
-                                                                                                                            }
-                                                                                                                            return jsonProvider.createObjectBuilder()
-                                                                                                                                    .add("op", "add")
-                                                                                                                                    .add("path", pathEntry.getKey() + "/" + INPUT_VALUE_EXS_NAME)
-                                                                                                                                    .add("value", jsonArray)
-                                                                                                                                    .build();
-                                                                                                                        }
-
+                                                                                                                .map(pathEntry ->
+                                                                                                                        jsonProvider.createObjectBuilder()
+                                                                                                                                .add("op", "add")
+                                                                                                                                .add("path", pathEntry.getKey() + "/" + INPUT_VALUE_EXS_NAME)
+                                                                                                                                .add(
+                                                                                                                                        "value",
+                                                                                                                                        Stream
+                                                                                                                                                .concat(
+                                                                                                                                                        Stream.of(jsonProvider.createPointer(pathEntry.getKey() + "/" + INPUT_VALUE_EXS_NAME))
+                                                                                                                                                                .filter(jsonPointer -> jsonPointer.containsValue(entry.getKey().getArguments()))
+                                                                                                                                                                .map(jsonPointer -> jsonPointer.getValue(entry.getKey().getArguments()))
+                                                                                                                                                                .filter(jsonValue -> jsonValue.getValueType().equals(JsonValue.ValueType.ARRAY))
+                                                                                                                                                                .flatMap(jsonValue -> jsonValue.asJsonArray().stream()),
+                                                                                                                                                        pathEntry.getValue().stream()
+                                                                                                                                                )
+                                                                                                                                                .collect(JsonCollectors.toJsonArray())
+                                                                                                                                )
+                                                                                                                                .build()
                                                                                                                 )
                                                                                                                 .collect(JsonCollectors.toJsonArray())
                                                                                                 )
