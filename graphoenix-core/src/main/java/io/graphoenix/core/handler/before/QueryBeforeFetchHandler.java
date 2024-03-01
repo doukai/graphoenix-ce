@@ -19,7 +19,6 @@ import io.nozdormu.spi.context.BeanContext;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
@@ -106,27 +105,21 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                                                         Collectors.groupingBy(
                                                                                                                 FetchItem::getPath,
                                                                                                                 Collectors.mapping(
-                                                                                                                        fetchItem -> {
-                                                                                                                            JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(fetchItem.getFetchField().getAlias());
-                                                                                                                            List<JsonValue> jsonValueList = fieldJsonValue.asJsonArray().stream()
-                                                                                                                                    .filter(item -> item.getValueType().equals(JsonValue.ValueType.OBJECT))
-                                                                                                                                    .map(item -> item.asJsonObject().get(fetchItem.getTarget()))
-                                                                                                                                    .collect(Collectors.toList());
-                                                                                                                            JsonArray jsonArray;
-                                                                                                                            if (jsonValueList.isEmpty()) {
-                                                                                                                                jsonArray = jsonProvider.createArrayBuilder(Collections.singletonList(JsonValue.NULL)).build();
-                                                                                                                            } else {
-                                                                                                                                jsonArray = jsonProvider.createArrayBuilder(jsonValueList).build();
-                                                                                                                            }
-                                                                                                                            return jsonProvider.createObjectBuilder()
-                                                                                                                                    .add(
-                                                                                                                                            fetchItem.getFetchFrom(),
-                                                                                                                                            jsonProvider.createObjectBuilder()
-                                                                                                                                                    .add(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME, new EnumValue(INPUT_OPERATOR_INPUT_VALUE_IN))
-                                                                                                                                                    .add(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME, jsonArray)
-                                                                                                                                    )
-                                                                                                                                    .build();
-                                                                                                                        },
+                                                                                                                        fetchItem ->
+                                                                                                                                jsonProvider.createObjectBuilder()
+                                                                                                                                        .add(
+                                                                                                                                                fetchItem.getFetchFrom(),
+                                                                                                                                                jsonProvider.createObjectBuilder()
+                                                                                                                                                        .add(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME, new EnumValue(INPUT_OPERATOR_INPUT_VALUE_IN))
+                                                                                                                                                        .add(
+                                                                                                                                                                INPUT_OPERATOR_INPUT_VALUE_ARR_NAME,
+                                                                                                                                                                fetchJsonValue.asJsonObject().get(fetchItem.getFetchField().getAlias()).asJsonArray().stream()
+                                                                                                                                                                        .filter(item -> item.getValueType().equals(JsonValue.ValueType.OBJECT))
+                                                                                                                                                                        .map(item -> item.asJsonObject().get(fetchItem.getTarget()))
+                                                                                                                                                                        .collect(JsonCollectors.toJsonArray())
+                                                                                                                                                        )
+                                                                                                                                        )
+                                                                                                                                        .build(),
                                                                                                                         Collectors.toList()
                                                                                                                 )
                                                                                                         )
