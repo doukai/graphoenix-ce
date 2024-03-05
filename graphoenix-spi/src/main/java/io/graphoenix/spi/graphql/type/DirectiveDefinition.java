@@ -51,7 +51,7 @@ public class DirectiveDefinition extends AbstractDefinition implements Definitio
     }
 
     public DirectiveDefinition setArguments(Collection<InputValue> arguments) {
-        if (arguments != null && arguments.size() > 0) {
+        if (arguments != null && !arguments.isEmpty()) {
             this.argumentMap = arguments.stream()
                     .collect(
                             Collectors.toMap(
@@ -96,7 +96,7 @@ public class DirectiveDefinition extends AbstractDefinition implements Definitio
     }
 
     public DirectiveDefinition setDirectiveLocations(Collection<String> directiveLocations) {
-        if (directiveLocations != null && directiveLocations.size() > 0) {
+        if (directiveLocations != null && !directiveLocations.isEmpty()) {
             this.directiveLocations = new LinkedHashSet<>(directiveLocations);
         }
         return this;

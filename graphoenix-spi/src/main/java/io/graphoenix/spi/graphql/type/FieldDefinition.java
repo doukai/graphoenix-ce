@@ -7,6 +7,7 @@ import io.graphoenix.spi.graphql.common.ArrayValueWithVariable;
 import io.graphoenix.spi.graphql.common.Directive;
 import io.graphoenix.spi.graphql.common.EnumValue;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
+import io.nozdormu.spi.async.Async;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
@@ -79,6 +80,7 @@ public class FieldDefinition extends AbstractDefinition {
                                 )
                         )
                         .addArgument(DIRECTIVE_INVOKE_ARGUMENT_RETURN_CLASS_NAME_NAME, getTypeNameFromTypeMirror(executableElement.getReturnType(), typeUtils))
+                        .addArgument(DIRECTIVE_INVOKE_ASYNC_NAME, executableElement.getAnnotation(Async.class) != null)
         );
     }
 
@@ -153,35 +155,35 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Optional<String> getTypeName() {
         return Optional.ofNullable(getDirective(DIRECTIVE_OPTIONS_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_OPTIONS_ARGUMENT_TYPE_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_OPTIONS_ARGUMENT_TYPE_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
 
     public Optional<String> getDefault() {
         return Optional.ofNullable(getDirective(DIRECTIVE_OPTIONS_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_OPTIONS_ARGUMENT_DEFAULT_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_OPTIONS_ARGUMENT_DEFAULT_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
 
     public Optional<Integer> getLength() {
         return Optional.ofNullable(getDirective(DIRECTIVE_OPTIONS_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_OPTIONS_ARGUMENT_LENGTH_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_OPTIONS_ARGUMENT_LENGTH_NAME))
                 .filter(ValueWithVariable::isInt)
                 .map(valueWithVariable -> valueWithVariable.asInt().getIntegerValue());
     }
 
     public Optional<Integer> getDecimals() {
         return Optional.ofNullable(getDirective(DIRECTIVE_OPTIONS_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_OPTIONS_ARGUMENT_DECIMALS_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_OPTIONS_ARGUMENT_DECIMALS_NAME))
                 .filter(ValueWithVariable::isInt)
                 .map(valueWithVariable -> valueWithVariable.asInt().getIntegerValue());
     }
 
     public boolean isAutoIncrement() {
         return Optional.ofNullable(getDirective(DIRECTIVE_OPTIONS_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_OPTIONS_ARGUMENT_AUTO_INCREMENT_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_OPTIONS_ARGUMENT_AUTO_INCREMENT_NAME))
                 .filter(ValueWithVariable::isBoolean)
                 .map(valueWithVariable -> valueWithVariable.asBoolean().getValue())
                 .orElse(false);
@@ -201,7 +203,7 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Optional<String> getInvokeClassName() {
         return Optional.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_INVOKE_ARGUMENT_CLASS_NAME_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_INVOKE_ARGUMENT_CLASS_NAME_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -212,7 +214,7 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Optional<String> getInvokeMethodName() {
         return Optional.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_INVOKE_ARGUMENT_METHOD_NAME_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_INVOKE_ARGUMENT_METHOD_NAME_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -223,7 +225,7 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Stream<Map.Entry<String, String>> getInvokeParameters() {
         return Stream.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
-                .flatMap(directive -> Stream.ofNullable(directive.getArgumentOrNull(DIRECTIVE_INVOKE_ARGUMENT_PARAMETER_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_INVOKE_ARGUMENT_PARAMETER_NAME).stream())
                 .filter(ValueWithVariable::isArray)
                 .flatMap(valueWithVariable -> valueWithVariable.asArray().getValueWithVariables().stream())
                 .filter(ValueWithVariable::isObject)
@@ -242,7 +244,7 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Optional<String> getInvokeReturnClassName() {
         return Optional.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_INVOKE_ARGUMENT_RETURN_CLASS_NAME_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_INVOKE_ARGUMENT_RETURN_CLASS_NAME_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -251,13 +253,21 @@ public class FieldDefinition extends AbstractDefinition {
         return getInvokeReturnClassName().orElseThrow(() -> new GraphQLErrors(RETURN_CLASS_NAME_ARGUMENT_NOT_EXIST.bind(toString())));
     }
 
+    public boolean isAsyncInvoke() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_INVOKE_ASYNC_NAME))
+                .filter(ValueWithVariable::isBoolean)
+                .map(valueWithVariable -> valueWithVariable.asBoolean().getValue())
+                .orElse(false);
+    }
+
     public boolean isFunctionField() {
         return hasDirective(DIRECTIVE_FUNC_NAME);
     }
 
     public Optional<String> getFunctionName() {
         return Optional.ofNullable(getDirective(DIRECTIVE_FUNC_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FUNC_ARGUMENT_NAME_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_FUNC_ARGUMENT_NAME_NAME))
                 .filter(ValueWithVariable::isEnum)
                 .map(valueWithVariable -> valueWithVariable.asEnum().getValue());
     }
@@ -268,7 +278,7 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Optional<String> getFunctionField() {
         return Optional.ofNullable(getDirective(DIRECTIVE_FUNC_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FUNC_ARGUMENT_FIELD_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_FUNC_ARGUMENT_FIELD_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -283,7 +293,7 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Optional<String> getConnectionField() {
         return Optional.ofNullable(getDirective(DIRECTIVE_CONNECTION_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_CONNECTION_ARGUMENT_FIELD_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_CONNECTION_ARGUMENT_FIELD_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -294,7 +304,7 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Optional<String> getConnectionAgg() {
         return Optional.ofNullable(getDirective(DIRECTIVE_CONNECTION_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_CONNECTION_ARGUMENT_AGG_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_CONNECTION_ARGUMENT_AGG_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -321,7 +331,7 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Optional<String> getMapFrom() {
         return Optional.ofNullable(getDirective(DIRECTIVE_MAP_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_MAP_ARGUMENT_FROM_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -332,7 +342,7 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Optional<String> getMapTo() {
         return Optional.ofNullable(getDirective(DIRECTIVE_MAP_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_MAP_ARGUMENT_TO_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -343,9 +353,9 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Optional<String> getMapWithType() {
         return Optional.ofNullable(getDirective(DIRECTIVE_MAP_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_MAP_ARGUMENT_WITH_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_MAP_ARGUMENT_WITH_NAME))
                 .filter(ValueWithVariable::isObject)
-                .map(valueWithVariable -> valueWithVariable.asObject().getValueWithVariableOrNull(INPUT_WITH_INPUT_VALUE_TYPE_NAME))
+                .flatMap(valueWithVariable -> valueWithVariable.asObject().getValueWithVariable(INPUT_WITH_INPUT_VALUE_TYPE_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -356,9 +366,9 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Optional<String> getMapWithFrom() {
         return Optional.ofNullable(getDirective(DIRECTIVE_MAP_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_MAP_ARGUMENT_WITH_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_MAP_ARGUMENT_WITH_NAME))
                 .filter(ValueWithVariable::isObject)
-                .map(valueWithVariable -> valueWithVariable.asObject().getValueWithVariableOrNull(DIRECTIVE_MAP_ARGUMENT_FROM_NAME))
+                .flatMap(valueWithVariable -> valueWithVariable.asObject().getValueWithVariable(DIRECTIVE_MAP_ARGUMENT_FROM_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -369,9 +379,9 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Optional<String> getMapWithTo() {
         return Optional.ofNullable(getDirective(DIRECTIVE_MAP_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_MAP_ARGUMENT_WITH_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_MAP_ARGUMENT_WITH_NAME))
                 .filter(ValueWithVariable::isObject)
-                .map(valueWithVariable -> valueWithVariable.asObject().getValueWithVariableOrNull(DIRECTIVE_MAP_ARGUMENT_TO_NAME))
+                .flatMap(valueWithVariable -> valueWithVariable.asObject().getValueWithVariable(DIRECTIVE_MAP_ARGUMENT_TO_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -394,7 +404,7 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Optional<String> getFetchFrom() {
         return Optional.ofNullable(getDirective(DIRECTIVE_FETCH_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -405,7 +415,7 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Optional<String> getFetchTo() {
         return Optional.ofNullable(getDirective(DIRECTIVE_FETCH_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FETCH_ARGUMENT_TO_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -416,9 +426,9 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Optional<String> getFetchWithType() {
         return Optional.ofNullable(getDirective(DIRECTIVE_FETCH_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FETCH_ARGUMENT_WITH_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_FETCH_ARGUMENT_WITH_NAME))
                 .filter(ValueWithVariable::isObject)
-                .map(valueWithVariable -> valueWithVariable.asObject().getValueWithVariableOrNull(DIRECTIVE_FETCH_ARGUMENT_WITH_TYPE_NAME))
+                .flatMap(valueWithVariable -> valueWithVariable.asObject().getValueWithVariable(DIRECTIVE_FETCH_ARGUMENT_WITH_TYPE_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -429,9 +439,9 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Optional<String> getFetchWithFrom() {
         return Optional.ofNullable(getDirective(DIRECTIVE_FETCH_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FETCH_ARGUMENT_WITH_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_FETCH_ARGUMENT_WITH_NAME))
                 .filter(ValueWithVariable::isObject)
-                .map(valueWithVariable -> valueWithVariable.asObject().getValueWithVariableOrNull(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME))
+                .flatMap(valueWithVariable -> valueWithVariable.asObject().getValueWithVariable(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -442,9 +452,9 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Optional<String> getFetchWithTo() {
         return Optional.ofNullable(getDirective(DIRECTIVE_FETCH_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FETCH_ARGUMENT_WITH_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_FETCH_ARGUMENT_WITH_NAME))
                 .filter(ValueWithVariable::isObject)
-                .map(valueWithVariable -> valueWithVariable.asObject().getValueWithVariableOrNull(DIRECTIVE_FETCH_ARGUMENT_TO_NAME))
+                .flatMap(valueWithVariable -> valueWithVariable.asObject().getValueWithVariable(DIRECTIVE_FETCH_ARGUMENT_TO_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -455,7 +465,7 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Optional<EnumValue> getFetchProtocol() {
         return Optional.ofNullable(getDirective(DIRECTIVE_FETCH_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME))
                 .map(ValueWithVariable::asEnum);
     }
 
@@ -469,7 +479,7 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Optional<String> getFormatValue() {
         return Optional.ofNullable(getDirective(DIRECTIVE_FORMAT_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FORMAT_ARGUMENT_VALUE_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_FORMAT_ARGUMENT_VALUE_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -480,7 +490,7 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Optional<String> getFormatLocale() {
         return Optional.ofNullable(getDirective(DIRECTIVE_FORMAT_NAME))
-                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_FORMAT_ARGUMENT_LOCALE_NAME)))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_FORMAT_ARGUMENT_LOCALE_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }

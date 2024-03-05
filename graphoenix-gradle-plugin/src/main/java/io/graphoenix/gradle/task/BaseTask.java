@@ -36,6 +36,7 @@ import io.graphoenix.spi.graphql.common.Directive;
 import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
 import io.graphoenix.spi.graphql.type.*;
 import io.nozdormu.config.TypesafeConfig;
+import io.nozdormu.spi.async.Async;
 import io.nozdormu.spi.context.BeanContext;
 import jakarta.annotation.Generated;
 import org.eclipse.microprofile.config.Config;
@@ -330,6 +331,7 @@ public class BaseTask extends DefaultTask {
                                                                                                             )
                                                                                                     )
                                                                                                     .addArgument(DIRECTIVE_INVOKE_ARGUMENT_RETURN_CLASS_NAME_NAME, methodDeclaration.getType().toString())
+                                                                                                    .addArgument(DIRECTIVE_INVOKE_ASYNC_NAME, methodDeclaration.isAnnotationPresent(Async.class))
                                                                                     )
                                                                                     .addDirective(
                                                                                             new Directive(DIRECTIVE_PACKAGE_NAME)
@@ -388,6 +390,7 @@ public class BaseTask extends DefaultTask {
                                                                                                 )
                                                                                         )
                                                                                         .addArgument(DIRECTIVE_INVOKE_ARGUMENT_RETURN_CLASS_NAME_NAME, methodDeclaration.getType().toString())
+                                                                                        .addArgument(DIRECTIVE_INVOKE_ASYNC_NAME, methodDeclaration.isAnnotationPresent(Async.class))
                                                                         )
                                                                         .addDirective(
                                                                                 new Directive(DIRECTIVE_PACKAGE_NAME)
@@ -444,6 +447,7 @@ public class BaseTask extends DefaultTask {
                                                                                                 )
                                                                                         )
                                                                                         .addArgument(DIRECTIVE_INVOKE_ARGUMENT_RETURN_CLASS_NAME_NAME, methodDeclaration.getType().toString())
+                                                                                        .addArgument(DIRECTIVE_INVOKE_ASYNC_NAME, methodDeclaration.isAnnotationPresent(Async.class))
                                                                         )
                                                                         .addDirective(
                                                                                 new Directive(DIRECTIVE_PACKAGE_NAME)

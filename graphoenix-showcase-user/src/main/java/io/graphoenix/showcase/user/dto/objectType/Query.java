@@ -69,6 +69,8 @@ public class Query {
 
   private String appName;
 
+  private String appName2;
+
   private Collection<String> loginName;
 
   public User getUser() {
@@ -309,6 +311,14 @@ public class Query {
 
   public void setAppName(String appName) {
     this.appName = appName;
+  }
+
+  public String getAppName2() {
+    return this.appName2;
+  }
+
+  public void setAppName2(String appName2) {
+    this.appName2 = appName2;
   }
 
   public Collection<String> getLoginName() {

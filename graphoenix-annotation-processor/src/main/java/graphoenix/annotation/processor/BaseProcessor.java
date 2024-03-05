@@ -10,6 +10,7 @@ import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
 import io.graphoenix.spi.graphql.type.*;
 import io.graphoenix.spi.utils.ElementUtil;
 import io.nozdormu.config.TypesafeConfig;
+import io.nozdormu.spi.async.Async;
 import io.nozdormu.spi.context.BeanContext;
 import jakarta.annotation.Generated;
 import org.eclipse.microprofile.config.Config;
@@ -221,7 +222,8 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                                         )
                                                         .collect(Collectors.toList())
                                         ),
-                                        INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME, ElementUtil.getTypeNameFromTypeMirror(executableElement.getReturnType(), typeUtils)
+                                        INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME, ElementUtil.getTypeNameFromTypeMirror(executableElement.getReturnType(), typeUtils),
+                                        INPUT_INVOKE_INPUT_VALUE_ASYNC_NAME, executableElement.getAnnotation(Async.class) != null
                                 );
 
                                 executableElement.getParameters().stream()

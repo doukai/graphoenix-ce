@@ -26,11 +26,13 @@ repositories {
 dependencies {
     implementation project(':graphoenix-core')
     implementation 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
+    implementation 'io.nozdormu:nozdormu-async:0.0.1-SNAPSHOT'
     implementation 'io.nozdormu:nozdormu-interceptor:0.0.1-SNAPSHOT'
     implementation 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
 
     annotationProcessor project(':graphoenix-annotation-processor')
     annotationProcessor 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
+    annotationProcessor 'io.nozdormu:nozdormu-async:0.0.1-SNAPSHOT'
     annotationProcessor 'io.nozdormu:nozdormu-interceptor:0.0.1-SNAPSHOT'
     annotationProcessor 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
 

@@ -17,6 +17,7 @@ dependencies {
     implementation project(":graphoenix-r2dbc")
     implementation project(":graphoenix-http-server")
     implementation 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
+    implementation 'io.nozdormu:nozdormu-async:0.0.1-SNAPSHOT'
     implementation 'io.nozdormu:nozdormu-interceptor:0.0.1-SNAPSHOT'
     implementation 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
     implementation 'org.mariadb:r2dbc-mariadb:1.1.4'

@@ -1,6 +1,8 @@
 package io.graphoenix.spi.graphql.common;
 
 import graphql.parser.antlr.GraphqlParser;
+import io.graphoenix.spi.error.GraphQLErrorType;
+import io.graphoenix.spi.error.GraphQLErrors;
 import jakarta.json.*;
 import jakarta.validation.constraints.NotNull;
 import org.stringtemplate.v4.ST;
@@ -123,6 +125,10 @@ public class ObjectValueWithVariable extends AbstractMap<String, JsonValue> impl
 
     public ValueWithVariable getValueWithVariableOrNull(String name) {
         return objectValueWithVariable.get(name);
+    }
+
+    public ValueWithVariable getValueWithVariableOrError(String name) {
+        return getValueWithVariable(name).orElseThrow(() -> new GraphQLErrors(GraphQLErrorType.ARGUMENT_NOT_EXIST.bind(name)));
     }
 
     public Optional<ValueWithVariable> getValueWithVariable(String name) {

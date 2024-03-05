@@ -120,6 +120,8 @@ public class User implements Meta {
 
   private String nickName;
 
+  private Integer age2;
+
   private Collection<String> address;
 
   public String getId() {
@@ -534,6 +536,14 @@ public class User implements Meta {
 
   public void setNickName(String nickName) {
     this.nickName = nickName;
+  }
+
+  public Integer getAge2() {
+    return this.age2;
+  }
+
+  public void setAge2(Integer age2) {
+    this.age2 = age2;
   }
 
   public Collection<String> getAddress() {

@@ -5,18 +5,13 @@ import com.squareup.javapoet.*;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.OperationBuilder;
-import io.graphoenix.core.handler.PackageManager;
-import io.graphoenix.java.utils.TypeNameUtil;
-import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Operation;
-import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.ObjectType;
 import io.graphoenix.spi.handler.OperationBeforeHandler;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.inject.Provider;
 import jakarta.json.JsonValue;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.spi.JsonProvider;
@@ -28,7 +23,8 @@ import javax.annotation.processing.Filer;
 import javax.lang.model.element.Modifier;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -40,47 +36,15 @@ import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 public class ArgumentsInvokeHandlerBuilder {
 
     private final DocumentManager documentManager;
-    private final PackageManager packageManager;
     private final PackageConfig packageConfig;
-    private Map<String, Map<String, List<Map.Entry<String, String>>>> invokeMethods;
 
     @Inject
-    public ArgumentsInvokeHandlerBuilder(DocumentManager documentManager, PackageManager packageManager, PackageConfig packageConfig) {
+    public ArgumentsInvokeHandlerBuilder(DocumentManager documentManager, PackageConfig packageConfig) {
         this.documentManager = documentManager;
-        this.packageManager = packageManager;
         this.packageConfig = packageConfig;
     }
 
     public void writeToFiler(Filer filer) throws IOException {
-        this.invokeMethods = documentManager.getDocument().getObjectTypes()
-                .filter(objectType -> !documentManager.isOperationType(objectType))
-                .collect(
-                        Collectors.toMap(
-                                AbstractDefinition::getName,
-                                objectType ->
-                                        objectType.getFields().stream()
-                                                .filter(FieldDefinition::isInvokeField)
-                                                .filter(packageManager::isLocalPackage)
-                                                .map(fieldDefinition ->
-                                                        new AbstractMap.SimpleEntry<>(
-                                                                fieldDefinition.getInvokeClassNameOrError(),
-                                                                new AbstractMap.SimpleEntry<>(
-                                                                        fieldDefinition.getInvokeMethodNameOrError(),
-                                                                        fieldDefinition.getInvokeReturnClassNameOrError()
-                                                                )
-                                                        )
-                                                )
-                                                .collect(
-                                                        Collectors.groupingBy(
-                                                                AbstractMap.SimpleEntry<String, AbstractMap.SimpleEntry<String, String>>::getKey,
-                                                                Collectors.mapping(
-                                                                        AbstractMap.SimpleEntry<String, AbstractMap.SimpleEntry<String, String>>::getValue,
-                                                                        Collectors.toList()
-                                                                )
-                                                        )
-                                                )
-                        )
-                );
         this.buildClass().writeTo(filer);
         Logger.info("ArgumentsInvokeHandler build success");
     }
@@ -128,30 +92,12 @@ public class ArgumentsInvokeHandlerBuilder {
                                 Modifier.FINAL
                         ).build()
                 )
-                .addFields(buildFields())
                 .addMethod(buildConstructor())
                 .addMethods(buildTypeInvokeMethods())
                 .build();
     }
 
-    private Set<FieldSpec> buildFields() {
-        return this.invokeMethods.values().stream()
-                .flatMap(classMap ->
-                        classMap.keySet().stream()
-                                .map(TypeNameUtil::toClassName)
-                                .map(className ->
-                                        FieldSpec.builder(ParameterizedTypeName.get(ClassName.get(Provider.class), className), typeNameToFieldName(className.simpleName()))
-                                                .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
-                                                .build()
-                                )
-                )
-                .collect(Collectors.toSet());
-    }
-
     private MethodSpec buildConstructor() {
-        Set<String> classNameSet = invokeMethods.values().stream()
-                .flatMap(value -> value.keySet().stream())
-                .collect(Collectors.toSet());
 
         MethodSpec.Builder builder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
@@ -160,30 +106,10 @@ public class ArgumentsInvokeHandlerBuilder {
                 .addParameter(ClassName.get(Jsonb.class), "jsonb")
                 .addParameter(ClassName.get(JsonProvider.class), "jsonProvider")
                 .addParameter(ClassName.get(packageConfig.getHandlerPackageName(), "InputInvokeHandler"), "inputInvokeHandler")
-                .addParameters(
-                        classNameSet.stream()
-                                .map(TypeNameUtil::toClassName)
-                                .map(className ->
-                                        ParameterSpec.builder(
-                                                ParameterizedTypeName.get(ClassName.get(Provider.class), className),
-                                                typeNameToFieldName(className.simpleName())
-                                        ).build()
-                                )
-                                .collect(Collectors.toList())
-                )
                 .addStatement("this.operationBuilder = operationBuilder")
                 .addStatement("this.jsonb = jsonb")
                 .addStatement("this.jsonProvider = jsonProvider")
                 .addStatement("this.inputInvokeHandler = inputInvokeHandler");
-
-        classNameSet.stream()
-                .map(TypeNameUtil::toClassName)
-                .forEach(className ->
-                        builder.addStatement("this.$L = $L",
-                                typeNameToFieldName(className.simpleName()),
-                                typeNameToFieldName(className.simpleName())
-                        )
-                );
 
         return builder.build();
     }

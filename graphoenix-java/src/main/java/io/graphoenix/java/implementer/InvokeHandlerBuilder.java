@@ -25,6 +25,8 @@ import jakarta.json.stream.JsonCollectors;
 import org.tinylog.Logger;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple3;
+import reactor.util.function.Tuples;
 
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.Modifier;
@@ -46,7 +48,7 @@ public class InvokeHandlerBuilder {
     private final DocumentManager documentManager;
     private final PackageManager packageManager;
     private final PackageConfig packageConfig;
-    private Map<String, Map<String, List<Map.Entry<String, String>>>> invokeMethods;
+    private Map<String, Map<String, List<Tuple3<String, String, Boolean>>>> invokeMethods;
 
     @Inject
     public InvokeHandlerBuilder(DocumentManager documentManager, PackageManager packageManager, PackageConfig packageConfig) {
@@ -67,17 +69,18 @@ public class InvokeHandlerBuilder {
                                                 .map(fieldDefinition ->
                                                         new AbstractMap.SimpleEntry<>(
                                                                 fieldDefinition.getInvokeClassNameOrError(),
-                                                                new AbstractMap.SimpleEntry<>(
+                                                                Tuples.of(
                                                                         fieldDefinition.getInvokeMethodNameOrError(),
-                                                                        fieldDefinition.getInvokeReturnClassNameOrError()
+                                                                        fieldDefinition.getInvokeReturnClassNameOrError(),
+                                                                        fieldDefinition.isAsyncInvoke()
                                                                 )
                                                         )
                                                 )
                                                 .collect(
                                                         Collectors.groupingBy(
-                                                                AbstractMap.SimpleEntry<String, AbstractMap.SimpleEntry<String, String>>::getKey,
+                                                                AbstractMap.SimpleEntry<String, Tuple3<String, String, Boolean>>::getKey,
                                                                 Collectors.mapping(
-                                                                        AbstractMap.SimpleEntry<String, AbstractMap.SimpleEntry<String, String>>::getValue,
+                                                                        AbstractMap.SimpleEntry<String, Tuple3<String, String, Boolean>>::getValue,
                                                                         Collectors.toList()
                                                                 )
                                                         )
@@ -243,13 +246,25 @@ public class InvokeHandlerBuilder {
                                                                                                     String invokeClassName = fieldDefinition.getInvokeClassNameOrError();
                                                                                                     String methodName = fieldDefinition.getInvokeMethodNameOrError();
                                                                                                     ClassName returnClassName = toClassName(getClassName(fieldDefinition.getInvokeReturnClassNameOrError()));
+                                                                                                    boolean asyncInvoke = fieldDefinition.isAsyncInvoke();
 
                                                                                                     String apiVariableName = typeNameToFieldName(toClassName(invokeClassName).simpleName());
                                                                                                     String fieldSetterMethodName = getFieldSetterMethodName(fieldDefinition.getName());
                                                                                                     CodeBlock caseCodeBlock = CodeBlock.of("case $S:\n", fieldDefinition.getName());
                                                                                                     CodeBlock invokeCodeBlock;
 
-                                                                                                    if (returnClassName.canonicalName().equals(Mono.class.getCanonicalName())) {
+                                                                                                    if (asyncInvoke) {
+                                                                                                        invokeCodeBlock = CodeBlock.of("return $L.get().asyncInvoke($S, $L).map(sync -> ($T)sync).doOnNext($L -> $L.$L($L));",
+                                                                                                                apiVariableName,
+                                                                                                                methodName,
+                                                                                                                resultParameterName,
+                                                                                                                returnClassName,
+                                                                                                                getFieldName(fieldDefinition.getName()),
+                                                                                                                resultParameterName,
+                                                                                                                fieldSetterMethodName,
+                                                                                                                getFieldName(fieldDefinition.getName())
+                                                                                                        );
+                                                                                                    } else if (returnClassName.canonicalName().equals(Mono.class.getCanonicalName())) {
                                                                                                         invokeCodeBlock = CodeBlock.of("return $L.get().$L($L).doOnNext($L -> $L.$L($L));",
                                                                                                                 apiVariableName,
                                                                                                                 methodName,
@@ -388,6 +403,7 @@ public class InvokeHandlerBuilder {
                                                                                                     String methodName = fieldDefinition.getInvokeMethodNameOrError();
                                                                                                     List<Map.Entry<String, String>> parameters = fieldDefinition.getInvokeParametersList();
                                                                                                     ClassName returnClassName = toClassName(getClassName(fieldDefinition.getInvokeReturnClassNameOrError()));
+                                                                                                    boolean asyncInvoke = fieldDefinition.isAsyncInvoke();
                                                                                                     String apiVariableName = typeNameToFieldName(toClassName(invokeClassName).simpleName());
 
                                                                                                     CodeBlock parametersCodeBlock = CodeBlock.join(
@@ -403,7 +419,16 @@ public class InvokeHandlerBuilder {
                                                                                                     CodeBlock.Builder codeBlockBuilder = CodeBlock.builder().add("case $S:\n", fieldDefinition.getName())
                                                                                                             .indent();
 
-                                                                                                    if (returnClassName.canonicalName().equals(Mono.class.getCanonicalName())) {
+                                                                                                    if (asyncInvoke) {
+                                                                                                        codeBlockBuilder
+                                                                                                                .add("return $L.get().asyncInvoke($S, $L).map(sync -> ($T)sync)\n",
+                                                                                                                        apiVariableName,
+                                                                                                                        methodName,
+                                                                                                                        parametersCodeBlock,
+                                                                                                                        returnClassName
+                                                                                                                )
+                                                                                                                .indent();
+                                                                                                    } else if (returnClassName.canonicalName().equals(Mono.class.getCanonicalName())) {
                                                                                                         codeBlockBuilder
                                                                                                                 .add("return $L.get().$L($L)\n",
                                                                                                                         apiVariableName,

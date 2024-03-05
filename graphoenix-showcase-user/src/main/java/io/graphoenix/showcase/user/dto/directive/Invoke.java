@@ -23,4 +23,6 @@ public @interface Invoke {
   InvokeParameter[] parameters() default {};
 
   String returnClassName() default "";
+
+  boolean async() default false;
 }

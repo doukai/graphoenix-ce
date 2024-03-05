@@ -8,6 +8,7 @@ import org.eclipse.microprofile.graphql.Ignore;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 import reactor.util.function.Tuple3;
+import reactor.util.function.Tuple4;
 import reactor.util.function.Tuples;
 
 import javax.lang.model.element.ElementKind;
@@ -143,7 +144,7 @@ public class InputObjectType extends AbstractDefinition implements Definition {
         return hasDirective(DIRECTIVE_INVOKES_NAME);
     }
 
-    public List<Tuple3<String, String, String>> getInputInvokes() {
+    public List<Tuple4<String, String, String, Boolean>> getInputInvokes() {
         return Stream.ofNullable(getDirective(DIRECTIVE_INVOKES_NAME))
                 .flatMap(directive ->
                         Stream.ofNullable(directive.getArgumentOrNull(DIRECTIVE_INVOKES_METHODS_NAME))
@@ -154,9 +155,10 @@ public class InputObjectType extends AbstractDefinition implements Definition {
                                 .map(ValueWithVariable::asObject)
                                 .map(objectValueWithVariable ->
                                         Tuples.of(
-                                                objectValueWithVariable.getValueWithVariableOrNull(INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME).asString().getValue(),
-                                                objectValueWithVariable.getValueWithVariableOrNull(INPUT_INVOKE_INPUT_VALUE_METHOD_NAME_NAME).asString().getValue(),
-                                                objectValueWithVariable.getValueWithVariableOrNull(INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME).asString().getValue()
+                                                objectValueWithVariable.getValueWithVariableOrError(INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME).asString().getValue(),
+                                                objectValueWithVariable.getValueWithVariableOrError(INPUT_INVOKE_INPUT_VALUE_METHOD_NAME_NAME).asString().getValue(),
+                                                objectValueWithVariable.getValueWithVariableOrError(INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME).asString().getValue(),
+                                                objectValueWithVariable.getValueWithVariable(INPUT_INVOKE_INPUT_VALUE_ASYNC_NAME).map(valueWithVariable -> valueWithVariable.asBoolean().getValue()).orElse(false)
                                         )
                                 )
                 )
