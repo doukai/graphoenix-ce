@@ -28,12 +28,12 @@ import static io.graphoenix.spi.constant.Hammurabi.SUFFIX_INPUT;
 
 @ApplicationScoped
 @Priority(700)
-public class MutationFieldsMergeHandler implements OperationBeforeHandler {
+public class MutationFetchFieldsMergeHandler implements OperationBeforeHandler {
 
     private final DocumentManager documentManager;
 
     @Inject
-    public MutationFieldsMergeHandler(DocumentManager documentManager) {
+    public MutationFetchFieldsMergeHandler(DocumentManager documentManager) {
         this.documentManager = documentManager;
     }
 

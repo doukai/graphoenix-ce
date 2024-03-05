@@ -23,12 +23,12 @@ import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_HIDE_NAME;
 
 @ApplicationScoped
 @Priority(600)
-public class QueryFieldsMergeHandler implements OperationBeforeHandler {
+public class QueryFetchFieldsMergeHandler implements OperationBeforeHandler {
 
     private final DocumentManager documentManager;
 
     @Inject
-    public QueryFieldsMergeHandler(DocumentManager documentManager) {
+    public QueryFetchFieldsMergeHandler(DocumentManager documentManager) {
         this.documentManager = documentManager;
     }
 

@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+}
+
+group 'io.graphoenix'
+version '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    jcenter()
+    mavenLocal()
+}
+
+dependencies {
+    implementation project(':graphoenix-core')
+    implementation 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
+    implementation 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
+
+    annotationProcessor project(':graphoenix-core')
+    annotationProcessor 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
+    annotationProcessor 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
+
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
