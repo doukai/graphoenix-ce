@@ -3,6 +3,7 @@ package io.graphoenix.core.handler;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
+import io.graphoenix.spi.graphql.type.ObjectType;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
@@ -11,6 +12,7 @@ import jakarta.json.stream.JsonCollectors;
 
 import java.util.AbstractMap;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -83,5 +85,9 @@ public class OperationBuilder {
         } else {
             return jsonValue;
         }
+    }
+
+    private List<Field> argumentsToFields(ObjectType objectType, FieldDefinition fieldDefinition, Field field) {
+
     }
 }
