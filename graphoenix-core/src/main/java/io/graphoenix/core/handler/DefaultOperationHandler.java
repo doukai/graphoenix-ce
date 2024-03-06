@@ -39,6 +39,10 @@ public class DefaultOperationHandler implements OperationHandler {
             .map(name -> BeanContext.getProvider(MutationHandler.class, name))
             .orElseGet(() -> BeanContext.getProvider(MutationHandler.class));
 
+    private static final Provider<SubscriptionHandler> subscriptionHandlerProvider = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
+            .map(name -> BeanContext.getProvider(SubscriptionHandler.class, name))
+            .orElseGet(() -> BeanContext.getProvider(SubscriptionHandler.class));
+
     @Override
     public Publisher<JsonValue> handle(Operation operation, Map<String, JsonValue> variables) {
         return handle(operation, variables, null, null);
@@ -102,6 +106,23 @@ public class DefaultOperationHandler implements OperationHandler {
     }
 
     public Flux<JsonValue> subscription(Operation operation, Map<String, JsonValue> variables, String token, String operationId) {
-        return null;
+        return Flux.fromIterable(operationBeforeHandlerProviderList)
+                .reduce(
+                        Mono.just(operation),
+                        (pre, cur) -> pre.flatMap(result -> cur.get().query(result, variables))
+                )
+                .flatMap(operationMono -> operationMono)
+                .flatMapMany(operationAfterHandler ->
+                        subscriptionHandlerProvider.get().subscription(operationAfterHandler, token, operationId)
+                                .flatMap(jsonValue ->
+                                        Flux.fromIterable(operationAfterHandlerProviderList)
+                                                .reduce(
+                                                        Mono.just(jsonValue),
+                                                        (pre, cur) -> pre.flatMap(result -> cur.get().query(operationAfterHandler, result))
+                                                )
+                                                .flatMap(operationMono -> operationMono)
+                                )
+                )
+                .defaultIfEmpty(JsonValue.EMPTY_JSON_OBJECT);
     }
 }

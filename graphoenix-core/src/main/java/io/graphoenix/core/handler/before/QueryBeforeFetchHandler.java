@@ -28,6 +28,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
@@ -201,6 +202,40 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                     )
                                                     )
                                     ),
+                            fieldDefinition.getArgument(INPUT_VALUE_EXS_NAME).stream()
+                                    .flatMap(exsInputValue ->
+                                            Stream.ofNullable(field.getArguments())
+                                                    .flatMap(arguments ->
+                                                            arguments.getArgument(exsInputValue.getName())
+                                                                    .or(() -> Optional.ofNullable(exsInputValue.getDefaultValue())).stream()
+                                                    )
+                                                    .filter(ValueWithVariable::isArray)
+                                                    .map(ValueWithVariable::asArray)
+                                                    .flatMap(arrayValueWithVariable ->
+                                                            IntStream.range(0, arrayValueWithVariable.size())
+                                                                    .mapToObj(index ->
+                                                                            documentManager.getInputValueTypeDefinition(exsInputValue).asInputObject().getInputValues().stream()
+                                                                                    .flatMap(subInputValue ->
+                                                                                            Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
+                                                                                                    .flatMap(subFieldDefinition ->
+                                                                                                            arrayValueWithVariable.getValueWithVariable(index).asObject().getValueWithVariable(subInputValue.getName())
+                                                                                                                    .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
+                                                                                                                    .flatMap(subValueWithVariable ->
+                                                                                                                            buildFetchItems(
+                                                                                                                                    path,
+                                                                                                                                    field,
+                                                                                                                                    "/" + INPUT_VALUE_EXS_NAME + "/" + index,
+                                                                                                                                    subFieldDefinition,
+                                                                                                                                    subInputValue,
+                                                                                                                                    subValueWithVariable
+                                                                                                                            )
+                                                                                                                    )
+                                                                                                    )
+                                                                                    )
+                                                                    )
+                                                                    .flatMap(stream -> stream)
+                                                    )
+                                    ),
                             fieldDefinition.getArgument(INPUT_VALUE_WHERE_NAME).stream()
                                     .flatMap(whereInputValue ->
                                             Stream.ofNullable(field.getArguments())
@@ -287,7 +322,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
             }
         } else if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
-            return Stream
+            return Streams
                     .concat(
                             inputValueTypeDefinition.asInputObject().getInputValues().stream()
                                     .filter(subInputValue -> subInputValue.getType().getTypeName().getName().endsWith(SUFFIX_EXPRESSION))
@@ -309,6 +344,37 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                                     subValueWithVariable
                                                                             )
                                                                     )
+                                                    )
+                                    ),
+                            inputValueTypeDefinition.asInputObject().getInputValue(INPUT_VALUE_EXS_NAME).stream()
+                                    .flatMap(exsInputValue ->
+                                            valueWithVariable.asObject().getValueWithVariable(exsInputValue.getName())
+                                                    .or(() -> Optional.ofNullable(exsInputValue.getDefaultValue())).stream()
+                                                    .filter(ValueWithVariable::isArray)
+                                                    .map(ValueWithVariable::asArray)
+                                                    .flatMap(arrayValueWithVariable ->
+                                                            IntStream.range(0, arrayValueWithVariable.size())
+                                                                    .mapToObj(index ->
+                                                                            documentManager.getInputValueTypeDefinition(exsInputValue).asInputObject().getInputValues().stream()
+                                                                                    .flatMap(subInputValue ->
+                                                                                            Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
+                                                                                                    .flatMap(subFieldDefinition ->
+                                                                                                            arrayValueWithVariable.getValueWithVariable(index).asObject().getValueWithVariable(subInputValue.getName())
+                                                                                                                    .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
+                                                                                                                    .flatMap(subValueWithVariable ->
+                                                                                                                            buildFetchItems(
+                                                                                                                                    fieldPath,
+                                                                                                                                    field,
+                                                                                                                                    path + "/" + fieldDefinition.getName() + "/" + INPUT_VALUE_EXS_NAME + "/" + index,
+                                                                                                                                    subFieldDefinition,
+                                                                                                                                    subInputValue,
+                                                                                                                                    subValueWithVariable
+                                                                                                                            )
+                                                                                                                    )
+                                                                                                    )
+                                                                                    )
+                                                                    )
+                                                                    .flatMap(stream -> stream)
                                                     )
                                     ),
                             inputValueTypeDefinition.asInputObject().getInputValue(INPUT_VALUE_WHERE_NAME).stream()
