@@ -92,6 +92,40 @@ public class Field extends AbstractDefinition implements Selection {
         return this;
     }
 
+    public static List<Field> mergeFields(List<Field> originalFields, Collection<Field> fields) {
+        return Stream.ofNullable(fields)
+                .flatMap(Collection::stream)
+                .reduce(
+                        originalFields,
+                        (pre, cur) ->
+                                Stream
+                                        .concat(
+                                                Stream.ofNullable(pre)
+                                                        .flatMap(Collection::stream)
+                                                        .map(original -> {
+                                                                    if (Optional.ofNullable(original.getAlias()).orElseGet(original::getName)
+                                                                            .equals(Optional.ofNullable(cur.getAlias()).orElseGet(cur::getName)))
+                                                                        if (cur.getFields() != null) {
+                                                                            return original.mergeSelection(cur.getFields());
+                                                                        }
+                                                                    return original;
+                                                                }
+                                                        ),
+                                                Stream.ofNullable(cur)
+                                                        .filter(field ->
+                                                                Stream.ofNullable(pre)
+                                                                        .flatMap(Collection::stream)
+                                                                        .noneMatch(original ->
+                                                                                Optional.ofNullable(original.getAlias()).orElseGet(original::getName)
+                                                                                        .equals(Optional.ofNullable(field.getAlias()).orElseGet(field::getName))
+                                                                        )
+                                                        )
+                                        )
+                                        .collect(Collectors.toList()),
+                        (x, y) -> y
+                );
+    }
+
     public String getAlias() {
         return alias;
     }
