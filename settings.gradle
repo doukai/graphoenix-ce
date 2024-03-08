@@ -12,4 +12,5 @@ include 'graphoenix-r2dbc'
 include 'graphoenix-http-server'
 include 'graphoenix-subscription'
 include 'graphoenix-rabbitmq'
+include 'graphoenix-json-path'
 

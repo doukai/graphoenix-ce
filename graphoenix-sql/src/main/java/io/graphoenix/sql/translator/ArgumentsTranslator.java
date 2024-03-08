@@ -6,7 +6,6 @@ import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.spi.error.GraphQLErrorType;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.Definition;
-import io.graphoenix.spi.graphql.common.Arguments;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
@@ -36,6 +35,7 @@ import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_FIELD_TYPE;
+import static io.graphoenix.spi.utils.ValueWithVariableUtil.*;
 import static io.graphoenix.sql.utils.DBNameUtil.*;
 import static io.graphoenix.sql.utils.DBValueUtil.getValueFromArrayVariable;
 import static io.graphoenix.sql.utils.DBValueUtil.leafValueToDBValue;
@@ -620,60 +620,6 @@ public class ArgumentsTranslator {
                         new ParenthesedSelect()
                                 .withSelect(plainSelect)
                 );
-    }
-
-    protected boolean isOr(Arguments arguments) {
-        return Optional.ofNullable(arguments)
-                .flatMap(result -> result.getArgument(INPUT_VALUE_COND_NAME))
-                .filter(ValueWithVariable::isEnum)
-                .map(field -> field.asEnum().getValue().equals(INPUT_CONDITIONAL_INPUT_VALUE_OR))
-                .orElse(false);
-    }
-
-    protected boolean isOr(ValueWithVariable valueWithVariable) {
-        return Optional.ofNullable(valueWithVariable)
-                .filter(ValueWithVariable::isObject)
-                .map(ValueWithVariable::asObject)
-                .flatMap(objectValueWithVariable -> objectValueWithVariable.getValueWithVariable(INPUT_VALUE_COND_NAME))
-                .filter(ValueWithVariable::isEnum)
-                .map(field -> field.asEnum().getValue().equals(INPUT_CONDITIONAL_INPUT_VALUE_OR))
-                .orElse(false);
-    }
-
-    protected boolean isNot(Arguments arguments) {
-        return Optional.ofNullable(arguments)
-                .flatMap(result -> result.getArgument(INPUT_VALUE_NOT_NAME))
-                .filter(ValueWithVariable::isBoolean)
-                .map(field -> field.asBoolean().getValue())
-                .orElse(false);
-    }
-
-    protected boolean isNot(ValueWithVariable valueWithVariable) {
-        return Optional.ofNullable(valueWithVariable)
-                .filter(ValueWithVariable::isObject)
-                .map(ValueWithVariable::asObject)
-                .flatMap(objectValueWithVariable -> objectValueWithVariable.getValueWithVariable(INPUT_VALUE_NOT_NAME))
-                .filter(ValueWithVariable::isBoolean)
-                .map(field -> field.asBoolean().getValue())
-                .orElse(false);
-    }
-
-    protected boolean skipNull(Arguments arguments) {
-        return Optional.ofNullable(arguments)
-                .flatMap(result -> result.getArgument(INPUT_OPERATOR_INPUT_VALUE_SKIP_NULL_NAME))
-                .filter(ValueWithVariable::isBoolean)
-                .map(field -> field.asBoolean().getValue())
-                .orElse(false);
-    }
-
-    protected boolean skipNull(ValueWithVariable valueWithVariable) {
-        return Optional.ofNullable(valueWithVariable)
-                .filter(ValueWithVariable::isObject)
-                .map(ValueWithVariable::asObject)
-                .flatMap(objectValueWithVariable -> objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_SKIP_NULL_NAME))
-                .filter(ValueWithVariable::isBoolean)
-                .map(field -> field.asBoolean().getValue())
-                .orElse(false);
     }
 
     protected Table typeToTable(ObjectType objectType, int level) {
