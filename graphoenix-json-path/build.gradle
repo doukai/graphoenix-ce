@@ -15,7 +15,8 @@ dependencies {
     implementation project(':graphoenix-core')
     implementation 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
     implementation 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
-    implementation 'com.jayway.jsonpath:json-path:2.8.0'
+
+    compile 'com.jayway.jsonpath:json-path:2.8.0'
 
     annotationProcessor project(':graphoenix-core')
     annotationProcessor 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'

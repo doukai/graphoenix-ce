@@ -1,20 +1,21 @@
 package io.graphoenix.subscription.handler;
 
+import com.jayway.jsonpath.*;
+import com.jayway.jsonpath.spi.json.JakartaJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JakartaMappingProvider;
 import io.graphoenix.core.handler.DocumentManager;
+import io.graphoenix.jsonpath.translator.ArgumentsToFilter;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.ObjectType;
 import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
-import jakarta.inject.Provider;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 
-import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,14 +24,25 @@ public class SubscriptionDataListener {
 
     private final DocumentManager documentManager;
 
-    private final SubscriptionDataFilter subscriptionDataFilter;
+    private final ArgumentsToFilter argumentsToFilter;
+
+    private final ParseContext parseContext;
 
     private final Map<String, List<String>> typeIDMap = new HashMap<>();
 
+    private final Map<String, List<String>> typeFilterMap = new HashMap<>();
+
     @Inject
-    public SubscriptionDataListener(DocumentManager documentManager, Provider<SubscriptionDataFilter> subscriptionDataFilterProvider) {
+    public SubscriptionDataListener(DocumentManager documentManager, ArgumentsToFilter argumentsToFilter) {
         this.documentManager = documentManager;
-        this.subscriptionDataFilter = subscriptionDataFilterProvider.get();
+        this.argumentsToFilter = argumentsToFilter;
+        this.parseContext = JsonPath.using(
+                Configuration.builder()
+                        .jsonProvider(new JakartaJsonProvider())
+                        .mappingProvider(new JakartaMappingProvider())
+                        .options(EnumSet.noneOf(Option.class))
+                        .build()
+        );
     }
 
     public boolean merged(JsonValue jsonValue) {
@@ -38,7 +50,11 @@ public class SubscriptionDataListener {
         String typeName = jsonObject.getString("type");
         JsonValue arguments = jsonObject.get("arguments");
         JsonValue mutation = jsonObject.get("mutation");
-        return arguments.asJsonArray().stream().anyMatch(argument -> merged(typeName, argument)) || subscriptionDataFilter.merged(mutation);
+        return mergedArguments(typeName, arguments.asJsonArray()) || mergedMutation(typeName, mutation.asJsonArray());
+    }
+
+    public boolean mergedArguments(String typeName, JsonArray arguments) {
+        return arguments.asJsonArray().stream().anyMatch(argument -> merged(typeName, argument));
     }
 
     private boolean merged(String typeName, JsonValue jsonValue) {
@@ -114,8 +130,37 @@ public class SubscriptionDataListener {
                 .distinct();
     }
 
+    @SuppressWarnings("unchecked")
+    private boolean mergedMutation(String typeName, JsonArray mutation) {
+        return Stream.ofNullable(typeFilterMap.get(typeName))
+                .flatMap(Collection::stream)
+                .map(filter -> parseContext.parse(mutation).read(filter))
+                .map(jsonValues -> (List<JsonValue>) jsonValues)
+                .anyMatch(jsonValues -> !jsonValues.isEmpty());
+    }
+
     public SubscriptionDataListener indexFilter(Operation operation) {
-        subscriptionDataFilter.indexFilter(operation);
+        ObjectType operationType = documentManager.getOperationTypeOrError(operation);
+        this.typeFilterMap
+                .putAll(
+                        operation.getFields().stream()
+                                .filter(field -> documentManager.getFieldTypeDefinition(operationType.getField(field.getName())).isObject())
+                                .flatMap(field ->
+                                        argumentsToFilter.argumentsToMultipleExpression(operationType.getField(field.getName()), field).stream()
+                                                .map(expression -> "$[?" + expression + "]")
+                                                .distinct()
+                                                .map(filter -> new AbstractMap.SimpleEntry<>(field.getName(), filter))
+                                )
+                                .collect(
+                                        Collectors.groupingBy(
+                                                Map.Entry::getKey,
+                                                Collectors.mapping(
+                                                        Map.Entry::getValue,
+                                                        Collectors.toList()
+                                                )
+                                        )
+                                )
+                );
         return this;
     }
 }

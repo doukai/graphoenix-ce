@@ -9,6 +9,7 @@ import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import java.util.stream.Collectors;
 
 public final class JsonValueUtil {
+
     public static Expression valueToJsonValue(ValueWithVariable valueWithVariable) {
         if (valueWithVariable.isNull()) {
             return new NullValue();

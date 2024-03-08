@@ -13,10 +13,12 @@ repositories {
 
 dependencies {
     implementation project(':graphoenix-core')
+    implementation project(':graphoenix-json-path')
     implementation 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
     implementation 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
 
     annotationProcessor project(':graphoenix-core')
+    annotationProcessor project(':graphoenix-json-path')
     annotationProcessor 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
     annotationProcessor 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
 

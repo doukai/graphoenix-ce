@@ -4,7 +4,7 @@ import io.graphoenix.jsonpath.expression.Expression;
 
 public abstract class ComparisonOperator implements Expression {
 
-    private final String element;
+    private final String path;
 
     private final String operator;
 
@@ -12,15 +12,15 @@ public abstract class ComparisonOperator implements Expression {
 
     private final boolean not;
 
-    public ComparisonOperator(String element, String operator, Expression expression) {
-        this.element = element;
+    public ComparisonOperator(String path, String operator, Expression expression) {
+        this.path = path;
         this.operator = operator;
         this.expression = expression;
         this.not = false;
     }
 
-    public ComparisonOperator(String element, String operator, Expression expression, boolean not) {
-        this.element = element;
+    public ComparisonOperator(String path, String operator, Expression expression, boolean not) {
+        this.path = path;
         this.operator = operator;
         this.expression = expression;
         this.not = not;
@@ -28,7 +28,7 @@ public abstract class ComparisonOperator implements Expression {
 
     @Override
     public String toString() {
-        String comparisonOperator = "@." + element + " " + operator + " " + expression;
+        String comparisonOperator = path + " " + operator + " " + expression;
         if (not) {
             return "!(" + comparisonOperator + ")";
         } else {
