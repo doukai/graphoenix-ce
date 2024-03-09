@@ -14,14 +14,15 @@ public class RabbitMQProducer {
 
     private final RabbitMQConfig rabbitMQConfig;
 
+    private final Mono<Connection> connectionMono;
+
     @Inject
     public RabbitMQProducer(RabbitMQConfig rabbitMQConfig) {
         this.rabbitMQConfig = rabbitMQConfig;
+        this.connectionMono = createConnectionMono();
     }
 
-    @Produces
-    @ApplicationScoped
-    public Mono<Connection> connectionMono() {
+    public Mono<Connection> createConnectionMono() {
         ConnectionFactory connectionFactory = new ConnectionFactory();
         connectionFactory.useNio();
         connectionFactory.setHost(rabbitMQConfig.getHost());
@@ -41,18 +42,18 @@ public class RabbitMQProducer {
         connectionFactory.setChannelRpcTimeout(rabbitMQConfig.getChannelRpcTimeout());
         connectionFactory.setChannelShouldCheckRpcResponseType(rabbitMQConfig.getChannelShouldCheckRpcResponseType());
         connectionFactory.setWorkPoolTimeout(rabbitMQConfig.getWorkPoolTimeout());
-        return Mono.fromCallable(() -> connectionFactory.newConnection()).cache();
+        return Mono.fromCallable(connectionFactory::newConnection).cache();
     }
 
     @Produces
     @ApplicationScoped
     public Sender sender() {
-        return RabbitFlux.createSender(new SenderOptions().connectionMono(connectionMono()));
+        return RabbitFlux.createSender(new SenderOptions().connectionMono(connectionMono));
     }
 
     @Produces
     @ApplicationScoped
     public Receiver receiver() {
-        return RabbitFlux.createReceiver(new ReceiverOptions().connectionMono(connectionMono()));
+        return RabbitFlux.createReceiver(new ReceiverOptions().connectionMono(connectionMono));
     }
 }
