@@ -54,19 +54,21 @@ public class DefaultSubscriptionDataListener implements SubscriptionDataListener
         this.typeFilterMap
                 .putAll(
                         operation.getFields().stream()
-                                .filter(field -> documentManager.getFieldTypeDefinition(operationType.getField(field.getName())).isObject())
                                 .flatMap(field -> {
                                             FieldDefinition fieldDefinition = operationType.getField(field.getName());
-                                            String typeName = documentManager.getFieldTypeDefinition(fieldDefinition).getName();
-                                            return argumentsToFilter.argumentsToMultipleExpression(fieldDefinition, field).stream()
-                                                    .map(expression -> "$[?" + expression + "]")
-                                                    .distinct()
-                                                    .map(filter ->
-                                                            new AbstractMap.SimpleEntry<>(
-                                                                    typeName,
-                                                                    filter
-                                                            )
-                                                    );
+                                            Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+                                            if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
+                                                return argumentsToFilter.argumentsToMultipleExpression(fieldDefinition, field).stream()
+                                                        .map(expression -> "$[?" + expression + "]")
+                                                        .distinct()
+                                                        .map(filter ->
+                                                                new AbstractMap.SimpleEntry<>(
+                                                                        fieldTypeDefinition.getName(),
+                                                                        filter
+                                                                )
+                                                        );
+                                            }
+                                            return Stream.empty();
                                         }
                                 )
                                 .collect(

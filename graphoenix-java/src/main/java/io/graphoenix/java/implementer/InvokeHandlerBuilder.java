@@ -8,7 +8,6 @@ import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.OperationBuilder;
 import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.java.utils.TypeNameUtil;
-import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
@@ -25,8 +24,6 @@ import jakarta.json.stream.JsonCollectors;
 import org.tinylog.Logger;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuple3;
-import reactor.util.function.Tuples;
 
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.Modifier;
@@ -48,7 +45,7 @@ public class InvokeHandlerBuilder {
     private final DocumentManager documentManager;
     private final PackageManager packageManager;
     private final PackageConfig packageConfig;
-    private Map<String, Map<String, List<Tuple3<String, String, Boolean>>>> invokeMethods;
+    private Set<String> invokeClassSet;
 
     @Inject
     public InvokeHandlerBuilder(DocumentManager documentManager, PackageManager packageManager, PackageConfig packageConfig) {
@@ -58,35 +55,12 @@ public class InvokeHandlerBuilder {
     }
 
     public void writeToFiler(Filer filer) throws IOException {
-        this.invokeMethods = documentManager.getDocument().getObjectTypes()
-                .collect(
-                        Collectors.toMap(
-                                AbstractDefinition::getName,
-                                objectType ->
-                                        objectType.getFields().stream()
-                                                .filter(FieldDefinition::isInvokeField)
-                                                .filter(packageManager::isLocalPackage)
-                                                .map(fieldDefinition ->
-                                                        new AbstractMap.SimpleEntry<>(
-                                                                fieldDefinition.getInvokeClassNameOrError(),
-                                                                Tuples.of(
-                                                                        fieldDefinition.getInvokeMethodNameOrError(),
-                                                                        fieldDefinition.getInvokeReturnClassNameOrError(),
-                                                                        fieldDefinition.isAsyncInvoke()
-                                                                )
-                                                        )
-                                                )
-                                                .collect(
-                                                        Collectors.groupingBy(
-                                                                AbstractMap.SimpleEntry<String, Tuple3<String, String, Boolean>>::getKey,
-                                                                Collectors.mapping(
-                                                                        AbstractMap.SimpleEntry<String, Tuple3<String, String, Boolean>>::getValue,
-                                                                        Collectors.toList()
-                                                                )
-                                                        )
-                                                )
-                        )
-                );
+        this.invokeClassSet = documentManager.getDocument().getObjectTypes()
+                .flatMap(objectType -> objectType.getFields().stream())
+                .filter(FieldDefinition::isInvokeField)
+                .filter(packageManager::isLocalPackage)
+                .map(FieldDefinition::getInvokeClassNameOrError)
+                .collect(Collectors.toSet());
         this.buildClass().writeTo(filer);
         Logger.info("InvokeHandler build success");
     }
@@ -141,24 +115,17 @@ public class InvokeHandlerBuilder {
     }
 
     private Set<FieldSpec> buildFields() {
-        return this.invokeMethods.values().stream()
-                .flatMap(classMap ->
-                        classMap.keySet().stream()
-                                .map(TypeNameUtil::toClassName)
-                                .map(className ->
-                                        FieldSpec.builder(ParameterizedTypeName.get(ClassName.get(Provider.class), className), typeNameToFieldName(className.simpleName()))
-                                                .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
-                                                .build()
-                                )
+        return invokeClassSet.stream()
+                .map(TypeNameUtil::toClassName)
+                .map(className ->
+                        FieldSpec.builder(ParameterizedTypeName.get(ClassName.get(Provider.class), className), typeNameToFieldName(className.simpleName()))
+                                .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
+                                .build()
                 )
                 .collect(Collectors.toSet());
     }
 
     private MethodSpec buildConstructor() {
-        Set<String> classNameSet = invokeMethods.values().stream()
-                .flatMap(value -> value.keySet().stream())
-                .collect(Collectors.toSet());
-
         MethodSpec.Builder builder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Inject.class)
@@ -167,7 +134,7 @@ public class InvokeHandlerBuilder {
                 .addParameter(ClassName.get(Jsonb.class), "jsonb")
                 .addParameter(ClassName.get(JsonProvider.class), "jsonProvider")
                 .addParameters(
-                        classNameSet.stream()
+                        invokeClassSet.stream()
                                 .map(TypeNameUtil::toClassName)
                                 .map(className ->
                                         ParameterSpec.builder(
@@ -182,7 +149,7 @@ public class InvokeHandlerBuilder {
                 .addStatement("this.jsonb = jsonb")
                 .addStatement("this.jsonProvider = jsonProvider");
 
-        classNameSet.stream()
+        invokeClassSet.stream()
                 .map(TypeNameUtil::toClassName)
                 .forEach(className ->
                         builder.addStatement("this.$L = $L",
@@ -190,7 +157,6 @@ public class InvokeHandlerBuilder {
                                 typeNameToFieldName(className.simpleName())
                         )
                 );
-
         return builder.build();
     }
 

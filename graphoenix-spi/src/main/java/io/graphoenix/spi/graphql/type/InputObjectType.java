@@ -7,7 +7,6 @@ import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import org.eclipse.microprofile.graphql.Ignore;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
-import reactor.util.function.Tuple3;
 import reactor.util.function.Tuple4;
 import reactor.util.function.Tuples;
 
@@ -71,7 +70,8 @@ public class InputObjectType extends AbstractDefinition implements Definition {
                 (Map<? extends String, ? extends InputValue>) Stream
                         .concat(
                                 Stream.ofNullable(inputValueMap.values()),
-                                Stream.of(inputObjectTypes).flatMap(item -> Stream.ofNullable(item.getInputValues()))
+                                Stream.of(inputObjectTypes)
+                                        .flatMap(item -> Stream.ofNullable(item.getInputValues()))
                         )
                         .flatMap(Collection::stream)
                         .filter(distinctByKey(InputValue::getName))
@@ -131,7 +131,7 @@ public class InputObjectType extends AbstractDefinition implements Definition {
     public Collection<String> getInterfaces() {
         return Stream.ofNullable(getDirective(DIRECTIVE_IMPLEMENTS_NAME))
                 .flatMap(directive ->
-                        Stream.ofNullable(directive.getArgumentOrNull(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME))
+                        directive.getArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME).stream()
                                 .filter(ValueWithVariable::isArray)
                                 .flatMap(valueWithVariable -> valueWithVariable.asArray().getValueWithVariables().stream())
                                 .filter(ValueWithVariable::isString)
@@ -147,7 +147,7 @@ public class InputObjectType extends AbstractDefinition implements Definition {
     public List<Tuple4<String, String, String, Boolean>> getInputInvokes() {
         return Stream.ofNullable(getDirective(DIRECTIVE_INVOKES_NAME))
                 .flatMap(directive ->
-                        Stream.ofNullable(directive.getArgumentOrNull(DIRECTIVE_INVOKES_METHODS_NAME))
+                        directive.getArgument(DIRECTIVE_INVOKES_METHODS_NAME).stream()
                                 .filter(ValueWithVariable::isArray)
                                 .map(ValueWithVariable::asArray)
                                 .flatMap(arrayValueWithVariable -> arrayValueWithVariable.getValueWithVariables().stream())
@@ -158,7 +158,9 @@ public class InputObjectType extends AbstractDefinition implements Definition {
                                                 objectValueWithVariable.getValueWithVariableOrError(INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME).asString().getValue(),
                                                 objectValueWithVariable.getValueWithVariableOrError(INPUT_INVOKE_INPUT_VALUE_METHOD_NAME_NAME).asString().getValue(),
                                                 objectValueWithVariable.getValueWithVariableOrError(INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME).asString().getValue(),
-                                                objectValueWithVariable.getValueWithVariable(INPUT_INVOKE_INPUT_VALUE_ASYNC_NAME).map(valueWithVariable -> valueWithVariable.asBoolean().getValue()).orElse(false)
+                                                objectValueWithVariable.getValueWithVariable(INPUT_INVOKE_INPUT_VALUE_ASYNC_NAME)
+                                                        .map(valueWithVariable -> valueWithVariable.asBoolean().getValue())
+                                                        .orElse(false)
                                         )
                                 )
                 )

@@ -44,42 +44,45 @@ public class MutationSendHandler implements OperationAfterHandler {
     public Mono<JsonValue> mutation(Operation operation, JsonValue jsonValue) {
         ObjectType operationType = documentManager.getOperationTypeOrError(operation);
         Flux<OutboundMessage> messageFlux = Flux.fromIterable(operation.getFields())
-                .filter(field -> documentManager.getFieldTypeDefinition(operationType.getField(field.getName())).isObject())
-                .filter(field -> !jsonValue.asJsonObject().isNull(Optional.ofNullable(field.getAlias()).orElseGet(field::getName)))
-                .map(field -> {
+                .flatMap(field -> {
                             FieldDefinition fieldDefinition = operationType.getField(field.getName());
                             String packageName = fieldDefinition.getPackageNameOrError();
                             Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-                            String typeName = fieldTypeDefinition.getName();
-                            Arguments arguments = field.getArguments();
                             JsonValue fieldJsonValue = jsonValue.asJsonObject().get(Optional.ofNullable(field.getAlias()).orElseGet(field::getName));
-                            JsonObjectBuilder messageJsonObject = jsonProvider.createObjectBuilder().add(BODY_TYPE_KEY, typeName);
-                            if (fieldDefinition.getType().hasList()) {
-                                if (arguments.containsKey(INPUT_VALUE_WHERE_NAME)) {
-                                    messageJsonObject
-                                            .add(BODY_ARGUMENTS_KEY, JsonValue.EMPTY_JSON_ARRAY)
-                                            .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder(fieldJsonValue.asJsonArray()));
+                            if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer() && !fieldJsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
+                                String typeName = fieldTypeDefinition.getName();
+                                Arguments arguments = field.getArguments();
+                                JsonObjectBuilder messageJsonObject = jsonProvider.createObjectBuilder().add(BODY_TYPE_KEY, typeName);
+                                if (fieldDefinition.getType().hasList()) {
+                                    if (arguments.containsKey(INPUT_VALUE_WHERE_NAME)) {
+                                        messageJsonObject
+                                                .add(BODY_ARGUMENTS_KEY, JsonValue.EMPTY_JSON_ARRAY)
+                                                .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder(fieldJsonValue.asJsonArray()));
+                                    } else {
+                                        messageJsonObject
+                                                .add(BODY_ARGUMENTS_KEY, jsonProvider.createArrayBuilder(arguments.get(INPUT_VALUE_LIST_NAME).asJsonArray()))
+                                                .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder(fieldJsonValue.asJsonArray()));
+                                    }
                                 } else {
-                                    messageJsonObject
-                                            .add(BODY_ARGUMENTS_KEY, jsonProvider.createArrayBuilder(arguments.get(INPUT_VALUE_LIST_NAME).asJsonArray()))
-                                            .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder(fieldJsonValue.asJsonArray()));
+                                    if (arguments.containsKey(INPUT_VALUE_WHERE_NAME)) {
+                                        messageJsonObject
+                                                .add(BODY_ARGUMENTS_KEY, JsonValue.EMPTY_JSON_ARRAY)
+                                                .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(fieldJsonValue.asJsonObject())));
+                                    } else {
+                                        messageJsonObject
+                                                .add(BODY_ARGUMENTS_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(arguments.asJsonObject())))
+                                                .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(fieldJsonValue.asJsonObject())));
+                                    }
                                 }
-                            } else {
-                                if (arguments.containsKey(INPUT_VALUE_WHERE_NAME)) {
-                                    messageJsonObject
-                                            .add(BODY_ARGUMENTS_KEY, JsonValue.EMPTY_JSON_ARRAY)
-                                            .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(fieldJsonValue.asJsonObject())));
-                                } else {
-                                    messageJsonObject
-                                            .add(BODY_ARGUMENTS_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(arguments.asJsonObject())))
-                                            .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(fieldJsonValue.asJsonObject())));
-                                }
+                                return Mono.just(
+                                        new OutboundMessage(
+                                                SUBSCRIPTION_EXCHANGE_NAME,
+                                                packageName + "." + typeName,
+                                                messageJsonObject.build().toString().getBytes()
+                                        )
+                                );
                             }
-                            return new OutboundMessage(
-                                    SUBSCRIPTION_EXCHANGE_NAME,
-                                    packageName + "." + typeName,
-                                    messageJsonObject.build().toString().getBytes()
-                            );
+                            return Mono.empty();
                         }
                 );
         return sender.send(messageFlux).thenReturn(jsonValue);

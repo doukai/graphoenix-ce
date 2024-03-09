@@ -2,6 +2,7 @@ package io.graphoenix.rabbitmq.handler;
 
 import io.graphoenix.core.config.GraphQLConfig;
 import io.graphoenix.core.handler.DocumentManager;
+import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.ObjectType;
 import io.graphoenix.spi.handler.QueryHandler;
@@ -67,8 +68,12 @@ public class RabbitMQSubscriptionHandler implements SubscriptionHandler {
                         sender.declare(queue(requestId).autoDelete(true))
                                 .thenMany(
                                         Flux.fromIterable(operation.getFields())
-                                                .filter(field -> documentManager.getFieldTypeDefinition(operationType.getField(field.getName())).isObject())
                                                 .map(field -> operationType.getField(field.getName()))
+                                                .filter(fieldDefinition -> {
+                                                            Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+                                                            return fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer();
+                                                        }
+                                                )
                                                 .map(fieldDefinition -> fieldDefinition.getPackageNameOrError() + "." + documentManager.getFieldTypeDefinition(fieldDefinition).getName())
                                                 .distinct()
                                                 .flatMap(routingKey -> sender.bind(binding(SUBSCRIPTION_EXCHANGE_NAME, routingKey, requestId)))

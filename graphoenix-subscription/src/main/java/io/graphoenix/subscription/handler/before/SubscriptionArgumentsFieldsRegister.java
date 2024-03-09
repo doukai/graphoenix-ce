@@ -44,15 +44,20 @@ public class SubscriptionArgumentsFieldsRegister implements OperationBeforeHandl
     public Mono<Operation> subscription(Operation operation, Map<String, JsonValue> variables) {
         ObjectType operationType = documentManager.getOperationTypeOrError(operation);
         return Flux.fromIterable(operation.getFields())
-                .filter(field -> documentManager.getFieldTypeDefinition(operationType.getField(field.getName())).isObject())
-                .map(field -> {
+                .flatMap(field -> {
                             FieldDefinition fieldDefinition = operationType.getField(field.getName());
-                            String typeName = documentManager.getFieldTypeDefinition(fieldDefinition).getName();
-                            return new AbstractMap.SimpleEntry<>(
-                                    typeName,
-                                    argumentsToFields(fieldDefinition, field)
-                            );
+                            Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+                            if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
+                                return Mono.just(
+                                        new AbstractMap.SimpleEntry<>(
+                                                fieldTypeDefinition.getName(),
+                                                argumentsToFields(fieldDefinition, field)
+                                        )
+                                );
+                            }
+                            return Mono.empty();
                         }
+
                 )
                 .doOnNext(entry ->
                         subscriptionFilterFieldsManager.merge(
