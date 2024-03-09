@@ -27,7 +27,7 @@ import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_HIDE_NAME;
 import static io.graphoenix.spi.constant.Hammurabi.INPUT_VALUE_EXS_NAME;
 
 @ApplicationScoped
-@Priority(750)
+@Priority(675)
 public class SubscriptionArgumentsFieldsRegister implements OperationBeforeHandler {
 
     private final DocumentManager documentManager;

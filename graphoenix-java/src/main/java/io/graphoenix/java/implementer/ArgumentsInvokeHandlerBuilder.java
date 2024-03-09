@@ -59,7 +59,7 @@ public class ArgumentsInvokeHandlerBuilder {
                 .addSuperinterface(ClassName.get(OperationBeforeHandler.class))
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(ApplicationScoped.class)
-                .addAnnotation(AnnotationSpec.builder(Priority.class).addMember("value", "300").build())
+                .addAnnotation(AnnotationSpec.builder(Priority.class).addMember("value", "200").build())
                 .addField(
                         FieldSpec.builder(
                                 ClassName.get(OperationBuilder.class),

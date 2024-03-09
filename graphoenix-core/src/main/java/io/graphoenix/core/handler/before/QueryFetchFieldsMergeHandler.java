@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_HIDE_NAME;
 
 @ApplicationScoped
-@Priority(600)
+@Priority(500)
 public class QueryFetchFieldsMergeHandler implements OperationBeforeHandler {
 
     private final DocumentManager documentManager;

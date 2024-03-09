@@ -35,7 +35,7 @@ import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 
 @ApplicationScoped
-@Priority(900)
+@Priority(850)
 public class MutationBeforeFetchHandler implements OperationBeforeHandler {
 
     private final DocumentManager documentManager;

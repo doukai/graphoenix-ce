@@ -27,7 +27,7 @@ import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_HIDE_NAME;
 import static io.graphoenix.spi.constant.Hammurabi.SUFFIX_INPUT;
 
 @ApplicationScoped
-@Priority(700)
+@Priority(550)
 public class MutationFetchFieldsMergeHandler implements OperationBeforeHandler {
 
     private final DocumentManager documentManager;

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @ApplicationScoped
-@Priority(400)
+@Priority(300)
 public class EnumValueHandler implements OperationBeforeHandler {
 
     private final DocumentManager documentManager;

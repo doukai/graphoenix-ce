@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_HIDE_NAME;
 
 @ApplicationScoped
-@Priority(725)
+@Priority(575)
 public class SubscriptionIDFieldsMergeHandler implements OperationBeforeHandler {
 
     private final DocumentManager documentManager;

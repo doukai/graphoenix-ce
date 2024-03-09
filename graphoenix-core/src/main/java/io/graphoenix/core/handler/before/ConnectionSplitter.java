@@ -31,7 +31,7 @@ import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.OBJECT_SELECTION_NOT_EXIST;
 
 @ApplicationScoped
-@Priority(500)
+@Priority(400)
 public class ConnectionSplitter implements OperationBeforeHandler {
 
     private final DocumentManager documentManager;

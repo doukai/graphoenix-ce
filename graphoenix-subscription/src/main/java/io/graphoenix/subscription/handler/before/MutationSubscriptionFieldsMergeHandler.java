@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
-@Priority(950)
+@Priority(650)
 public class MutationSubscriptionFieldsMergeHandler implements OperationBeforeHandler {
 
     private final DocumentManager documentManager;

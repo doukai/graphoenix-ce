@@ -28,6 +28,19 @@ public class RabbitMQProducer {
         connectionFactory.setPort(rabbitMQConfig.getPort());
         connectionFactory.setUsername(rabbitMQConfig.getUsername());
         connectionFactory.setPassword(rabbitMQConfig.getPassword());
+        connectionFactory.setVirtualHost(rabbitMQConfig.getVirtualHost());
+        connectionFactory.setRequestedChannelMax(rabbitMQConfig.getRequestedChannelMax());
+        connectionFactory.setRequestedFrameMax(rabbitMQConfig.getRequestedFrameMax());
+        connectionFactory.setRequestedHeartbeat(rabbitMQConfig.getRequestedHeartbeat());
+        connectionFactory.setConnectionTimeout(rabbitMQConfig.getConnectionTimeout());
+        connectionFactory.setHandshakeTimeout(rabbitMQConfig.getHandshakeTimeout());
+        connectionFactory.setShutdownTimeout(rabbitMQConfig.getShutdownTimeout());
+        connectionFactory.setAutomaticRecoveryEnabled(rabbitMQConfig.getAutomaticRecovery());
+        connectionFactory.setTopologyRecoveryEnabled(rabbitMQConfig.getTopologyRecovery());
+        connectionFactory.setNetworkRecoveryInterval(rabbitMQConfig.getNetworkRecoveryInterval());
+        connectionFactory.setChannelRpcTimeout(rabbitMQConfig.getChannelRpcTimeout());
+        connectionFactory.setChannelShouldCheckRpcResponseType(rabbitMQConfig.getChannelShouldCheckRpcResponseType());
+        connectionFactory.setWorkPoolTimeout(rabbitMQConfig.getWorkPoolTimeout());
         return Mono.fromCallable(() -> connectionFactory.newConnection()).cache();
     }
 

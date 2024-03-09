@@ -38,7 +38,7 @@ import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIEL
 import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
 
 @ApplicationScoped
-@Priority(Integer.MAX_VALUE - 500)
+@Priority(Integer.MAX_VALUE - 450)
 public class MutationAfterFetchHandler implements OperationAfterHandler {
 
     private final DocumentManager documentManager;
