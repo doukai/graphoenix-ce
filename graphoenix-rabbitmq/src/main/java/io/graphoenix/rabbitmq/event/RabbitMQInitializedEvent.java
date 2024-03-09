@@ -16,12 +16,12 @@ import static reactor.rabbitmq.ExchangeSpecification.exchange;
 @ApplicationScoped
 @Initialized(ApplicationScoped.class)
 @Priority(200)
-public class RabbitMQIInitializedEvent implements ScopeEvent {
+public class RabbitMQInitializedEvent implements ScopeEvent {
 
     private final Sender sender;
 
     @Inject
-    public RabbitMQIInitializedEvent(Sender sender) {
+    public RabbitMQInitializedEvent(Sender sender) {
         this.sender = sender;
     }
 

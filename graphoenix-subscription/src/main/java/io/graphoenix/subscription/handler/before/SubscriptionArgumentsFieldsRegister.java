@@ -46,10 +46,11 @@ public class SubscriptionArgumentsFieldsRegister implements OperationBeforeHandl
         return Flux.fromIterable(operation.getFields())
                 .filter(field -> documentManager.getFieldTypeDefinition(operationType.getField(field.getName())).isObject())
                 .map(field -> {
-                            String typeName = documentManager.getFieldTypeDefinition(operationType.getField(field.getName())).getName();
+                            FieldDefinition fieldDefinition = operationType.getField(field.getName());
+                            String typeName = documentManager.getFieldTypeDefinition(fieldDefinition).getName();
                             return new AbstractMap.SimpleEntry<>(
                                     typeName,
-                                    argumentsToFields(operationType.getField(field.getName()), field)
+                                    argumentsToFields(fieldDefinition, field)
                             );
                         }
                 )

@@ -1,6 +1,5 @@
 package io.graphoenix.rabbitmq.handler;
 
-import com.rabbitmq.client.Delivery;
 import io.graphoenix.core.config.GraphQLConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.spi.graphql.operation.Operation;
@@ -13,6 +12,8 @@ import io.nozdormu.spi.context.PublisherBeanContext;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
 import reactor.core.publisher.Flux;
@@ -30,6 +31,9 @@ import static reactor.rabbitmq.QueueSpecification.queue;
 public class RabbitMQSubscriptionHandler implements SubscriptionHandler {
 
     public static final String SUBSCRIPTION_EXCHANGE_NAME = "graphoenix.subscription";
+    public static final String BODY_TYPE_KEY = "type";
+    public static final String BODY_ARGUMENTS_KEY = "arguments";
+    public static final String BODY_MUTATION_KEY = "mutation";
     public static final String REQUEST_ID = "requestId";
 
     private final GraphQLConfig graphQLConfig = BeanContext.get(GraphQLConfig.class);
@@ -76,16 +80,18 @@ public class RabbitMQSubscriptionHandler implements SubscriptionHandler {
                                                                 .concat(
                                                                         queryHandlerProvider.get().query(operation),
                                                                         receiver.consumeAutoAck(requestId)
-                                                                                .map(this::deliveryToJsonValue)
-                                                                                .filter(subscriptionDataListener::changed)
-                                                                                .flatMap(jsonValue -> queryHandlerProvider.get().query(operation))
+                                                                                .filter(delivery -> {
+                                                                                            JsonObject messageJsonObject = jsonProvider.createReader(new StringReader(new String(delivery.getBody()))).readObject();
+                                                                                            String typeName = messageJsonObject.getString(BODY_TYPE_KEY);
+                                                                                            JsonArray arguments = messageJsonObject.getJsonArray(BODY_ARGUMENTS_KEY);
+                                                                                            JsonArray mutation = messageJsonObject.getJsonArray(BODY_MUTATION_KEY);
+                                                                                            return subscriptionDataListener.changed(typeName, arguments, mutation);
+                                                                                        }
+                                                                                )
+                                                                                .flatMap(delivery -> queryHandlerProvider.get().query(operation))
                                                                 )
                                                 )
                                 )
                 );
-    }
-
-    private JsonValue deliveryToJsonValue(Delivery delivery) {
-        return jsonProvider.createReader(new StringReader(new String(delivery.getBody()))).readValue();
     }
 }

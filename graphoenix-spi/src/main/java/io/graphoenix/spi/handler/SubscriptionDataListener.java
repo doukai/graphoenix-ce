@@ -1,6 +1,7 @@
 package io.graphoenix.spi.handler;
 
 import io.graphoenix.spi.graphql.operation.Operation;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
 
 public interface SubscriptionDataListener {
@@ -9,5 +10,5 @@ public interface SubscriptionDataListener {
 
     SubscriptionDataListener afterSubscription(Operation operation, JsonValue jsonValue);
 
-    boolean changed(JsonValue messageJsonObject);
+    boolean changed(String typeName, JsonArray arguments, JsonArray mutation);
 }

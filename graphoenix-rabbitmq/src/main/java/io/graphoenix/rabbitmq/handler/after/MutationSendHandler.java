@@ -20,9 +20,8 @@ import reactor.rabbitmq.Sender;
 
 import java.util.Optional;
 
-import static io.graphoenix.rabbitmq.handler.RabbitMQSubscriptionHandler.SUBSCRIPTION_EXCHANGE_NAME;
+import static io.graphoenix.rabbitmq.handler.RabbitMQSubscriptionHandler.*;
 import static io.graphoenix.spi.constant.Hammurabi.*;
-import static io.graphoenix.subscription.handler.DefaultSubscriptionDataListener.*;
 
 @ApplicationScoped
 @Priority(Integer.MAX_VALUE - 250)
@@ -54,22 +53,26 @@ public class MutationSendHandler implements OperationAfterHandler {
                             String typeName = fieldTypeDefinition.getName();
                             Arguments arguments = field.getArguments();
                             JsonValue fieldJsonValue = jsonValue.asJsonObject().get(Optional.ofNullable(field.getAlias()).orElseGet(field::getName));
-                            JsonObjectBuilder messageJsonObject = jsonProvider.createObjectBuilder().add(TYPE_KEY, typeName);
+                            JsonObjectBuilder messageJsonObject = jsonProvider.createObjectBuilder().add(BODY_TYPE_KEY, typeName);
                             if (fieldDefinition.getType().hasList()) {
                                 if (arguments.containsKey(INPUT_VALUE_WHERE_NAME)) {
-                                    messageJsonObject.add(ARGUMENTS_KEY, JsonValue.EMPTY_JSON_ARRAY)
-                                            .add(MUTATION_KEY, jsonProvider.createArrayBuilder(fieldJsonValue.asJsonArray()));
+                                    messageJsonObject
+                                            .add(BODY_ARGUMENTS_KEY, JsonValue.EMPTY_JSON_ARRAY)
+                                            .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder(fieldJsonValue.asJsonArray()));
                                 } else {
-                                    messageJsonObject.add(ARGUMENTS_KEY, jsonProvider.createArrayBuilder(arguments.get(INPUT_VALUE_LIST_NAME).asJsonArray()))
-                                            .add(MUTATION_KEY, jsonProvider.createArrayBuilder(fieldJsonValue.asJsonArray()));
+                                    messageJsonObject
+                                            .add(BODY_ARGUMENTS_KEY, jsonProvider.createArrayBuilder(arguments.get(INPUT_VALUE_LIST_NAME).asJsonArray()))
+                                            .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder(fieldJsonValue.asJsonArray()));
                                 }
                             } else {
                                 if (arguments.containsKey(INPUT_VALUE_WHERE_NAME)) {
-                                    messageJsonObject.add(ARGUMENTS_KEY, JsonValue.EMPTY_JSON_ARRAY)
-                                            .add(MUTATION_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(fieldJsonValue.asJsonObject())));
+                                    messageJsonObject
+                                            .add(BODY_ARGUMENTS_KEY, JsonValue.EMPTY_JSON_ARRAY)
+                                            .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(fieldJsonValue.asJsonObject())));
                                 } else {
-                                    messageJsonObject.add(ARGUMENTS_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(arguments.asJsonObject())))
-                                            .add(MUTATION_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(fieldJsonValue.asJsonObject())));
+                                    messageJsonObject
+                                            .add(BODY_ARGUMENTS_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(arguments.asJsonObject())))
+                                            .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(fieldJsonValue.asJsonObject())));
                                 }
                             }
                             return new OutboundMessage(

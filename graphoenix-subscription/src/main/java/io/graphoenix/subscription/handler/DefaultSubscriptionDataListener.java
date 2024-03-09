@@ -1,6 +1,9 @@
 package io.graphoenix.subscription.handler;
 
-import com.jayway.jsonpath.*;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.ParseContext;
 import com.jayway.jsonpath.spi.json.JakartaJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JakartaMappingProvider;
 import io.graphoenix.core.handler.DocumentManager;
@@ -13,7 +16,6 @@ import io.graphoenix.spi.handler.SubscriptionDataListener;
 import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 
 import java.util.*;
@@ -22,10 +24,6 @@ import java.util.stream.Stream;
 
 @Dependent
 public class DefaultSubscriptionDataListener implements SubscriptionDataListener {
-
-    public static final String TYPE_KEY = "type";
-    public static final String ARGUMENTS_KEY = "arguments";
-    public static final String MUTATION_KEY = "mutation";
 
     private final DocumentManager documentManager;
 
@@ -57,11 +55,19 @@ public class DefaultSubscriptionDataListener implements SubscriptionDataListener
                 .putAll(
                         operation.getFields().stream()
                                 .filter(field -> documentManager.getFieldTypeDefinition(operationType.getField(field.getName())).isObject())
-                                .flatMap(field ->
-                                        argumentsToFilter.argumentsToMultipleExpression(operationType.getField(field.getName()), field).stream()
-                                                .map(expression -> "$[?" + expression + "]")
-                                                .distinct()
-                                                .map(filter -> new AbstractMap.SimpleEntry<>(field.getName(), filter))
+                                .flatMap(field -> {
+                                            FieldDefinition fieldDefinition = operationType.getField(field.getName());
+                                            String typeName = documentManager.getFieldTypeDefinition(fieldDefinition).getName();
+                                            return argumentsToFilter.argumentsToMultipleExpression(fieldDefinition, field).stream()
+                                                    .map(expression -> "$[?" + expression + "]")
+                                                    .distinct()
+                                                    .map(filter ->
+                                                            new AbstractMap.SimpleEntry<>(
+                                                                    typeName,
+                                                                    filter
+                                                            )
+                                                    );
+                                        }
                                 )
                                 .collect(
                                         Collectors.groupingBy(
@@ -126,12 +132,9 @@ public class DefaultSubscriptionDataListener implements SubscriptionDataListener
                 .distinct();
     }
 
-    public boolean changed(JsonValue jsonValue) {
-        JsonObject jsonObject = jsonValue.asJsonObject();
-        String typeName = jsonObject.getString(TYPE_KEY);
-        JsonValue arguments = jsonObject.get(ARGUMENTS_KEY);
-        JsonValue mutation = jsonObject.get(MUTATION_KEY);
-        return idChanged(typeName, arguments.asJsonArray()) || mutationChanged(typeName, mutation.asJsonArray());
+    @Override
+    public boolean changed(String typeName, JsonArray arguments, JsonArray mutation) {
+        return idChanged(typeName, arguments) || mutationChanged(typeName, mutation);
     }
 
     public boolean idChanged(String typeName, JsonArray arguments) {
