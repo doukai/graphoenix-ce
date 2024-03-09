@@ -5,6 +5,7 @@ import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.handler.*;
 import io.nozdormu.spi.context.BeanContext;
+import io.nozdormu.spi.context.PublisherBeanContext;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Default;
 import jakarta.inject.Provider;
@@ -25,23 +26,25 @@ import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_OPERATION_TYP
 @Default
 public class DefaultOperationHandler implements OperationHandler {
 
-    private static final GraphQLConfig graphQLConfig = BeanContext.get(GraphQLConfig.class);
+    private final GraphQLConfig graphQLConfig = BeanContext.get(GraphQLConfig.class);
 
-    private static final List<Provider<OperationBeforeHandler>> operationBeforeHandlerProviderList = BeanContext.getPriorityProviderList(OperationBeforeHandler.class);
+    private final List<Provider<OperationBeforeHandler>> operationBeforeHandlerProviderList = BeanContext.getPriorityProviderList(OperationBeforeHandler.class);
 
-    private static final List<Provider<OperationAfterHandler>> operationAfterHandlerProviderList = BeanContext.getPriorityProviderList(OperationAfterHandler.class);
+    private final List<Provider<OperationAfterHandler>> operationAfterHandlerProviderList = BeanContext.getPriorityProviderList(OperationAfterHandler.class);
 
-    private static final Provider<QueryHandler> queryHandlerProvider = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
+    private final Provider<QueryHandler> queryHandlerProvider = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
             .map(name -> BeanContext.getProvider(QueryHandler.class, name))
             .orElseGet(() -> BeanContext.getProvider(QueryHandler.class));
 
-    private static final Provider<MutationHandler> mutationHandlerProvider = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
+    private final Provider<MutationHandler> mutationHandlerProvider = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
             .map(name -> BeanContext.getProvider(MutationHandler.class, name))
             .orElseGet(() -> BeanContext.getProvider(MutationHandler.class));
 
-    private static final Provider<SubscriptionHandler> subscriptionHandlerProvider = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
+    private final Provider<SubscriptionHandler> subscriptionHandlerProvider = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
             .map(name -> BeanContext.getProvider(SubscriptionHandler.class, name))
             .orElseGet(() -> BeanContext.getProvider(SubscriptionHandler.class));
+
+    private final Provider<SubscriptionDataListener> subscriptionDataListenerProvider = BeanContext.getProvider(SubscriptionDataListener.class);
 
     @Override
     public Publisher<JsonValue> handle(Operation operation, Map<String, JsonValue> variables) {
@@ -123,6 +126,7 @@ public class DefaultOperationHandler implements OperationHandler {
                                                 .flatMap(operationMono -> operationMono)
                                 )
                 )
-                .defaultIfEmpty(JsonValue.EMPTY_JSON_OBJECT);
+                .defaultIfEmpty(JsonValue.EMPTY_JSON_OBJECT)
+                .contextWrite(PublisherBeanContext.of(SubscriptionDataListener.class, subscriptionDataListenerProvider.get()));
     }
 }
