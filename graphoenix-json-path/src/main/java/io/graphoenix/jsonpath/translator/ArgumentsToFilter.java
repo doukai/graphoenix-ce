@@ -3,10 +3,7 @@ package io.graphoenix.jsonpath.translator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import io.graphoenix.core.handler.DocumentManager;
-import io.graphoenix.jsonpath.expression.Expression;
-import io.graphoenix.jsonpath.expression.MultiAndExpression;
-import io.graphoenix.jsonpath.expression.MultiOrExpression;
-import io.graphoenix.jsonpath.expression.NotExpression;
+import io.graphoenix.jsonpath.expression.*;
 import io.graphoenix.jsonpath.expression.operators.*;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.Definition;
@@ -59,9 +56,7 @@ public class ArgumentsToFilter {
                                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(entry.getKey().getName()))
                                                     .filter(subField -> !subField.isFetchField())
                                                     .flatMap(subField ->
-                                                            documentManager.getFieldTypeDefinition(subField).isObject() ?
-                                                                    inputValueToMultipleExpression(subField, entry.getKey(), entry.getValue(), path + "." + subField.getName()).stream() :
-                                                                    inputValueToMultipleExpression(subField, entry.getKey(), entry.getValue(), path).stream()
+                                                            inputValueToMultipleExpression(subField, entry.getKey(), entry.getValue(), path + "." + subField.getName()).stream()
                                                     )
                                     ),
                             inputValueValueWithVariableMap.entrySet().stream()
@@ -79,9 +74,7 @@ public class ArgumentsToFilter {
                                                     entry.getValue().asBoolean().getValue()
                                     ) ?
                                     Stream.empty() :
-                                    Stream.of(
-                                            new IsNullExpression(FIELD_DEPRECATED_NAME)
-                                    )
+                                    Stream.of(new NotEqualsTo(path + "." + FIELD_DEPRECATED_NAME, new BooleanValue(true)))
                     )
                     .collect(Collectors.toList());
 
@@ -114,11 +107,11 @@ public class ArgumentsToFilter {
                                     .flatMap(arguments ->
                                             arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
                                                     .flatMap(val ->
-                                                            operatorToExpression(path, opr, val, skipNull(arguments))
+                                                            operatorToExpression(path + "." + fieldDefinition.getName(), opr, val, skipNull(arguments))
                                                     )
                                                     .or(() ->
                                                             arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
-                                                                    .flatMap(arr -> operatorToExpression(path, opr, arr, skipNull(arguments)))
+                                                                    .flatMap(arr -> operatorToExpression(path + "." + fieldDefinition.getName(), opr, arr, skipNull(arguments)))
                                                     )
                                     )
                     );
@@ -153,9 +146,7 @@ public class ArgumentsToFilter {
                                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(entry.getKey().getName()))
                                                     .filter(subField -> !subField.isFetchField())
                                                     .flatMap(subField ->
-                                                            documentManager.getFieldTypeDefinition(subField).isObject() ?
-                                                                    inputValueToMultipleExpression(subField, entry.getKey(), entry.getValue(), path + "." + subField.getName()).stream() :
-                                                                    inputValueToMultipleExpression(subField, entry.getKey(), entry.getValue(), path).stream()
+                                                            inputValueToMultipleExpression(subField, entry.getKey(), entry.getValue(), path + "." + subField.getName()).stream()
                                                     )
                                     ),
                             inputValueValueWithVariableMap.entrySet().stream()
@@ -173,9 +164,7 @@ public class ArgumentsToFilter {
                                                     entry.getValue().asBoolean().getValue()
                                     ) ?
                                     Stream.empty() :
-                                    Stream.of(
-                                            new IsNullExpression(FIELD_DEPRECATED_NAME)
-                                    )
+                                    Stream.of(new NotEqualsTo(path + "." + FIELD_DEPRECATED_NAME, new BooleanValue(true)))
                     )
                     .collect(Collectors.toList());
 

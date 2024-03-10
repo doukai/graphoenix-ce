@@ -228,7 +228,6 @@ public class MutationTranslator {
                                                                        int level,
                                                                        int index) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        Table table = typeToTable(fieldTypeDefinition.asObject(), level);
 
         List<FieldDefinition> leafFieldDefinitionList = fieldTypeDefinition.asObject().getFields().stream()
                 .filter(subField -> !subField.isInvokeField())
@@ -253,30 +252,34 @@ public class MutationTranslator {
 
         Statement leafFieldMutationStatement = whereInputValueEntry
                 .flatMap(entry -> argumentsTranslator.inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), entry.getValue(), level))
-                .map(whereExpression ->
-                        (Statement) updateExpression(
-                                table,
-                                leafValueWithVariableMap.entrySet().stream()
-                                        .map(entry ->
-                                                new UpdateSet(
-                                                        graphqlFieldToColumn(table, entry.getKey()),
-                                                        leafValueToDBValue(entry.getValue()))
-                                        )
-                                        .collect(Collectors.toList()),
-                                whereExpression
-                        )
+                .map(whereExpression -> {
+                            Table table = typeToTable(fieldTypeDefinition.asObject(), level);
+                            return (Statement) updateExpression(
+                                    table,
+                                    leafValueWithVariableMap.entrySet().stream()
+                                            .map(entry ->
+                                                    new UpdateSet(
+                                                            graphqlFieldToColumn(table, entry.getKey()),
+                                                            leafValueToDBValue(entry.getValue()))
+                                            )
+                                            .collect(Collectors.toList()),
+                                    whereExpression
+                            );
+                        }
                 )
-                .orElseGet(() ->
-                        insertExpression(
-                                table,
-                                leafValueWithVariableMap.keySet().stream()
-                                        .map(name -> graphqlFieldToColumn(table, name))
-                                        .collect(Collectors.toList()),
-                                leafValueWithVariableMap.values().stream()
-                                        .map(DBValueUtil::leafValueToDBValue)
-                                        .collect(Collectors.toList()),
-                                true
-                        )
+                .orElseGet(() -> {
+                            Table table = typeToTable(fieldTypeDefinition.asObject());
+                            return insertExpression(
+                                    table,
+                                    leafValueWithVariableMap.keySet().stream()
+                                            .map(name -> graphqlFieldToColumn(table, name))
+                                            .collect(Collectors.toList()),
+                                    leafValueWithVariableMap.values().stream()
+                                            .map(DBValueUtil::leafValueToDBValue)
+                                            .collect(Collectors.toList()),
+                                    true
+                            );
+                        }
                 );
 
         String idName = fieldTypeDefinition.asObject().getIDFieldOrError().getName();

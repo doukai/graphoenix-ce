@@ -112,7 +112,7 @@ public class DefaultOperationHandler implements OperationHandler {
         return Flux.fromIterable(operationBeforeHandlerProviderList)
                 .reduce(
                         Mono.just(operation),
-                        (pre, cur) -> pre.flatMap(result -> cur.get().query(result, variables))
+                        (pre, cur) -> pre.flatMap(result -> cur.get().subscription(result, variables))
                 )
                 .flatMap(operationMono -> operationMono)
                 .flatMapMany(operationAfterHandler ->
@@ -121,7 +121,7 @@ public class DefaultOperationHandler implements OperationHandler {
                                         Flux.fromIterable(operationAfterHandlerProviderList)
                                                 .reduce(
                                                         Mono.just(jsonValue),
-                                                        (pre, cur) -> pre.flatMap(result -> cur.get().query(operationAfterHandler, result))
+                                                        (pre, cur) -> pre.flatMap(result -> cur.get().subscription(operationAfterHandler, result))
                                                 )
                                                 .flatMap(operationMono -> operationMono)
                                 )

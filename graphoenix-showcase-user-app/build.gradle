@@ -16,6 +16,7 @@ dependencies {
     implementation project(":graphoenix-showcase-user")
     implementation project(":graphoenix-r2dbc")
     implementation project(":graphoenix-http-server")
+    implementation project(":graphoenix-rabbitmq")
     implementation 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
     implementation 'io.nozdormu:nozdormu-async:0.0.1-SNAPSHOT'
     implementation 'io.nozdormu:nozdormu-interceptor:0.0.1-SNAPSHOT'

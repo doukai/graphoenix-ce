@@ -6,8 +6,8 @@ import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.ObjectType;
 import io.graphoenix.spi.handler.QueryHandler;
+import io.graphoenix.spi.handler.SubscriptionDataListener;
 import io.graphoenix.spi.handler.SubscriptionHandler;
-import io.graphoenix.subscription.handler.DefaultSubscriptionDataListener;
 import io.nozdormu.spi.context.BeanContext;
 import io.nozdormu.spi.context.PublisherBeanContext;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -79,7 +79,7 @@ public class RabbitMQSubscriptionHandler implements SubscriptionHandler {
                                                 .flatMap(routingKey -> sender.bind(binding(SUBSCRIPTION_EXCHANGE_NAME, routingKey, requestId)))
                                 )
                                 .flatMap(bindOk ->
-                                        PublisherBeanContext.get(DefaultSubscriptionDataListener.class)
+                                        PublisherBeanContext.get(SubscriptionDataListener.class)
                                                 .flatMapMany(subscriptionDataListener ->
                                                         Flux
                                                                 .concat(

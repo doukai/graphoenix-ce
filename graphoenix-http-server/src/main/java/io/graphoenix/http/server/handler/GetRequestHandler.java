@@ -29,6 +29,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static io.graphoenix.http.server.context.RequestScopeInstanceFactory.REQUEST_ID;
+import static io.graphoenix.http.server.utils.ResponseUtil.next;
 import static io.netty.handler.codec.http.HttpHeaderNames.ACCEPT;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 
@@ -75,7 +76,7 @@ public class GetRequestHandler extends BaseHandler {
                                             Flux.from(operationHandler.handle(operation, graphQLRequest.getVariables(), token, operationId))
                                                     .contextWrite(PublisherBeanContext.of(Document.class, document))
                                     )
-                                    .map(JsonValue::toString)
+                                    .map(jsonValue -> next(jsonValue, operationId))
                                     .onErrorResume(throwable -> this.errorSSEHandler(throwable, response, operationId))
                                     .map(eventString -> ByteBufAllocator.DEFAULT.buffer().writeBytes(eventString.getBytes(StandardCharsets.UTF_8)))
                                     .contextWrite(Context.of(REQUEST_ID, requestId)),

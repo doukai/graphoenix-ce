@@ -2,7 +2,7 @@ package io.graphoenix.subscription.handler.after;
 
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.handler.OperationAfterHandler;
-import io.graphoenix.subscription.handler.DefaultSubscriptionDataListener;
+import io.graphoenix.spi.handler.SubscriptionDataListener;
 import io.nozdormu.spi.context.PublisherBeanContext;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -15,7 +15,7 @@ public class SubscriptionDataListenerAfterHandler implements OperationAfterHandl
 
     @Override
     public Mono<JsonValue> subscription(Operation operation, JsonValue jsonValue) {
-        return PublisherBeanContext.get(DefaultSubscriptionDataListener.class)
+        return PublisherBeanContext.get(SubscriptionDataListener.class)
                 .map(subscriptionDataListener -> subscriptionDataListener.afterSubscription(operation, jsonValue))
                 .thenReturn(jsonValue);
     }

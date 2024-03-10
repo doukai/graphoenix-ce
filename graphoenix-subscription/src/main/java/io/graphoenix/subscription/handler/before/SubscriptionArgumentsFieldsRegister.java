@@ -23,8 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_HIDE_NAME;
-import static io.graphoenix.spi.constant.Hammurabi.INPUT_VALUE_EXS_NAME;
+import static io.graphoenix.spi.constant.Hammurabi.*;
 
 @ApplicationScoped
 @Priority(675)
@@ -57,7 +56,6 @@ public class SubscriptionArgumentsFieldsRegister implements OperationBeforeHandl
                             }
                             return Mono.empty();
                         }
-
                 )
                 .doOnNext(entry ->
                         subscriptionFilterFieldsManager.merge(
@@ -76,22 +74,28 @@ public class SubscriptionArgumentsFieldsRegister implements OperationBeforeHandl
                 Stream.ofNullable(fieldDefinition.getArguments())
                         .flatMap(Collection::stream)
                         .flatMap(inputValue ->
-                                Stream.ofNullable(fieldTypeDefinition.asObject().getField(inputValue.getName()))
-                                        .flatMap(subFieldDefinition ->
-                                                Stream.ofNullable(field.getArguments())
-                                                        .flatMap(arguments ->
-                                                                arguments.getArgument(inputValue.getName())
-                                                                        .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
-                                                        )
-                                                        .map(valueWithVariable -> {
-                                                                    Field argumentField = new Field(subFieldDefinition.getName()).addDirective(new Directive(DIRECTIVE_HIDE_NAME));
-                                                                    Definition subFieldTypeDefinition = documentManager.getFieldTypeDefinition(subFieldDefinition);
-                                                                    if (subFieldTypeDefinition.isObject() && valueWithVariable.isObject()) {
-                                                                        argumentField.setSelections(objectValueToFields(subFieldDefinition, inputValue, valueWithVariable));
-                                                                    }
-                                                                    return argumentField;
-                                                                }
-                                                        )
+                                Stream
+                                        .concat(
+                                                Stream.ofNullable(fieldTypeDefinition.asObject().getField(inputValue.getName()))
+                                                        .flatMap(subFieldDefinition ->
+                                                                Stream.ofNullable(field.getArguments())
+                                                                        .flatMap(arguments ->
+                                                                                arguments.getArgument(inputValue.getName())
+                                                                                        .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
+                                                                        )
+                                                                        .map(valueWithVariable -> {
+                                                                                    Field argumentField = new Field(subFieldDefinition.getName()).addDirective(new Directive(DIRECTIVE_HIDE_NAME));
+                                                                                    Definition subFieldTypeDefinition = documentManager.getFieldTypeDefinition(subFieldDefinition);
+                                                                                    if (subFieldTypeDefinition.isObject() && valueWithVariable.isObject()) {
+                                                                                        argumentField.setSelections(objectValueToFields(subFieldDefinition, inputValue, valueWithVariable));
+                                                                                    }
+                                                                                    return argumentField;
+                                                                                }
+                                                                        )
+                                                        ),
+                                                field.getArguments().containsKey(INPUT_VALUE_INCLUDE_DEPRECATED_NAME) ?
+                                                        Stream.empty() :
+                                                        Stream.of(new Field(FIELD_DEPRECATED_NAME).addDirective(new Directive(DIRECTIVE_HIDE_NAME)))
                                         )
                         )
                         .collect(Collectors.toList()),
@@ -138,22 +142,28 @@ public class SubscriptionArgumentsFieldsRegister implements OperationBeforeHandl
         return Field.mergeFields(
                 inputValueTypeDefinition.asInputObject().getInputValues().stream()
                         .flatMap(subInputValue ->
-                                Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
-                                        .flatMap(subFieldDefinition ->
-                                                Stream.ofNullable(valueWithVariable.asObject().getObjectValueWithVariable())
-                                                        .flatMap(objectValue ->
-                                                                Optional.ofNullable(objectValue.get(subInputValue.getName()))
-                                                                        .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
-                                                        )
-                                                        .map(subValueWithVariable -> {
-                                                                    Field inputValueField = new Field(subFieldDefinition.getName()).addDirective(new Directive(DIRECTIVE_HIDE_NAME));
-                                                                    Definition subFieldTypeDefinition = documentManager.getFieldTypeDefinition(subFieldDefinition);
-                                                                    if (subFieldTypeDefinition.isObject() && subValueWithVariable.isObject()) {
-                                                                        inputValueField.setSelections(objectValueToFields(subFieldDefinition, subInputValue, subValueWithVariable));
-                                                                    }
-                                                                    return inputValueField;
-                                                                }
-                                                        )
+                                Stream
+                                        .concat(
+                                                Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
+                                                        .flatMap(subFieldDefinition ->
+                                                                Stream.ofNullable(valueWithVariable.asObject().getObjectValueWithVariable())
+                                                                        .flatMap(objectValue ->
+                                                                                Optional.ofNullable(objectValue.get(subInputValue.getName()))
+                                                                                        .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
+                                                                        )
+                                                                        .map(subValueWithVariable -> {
+                                                                                    Field inputValueField = new Field(subFieldDefinition.getName()).addDirective(new Directive(DIRECTIVE_HIDE_NAME));
+                                                                                    Definition subFieldTypeDefinition = documentManager.getFieldTypeDefinition(subFieldDefinition);
+                                                                                    if (subFieldTypeDefinition.isObject() && subValueWithVariable.isObject()) {
+                                                                                        inputValueField.setSelections(objectValueToFields(subFieldDefinition, subInputValue, subValueWithVariable));
+                                                                                    }
+                                                                                    return inputValueField;
+                                                                                }
+                                                                        )
+                                                        ),
+                                                valueWithVariable.asObject().containsKey(INPUT_VALUE_INCLUDE_DEPRECATED_NAME) ?
+                                                        Stream.empty() :
+                                                        Stream.of(new Field(FIELD_DEPRECATED_NAME).addDirective(new Directive(DIRECTIVE_HIDE_NAME)))
                                         )
                         )
                         .collect(Collectors.toList()),
