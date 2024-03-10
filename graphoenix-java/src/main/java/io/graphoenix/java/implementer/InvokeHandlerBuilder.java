@@ -212,15 +212,15 @@ public class InvokeHandlerBuilder {
                                                                                                     String invokeClassName = fieldDefinition.getInvokeClassNameOrError();
                                                                                                     String methodName = fieldDefinition.getInvokeMethodNameOrError();
                                                                                                     ClassName returnClassName = toClassName(getClassName(fieldDefinition.getInvokeReturnClassNameOrError()));
-                                                                                                    boolean asyncInvoke = fieldDefinition.isAsyncInvoke();
+                                                                                                    boolean async = fieldDefinition.isAsyncInvoke();
 
                                                                                                     String apiVariableName = typeNameToFieldName(toClassName(invokeClassName).simpleName());
                                                                                                     String fieldSetterMethodName = getFieldSetterMethodName(fieldDefinition.getName());
                                                                                                     CodeBlock caseCodeBlock = CodeBlock.of("case $S:\n", fieldDefinition.getName());
                                                                                                     CodeBlock invokeCodeBlock;
 
-                                                                                                    if (asyncInvoke) {
-                                                                                                        invokeCodeBlock = CodeBlock.of("return $L.get().asyncInvoke($S, $L).map(sync -> ($T)sync).doOnNext($L -> $L.$L($L));",
+                                                                                                    if (async) {
+                                                                                                        invokeCodeBlock = CodeBlock.of("return $L.get().async($S, $L).map(sync -> ($T)sync).doOnNext($L -> $L.$L($L));",
                                                                                                                 apiVariableName,
                                                                                                                 methodName,
                                                                                                                 resultParameterName,
@@ -369,7 +369,7 @@ public class InvokeHandlerBuilder {
                                                                                                     String methodName = fieldDefinition.getInvokeMethodNameOrError();
                                                                                                     List<Map.Entry<String, String>> parameters = fieldDefinition.getInvokeParametersList();
                                                                                                     ClassName returnClassName = toClassName(getClassName(fieldDefinition.getInvokeReturnClassNameOrError()));
-                                                                                                    boolean asyncInvoke = fieldDefinition.isAsyncInvoke();
+                                                                                                    boolean async = fieldDefinition.isAsyncInvoke();
                                                                                                     String apiVariableName = typeNameToFieldName(toClassName(invokeClassName).simpleName());
 
                                                                                                     CodeBlock parametersCodeBlock = CodeBlock.join(
@@ -385,9 +385,9 @@ public class InvokeHandlerBuilder {
                                                                                                     CodeBlock.Builder codeBlockBuilder = CodeBlock.builder().add("case $S:\n", fieldDefinition.getName())
                                                                                                             .indent();
 
-                                                                                                    if (asyncInvoke) {
+                                                                                                    if (async) {
                                                                                                         codeBlockBuilder
-                                                                                                                .add("return $L.get().asyncInvoke($S, $L).map(sync -> ($T)sync)\n",
+                                                                                                                .add("return $L.get().async($S, $L).map(sync -> ($T)sync)\n",
                                                                                                                         apiVariableName,
                                                                                                                         methodName,
                                                                                                                         parametersCodeBlock,

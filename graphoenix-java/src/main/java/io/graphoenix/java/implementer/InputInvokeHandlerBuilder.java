@@ -168,7 +168,7 @@ public class InputInvokeHandlerBuilder {
                 Boolean async = tuple4.getT4();
                 CodeBlock invokeCodeBlock;
                 if (async) {
-                    invokeCodeBlock = CodeBlock.of("$L.get().asyncInvoke($S, $L)",
+                    invokeCodeBlock = CodeBlock.of("$L.get().async($S, $L)",
                             apiVariableName,
                             methodName,
                             index == 0 ? typeParameterName : resultParameterName

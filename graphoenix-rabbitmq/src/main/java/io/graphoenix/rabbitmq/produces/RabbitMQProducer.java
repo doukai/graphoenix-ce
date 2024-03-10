@@ -12,17 +12,14 @@ import reactor.rabbitmq.*;
 @ApplicationScoped
 public class RabbitMQProducer {
 
-    private final RabbitMQConfig rabbitMQConfig;
-
     private final Mono<Connection> connectionMono;
 
     @Inject
     public RabbitMQProducer(RabbitMQConfig rabbitMQConfig) {
-        this.rabbitMQConfig = rabbitMQConfig;
-        this.connectionMono = createConnectionMono();
+        this.connectionMono = createConnectionMono(rabbitMQConfig);
     }
 
-    public Mono<Connection> createConnectionMono() {
+    public Mono<Connection> createConnectionMono(RabbitMQConfig rabbitMQConfig) {
         ConnectionFactory connectionFactory = new ConnectionFactory();
         connectionFactory.useNio();
         connectionFactory.setHost(rabbitMQConfig.getHost());

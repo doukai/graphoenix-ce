@@ -6,6 +6,7 @@ import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MemberValuePair;
 import com.github.javaparser.ast.nodeTypes.NodeWithName;
+import com.github.javaparser.ast.nodeTypes.NodeWithType;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
@@ -64,6 +65,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.github.javaparser.resolution.types.ResolvedPrimitiveType.*;
 import static io.graphoenix.core.utils.TypeNameUtil.getArgumentTypeName0;
@@ -314,7 +316,7 @@ public class BaseTask extends DefaultTask {
                                                                                                                                     typeDeclaration.getNameAsString()
                                                                                                                     )
                                                                                                     )
-                                                                                                    .addArgument(DIRECTIVE_INVOKE_ARGUMENT_METHOD_NAME_NAME, methodDeclaration.getNameAsString())
+                                                                                                    .addArgument(DIRECTIVE_INVOKE_ARGUMENT_METHOD_NAME_NAME, methodDeclaration.isAnnotationPresent(Async.class) ? getAsyncMethodName(methodDeclaration) : methodDeclaration.getNameAsString())
                                                                                                     .addArgument(
                                                                                                             DIRECTIVE_INVOKE_ARGUMENT_PARAMETER_NAME,
                                                                                                             new ArrayValueWithVariable(
@@ -373,7 +375,7 @@ public class BaseTask extends DefaultTask {
                                                                                                                         typeDeclaration.getNameAsString()
                                                                                                         )
                                                                                         )
-                                                                                        .addArgument(DIRECTIVE_INVOKE_ARGUMENT_METHOD_NAME_NAME, methodDeclaration.getNameAsString())
+                                                                                        .addArgument(DIRECTIVE_INVOKE_ARGUMENT_METHOD_NAME_NAME, methodDeclaration.isAnnotationPresent(Async.class) ? getAsyncMethodName(methodDeclaration) : methodDeclaration.getNameAsString())
                                                                                         .addArgument(
                                                                                                 DIRECTIVE_INVOKE_ARGUMENT_PARAMETER_NAME,
                                                                                                 new ArrayValueWithVariable(
@@ -430,7 +432,7 @@ public class BaseTask extends DefaultTask {
                                                                                                                         typeDeclaration.getNameAsString()
                                                                                                         )
                                                                                         )
-                                                                                        .addArgument(DIRECTIVE_INVOKE_ARGUMENT_METHOD_NAME_NAME, methodDeclaration.getNameAsString())
+                                                                                        .addArgument(DIRECTIVE_INVOKE_ARGUMENT_METHOD_NAME_NAME, methodDeclaration.isAnnotationPresent(Async.class) ? getAsyncMethodName(methodDeclaration) : methodDeclaration.getNameAsString())
                                                                                         .addArgument(
                                                                                                 DIRECTIVE_INVOKE_ARGUMENT_PARAMETER_NAME,
                                                                                                 new ArrayValueWithVariable(
@@ -829,5 +831,15 @@ public class BaseTask extends DefaultTask {
                             .orElseGet(() -> resolvedReferenceType.getQualifiedName().substring(resolvedReferenceType.getQualifiedName().lastIndexOf(".") + 1))
             );
         }
+    }
+
+    private String getAsyncMethodName(MethodDeclaration methodDeclaration) {
+        return Stream
+                .concat(
+                        Stream.of(methodDeclaration.getNameAsString() + "Async"),
+                        methodDeclaration.getParameters().stream()
+                                .map(NodeWithType::getTypeAsString)
+                )
+                .collect(Collectors.joining("_"));
     }
 }

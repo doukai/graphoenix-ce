@@ -59,11 +59,12 @@ public class FieldDefinition extends AbstractDefinition {
         this.type = executableElementToTypeName(executableElement, typeUtils);
         setArguments(executableElementParametersToInputValues(executableElement, typeUtils));
         getFormatDirective(executableElement).ifPresent(this::addDirective);
+        boolean async = executableElement.getAnnotation(Async.class) != null;
         addDirective(
                 new Directive()
                         .setName(DIRECTIVE_INVOKE_NAME)
                         .addArgument(DIRECTIVE_INVOKE_ARGUMENT_CLASS_NAME_NAME, executableElement.getEnclosingElement().toString())
-                        .addArgument(DIRECTIVE_INVOKE_ARGUMENT_METHOD_NAME_NAME, executableElement.getSimpleName().toString())
+                        .addArgument(DIRECTIVE_INVOKE_ARGUMENT_METHOD_NAME_NAME, async ? getAsyncMethodName(executableElement, typeUtils) : executableElement.getSimpleName().toString())
                         .addArgument(
                                 DIRECTIVE_INVOKE_ARGUMENT_PARAMETER_NAME,
                                 new ArrayValueWithVariable(
@@ -80,7 +81,7 @@ public class FieldDefinition extends AbstractDefinition {
                                 )
                         )
                         .addArgument(DIRECTIVE_INVOKE_ARGUMENT_RETURN_CLASS_NAME_NAME, getTypeNameFromTypeMirror(executableElement.getReturnType(), typeUtils))
-                        .addArgument(DIRECTIVE_INVOKE_ASYNC_NAME, executableElement.getAnnotation(Async.class) != null)
+                        .addArgument(DIRECTIVE_INVOKE_ASYNC_NAME, async)
         );
     }
 

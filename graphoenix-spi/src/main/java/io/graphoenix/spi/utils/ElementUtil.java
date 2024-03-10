@@ -8,8 +8,8 @@ import io.graphoenix.spi.graphql.type.ListType;
 import io.graphoenix.spi.graphql.type.NonNullType;
 import io.graphoenix.spi.graphql.type.TypeName;
 import jakarta.json.spi.JsonProvider;
-import org.eclipse.microprofile.graphql.*;
 import org.eclipse.microprofile.graphql.Enum;
+import org.eclipse.microprofile.graphql.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -22,7 +22,6 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
-
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -31,6 +30,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static javax.lang.model.element.ElementKind.ENUM;
@@ -247,5 +247,15 @@ public final class ElementUtil {
             return ((TypeElement) types.asElement(declaredType)).getQualifiedName().toString();
         }
         throw new RuntimeException("illegal typeMirror: " + typeMirror);
+    }
+
+    public static String getAsyncMethodName(ExecutableElement executableElement, Types typeUtils) {
+        return Stream
+                .concat(
+                        Stream.of(executableElement.getSimpleName().toString() + "Async"),
+                        executableElement.getParameters().stream()
+                                .map(parameter -> typeUtils.asElement(parameter.asType()).getSimpleName().toString())
+                )
+                .collect(Collectors.joining("_"));
     }
 }

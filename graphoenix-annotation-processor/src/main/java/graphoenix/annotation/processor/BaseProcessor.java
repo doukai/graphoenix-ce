@@ -31,6 +31,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
+import static io.graphoenix.spi.utils.ElementUtil.getAsyncMethodName;
 import static io.graphoenix.spi.utils.ElementUtil.getNameFromElement;
 
 public abstract class BaseProcessor extends AbstractProcessor {
@@ -206,9 +207,10 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                                     typeUtils.asElement(variableElement.asType()).getAnnotation(Input.class) != null
                                     )
                             ) {
+                                boolean async = executableElement.getAnnotation(Async.class) != null;
                                 ObjectValueWithVariable invoke = ObjectValueWithVariable.of(
                                         INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME, executableElement.getEnclosingElement().toString(),
-                                        INPUT_INVOKE_INPUT_VALUE_METHOD_NAME_NAME, executableElement.getSimpleName().toString(),
+                                        INPUT_INVOKE_INPUT_VALUE_METHOD_NAME_NAME, async ? getAsyncMethodName(executableElement, typeUtils) : executableElement.getSimpleName().toString(),
                                         INPUT_INVOKE_INPUT_VALUE_PARAMETER_NAME,
                                         new ArrayValueWithVariable(
                                                 executableElement.getParameters().stream()
@@ -223,7 +225,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                                         .collect(Collectors.toList())
                                         ),
                                         INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME, ElementUtil.getTypeNameFromTypeMirror(executableElement.getReturnType(), typeUtils),
-                                        INPUT_INVOKE_INPUT_VALUE_ASYNC_NAME, executableElement.getAnnotation(Async.class) != null
+                                        INPUT_INVOKE_INPUT_VALUE_ASYNC_NAME, async
                                 );
 
                                 executableElement.getParameters().stream()
