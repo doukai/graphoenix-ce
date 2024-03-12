@@ -31,9 +31,9 @@ public class DefaultSubscriptionDataListener implements SubscriptionDataListener
 
     private final ParseContext parseContext;
 
-    private final Map<String, List<String>> typeIDMap = new HashMap<>();
+    private final Map<String, Set<String>> typeIDMap = new HashMap<>();
 
-    private final Map<String, List<String>> typeFilterMap = new HashMap<>();
+    private final Map<String, Set<String>> typeFilterMap = new HashMap<>();
 
     @Inject
     public DefaultSubscriptionDataListener(DocumentManager documentManager, ArgumentsToFilter argumentsToFilter) {
@@ -60,7 +60,6 @@ public class DefaultSubscriptionDataListener implements SubscriptionDataListener
                                             if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
                                                 return argumentsToFilter.argumentsToMultipleExpression(fieldDefinition, field).stream()
                                                         .map(expression -> "$[?" + expression + "]")
-                                                        .distinct()
                                                         .map(filter ->
                                                                 new AbstractMap.SimpleEntry<>(
                                                                         fieldTypeDefinition.getName(),
@@ -76,7 +75,7 @@ public class DefaultSubscriptionDataListener implements SubscriptionDataListener
                                                 Map.Entry::getKey,
                                                 Collectors.mapping(
                                                         Map.Entry::getValue,
-                                                        Collectors.toList()
+                                                        Collectors.toSet()
                                                 )
                                         )
                                 )
@@ -90,17 +89,13 @@ public class DefaultSubscriptionDataListener implements SubscriptionDataListener
         this.typeIDMap
                 .putAll(
                         operation.getFields().stream()
-                                .map(field -> operationType.getField(field.getName()))
-                                .filter(fieldDefinition -> documentManager.getFieldTypeDefinition(fieldDefinition).isObject())
-                                .filter(fieldDefinition -> jsonValue.asJsonObject().containsKey(fieldDefinition.getName()))
-                                .filter(fieldDefinition -> jsonValue.asJsonObject().get(fieldDefinition.getName()).getValueType().equals(JsonValue.ValueType.OBJECT))
-                                .flatMap(fieldDefinition -> indexID(fieldDefinition, jsonValue.asJsonObject().get(fieldDefinition.getName())))
+                                .flatMap(field -> indexID(operationType.getField(field.getName()), jsonValue.asJsonObject().get(Optional.ofNullable(field.getAlias()).orElseGet(field::getName))))
                                 .collect(
                                         Collectors.groupingBy(
                                                 Map.Entry::getKey,
                                                 Collectors.mapping(
                                                         Map.Entry::getValue,
-                                                        Collectors.toList()
+                                                        Collectors.toSet()
                                                 )
                                         )
                                 )
@@ -110,28 +105,34 @@ public class DefaultSubscriptionDataListener implements SubscriptionDataListener
 
     private Stream<Map.Entry<String, String>> indexID(FieldDefinition fieldDefinition, JsonValue jsonValue) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        return Stream
-                .concat(
-                        fieldTypeDefinition.asObject().getIDField()
-                                .filter(idFieldDefinition -> jsonValue.asJsonObject().containsKey(idFieldDefinition.getName()))
-                                .filter(idFieldDefinition -> !jsonValue.asJsonObject().isNull(idFieldDefinition.getName())).stream()
-                                .map(idFieldDefinition -> new AbstractMap.SimpleEntry<>(fieldTypeDefinition.getName(), jsonValue.asJsonObject().getString(idFieldDefinition.getName()))),
-                        jsonValue.asJsonObject().entrySet().stream()
-                                .flatMap(entry -> {
-                                            FieldDefinition subFieldDefinition = fieldTypeDefinition.asObject().getField(entry.getKey());
-                                            if (entry.getValue().getValueType().equals(JsonValue.ValueType.ARRAY)) {
-                                                return entry.getValue().asJsonArray().stream()
-                                                        .filter(item -> item.getValueType().equals(JsonValue.ValueType.OBJECT))
-                                                        .flatMap(item -> indexID(subFieldDefinition, item));
-                                            } else if (entry.getValue().getValueType().equals(JsonValue.ValueType.OBJECT)) {
-                                                return indexID(subFieldDefinition, entry.getValue());
-                                            } else {
-                                                return Stream.empty();
+        if (jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
+            return Stream.empty();
+        } else if (jsonValue.getValueType().equals(JsonValue.ValueType.ARRAY)) {
+            return jsonValue.asJsonArray().stream()
+                    .flatMap(item -> indexID(fieldDefinition, item));
+        } else {
+            return Stream
+                    .concat(
+                            fieldTypeDefinition.asObject().getIDField()
+                                    .filter(idFieldDefinition -> jsonValue.asJsonObject().containsKey(idFieldDefinition.getName()))
+                                    .filter(idFieldDefinition -> !jsonValue.asJsonObject().isNull(idFieldDefinition.getName())).stream()
+                                    .map(idFieldDefinition -> new AbstractMap.SimpleEntry<>(fieldTypeDefinition.getName(), jsonValue.asJsonObject().getString(idFieldDefinition.getName()))),
+                            jsonValue.asJsonObject().entrySet().stream()
+                                    .flatMap(entry -> {
+                                                FieldDefinition subFieldDefinition = fieldTypeDefinition.asObject().getField(entry.getKey());
+                                                if (entry.getValue().getValueType().equals(JsonValue.ValueType.ARRAY)) {
+                                                    return entry.getValue().asJsonArray().stream()
+                                                            .filter(item -> item.getValueType().equals(JsonValue.ValueType.OBJECT))
+                                                            .flatMap(item -> indexID(subFieldDefinition, item));
+                                                } else if (entry.getValue().getValueType().equals(JsonValue.ValueType.OBJECT)) {
+                                                    return indexID(subFieldDefinition, entry.getValue());
+                                                } else {
+                                                    return Stream.empty();
+                                                }
                                             }
-                                        }
-                                )
-                )
-                .distinct();
+                                    )
+                    );
+        }
     }
 
     @Override
