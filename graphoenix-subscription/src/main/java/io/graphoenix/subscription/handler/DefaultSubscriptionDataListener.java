@@ -22,6 +22,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.graphoenix.spi.constant.Hammurabi.INPUT_OPERATOR_INPUT_VALUE_VAL_NAME;
+import static io.graphoenix.spi.constant.Hammurabi.INPUT_VALUE_WHERE_NAME;
+
 @Dependent
 public class DefaultSubscriptionDataListener implements SubscriptionDataListener {
 
@@ -147,25 +150,35 @@ public class DefaultSubscriptionDataListener implements SubscriptionDataListener
     private boolean idChanged(String typeName, JsonValue argument) {
         ObjectType objectType = documentManager.getDocument().getObjectTypeOrError(typeName);
         return objectType.getIDField()
-                .filter(fieldDefinition -> typeIDMap.containsKey(typeName))
-                .filter(fieldDefinition -> argument.asJsonObject().containsKey(fieldDefinition.getName()))
-                .filter(fieldDefinition -> !argument.asJsonObject().isNull(fieldDefinition.getName())).stream()
-                .anyMatch(fieldDefinition -> typeIDMap.get(typeName).contains(argument.asJsonObject().getString(fieldDefinition.getName()))) ||
-
-                argument.asJsonObject().entrySet().stream()
-                        .anyMatch(entry -> {
-                                    FieldDefinition fieldDefinition = objectType.getField(entry.getKey());
-                                    if (entry.getValue().getValueType().equals(JsonValue.ValueType.ARRAY)) {
-                                        return entry.getValue().asJsonArray().stream()
-                                                .filter(item -> item.getValueType().equals(JsonValue.ValueType.OBJECT))
-                                                .anyMatch(item -> idChanged(documentManager.getFieldTypeDefinition(fieldDefinition).getName(), item));
-                                    } else if (entry.getValue().getValueType().equals(JsonValue.ValueType.OBJECT)) {
-                                        return idChanged(documentManager.getFieldTypeDefinition(fieldDefinition).getName(), entry.getValue());
-                                    } else {
-                                        return false;
-                                    }
-                                }
-                        );
+                .map(idFieldDefinition ->
+                        typeIDMap.containsKey(typeName) &&
+                                (argument.asJsonObject().containsKey(idFieldDefinition.getName()) &&
+                                        !argument.asJsonObject().isNull(idFieldDefinition.getName()) &&
+                                        typeIDMap.get(typeName).contains(argument.asJsonObject().getString(idFieldDefinition.getName())) ||
+                                        argument.asJsonObject().containsKey(INPUT_VALUE_WHERE_NAME) &&
+                                                !argument.asJsonObject().isNull(INPUT_VALUE_WHERE_NAME) &&
+                                                argument.asJsonObject().getJsonObject(INPUT_VALUE_WHERE_NAME).containsKey(idFieldDefinition.getName()) &&
+                                                !argument.asJsonObject().getJsonObject(INPUT_VALUE_WHERE_NAME).isNull(idFieldDefinition.getName()) &&
+                                                typeIDMap.get(typeName).contains(argument.asJsonObject().getJsonObject(INPUT_VALUE_WHERE_NAME).getJsonObject(idFieldDefinition.getName()).getString(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
+                                )
+                )
+                .orElseGet(() ->
+                        argument.asJsonObject().entrySet().stream()
+                                .filter(entry -> !entry.getKey().equals(INPUT_VALUE_WHERE_NAME))
+                                .anyMatch(entry -> {
+                                            FieldDefinition fieldDefinition = objectType.getField(entry.getKey());
+                                            if (entry.getValue().getValueType().equals(JsonValue.ValueType.ARRAY)) {
+                                                return entry.getValue().asJsonArray().stream()
+                                                        .filter(item -> item.getValueType().equals(JsonValue.ValueType.OBJECT))
+                                                        .anyMatch(item -> idChanged(documentManager.getFieldTypeDefinition(fieldDefinition).getName(), item));
+                                            } else if (entry.getValue().getValueType().equals(JsonValue.ValueType.OBJECT)) {
+                                                return idChanged(documentManager.getFieldTypeDefinition(fieldDefinition).getName(), entry.getValue());
+                                            } else {
+                                                return false;
+                                            }
+                                        }
+                                )
+                );
     }
 
     @SuppressWarnings("unchecked")

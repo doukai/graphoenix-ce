@@ -54,25 +54,13 @@ public class MutationSendHandler implements OperationAfterHandler {
                                 Arguments arguments = field.getArguments();
                                 JsonObjectBuilder messageJsonObject = jsonProvider.createObjectBuilder().add(BODY_TYPE_KEY, typeName);
                                 if (fieldDefinition.getType().hasList()) {
-                                    if (arguments.containsKey(INPUT_VALUE_WHERE_NAME)) {
-                                        messageJsonObject
-                                                .add(BODY_ARGUMENTS_KEY, JsonValue.EMPTY_JSON_ARRAY)
-                                                .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder(fieldJsonValue.asJsonArray()));
-                                    } else {
-                                        messageJsonObject
-                                                .add(BODY_ARGUMENTS_KEY, jsonProvider.createArrayBuilder(arguments.get(INPUT_VALUE_LIST_NAME).asJsonArray()))
-                                                .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder(fieldJsonValue.asJsonArray()));
-                                    }
+                                    messageJsonObject
+                                            .add(BODY_ARGUMENTS_KEY, jsonProvider.createArrayBuilder(arguments.get(INPUT_VALUE_LIST_NAME).asJsonArray()))
+                                            .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder(fieldJsonValue.asJsonArray()));
                                 } else {
-                                    if (arguments.containsKey(INPUT_VALUE_WHERE_NAME)) {
-                                        messageJsonObject
-                                                .add(BODY_ARGUMENTS_KEY, JsonValue.EMPTY_JSON_ARRAY)
-                                                .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(fieldJsonValue.asJsonObject())));
-                                    } else {
-                                        messageJsonObject
-                                                .add(BODY_ARGUMENTS_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(arguments.asJsonObject())))
-                                                .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(fieldJsonValue.asJsonObject())));
-                                    }
+                                    messageJsonObject
+                                            .add(BODY_ARGUMENTS_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(arguments.asJsonObject())))
+                                            .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(fieldJsonValue.asJsonObject())));
                                 }
                                 return Mono.just(
                                         new OutboundMessage(
