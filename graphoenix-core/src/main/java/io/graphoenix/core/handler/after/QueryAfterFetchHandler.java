@@ -279,7 +279,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
             }
         } else if (fieldTypeDefinition.isObject()) {
             String selectionName = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
-            if (jsonValue.asJsonObject().isNull(selectionName)) {
+            if (!jsonValue.asJsonObject().containsKey(selectionName) || jsonValue.asJsonObject().isNull(selectionName)) {
                 return Stream.empty();
             }
             if (fieldDefinition.getType().hasList()) {

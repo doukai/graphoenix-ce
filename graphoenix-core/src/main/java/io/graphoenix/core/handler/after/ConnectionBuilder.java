@@ -61,11 +61,11 @@ public class ConnectionBuilder implements OperationAfterHandler {
     }
 
     public Stream<JsonValue> buildConnections(String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
-        if (jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
-            return Stream.empty();
-        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject()) {
+            if (jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
+                return Stream.empty();
+            }
             String selectionName = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
             if (fieldDefinition.getType().hasList()) {
                 return IntStream.range(0, jsonValue.asJsonObject().get(selectionName).asJsonArray().size())
@@ -107,7 +107,7 @@ public class ConnectionBuilder implements OperationAfterHandler {
                                                                             path + "/" + FIELD_EDGES_NAME + "/" + index + "/" + FIELD_NODE_NAME + "/" + subSelectionName,
                                                                             documentManager.getFieldTypeDefinition(nodeFieldDefinition).asObject().getField(subField.getName()),
                                                                             subField,
-                                                                            edgesJsonValue.asJsonArray().get(index).asJsonObject().get(FIELD_NODE_NAME).asJsonObject().get(selectionName)
+                                                                            edgesJsonValue.asJsonArray().get(index).asJsonObject().get(FIELD_NODE_NAME).asJsonObject()
                                                                     );
                                                                 }
                                                         )

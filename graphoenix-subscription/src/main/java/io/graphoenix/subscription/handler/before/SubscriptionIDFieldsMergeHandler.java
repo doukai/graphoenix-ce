@@ -47,12 +47,17 @@ public class SubscriptionIDFieldsMergeHandler implements OperationBeforeHandler 
 
     private Stream<Field> mergeIDField(FieldDefinition fieldDefinition, Field field) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        if (fieldTypeDefinition.isObject()) {
+        if (fieldTypeDefinition.isObject() && !fieldDefinition.isConnectionField()) {
             return Stream.of(
                     field.mergeSelection(
                             Stream
                                     .concat(
-                                            Stream.of(new Field(fieldTypeDefinition.asObject().getIDFieldOrError().getName()).addDirective(new Directive(DIRECTIVE_HIDE_NAME))),
+                                            fieldTypeDefinition.asObject().getIDField()
+                                                    .map(idFieldDefinition ->
+                                                            (Field) new Field(idFieldDefinition.getName())
+                                                                    .addDirective(new Directive(DIRECTIVE_HIDE_NAME))
+                                                    )
+                                                    .stream(),
                                             Stream.ofNullable(field.getFields())
                                                     .flatMap(Collection::stream)
                                                     .flatMap(subField -> mergeIDField(fieldTypeDefinition.asObject().getField(subField.getName()), subField))
