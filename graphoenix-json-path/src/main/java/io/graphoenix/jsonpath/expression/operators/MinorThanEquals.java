@@ -6,4 +6,8 @@ public class MinorThanEquals extends ComparisonOperator {
     public MinorThanEquals(String element, Expression expression) {
         super(element, "<=", expression);
     }
+
+    public MinorThanEquals(Expression elementExpression, Expression expression) {
+        this(elementExpression.toString(), expression);
+    }
 }

@@ -6,4 +6,8 @@ public class NotEqualsTo extends ComparisonOperator {
     public NotEqualsTo(String element, Expression expression) {
         super(element, "!=", expression);
     }
+
+    public NotEqualsTo(Expression elementExpression, Expression expression) {
+        this(elementExpression.toString(), expression);
+    }
 }

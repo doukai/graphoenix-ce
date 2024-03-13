@@ -34,6 +34,11 @@ public class ArgumentsToFilter {
         this.documentManager = documentManager;
     }
 
+    public Optional<Filter> argumentsToMultipleFilter(FieldDefinition fieldDefinition, Field field) {
+        return argumentsToMultipleExpression(fieldDefinition, field)
+                .map(Filter::new);
+    }
+
     public Optional<Expression> argumentsToMultipleExpression(FieldDefinition fieldDefinition, Field field) {
         String path = "@";
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
@@ -55,8 +60,14 @@ public class ArgumentsToFilter {
                                     .flatMap(entry ->
                                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(entry.getKey().getName()))
                                                     .filter(subField -> !subField.isFetchField())
-                                                    .flatMap(subField ->
-                                                            inputValueToMultipleExpression(subField, entry.getKey(), entry.getValue(), path + "." + subField.getName()).stream()
+                                                    .flatMap(subField -> {
+                                                                if (subField.getType().hasList()) {
+                                                                    return inputValueToMultipleExpression(subField, entry.getKey(), entry.getValue(), "@")
+                                                                            .map(expression -> new NotEqualsTo(new Filter(path + "." + subField.getName(), expression), new EmptyArray())).stream();
+                                                                } else {
+                                                                    return inputValueToMultipleExpression(subField, entry.getKey(), entry.getValue(), path + "." + subField.getName()).stream();
+                                                                }
+                                                            }
                                                     )
                                     ),
                             inputValueValueWithVariableMap.entrySet().stream()
@@ -145,8 +156,14 @@ public class ArgumentsToFilter {
                                     .flatMap(entry ->
                                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(entry.getKey().getName()))
                                                     .filter(subField -> !subField.isFetchField())
-                                                    .flatMap(subField ->
-                                                            inputValueToMultipleExpression(subField, entry.getKey(), entry.getValue(), path + "." + subField.getName()).stream()
+                                                    .flatMap(subField -> {
+                                                                if (subField.getType().hasList()) {
+                                                                    return inputValueToMultipleExpression(subField, entry.getKey(), entry.getValue(), "@")
+                                                                            .map(expression -> new NotEqualsTo(new Filter(path + "." + subField.getName(), expression), new EmptyArray())).stream();
+                                                                } else {
+                                                                    return inputValueToMultipleExpression(subField, entry.getKey(), entry.getValue(), path + "." + subField.getName()).stream();
+                                                                }
+                                                            }
                                                     )
                                     ),
                             inputValueValueWithVariableMap.entrySet().stream()

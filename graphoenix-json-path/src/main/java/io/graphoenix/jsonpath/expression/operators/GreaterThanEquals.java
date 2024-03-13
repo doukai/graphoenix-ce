@@ -6,4 +6,8 @@ public class GreaterThanEquals extends ComparisonOperator {
     public GreaterThanEquals(String element, Expression expression) {
         super(element, ">=", expression);
     }
+
+    public GreaterThanEquals(Expression elementExpression, Expression expression) {
+        this(elementExpression.toString(), expression);
+    }
 }

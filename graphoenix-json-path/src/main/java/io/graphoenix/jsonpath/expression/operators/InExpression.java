@@ -17,4 +17,16 @@ public class InExpression extends ComparisonOperator {
     public InExpression(String element, List<Expression> expressionList) {
         super(element, "in", new ArrayValue(expressionList));
     }
+
+    public InExpression(Expression elementExpression, Expression expression) {
+        this(elementExpression.toString(), expression);
+    }
+
+    public InExpression(Expression elementExpression, Expression... expressions) {
+        this(elementExpression.toString(), expressions);
+    }
+
+    public InExpression(Expression elementExpression, List<Expression> expressionList) {
+        this(elementExpression.toString(), expressionList);
+    }
 }

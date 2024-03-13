@@ -61,12 +61,11 @@ public class DefaultSubscriptionDataListener implements SubscriptionDataListener
                                             FieldDefinition fieldDefinition = operationType.getField(field.getName());
                                             Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
                                             if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
-                                                return argumentsToFilter.argumentsToMultipleExpression(fieldDefinition, field).stream()
-                                                        .map(expression -> "$[?" + expression + "]")
+                                                return argumentsToFilter.argumentsToMultipleFilter(fieldDefinition, field).stream()
                                                         .map(filter ->
                                                                 new AbstractMap.SimpleEntry<>(
                                                                         fieldTypeDefinition.getName(),
-                                                                        filter
+                                                                        filter.toString()
                                                                 )
                                                         );
                                             }
