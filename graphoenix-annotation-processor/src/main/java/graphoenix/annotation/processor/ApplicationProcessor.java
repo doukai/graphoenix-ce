@@ -54,6 +54,7 @@ public class ApplicationProcessor extends BaseProcessor {
             GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
             configRegister.registerPackage(ApplicationProcessor.class.getClassLoader(), true);
             registerElements(roundEnv);
+            registerOperations(roundEnv);
             if (graphQLConfig.getMapToLocalFetch()) {
                 documentBuilder.mapToLocalFetch();
             }

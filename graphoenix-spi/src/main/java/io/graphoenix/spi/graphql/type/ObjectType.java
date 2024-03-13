@@ -55,18 +55,18 @@ public class ObjectType extends AbstractDefinition implements Definition, Fields
         }
     }
 
-    public ObjectType(TypeElement typeElement, Types typeUtils) {
+    public ObjectType(TypeElement typeElement, Types types) {
         super(typeElement);
         setInterfaces(
                 typeElement.getInterfaces().stream()
-                        .map(typeMirror -> getNameFromElement(typeUtils.asElement(typeMirror)))
+                        .map(typeMirror -> getNameFromElement(types.asElement(typeMirror)))
                         .collect(Collectors.toCollection(LinkedHashSet::new))
         );
         setFields(
                 typeElement.getEnclosedElements().stream()
                         .filter(element -> element.getKind().equals(ElementKind.FIELD))
                         .filter(element -> element.getAnnotation(Ignore.class) == null)
-                        .map(element -> new FieldDefinition((VariableElement) element, typeUtils))
+                        .map(element -> new FieldDefinition((VariableElement) element, types))
                         .collect(Collectors.toList())
         );
     }

@@ -9,6 +9,8 @@ import jakarta.json.JsonValue;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.ExecutableElement;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -49,6 +51,11 @@ public class Field extends AbstractDefinition implements Selection {
                             .collect(Collectors.toList())
             );
         }
+    }
+
+    public Field(ExecutableElement executableElement, ExecutableElement fieldExecutableElement, AnnotationMirror fieldAnnotationMirror) {
+        this.setName(fieldExecutableElement.getSimpleName().toString());
+        this.setArguments(new Arguments(executableElement, fieldAnnotationMirror));
     }
 
     public Field mergeSelection(Collection<Field> fields) {

@@ -48,23 +48,23 @@ public class FieldDefinition extends AbstractDefinition {
         }
     }
 
-    public FieldDefinition(VariableElement variableElement, Types typeUtils) {
+    public FieldDefinition(VariableElement variableElement, Types types) {
         super(variableElement);
-        this.type = variableElementToTypeName(variableElement, typeUtils);
+        this.type = variableElementToTypeName(variableElement, types);
         getFormatDirective(variableElement).ifPresent(this::addDirective);
     }
 
-    public FieldDefinition(ExecutableElement executableElement, Types typeUtils) {
+    public FieldDefinition(ExecutableElement executableElement, Types types) {
         super(executableElement);
-        this.type = executableElementToTypeName(executableElement, typeUtils);
-        setArguments(executableElementParametersToInputValues(executableElement, typeUtils));
+        this.type = executableElementToTypeName(executableElement, types);
+        setArguments(executableElementParametersToInputValues(executableElement, types));
         getFormatDirective(executableElement).ifPresent(this::addDirective);
         boolean async = executableElement.getAnnotation(Async.class) != null;
         addDirective(
                 new Directive()
                         .setName(DIRECTIVE_INVOKE_NAME)
                         .addArgument(DIRECTIVE_INVOKE_ARGUMENT_CLASS_NAME_NAME, executableElement.getEnclosingElement().toString())
-                        .addArgument(DIRECTIVE_INVOKE_ARGUMENT_METHOD_NAME_NAME, async ? getAsyncMethodName(executableElement, typeUtils) : executableElement.getSimpleName().toString())
+                        .addArgument(DIRECTIVE_INVOKE_ARGUMENT_METHOD_NAME_NAME, async ? getAsyncMethodName(executableElement, types) : executableElement.getSimpleName().toString())
                         .addArgument(
                                 DIRECTIVE_INVOKE_ARGUMENT_PARAMETER_NAME,
                                 new ArrayValueWithVariable(
@@ -74,13 +74,13 @@ public class FieldDefinition extends AbstractDefinition {
                                                                 INPUT_INVOKE_PARAMETER_INPUT_VALUE_NAME_NAME,
                                                                 parameter.getSimpleName().toString(),
                                                                 INPUT_INVOKE_PARAMETER_INPUT_VALUE_CLASS_NAME_NAME,
-                                                                getTypeNameFromTypeMirror(parameter.asType(), typeUtils)
+                                                                getTypeWithArgumentsName(parameter.asType(), types)
                                                         )
                                                 )
                                                 .collect(Collectors.toList())
                                 )
                         )
-                        .addArgument(DIRECTIVE_INVOKE_ARGUMENT_RETURN_CLASS_NAME_NAME, getTypeNameFromTypeMirror(executableElement.getReturnType(), typeUtils))
+                        .addArgument(DIRECTIVE_INVOKE_ARGUMENT_RETURN_CLASS_NAME_NAME, getTypeWithArgumentsName(executableElement.getReturnType(), types))
                         .addArgument(DIRECTIVE_INVOKE_ASYNC_NAME, async)
         );
     }

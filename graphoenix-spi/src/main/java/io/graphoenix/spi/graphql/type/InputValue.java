@@ -34,9 +34,9 @@ public class InputValue extends AbstractDefinition {
         }
     }
 
-    public InputValue(VariableElement variableElement, Types typeUtils) {
+    public InputValue(VariableElement variableElement, Types types) {
         super(variableElement);
-        this.type = variableElementToTypeName(variableElement, typeUtils);
+        this.type = variableElementToTypeName(variableElement, types);
         this.defaultValue = getDefaultValueFromElement(variableElement);
     }
 

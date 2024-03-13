@@ -116,6 +116,7 @@ public class Hammurabi {
     public static final String DIRECTIVE_INVOKE_ARGUMENT_METHOD_NAME_NAME = "methodName";
     public static final String DIRECTIVE_INVOKE_ARGUMENT_PARAMETER_NAME = "parameters";
     public static final String DIRECTIVE_INVOKE_ARGUMENT_RETURN_CLASS_NAME_NAME = "returnClassName";
+    public static final String DIRECTIVE_INVOKE_ARGUMENT_THROWN_TYPES_NAME = "thrownTypes";
     public static final String DIRECTIVE_INVOKE_ASYNC_NAME = "async";
 
 

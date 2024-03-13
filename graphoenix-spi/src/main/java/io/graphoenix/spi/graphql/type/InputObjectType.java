@@ -45,13 +45,13 @@ public class InputObjectType extends AbstractDefinition implements Definition {
         }
     }
 
-    public InputObjectType(TypeElement typeElement, Types typeUtils) {
+    public InputObjectType(TypeElement typeElement, Types types) {
         super(typeElement);
         setInputValues(
                 typeElement.getEnclosedElements().stream()
                         .filter(element -> element.getKind().equals(ElementKind.FIELD))
                         .filter(element -> element.getAnnotation(Ignore.class) == null)
-                        .map(element -> new InputValue((VariableElement) element, typeUtils))
+                        .map(element -> new InputValue((VariableElement) element, types))
                         .collect(Collectors.toList())
         );
     }

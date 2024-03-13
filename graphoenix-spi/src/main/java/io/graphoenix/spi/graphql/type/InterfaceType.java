@@ -54,18 +54,18 @@ public class InterfaceType extends AbstractDefinition implements Definition, Fie
         }
     }
 
-    public InterfaceType(TypeElement typeElement, Types typeUtils) {
+    public InterfaceType(TypeElement typeElement, Types types) {
         super(typeElement);
         setInterfaces(
                 typeElement.getInterfaces().stream()
-                        .map(typeMirror -> getNameFromElement(typeUtils.asElement(typeMirror)))
+                        .map(typeMirror -> getNameFromElement(types.asElement(typeMirror)))
                         .collect(Collectors.toList())
         );
         setFields(
                 typeElement.getEnclosedElements().stream()
                         .filter(element -> element.getKind().equals(ElementKind.FIELD))
                         .filter(element -> element.getAnnotation(Ignore.class) == null)
-                        .map(element -> new FieldDefinition((VariableElement) element, typeUtils))
+                        .map(element -> new FieldDefinition((VariableElement) element, types))
                         .collect(Collectors.toList())
         );
     }

@@ -1,23 +1,22 @@
 package io.graphoenix.spi.utils;
 
 import com.google.common.base.CaseFormat;
-import io.graphoenix.spi.graphql.common.Arguments;
 import io.graphoenix.spi.graphql.common.Directive;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.type.InputValue;
 import io.graphoenix.spi.graphql.type.ListType;
 import io.graphoenix.spi.graphql.type.NonNullType;
 import io.graphoenix.spi.graphql.type.TypeName;
-import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
-import jakarta.json.stream.JsonCollectors;
 import org.eclipse.microprofile.graphql.Enum;
 import org.eclipse.microprofile.graphql.*;
-import org.eclipse.microprofile.graphql.Name;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import javax.lang.model.element.*;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
@@ -220,28 +219,28 @@ public final class ElementUtil {
         return Optional.empty();
     }
 
-    public static List<InputValue> executableElementParametersToInputValues(ExecutableElement executableElement, Types typeUtils) {
+    public static List<InputValue> executableElementParametersToInputValues(ExecutableElement executableElement, Types types) {
         if (executableElement.getParameters() != null) {
             return executableElement.getParameters().stream()
                     .filter(variableElement -> variableElement.getAnnotation(Source.class) == null)
-                    .map(variableElement -> new InputValue(variableElement, typeUtils))
+                    .map(variableElement -> new InputValue(variableElement, types))
                     .collect(Collectors.toList());
         } else {
             return Collections.emptyList();
         }
     }
 
-    public static String getTypeNameFromTypeMirror(TypeMirror typeMirror, Types types) {
+    public static String getTypeWithArgumentsName(TypeMirror typeMirror, Types types) {
         if (typeMirror.getKind().isPrimitive()) {
             return typeMirror.getKind().toString().toLowerCase();
         } else if (typeMirror.getKind().equals(ARRAY)) {
-            return getTypeNameFromTypeMirror(((ArrayType) typeMirror).getComponentType(), types) + "[]";
+            return getTypeWithArgumentsName(((ArrayType) typeMirror).getComponentType(), types) + "[]";
         } else if (typeMirror.getKind().equals(TypeKind.DECLARED)) {
             DeclaredType declaredType = (DeclaredType) typeMirror;
             if (declaredType.getTypeArguments() != null && !declaredType.getTypeArguments().isEmpty()) {
                 return ((TypeElement) types.asElement(declaredType)).getQualifiedName().toString() +
                         "<" +
-                        declaredType.getTypeArguments().stream().map(argumentTypeMirror -> getTypeNameFromTypeMirror(argumentTypeMirror, types))
+                        declaredType.getTypeArguments().stream().map(argumentTypeMirror -> getTypeWithArgumentsName(argumentTypeMirror, types))
                                 .collect(Collectors.joining(", ")) +
                         ">";
             }
@@ -250,12 +249,12 @@ public final class ElementUtil {
         throw new RuntimeException("illegal typeMirror: " + typeMirror);
     }
 
-    public static String getAsyncMethodName(ExecutableElement executableElement, Types typeUtils) {
+    public static String getAsyncMethodName(ExecutableElement executableElement, Types types) {
         return Stream
                 .concat(
                         Stream.of(executableElement.getSimpleName().toString() + "Async"),
                         executableElement.getParameters().stream()
-                                .map(parameter -> typeUtils.asElement(parameter.asType()).getSimpleName().toString())
+                                .map(parameter -> types.asElement(parameter.asType()).getSimpleName().toString())
                 )
                 .collect(Collectors.joining("_"));
     }
