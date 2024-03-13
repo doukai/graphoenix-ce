@@ -3,10 +3,14 @@ package graphoenix.annotation.processor;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.GraphQLConfigRegister;
+import io.graphoenix.spi.annotation.GraphQLOperation;
 import io.graphoenix.spi.annotation.Package;
+import io.graphoenix.spi.error.GraphQLErrorType;
+import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.common.ArrayValueWithVariable;
 import io.graphoenix.spi.graphql.common.Directive;
 import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
+import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.type.*;
 import io.graphoenix.spi.utils.ElementUtil;
 import io.nozdormu.config.TypesafeConfig;
@@ -18,32 +22,42 @@ import org.eclipse.microprofile.graphql.Enum;
 import org.eclipse.microprofile.graphql.Type;
 import org.eclipse.microprofile.graphql.*;
 import org.tinylog.Logger;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
+import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
-import static io.graphoenix.spi.utils.ElementUtil.getAsyncMethodName;
-import static io.graphoenix.spi.utils.ElementUtil.getNameFromElement;
+import static io.graphoenix.spi.error.GraphQLErrorType.FIELD_NOT_EXIST;
+import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_OPERATION_TYPE;
+import static io.graphoenix.spi.utils.ElementUtil.*;
 
 public abstract class BaseProcessor extends AbstractProcessor {
 
     private PackageConfig packageConfig;
     private DocumentManager documentManager;
     private Types typeUtils;
+    private Elements elements;
 
     @Override
     public void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
         typeUtils = processingEnv.getTypeUtils();
+        elements = processingEnv.getElementUtils();
         Filer filer = processingEnv.getFiler();
         BeanContext.load(BaseProcessor.class.getClassLoader());
         Config config = BeanContext.get(Config.class);
@@ -286,5 +300,48 @@ public abstract class BaseProcessor extends AbstractProcessor {
                             }
                         }
                 );
+    }
+
+    public void registerOperations(RoundEnvironment roundEnv) {
+        roundEnv.getElementsAnnotatedWith(GraphQLOperation.class).stream()
+                .filter(element -> element.getKind().equals(ElementKind.INTERFACE))
+                .forEach(this::registerGraphQLOperationElement);
+    }
+
+    public List<String> buildOperations(TypeElement typeElement, Types typeUtils) {
+        return typeElement.getEnclosedElements().stream()
+                .filter(element -> element.getKind().equals(ElementKind.METHOD))
+                .map(element -> (ExecutableElement) element)
+                .map(executableElement ->
+                        methodToOperation.executableElementToOperation(executableElement, typeElement.getEnclosedElements().indexOf(executableElement), typeUtils)
+                )
+                .collect(Collectors.toList());
+    }
+
+    public AnnotationMirror getOperationAnnotationMirror(ExecutableElement executableElement) {
+        return executableElement.getAnnotationMirrors().stream()
+                .filter(annotationMirror ->
+                        elements.getPackageOf(annotationMirror.getAnnotationType().asElement()).getQualifiedName().toString().equals(packageConfig.getAnnotationPackageName())
+                )
+                .findFirst()
+                .orElseThrow(() -> new GraphQLErrors(GraphQLErrorType.UNSUPPORTED_OPERATION_TYPE));
+    }
+
+    public Field getOperationField(AnnotationMirror annotationMirror) {
+        Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> filedEntry = annotationMirror.getElementValues().entrySet().stream().findFirst()
+                .orElseThrow(() -> new GraphQLErrors(FIELD_NOT_EXIST.bind(annotationMirror.toString())));
+
+        AnnotationMirror fieldAnnotationMirror = (AnnotationMirror) filedEntry.getValue().getValue();
+        FieldDefinition fieldDefinition;
+        switch (annotationMirror.getAnnotationType().asElement().getSimpleName().toString()) {
+            case OPERATION_QUERY_NAME:
+                fieldDefinition = documentManager.getDocument().getQueryOperationTypeOrError().getField(filedEntry.getKey().getSimpleName().toString());
+                break;
+            case OPERATION_MUTATION_NAME:
+                fieldDefinition = documentManager.getDocument().getMutationOperationTypeOrError().getField(filedEntry.getKey().getSimpleName().toString());
+                break;
+            default:
+                throw new GraphQLErrors(UNSUPPORTED_OPERATION_TYPE);
+        }
     }
 }

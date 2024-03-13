@@ -8,6 +8,8 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
 import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
+import javax.lang.model.element.ExecutableElement;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -64,6 +66,76 @@ public class Arguments extends AbstractMap<String, JsonValue> implements ValueWi
                                         Field::getName,
                                         field -> ValueWithVariable.of(getFieldValue(arguments, field))
                                 )
+                );
+    }
+
+    public Arguments(ExecutableElement executableElement, AnnotationMirror fieldAnnotationMirror) {
+        this.arguments = fieldAnnotationMirror.getElementValues().entrySet().stream()
+                .map(entry -> {
+                            String fieldName = entry.getKey().getSimpleName().toString();
+                            if (fieldName.startsWith("$")) {
+                                return new AbstractMap.SimpleEntry<>(fieldName.substring(1), ValueWithVariable.of(annotationValueToVariable(executableElement, entry.getValue())));
+                            } else {
+                                return new AbstractMap.SimpleEntry<>(fieldName, ValueWithVariable.of(annotationValueToValue(executableElement, entry.getValue())));
+                            }
+                        }
+                )
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+    }
+
+    private Object annotationValueToValue(ExecutableElement executableElement, AnnotationValue annotationValue) {
+        Object value = annotationValue.getValue();
+        if (value instanceof Collection<?>) {
+            return ((Collection<?>) value).stream()
+                    .map(item -> annotationValueToValue(executableElement, (AnnotationValue) item))
+                    .collect(Collectors.toList());
+        } else {
+            if (value instanceof AnnotationMirror) {
+                return annotationMirrorToValueWithVariable(executableElement, (AnnotationMirror) value);
+            } else {
+                return value;
+            }
+        }
+    }
+
+    private Object annotationValueToVariable(ExecutableElement executableElement, AnnotationValue annotationValue) {
+        Object value = annotationValue.getValue();
+        if (value instanceof Collection<?>) {
+            return ((Collection<?>) value).stream()
+                    .map(item -> annotationValueToVariable(executableElement, (AnnotationValue) item))
+                    .collect(Collectors.toList());
+        } else {
+            if (value instanceof AnnotationMirror) {
+                return annotationMirrorToValueWithVariable(executableElement, (AnnotationMirror) value);
+            } else {
+                return executableElement.getParameters().stream()
+                        .filter(parameter -> parameter.getSimpleName().toString().equals(value.toString()))
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException(value.toString() + " parameter not exist in " + executableElement));
+            }
+        }
+    }
+
+    private Object annotationMirrorToValueWithVariable(ExecutableElement executableElement, AnnotationMirror annotationMirror) {
+        return annotationMirror.getElementValues().entrySet().stream()
+                .collect(Collectors
+                        .toMap(entry -> {
+                                    String fieldName = entry.getKey().getSimpleName().toString();
+                                    if (fieldName.startsWith("$")) {
+                                        return fieldName.substring(1);
+                                    } else {
+                                        return fieldName;
+                                    }
+                                },
+                                entry -> {
+                                    String fieldName = entry.getKey().getSimpleName().toString();
+                                    if (fieldName.startsWith("$")) {
+                                        return annotationValueToVariable(executableElement, entry.getValue());
+                                    } else {
+                                        return annotationValueToValue(executableElement, entry.getValue());
+                                    }
+                                }
+                        )
                 );
     }
 
