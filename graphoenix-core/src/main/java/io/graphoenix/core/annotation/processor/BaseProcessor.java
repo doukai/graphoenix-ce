@@ -1,4 +1,4 @@
-package graphoenix.annotation.processor;
+package io.graphoenix.core.annotation.processor;
 
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
@@ -329,17 +329,26 @@ public abstract class BaseProcessor extends AbstractProcessor {
     }
 
     public Operation buildOperation(ExecutableElement executableElement, AnnotationMirror annotationMirror) {
+        TypeElement typeElement = (TypeElement) executableElement.getEnclosingElement();
+        int index = typeElement.getEnclosedElements().indexOf(executableElement);
         Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> filedEntry = annotationMirror.getElementValues().entrySet().stream()
                 .findFirst()
                 .orElseThrow(() -> new GraphQLErrors(FIELD_NOT_EXIST.bind(annotationMirror.toString())));
         Field field = new Field(executableElement, filedEntry.getKey(), (AnnotationMirror) filedEntry.getValue());
-        Operation operation = new Operation(getOperationName(executableElement))
+        Operation operation = new Operation(
+                typeElement.getQualifiedName().toString().replaceAll("\\.", "_") +
+                        "_" +
+                        executableElement.getSimpleName().toString() +
+                        "_" +
+                        index
+        )
                 .addDirectives(getDirectivesFromElement(executableElement))
                 .addDirective(
                         new Directive()
                                 .setName(DIRECTIVE_INVOKE_NAME)
                                 .addArgument(DIRECTIVE_INVOKE_ARGUMENT_CLASS_NAME_NAME, executableElement.getEnclosingElement().toString())
                                 .addArgument(DIRECTIVE_INVOKE_ARGUMENT_METHOD_NAME_NAME, executableElement.getSimpleName().toString())
+                                .addArgument(DIRECTIVE_INVOKE_ARGUMENT_METHOD_INDEX_NAME, index)
                                 .addArgument(
                                         DIRECTIVE_INVOKE_ARGUMENT_PARAMETER_NAME,
                                         new ArrayValueWithVariable(
@@ -420,15 +429,5 @@ public abstract class BaseProcessor extends AbstractProcessor {
                         }
                 )
                 .collect(Collectors.toList());
-    }
-
-    public String getOperationName(ExecutableElement executableElement) {
-        TypeElement typeElement = (TypeElement) executableElement.getEnclosingElement();
-        int index = typeElement.getEnclosedElements().indexOf(executableElement);
-        return typeElement.getQualifiedName().toString().replaceAll("\\.", "_") +
-                "_" +
-                executableElement.getSimpleName().toString() +
-                "_" +
-                index;
     }
 }

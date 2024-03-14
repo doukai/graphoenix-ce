@@ -1,6 +1,7 @@
 package graphoenix.annotation.processor;
 
 import com.google.auto.service.AutoService;
+import io.graphoenix.core.annotation.processor.BaseProcessor;
 import io.graphoenix.core.config.GraphQLConfig;
 import io.graphoenix.core.handler.DocumentBuilder;
 import io.graphoenix.core.handler.DocumentManager;

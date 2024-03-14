@@ -16,8 +16,9 @@ dependencies {
     implementation project(':graphoenix-core')
     implementation 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
     implementation 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
-    implementation 'com.squareup:javapoet:1.13.0'
     implementation 'com.google.guava:guava:31.1-jre'
+
+    compile 'com.squareup:javapoet:1.13.0'
 
     annotationProcessor project(':graphoenix-core')
     annotationProcessor 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'

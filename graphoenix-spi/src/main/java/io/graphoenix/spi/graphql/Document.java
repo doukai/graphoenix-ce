@@ -339,6 +339,12 @@ public class Document {
                 .findFirst();
     }
 
+    public Stream<Operation> getOperations() {
+        return getDefinitions().stream()
+                .filter(Definition::isOperation)
+                .map(Definition::asOperation);
+    }
+
     public Operation getOperationOrError() {
         return getOperation().orElseThrow(() -> new GraphQLErrors(OPERATION_NOT_EXIST));
     }

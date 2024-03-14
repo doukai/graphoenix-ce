@@ -1,8 +1,11 @@
 package io.graphoenix.spi.graphql.operation;
 
+import com.google.common.collect.Iterators;
 import graphql.parser.antlr.GraphqlParser;
+import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
+import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.type.VariableDefinition;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
@@ -11,7 +14,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.graphoenix.spi.constant.Hammurabi.OPERATION_QUERY_NAME;
+import static io.graphoenix.spi.constant.Hammurabi.*;
+import static io.graphoenix.spi.error.GraphQLErrorType.*;
 
 public class Operation extends AbstractDefinition implements Definition {
 
@@ -122,6 +126,10 @@ public class Operation extends AbstractDefinition implements Definition {
                 .orElse(null);
     }
 
+    public Selection getSelection(int index) {
+        return Iterators.get(selections.iterator(), index);
+    }
+
     public Collection<Fragment> getFragments() {
         return Optional.ofNullable(selections)
                 .map(fragments ->
@@ -197,6 +205,79 @@ public class Operation extends AbstractDefinition implements Definition {
                         )
         );
         return this;
+    }
+
+    public Optional<String> getInvokeClassName() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_INVOKE_ARGUMENT_CLASS_NAME_NAME))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
+    }
+
+    public String getInvokeClassNameOrError() {
+        return getInvokeClassName().orElseThrow(() -> new GraphQLErrors(CLASS_NAME_ARGUMENT_NOT_EXIST.bind(toString())));
+    }
+
+    public Optional<String> getInvokeMethodName() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_INVOKE_ARGUMENT_METHOD_NAME_NAME))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
+    }
+
+    public String getInvokeMethodNameOrError() {
+        return getInvokeMethodName().orElseThrow(() -> new GraphQLErrors(METHOD_NAME_ARGUMENT_NOT_EXIST.bind(toString())));
+    }
+
+    public Optional<Integer> getInvokeIndexName() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_INVOKE_ARGUMENT_METHOD_INDEX_NAME))
+                .filter(ValueWithVariable::isInt)
+                .map(valueWithVariable -> valueWithVariable.asInt().getIntegerValue());
+    }
+
+    public Integer getInvokeMethodIndexOrError() {
+        return getInvokeIndexName().orElseThrow(() -> new GraphQLErrors(METHOD_NAME_ARGUMENT_NOT_EXIST.bind(toString())));
+    }
+
+    public Stream<Map.Entry<String, String>> getInvokeParameters() {
+        return Stream.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_INVOKE_ARGUMENT_PARAMETER_NAME).stream())
+                .filter(ValueWithVariable::isArray)
+                .flatMap(valueWithVariable -> valueWithVariable.asArray().getValueWithVariables().stream())
+                .filter(ValueWithVariable::isObject)
+                .map(ValueWithVariable::asObject)
+                .map(objectValueWithVariable ->
+                        new AbstractMap.SimpleEntry<>(
+                                objectValueWithVariable.getString(INPUT_INVOKE_PARAMETER_INPUT_VALUE_NAME_NAME),
+                                objectValueWithVariable.getString(INPUT_INVOKE_PARAMETER_INPUT_VALUE_CLASS_NAME_NAME)
+                        )
+                );
+    }
+
+    public List<Map.Entry<String, String>> getInvokeParametersList() {
+        return getInvokeParameters().collect(Collectors.toList());
+    }
+
+    public Optional<String> getInvokeReturnClassName() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_INVOKE_ARGUMENT_RETURN_CLASS_NAME_NAME))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
+    }
+
+    public String getInvokeReturnClassNameOrError() {
+        return getInvokeReturnClassName().orElseThrow(() -> new GraphQLErrors(RETURN_CLASS_NAME_ARGUMENT_NOT_EXIST.bind(toString())));
+    }
+
+    public Stream<String> getInvokeThrownTypes() {
+        return Stream.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
+                .flatMap(directive -> directive.getArgument(DIRECTIVE_INVOKE_ARGUMENT_THROWN_TYPES_NAME).stream())
+                .filter(ValueWithVariable::isArray)
+                .map(ValueWithVariable::asArray)
+                .flatMap(arrayValueWithVariable -> arrayValueWithVariable.getValueWithVariables().stream())
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
 
     @Override

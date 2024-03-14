@@ -13,6 +13,7 @@ repositories {
 
 dependencies {
     implementation project(':graphoenix-core')
+    implementation project(':graphoenix-java')
     implementation 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
     implementation 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
     implementation 'com.github.jsqlparser:jsqlparser:4.8'

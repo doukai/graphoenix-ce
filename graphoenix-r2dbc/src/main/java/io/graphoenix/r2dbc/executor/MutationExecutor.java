@@ -116,4 +116,26 @@ public class MutationExecutor {
                         connectionProvider::close
                 );
     }
+
+    public Mono<Long> executeMutation(String sql) {
+        return executeMutation(sql, null);
+    }
+
+    public Mono<Long> executeMutation(String sql, Map<String, Object> parameters) {
+        return Mono
+                .usingWhen(
+                        connectionProvider.get(),
+                        connection -> {
+                            Logger.info("execute mutation:\r\n{}", sql);
+                            Logger.info("sql parameters:\r\n{}", parameters);
+                            Statement mutationStatement = connection.createStatement(sql);
+                            if (parameters != null) {
+                                parameters.forEach(mutationStatement::bind);
+                            }
+                            return Mono.from(mutationStatement.execute())
+                                    .flatMap(ResultUtil::getUpdateCountFromResult);
+                        },
+                        connectionProvider::close
+                );
+    }
 }

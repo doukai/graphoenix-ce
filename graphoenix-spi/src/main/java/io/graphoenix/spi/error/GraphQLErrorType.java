@@ -73,6 +73,7 @@ public enum GraphQLErrorType {
     ANNOTATION_NAME_ARGUMENT_NOT_EXIST(-72, "annotationName not exist in @class directive: %s"),
     GRPC_CLASS_NAME_ARGUMENT_NOT_EXIST(-73, "grpcClassName not exist in @annotation directive: %s"),
     METHOD_NAME_ARGUMENT_NOT_EXIST(-74, "methodName not exist in @invoke directive: %s"),
+    METHOD_INDEX_ARGUMENT_NOT_EXIST(-74, "methodIndex not exist in @invoke directive: %s"),
     PACKAGE_NAME_ARGUMENT_NOT_EXIST(-75, "packageName not exist in @packageInfo directive: %s"),
     GRPC_PACKAGE_NAME_ARGUMENT_NOT_EXIST(-76, "grpcPackageName not exist in @packageInfo directive: %s"),
     RETURN_CLASS_NAME_ARGUMENT_NOT_EXIST(-74, "returnClassName not exist in @invoke directive: %s"),

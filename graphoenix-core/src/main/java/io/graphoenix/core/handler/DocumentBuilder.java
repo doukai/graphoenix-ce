@@ -1577,6 +1577,10 @@ public class DocumentBuilder {
                 .addDirective(
                         new Directive(DIRECTIVE_PACKAGE_NAME)
                                 .addArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME, packageConfig.getPackageName())
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_CLASS_NAME)
+                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + "_" + fieldDefinition.getName() + "_" + SUFFIX_ARGUMENTS)
                 );
     }
 
