@@ -13,4 +13,5 @@ include 'graphoenix-http-server'
 include 'graphoenix-subscription'
 include 'graphoenix-rabbitmq'
 include 'graphoenix-json-path'
+include 'graphoenix-gossip'
 

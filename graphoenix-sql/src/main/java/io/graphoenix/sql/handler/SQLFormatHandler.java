@@ -1,4 +1,4 @@
-package io.graphoenix.sql.implementer;
+package io.graphoenix.sql.handler;
 
 import com.github.vertical_blank.sqlformatter.SqlFormatter;
 import com.github.vertical_blank.sqlformatter.languages.Dialect;

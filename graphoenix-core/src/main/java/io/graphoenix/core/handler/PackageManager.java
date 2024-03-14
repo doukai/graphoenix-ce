@@ -3,24 +3,49 @@ package io.graphoenix.core.handler;
 import com.google.common.reflect.ClassPath;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.spi.annotation.Package;
+import io.graphoenix.spi.dto.PackageURL;
 import io.graphoenix.spi.graphql.Definition;
+import io.graphoenix.spi.handler.PackageProvider;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.tinylog.Logger;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Stream;
 
 @ApplicationScoped
 public class PackageManager {
 
+    public static final String LOAD_BALANCE_ROUND_ROBIN = "roundRobin";
+    public static final String LOAD_BALANCE_RANDOM = "random";
+
     private final PackageConfig packageConfig;
+    private final PackageProvider packageProvider;
 
     @Inject
-    public PackageManager(PackageConfig packageConfig) {
+    public PackageManager(PackageConfig packageConfig, PackageProvider packageProvider) {
         this.packageConfig = packageConfig;
+        this.packageProvider = packageProvider;
+    }
+
+    public PackageURL getURL(String packageName, String schema) {
+        switch (packageConfig.getPackageLoadBalance()) {
+            case LOAD_BALANCE_ROUND_ROBIN:
+                return packageProvider.getProtocolURLIterator(packageName, schema).next();
+            case LOAD_BALANCE_RANDOM:
+                List<PackageURL> urlList = packageProvider.getProtocolURLList(packageName, schema);
+                if (urlList.size() == 1) {
+                    return urlList.get(0);
+                }
+                int randomIndex = new Random().nextInt(urlList.size());
+                return urlList.get(randomIndex);
+            default:
+                return packageProvider.getProtocolURLList(packageName, schema).get(0);
+        }
     }
 
     public Optional<String> getDefaultPackageName() {

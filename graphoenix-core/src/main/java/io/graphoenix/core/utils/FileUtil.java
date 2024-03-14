@@ -10,8 +10,8 @@ import java.util.Objects;
 public final class FileUtil {
 
     public static <T> String fileToString(Class<T> beanClass, String fileName) {
-        try {
-            return CharStreams.toString(new InputStreamReader(Objects.requireNonNull(beanClass.getResourceAsStream(fileName)), Charsets.UTF_8));
+        try (InputStreamReader inputStreamReader = new InputStreamReader(Objects.requireNonNull(beanClass.getResourceAsStream(fileName)), Charsets.UTF_8)) {
+            return CharStreams.toString(inputStreamReader);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

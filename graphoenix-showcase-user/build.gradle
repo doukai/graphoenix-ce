@@ -31,7 +31,6 @@ dependencies {
     implementation 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
 
     annotationProcessor project(':graphoenix-annotation-processor')
-    annotationProcessor project(":graphoenix-sql")
     annotationProcessor 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
     annotationProcessor 'io.nozdormu:nozdormu-async:0.0.1-SNAPSHOT'
     annotationProcessor 'io.nozdormu:nozdormu-interceptor:0.0.1-SNAPSHOT'

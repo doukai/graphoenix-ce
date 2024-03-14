@@ -1,21 +1,19 @@
 package io.graphoenix.sql.implementer;
 
 import com.squareup.javapoet.*;
-import io.graphoenix.core.config.GraphQLConfig;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.core.utils.FileUtil;
+import io.graphoenix.spi.dao.OperationDAO;
 import io.graphoenix.spi.error.GraphQLErrorType;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.operation.Operation;
-import io.graphoenix.spi.dao.OperationDAO;
+import io.graphoenix.sql.handler.SQLFormatHandler;
 import io.graphoenix.sql.translator.MutationTranslator;
 import io.graphoenix.sql.translator.QueryTranslator;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Default;
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import org.tinylog.Logger;
 import reactor.core.publisher.Mono;
 
@@ -37,23 +35,20 @@ import static io.graphoenix.spi.constant.Hammurabi.OPERATION_QUERY_NAME;
 @ApplicationScoped
 public class OperationInterfaceImplementer {
 
-    public static final String implName = "sql";
-
     private final DocumentManager documentManager;
     private final PackageManager packageManager;
     private final QueryTranslator queryTranslator;
     private final MutationTranslator mutationTranslator;
     private final SQLFormatHandler sqlFormatHandler;
-    private final GraphQLConfig graphQLConfig;
     private final PackageConfig packageConfig;
 
-    public OperationInterfaceImplementer(DocumentManager documentManager, PackageManager packageManager, QueryTranslator queryTranslator, MutationTranslator mutationTranslator, SQLFormatHandler sqlFormatHandler, GraphQLConfig graphQLConfig, PackageConfig packageConfig) {
+    @Inject
+    public OperationInterfaceImplementer(DocumentManager documentManager, PackageManager packageManager, QueryTranslator queryTranslator, MutationTranslator mutationTranslator, SQLFormatHandler sqlFormatHandler, PackageConfig packageConfig) {
         this.documentManager = documentManager;
         this.packageManager = packageManager;
         this.queryTranslator = queryTranslator;
         this.mutationTranslator = mutationTranslator;
         this.sqlFormatHandler = sqlFormatHandler;
-        this.graphQLConfig = graphQLConfig;
         this.packageConfig = packageConfig;
     }
 
@@ -103,7 +98,7 @@ public class OperationInterfaceImplementer {
     private Map.Entry<String, String> buildSQLFile(String simpleName, Operation operation) {
         String methodName = operation.getInvokeMethodNameOrError();
         int methodIndex = operation.getInvokeMethodIndexOrError();
-        String sqlFileName = simpleName + "_" + methodName + "_" + methodIndex + ".sql";
+        String sqlFileName = "SQL" + simpleName + "Impl_" + methodName + "_" + methodIndex + ".sql";
         if (operation.getOperationType() == null || operation.getOperationType().equals(OPERATION_QUERY_NAME)) {
             return new AbstractMap.SimpleEntry<>(sqlFileName, sqlFormatHandler.query(queryTranslator.operationToSelectSQL(operation)));
         } else if (operation.getOperationType().equals(OPERATION_MUTATION_NAME)) {
@@ -119,12 +114,14 @@ public class OperationInterfaceImplementer {
                 .addAnnotation(ApplicationScoped.class)
                 .addSuperinterface(ClassName.get(packageName, simpleName))
                 .addField(
-                        FieldSpec.builder(
-                                ClassName.get(OperationDAO.class),
-                                "operationDAO",
-                                Modifier.PRIVATE,
-                                Modifier.FINAL
-                        ).build()
+                        FieldSpec
+                                .builder(
+                                        ClassName.get(OperationDAO.class),
+                                        "operationDAO",
+                                        Modifier.PRIVATE,
+                                        Modifier.FINAL
+                                )
+                                .build()
                 )
                 .addFields(buildSQLFields(operationList))
                 .addStaticBlock(buildSQLFieldInitializeCodeBlock(packageName, simpleName, operationList))
@@ -135,9 +132,6 @@ public class OperationInterfaceImplementer {
                                 .map(this::executableElementToMethodSpec)
                                 .collect(Collectors.toList())
                 );
-        if (graphQLConfig.getDefaultOperationHandlerName() != null && graphQLConfig.getDefaultOperationHandlerName().equals(implName)) {
-            builder.addAnnotation(Default.class);
-        }
         return JavaFile.builder(packageName, builder.build()).build();
     }
 
@@ -168,17 +162,10 @@ public class OperationInterfaceImplementer {
                 .forEach(operation ->
                         builder.addStatement(
                                 "$L = $T.fileToString($T.class, $S)",
-                                operation.getInvokeMethodNameOrError() +
-                                        "_" +
-                                        operation.getInvokeMethodIndexOrError(),
+                                operation.getInvokeMethodNameOrError() + "_" + operation.getInvokeMethodIndexOrError(),
                                 ClassName.get(FileUtil.class),
                                 typeClassName,
-                                simpleName +
-                                        "_" +
-                                        operation.getInvokeMethodNameOrError() +
-                                        "_" +
-                                        operation.getInvokeMethodIndexOrError() +
-                                        ".sql"
+                                "SQL" + simpleName + "Impl_" + operation.getInvokeMethodNameOrError() + "_" + operation.getInvokeMethodIndexOrError() + ".sql"
                         )
                 );
         return builder.build();
@@ -188,10 +175,7 @@ public class OperationInterfaceImplementer {
         return MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Inject.class)
-                .addParameter(
-                        ParameterSpec.builder(ClassName.get(OperationDAO.class), "operationDAO")
-                                .addAnnotation(AnnotationSpec.builder(Named.class).addMember("value", "$S", implName).build())
-                                .build())
+                .addParameter(ParameterSpec.builder(ClassName.get(OperationDAO.class), "operationDAO").build())
                 .addStatement("this.operationDAO = operationDAO")
                 .build();
     }
@@ -216,10 +200,13 @@ public class OperationInterfaceImplementer {
             parameterMapCodeBlock = CodeBlock.of(
                     "$T.of($L)",
                     ClassName.get(Map.class),
-                    CodeBlock.join(
-                            parameters.stream().map(entry -> CodeBlock.of("$S, (Object)$L", entry.getKey(), entry.getKey())).collect(Collectors.toList()),
-                            ", "
-                    )
+                    CodeBlock
+                            .join(
+                                    parameters.stream()
+                                            .map(entry -> CodeBlock.of("$S, (Object)$L", entry.getKey(), entry.getKey()))
+                                            .collect(Collectors.toList()),
+                                    ", "
+                            )
             );
         }
         List<String> thrownTypes = operation.getInvokeThrownTypes().collect(Collectors.toList());
@@ -313,7 +300,8 @@ public class OperationInterfaceImplementer {
                                             queryClassName,
                                             fieldGetterMethodName
                                     )
-                            ).orElseGet(() ->
+                            )
+                            .orElseGet(() ->
                                     CodeBlock.of(
                                             "return operationDAO.find($L, $L, $T.class).$L()",
                                             sqlFieldName,
@@ -334,7 +322,8 @@ public class OperationInterfaceImplementer {
                                             mutationClassName,
                                             fieldGetterMethodName
                                     )
-                            ).orElseGet(() ->
+                            )
+                            .orElseGet(() ->
                                     CodeBlock.of(
                                             "return operationDAO.save($L, $L, $T.class).$L()",
                                             sqlFieldName,

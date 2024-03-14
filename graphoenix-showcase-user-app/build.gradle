@@ -25,6 +25,7 @@ dependencies {
     implementation group: 'io.netty', name: 'netty-resolver-dns-native-macos', version: '4.1.75.Final', classifier: 'osx-aarch_64'
 
     annotationProcessor project(':graphoenix-annotation-processor')
+    annotationProcessor project(":graphoenix-sql")
     annotationProcessor project(":graphoenix-showcase-user")
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'

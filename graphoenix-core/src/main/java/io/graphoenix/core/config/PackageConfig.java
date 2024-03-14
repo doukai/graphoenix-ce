@@ -3,13 +3,25 @@ package io.graphoenix.core.config;
 import com.typesafe.config.Optional;
 import org.eclipse.microprofile.config.inject.ConfigProperties;
 
+import java.util.Map;
 import java.util.Set;
+
+import static io.graphoenix.core.handler.PackageManager.LOAD_BALANCE_RANDOM;
 
 @ConfigProperties(prefix = "package")
 public class PackageConfig {
 
     @Optional
     private String packageName;
+
+    @Optional
+    private String packageLoadBalance = LOAD_BALANCE_RANDOM;
+
+    @Optional
+    private Set<String> seedMembers;
+
+    @Optional
+    private Map<String, Object> members;
 
     @Optional
     private Set<String> localPackageNames;
@@ -76,8 +88,32 @@ public class PackageConfig {
         this.packageName = packageName;
     }
 
+    public String getPackageLoadBalance() {
+        return packageLoadBalance;
+    }
+
+    public void setPackageLoadBalance(String packageLoadBalance) {
+        this.packageLoadBalance = packageLoadBalance;
+    }
+
     public Set<String> getLocalPackageNames() {
         return localPackageNames;
+    }
+
+    public Set<String> getSeedMembers() {
+        return seedMembers;
+    }
+
+    public void setSeedMembers(Set<String> seedMembers) {
+        this.seedMembers = seedMembers;
+    }
+
+    public Map<String, Object> getMembers() {
+        return members;
+    }
+
+    public void setMembers(Map<String, Object> members) {
+        this.members = members;
     }
 
     public void setLocalPackageNames(Set<String> localPackageNames) {

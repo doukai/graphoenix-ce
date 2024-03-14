@@ -9,7 +9,6 @@ import io.nozdormu.spi.async.Async;
 import io.nozdormu.spi.async.Asyncable;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import jakarta.json.bind.Jsonb;
 import org.tinylog.Logger;
 import reactor.core.publisher.Mono;
@@ -20,7 +19,6 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 @ApplicationScoped
-@Named("r2dbc")
 public class R2DBCOperationDAO implements OperationDAO, Asyncable {
 
     private final R2DBCConfig r2DBCConfig;
@@ -69,13 +67,13 @@ public class R2DBCOperationDAO implements OperationDAO, Asyncable {
     @Override
     public <T> Mono<T> findAsync(String sql, Map<String, Object> parameters, Class<T> beanClass) {
         return queryExecutor.executeQuery(sql, r2DBCParameterHandler.process(parameters))
-                .mapNotNull(jsonString -> jsonb.fromJson(jsonString, beanClass));
+                .mapNotNull(json -> jsonb.fromJson(json, beanClass));
     }
 
     @Override
     public <T> Mono<T> findAsync(String sql, Map<String, Object> parameters, Type type) {
         return queryExecutor.executeQuery(sql, r2DBCParameterHandler.process(parameters))
-                .mapNotNull(jsonString -> jsonb.fromJson(jsonString, type));
+                .mapNotNull(json -> jsonb.fromJson(json, type));
     }
 
     @Override
