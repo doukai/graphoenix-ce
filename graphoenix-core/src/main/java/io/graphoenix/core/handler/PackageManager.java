@@ -6,15 +6,14 @@ import io.graphoenix.spi.annotation.Package;
 import io.graphoenix.spi.dto.PackageURL;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.handler.PackageProvider;
+import io.nozdormu.spi.context.BeanContext;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.tinylog.Logger;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @ApplicationScoped
@@ -22,14 +21,29 @@ public class PackageManager {
 
     public static final String LOAD_BALANCE_ROUND_ROBIN = "roundRobin";
     public static final String LOAD_BALANCE_RANDOM = "random";
+    public static final String SEEDS_MEMBER_KEY = "seeds";
+    public static final String PACKAGE_PROVIDER_GOSSIP_NAME = "gossip";
 
     private final PackageConfig packageConfig;
     private final PackageProvider packageProvider;
+    private final Set<String> seedMembers;
 
     @Inject
     public PackageManager(PackageConfig packageConfig, PackageProvider packageProvider) {
         this.packageConfig = packageConfig;
-        this.packageProvider = packageProvider;
+        //noinspection unchecked
+        this.seedMembers = Stream.ofNullable(packageConfig.getMembers().get(SEEDS_MEMBER_KEY))
+                .map(seedList -> (List<Map<String, Object>>) seedList)
+                .flatMap(Collection::stream)
+                .map(PackageURL::new)
+                .map(packageURL -> packageURL.getHost() + ":" + packageURL.getPort())
+                .collect(Collectors.toSet());
+
+        if (!getSeedMembers().isEmpty()) {
+            this.packageProvider = BeanContext.getName(PackageProvider.class, PACKAGE_PROVIDER_GOSSIP_NAME);
+        } else {
+            this.packageProvider = BeanContext.getDefault(PackageProvider.class);
+        }
     }
 
     public PackageURL getURL(String packageName, String schema) {
@@ -92,5 +106,9 @@ public class PackageManager {
                 Stream.ofNullable(packageConfig.getPackageName()),
                 Stream.ofNullable(packageConfig.getLocalPackageNames()).flatMap(Collection::stream)
         );
+    }
+
+    public Set<String> getSeedMembers() {
+        return seedMembers;
     }
 }

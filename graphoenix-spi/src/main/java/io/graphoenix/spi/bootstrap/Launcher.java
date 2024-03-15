@@ -2,12 +2,12 @@ package io.graphoenix.spi.bootstrap;
 
 public interface Launcher {
 
-    Launcher addServers(Runner... servers);
+    Launcher addServers(Runnable... servers);
 
-    Launcher with(Runner... servers);
+    Launcher with(Runnable... servers);
 
     @SuppressWarnings("unchecked")
-    Launcher with(Class<? extends Runner>... classes);
+    Launcher with(Class<? extends Runnable>... classes);
 
     void run(String... args);
 }

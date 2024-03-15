@@ -25,7 +25,7 @@ public class ApplicationLauncher implements Launcher {
 
     private final PackageManager packageManager;
     private final PackageConfig packageConfig;
-    private final List<Runner> runnerList;
+    private final List<Runnable> runnerList;
 
     @Inject
     public ApplicationLauncher(PackageManager packageManager, PackageConfig packageConfig) {
@@ -34,18 +34,18 @@ public class ApplicationLauncher implements Launcher {
         this.runnerList = new ArrayList<>();
     }
 
-    public ApplicationLauncher addServers(Runner... servers) {
+    public ApplicationLauncher addServers(Runnable... servers) {
         this.runnerList.addAll(List.of(servers));
         return this;
     }
 
-    public ApplicationLauncher with(Runner... servers) {
+    public ApplicationLauncher with(Runnable... servers) {
         return addServers(servers);
     }
 
     @SafeVarargs
-    public final ApplicationLauncher with(Class<? extends Runner>... classes) {
-        return addServers(Arrays.stream(classes).map(BeanContext::get).toArray(Runner[]::new));
+    public final ApplicationLauncher with(Class<? extends Runnable>... classes) {
+        return addServers(Arrays.stream(classes).map(BeanContext::get).toArray(Runnable[]::new));
     }
 
     public void run(String... args) {
@@ -60,7 +60,7 @@ public class ApplicationLauncher implements Launcher {
         if (!runnerList.isEmpty()) {
             ExecutorService executorService = Executors.newCachedThreadPool();
             CountDownLatch latch = new CountDownLatch(1);
-            for (Runner runner : runnerList) {
+            for (Runnable runner : runnerList) {
                 executorService.execute(
                         new Thread(() -> {
                             try {

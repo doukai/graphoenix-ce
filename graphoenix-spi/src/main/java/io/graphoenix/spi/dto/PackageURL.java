@@ -3,36 +3,36 @@ package io.graphoenix.spi.dto;
 import java.util.Map;
 
 public class PackageURL {
-    public static final String SCHEMA_NAME = "schema";
+    public static final String PROTOCOL_NAME = "protocol";
     public static final String HOST_NAME = "host";
     public static final String PORT_NAME = "port";
     public static final String PATH_NAME = "path";
 
-    private String schema;
+    private String protocol;
     private String host;
     private Integer port;
     private String path;
 
-    public PackageURL(String schema, String host, Integer port, String path) {
-        this.schema = schema;
+    public PackageURL(String protocol, String host, Integer port, String path) {
+        this.protocol = protocol;
         this.host = host;
         this.port = port;
         this.path = path;
     }
 
     public PackageURL(Map<String, Object> map) {
-        this.schema = (String) map.get(SCHEMA_NAME);
+        this.protocol = (String) map.get(PROTOCOL_NAME);
         this.host = (String) map.get(HOST_NAME);
         this.port = (int) map.getOrDefault(PORT_NAME, -1);
         this.path = (String) map.getOrDefault(PATH_NAME, "");
     }
 
-    public String getSchema() {
-        return schema;
+    public String getProtocol() {
+        return protocol;
     }
 
-    public void setSchema(String schema) {
-        this.schema = schema;
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
     }
 
     public String getHost() {
@@ -62,7 +62,7 @@ public class PackageURL {
     @Override
     public String toString() {
         return "PackageURL{" +
-                "schema='" + schema + '\'' +
+                "protocol='" + protocol + '\'' +
                 ", host='" + host + '\'' +
                 ", port=" + port +
                 ", path='" + path + '\'' +

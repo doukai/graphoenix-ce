@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface PackageProvider {
 
-    List<PackageURL> getProtocolURLList(String packageName, String schema);
+    List<PackageURL> getProtocolURLList(String packageName, String protocol);
 
-    Iterator<PackageURL> getProtocolURLIterator(String packageName, String schema);
+    Iterator<PackageURL> getProtocolURLIterator(String packageName, String protocol);
 }

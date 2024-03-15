@@ -16,91 +16,74 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.core.handler.PackageManager.LOAD_BALANCE_ROUND_ROBIN;
+import static io.graphoenix.core.handler.PackageManager.SEEDS_MEMBER_KEY;
 
 @ApplicationScoped
 @Default
 public class DefaultPackageProvider implements PackageProvider {
 
-    private final Map<String, Map<String, List<PackageURL>>> packageSchemaURLListMap;
+    private final Map<String, Map<String, List<PackageURL>>> packageProtocolURLListMap;
 
-    private final Map<String, Map<String, Iterator<PackageURL>>> packageSchemaURLIteratorMap;
+    private final Map<String, Map<String, Iterator<PackageURL>>> packageProtocolURLIteratorMap;
 
     @SuppressWarnings("unchecked")
     @Inject
     public DefaultPackageProvider(PackageConfig packageConfig) {
-        this.packageSchemaURLListMap = Stream.ofNullable(packageConfig.getMembers())
+        List<Map.Entry<String, PackageURL>> packageURLList = Stream.ofNullable(packageConfig.getMembers())
                 .flatMap(packageMembers -> packageMembers.entrySet().stream())
+                .filter(packageEntry -> !packageEntry.getKey().equals(SEEDS_MEMBER_KEY))
                 .flatMap(packageEntry ->
                         ((List<Map<String, Object>>) packageEntry.getValue()).stream()
                                 .map(PackageURL::new)
-                                .map(url -> new AbstractMap.SimpleEntry<>(packageEntry.getKey(), new AbstractMap.SimpleEntry<>(url.getSchema(), url)))
+                                .map(packageURL ->
+                                        new AbstractMap.SimpleEntry<>(
+                                                packageEntry.getKey(),
+                                                packageURL
+                                        )
+                                )
                 )
-                .collect(Collectors.groupingBy(
-                        Map.Entry<String, AbstractMap.SimpleEntry<String, PackageURL>>::getKey,
-                        Collectors
-                                .mapping(
-                                        Map.Entry<String, AbstractMap.SimpleEntry<String, PackageURL>>::getValue,
-                                        Collectors
-                                                .groupingBy(
-                                                        Map.Entry<String, PackageURL>::getKey,
-                                                        Collectors
-                                                                .mapping(
-                                                                        Map.Entry<String, PackageURL>::getValue,
-                                                                        Collectors.toList()
-                                                                )
-                                                )
+                .collect(Collectors.toList());
+
+        this.packageProtocolURLListMap = packageURLList.stream()
+                .collect(
+                        Collectors.groupingBy(
+                                Map.Entry::getKey,
+                                Collectors.mapping(
+                                        Map.Entry::getValue,
+                                        Collectors.groupingBy(
+                                                PackageURL::getProtocol,
+                                                Collectors.toList()
+                                        )
                                 )
                         )
                 );
+
         if (packageConfig.getPackageLoadBalance().equals(LOAD_BALANCE_ROUND_ROBIN)) {
-            this.packageSchemaURLIteratorMap = Stream.ofNullable(packageConfig.getMembers())
-                    .flatMap(packageMembers -> packageMembers.entrySet().stream())
-                    .flatMap(packageEntry ->
-                            ((List<Map<String, Object>>) packageEntry.getValue()).stream()
-                                    .map(PackageURL::new)
-                                    .map(url -> new AbstractMap.SimpleEntry<>(url.getSchema(), url))
-                                    .collect(
-                                            Collectors
-                                                    .groupingBy(
-                                                            Map.Entry<String, PackageURL>::getKey,
-                                                            Collectors
-                                                                    .mapping(
-                                                                            Map.Entry<String, PackageURL>::getValue,
-                                                                            Collectors.toList()
-                                                                    )
-                                                    )
-                                    )
-                                    .entrySet()
-                                    .stream()
-                                    .map(protocolEntry -> new AbstractMap.SimpleEntry<>(packageEntry.getKey(), new AbstractMap.SimpleEntry<>(protocolEntry.getKey(), Iterators.cycle(protocolEntry.getValue()))))
-                    )
+            this.packageProtocolURLIteratorMap = packageURLList.stream()
                     .collect(
-                            Collectors
-                                    .groupingBy(
-                                            Map.Entry<String, AbstractMap.SimpleEntry<String, Iterator<PackageURL>>>::getKey,
-                                            Collectors
-                                                    .mapping(
-                                                            Map.Entry<String, AbstractMap.SimpleEntry<String, Iterator<PackageURL>>>::getValue,
-                                                            Collectors
-                                                                    .toMap(
-                                                                            Map.Entry<String, Iterator<PackageURL>>::getKey,
-                                                                            Map.Entry<String, Iterator<PackageURL>>::getValue
-                                                                    )
-                                                    )
+                            Collectors.groupingBy(
+                                    Map.Entry::getKey,
+                                    Collectors.mapping(
+                                            Map.Entry::getValue,
+                                            Collectors.groupingBy(
+                                                    PackageURL::getProtocol,
+                                                    Collectors.collectingAndThen(Collectors.toList(), Iterators::cycle)
+                                            )
                                     )
+                            )
                     );
         } else {
-            this.packageSchemaURLIteratorMap = null;
+            this.packageProtocolURLIteratorMap = null;
         }
     }
 
     @Override
-    public List<PackageURL> getProtocolURLList(String packageName, String schema) {
-        return packageSchemaURLListMap.get(packageName).get(schema);
+    public List<PackageURL> getProtocolURLList(String packageName, String protocol) {
+        return packageProtocolURLListMap.get(packageName).get(protocol);
     }
 
     @Override
-    public Iterator<PackageURL> getProtocolURLIterator(String packageName, String schema) {
-        return packageSchemaURLIteratorMap.get(packageName).get(schema);
+    public Iterator<PackageURL> getProtocolURLIterator(String packageName, String protocol) {
+        return packageProtocolURLIteratorMap.get(packageName).get(protocol);
     }
 }
