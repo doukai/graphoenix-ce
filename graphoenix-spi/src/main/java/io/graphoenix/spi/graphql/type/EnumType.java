@@ -1,5 +1,6 @@
 package io.graphoenix.spi.graphql.type;
 
+import com.google.common.collect.Iterators;
 import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
@@ -89,6 +90,10 @@ public class EnumType extends AbstractDefinition implements Definition {
 
     public Collection<EnumValueDefinition> getEnumValues() {
         return enumValueMap.values();
+    }
+
+    public EnumValueDefinition getEnumValue(int index) {
+        return Iterators.get(enumValueMap.values().iterator(), index);
     }
 
     public EnumType setEnumValues(Collection<EnumValueDefinition> enumValueDefinitions) {

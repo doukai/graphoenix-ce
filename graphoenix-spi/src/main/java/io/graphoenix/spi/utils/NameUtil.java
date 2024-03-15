@@ -32,4 +32,32 @@ public final class NameUtil {
     public static String getAliasFromPath(String path) {
         return path.replaceAll("/", "_");
     }
+
+    public static String getGrpcName(String name) {
+        if (name.startsWith(PREFIX_INTROSPECTION)) {
+            return name.replaceFirst(PREFIX_INTROSPECTION, "Intro");
+        }
+        return name;
+    }
+
+    public static String getGrpcMessageFiledName(String fieldName) {
+        if (fieldName.startsWith(PREFIX_INTROSPECTION)) {
+            return "intro_" + getGrpcMessageFiledName(fieldName.replaceFirst(PREFIX_INTROSPECTION, ""));
+        }
+        return CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, fieldName);
+    }
+
+    public static String getGrpcServiceRpcName(String fieldName) {
+        if (fieldName.startsWith(PREFIX_INTROSPECTION)) {
+            return "Intro" + getGrpcServiceRpcName(fieldName.replaceFirst(PREFIX_INTROSPECTION, ""));
+        }
+        return CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, fieldName);
+    }
+
+    public static String getGrpcEnumFieldName(String fieldName) {
+        if (fieldName.startsWith(PREFIX_INTROSPECTION)) {
+            return "INTRO_" + getGrpcEnumFieldName(fieldName.replaceFirst(PREFIX_INTROSPECTION, ""));
+        }
+        return CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, fieldName);
+    }
 }
