@@ -239,6 +239,16 @@ public abstract class AbstractDefinition implements Definition {
     }
 
     @Override
+    public Optional<String> getGrpcName() {
+        return Optional.ofNullable(directiveMap)
+                .map(map -> map.get(DIRECTIVE_GRPC_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgumentOrNull(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME)))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> (StringValue) valueWithVariable)
+                .map(StringValue::getString);
+    }
+
+    @Override
     public String getPackageNameOrError() {
         return getPackageName().orElseThrow(() -> new GraphQLErrors(PACKAGE_NAME_ARGUMENT_NOT_EXIST));
     }
@@ -251,6 +261,11 @@ public abstract class AbstractDefinition implements Definition {
     @Override
     public String getAnnotationNameOrError() {
         return getAnnotationName().orElseThrow(() -> new GraphQLErrors(ANNOTATION_NAME_ARGUMENT_NOT_EXIST));
+    }
+
+    @Override
+    public String getGrpcNameOrError() {
+        return getGrpcName().orElseThrow(() -> new GraphQLErrors(GRPC_CLASS_NAME_ARGUMENT_NOT_EXIST));
     }
 
     public boolean isContainer() {

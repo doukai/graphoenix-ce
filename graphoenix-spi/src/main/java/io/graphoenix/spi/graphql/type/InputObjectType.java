@@ -1,5 +1,6 @@
 package io.graphoenix.spi.graphql.type;
 
+import com.google.common.collect.Iterators;
 import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
@@ -89,6 +90,10 @@ public class InputObjectType extends AbstractDefinition implements Definition {
 
     public InputValue getInputValueOrNull(String name) {
         return inputValueMap.get(name);
+    }
+
+    public InputValue getInputValue(int index) {
+        return Iterators.get(inputValueMap.values().iterator(), index);
     }
 
     public Optional<InputValue> getInputValue(String name) {

@@ -1,5 +1,6 @@
 package io.graphoenix.spi.graphql.type;
 
+import com.google.common.collect.Iterators;
 import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
@@ -124,6 +125,10 @@ public class InterfaceType extends AbstractDefinition implements Definition, Fie
     @Override
     public FieldDefinition getField(String name) {
         return fieldDefinitionMap.get(name);
+    }
+
+    public FieldDefinition getField(int index) {
+        return Iterators.get(fieldDefinitionMap.values().iterator(), index);
     }
 
     @Override

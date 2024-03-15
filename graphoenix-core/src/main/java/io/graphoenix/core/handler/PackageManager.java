@@ -27,6 +27,7 @@ public class PackageManager {
     private final PackageConfig packageConfig;
     private final PackageProvider packageProvider;
     private final Set<String> seedMembers;
+    private final Random random = new Random();
 
     @Inject
     public PackageManager(PackageConfig packageConfig, PackageProvider packageProvider) {
@@ -54,9 +55,9 @@ public class PackageManager {
                 List<PackageURL> urlList = packageProvider.getProtocolURLList(packageName, schema);
                 if (urlList.size() == 1) {
                     return urlList.get(0);
+                } else {
+                    return urlList.get(random.nextInt(urlList.size()));
                 }
-                int randomIndex = new Random().nextInt(urlList.size());
-                return urlList.get(randomIndex);
             default:
                 return packageProvider.getProtocolURLList(packageName, schema).get(0);
         }
@@ -104,7 +105,8 @@ public class PackageManager {
     public Stream<String> getLocalPackages() {
         return Stream.concat(
                 Stream.ofNullable(packageConfig.getPackageName()),
-                Stream.ofNullable(packageConfig.getLocalPackageNames()).flatMap(Collection::stream)
+                Stream.ofNullable(packageConfig.getLocalPackageNames())
+                        .flatMap(Collection::stream)
         );
     }
 

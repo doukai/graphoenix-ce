@@ -1,5 +1,6 @@
 package io.graphoenix.spi.graphql.type;
 
+import com.google.common.collect.Iterators;
 import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.AbstractDefinition;
@@ -87,6 +88,10 @@ public class FieldDefinition extends AbstractDefinition {
 
     public Collection<InputValue> getArguments() {
         return Optional.ofNullable(argumentMap).map(Map::values).orElse(null);
+    }
+
+    public InputValue getArgument(int index) {
+        return Iterators.get(argumentMap.values().iterator(), index);
     }
 
     public InputValue getArgumentOrNull(String name) {

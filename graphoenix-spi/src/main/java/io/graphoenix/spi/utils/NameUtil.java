@@ -40,6 +40,13 @@ public final class NameUtil {
         return name;
     }
 
+    public static String getGrpcEnumFieldName(String fieldName) {
+        if (fieldName.startsWith(PREFIX_INTROSPECTION)) {
+            return "INTRO_" + getGrpcEnumFieldName(fieldName.replaceFirst(PREFIX_INTROSPECTION, ""));
+        }
+        return CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, fieldName);
+    }
+
     public static String getGrpcMessageFiledName(String fieldName) {
         if (fieldName.startsWith(PREFIX_INTROSPECTION)) {
             return "intro_" + getGrpcMessageFiledName(fieldName.replaceFirst(PREFIX_INTROSPECTION, ""));
@@ -52,12 +59,5 @@ public final class NameUtil {
             return "Intro" + getGrpcServiceRpcName(fieldName.replaceFirst(PREFIX_INTROSPECTION, ""));
         }
         return CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, fieldName);
-    }
-
-    public static String getGrpcEnumFieldName(String fieldName) {
-        if (fieldName.startsWith(PREFIX_INTROSPECTION)) {
-            return "INTRO_" + getGrpcEnumFieldName(fieldName.replaceFirst(PREFIX_INTROSPECTION, ""));
-        }
-        return CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, fieldName);
     }
 }

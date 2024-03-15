@@ -282,6 +282,10 @@ public class DocumentBuilder {
                 .addDirective(
                         new Directive(DIRECTIVE_CLASS_NAME)
                                 .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + fieldDefinition.getMapWithTypeOrError())
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_GRPC_NAME)
+                                .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcObjectTypePackageName() + "." + getGrpcName(fieldDefinition.getMapWithTypeOrError()))
                 );
 
         documentManager.getFieldMapToFieldDefinition(fieldDefinition)
@@ -338,6 +342,10 @@ public class DocumentBuilder {
                 .addDirective(
                         new Directive(DIRECTIVE_CLASS_NAME)
                                 .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + fieldDefinition.getFetchWithTypeOrError())
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_GRPC_NAME)
+                                .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcObjectTypePackageName() + "." + getGrpcName(fieldDefinition.getFetchWithTypeOrError()))
                 );
 
         documentManager.getFieldFetchToFieldDefinition(fieldDefinition)
@@ -378,6 +386,13 @@ public class DocumentBuilder {
             objectType.addDirective(
                     new Directive(DIRECTIVE_CLASS_NAME)
                             .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + objectType.getName())
+            );
+        }
+
+        if (objectType.getGrpcName().isEmpty()) {
+            objectType.addDirective(
+                    new Directive(DIRECTIVE_GRPC_NAME)
+                            .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcObjectTypePackageName() + "." + getGrpcName(objectType.getName()))
             );
         }
 
@@ -511,6 +526,13 @@ public class DocumentBuilder {
                             .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInterfaceTypePackageName() + "." + interfaceType.getName())
             );
         }
+
+        if (interfaceType.getGrpcName().isEmpty()) {
+            interfaceType.addDirective(
+                    new Directive(DIRECTIVE_GRPC_NAME)
+                            .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcInterfaceTypePackageName() + "." + getGrpcName(interfaceType.getName()))
+            );
+        }
         return interfaceType;
     }
 
@@ -535,6 +557,13 @@ public class DocumentBuilder {
                             .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + inputObjectType.getName())
             );
         }
+
+        if (inputObjectType.getGrpcName().isEmpty()) {
+            inputObjectType.addDirective(
+                    new Directive(DIRECTIVE_GRPC_NAME)
+                            .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcInputObjectTypePackageName() + "." + getGrpcName(inputObjectType.getName()))
+            );
+        }
         return inputObjectType;
     }
 
@@ -550,6 +579,13 @@ public class DocumentBuilder {
             enumType.addDirective(
                     new Directive(DIRECTIVE_CLASS_NAME)
                             .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getEnumTypePackageName() + "." + enumType.getName())
+            );
+        }
+
+        if (enumType.getGrpcName().isEmpty()) {
+            enumType.addDirective(
+                    new Directive(DIRECTIVE_GRPC_NAME)
+                            .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcEnumTypePackageName() + "." + getGrpcName(enumType.getName()))
             );
         }
         return enumType;
@@ -774,6 +810,10 @@ public class DocumentBuilder {
                                 .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + fieldsType.getName() + InputType.EXPRESSION)
                 )
                 .addDirective(
+                        new Directive(DIRECTIVE_GRPC_NAME)
+                                .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcInputObjectTypePackageName() + "." + getGrpcName(fieldsType.getName() + InputType.EXPRESSION))
+                )
+                .addDirective(
                         new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                 .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                         new ArrayValueWithVariable(
@@ -807,6 +847,10 @@ public class DocumentBuilder {
                                 .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + fieldsType.getName() + InputType.INPUT)
                 )
                 .addDirective(
+                        new Directive(DIRECTIVE_GRPC_NAME)
+                                .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcInputObjectTypePackageName() + "." + getGrpcName(fieldsType.getName() + InputType.INPUT))
+                )
+                .addDirective(
                         new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                 .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                         new ArrayValueWithVariable(
@@ -837,6 +881,10 @@ public class DocumentBuilder {
                 .addDirective(
                         new Directive(DIRECTIVE_ANNOTATION_NAME)
                                 .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + fieldsType.getName() + InputType.ORDER_BY)
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_GRPC_NAME)
+                                .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcInputObjectTypePackageName() + "." + getGrpcName(fieldsType.getName() + InputType.ORDER_BY))
                 );
     }
 
@@ -856,6 +904,10 @@ public class DocumentBuilder {
                 .addDirective(
                         new Directive(DIRECTIVE_ANNOTATION_NAME)
                                 .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + enumType.getName() + InputType.EXPRESSION)
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_GRPC_NAME)
+                                .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcInputObjectTypePackageName() + "." + getGrpcName(enumType.getName() + InputType.EXPRESSION))
                 );
     }
 
@@ -871,6 +923,10 @@ public class DocumentBuilder {
                 .addDirective(
                         new Directive(DIRECTIVE_CLASS_NAME)
                                 .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + objectType.getName() + InputType.CONNECTION)
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_GRPC_NAME)
+                                .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcObjectTypePackageName() + "." + getGrpcName(objectType.getName() + InputType.CONNECTION))
                 )
                 .addDirective(new Directive(DIRECTIVE_CONTAINER_NAME));
     }
@@ -889,6 +945,10 @@ public class DocumentBuilder {
                 .addDirective(
                         new Directive(DIRECTIVE_CLASS_NAME)
                                 .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getObjectTypePackageName() + "." + objectType.getName() + InputType.EDGE)
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_GRPC_NAME)
+                                .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcObjectTypePackageName() + "." + getGrpcName(objectType.getName() + InputType.EDGE))
                 )
                 .addDirective(new Directive(DIRECTIVE_CONTAINER_NAME));
     }
@@ -1233,6 +1293,10 @@ public class DocumentBuilder {
                                     .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + objectType.getName() + queryOperationType.getName() + inputType)
                     )
                     .addDirective(
+                            new Directive(DIRECTIVE_GRPC_NAME)
+                                    .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcInputObjectTypePackageName() + "." + getGrpcName(objectType.getName() + queryOperationType.getName() + inputType))
+                    )
+                    .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                     .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                             new ArrayValueWithVariable(
@@ -1264,6 +1328,10 @@ public class DocumentBuilder {
                                     .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + objectType.getName() + subscriptionOperation.getName() + inputType)
                     )
                     .addDirective(
+                            new Directive(DIRECTIVE_GRPC_NAME)
+                                    .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcInputObjectTypePackageName() + "." + getGrpcName(objectType.getName() + subscriptionOperation.getName() + inputType))
+                    )
+                    .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                     .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                             new ArrayValueWithVariable(
@@ -1290,6 +1358,10 @@ public class DocumentBuilder {
                     .addDirective(
                             new Directive(DIRECTIVE_ANNOTATION_NAME)
                                     .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + objectType.getName() + mutationOperationType.getName() + inputType)
+                    )
+                    .addDirective(
+                            new Directive(DIRECTIVE_GRPC_NAME)
+                                    .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcInputObjectTypePackageName() + "." + getGrpcName(objectType.getName() + mutationOperationType.getName() + inputType))
                     )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
@@ -1339,6 +1411,10 @@ public class DocumentBuilder {
                                     .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + objectType.getName() + SUFFIX_LIST + queryOperationType.getName() + inputType)
                     )
                     .addDirective(
+                            new Directive(DIRECTIVE_GRPC_NAME)
+                                    .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcInputObjectTypePackageName() + "." + getGrpcName(objectType.getName() + SUFFIX_LIST + queryOperationType.getName() + inputType))
+                    )
+                    .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                     .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                             new ArrayValueWithVariable(
@@ -1381,6 +1457,10 @@ public class DocumentBuilder {
                                     .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + objectType.getName() + SUFFIX_LIST + subscriptionOperationType.getName() + inputType)
                     )
                     .addDirective(
+                            new Directive(DIRECTIVE_GRPC_NAME)
+                                    .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcInputObjectTypePackageName() + "." + getGrpcName(objectType.getName() + SUFFIX_LIST + subscriptionOperationType.getName() + inputType))
+                    )
+                    .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                     .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                             new ArrayValueWithVariable(
@@ -1415,6 +1495,10 @@ public class DocumentBuilder {
                     .addDirective(
                             new Directive(DIRECTIVE_ANNOTATION_NAME)
                                     .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + objectType.getName() + SUFFIX_LIST + mutationOperationType.getName() + inputType)
+                    )
+                    .addDirective(
+                            new Directive(DIRECTIVE_GRPC_NAME)
+                                    .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcInputObjectTypePackageName() + "." + getGrpcName(objectType.getName() + SUFFIX_LIST + mutationOperationType.getName() + inputType))
                     )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
@@ -1464,6 +1548,10 @@ public class DocumentBuilder {
                                     .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + objectType.getName() + SUFFIX_CONNECTION + queryOperationType.getName() + inputType)
                     )
                     .addDirective(
+                            new Directive(DIRECTIVE_GRPC_NAME)
+                                    .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcInputObjectTypePackageName() + "." + getGrpcName(objectType.getName() + SUFFIX_CONNECTION + queryOperationType.getName() + inputType))
+                    )
+                    .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
                                     .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                             new ArrayValueWithVariable(
@@ -1504,6 +1592,10 @@ public class DocumentBuilder {
                     .addDirective(
                             new Directive(DIRECTIVE_ANNOTATION_NAME)
                                     .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + objectType.getName() + SUFFIX_CONNECTION + subscriptionOperationType.getName() + inputType)
+                    )
+                    .addDirective(
+                            new Directive(DIRECTIVE_GRPC_NAME)
+                                    .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcInputObjectTypePackageName() + "." + getGrpcName(objectType.getName() + SUFFIX_CONNECTION + subscriptionOperationType.getName() + inputType))
                     )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
@@ -1581,6 +1673,10 @@ public class DocumentBuilder {
                 .addDirective(
                         new Directive(DIRECTIVE_CLASS_NAME)
                                 .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + objectType.getName() + "_" + fieldDefinition.getName() + "_" + SUFFIX_ARGUMENTS)
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_GRPC_NAME)
+                                .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcInputObjectTypePackageName() + "." + getGrpcName(objectType.getName() + "_" + fieldDefinition.getName() + "_" + SUFFIX_ARGUMENTS))
                 );
     }
 

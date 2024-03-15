@@ -1,5 +1,6 @@
 package io.graphoenix.spi.graphql.type;
 
+import com.google.common.collect.Iterators;
 import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.AbstractDefinition;
@@ -130,6 +131,10 @@ public class ObjectType extends AbstractDefinition implements Definition, Fields
     @Override
     public FieldDefinition getField(String name) {
         return fieldDefinitionMap.get(name);
+    }
+
+    public FieldDefinition getField(int index) {
+        return Iterators.get(fieldDefinitionMap.values().iterator(), index);
     }
 
     @Override

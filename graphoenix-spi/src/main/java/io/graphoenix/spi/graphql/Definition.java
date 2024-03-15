@@ -107,9 +107,13 @@ public interface Definition {
 
     Optional<String> getAnnotationName();
 
+    Optional<String> getGrpcName();
+
     String getPackageNameOrError();
 
     String getClassNameOrError();
+
+    String getGrpcNameOrError();
 
     String toString();
 

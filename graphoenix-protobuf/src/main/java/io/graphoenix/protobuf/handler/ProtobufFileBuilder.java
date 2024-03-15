@@ -1,17 +1,14 @@
 package io.graphoenix.protobuf.handler;
 
 import com.google.common.collect.Streams;
-import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.PackageManager;
-import io.graphoenix.protobuf.v3.*;
 import io.graphoenix.protobuf.v3.Enum;
+import io.graphoenix.protobuf.v3.*;
+import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.Definition;
-import io.graphoenix.spi.graphql.type.EnumType;
-import io.graphoenix.spi.graphql.type.FieldDefinition;
-import io.graphoenix.spi.graphql.type.InputObjectType;
-import io.graphoenix.spi.graphql.type.Type;
+import io.graphoenix.spi.graphql.type.*;
 import io.graphoenix.spi.utils.StreamUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -23,7 +20,7 @@ import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_FIELD_TYPE;
-import static io.graphoenix.spi.utils.NameUtil.getGrpcName;
+import static io.graphoenix.spi.utils.NameUtil.*;
 
 @ApplicationScoped
 public class ProtobufFileBuilder {
@@ -49,7 +46,7 @@ public class ProtobufFileBuilder {
                         documentManager.getDocument().getObjectTypes()
                                 .filter(objectType -> !documentManager.isOperationType(objectType))
                                 .filter(packageManager::isOwnPackage)
-                                .flatMap(objectType -> getImports(objectType.getFields()))
+                                .flatMap(objectType -> getFieldDefinitionsImports(objectType.getFields()))
                                 .filter(StreamUtil.distinctByKey(Import::getName))
                                 .collect(Collectors.toList())
                 )
@@ -57,7 +54,7 @@ public class ProtobufFileBuilder {
                         documentManager.getDocument().getObjectTypes()
                                 .filter(objectType -> !documentManager.isOperationType(objectType))
                                 .filter(packageManager::isOwnPackage)
-                                .flatMap(objectType -> getScalarImports(objectType.getFields()))
+                                .flatMap(objectType -> getFieldDefinitionsScalarImports(objectType.getFields()))
                                 .filter(StreamUtil.distinctByKey(Import::getName))
                                 .collect(Collectors.toList())
                 )
@@ -68,7 +65,14 @@ public class ProtobufFileBuilder {
                         )
                 )
                 .setPkg(packageConfig.getGrpcPackageName())
-                .setTopLevelDefs(documentManager.getObjects().filter(documentManager::isNotOperationType).filter(packageManager::isOwnPackage).map(this::buildMessage).map(Message::toString).collect(Collectors.toList()))
+                .setTopLevelDefs(
+                        documentManager.getDocument().getObjectTypes()
+                                .filter(objectType -> !documentManager.isOperationType(objectType))
+                                .filter(packageManager::isOwnPackage)
+                                .map(this::buildMessage)
+                                .map(Message::toString)
+                                .collect(Collectors.toList())
+                )
                 .toString()
         );
         protoFileMap.put("interfaces", new ProtoFile()
@@ -78,14 +82,14 @@ public class ProtobufFileBuilder {
                 .addImports(
                         documentManager.getDocument().getInterfaceTypes()
                                 .filter(packageManager::isOwnPackage)
-                                .flatMap(interfaceType -> getImports(interfaceType.getFields()))
+                                .flatMap(interfaceType -> getFieldDefinitionsImports(interfaceType.getFields()))
                                 .filter(StreamUtil.distinctByKey(Import::getName))
                                 .collect(Collectors.toList())
                 )
                 .addImports(
                         documentManager.getDocument().getInterfaceTypes()
                                 .filter(packageManager::isOwnPackage)
-                                .flatMap(interfaceType -> getScalarImports(interfaceType.getFields()))
+                                .flatMap(interfaceType -> getFieldDefinitionsScalarImports(interfaceType.getFields()))
                                 .filter(StreamUtil.distinctByKey(Import::getName))
                                 .collect(Collectors.toList())
                 )
@@ -96,7 +100,13 @@ public class ProtobufFileBuilder {
                         )
                 )
                 .setPkg(packageConfig.getGrpcPackageName())
-                .setTopLevelDefs(documentManager.getInterfaces().filter(packageManager::isOwnPackage).map(this::buildMessage).map(Message::toString).collect(Collectors.toList()))
+                .setTopLevelDefs(
+                        documentManager.getDocument().getInterfaceTypes()
+                                .filter(packageManager::isOwnPackage)
+                                .map(this::buildMessage)
+                                .map(Message::toString)
+                                .collect(Collectors.toList())
+                )
                 .toString()
         );
         protoFileMap.put("input_objects", new ProtoFile()
@@ -106,14 +116,14 @@ public class ProtobufFileBuilder {
                 .addImports(
                         documentManager.getDocument().getInputObjectTypes()
                                 .filter(packageManager::isOwnPackage)
-                                .flatMap(this::getImports)
+                                .flatMap(inputObjectType -> getInputValuesImports(inputObjectType.getInputValues()))
                                 .filter(StreamUtil.distinctByKey(Import::getName))
                                 .collect(Collectors.toList())
                 )
                 .addImports(
                         documentManager.getDocument().getInputObjectTypes()
                                 .filter(packageManager::isOwnPackage)
-                                .flatMap(this::getScalarImports)
+                                .flatMap(inputObjectType -> getInputValuesScalarImports(inputObjectType.getInputValues()))
                                 .filter(StreamUtil.distinctByKey(Import::getName))
                                 .collect(Collectors.toList())
                 )
@@ -124,7 +134,13 @@ public class ProtobufFileBuilder {
                         )
                 )
                 .setPkg(packageConfig.getGrpcPackageName())
-                .setTopLevelDefs(documentManager.getInputObjects().filter(packageManager::isOwnPackage).map(this::buildMessage).map(Message::toString).collect(Collectors.toList()))
+                .setTopLevelDefs(
+                        documentManager.getDocument().getInputObjectTypes()
+                                .filter(packageManager::isOwnPackage)
+                                .map(this::buildMessage)
+                                .map(Message::toString)
+                                .collect(Collectors.toList())
+                )
                 .toString()
         );
         protoFileMap.put("enums", new ProtoFile()
@@ -133,7 +149,13 @@ public class ProtobufFileBuilder {
                         new Option().setName("java_package").setValue(packageConfig.getGrpcEnumTypePackageName())
                 )
                 .setPkg(packageConfig.getGrpcPackageName())
-                .setTopLevelDefs(documentManager.getEnums().filter(packageManager::isOwnPackage).map(this::buildEnum).map(Enum::toString).collect(Collectors.toList()))
+                .setTopLevelDefs(
+                        documentManager.getDocument().getEnums()
+                                .filter(packageManager::isOwnPackage)
+                                .map(this::buildEnum)
+                                .map(Enum::toString)
+                                .collect(Collectors.toList())
+                )
                 .toString()
         );
         protoFileMap.put("query_requests", new ProtoFile()
@@ -144,58 +166,50 @@ public class ProtobufFileBuilder {
                         new Import().setName(getPath("input_objects.proto"))
                 )
                 .addImports(
-                        io.vavr.collection.List
-                                .ofAll(
-                                        documentManager.getQueryOperationTypeName()
-                                                .flatMap(documentManager::getObject).stream()
-                                                .flatMap(objectTypeDefinitionContext -> getImportPath(objectTypeDefinitionContext.fieldsDefinition()))
-                                )
-                                .distinctBy(Import::getName)
-                                .toJavaList()
+                        documentManager.getDocument().getQueryOperationType().stream()
+                                .flatMap(objectType -> getFieldDefinitionsImports(objectType.getFields()))
+                                .filter(StreamUtil.distinctByKey(Import::getName))
+                                .collect(Collectors.toList())
                 )
                 .addImports(
-                        io.vavr.collection.List
-                                .ofAll(
-                                        documentManager.getQueryOperationTypeName()
-                                                .flatMap(documentManager::getObject).stream()
-                                                .flatMap(objectTypeDefinitionContext ->
-                                                        objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().stream()
-                                                                .flatMap(fieldDefinitionContext ->
-                                                                        Stream.ofNullable(fieldDefinitionContext.argumentsDefinition())
+                        documentManager.getDocument().getQueryOperationType().stream()
+                                .flatMap(objectType ->
+                                        objectType.getFields().stream()
+                                                .flatMap(fieldDefinition ->
+                                                        Stream.ofNullable(fieldDefinition.getArguments())
+                                                )
+                                )
+                                .flatMap(this::getInputValuesImports)
+                                .filter(StreamUtil.distinctByKey(Import::getName))
+                                .collect(Collectors.toList())
+                )
+                .addImports(
+                        Stream
+                                .concat(
+                                        documentManager.getDocument().getQueryOperationType().stream()
+                                                .flatMap(objectType -> getFieldDefinitionsScalarImports(objectType.getFields())),
+                                        documentManager.getDocument().getQueryOperationType().stream()
+                                                .flatMap(objectType ->
+                                                        objectType.getFields().stream()
+                                                                .flatMap(fieldDefinition ->
+                                                                        Stream.ofNullable(fieldDefinition.getArguments())
                                                                 )
                                                 )
-                                                .flatMap(this::getImportPath)
+                                                .flatMap(this::getInputValuesScalarImports)
                                 )
-                                .distinctBy(Import::getName)
-                                .toJavaList()
-                )
-                .addImports(
-                        io.vavr.collection.List
-                                .ofAll(
-                                        Stream.concat(
-                                                documentManager.getQueryOperationTypeName()
-                                                        .flatMap(documentManager::getObject).stream()
-                                                        .flatMap(objectTypeDefinitionContext -> getImportScalarTypePath(objectTypeDefinitionContext.fieldsDefinition())),
-                                                documentManager.getQueryOperationTypeName()
-                                                        .flatMap(documentManager::getObject).stream()
-                                                        .flatMap(objectTypeDefinitionContext ->
-                                                                objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().stream()
-                                                                        .flatMap(fieldDefinitionContext ->
-                                                                                Stream.ofNullable(fieldDefinitionContext.argumentsDefinition())
-                                                                        )
-                                                        )
-                                                        .flatMap(this::getImportScalarTypePath)
-                                        )
-                                )
-                                .distinctBy(Import::getName)
-                                .toJavaList()
+                                .filter(StreamUtil.distinctByKey(Import::getName))
+                                .collect(Collectors.toList())
                 )
                 .setOptions(
                         new Option().setName("java_multiple_files").setValue(true),
                         new Option().setName("java_package").setValue(packageConfig.getGrpcPackageName())
                 )
                 .setPkg(packageConfig.getGrpcPackageName())
-                .setTopLevelDefs(buildQueryRpcRequest().map(Message::toString).collect(Collectors.toList()))
+                .setTopLevelDefs(
+                        buildQueryRpcRequest()
+                                .map(Message::toString)
+                                .collect(Collectors.toList())
+                )
                 .toString()
         );
         protoFileMap.put("query_responses", new ProtoFile()
@@ -206,58 +220,50 @@ public class ProtobufFileBuilder {
                         new Import().setName(getPath("input_objects.proto"))
                 )
                 .addImports(
-                        io.vavr.collection.List
-                                .ofAll(
-                                        documentManager.getQueryOperationTypeName()
-                                                .flatMap(documentManager::getObject).stream()
-                                                .flatMap(objectTypeDefinitionContext -> getImportPath(objectTypeDefinitionContext.fieldsDefinition()))
-                                )
-                                .distinctBy(Import::getName)
-                                .toJavaList()
+                        documentManager.getDocument().getQueryOperationType().stream()
+                                .flatMap(objectType -> getFieldDefinitionsImports(objectType.getFields()))
+                                .filter(StreamUtil.distinctByKey(Import::getName))
+                                .collect(Collectors.toList())
                 )
                 .addImports(
-                        io.vavr.collection.List
-                                .ofAll(
-                                        documentManager.getQueryOperationTypeName()
-                                                .flatMap(documentManager::getObject).stream()
-                                                .flatMap(objectTypeDefinitionContext ->
-                                                        objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().stream()
-                                                                .flatMap(fieldDefinitionContext ->
-                                                                        Stream.ofNullable(fieldDefinitionContext.argumentsDefinition())
+                        documentManager.getDocument().getQueryOperationType().stream()
+                                .flatMap(objectType ->
+                                        objectType.getFields().stream()
+                                                .flatMap(fieldDefinition ->
+                                                        Stream.ofNullable(fieldDefinition.getArguments())
+                                                )
+                                )
+                                .flatMap(this::getInputValuesImports)
+                                .filter(StreamUtil.distinctByKey(Import::getName))
+                                .collect(Collectors.toList())
+                )
+                .addImports(
+                        Stream
+                                .concat(
+                                        documentManager.getDocument().getQueryOperationType().stream()
+                                                .flatMap(objectType -> getFieldDefinitionsScalarImports(objectType.getFields())),
+                                        documentManager.getDocument().getQueryOperationType().stream()
+                                                .flatMap(objectType ->
+                                                        objectType.getFields().stream()
+                                                                .flatMap(fieldDefinition ->
+                                                                        Stream.ofNullable(fieldDefinition.getArguments())
                                                                 )
                                                 )
-                                                .flatMap(this::getImportPath)
+                                                .flatMap(this::getInputValuesScalarImports)
                                 )
-                                .distinctBy(Import::getName)
-                                .toJavaList()
-                )
-                .addImports(
-                        io.vavr.collection.List
-                                .ofAll(
-                                        Stream.concat(
-                                                documentManager.getQueryOperationTypeName()
-                                                        .flatMap(documentManager::getObject).stream()
-                                                        .flatMap(objectTypeDefinitionContext -> getImportScalarTypePath(objectTypeDefinitionContext.fieldsDefinition())),
-                                                documentManager.getQueryOperationTypeName()
-                                                        .flatMap(documentManager::getObject).stream()
-                                                        .flatMap(objectTypeDefinitionContext ->
-                                                                objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().stream()
-                                                                        .flatMap(fieldDefinitionContext ->
-                                                                                Stream.ofNullable(fieldDefinitionContext.argumentsDefinition())
-                                                                        )
-                                                        )
-                                                        .flatMap(this::getImportScalarTypePath)
-                                        )
-                                )
-                                .distinctBy(Import::getName)
-                                .toJavaList()
+                                .filter(StreamUtil.distinctByKey(Import::getName))
+                                .collect(Collectors.toList())
                 )
                 .setOptions(
                         new Option().setName("java_multiple_files").setValue(true),
                         new Option().setName("java_package").setValue(packageConfig.getGrpcPackageName())
                 )
                 .setPkg(packageConfig.getGrpcPackageName())
-                .setTopLevelDefs(buildQueryRpcResponse().map(Message::toString).collect(Collectors.toList()))
+                .setTopLevelDefs(
+                        buildQueryRpcResponse()
+                                .map(Message::toString)
+                                .collect(Collectors.toList())
+                )
                 .toString()
         );
         protoFileMap.put("mutation_requests", new ProtoFile()
@@ -268,58 +274,50 @@ public class ProtobufFileBuilder {
                         new Import().setName(getPath("input_objects.proto"))
                 )
                 .addImports(
-                        io.vavr.collection.List
-                                .ofAll(
-                                        documentManager.getMutationOperationTypeName()
-                                                .flatMap(documentManager::getObject).stream()
-                                                .flatMap(objectTypeDefinitionContext -> getImportPath(objectTypeDefinitionContext.fieldsDefinition()))
-                                )
-                                .distinctBy(Import::getName)
-                                .toJavaList()
+                        documentManager.getDocument().getMutationOperationType().stream()
+                                .flatMap(objectType -> getFieldDefinitionsImports(objectType.getFields()))
+                                .filter(StreamUtil.distinctByKey(Import::getName))
+                                .collect(Collectors.toList())
                 )
                 .addImports(
-                        io.vavr.collection.List
-                                .ofAll(
-                                        documentManager.getMutationOperationTypeName()
-                                                .flatMap(documentManager::getObject).stream()
-                                                .flatMap(objectTypeDefinitionContext ->
-                                                        objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().stream()
-                                                                .flatMap(fieldDefinitionContext ->
-                                                                        Stream.ofNullable(fieldDefinitionContext.argumentsDefinition())
+                        documentManager.getDocument().getMutationOperationType().stream()
+                                .flatMap(objectType ->
+                                        objectType.getFields().stream()
+                                                .flatMap(fieldDefinition ->
+                                                        Stream.ofNullable(fieldDefinition.getArguments())
+                                                )
+                                )
+                                .flatMap(this::getInputValuesImports)
+                                .filter(StreamUtil.distinctByKey(Import::getName))
+                                .collect(Collectors.toList())
+                )
+                .addImports(
+                        Stream
+                                .concat(
+                                        documentManager.getDocument().getMutationOperationType().stream()
+                                                .flatMap(objectType -> getFieldDefinitionsScalarImports(objectType.getFields())),
+                                        documentManager.getDocument().getMutationOperationType().stream()
+                                                .flatMap(objectType ->
+                                                        objectType.getFields().stream()
+                                                                .flatMap(fieldDefinition ->
+                                                                        Stream.ofNullable(fieldDefinition.getArguments())
                                                                 )
                                                 )
-                                                .flatMap(this::getImportPath)
+                                                .flatMap(this::getInputValuesScalarImports)
                                 )
-                                .distinctBy(Import::getName)
-                                .toJavaList()
-                )
-                .addImports(
-                        io.vavr.collection.List
-                                .ofAll(
-                                        Stream.concat(
-                                                documentManager.getMutationOperationTypeName()
-                                                        .flatMap(documentManager::getObject).stream()
-                                                        .flatMap(objectTypeDefinitionContext -> getImportScalarTypePath(objectTypeDefinitionContext.fieldsDefinition())),
-                                                documentManager.getMutationOperationTypeName()
-                                                        .flatMap(documentManager::getObject).stream()
-                                                        .flatMap(objectTypeDefinitionContext ->
-                                                                objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().stream()
-                                                                        .flatMap(fieldDefinitionContext ->
-                                                                                Stream.ofNullable(fieldDefinitionContext.argumentsDefinition())
-                                                                        )
-                                                        )
-                                                        .flatMap(this::getImportScalarTypePath)
-                                        )
-                                )
-                                .distinctBy(Import::getName)
-                                .toJavaList()
+                                .filter(StreamUtil.distinctByKey(Import::getName))
+                                .collect(Collectors.toList())
                 )
                 .setOptions(
                         new Option().setName("java_multiple_files").setValue(true),
                         new Option().setName("java_package").setValue(packageConfig.getGrpcPackageName())
                 )
                 .setPkg(packageConfig.getGrpcPackageName())
-                .setTopLevelDefs(buildMutationRpcRequest().map(Message::toString).collect(Collectors.toList()))
+                .setTopLevelDefs(
+                        buildMutationRpcRequest()
+                                .map(Message::toString)
+                                .collect(Collectors.toList())
+                )
                 .toString()
         );
         protoFileMap.put("mutation_responses", new ProtoFile()
@@ -330,147 +328,142 @@ public class ProtobufFileBuilder {
                         new Import().setName(getPath("input_objects.proto"))
                 )
                 .addImports(
-                        io.vavr.collection.List
-                                .ofAll(
-                                        documentManager.getMutationOperationTypeName()
-                                                .flatMap(documentManager::getObject).stream()
-                                                .flatMap(objectTypeDefinitionContext -> getImportPath(objectTypeDefinitionContext.fieldsDefinition()))
-                                )
-                                .distinctBy(Import::getName)
-                                .toJavaList()
+                        documentManager.getDocument().getMutationOperationType().stream()
+                                .flatMap(objectType -> getFieldDefinitionsImports(objectType.getFields()))
+                                .filter(StreamUtil.distinctByKey(Import::getName))
+                                .collect(Collectors.toList())
                 )
                 .addImports(
-                        io.vavr.collection.List
-                                .ofAll(
-                                        documentManager.getMutationOperationTypeName()
-                                                .flatMap(documentManager::getObject).stream()
-                                                .flatMap(objectTypeDefinitionContext ->
-                                                        objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().stream()
-                                                                .flatMap(fieldDefinitionContext ->
-                                                                        Stream.ofNullable(fieldDefinitionContext.argumentsDefinition())
+                        documentManager.getDocument().getMutationOperationType().stream()
+                                .flatMap(objectType ->
+                                        objectType.getFields().stream()
+                                                .flatMap(fieldDefinition ->
+                                                        Stream.ofNullable(fieldDefinition.getArguments())
+                                                )
+                                )
+                                .flatMap(this::getInputValuesImports)
+                                .filter(StreamUtil.distinctByKey(Import::getName))
+                                .collect(Collectors.toList())
+                )
+                .addImports(
+                        Stream
+                                .concat(
+                                        documentManager.getDocument().getMutationOperationType().stream()
+                                                .flatMap(objectType -> getFieldDefinitionsScalarImports(objectType.getFields())),
+                                        documentManager.getDocument().getMutationOperationType().stream()
+                                                .flatMap(objectType ->
+                                                        objectType.getFields().stream()
+                                                                .flatMap(fieldDefinition ->
+                                                                        Stream.ofNullable(fieldDefinition.getArguments())
                                                                 )
                                                 )
-                                                .flatMap(this::getImportPath)
+                                                .flatMap(this::getInputValuesScalarImports)
                                 )
-                                .distinctBy(Import::getName)
-                                .toJavaList()
-                )
-                .addImports(
-                        io.vavr.collection.List
-                                .ofAll(
-                                        Stream.concat(
-                                                documentManager.getMutationOperationTypeName()
-                                                        .flatMap(documentManager::getObject).stream()
-                                                        .flatMap(objectTypeDefinitionContext -> getImportScalarTypePath(objectTypeDefinitionContext.fieldsDefinition())),
-                                                documentManager.getMutationOperationTypeName()
-                                                        .flatMap(documentManager::getObject).stream()
-                                                        .flatMap(objectTypeDefinitionContext ->
-                                                                objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().stream()
-                                                                        .flatMap(fieldDefinitionContext ->
-                                                                                Stream.ofNullable(fieldDefinitionContext.argumentsDefinition())
-                                                                        )
-                                                        )
-                                                        .flatMap(this::getImportScalarTypePath)
-                                        )
-                                )
-                                .distinctBy(Import::getName)
-                                .toJavaList()
+                                .filter(StreamUtil.distinctByKey(Import::getName))
+                                .collect(Collectors.toList())
                 )
                 .setOptions(
                         new Option().setName("java_multiple_files").setValue(true),
                         new Option().setName("java_package").setValue(packageConfig.getGrpcPackageName())
                 )
                 .setPkg(packageConfig.getGrpcPackageName())
-                .setTopLevelDefs(buildMutationRpcResponse().map(Message::toString).collect(Collectors.toList()))
+                .setTopLevelDefs(
+                        buildMutationRpcResponse()
+                                .map(Message::toString)
+                                .collect(Collectors.toList())
+                )
                 .toString()
         );
-        protoFileMap.put("query", new ProtoFile()
-                .setImports(
-                        new Import().setName(getPath("enums.proto")),
-                        new Import().setName(getPath("objects.proto")),
-                        new Import().setName(getPath("interfaces.proto")),
-                        new Import().setName(getPath("input_objects.proto")),
-                        new Import().setName(getPath("query_requests.proto")),
-                        new Import().setName(getPath("query_responses.proto"))
-                )
-                .setOptions(
-                        new Option().setName("java_multiple_files").setValue(true),
-                        new Option().setName("java_package").setValue(packageConfig.getGrpcPackageName())
-                )
-                .setPkg(packageConfig.getGrpcPackageName())
-                .setTopLevelDefs(buildQueryService().stream().map(Service::toString).collect(Collectors.toList()))
-                .toString()
+        protoFileMap.put("query",
+                new ProtoFile()
+                        .setImports(
+                                new Import().setName(getPath("enums.proto")),
+                                new Import().setName(getPath("objects.proto")),
+                                new Import().setName(getPath("interfaces.proto")),
+                                new Import().setName(getPath("input_objects.proto")),
+                                new Import().setName(getPath("query_requests.proto")),
+                                new Import().setName(getPath("query_responses.proto"))
+                        )
+                        .setOptions(
+                                new Option().setName("java_multiple_files").setValue(true),
+                                new Option().setName("java_package").setValue(packageConfig.getGrpcPackageName())
+                        )
+                        .setPkg(packageConfig.getGrpcPackageName())
+                        .setTopLevelDefs(buildQueryService().stream().map(Service::toString).collect(Collectors.toList()))
+                        .toString()
         );
-        protoFileMap.put("mutation", new ProtoFile()
-                .setImports(
-                        new Import().setName(getPath("enums.proto")),
-                        new Import().setName(getPath("objects.proto")),
-                        new Import().setName(getPath("interfaces.proto")),
-                        new Import().setName(getPath("input_objects.proto")),
-                        new Import().setName(getPath("mutation_requests.proto")),
-                        new Import().setName(getPath("mutation_responses.proto"))
-                )
-                .setOptions(
-                        new Option().setName("java_multiple_files").setValue(true),
-                        new Option().setName("java_package").setValue(packageConfig.getGrpcPackageName())
-                )
-                .setPkg(packageConfig.getGrpcPackageName())
-                .setTopLevelDefs(buildMutationService().stream().map(Service::toString).collect(Collectors.toList()))
-                .toString()
+        protoFileMap.put("mutation",
+                new ProtoFile()
+                        .setImports(
+                                new Import().setName(getPath("enums.proto")),
+                                new Import().setName(getPath("objects.proto")),
+                                new Import().setName(getPath("interfaces.proto")),
+                                new Import().setName(getPath("input_objects.proto")),
+                                new Import().setName(getPath("mutation_requests.proto")),
+                                new Import().setName(getPath("mutation_responses.proto"))
+                        )
+                        .setOptions(
+                                new Option().setName("java_multiple_files").setValue(true),
+                                new Option().setName("java_package").setValue(packageConfig.getGrpcPackageName())
+                        )
+                        .setPkg(packageConfig.getGrpcPackageName())
+                        .setTopLevelDefs(buildMutationService().stream().map(Service::toString).collect(Collectors.toList()))
+                        .toString()
         );
-        protoFileMap.put("graphql", new ProtoFile()
-                .setOptions(
-                        new Option().setName("java_multiple_files").setValue(true),
-                        new Option().setName("java_package").setValue(packageConfig.getGrpcPackageName())
-                )
-                .setPkg(packageConfig.getGrpcPackageName())
-                .addTopLevelDef(buildGraphQLService().toString())
-                .addTopLevelDef(buildGraphQLRpcRequest().toString())
-                .addTopLevelDef(buildGraphQLRpcResponse().toString())
-                .toString()
+        protoFileMap.put("graphql",
+                new ProtoFile()
+                        .setOptions(
+                                new Option().setName("java_multiple_files").setValue(true),
+                                new Option().setName("java_package").setValue(packageConfig.getGrpcPackageName())
+                        )
+                        .setPkg(packageConfig.getGrpcPackageName())
+                        .addTopLevelDef(buildGraphQLService().toString())
+                        .addTopLevelDef(buildGraphQLRpcRequest().toString())
+                        .addTopLevelDef(buildGraphQLRpcResponse().toString())
+                        .toString()
         );
         return protoFileMap;
     }
 
     public Optional<Service> buildQueryService() {
-        return documentManager.getQueryOperationTypeName()
-                .flatMap(documentManager::getObject)
-                .map(objectTypeDefinitionContext ->
-                        new Service().setName(objectTypeDefinitionContext.name().getText() + "Service")
+        return documentManager.getDocument().getQueryOperationType()
+                .map(objectType ->
+                        new Service()
+                                .setName(objectType.getName() + "Service")
                                 .setRpcs(
-                                        objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().stream()
+                                        objectType.getFields().stream()
                                                 .filter(packageManager::isOwnPackage)
-                                                .map(fieldDefinitionContext ->
+                                                .map(fieldDefinition ->
                                                         new Rpc()
-                                                                .setName(getServiceRpcName(fieldDefinitionContext.name().getText()))
-                                                                .setMessageType("Query" + getServiceRpcName(fieldDefinitionContext.name().getText()) + "Request")
-                                                                .setReturnType("Query" + getServiceRpcName(fieldDefinitionContext.name().getText()) + "Response")
-                                                                .setDescription(Optional.ofNullable(fieldDefinitionContext.description()).map(descriptionContext -> DOCUMENT_UTIL.getStringValue(descriptionContext.StringValue())).orElse(null))
+                                                                .setName(getGrpcServiceRpcName(fieldDefinition.getName()))
+                                                                .setMessageType(TYPE_QUERY_NAME + getGrpcServiceRpcName(fieldDefinition.getName()) + "Request")
+                                                                .setReturnType(TYPE_QUERY_NAME + getGrpcServiceRpcName(fieldDefinition.getName()) + "Response")
+                                                                .setDescription(fieldDefinition.getDescription())
                                                 )
                                                 .collect(Collectors.toList())
                                 )
-                                .setDescription(Optional.ofNullable(objectTypeDefinitionContext.description()).map(descriptionContext -> DOCUMENT_UTIL.getStringValue(descriptionContext.StringValue())).orElse(null))
+                                .setDescription(objectType.getDescription())
                 );
     }
 
     public Optional<Service> buildMutationService() {
-        return documentManager.getMutationOperationTypeName()
-                .flatMap(documentManager::getObject)
-                .map(objectTypeDefinitionContext ->
-                        new Service().setName(objectTypeDefinitionContext.name().getText() + "Service")
+        return documentManager.getDocument().getMutationOperationType()
+                .map(objectType ->
+                        new Service()
+                                .setName(objectType.getName() + "Service")
                                 .setRpcs(
-                                        objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().stream()
+                                        objectType.getFields().stream()
                                                 .filter(packageManager::isOwnPackage)
-                                                .map(fieldDefinitionContext ->
+                                                .map(fieldDefinition ->
                                                         new Rpc()
-                                                                .setName(getServiceRpcName(fieldDefinitionContext.name().getText()))
-                                                                .setMessageType("Mutation" + getServiceRpcName(fieldDefinitionContext.name().getText()) + "Request")
-                                                                .setReturnType("Mutation" + getServiceRpcName(fieldDefinitionContext.name().getText()) + "Response")
-                                                                .setDescription(Optional.ofNullable(fieldDefinitionContext.description()).map(descriptionContext -> DOCUMENT_UTIL.getStringValue(descriptionContext.StringValue())).orElse(null))
+                                                                .setName(getGrpcServiceRpcName(fieldDefinition.getName()))
+                                                                .setMessageType(TYPE_MUTATION_NAME + getGrpcServiceRpcName(fieldDefinition.getName()) + "Request")
+                                                                .setReturnType(TYPE_MUTATION_NAME + getGrpcServiceRpcName(fieldDefinition.getName()) + "Response")
+                                                                .setDescription(fieldDefinition.getDescription())
                                                 )
                                                 .collect(Collectors.toList())
                                 )
-                                .setDescription(Optional.ofNullable(objectTypeDefinitionContext.description()).map(descriptionContext -> DOCUMENT_UTIL.getStringValue(descriptionContext.StringValue())).orElse(null))
+                                .setDescription(objectType.getDescription())
                 );
     }
 
@@ -485,99 +478,114 @@ public class ProtobufFileBuilder {
     }
 
     public Stream<Message> buildQueryRpcRequest() {
-        return documentManager.getQueryOperationTypeName()
-                .flatMap(documentManager::getObject).stream()
-                .flatMap(objectTypeDefinitionContext -> objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().stream())
+        return documentManager.getDocument().getQueryOperationTypeOrError().getFields().stream()
                 .filter(packageManager::isOwnPackage)
-                .map(fieldDefinitionContext ->
+                .map(fieldDefinition ->
                         new Message()
-                                .setName("Query" + getServiceRpcName(fieldDefinitionContext.name().getText()) + "Request")
+                                .setName(TYPE_QUERY_NAME + getGrpcServiceRpcName(fieldDefinition.getName()) + "Request")
                                 .setFields(
-                                        Stream.concat(
-                                                Stream.of(new Field().setName("selection_set").setOptional(true).setType("string").setNumber(1), new Field().setName("arguments").setOptional(true).setType("string").setNumber(2)),
-                                                Stream.ofNullable(fieldDefinitionContext.argumentsDefinition())
-                                                        .flatMap(argumentsDefinitionContext ->
-                                                                IntStream.range(0, argumentsDefinitionContext.inputValueDefinition().size())
-                                                                        .mapToObj(index ->
-                                                                                new Field()
-                                                                                        .setName(getMessageFiledName(argumentsDefinitionContext.inputValueDefinition().get(index).name().getText()))
-                                                                                        .setType(buildType(argumentsDefinitionContext.inputValueDefinition().get(index).type()))
-                                                                                        .setOptional(argumentsDefinitionContext.inputValueDefinition().get(index).type().nonNullType() == null)
-                                                                                        .setRepeated(documentManager.fieldTypeIsList(argumentsDefinitionContext.inputValueDefinition().get(index).type()))
-                                                                                        .setNumber(index + 3)
-                                                                                        .setDescription(Optional.ofNullable(argumentsDefinitionContext.inputValueDefinition().get(index).description()).map(descriptionContext -> DOCUMENT_UTIL.getStringValue(descriptionContext.StringValue())).orElse(null))
-                                                                        )
-                                                        )
-                                        ).collect(Collectors.toList())
+                                        Stream
+                                                .concat(
+                                                        Stream.of(
+                                                                new Field()
+                                                                        .setName("selection_set")
+                                                                        .setOptional(true)
+                                                                        .setType("string")
+                                                                        .setNumber(1),
+                                                                new Field()
+                                                                        .setName("arguments")
+                                                                        .setOptional(true)
+                                                                        .setType("string")
+                                                                        .setNumber(2)
+                                                        ),
+                                                        Stream.ofNullable(fieldDefinition.getArguments())
+                                                                .flatMap(inputValues ->
+                                                                        IntStream.range(0, inputValues.size())
+                                                                                .mapToObj(index ->
+                                                                                        new Field()
+                                                                                                .setName(getGrpcMessageFiledName(fieldDefinition.getArgument(index).getName()))
+                                                                                                .setType(buildType(fieldDefinition.getArgument(index).getType()))
+                                                                                                .setOptional(fieldDefinition.getArgument(index).getType().isNonNull())
+                                                                                                .setRepeated(fieldDefinition.getArgument(index).getType().hasList())
+                                                                                                .setNumber(index + 3)
+                                                                                                .setDescription(fieldDefinition.getArgument(index).getDescription())
+                                                                                )
+                                                                )
+                                                )
+                                                .collect(Collectors.toList())
                                 )
                 );
     }
 
     public Stream<Message> buildQueryRpcResponse() {
-        return documentManager.getQueryOperationTypeName()
-                .flatMap(documentManager::getObject).stream()
-                .flatMap(objectTypeDefinitionContext -> objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().stream())
+        return documentManager.getDocument().getQueryOperationTypeOrError().getFields().stream()
                 .filter(packageManager::isOwnPackage)
-                .map(fieldDefinitionContext ->
+                .map(fieldDefinition ->
                         new Message()
-                                .setName("Query" + getServiceRpcName(fieldDefinitionContext.name().getText()) + "Response")
+                                .setName(TYPE_QUERY_NAME + getGrpcServiceRpcName(fieldDefinition.getName()) + "Response")
                                 .addField(
                                         new Field()
-                                                .setName(getMessageFiledName(fieldDefinitionContext.name().getText()))
-                                                .setType(buildType(fieldDefinitionContext.type()))
-                                                .setOptional(fieldDefinitionContext.type().nonNullType() == null)
-                                                .setRepeated(documentManager.fieldTypeIsList(fieldDefinitionContext.type()))
+                                                .setName(getGrpcMessageFiledName(fieldDefinition.getName()))
+                                                .setType(buildType(fieldDefinition.getType()))
+                                                .setOptional(fieldDefinition.getType().isNonNull())
+                                                .setRepeated(fieldDefinition.getType().hasList())
                                                 .setNumber(1)
-
                                 )
                 );
     }
 
     public Stream<Message> buildMutationRpcRequest() {
-        return documentManager.getMutationOperationTypeName()
-                .flatMap(documentManager::getObject).stream()
-                .flatMap(objectTypeDefinitionContext -> objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().stream())
+        return documentManager.getDocument().getMutationOperationTypeOrError().getFields().stream()
                 .filter(packageManager::isOwnPackage)
-                .map(fieldDefinitionContext ->
+                .map(fieldDefinition ->
                         new Message()
-                                .setName("Mutation" + getServiceRpcName(fieldDefinitionContext.name().getText()) + "Request")
+                                .setName(TYPE_MUTATION_NAME + getGrpcServiceRpcName(fieldDefinition.getName()) + "Request")
                                 .setFields(
-                                        Stream.concat(
-                                                Stream.of(
-                                                        new Field().setName("selection_set").setOptional(true).setType("string").setNumber(1), new Field().setName("arguments").setOptional(true).setType("string").setNumber(2)
-                                                ),
-                                                Stream.ofNullable(fieldDefinitionContext.argumentsDefinition())
-                                                        .flatMap(argumentsDefinitionContext ->
-                                                                IntStream.range(0, argumentsDefinitionContext.inputValueDefinition().size())
-                                                                        .mapToObj(index ->
-                                                                                new Field()
-                                                                                        .setName(getMessageFiledName(argumentsDefinitionContext.inputValueDefinition().get(index).name().getText()))
-                                                                                        .setType(buildType(argumentsDefinitionContext.inputValueDefinition().get(index).type()))
-                                                                                        .setOptional(argumentsDefinitionContext.inputValueDefinition().get(index).type().nonNullType() == null)
-                                                                                        .setRepeated(documentManager.fieldTypeIsList(argumentsDefinitionContext.inputValueDefinition().get(index).type()))
-                                                                                        .setNumber(index + 3)
-                                                                                        .setDescription(Optional.ofNullable(argumentsDefinitionContext.inputValueDefinition().get(index).description()).map(descriptionContext -> DOCUMENT_UTIL.getStringValue(descriptionContext.StringValue())).orElse(null))
-                                                                        )
-                                                        )
-                                        ).collect(Collectors.toList())
+                                        Stream
+                                                .concat(
+                                                        Stream.of(
+                                                                new Field()
+                                                                        .setName("selection_set")
+                                                                        .setOptional(true)
+                                                                        .setType("string")
+                                                                        .setNumber(1),
+                                                                new Field()
+                                                                        .setName("arguments")
+                                                                        .setOptional(true)
+                                                                        .setType("string")
+                                                                        .setNumber(2)
+                                                        ),
+                                                        Stream.ofNullable(fieldDefinition.getArguments())
+                                                                .flatMap(inputValues ->
+                                                                        IntStream.range(0, inputValues.size())
+                                                                                .mapToObj(index ->
+                                                                                        new Field()
+                                                                                                .setName(getGrpcMessageFiledName(fieldDefinition.getArgument(index).getName()))
+                                                                                                .setType(buildType(fieldDefinition.getArgument(index).getType()))
+                                                                                                .setOptional(fieldDefinition.getArgument(index).getType().isNonNull())
+                                                                                                .setRepeated(fieldDefinition.getArgument(index).getType().hasList())
+                                                                                                .setNumber(index + 3)
+                                                                                                .setDescription(fieldDefinition.getArgument(index).getDescription())
+                                                                                )
+                                                                )
+                                                )
+                                                .collect(Collectors.toList())
                                 )
                 );
     }
 
     public Stream<Message> buildMutationRpcResponse() {
-        return documentManager.getMutationOperationTypeName()
-                .flatMap(documentManager::getObject).stream()
-                .flatMap(objectTypeDefinitionContext -> objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().stream())
+        return documentManager.getDocument().getMutationOperationTypeOrError().getFields().stream()
                 .filter(packageManager::isOwnPackage)
-                .map(fieldDefinitionContext ->
+                .map(fieldDefinition ->
                         new Message()
-                                .setName("Mutation" + getServiceRpcName(fieldDefinitionContext.name().getText()) + "Response")
+                                .setName(TYPE_MUTATION_NAME + getGrpcServiceRpcName(fieldDefinition.getName()) + "Response")
                                 .addField(
                                         new Field()
-                                                .setName(getMessageFiledName(fieldDefinitionContext.name().getText()))
-                                                .setType(buildType(fieldDefinitionContext.type()))
-                                                .setOptional(fieldDefinitionContext.type().nonNullType() == null)
-                                                .setRepeated(documentManager.fieldTypeIsList(fieldDefinitionContext.type()))
+                                                .setName(getGrpcMessageFiledName(fieldDefinition.getName()))
+                                                .setType(buildType(fieldDefinition.getType()))
+                                                .setOptional(fieldDefinition.getType().isNonNull())
+                                                .setRepeated(fieldDefinition.getType().hasList())
                                                 .setNumber(1)
                                 )
                 );
@@ -603,72 +611,70 @@ public class ProtobufFileBuilder {
                         IntStream.range(0, enumType.getEnumValues().size())
                                 .mapToObj(index ->
                                         new EnumField()
-                                                .setName(
-                                                        enumType.getEnumValue(index) + "_" + getEnumFieldName(enumTypeDefinitionContext.name().getText())
-                                                )
-                                                .setDescription(Optional.ofNullable(enumTypeDefinitionContext.enumValueDefinitions().enumValueDefinition().get(index).description()).map(descriptionContext -> DOCUMENT_UTIL.getStringValue(descriptionContext.StringValue())).orElse(null))
+                                                .setName(enumType.getEnumValue(index) + "_" + getGrpcEnumFieldName(enumType.getName()))
+                                                .setDescription(enumType.getEnumValue(index).getDescription())
                                                 .setNumber(index)
                                 )
                                 .collect(Collectors.toList())
                 )
-                .setDescription(Optional.ofNullable(enumTypeDefinitionContext.description()).map(descriptionContext -> DOCUMENT_UTIL.getStringValue(descriptionContext.StringValue())).orElse(null));
+                .setDescription(enumType.getDescription());
     }
 
-    public Message buildMessage(GraphqlParser.ObjectTypeDefinitionContext objectTypeDefinitionContext) {
+    public Message buildMessage(ObjectType objectType) {
         return new Message()
-                .setName(getName(objectTypeDefinitionContext.name().getText()))
+                .setName(getGrpcName(objectType.getName()))
                 .setFields(
-                        IntStream.range(0, objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().size())
+                        IntStream.range(0, objectType.getFields().size())
                                 .mapToObj(index ->
                                         new Field()
-                                                .setName(getMessageFiledName(objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().get(index).name().getText()))
-                                                .setType(buildType(objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().get(index).type()))
-                                                .setOptional(objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().get(index).type().nonNullType() == null)
-                                                .setRepeated(documentManager.fieldTypeIsList(objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().get(index).type()))
-                                                .setDescription(Optional.ofNullable(objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().get(index).description()).map(descriptionContext -> DOCUMENT_UTIL.getStringValue(descriptionContext.StringValue())).orElse(null))
+                                                .setName(getGrpcMessageFiledName(objectType.getField(index).getName()))
+                                                .setType(buildType(objectType.getField(index).getType()))
+                                                .setOptional(objectType.getField(index).getType().isNonNull())
+                                                .setRepeated(objectType.getField(index).getType().hasList())
+                                                .setDescription(objectType.getField(index).getDescription())
                                                 .setNumber(index + 1)
                                 )
                                 .collect(Collectors.toList())
                 )
-                .setDescription(Optional.ofNullable(objectTypeDefinitionContext.description()).map(descriptionContext -> DOCUMENT_UTIL.getStringValue(descriptionContext.StringValue())).orElse(null));
+                .setDescription(objectType.getDescription());
     }
 
-    public Message buildMessage(GraphqlParser.InterfaceTypeDefinitionContext interfaceTypeDefinitionContext) {
+    public Message buildMessage(InterfaceType interfaceType) {
         return new Message()
-                .setName(getName(interfaceTypeDefinitionContext.name().getText()))
+                .setName(getGrpcName(interfaceType.getName()))
                 .setFields(
-                        IntStream.range(0, interfaceTypeDefinitionContext.fieldsDefinition().fieldDefinition().size())
+                        IntStream.range(0, interfaceType.getFields().size())
                                 .mapToObj(index ->
                                         new Field()
-                                                .setName(getMessageFiledName(interfaceTypeDefinitionContext.fieldsDefinition().fieldDefinition().get(index).name().getText()))
-                                                .setType(buildType(interfaceTypeDefinitionContext.fieldsDefinition().fieldDefinition().get(index).type()))
-                                                .setOptional(interfaceTypeDefinitionContext.fieldsDefinition().fieldDefinition().get(index).type().nonNullType() == null)
-                                                .setRepeated(documentManager.fieldTypeIsList(interfaceTypeDefinitionContext.fieldsDefinition().fieldDefinition().get(index).type()))
-                                                .setDescription(Optional.ofNullable(interfaceTypeDefinitionContext.fieldsDefinition().fieldDefinition().get(index).description()).map(descriptionContext -> DOCUMENT_UTIL.getStringValue(descriptionContext.StringValue())).orElse(null))
+                                                .setName(getGrpcMessageFiledName(interfaceType.getField(index).getName()))
+                                                .setType(buildType(interfaceType.getField(index).getType()))
+                                                .setOptional(interfaceType.getField(index).getType().isNonNull())
+                                                .setRepeated(interfaceType.getField(index).getType().hasList())
+                                                .setDescription(interfaceType.getField(index).getDescription())
                                                 .setNumber(index + 1)
                                 )
                                 .collect(Collectors.toList())
                 )
-                .setDescription(Optional.ofNullable(interfaceTypeDefinitionContext.description()).map(descriptionContext -> DOCUMENT_UTIL.getStringValue(descriptionContext.StringValue())).orElse(null));
+                .setDescription(interfaceType.getDescription());
     }
 
-    public Message buildMessage(GraphqlParser.InputObjectTypeDefinitionContext inputObjectTypeDefinitionContext) {
+    public Message buildMessage(InputObjectType inputObjectType) {
         return new Message()
-                .setName(getName(inputObjectTypeDefinitionContext.name().getText()))
+                .setName(getGrpcName(inputObjectType.getName()))
                 .setFields(
-                        IntStream.range(0, inputObjectTypeDefinitionContext.inputObjectValueDefinitions().inputValueDefinition().size())
+                        IntStream.range(0, inputObjectType.getInputValues().size())
                                 .mapToObj(index ->
                                         new Field()
-                                                .setName(getMessageFiledName(inputObjectTypeDefinitionContext.inputObjectValueDefinitions().inputValueDefinition().get(index).name().getText()))
-                                                .setType(buildType(inputObjectTypeDefinitionContext.inputObjectValueDefinitions().inputValueDefinition().get(index).type()))
-                                                .setOptional(inputObjectTypeDefinitionContext.inputObjectValueDefinitions().inputValueDefinition().get(index).type().nonNullType() == null)
-                                                .setRepeated(documentManager.fieldTypeIsList(inputObjectTypeDefinitionContext.inputObjectValueDefinitions().inputValueDefinition().get(index).type()))
-                                                .setDescription(Optional.ofNullable(inputObjectTypeDefinitionContext.inputObjectValueDefinitions().inputValueDefinition().get(index).description()).map(descriptionContext -> DOCUMENT_UTIL.getStringValue(descriptionContext.StringValue())).orElse(null))
+                                                .setName(getGrpcMessageFiledName(inputObjectType.getInputValue(index).getName()))
+                                                .setType(buildType(inputObjectType.getInputValue(index).getType()))
+                                                .setOptional(inputObjectType.getInputValue(index).getType().isNonNull())
+                                                .setRepeated(inputObjectType.getInputValue(index).getType().hasList())
+                                                .setDescription(inputObjectType.getInputValue(index).getDescription())
                                                 .setNumber(index + 1)
                                 )
                                 .collect(Collectors.toList())
                 )
-                .setDescription(Optional.ofNullable(inputObjectTypeDefinitionContext.description()).map(descriptionContext -> DOCUMENT_UTIL.getStringValue(descriptionContext.StringValue())).orElse(null));
+                .setDescription(inputObjectType.getDescription());
     }
 
     public String buildType(Type type) {
@@ -696,30 +702,14 @@ public class ProtobufFileBuilder {
                 case SCALA_BIG_DECIMAL_NAME:
                     return "google.type.Decimal";
                 default:
-                    throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(fieldTypeName));
+                    throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(definition.getName()));
             }
-        } else if (definition.isEnum()) {
-            return documentManager.getEnum(fieldTypeName)
-                    .filter(packageManager::isNotOwnPackage)
-                    .flatMap(enumTypeDefinitionContext -> documentManager.getGrpcPackageName(enumTypeDefinitionContext).map(packageName -> packageName + "." + getName(fieldTypeName)))
-                    .orElseGet(() -> getName(fieldTypeName));
-        } else if (definition.isObject()) {
-            return documentManager.getObject(fieldTypeName)
-                    .filter(packageManager::isNotOwnPackage)
-                    .flatMap(objectTypeDefinitionContext -> documentManager.getGrpcPackageName(objectTypeDefinitionContext).map(packageName -> packageName + "." + getName(fieldTypeName)))
-                    .orElseGet(() -> getName(fieldTypeName));
-        } else if (definition.isInterface()) {
-            return documentManager.getInterface(fieldTypeName)
-                    .filter(packageManager::isNotOwnPackage)
-                    .flatMap(interfaceTypeDefinitionContext -> documentManager.getGrpcPackageName(interfaceTypeDefinitionContext).map(packageName -> packageName + "." + getName(fieldTypeName)))
-                    .orElseGet(() -> getName(fieldTypeName));
-        } else if (definition.isInputObject()) {
-            return documentManager.getInputObject(fieldTypeName)
-                    .filter(packageManager::isNotOwnPackage)
-                    .flatMap(inputObjectTypeDefinitionContext -> documentManager.getGrpcPackageName(inputObjectTypeDefinitionContext).map(packageName -> packageName + "." + getName(fieldTypeName)))
-                    .orElseGet(() -> getName(fieldTypeName));
         } else {
-            throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(fieldTypeName));
+            if (packageManager.isOwnPackage(definition)) {
+                return getGrpcName(definition.getName());
+            } else {
+                return definition.getGrpcNameOrError();
+            }
         }
     }
 
@@ -731,7 +721,7 @@ public class ProtobufFileBuilder {
         return packageName.replaceAll("\\.", "/") + "/" + protoName;
     }
 
-    private Stream<Import> getImports(Collection<FieldDefinition> fieldDefinitions) {
+    private Stream<Import> getFieldDefinitionsImports(Collection<FieldDefinition> fieldDefinitions) {
         return Streams
                 .concat(
                         fieldDefinitions.stream()
@@ -764,10 +754,10 @@ public class ProtobufFileBuilder {
                 );
     }
 
-    private Stream<Import> getImports(InputObjectType inputObjectType) {
+    private Stream<Import> getInputValuesImports(Collection<InputValue> inputValues) {
         return Streams
                 .concat(
-                        inputObjectType.getInputValues().stream()
+                        inputValues.stream()
                                 .filter(packageManager::isOwnPackage)
                                 .map(documentManager::getInputValueTypeDefinition)
                                 .filter(packageManager::isNotOwnPackage)
@@ -776,7 +766,7 @@ public class ProtobufFileBuilder {
                                 .flatMap(Optional::stream)
                                 .map(packageName -> getPath(packageName, "enums.proto"))
                                 .map(path -> new Import().setName(path)),
-                        inputObjectType.getInputValues().stream()
+                        inputValues.stream()
                                 .filter(packageManager::isOwnPackage)
                                 .map(documentManager::getInputValueTypeDefinition)
                                 .filter(packageManager::isNotOwnPackage)
@@ -788,7 +778,7 @@ public class ProtobufFileBuilder {
                 );
     }
 
-    private Stream<Import> getScalarImports(Collection<FieldDefinition> fieldDefinitions) {
+    private Stream<Import> getFieldDefinitionsScalarImports(Collection<FieldDefinition> fieldDefinitions) {
         return Streams
                 .concat(
                         fieldDefinitions.stream()
@@ -824,30 +814,30 @@ public class ProtobufFileBuilder {
                 );
     }
 
-    private Stream<Import> getScalarImports(InputObjectType inputObjectType) {
+    private Stream<Import> getInputValuesScalarImports(Collection<InputValue> inputValues) {
         return Streams
                 .concat(
-                        inputObjectType.getInputValues().stream()
+                        inputValues.stream()
                                 .map(documentManager::getInputValueTypeDefinition)
                                 .filter(Definition::isScalar)
                                 .filter(definition -> definition.getName().equals(SCALA_DATE_NAME))
                                 .map(path -> new Import().setName("google/type/date.proto")),
-                        inputObjectType.getInputValues().stream()
+                        inputValues.stream()
                                 .map(documentManager::getInputValueTypeDefinition)
                                 .filter(Definition::isScalar)
                                 .filter(definition -> definition.getName().equals(SCALA_TIME_NAME))
                                 .map(path -> new Import().setName("google/type/timeofday.proto")),
-                        inputObjectType.getInputValues().stream()
+                        inputValues.stream()
                                 .map(documentManager::getInputValueTypeDefinition)
                                 .filter(Definition::isScalar)
                                 .filter(definition -> definition.getName().equals(SCALA_DATE_TIME_NAME))
                                 .map(path -> new Import().setName("google/type/datetime.proto")),
-                        inputObjectType.getInputValues().stream()
+                        inputValues.stream()
                                 .map(documentManager::getInputValueTypeDefinition)
                                 .filter(Definition::isScalar)
                                 .filter(definition -> definition.getName().equals(SCALA_TIMESTAMP_NAME))
                                 .map(path -> new Import().setName("google/protobuf/timestamp.proto")),
-                        inputObjectType.getInputValues().stream()
+                        inputValues.stream()
                                 .map(documentManager::getInputValueTypeDefinition)
                                 .filter(Definition::isScalar)
                                 .filter(definition -> definition.getName().equals(SCALA_BIG_INTEGER_NAME) || definition.getName().equals(SCALA_BIG_DECIMAL_NAME))
