@@ -254,13 +254,6 @@ public class Field extends AbstractDefinition implements Selection {
         return this;
     }
 
-    public Field addSelections(JsonValue selectionSet) {
-        if (!selectionSet.getValueType().equals(JsonValue.ValueType.NULL)) {
-            addSelections(selectionSet.toString());
-        }
-        return this;
-    }
-
     public Field addSelections(String selectionSet) {
         if (selectionSet != null) {
             addSelections(

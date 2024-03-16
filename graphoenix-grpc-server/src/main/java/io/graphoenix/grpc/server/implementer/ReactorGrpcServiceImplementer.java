@@ -7,6 +7,7 @@ import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.grpc.server.utils.ProtobufUtil;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.AbstractDefinition;
+import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
@@ -14,7 +15,6 @@ import io.graphoenix.spi.handler.OperationHandler;
 import io.nozdormu.spi.context.BeanContext;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
 import org.tinylog.Logger;
 import reactor.core.publisher.Mono;
@@ -170,6 +170,7 @@ public class ReactorGrpcServiceImplementer {
         String grpcHandlerMethodName = getGrpcFieldName(fieldDefinition.getName());
         String grpcRequestClassName = operationTypeName + getGrpcServiceRpcName(fieldDefinition.getName()) + "Request";
         String grpcResponseClassName = operationTypeName + getGrpcServiceRpcName(fieldDefinition.getName()) + "Response";
+        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
 
         String operationType;
         switch (operationTypeName) {
@@ -200,12 +201,27 @@ public class ReactorGrpcServiceImplementer {
                                 .add(".map(json -> jsonProvider.createReader(new $T(json)).readObject())\n",
                                         ClassName.get(StringReader.class)
                                 )
-                                .add(".map(jsonObject -> new $T().setOperationType($S).addSelection(new $T($S).addSelections(jsonObject.getOrDefault(\"selectionSet\", $T.NULL)).setArguments(jsonObject)))\n",
-                                        ClassName.get(Operation.class),
-                                        operationType,
-                                        ClassName.get(Field.class),
-                                        fieldDefinition.getName(),
-                                        ClassName.get(JsonValue.class)
+                                .add(
+                                        fieldTypeDefinition.isObject() ?
+                                                CodeBlock.of(
+                                                        ".map(jsonObject -> new $T().setOperationType($S).addSelection(new $T($S).addSelections(jsonObject.getOrDefault(\"selectionSet\", jsonProvider.createValue($S)).toString()).setArguments(jsonObject)))\n",
+                                                        ClassName.get(Operation.class),
+                                                        operationType,
+                                                        ClassName.get(Field.class),
+                                                        fieldDefinition.getName(),
+                                                        fieldTypeDefinition.asObject().getFields().stream()
+                                                                .filter(subFieldDefinition -> !subFieldDefinition.isFunctionField())
+                                                                .filter(subFieldDefinition -> documentManager.getFieldTypeDefinition(subFieldDefinition).isLeaf())
+                                                                .map(AbstractDefinition::getName)
+                                                                .collect(Collectors.joining(" ", "{", "}"))
+                                                ) :
+                                                CodeBlock.of(
+                                                        ".map(jsonObject -> new $T().setOperationType($S).addSelection(new $T($S).setArguments(jsonObject)))\n",
+                                                        ClassName.get(Operation.class),
+                                                        operationType,
+                                                        ClassName.get(Field.class),
+                                                        fieldDefinition.getName()
+                                                )
                                 )
                                 .add(".flatMap(operation -> $T.from(operationHandler.handle(operation)))\n",
                                         ClassName.get(Mono.class)
