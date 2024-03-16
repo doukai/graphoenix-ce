@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.graphoenix.showcase.user.grpc";
+
+package io.graphoenix.showcase.user;
+
+import "io/graphoenix/showcase/user/enums.proto";
+import "io/graphoenix/showcase/user/objects.proto";
+import "io/graphoenix/showcase/user/interfaces.proto";
+import "io/graphoenix/showcase/user/input_objects.proto";
+import "google/protobuf/timestamp.proto";
+
+message MutationUserResponse {
+    User user = 1;
+}
+message MutationUserListResponse {
+    repeated User user_list = 1;
+}
+message MutationUserProfileResponse {
+    UserProfile user_profile = 1;
+}
+message MutationUserProfileListResponse {
+    repeated UserProfile user_profile_list = 1;
+}
+message MutationRoleResponse {
+    Role role = 1;
+}
+message MutationRoleListResponse {
+    repeated Role role_list = 1;
+}
+message MutationOrganizationResponse {
+    Organization organization = 1;
+}
+message MutationOrganizationListResponse {
+    repeated Organization organization_list = 1;
+}
+message MutationOrganizationUserRelationResponse {
+    OrganizationUserRelation organization_user_relation = 1;
+}
+message MutationOrganizationUserRelationListResponse {
+    repeated OrganizationUserRelation organization_user_relation_list = 1;
+}
+message MutationRoleUserRelationResponse {
+    RoleUserRelation role_user_relation = 1;
+}
+message MutationRoleUserRelationListResponse {
+    repeated RoleUserRelation role_user_relation_list = 1;
+}
+message MutationUserMobileNumbersRelationResponse {
+    UserMobileNumbersRelation user_mobile_numbers_relation = 1;
+}
+message MutationUserMobileNumbersRelationListResponse {
+    repeated UserMobileNumbersRelation user_mobile_numbers_relation_list = 1;
+}
+message MutationUserUserProfileRelationResponse {
+    UserUserProfileRelation user_user_profile_relation = 1;
+}
+message MutationUserUserProfileRelationListResponse {
+    repeated UserUserProfileRelation user_user_profile_relation_list = 1;
+}
+message MutationRoleRoleTypeRelationResponse {
+    RoleRoleTypeRelation role_role_type_relation = 1;
+}
+message MutationRoleRoleTypeRelationListResponse {
+    repeated RoleRoleTypeRelation role_role_type_relation_list = 1;
+}

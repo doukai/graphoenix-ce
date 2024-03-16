@@ -18,9 +18,6 @@ public class PackageConfig {
     private String packageLoadBalance = LOAD_BALANCE_RANDOM;
 
     @Optional
-    private Set<String> seedMembers;
-
-    @Optional
     private Map<String, Object> members;
 
     @Optional
@@ -98,14 +95,6 @@ public class PackageConfig {
 
     public Set<String> getLocalPackageNames() {
         return localPackageNames;
-    }
-
-    public Set<String> getSeedMembers() {
-        return seedMembers;
-    }
-
-    public void setSeedMembers(Set<String> seedMembers) {
-        this.seedMembers = seedMembers;
     }
 
     public Map<String, Object> getMembers() {

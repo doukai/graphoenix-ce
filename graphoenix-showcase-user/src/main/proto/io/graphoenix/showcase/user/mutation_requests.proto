@@ -1,0 +1,384 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.graphoenix.showcase.user.grpc";
+
+package io.graphoenix.showcase.user;
+
+import "io/graphoenix/showcase/user/enums.proto";
+import "io/graphoenix/showcase/user/objects.proto";
+import "io/graphoenix/showcase/user/interfaces.proto";
+import "io/graphoenix/showcase/user/input_objects.proto";
+import "google/protobuf/timestamp.proto";
+
+message MutationUserRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string login = 4;
+    string password = 5;
+    string name = 6;
+    int32 age = 7;
+    bool disabled = 8;
+    Sex sex = 9;
+    UserProfileInput user_profile = 10;
+    OrganizationInput organization = 11;
+    repeated RoleInput roles = 12;
+    repeated string mobile_numbers = 13;
+    bool is_deprecated = 14;
+    int32 version = 15;
+    int32 realm_id = 16;
+    string create_user_id = 17;
+    google.protobuf.Timestamp create_time = 18;
+    string update_user_id = 19;
+    google.protobuf.Timestamp update_time = 20;
+    string create_group_id = 21;
+    string intro_typename = 22;
+    repeated OrganizationUserRelationInput organization_user_relation = 23;
+    repeated RoleUserRelationInput role_user_relation = 24;
+    repeated UserMobileNumbersRelationInput user_mobile_numbers_relation = 25;
+    UserExpression where = 26;
+}
+message MutationUserListRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string login = 4;
+    string password = 5;
+    string name = 6;
+    int32 age = 7;
+    bool disabled = 8;
+    Sex sex = 9;
+    UserProfileInput user_profile = 10;
+    OrganizationInput organization = 11;
+    repeated RoleInput roles = 12;
+    repeated string mobile_numbers = 13;
+    bool is_deprecated = 14;
+    int32 version = 15;
+    int32 realm_id = 16;
+    string create_user_id = 17;
+    google.protobuf.Timestamp create_time = 18;
+    string update_user_id = 19;
+    google.protobuf.Timestamp update_time = 20;
+    string create_group_id = 21;
+    string intro_typename = 22;
+    repeated OrganizationUserRelationInput organization_user_relation = 23;
+    repeated RoleUserRelationInput role_user_relation = 24;
+    repeated UserMobileNumbersRelationInput user_mobile_numbers_relation = 25;
+    repeated UserInput list = 26;
+    UserExpression where = 27;
+}
+message MutationUserProfileRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    int32 user_id = 4;
+    UserInput user = 5;
+    string email = 6;
+    string address = 7;
+    bool is_deprecated = 8;
+    int32 version = 9;
+    int32 realm_id = 10;
+    string create_user_id = 11;
+    google.protobuf.Timestamp create_time = 12;
+    string update_user_id = 13;
+    google.protobuf.Timestamp update_time = 14;
+    string create_group_id = 15;
+    string intro_typename = 16;
+    repeated UserUserProfileRelationInput user_user_profile_relation = 17;
+    UserProfileExpression where = 18;
+}
+message MutationUserProfileListRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    int32 user_id = 4;
+    UserInput user = 5;
+    string email = 6;
+    string address = 7;
+    bool is_deprecated = 8;
+    int32 version = 9;
+    int32 realm_id = 10;
+    string create_user_id = 11;
+    google.protobuf.Timestamp create_time = 12;
+    string update_user_id = 13;
+    google.protobuf.Timestamp update_time = 14;
+    string create_group_id = 15;
+    string intro_typename = 16;
+    repeated UserUserProfileRelationInput user_user_profile_relation = 17;
+    repeated UserProfileInput list = 18;
+    UserProfileExpression where = 19;
+}
+message MutationRoleRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string name = 4;
+    repeated RoleType role_type = 5;
+    repeated UserInput users = 6;
+    bool is_deprecated = 7;
+    int32 version = 8;
+    int32 realm_id = 9;
+    string create_user_id = 10;
+    google.protobuf.Timestamp create_time = 11;
+    string update_user_id = 12;
+    google.protobuf.Timestamp update_time = 13;
+    string create_group_id = 14;
+    string intro_typename = 15;
+    repeated RoleRoleTypeRelationInput role_role_type_relation = 16;
+    repeated RoleUserRelationInput role_user_relation = 17;
+    RoleExpression where = 18;
+}
+message MutationRoleListRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string name = 4;
+    repeated RoleType role_type = 5;
+    repeated UserInput users = 6;
+    bool is_deprecated = 7;
+    int32 version = 8;
+    int32 realm_id = 9;
+    string create_user_id = 10;
+    google.protobuf.Timestamp create_time = 11;
+    string update_user_id = 12;
+    google.protobuf.Timestamp update_time = 13;
+    string create_group_id = 14;
+    string intro_typename = 15;
+    repeated RoleRoleTypeRelationInput role_role_type_relation = 16;
+    repeated RoleUserRelationInput role_user_relation = 17;
+    repeated RoleInput list = 18;
+    RoleExpression where = 19;
+}
+message MutationOrganizationRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    int32 parent_id = 4;
+    string name = 5;
+    OrganizationInput above = 6;
+    repeated UserInput users = 7;
+    bool is_deprecated = 8;
+    int32 version = 9;
+    int32 realm_id = 10;
+    string create_user_id = 11;
+    google.protobuf.Timestamp create_time = 12;
+    string update_user_id = 13;
+    google.protobuf.Timestamp update_time = 14;
+    string create_group_id = 15;
+    string intro_typename = 16;
+    repeated OrganizationUserRelationInput organization_user_relation = 17;
+    OrganizationExpression where = 18;
+}
+message MutationOrganizationListRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    int32 parent_id = 4;
+    string name = 5;
+    OrganizationInput above = 6;
+    repeated UserInput users = 7;
+    bool is_deprecated = 8;
+    int32 version = 9;
+    int32 realm_id = 10;
+    string create_user_id = 11;
+    google.protobuf.Timestamp create_time = 12;
+    string update_user_id = 13;
+    google.protobuf.Timestamp update_time = 14;
+    string create_group_id = 15;
+    string intro_typename = 16;
+    repeated OrganizationUserRelationInput organization_user_relation = 17;
+    repeated OrganizationInput list = 18;
+    OrganizationExpression where = 19;
+}
+message MutationOrganizationUserRelationRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string user_ref = 4;
+    UserInput user = 5;
+    string organization_ref = 6;
+    OrganizationInput organization = 7;
+    bool is_deprecated = 8;
+    int32 version = 9;
+    int32 realm_id = 10;
+    string create_user_id = 11;
+    google.protobuf.Timestamp create_time = 12;
+    string update_user_id = 13;
+    google.protobuf.Timestamp update_time = 14;
+    string create_group_id = 15;
+    string intro_typename = 16;
+    OrganizationUserRelationExpression where = 17;
+}
+message MutationOrganizationUserRelationListRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string user_ref = 4;
+    UserInput user = 5;
+    string organization_ref = 6;
+    OrganizationInput organization = 7;
+    bool is_deprecated = 8;
+    int32 version = 9;
+    int32 realm_id = 10;
+    string create_user_id = 11;
+    google.protobuf.Timestamp create_time = 12;
+    string update_user_id = 13;
+    google.protobuf.Timestamp update_time = 14;
+    string create_group_id = 15;
+    string intro_typename = 16;
+    repeated OrganizationUserRelationInput list = 17;
+    OrganizationUserRelationExpression where = 18;
+}
+message MutationRoleUserRelationRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string user_ref = 4;
+    UserInput user = 5;
+    string role_ref = 6;
+    RoleInput role = 7;
+    bool is_deprecated = 8;
+    int32 version = 9;
+    int32 realm_id = 10;
+    string create_user_id = 11;
+    google.protobuf.Timestamp create_time = 12;
+    string update_user_id = 13;
+    google.protobuf.Timestamp update_time = 14;
+    string create_group_id = 15;
+    string intro_typename = 16;
+    RoleUserRelationExpression where = 17;
+}
+message MutationRoleUserRelationListRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string user_ref = 4;
+    UserInput user = 5;
+    string role_ref = 6;
+    RoleInput role = 7;
+    bool is_deprecated = 8;
+    int32 version = 9;
+    int32 realm_id = 10;
+    string create_user_id = 11;
+    google.protobuf.Timestamp create_time = 12;
+    string update_user_id = 13;
+    google.protobuf.Timestamp update_time = 14;
+    string create_group_id = 15;
+    string intro_typename = 16;
+    repeated RoleUserRelationInput list = 17;
+    RoleUserRelationExpression where = 18;
+}
+message MutationUserMobileNumbersRelationRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string user_ref = 4;
+    UserInput user = 5;
+    string mobile_numbers_ref = 6;
+    bool is_deprecated = 7;
+    int32 version = 8;
+    int32 realm_id = 9;
+    string create_user_id = 10;
+    google.protobuf.Timestamp create_time = 11;
+    string update_user_id = 12;
+    google.protobuf.Timestamp update_time = 13;
+    string create_group_id = 14;
+    string intro_typename = 15;
+    UserMobileNumbersRelationExpression where = 16;
+}
+message MutationUserMobileNumbersRelationListRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string user_ref = 4;
+    UserInput user = 5;
+    string mobile_numbers_ref = 6;
+    bool is_deprecated = 7;
+    int32 version = 8;
+    int32 realm_id = 9;
+    string create_user_id = 10;
+    google.protobuf.Timestamp create_time = 11;
+    string update_user_id = 12;
+    google.protobuf.Timestamp update_time = 13;
+    string create_group_id = 14;
+    string intro_typename = 15;
+    repeated UserMobileNumbersRelationInput list = 16;
+    UserMobileNumbersRelationExpression where = 17;
+}
+message MutationUserUserProfileRelationRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string user_profile_ref = 4;
+    UserProfileInput user_profile = 5;
+    string user_ref = 6;
+    UserInput user = 7;
+    bool is_deprecated = 8;
+    int32 version = 9;
+    int32 realm_id = 10;
+    string create_user_id = 11;
+    google.protobuf.Timestamp create_time = 12;
+    string update_user_id = 13;
+    google.protobuf.Timestamp update_time = 14;
+    string create_group_id = 15;
+    string intro_typename = 16;
+    UserUserProfileRelationExpression where = 17;
+}
+message MutationUserUserProfileRelationListRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string user_profile_ref = 4;
+    UserProfileInput user_profile = 5;
+    string user_ref = 6;
+    UserInput user = 7;
+    bool is_deprecated = 8;
+    int32 version = 9;
+    int32 realm_id = 10;
+    string create_user_id = 11;
+    google.protobuf.Timestamp create_time = 12;
+    string update_user_id = 13;
+    google.protobuf.Timestamp update_time = 14;
+    string create_group_id = 15;
+    string intro_typename = 16;
+    repeated UserUserProfileRelationInput list = 17;
+    UserUserProfileRelationExpression where = 18;
+}
+message MutationRoleRoleTypeRelationRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string role_ref = 4;
+    RoleInput role = 5;
+    RoleType role_type_ref = 6;
+    bool is_deprecated = 7;
+    int32 version = 8;
+    int32 realm_id = 9;
+    string create_user_id = 10;
+    google.protobuf.Timestamp create_time = 11;
+    string update_user_id = 12;
+    google.protobuf.Timestamp update_time = 13;
+    string create_group_id = 14;
+    string intro_typename = 15;
+    RoleRoleTypeRelationExpression where = 16;
+}
+message MutationRoleRoleTypeRelationListRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string role_ref = 4;
+    RoleInput role = 5;
+    RoleType role_type_ref = 6;
+    bool is_deprecated = 7;
+    int32 version = 8;
+    int32 realm_id = 9;
+    string create_user_id = 10;
+    google.protobuf.Timestamp create_time = 11;
+    string update_user_id = 12;
+    google.protobuf.Timestamp update_time = 13;
+    string create_group_id = 14;
+    string intro_typename = 15;
+    repeated RoleRoleTypeRelationInput list = 16;
+    RoleRoleTypeRelationExpression where = 17;
+}

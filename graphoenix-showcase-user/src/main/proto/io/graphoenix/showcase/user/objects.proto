@@ -1,0 +1,359 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.graphoenix.showcase.user.dto.objectType.grpc";
+
+package io.graphoenix.showcase.user;
+
+import "io/graphoenix/showcase/user/enums.proto";
+import "io/graphoenix/core/objects.proto";
+import "google/protobuf/timestamp.proto";
+
+message User {
+    string id = 1;
+    optional string login = 2;
+    optional string password = 3;
+    optional string name = 4;
+    int32 age = 5;
+    bool disabled = 6;
+    Sex sex = 7;
+    UserProfile user_profile = 8;
+    Organization organization = 9;
+    repeated Role roles = 10;
+    repeated string mobile_numbers = 11;
+    bool is_deprecated = 12;
+    int32 version = 13;
+    int32 realm_id = 14;
+    string create_user_id = 15;
+    google.protobuf.Timestamp create_time = 16;
+    string update_user_id = 17;
+    google.protobuf.Timestamp update_time = 18;
+    string create_group_id = 19;
+    string intro_typename = 20;
+    repeated OrganizationUserRelation organization_user_relation = 21;
+    repeated RoleUserRelation role_user_relation = 22;
+    repeated UserMobileNumbersRelation user_mobile_numbers_relation = 23;
+    Role roles_aggregate = 24;
+    RoleConnection roles_connection = 25;
+    OrganizationUserRelation organization_user_relation_aggregate = 26;
+    OrganizationUserRelationConnection organization_user_relation_connection = 27;
+    RoleUserRelation role_user_relation_aggregate = 28;
+    RoleUserRelationConnection role_user_relation_connection = 29;
+    UserMobileNumbersRelation user_mobile_numbers_relation_aggregate = 30;
+    UserMobileNumbersRelationConnection user_mobile_numbers_relation_connection = 31;
+    int32 id_count = 32;
+    int32 id_max = 33;
+    int32 id_min = 34;
+    int32 login_count = 35;
+    string login_max = 36;
+    string login_min = 37;
+    int32 password_count = 38;
+    string password_max = 39;
+    string password_min = 40;
+    int32 name_count = 41;
+    string name_max = 42;
+    string name_min = 43;
+    int32 age_count = 44;
+    int32 age_sum = 45;
+    int32 age_avg = 46;
+    int32 age_max = 47;
+    int32 age_min = 48;
+    string nick_name = 49;
+    int32 age2 = 50;
+    repeated string address = 51;
+}
+message UserProfile {
+    string id = 1;
+    int32 user_id = 2;
+    User user = 3;
+    string email = 4;
+    string address = 5;
+    bool is_deprecated = 6;
+    int32 version = 7;
+    int32 realm_id = 8;
+    string create_user_id = 9;
+    google.protobuf.Timestamp create_time = 10;
+    string update_user_id = 11;
+    google.protobuf.Timestamp update_time = 12;
+    string create_group_id = 13;
+    string intro_typename = 14;
+    repeated UserUserProfileRelation user_user_profile_relation = 15;
+    UserUserProfileRelation user_user_profile_relation_aggregate = 16;
+    UserUserProfileRelationConnection user_user_profile_relation_connection = 17;
+    int32 id_count = 18;
+    int32 id_max = 19;
+    int32 id_min = 20;
+    int32 email_count = 21;
+    string email_max = 22;
+    string email_min = 23;
+    int32 address_count = 24;
+    string address_max = 25;
+    string address_min = 26;
+    int32 user_id_count = 27;
+    int32 user_id_sum = 28;
+    int32 user_id_avg = 29;
+    int32 user_id_max = 30;
+    int32 user_id_min = 31;
+}
+message Role {
+    string id = 1;
+    optional string name = 2;
+    repeated RoleType role_type = 3;
+    repeated User users = 4;
+    bool is_deprecated = 5;
+    int32 version = 6;
+    int32 realm_id = 7;
+    string create_user_id = 8;
+    google.protobuf.Timestamp create_time = 9;
+    string update_user_id = 10;
+    google.protobuf.Timestamp update_time = 11;
+    string create_group_id = 12;
+    string intro_typename = 13;
+    repeated RoleRoleTypeRelation role_role_type_relation = 14;
+    repeated RoleUserRelation role_user_relation = 15;
+    User users_aggregate = 16;
+    UserConnection users_connection = 17;
+    RoleRoleTypeRelation role_role_type_relation_aggregate = 18;
+    RoleRoleTypeRelationConnection role_role_type_relation_connection = 19;
+    RoleUserRelation role_user_relation_aggregate = 20;
+    RoleUserRelationConnection role_user_relation_connection = 21;
+    int32 id_count = 22;
+    int32 id_max = 23;
+    int32 id_min = 24;
+    int32 name_count = 25;
+    string name_max = 26;
+    string name_min = 27;
+}
+message Organization {
+    string id = 1;
+    int32 parent_id = 2;
+    optional string name = 3;
+    Organization above = 4;
+    repeated User users = 5;
+    bool is_deprecated = 6;
+    int32 version = 7;
+    int32 realm_id = 8;
+    string create_user_id = 9;
+    google.protobuf.Timestamp create_time = 10;
+    string update_user_id = 11;
+    google.protobuf.Timestamp update_time = 12;
+    string create_group_id = 13;
+    string intro_typename = 14;
+    repeated OrganizationUserRelation organization_user_relation = 15;
+    User users_aggregate = 16;
+    UserConnection users_connection = 17;
+    OrganizationUserRelation organization_user_relation_aggregate = 18;
+    OrganizationUserRelationConnection organization_user_relation_connection = 19;
+    int32 id_count = 20;
+    int32 id_max = 21;
+    int32 id_min = 22;
+    int32 name_count = 23;
+    string name_max = 24;
+    string name_min = 25;
+    int32 parent_id_count = 26;
+    int32 parent_id_sum = 27;
+    int32 parent_id_avg = 28;
+    int32 parent_id_max = 29;
+    int32 parent_id_min = 30;
+}
+message OrganizationUserRelation {
+    string id = 1;
+    string user_ref = 2;
+    User user = 3;
+    string organization_ref = 4;
+    Organization organization = 5;
+    bool is_deprecated = 6;
+    int32 version = 7;
+    int32 realm_id = 8;
+    string create_user_id = 9;
+    google.protobuf.Timestamp create_time = 10;
+    string update_user_id = 11;
+    google.protobuf.Timestamp update_time = 12;
+    string create_group_id = 13;
+    string intro_typename = 14;
+    int32 id_count = 15;
+    int32 id_max = 16;
+    int32 id_min = 17;
+    int32 user_ref_count = 18;
+    string user_ref_max = 19;
+    string user_ref_min = 20;
+    int32 organization_ref_count = 21;
+    string organization_ref_max = 22;
+    string organization_ref_min = 23;
+}
+message RoleUserRelation {
+    string id = 1;
+    string user_ref = 2;
+    User user = 3;
+    string role_ref = 4;
+    Role role = 5;
+    bool is_deprecated = 6;
+    int32 version = 7;
+    int32 realm_id = 8;
+    string create_user_id = 9;
+    google.protobuf.Timestamp create_time = 10;
+    string update_user_id = 11;
+    google.protobuf.Timestamp update_time = 12;
+    string create_group_id = 13;
+    string intro_typename = 14;
+    int32 id_count = 15;
+    int32 id_max = 16;
+    int32 id_min = 17;
+    int32 user_ref_count = 18;
+    string user_ref_max = 19;
+    string user_ref_min = 20;
+    int32 role_ref_count = 21;
+    string role_ref_max = 22;
+    string role_ref_min = 23;
+}
+message UserMobileNumbersRelation {
+    string id = 1;
+    string user_ref = 2;
+    User user = 3;
+    string mobile_numbers_ref = 4;
+    bool is_deprecated = 5;
+    int32 version = 6;
+    int32 realm_id = 7;
+    string create_user_id = 8;
+    google.protobuf.Timestamp create_time = 9;
+    string update_user_id = 10;
+    google.protobuf.Timestamp update_time = 11;
+    string create_group_id = 12;
+    string intro_typename = 13;
+    int32 id_count = 14;
+    int32 id_max = 15;
+    int32 id_min = 16;
+    int32 user_ref_count = 17;
+    string user_ref_max = 18;
+    string user_ref_min = 19;
+    int32 mobile_numbers_ref_count = 20;
+    string mobile_numbers_ref_max = 21;
+    string mobile_numbers_ref_min = 22;
+}
+message UserUserProfileRelation {
+    string id = 1;
+    string user_profile_ref = 2;
+    UserProfile user_profile = 3;
+    string user_ref = 4;
+    User user = 5;
+    bool is_deprecated = 6;
+    int32 version = 7;
+    int32 realm_id = 8;
+    string create_user_id = 9;
+    google.protobuf.Timestamp create_time = 10;
+    string update_user_id = 11;
+    google.protobuf.Timestamp update_time = 12;
+    string create_group_id = 13;
+    string intro_typename = 14;
+    int32 id_count = 15;
+    int32 id_max = 16;
+    int32 id_min = 17;
+    int32 user_profile_ref_count = 18;
+    string user_profile_ref_max = 19;
+    string user_profile_ref_min = 20;
+    int32 user_ref_count = 21;
+    string user_ref_max = 22;
+    string user_ref_min = 23;
+}
+message RoleRoleTypeRelation {
+    string id = 1;
+    string role_ref = 2;
+    Role role = 3;
+    RoleType role_type_ref = 4;
+    bool is_deprecated = 5;
+    int32 version = 6;
+    int32 realm_id = 7;
+    string create_user_id = 8;
+    google.protobuf.Timestamp create_time = 9;
+    string update_user_id = 10;
+    google.protobuf.Timestamp update_time = 11;
+    string create_group_id = 12;
+    string intro_typename = 13;
+    int32 id_count = 14;
+    int32 id_max = 15;
+    int32 id_min = 16;
+    int32 role_ref_count = 17;
+    string role_ref_max = 18;
+    string role_ref_min = 19;
+}
+message UserConnection {
+    int32 total_count = 1;
+    io.graphoenix.core.PageInfo page_info = 2;
+    repeated UserEdge edges = 3;
+}
+message UserEdge {
+    User node = 1;
+    string cursor = 2;
+}
+message UserProfileConnection {
+    int32 total_count = 1;
+    io.graphoenix.core.PageInfo page_info = 2;
+    repeated UserProfileEdge edges = 3;
+}
+message UserProfileEdge {
+    UserProfile node = 1;
+    string cursor = 2;
+}
+message RoleConnection {
+    int32 total_count = 1;
+    io.graphoenix.core.PageInfo page_info = 2;
+    repeated RoleEdge edges = 3;
+}
+message RoleEdge {
+    Role node = 1;
+    string cursor = 2;
+}
+message OrganizationConnection {
+    int32 total_count = 1;
+    io.graphoenix.core.PageInfo page_info = 2;
+    repeated OrganizationEdge edges = 3;
+}
+message OrganizationEdge {
+    Organization node = 1;
+    string cursor = 2;
+}
+message OrganizationUserRelationConnection {
+    int32 total_count = 1;
+    io.graphoenix.core.PageInfo page_info = 2;
+    repeated OrganizationUserRelationEdge edges = 3;
+}
+message OrganizationUserRelationEdge {
+    OrganizationUserRelation node = 1;
+    string cursor = 2;
+}
+message RoleUserRelationConnection {
+    int32 total_count = 1;
+    io.graphoenix.core.PageInfo page_info = 2;
+    repeated RoleUserRelationEdge edges = 3;
+}
+message RoleUserRelationEdge {
+    RoleUserRelation node = 1;
+    string cursor = 2;
+}
+message UserMobileNumbersRelationConnection {
+    int32 total_count = 1;
+    io.graphoenix.core.PageInfo page_info = 2;
+    repeated UserMobileNumbersRelationEdge edges = 3;
+}
+message UserMobileNumbersRelationEdge {
+    UserMobileNumbersRelation node = 1;
+    string cursor = 2;
+}
+message UserUserProfileRelationConnection {
+    int32 total_count = 1;
+    io.graphoenix.core.PageInfo page_info = 2;
+    repeated UserUserProfileRelationEdge edges = 3;
+}
+message UserUserProfileRelationEdge {
+    UserUserProfileRelation node = 1;
+    string cursor = 2;
+}
+message RoleRoleTypeRelationConnection {
+    int32 total_count = 1;
+    io.graphoenix.core.PageInfo page_info = 2;
+    repeated RoleRoleTypeRelationEdge edges = 3;
+}
+message RoleRoleTypeRelationEdge {
+    RoleRoleTypeRelation node = 1;
+    string cursor = 2;
+}

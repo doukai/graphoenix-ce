@@ -47,11 +47,6 @@ public class DefaultOperationHandler implements OperationHandler {
     private final Provider<SubscriptionDataListener> subscriptionDataListenerProvider = BeanContext.getProvider(SubscriptionDataListener.class);
 
     @Override
-    public Publisher<JsonValue> handle(Operation operation, Map<String, JsonValue> variables) {
-        return handle(operation, variables, null, null);
-    }
-
-    @Override
     public Publisher<JsonValue> handle(Operation operation, Map<String, JsonValue> variables, String token, String operationId) {
         switch (operation.getOperationType()) {
             case OPERATION_QUERY_NAME:

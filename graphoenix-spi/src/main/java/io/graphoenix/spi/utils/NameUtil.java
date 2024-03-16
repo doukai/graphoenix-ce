@@ -11,9 +11,8 @@ public final class NameUtil {
     public static String typeNameToFieldName(String name) {
         if (name.startsWith(PREFIX_INTROSPECTION)) {
             return PREFIX_INTROSPECTION + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, name.replace(PREFIX_INTROSPECTION, ""));
-        } else {
-            return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, name);
         }
+        return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, name);
     }
 
     public static String getRelationTypeName(String... typeNames) {
@@ -36,6 +35,13 @@ public final class NameUtil {
     public static String getGrpcName(String name) {
         if (name.startsWith(PREFIX_INTROSPECTION)) {
             return name.replaceFirst(PREFIX_INTROSPECTION, "Intro");
+        }
+        return name;
+    }
+
+    public static String getGrpcFieldName(String name) {
+        if (name.startsWith(PREFIX_INTROSPECTION)) {
+            return "intro" + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, name.replace(PREFIX_INTROSPECTION, ""));
         }
         return name;
     }

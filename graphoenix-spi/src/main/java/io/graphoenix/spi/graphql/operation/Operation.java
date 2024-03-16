@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.*;
+import static io.graphoenix.spi.utils.DocumentUtil.graphqlToOperation;
 
 public class Operation extends AbstractDefinition implements Definition {
 
@@ -30,6 +31,10 @@ public class Operation extends AbstractDefinition implements Definition {
 
     public Operation(String name) {
         super(name);
+    }
+
+    public static Operation fromString(String graphQL) {
+        return new Operation(graphqlToOperation(graphQL));
     }
 
     public Operation(GraphqlParser.OperationDefinitionContext operationDefinitionContext) {

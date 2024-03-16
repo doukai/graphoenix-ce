@@ -8,7 +8,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Default;
 import jakarta.inject.Inject;
 
-import java.util.AbstractMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -29,27 +28,22 @@ public class DefaultPackageProvider implements PackageProvider {
     @SuppressWarnings("unchecked")
     @Inject
     public DefaultPackageProvider(PackageConfig packageConfig) {
-        List<Map.Entry<String, PackageURL>> packageURLList = Stream.ofNullable(packageConfig.getMembers())
+        List<PackageURL> packageURLList = Stream.ofNullable(packageConfig.getMembers())
                 .flatMap(packageMembers -> packageMembers.entrySet().stream())
                 .filter(packageEntry -> !packageEntry.getKey().equals(SEEDS_MEMBER_KEY))
                 .flatMap(packageEntry ->
                         ((List<Map<String, Object>>) packageEntry.getValue()).stream()
                                 .map(PackageURL::new)
-                                .map(packageURL ->
-                                        new AbstractMap.SimpleEntry<>(
-                                                packageEntry.getKey(),
-                                                packageURL
-                                        )
-                                )
+                                .peek(packageURL -> packageURL.setPackageName(packageEntry.getKey()))
                 )
                 .collect(Collectors.toList());
 
         this.packageProtocolURLListMap = packageURLList.stream()
                 .collect(
                         Collectors.groupingBy(
-                                Map.Entry::getKey,
+                                PackageURL::getPackageName,
                                 Collectors.mapping(
-                                        Map.Entry::getValue,
+                                        packageURL -> packageURL,
                                         Collectors.groupingBy(
                                                 PackageURL::getProtocol,
                                                 Collectors.toList()
@@ -62,9 +56,9 @@ public class DefaultPackageProvider implements PackageProvider {
             this.packageProtocolURLIteratorMap = packageURLList.stream()
                     .collect(
                             Collectors.groupingBy(
-                                    Map.Entry::getKey,
+                                    PackageURL::getPackageName,
                                     Collectors.mapping(
-                                            Map.Entry::getValue,
+                                            packageURL -> packageURL,
                                             Collectors.groupingBy(
                                                     PackageURL::getProtocol,
                                                     Collectors.collectingAndThen(Collectors.toList(), Iterators::cycle)

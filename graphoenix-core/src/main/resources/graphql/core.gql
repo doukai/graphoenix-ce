@@ -205,6 +205,7 @@ directive @func(name: Func field: String) on FIELD_DEFINITION
 directive @container on OBJECT
 directive @class(name: String! exists: Boolean) on OBJECT
 directive @annotation(name: String!) on OBJECT
+directive @grpc(name: String!) on OBJECT
 directive @package(name: String!) on OBJECT | FIELD_DEFINITION | QUERY | MUTATION | SUBSCRIPTION
 directive @connection(field: String agg: String) on FIELD_DEFINITION
 directive @merge(arguments: [String]) on FIELD

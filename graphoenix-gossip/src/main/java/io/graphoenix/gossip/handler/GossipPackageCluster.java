@@ -19,14 +19,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.graphoenix.spi.dto.PackageURL.PORT_NAME;
-import static io.graphoenix.spi.dto.PackageURL.PROTOCOL_NAME;
+import static io.graphoenix.spi.dto.PackageURL.*;
 
 @ApplicationScoped
 public class GossipPackageCluster implements Runnable {
 
-    public static final String PACKAGE_NAME = "package";
-    public static final String SERVICES_NAME = "services";
+    public static final String URLS_NAME = "urls";
 
     private final GossipConfig gossipConfig;
     private final PackageManager packageManager;
@@ -53,9 +51,9 @@ public class GossipPackageCluster implements Runnable {
                 .transport(opts -> opts.port(gossipConfig.getPort()))
                 .config(opts ->
                         opts.metadata(
-                                packageManager.getLocalPackages()
-                                        .map(packageName -> Map.of(PACKAGE_NAME, packageName, SERVICES_NAME, getServices()))
-                                        .collect(Collectors.toList())
+                                Map.of(
+                                        URLS_NAME, getURLs()
+                                )
                         )
                 )
                 .transportFactory(TcpTransportFactory::new)
@@ -68,7 +66,7 @@ public class GossipPackageCluster implements Runnable {
                                     case UPDATED:
                                         cluster.metadata(event.member())
                                                 .ifPresent(metadata ->
-                                                        gossipPackageProvider.mergeMemberURLs(event.member(), (List<Map<String, Object>>) metadata)
+                                                        gossipPackageProvider.mergeMemberURLs(event.member(), (List<Map<String, Object>>) ((Map<String, ?>) metadata).get(URLS_NAME))
                                                 );
                                         Logger.debug(event.member().toString() + " merged");
                                         break;
@@ -86,9 +84,18 @@ public class GossipPackageCluster implements Runnable {
                 .startAwait();
     }
 
-    private List<Map<String, Object>> getServices() {
+    private List<Map<String, Object>> getURLs() {
         return BeanContext.getList(Runner.class).stream()
-                .map(runner -> Map.of(PROTOCOL_NAME, (Object) runner.protocol(), PORT_NAME, runner.port()))
+                .flatMap(runner ->
+                        packageManager.getLocalPackages()
+                                .map(packageName ->
+                                        Map.of(
+                                                PACKAGE_NAME_NAME, (Object) packageName,
+                                                PROTOCOL_NAME, runner.protocol(),
+                                                PORT_NAME, runner.port()
+                                        )
+                                )
+                )
                 .collect(Collectors.toList());
     }
 }

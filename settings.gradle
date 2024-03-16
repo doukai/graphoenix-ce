@@ -15,4 +15,5 @@ include 'graphoenix-rabbitmq'
 include 'graphoenix-json-path'
 include 'graphoenix-gossip'
 include 'graphoenix-protobuf'
+include 'graphoenix-grpc-server'
 

@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
+import static io.graphoenix.spi.utils.DocumentUtil.graphqlToSelectionSet;
 
 public class Field extends AbstractDefinition implements Selection {
 
@@ -250,6 +251,24 @@ public class Field extends AbstractDefinition implements Selection {
             this.selections = new LinkedHashSet<>();
         }
         this.selections.addAll(selections);
+        return this;
+    }
+
+    public Field addSelections(JsonValue selectionSet) {
+        if (!selectionSet.getValueType().equals(JsonValue.ValueType.NULL)) {
+            addSelections(selectionSet.toString());
+        }
+        return this;
+    }
+
+    public Field addSelections(String selectionSet) {
+        if (selectionSet != null) {
+            addSelections(
+                    graphqlToSelectionSet(selectionSet).selection().stream()
+                            .map(Field::new)
+                            .collect(Collectors.toList())
+            );
+        }
         return this;
     }
 

@@ -9,18 +9,18 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.core.handler.PackageManager.LOAD_BALANCE_ROUND_ROBIN;
-import static io.graphoenix.core.handler.PackageManager.PACKAGE_PROVIDER_GOSSIP_NAME;
-import static io.graphoenix.gossip.handler.GossipPackageCluster.PACKAGE_NAME;
-import static io.graphoenix.gossip.handler.GossipPackageCluster.SERVICES_NAME;
 
 @ApplicationScoped
-@Named(PACKAGE_PROVIDER_GOSSIP_NAME)
+@Named("gossip")
 public class GossipPackageProvider implements PackageProvider {
 
     private final PackageConfig packageConfig;
@@ -44,33 +44,24 @@ public class GossipPackageProvider implements PackageProvider {
         return packageProtocolURLIteratorMap.get(packageName).get(protocol);
     }
 
-    @SuppressWarnings("unchecked")
-    public void mergeMemberURLs(Member member, List<Map<String, Object>> metadata) {
+    public void mergeMemberURLs(Member member, List<Map<String, Object>> urls) {
         mergeURLs(
-                metadata.stream()
-                        .flatMap(packageMap ->
-                                Stream.concat(
-                                                Stream.ofNullable(packageProtocolURLListMap.get((String) packageMap.get(PACKAGE_NAME)))
-                                                        .flatMap(portocolMap -> portocolMap.values().stream())
-                                                        .flatMap(Collection::stream)
-                                                        .filter(packageURL ->
-                                                                !packageURL.getHost().equals(member.address().host()) &&
-                                                                        packageURL.getPort() != member.address().port()
-                                                        ),
-                                                ((List<Map<String, Object>>) packageMap.get(SERVICES_NAME)).stream()
-                                                        .map(PackageURL::new)
-                                                        .peek(packageURL -> {
-                                                                    if (packageURL.getHost() == null) {
-                                                                        packageURL.setHost(member.address().host());
-                                                                    }
-                                                                }
-                                                        )
-                                        )
-                                        .map(packageURL ->
-                                                new AbstractMap.SimpleEntry<>(
-                                                        (String) packageMap.get(PACKAGE_NAME),
-                                                        packageURL
-                                                )
+                Stream
+                        .concat(
+                                packageProtocolURLListMap.values().stream()
+                                        .flatMap(protocolMap -> protocolMap.values().stream())
+                                        .flatMap(Collection::stream)
+                                        .filter(packageURL ->
+                                                !packageURL.getHost().equals(member.address().host()) &&
+                                                        packageURL.getPort() != member.address().port()
+                                        ),
+                                urls.stream()
+                                        .map(PackageURL::new)
+                                        .peek(packageURL -> {
+                                                    if (packageURL.getHost() == null) {
+                                                        packageURL.setHost(member.address().host());
+                                                    }
+                                                }
                                         )
                         )
                         .collect(Collectors.toList())
@@ -79,34 +70,27 @@ public class GossipPackageProvider implements PackageProvider {
 
     public void removeMemberURLs(Member member) {
         mergeURLs(
-                packageProtocolURLListMap.entrySet().stream()
-                        .flatMap(entry ->
-                                entry.getValue().values().stream()
-                                        .flatMap(Collection::stream)
-                                        .filter(packageURL ->
-                                                !packageURL.getHost().equals(member.address().host()) &&
-                                                        packageURL.getPort() != member.address().port()
-                                        )
-                                        .map(packageURL ->
-                                                new AbstractMap.SimpleEntry<>(
-                                                        entry.getKey(),
-                                                        packageURL
-                                                )
-                                        )
+                packageProtocolURLListMap.values().stream()
+                        .flatMap(protocolMap -> protocolMap.values().stream())
+                        .flatMap(Collection::stream)
+                        .filter(packageURL ->
+                                !packageURL.getHost().equals(member.address().host()) &&
+                                        packageURL.getPort() != member.address().port()
                         )
                         .collect(Collectors.toList())
         );
     }
 
-    private void mergeURLs(List<Map.Entry<String, PackageURL>> packageURLList) {
+    private void mergeURLs(List<PackageURL> packageURLList) {
+        packageProtocolURLListMap.clear();
         packageProtocolURLListMap
                 .putAll(
                         packageURLList.stream()
                                 .collect(
                                         Collectors.groupingBy(
-                                                Map.Entry::getKey,
+                                                PackageURL::getPackageName,
                                                 Collectors.mapping(
-                                                        Map.Entry::getValue,
+                                                        packageURL -> packageURL,
                                                         Collectors.groupingBy(
                                                                 PackageURL::getProtocol,
                                                                 Collectors.toList()
@@ -117,14 +101,15 @@ public class GossipPackageProvider implements PackageProvider {
                 );
 
         if (packageConfig.getPackageLoadBalance().equals(LOAD_BALANCE_ROUND_ROBIN)) {
+            packageProtocolURLIteratorMap.clear();
             packageProtocolURLIteratorMap
                     .putAll(
                             packageURLList.stream()
                                     .collect(
                                             Collectors.groupingBy(
-                                                    Map.Entry::getKey,
+                                                    PackageURL::getPackageName,
                                                     Collectors.mapping(
-                                                            Map.Entry::getValue,
+                                                            packageURL -> packageURL,
                                                             Collectors.groupingBy(
                                                                     PackageURL::getProtocol,
                                                                     Collectors.collectingAndThen(Collectors.toList(), Iterators::cycle)

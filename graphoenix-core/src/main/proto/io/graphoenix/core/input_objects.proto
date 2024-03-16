@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.graphoenix.core.dto.inputObjectType.grpc";
+
+package io.graphoenix.core;
+
+import "io/graphoenix/core/enums.proto";
+import "google/protobuf/timestamp.proto";
+
+message MetaInput {
+    int32 version = 1;
+    int32 realm_id = 2;
+    string create_user_id = 3;
+    google.protobuf.Timestamp create_time = 4;
+    string update_user_id = 5;
+    google.protobuf.Timestamp update_time = 6;
+    string create_group_id = 7;
+}
+message MetaExpression {
+    IntExpression realm_id = 1;
+    StringExpression create_user_id = 2;
+    StringExpression create_time = 3;
+    StringExpression update_user_id = 4;
+    StringExpression update_time = 5;
+    StringExpression create_group_id = 6;
+}
+message IDExpression {
+    Operator opr = 1;
+    string val = 2;
+    repeated string arr = 3;
+    bool skip_null = 4;
+}
+message StringExpression {
+    Operator opr = 1;
+    string val = 2;
+    repeated string arr = 3;
+    bool skip_null = 4;
+}
+message BooleanExpression {
+    Operator opr = 1;
+    bool val = 2;
+    repeated bool arr = 3;
+    bool skip_null = 4;
+}
+message IntExpression {
+    Operator opr = 1;
+    int32 val = 2;
+    repeated int32 arr = 3;
+    bool skip_null = 4;
+}
+message FloatExpression {
+    Operator opr = 1;
+    float val = 2;
+    repeated float arr = 3;
+    bool skip_null = 4;
+}
+message With {
+    string type = 1;
+    string from = 2;
+    string to = 3;
+}
+message Invoke {
+    string class_name = 1;
+    string method_name = 2;
+    repeated InvokeParameter parameters = 3;
+    string return_class_name = 4;
+    repeated string thrown_types = 5;
+    bool async = 6;
+}
+message InvokeParameter {
+    string name = 1;
+    string class_name = 2;
+}
+message OperatorExpression {
+    Operator opr = 1;
+    Operator val = 2;
+    repeated Operator arr = 3;
+}
+message ConditionalExpression {
+    Operator opr = 1;
+    Conditional val = 2;
+    repeated Conditional arr = 3;
+}
+message SortExpression {
+    Operator opr = 1;
+    Sort val = 2;
+    repeated Sort arr = 3;
+}
+message FuncExpression {
+    Operator opr = 1;
+    Func val = 2;
+    repeated Func arr = 3;
+}
+message ProtocolExpression {
+    Operator opr = 1;
+    Protocol val = 2;
+    repeated Protocol arr = 3;
+}
+message IntroTypeKindExpression {
+    Operator opr = 1;
+    IntroTypeKind val = 2;
+    repeated IntroTypeKind arr = 3;
+}
+message IntroDirectiveLocationExpression {
+    Operator opr = 1;
+    IntroDirectiveLocation val = 2;
+    repeated IntroDirectiveLocation arr = 3;
+}

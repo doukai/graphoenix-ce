@@ -64,7 +64,7 @@ public class ProtobufFileBuilder {
                                 new Option().setName("java_package").setValue(packageConfig.getGrpcObjectTypePackageName())
                         )
                 )
-                .setPkg(packageConfig.getGrpcPackageName())
+                .setPkg(packageConfig.getPackageName())
                 .setTopLevelDefs(
                         documentManager.getDocument().getObjectTypes()
                                 .filter(objectType -> !documentManager.isOperationType(objectType))
@@ -99,7 +99,7 @@ public class ProtobufFileBuilder {
                                 new Option().setName("java_package").setValue(packageConfig.getGrpcObjectTypePackageName())
                         )
                 )
-                .setPkg(packageConfig.getGrpcPackageName())
+                .setPkg(packageConfig.getPackageName())
                 .setTopLevelDefs(
                         documentManager.getDocument().getInterfaceTypes()
                                 .filter(packageManager::isOwnPackage)
@@ -133,7 +133,7 @@ public class ProtobufFileBuilder {
                                 new Option().setName("java_package").setValue(packageConfig.getGrpcInputObjectTypePackageName())
                         )
                 )
-                .setPkg(packageConfig.getGrpcPackageName())
+                .setPkg(packageConfig.getPackageName())
                 .setTopLevelDefs(
                         documentManager.getDocument().getInputObjectTypes()
                                 .filter(packageManager::isOwnPackage)
@@ -148,7 +148,7 @@ public class ProtobufFileBuilder {
                         new Option().setName("java_multiple_files").setValue(true),
                         new Option().setName("java_package").setValue(packageConfig.getGrpcEnumTypePackageName())
                 )
-                .setPkg(packageConfig.getGrpcPackageName())
+                .setPkg(packageConfig.getPackageName())
                 .setTopLevelDefs(
                         documentManager.getDocument().getEnums()
                                 .filter(packageManager::isOwnPackage)
@@ -204,7 +204,7 @@ public class ProtobufFileBuilder {
                         new Option().setName("java_multiple_files").setValue(true),
                         new Option().setName("java_package").setValue(packageConfig.getGrpcPackageName())
                 )
-                .setPkg(packageConfig.getGrpcPackageName())
+                .setPkg(packageConfig.getPackageName())
                 .setTopLevelDefs(
                         buildQueryRpcRequest()
                                 .map(Message::toString)
@@ -258,7 +258,7 @@ public class ProtobufFileBuilder {
                         new Option().setName("java_multiple_files").setValue(true),
                         new Option().setName("java_package").setValue(packageConfig.getGrpcPackageName())
                 )
-                .setPkg(packageConfig.getGrpcPackageName())
+                .setPkg(packageConfig.getPackageName())
                 .setTopLevelDefs(
                         buildQueryRpcResponse()
                                 .map(Message::toString)
@@ -312,7 +312,7 @@ public class ProtobufFileBuilder {
                         new Option().setName("java_multiple_files").setValue(true),
                         new Option().setName("java_package").setValue(packageConfig.getGrpcPackageName())
                 )
-                .setPkg(packageConfig.getGrpcPackageName())
+                .setPkg(packageConfig.getPackageName())
                 .setTopLevelDefs(
                         buildMutationRpcRequest()
                                 .map(Message::toString)
@@ -366,7 +366,7 @@ public class ProtobufFileBuilder {
                         new Option().setName("java_multiple_files").setValue(true),
                         new Option().setName("java_package").setValue(packageConfig.getGrpcPackageName())
                 )
-                .setPkg(packageConfig.getGrpcPackageName())
+                .setPkg(packageConfig.getPackageName())
                 .setTopLevelDefs(
                         buildMutationRpcResponse()
                                 .map(Message::toString)
@@ -388,7 +388,7 @@ public class ProtobufFileBuilder {
                                 new Option().setName("java_multiple_files").setValue(true),
                                 new Option().setName("java_package").setValue(packageConfig.getGrpcPackageName())
                         )
-                        .setPkg(packageConfig.getGrpcPackageName())
+                        .setPkg(packageConfig.getPackageName())
                         .setTopLevelDefs(buildQueryService().stream().map(Service::toString).collect(Collectors.toList()))
                         .toString()
         );
@@ -406,7 +406,7 @@ public class ProtobufFileBuilder {
                                 new Option().setName("java_multiple_files").setValue(true),
                                 new Option().setName("java_package").setValue(packageConfig.getGrpcPackageName())
                         )
-                        .setPkg(packageConfig.getGrpcPackageName())
+                        .setPkg(packageConfig.getPackageName())
                         .setTopLevelDefs(buildMutationService().stream().map(Service::toString).collect(Collectors.toList()))
                         .toString()
         );
@@ -416,7 +416,7 @@ public class ProtobufFileBuilder {
                                 new Option().setName("java_multiple_files").setValue(true),
                                 new Option().setName("java_package").setValue(packageConfig.getGrpcPackageName())
                         )
-                        .setPkg(packageConfig.getGrpcPackageName())
+                        .setPkg(packageConfig.getPackageName())
                         .addTopLevelDef(buildGraphQLService().toString())
                         .addTopLevelDef(buildGraphQLRpcRequest().toString())
                         .addTopLevelDef(buildGraphQLRpcResponse().toString())
@@ -478,7 +478,8 @@ public class ProtobufFileBuilder {
     }
 
     public Stream<Message> buildQueryRpcRequest() {
-        return documentManager.getDocument().getQueryOperationTypeOrError().getFields().stream()
+        return documentManager.getDocument().getQueryOperationType().stream()
+                .flatMap(objectType -> objectType.getFields().stream())
                 .filter(packageManager::isOwnPackage)
                 .map(fieldDefinition ->
                         new Message()
@@ -518,7 +519,8 @@ public class ProtobufFileBuilder {
     }
 
     public Stream<Message> buildQueryRpcResponse() {
-        return documentManager.getDocument().getQueryOperationTypeOrError().getFields().stream()
+        return documentManager.getDocument().getQueryOperationType().stream()
+                .flatMap(objectType -> objectType.getFields().stream())
                 .filter(packageManager::isOwnPackage)
                 .map(fieldDefinition ->
                         new Message()
@@ -535,7 +537,8 @@ public class ProtobufFileBuilder {
     }
 
     public Stream<Message> buildMutationRpcRequest() {
-        return documentManager.getDocument().getMutationOperationTypeOrError().getFields().stream()
+        return documentManager.getDocument().getMutationOperationType().stream()
+                .flatMap(objectType -> objectType.getFields().stream())
                 .filter(packageManager::isOwnPackage)
                 .map(fieldDefinition ->
                         new Message()
@@ -575,7 +578,8 @@ public class ProtobufFileBuilder {
     }
 
     public Stream<Message> buildMutationRpcResponse() {
-        return documentManager.getDocument().getMutationOperationTypeOrError().getFields().stream()
+        return documentManager.getDocument().getMutationOperationType().stream()
+                .flatMap(objectType -> objectType.getFields().stream())
                 .filter(packageManager::isOwnPackage)
                 .map(fieldDefinition ->
                         new Message()
@@ -708,9 +712,18 @@ public class ProtobufFileBuilder {
             if (packageManager.isOwnPackage(definition)) {
                 return getGrpcName(definition.getName());
             } else {
-                return definition.getGrpcNameOrError();
+                if (definition.isEnum()) {
+                    return definition.getPackageNameOrError() + "." + getGrpcName(definition.getName());
+                } else if (definition.isObject()) {
+                    return definition.getPackageNameOrError() + "." + getGrpcName(definition.getName());
+                } else if (definition.isInterface()) {
+                    return definition.getPackageNameOrError() + "." + getGrpcName(definition.getName());
+                } else if (definition.isInputObject()) {
+                    return definition.getPackageNameOrError() + "." + getGrpcName(definition.getName());
+                }
             }
         }
+        throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(definition.getName()));
     }
 
     public String getPath(String protoName) {

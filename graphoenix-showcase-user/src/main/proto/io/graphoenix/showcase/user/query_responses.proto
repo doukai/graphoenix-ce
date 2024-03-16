@@ -1,0 +1,108 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.graphoenix.showcase.user.grpc";
+
+package io.graphoenix.showcase.user;
+
+import "io/graphoenix/showcase/user/enums.proto";
+import "io/graphoenix/showcase/user/objects.proto";
+import "io/graphoenix/showcase/user/interfaces.proto";
+import "io/graphoenix/showcase/user/input_objects.proto";
+import "io/graphoenix/core/enums.proto";
+import "io/graphoenix/core/input_objects.proto";
+import "google/type/datetime.proto";
+
+message QueryUserResponse {
+    User user = 1;
+}
+message QueryUserListResponse {
+    repeated User user_list = 1;
+}
+message QueryUserConnectionResponse {
+    UserConnection user_connection = 1;
+}
+message QueryUserProfileResponse {
+    UserProfile user_profile = 1;
+}
+message QueryUserProfileListResponse {
+    repeated UserProfile user_profile_list = 1;
+}
+message QueryUserProfileConnectionResponse {
+    UserProfileConnection user_profile_connection = 1;
+}
+message QueryRoleResponse {
+    Role role = 1;
+}
+message QueryRoleListResponse {
+    repeated Role role_list = 1;
+}
+message QueryRoleConnectionResponse {
+    RoleConnection role_connection = 1;
+}
+message QueryOrganizationResponse {
+    Organization organization = 1;
+}
+message QueryOrganizationListResponse {
+    repeated Organization organization_list = 1;
+}
+message QueryOrganizationConnectionResponse {
+    OrganizationConnection organization_connection = 1;
+}
+message QueryOrganizationUserRelationResponse {
+    OrganizationUserRelation organization_user_relation = 1;
+}
+message QueryOrganizationUserRelationListResponse {
+    repeated OrganizationUserRelation organization_user_relation_list = 1;
+}
+message QueryOrganizationUserRelationConnectionResponse {
+    OrganizationUserRelationConnection organization_user_relation_connection = 1;
+}
+message QueryRoleUserRelationResponse {
+    RoleUserRelation role_user_relation = 1;
+}
+message QueryRoleUserRelationListResponse {
+    repeated RoleUserRelation role_user_relation_list = 1;
+}
+message QueryRoleUserRelationConnectionResponse {
+    RoleUserRelationConnection role_user_relation_connection = 1;
+}
+message QueryUserMobileNumbersRelationResponse {
+    UserMobileNumbersRelation user_mobile_numbers_relation = 1;
+}
+message QueryUserMobileNumbersRelationListResponse {
+    repeated UserMobileNumbersRelation user_mobile_numbers_relation_list = 1;
+}
+message QueryUserMobileNumbersRelationConnectionResponse {
+    UserMobileNumbersRelationConnection user_mobile_numbers_relation_connection = 1;
+}
+message QueryUserUserProfileRelationResponse {
+    UserUserProfileRelation user_user_profile_relation = 1;
+}
+message QueryUserUserProfileRelationListResponse {
+    repeated UserUserProfileRelation user_user_profile_relation_list = 1;
+}
+message QueryUserUserProfileRelationConnectionResponse {
+    UserUserProfileRelationConnection user_user_profile_relation_connection = 1;
+}
+message QueryRoleRoleTypeRelationResponse {
+    RoleRoleTypeRelation role_role_type_relation = 1;
+}
+message QueryRoleRoleTypeRelationListResponse {
+    repeated RoleRoleTypeRelation role_role_type_relation_list = 1;
+}
+message QueryRoleRoleTypeRelationConnectionResponse {
+    RoleRoleTypeRelationConnection role_role_type_relation_connection = 1;
+}
+message QueryCurrentTimeResponse {
+    google.type.DateTime current_time = 1;
+}
+message QueryAppNameResponse {
+    string app_name = 1;
+}
+message QueryAppName2Response {
+    string app_name2 = 1;
+}
+message QueryLoginNameResponse {
+    repeated string login_name = 1;
+}

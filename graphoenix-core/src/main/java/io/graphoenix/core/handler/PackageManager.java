@@ -33,7 +33,8 @@ public class PackageManager {
     public PackageManager(PackageConfig packageConfig, PackageProvider packageProvider) {
         this.packageConfig = packageConfig;
         //noinspection unchecked
-        this.seedMembers = Stream.ofNullable(packageConfig.getMembers().get(SEEDS_MEMBER_KEY))
+        this.seedMembers = Stream.ofNullable(packageConfig.getMembers())
+                .flatMap(packageMap -> Stream.ofNullable(packageMap.get(SEEDS_MEMBER_KEY)))
                 .map(seedList -> (List<Map<String, Object>>) seedList)
                 .flatMap(Collection::stream)
                 .map(PackageURL::new)
