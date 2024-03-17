@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-option java_multiple_files = true;
-option java_package = "io.graphoenix.showcase.user.dto.objectType.grpc";
-
-package io.graphoenix.showcase.user;
-
-import "io/graphoenix/showcase/user/enums.proto";
-

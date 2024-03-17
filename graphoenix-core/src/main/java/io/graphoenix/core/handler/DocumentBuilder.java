@@ -42,21 +42,19 @@ public class DocumentBuilder {
     }
 
     public Document build(Document document) {
-        document.getDefinitions().stream()
-                .filter(Definition::isObject)
-                .map(Definition::asObject)
+        document.getObjectTypes()
+                .filter(objectType -> !objectType.isContainer())
+                .filter(objectType -> !documentManager.isOperationType(objectType))
                 .forEach(this::buildMapFields);
 
-        document.getDefinitions().stream()
-                .filter(Definition::isObject)
-                .map(Definition::asObject)
+        document.getObjectTypes()
+                .filter(objectType -> !objectType.isContainer())
+                .filter(objectType -> !documentManager.isOperationType(objectType))
                 .forEach(this::buildFetchFields);
 
         document
                 .addDefinitions(
-                        document.getDefinitions().stream()
-                                .filter(Definition::isObject)
-                                .map(Definition::asObject)
+                        document.getObjectTypes()
                                 .filter(packageManager::isOwnPackage)
                                 .filter(objectType -> !objectType.isContainer())
                                 .filter(objectType -> !documentManager.isOperationType(objectType))
@@ -69,9 +67,7 @@ public class DocumentBuilder {
                                 .collect(Collectors.toList())
                 )
                 .addDefinitions(
-                        document.getDefinitions().stream()
-                                .filter(Definition::isObject)
-                                .map(Definition::asObject)
+                        document.getObjectTypes()
                                 .filter(packageManager::isOwnPackage)
                                 .filter(objectType -> !objectType.isContainer())
                                 .filter(objectType -> !documentManager.isOperationType(objectType))
@@ -85,31 +81,23 @@ public class DocumentBuilder {
                                 .collect(Collectors.toList())
                 );
 
-        document.getDefinitions().stream()
-                .filter(Definition::isObject)
-                .map(Definition::asObject)
+        document.getObjectTypes()
                 .filter(packageManager::isOwnPackage)
                 .filter(objectType -> !objectType.isContainer())
                 .filter(objectType -> !documentManager.isOperationType(objectType))
                 .forEach(this::buildObject);
 
-        document.getDefinitions().stream()
-                .filter(Definition::isInterface)
-                .map(Definition::asInterface)
+        document.getInterfaceTypes()
                 .filter(packageManager::isOwnPackage)
                 .filter(interfaceType -> !interfaceType.isContainer())
                 .forEach(this::buildInterface);
 
-        document.getDefinitions().stream()
-                .filter(Definition::isInputObject)
-                .map(Definition::asInputObject)
+        document.getInputObjectTypes()
                 .filter(packageManager::isOwnPackage)
                 .filter(inputObjectType -> !inputObjectType.isContainer())
                 .forEach(this::buildInputObject);
 
-        document.getDefinitions().stream()
-                .filter(Definition::isEnum)
-                .map(Definition::asEnum)
+        document.getEnums()
                 .filter(packageManager::isOwnPackage)
                 .filter(enumType -> !enumType.isContainer())
                 .forEach(this::buildEnum);
@@ -118,10 +106,7 @@ public class DocumentBuilder {
                 .addDefinitions(buildInputObjects(document))
                 .addDefinitions(buildContainerTypeObjects(document));
 
-        if (document.getDefinitions().stream()
-                .filter(Definition::isObject)
-                .map(Definition::asObject)
-                .anyMatch(objectType -> !objectType.isContainer())) {
+        if (document.getObjectTypes().anyMatch(objectType -> !objectType.isContainer())) {
 
             ObjectType queryType = document.getQueryOperationType()
                     .orElseGet(() -> new ObjectType(TYPE_QUERY_NAME))
@@ -182,6 +167,7 @@ public class DocumentBuilder {
     public ObjectType buildMapFields(ObjectType objectType) {
         objectType.getFields().stream()
                 .filter(fieldDefinition -> documentManager.getFieldTypeDefinition(fieldDefinition).isObject())
+                .filter(fieldDefinition -> !documentManager.getFieldTypeDefinition(fieldDefinition).isContainer())
                 .filter(fieldDefinition -> !fieldDefinition.isMapField())
                 .filter(fieldDefinition -> !fieldDefinition.isFetchField())
                 .filter(fieldDefinition -> packageManager.isLocalPackage(documentManager.getFieldTypeDefinition(fieldDefinition)))
@@ -234,6 +220,7 @@ public class DocumentBuilder {
     public ObjectType buildFetchFields(ObjectType objectType) {
         objectType.getFields().stream()
                 .filter(fieldDefinition -> documentManager.getFieldTypeDefinition(fieldDefinition).isObject())
+                .filter(fieldDefinition -> !documentManager.getFieldTypeDefinition(fieldDefinition).isContainer())
                 .filter(fieldDefinition -> !fieldDefinition.isMapField())
                 .filter(fieldDefinition -> !fieldDefinition.isFetchField())
                 .filter(fieldDefinition -> !packageManager.isLocalPackage(documentManager.getFieldTypeDefinition(fieldDefinition)))
@@ -361,7 +348,7 @@ public class DocumentBuilder {
                                                         .addDirective(
                                                                 new Directive(DIRECTIVE_FETCH_NAME)
                                                                         .addArgument(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME, fieldDefinition.getFetchWithToOrError())
-                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME, fieldDefinition.getFetchTo())
+                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME, fieldDefinition.getFetchToOrError())
                                                                         .addArgument(DIRECTIVE_FETCH_ARGUMENT_ANCHOR_NAME, true)
                                                                         .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, fieldDefinition.getFetchProtocolOrError())
                                                         )

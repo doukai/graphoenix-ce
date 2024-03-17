@@ -254,6 +254,16 @@ public class Field extends AbstractDefinition implements Selection {
         return this;
     }
 
+
+    public Field setSelections(String selectionSet) {
+        if (selectionSet != null) {
+            this.selections = graphqlToSelectionSet(selectionSet).selection().stream()
+                    .map(Field::new)
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+        }
+        return this;
+    }
+
     public Field addSelections(String selectionSet) {
         if (selectionSet != null) {
             addSelections(

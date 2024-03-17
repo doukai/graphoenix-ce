@@ -27,8 +27,8 @@ public class PackageURL {
         this.packageName = (String) map.get(PACKAGE_NAME_NAME);
         this.protocol = (String) map.get(PROTOCOL_NAME);
         this.host = (String) map.get(HOST_NAME);
-        this.port = (int) map.getOrDefault(PORT_NAME, -1);
-        this.path = (String) map.getOrDefault(PATH_NAME, "");
+        this.port = (Integer) map.getOrDefault(PORT_NAME, null);
+        this.path = (String) map.getOrDefault(PATH_NAME, null);
     }
 
     public String getPackageName() {
@@ -69,6 +69,13 @@ public class PackageURL {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getAuthority() {
+        if (port != null) {
+            return host + ":" + port;
+        }
+        return host;
     }
 
     @Override

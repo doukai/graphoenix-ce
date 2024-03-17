@@ -204,16 +204,30 @@ public class ReactorGrpcServiceImplementer {
                                 .add(
                                         fieldTypeDefinition.isObject() ?
                                                 CodeBlock.of(
-                                                        ".map(jsonObject -> new $T().setOperationType($S).addSelection(new $T($S).addSelections(jsonObject.getOrDefault(\"selectionSet\", jsonProvider.createValue($S)).toString()).setArguments(jsonObject)))\n",
+                                                        ".map(jsonObject -> new $T().setOperationType($S).addSelection(new $T($S).setSelections(jsonObject.getOrDefault(\"selectionSet\", jsonProvider.createValue($S)).toString()).setArguments(jsonObject)))\n",
                                                         ClassName.get(Operation.class),
                                                         operationType,
                                                         ClassName.get(Field.class),
                                                         fieldDefinition.getName(),
-                                                        fieldTypeDefinition.asObject().getFields().stream()
-                                                                .filter(subFieldDefinition -> !subFieldDefinition.isFunctionField())
-                                                                .filter(subFieldDefinition -> documentManager.getFieldTypeDefinition(subFieldDefinition).isLeaf())
-                                                                .map(AbstractDefinition::getName)
-                                                                .collect(Collectors.joining(" ", "{", "}"))
+                                                        fieldDefinition.isConnectionField() ?
+                                                                documentManager
+                                                                        .getFieldTypeDefinition(
+                                                                                documentManager
+                                                                                        .getFieldTypeDefinition(
+                                                                                                fieldTypeDefinition.asObject().getField(FIELD_EDGES_NAME)
+                                                                                        )
+                                                                                        .asObject().getField(FIELD_NODE_NAME)
+                                                                        )
+                                                                        .asObject().getFields().stream()
+                                                                        .filter(subFieldDefinition -> !subFieldDefinition.isFunctionField())
+                                                                        .filter(subFieldDefinition -> documentManager.getFieldTypeDefinition(subFieldDefinition).isLeaf())
+                                                                        .map(AbstractDefinition::getName)
+                                                                        .collect(Collectors.joining(" ", "{totalCount edges {node {", "}}}")) :
+                                                                fieldTypeDefinition.asObject().getFields().stream()
+                                                                        .filter(subFieldDefinition -> !subFieldDefinition.isFunctionField())
+                                                                        .filter(subFieldDefinition -> documentManager.getFieldTypeDefinition(subFieldDefinition).isLeaf())
+                                                                        .map(AbstractDefinition::getName)
+                                                                        .collect(Collectors.joining(" ", "{", "}"))
                                                 ) :
                                                 CodeBlock.of(
                                                         ".map(jsonObject -> new $T().setOperationType($S).addSelection(new $T($S).setArguments(jsonObject)))\n",

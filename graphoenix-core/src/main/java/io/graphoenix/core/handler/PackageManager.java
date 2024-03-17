@@ -48,19 +48,19 @@ public class PackageManager {
         }
     }
 
-    public PackageURL getURL(String packageName, String schema) {
+    public PackageURL getURL(String packageName, String protocol) {
         switch (packageConfig.getPackageLoadBalance()) {
             case LOAD_BALANCE_ROUND_ROBIN:
-                return packageProvider.getProtocolURLIterator(packageName, schema).next();
+                return packageProvider.getProtocolURLIterator(packageName, protocol).next();
             case LOAD_BALANCE_RANDOM:
-                List<PackageURL> urlList = packageProvider.getProtocolURLList(packageName, schema);
+                List<PackageURL> urlList = packageProvider.getProtocolURLList(packageName, protocol);
                 if (urlList.size() == 1) {
                     return urlList.get(0);
                 } else {
                     return urlList.get(random.nextInt(urlList.size()));
                 }
             default:
-                return packageProvider.getProtocolURLList(packageName, schema).get(0);
+                return packageProvider.getProtocolURLList(packageName, protocol).get(0);
         }
     }
 

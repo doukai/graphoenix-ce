@@ -32,6 +32,10 @@ public final class NameUtil {
         return path.replaceAll("/", "_");
     }
 
+    public static String packageNameToUnderline(String packageName) {
+        return String.join("_", packageName.split("\\."));
+    }
+
     public static String getGrpcName(String name) {
         if (name.startsWith(PREFIX_INTROSPECTION)) {
             return name.replaceFirst(PREFIX_INTROSPECTION, "Intro");

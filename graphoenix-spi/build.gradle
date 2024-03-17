@@ -14,6 +14,10 @@ repositories {
 }
 
 dependencies {
+    antlr('org.antlr:antlr4:4.9.3') {
+        exclude group: 'org.glassfish', module: 'javax.json'
+    }
+
     compile 'io.projectreactor:reactor-core:3.4.16'
     compile 'com.dslplatform:dsl-json:1.10.0'
     compile 'org.eclipse.microprofile.graphql:microprofile-graphql-api:1.1.0'
@@ -21,12 +25,9 @@ dependencies {
     compile 'jakarta.json.bind:jakarta.json.bind-api:3.0.0'
     compile 'jakarta.validation:jakarta.validation-api:3.0.1'
     compile 'org.tinylog:tinylog-api:2.4.1'
+    compile 'org.antlr:antlr4-runtime:4.9.3'
 
     implementation 'io.nozdormu:nozdormu-spi:0.0.1-SNAPSHOT'
-
-    antlr('org.antlr:antlr4:4.9.3') {
-        exclude group: 'org.glassfish', module: 'javax.json'
-    }
     implementation 'org.antlr:ST4:4.3.2'
     implementation 'com.google.guava:guava:31.1-jre'
 

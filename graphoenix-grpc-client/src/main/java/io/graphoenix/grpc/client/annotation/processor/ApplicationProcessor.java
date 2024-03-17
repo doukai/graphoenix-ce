@@ -1,13 +1,11 @@
-package io.graphoenix.grpc.server.annotation.processor;
+package io.graphoenix.grpc.client.annotation.processor;
 
 import com.google.auto.service.AutoService;
 import io.graphoenix.core.annotation.processor.BaseProcessor;
 import io.graphoenix.core.config.GraphQLConfig;
 import io.graphoenix.core.handler.DocumentBuilder;
 import io.graphoenix.core.handler.GraphQLConfigRegister;
-import io.graphoenix.grpc.server.implementer.GrpcServerProducerBuilder;
-import io.graphoenix.grpc.server.implementer.GrpcServiceImplementer;
-import io.graphoenix.grpc.server.implementer.ReactorGrpcServiceImplementer;
+import io.graphoenix.grpc.client.implementer.GrpcFetchHandlerBuilder;
 import io.nozdormu.spi.context.BeanContext;
 import org.tinylog.Logger;
 
@@ -51,12 +49,8 @@ public class ApplicationProcessor extends BaseProcessor {
                 documentBuilder.mapToLocalFetch();
             }
 
-            ReactorGrpcServiceImplementer reactorGrpcServiceImplementer = BeanContext.get(ReactorGrpcServiceImplementer.class);
-            reactorGrpcServiceImplementer.writeToFiler(filer);
-            GrpcServiceImplementer grpcServiceImplementer = BeanContext.get(GrpcServiceImplementer.class);
-            grpcServiceImplementer.writeToFiler(filer);
-            GrpcServerProducerBuilder grpcServerProducerBuilder = BeanContext.get(GrpcServerProducerBuilder.class);
-            grpcServerProducerBuilder.writeToFiler(filer);
+            GrpcFetchHandlerBuilder grpcFetchHandlerBuilder = BeanContext.get(GrpcFetchHandlerBuilder.class);
+            grpcFetchHandlerBuilder.writeToFiler(filer);
         } catch (IOException | URISyntaxException e) {
             Logger.error(e);
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());

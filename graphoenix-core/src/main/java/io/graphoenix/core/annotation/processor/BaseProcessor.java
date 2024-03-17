@@ -168,14 +168,16 @@ public abstract class BaseProcessor extends AbstractProcessor {
                 .map(subElement -> (ExecutableElement) subElement)
                 .forEach(executableElement -> {
                             if (executableElement.getAnnotation(Query.class) != null) {
-                                FieldDefinition fieldDefinition = new FieldDefinition(executableElement, types);
+                                FieldDefinition fieldDefinition = new FieldDefinition(executableElement, types)
+                                        .addDirective(new Directive(DIRECTIVE_PACKAGE_NAME).addArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME, packageConfig.getPackageName()));
                                 documentManager.getDocument().getQueryOperationType()
                                         .ifPresentOrElse(
                                                 objectType -> objectType.addField(fieldDefinition),
                                                 () -> documentManager.getDocument().addDefinition(new ObjectType(TYPE_QUERY_NAME).addField(fieldDefinition))
                                         );
                             } else if (executableElement.getAnnotation(Mutation.class) != null) {
-                                FieldDefinition fieldDefinition = new FieldDefinition(executableElement, types);
+                                FieldDefinition fieldDefinition = new FieldDefinition(executableElement, types)
+                                        .addDirective(new Directive(DIRECTIVE_PACKAGE_NAME).addArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME, packageConfig.getPackageName()));
                                 documentManager.getDocument().getMutationOperationType()
                                         .ifPresentOrElse(
                                                 objectType -> objectType.addField(fieldDefinition),

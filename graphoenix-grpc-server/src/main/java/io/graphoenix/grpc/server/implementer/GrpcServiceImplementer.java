@@ -168,12 +168,13 @@ public class GrpcServiceImplementer {
                 .superclass(ClassName.get(grpcPackageName, "GraphQLServiceGrpc", "GraphQLServiceImplBase"))
                 .addModifiers(Modifier.PUBLIC)
                 .addField(
-                        FieldSpec.builder(
-                                ClassName.get(grpcPackageName, "ReactorGraphQLServiceGrpc", "GraphQLServiceImplBase"),
-                                "reactorService",
-                                Modifier.PRIVATE,
-                                Modifier.FINAL
-                        )
+                        FieldSpec
+                                .builder(
+                                        ClassName.get(grpcPackageName, "ReactorGraphQLServiceGrpc", "GraphQLServiceImplBase"),
+                                        "reactorService",
+                                        Modifier.PRIVATE,
+                                        Modifier.FINAL
+                                )
                                 .initializer("new $T()", ClassName.get(grpcPackageName, "ReactorGrpcGraphQLServiceImpl"))
                                 .build()
                 )
