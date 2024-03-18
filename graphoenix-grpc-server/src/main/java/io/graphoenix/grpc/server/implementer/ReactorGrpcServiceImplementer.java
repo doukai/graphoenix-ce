@@ -15,6 +15,7 @@ import io.graphoenix.spi.handler.OperationHandler;
 import io.nozdormu.spi.context.BeanContext;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
 import org.tinylog.Logger;
 import reactor.core.publisher.Mono;
@@ -22,7 +23,6 @@ import reactor.core.publisher.Mono;
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.Modifier;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
@@ -193,14 +193,12 @@ public class ReactorGrpcServiceImplementer {
                 .returns(responseClassName)
                 .addStatement(
                         CodeBlock.builder()
-                                .add("return $L.map($T::toJson)\n",
+                                .add("return $L.map($T::toJsonValue)\n",
                                         requestParameterName,
                                         ClassName.get(ProtobufUtil.class)
                                 )
                                 .indent()
-                                .add(".map(json -> jsonProvider.createReader(new $T(json)).readObject())\n",
-                                        ClassName.get(StringReader.class)
-                                )
+                                .add(".map($T::asJsonObject)\n", ClassName.get(JsonValue.class))
                                 .add(
                                         fieldTypeDefinition.isObject() ?
                                                 CodeBlock.of(
@@ -240,7 +238,7 @@ public class ReactorGrpcServiceImplementer {
                                 .add(".flatMap(operation -> $T.from(operationHandler.handle(operation)))\n",
                                         ClassName.get(Mono.class)
                                 )
-                                .add(".map(jsonValue -> ($T) $T.fromJson(jsonValue.asJsonObject().get($S).toString(), $T.newBuilder()))",
+                                .add(".map(jsonValue -> ($T) $T.fromJsonValue(jsonValue.asJsonObject().get($S), $T.newBuilder()))",
                                         ClassName.get(grpcPackageName, grpcResponseClassName),
                                         ClassName.get(ProtobufUtil.class),
                                         fieldDefinition.getName(),
