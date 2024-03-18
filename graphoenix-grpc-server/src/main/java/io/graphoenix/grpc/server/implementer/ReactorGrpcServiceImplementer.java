@@ -15,7 +15,6 @@ import io.graphoenix.spi.handler.OperationHandler;
 import io.nozdormu.spi.context.BeanContext;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
 import org.tinylog.Logger;
 import reactor.core.publisher.Mono;
@@ -220,11 +219,10 @@ public class ReactorGrpcServiceImplementer {
                 )
                 .addStatement(
                         CodeBlock.builder()
-                                .add("return $L.map(messageOrBuilder -> protobufConverter.toJsonValue(messageOrBuilder, fieldDefinition))\n",
+                                .add("return $L.map(messageOrBuilder -> protobufConverter.toJsonValue(messageOrBuilder, fieldDefinition).asJsonObject())\n",
                                         requestParameterName
                                 )
                                 .indent()
-                                .add(".map($T::asJsonObject)\n", ClassName.get(JsonValue.class))
                                 .add(
                                         fieldTypeDefinition.isObject() ?
                                                 CodeBlock.of(
