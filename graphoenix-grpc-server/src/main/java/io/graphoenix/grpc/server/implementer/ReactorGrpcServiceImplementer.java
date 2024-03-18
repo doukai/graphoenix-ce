@@ -4,7 +4,7 @@ import com.squareup.javapoet.*;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.PackageManager;
-import io.graphoenix.grpc.server.utils.ProtobufConverter;
+import io.graphoenix.grpc.server.handler.ProtobufConverter;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
