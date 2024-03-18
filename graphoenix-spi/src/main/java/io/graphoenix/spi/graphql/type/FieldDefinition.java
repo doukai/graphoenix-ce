@@ -90,6 +90,10 @@ public class FieldDefinition extends AbstractDefinition {
         return Optional.ofNullable(argumentMap).map(Map::values).orElse(null);
     }
 
+    public Map<String, InputValue> getArgumentMap() {
+        return argumentMap;
+    }
+
     public InputValue getArgument(int index) {
         return Iterators.get(argumentMap.values().iterator(), index);
     }

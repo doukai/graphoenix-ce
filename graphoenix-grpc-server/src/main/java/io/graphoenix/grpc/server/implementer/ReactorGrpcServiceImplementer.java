@@ -4,7 +4,7 @@ import com.squareup.javapoet.*;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.PackageManager;
-import io.graphoenix.grpc.server.utils.ProtobufUtil;
+import io.graphoenix.grpc.server.utils.ProtobufConverter;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
@@ -128,6 +128,16 @@ public class ReactorGrpcServiceImplementer {
                 .addField(
                         FieldSpec
                                 .builder(
+                                        ClassName.get(DocumentManager.class),
+                                        "documentManager",
+                                        Modifier.PRIVATE,
+                                        Modifier.FINAL
+                                )
+                                .build()
+                )
+                .addField(
+                        FieldSpec
+                                .builder(
                                         ClassName.get(OperationHandler.class),
                                         "operationHandler",
                                         Modifier.PRIVATE,
@@ -145,6 +155,16 @@ public class ReactorGrpcServiceImplementer {
                                 )
                                 .build()
                 )
+                .addField(
+                        FieldSpec
+                                .builder(
+                                        ClassName.get(ProtobufConverter.class),
+                                        "protobufConverter",
+                                        Modifier.PRIVATE,
+                                        Modifier.FINAL
+                                )
+                                .build()
+                )
                 .addMethod(buildConstructor())
                 .addMethods(buildTypeMethods(packageName, operationTypeName, fieldDefinitionList))
                 .build();
@@ -153,8 +173,10 @@ public class ReactorGrpcServiceImplementer {
     private MethodSpec buildConstructor() {
         return MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
+                .addStatement("this.documentManager = $T.get($T.class)", ClassName.get(BeanContext.class), ClassName.get(DocumentManager.class))
                 .addStatement("this.operationHandler = $T.get($T.class)", ClassName.get(BeanContext.class), ClassName.get(OperationHandler.class))
                 .addStatement("this.jsonProvider = $T.get($T.class)", ClassName.get(BeanContext.class), ClassName.get(JsonProvider.class))
+                .addStatement("this.protobufConverter = $T.get($T.class)", ClassName.get(BeanContext.class), ClassName.get(ProtobufConverter.class))
                 .build();
     }
 
@@ -191,11 +213,15 @@ public class ReactorGrpcServiceImplementer {
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(requestClassName, requestParameterName)
                 .returns(responseClassName)
+                .addStatement("$T fieldDefinition = documentManager.getDocument().getObjectTypeOrError($S).getField($S)",
+                        ClassName.get(FieldDefinition.class),
+                        operationTypeName,
+                        fieldDefinition.getName()
+                )
                 .addStatement(
                         CodeBlock.builder()
-                                .add("return $L.map($T::toJsonValue)\n",
-                                        requestParameterName,
-                                        ClassName.get(ProtobufUtil.class)
+                                .add("return $L.map(messageOrBuilder -> protobufConverter.toJsonValue(messageOrBuilder, fieldDefinition))\n",
+                                        requestParameterName
                                 )
                                 .indent()
                                 .add(".map($T::asJsonObject)\n", ClassName.get(JsonValue.class))
@@ -238,9 +264,8 @@ public class ReactorGrpcServiceImplementer {
                                 .add(".flatMap(operation -> $T.from(operationHandler.handle(operation)))\n",
                                         ClassName.get(Mono.class)
                                 )
-                                .add(".map(jsonValue -> ($T) $T.fromJsonValue(jsonValue.asJsonObject().get($S), $T.newBuilder()))",
+                                .add(".map(jsonValue -> ($T) protobufConverter.fromJsonValue(jsonValue.asJsonObject().get($S), $T.newBuilder(), fieldDefinition))",
                                         ClassName.get(grpcPackageName, grpcResponseClassName),
-                                        ClassName.get(ProtobufUtil.class),
                                         fieldDefinition.getName(),
                                         ClassName.get(grpcPackageName, grpcResponseClassName)
                                 )

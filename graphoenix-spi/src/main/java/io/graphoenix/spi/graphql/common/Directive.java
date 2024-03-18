@@ -67,7 +67,7 @@ public class Directive {
     }
 
     public Directive setArguments(Arguments arguments) {
-        if (arguments != null && arguments.size() > 0) {
+        if (arguments != null && !arguments.isEmpty()) {
             this.arguments = arguments;
         }
         return this;
