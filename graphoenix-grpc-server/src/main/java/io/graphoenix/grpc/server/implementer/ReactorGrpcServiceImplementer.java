@@ -228,7 +228,7 @@ public class ReactorGrpcServiceImplementer {
                                 .add(
                                         fieldTypeDefinition.isObject() ?
                                                 CodeBlock.of(
-                                                        ".map(jsonObject -> new $T().setOperationType($S).addSelection(new $T($S).setSelections(jsonObject.getOrDefault(\"selectionSet\", jsonProvider.createValue($S)).toString()).setArguments(jsonObject)))\n",
+                                                        ".map(jsonObject -> new $T().setOperationType($S).addSelection(new $T($S).setArguments(jsonObject).setSelections(jsonObject.getString(\"selectionSet\", $S))))\n",
                                                         ClassName.get(Operation.class),
                                                         operationType,
                                                         ClassName.get(Field.class),
