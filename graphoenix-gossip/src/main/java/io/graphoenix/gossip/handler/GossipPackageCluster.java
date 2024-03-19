@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 import static io.graphoenix.spi.dto.PackageURL.*;
 
 @ApplicationScoped
-public class GossipPackageCluster implements Runnable {
+public class GossipPackageCluster implements Runner {
 
     public static final String URLS_NAME = "urls";
 
@@ -97,5 +97,15 @@ public class GossipPackageCluster implements Runnable {
                                 )
                 )
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public String protocol() {
+        return "gossip";
+    }
+
+    @Override
+    public int port() {
+        return gossipConfig.getPort();
     }
 }

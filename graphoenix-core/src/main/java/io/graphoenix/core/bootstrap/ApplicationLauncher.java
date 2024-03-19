@@ -34,18 +34,18 @@ public class ApplicationLauncher implements Launcher {
         this.runnerList = new ArrayList<>();
     }
 
-    public ApplicationLauncher addServers(Runnable... servers) {
+    public ApplicationLauncher addServers(Runner... servers) {
         this.runnerList.addAll(List.of(servers));
         return this;
     }
 
-    public ApplicationLauncher with(Runnable... servers) {
+    public ApplicationLauncher with(Runner... servers) {
         return addServers(servers);
     }
 
     @SafeVarargs
-    public final ApplicationLauncher with(Class<? extends Runnable>... classes) {
-        return addServers(Arrays.stream(classes).map(BeanContext::get).toArray(Runnable[]::new));
+    public final ApplicationLauncher with(Class<? extends Runner>... classes) {
+        return addServers(Arrays.stream(classes).map(BeanContext::get).toArray(Runner[]::new));
     }
 
     public void run(String... args) {

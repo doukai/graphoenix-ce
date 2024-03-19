@@ -101,7 +101,7 @@ public class GrpcFetchHandlerBuilder {
                         packageNameToUnderline(packageName) + "_GraphQLServiceStub",
                         ClassName.get(packageName + ".grpc", "ReactorGraphQLServiceGrpc"),
                         ClassName.get(ManagedChannelBuilder.class),
-                        "package:///" + packageName,
+                        "package://" + packageName,
                         CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, packageConfig.getPackageLoadBalance())
                 )
         );
