@@ -94,7 +94,7 @@ public class ProtobufConverter {
                     if (inputValueTypeDefinition.isEnum()) {
                         String enumSuffix = "_" + CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, inputValueTypeDefinition.getName());
                         String enumValue = ((JsonString) jsonValue).getString();
-                        return jsonProvider.createValue(enumValue.substring(0, enumValue.lastIndexOf(enumSuffix) + 1));
+                        return jsonProvider.createValue(enumValue.substring(0, enumValue.lastIndexOf(enumSuffix)));
                     } else if (inputValueTypeDefinition.getName().equals(SCALA_TIMESTAMP_NAME)) {
                         Timestamp.Builder builder = Timestamp.newBuilder();
                         JsonFormat.parser().merge(jsonValue.toString(), builder);
@@ -155,75 +155,60 @@ public class ProtobufConverter {
                     } else if (fieldTypeDefinition.getName().equals(SCALA_TIMESTAMP_NAME)) {
                         LocalDateTime localDateTime = jsonb.fromJson(jsonValue.toString(), LocalDateTime.class);
                         Instant instant = localDateTime.toInstant(ZoneOffset.UTC);
-                        jsonProvider.createReader(
-                                        new StringReader(
-                                                JsonFormat.printer()
-                                                        .print(
-                                                                Timestamp.newBuilder()
-                                                                        .setSeconds(instant.getEpochSecond())
-                                                                        .setNanos(instant.getNano())
-                                                                        .build()
-                                                        )
+                        jsonProvider.createValue(
+                                JsonFormat.printer()
+                                        .print(
+                                                Timestamp.newBuilder()
+                                                        .setSeconds(instant.getEpochSecond())
+                                                        .setNanos(instant.getNano())
+                                                        .build()
                                         )
-                                )
-                                .readValue();
+                        );
                     } else if (fieldTypeDefinition.getName().equals(SCALA_DATE_NAME)) {
                         LocalDate localDate = jsonb.fromJson(jsonValue.toString(), LocalDate.class);
-                        jsonProvider.createReader(
-                                        new StringReader(
-                                                JsonFormat.printer()
-                                                        .print(
-                                                                Date.newBuilder()
-                                                                        .setYear(localDate.getYear())
-                                                                        .setMonth(localDate.getMonthValue())
-                                                                        .setDay(localDate.getDayOfMonth())
-                                                                        .build()
-                                                        )
+                        jsonProvider.createValue(
+                                JsonFormat.printer()
+                                        .print(
+                                                Date.newBuilder()
+                                                        .setYear(localDate.getYear())
+                                                        .setMonth(localDate.getMonthValue())
+                                                        .setDay(localDate.getDayOfMonth())
+                                                        .build()
                                         )
-                                )
-                                .readValue();
+                        );
                     } else if (fieldTypeDefinition.getName().equals(SCALA_TIME_NAME)) {
                         LocalTime localTime = jsonb.fromJson(jsonValue.toString(), LocalTime.class);
-                        jsonProvider.createReader(
-                                        new StringReader(
-                                                JsonFormat.printer()
-                                                        .print(
-                                                                TimeOfDay.newBuilder()
-                                                                        .setHours(localTime.getHour())
-                                                                        .setMinutes(localTime.getMinute())
-                                                                        .setSeconds(localTime.getSecond())
-                                                                        .setNanos(localTime.getNano())
-                                                                        .build()
-                                                        )
+                        jsonProvider.createValue(
+                                JsonFormat.printer()
+                                        .print(
+                                                TimeOfDay.newBuilder()
+                                                        .setHours(localTime.getHour())
+                                                        .setMinutes(localTime.getMinute())
+                                                        .setSeconds(localTime.getSecond())
+                                                        .setNanos(localTime.getNano())
+                                                        .build()
                                         )
-                                )
-                                .readValue();
+                        );
                     } else if (fieldTypeDefinition.getName().equals(SCALA_BIG_DECIMAL_NAME)) {
                         BigDecimal bigDecimal = jsonb.fromJson(jsonValue.toString(), BigDecimal.class);
-                        jsonProvider.createReader(
-                                        new StringReader(
-                                                JsonFormat.printer()
-                                                        .print(
-                                                                Decimal.newBuilder()
-                                                                        .setValueBytes(ByteString.copyFrom(bigDecimal.unscaledValue().toByteArray()))
-                                                                        .build()
-                                                        )
+                        jsonProvider.createValue(
+                                JsonFormat.printer()
+                                        .print(
+                                                Decimal.newBuilder()
+                                                        .setValueBytes(ByteString.copyFrom(bigDecimal.unscaledValue().toByteArray()))
+                                                        .build()
                                         )
-                                )
-                                .readValue();
+                        );
                     } else if (fieldTypeDefinition.getName().equals(SCALA_BIG_INTEGER_NAME)) {
                         BigInteger bigInteger = jsonb.fromJson(jsonValue.toString(), BigInteger.class);
-                        jsonProvider.createReader(
-                                        new StringReader(
-                                                JsonFormat.printer()
-                                                        .print(
-                                                                Decimal.newBuilder()
-                                                                        .setValueBytes(ByteString.copyFrom(bigInteger.toByteArray()))
-                                                                        .build()
-                                                        )
+                        jsonProvider.createValue(
+                                JsonFormat.printer()
+                                        .print(
+                                                Decimal.newBuilder()
+                                                        .setValueBytes(ByteString.copyFrom(bigInteger.toByteArray()))
+                                                        .build()
                                         )
-                                )
-                                .readValue();
+                        );
                     }
                     return jsonValue;
             }

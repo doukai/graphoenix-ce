@@ -1,13 +1,16 @@
 package io.graphoenix.grpc.client.implementer;
 
+import com.google.common.base.CaseFormat;
 import com.squareup.javapoet.*;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.PackageManager;
+import io.graphoenix.grpc.client.resolver.PackageNameResolverProvider;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.handler.FetchHandler;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.NameResolverRegistry;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -59,16 +62,6 @@ public class GrpcFetchHandlerBuilder {
                 .addField(
                         FieldSpec
                                 .builder(
-                                        ClassName.get(PackageManager.class),
-                                        "packageManager",
-                                        Modifier.PRIVATE,
-                                        Modifier.FINAL
-                                )
-                                .build()
-                )
-                .addField(
-                        FieldSpec
-                                .builder(
                                         ClassName.get(JsonProvider.class),
                                         "jsonProvider",
                                         Modifier.PRIVATE,
@@ -98,18 +91,18 @@ public class GrpcFetchHandlerBuilder {
         MethodSpec.Builder builder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Inject.class)
-                .addParameter(ClassName.get(PackageManager.class), "packageManager")
                 .addParameter(ClassName.get(JsonProvider.class), "jsonProvider")
-                .addStatement("this.packageManager = packageManager")
-                .addStatement("this.jsonProvider = jsonProvider");
+                .addParameter(ClassName.get(PackageNameResolverProvider.class), "packageNameResolverProvider")
+                .addStatement("this.jsonProvider = jsonProvider")
+                .addStatement("$T.getDefaultRegistry().register(packageNameResolverProvider)", ClassName.get(NameResolverRegistry.class));
 
         packageNameSet.forEach(packageName ->
-                builder.addStatement("this.$L = $T.newReactorStub($T.forTarget(packageManager.getURL($S, $S).getAuthority()).usePlaintext().build())",
+                builder.addStatement("this.$L = $T.newReactorStub($T.forTarget($S).defaultLoadBalancingPolicy($S).usePlaintext().build())",
                         packageNameToUnderline(packageName) + "_GraphQLServiceStub",
                         ClassName.get(packageName + ".grpc", "ReactorGraphQLServiceGrpc"),
                         ClassName.get(ManagedChannelBuilder.class),
-                        packageName,
-                        "grpc"
+                        "package:///" + packageName,
+                        CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, packageConfig.getPackageLoadBalance())
                 )
         );
         return builder.build();

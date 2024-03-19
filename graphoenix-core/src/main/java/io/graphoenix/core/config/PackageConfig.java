@@ -6,7 +6,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperties;
 import java.util.Map;
 import java.util.Set;
 
-import static io.graphoenix.core.handler.PackageManager.LOAD_BALANCE_RANDOM;
+import static io.graphoenix.core.handler.PackageManager.LOAD_BALANCE_ROUND_ROBIN;
 
 @ConfigProperties(prefix = "package")
 public class PackageConfig {
@@ -15,7 +15,7 @@ public class PackageConfig {
     private String packageName;
 
     @Optional
-    private String packageLoadBalance = LOAD_BALANCE_RANDOM;
+    private String packageLoadBalance = LOAD_BALANCE_ROUND_ROBIN;
 
     @Optional
     private Map<String, Object> members;

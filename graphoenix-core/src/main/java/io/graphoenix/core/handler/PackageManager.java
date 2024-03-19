@@ -20,14 +20,13 @@ import java.util.stream.Stream;
 public class PackageManager {
 
     public static final String LOAD_BALANCE_ROUND_ROBIN = "roundRobin";
-    public static final String LOAD_BALANCE_RANDOM = "random";
+    public static final String LOAD_BALANCE_PICK_FIRST = "pickFirst";
     public static final String SEEDS_MEMBER_KEY = "seeds";
     public static final String PACKAGE_PROVIDER_GOSSIP_NAME = "gossip";
 
     private final PackageConfig packageConfig;
     private final PackageProvider packageProvider;
     private final Set<String> seedMembers;
-    private final Random random = new Random();
 
     @Inject
     public PackageManager(PackageConfig packageConfig, PackageProvider packageProvider) {
@@ -52,16 +51,14 @@ public class PackageManager {
         switch (packageConfig.getPackageLoadBalance()) {
             case LOAD_BALANCE_ROUND_ROBIN:
                 return packageProvider.getProtocolURLIterator(packageName, protocol).next();
-            case LOAD_BALANCE_RANDOM:
-                List<PackageURL> urlList = packageProvider.getProtocolURLList(packageName, protocol);
-                if (urlList.size() == 1) {
-                    return urlList.get(0);
-                } else {
-                    return urlList.get(random.nextInt(urlList.size()));
-                }
+            case LOAD_BALANCE_PICK_FIRST:
             default:
                 return packageProvider.getProtocolURLList(packageName, protocol).get(0);
         }
+    }
+
+    public List<PackageURL> getURLList(String packageName, String protocol) {
+        return packageProvider.getProtocolURLList(packageName, protocol);
     }
 
     public Optional<String> getDefaultPackageName() {
