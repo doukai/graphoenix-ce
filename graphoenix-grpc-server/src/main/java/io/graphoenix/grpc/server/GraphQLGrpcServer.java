@@ -12,8 +12,10 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 @ApplicationScoped
-@Named("grpc")
+@Named(GraphQLGrpcServer.PROTOCOL)
 public class GraphQLGrpcServer implements Runner {
+
+    public static final String PROTOCOL = "grpc";
 
     private final Server server;
 

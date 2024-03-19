@@ -9,18 +9,16 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.core.handler.PackageManager.LOAD_BALANCE_ROUND_ROBIN;
+import static io.graphoenix.core.handler.PackageManager.PACKAGE_PROVIDER_GOSSIP_NAME;
 
 @ApplicationScoped
-@Named("gossip")
+@Named(PACKAGE_PROVIDER_GOSSIP_NAME)
 public class GossipPackageProvider implements PackageProvider {
 
     private final PackageConfig packageConfig;
@@ -82,7 +80,10 @@ public class GossipPackageProvider implements PackageProvider {
     }
 
     private void mergeURLs(List<PackageURL> packageURLList) {
-        packageProtocolURLListMap.clear();
+        Set<String> packageNameSet = packageURLList.stream()
+                .map(PackageURL::getPackageName)
+                .collect(Collectors.toSet());
+
         packageProtocolURLListMap
                 .putAll(
                         packageURLList.stream()
@@ -100,8 +101,13 @@ public class GossipPackageProvider implements PackageProvider {
                                 )
                 );
 
+        Set<String> packageProtocolURLListMapRemovedKeySet = packageProtocolURLListMap.keySet().stream()
+                .filter(key -> !packageNameSet.contains(key))
+                .collect(Collectors.toSet());
+
+        packageProtocolURLListMapRemovedKeySet.forEach(packageProtocolURLListMap::remove);
+
         if (packageConfig.getPackageLoadBalance().equals(LOAD_BALANCE_ROUND_ROBIN)) {
-            packageProtocolURLIteratorMap.clear();
             packageProtocolURLIteratorMap
                     .putAll(
                             packageURLList.stream()
@@ -118,6 +124,12 @@ public class GossipPackageProvider implements PackageProvider {
                                             )
                                     )
                     );
+
+            Set<String> packageProtocolURLIteratorMapRemovedKeySet = packageProtocolURLIteratorMap.keySet().stream()
+                    .filter(key -> !packageNameSet.contains(key))
+                    .collect(Collectors.toSet());
+
+            packageProtocolURLIteratorMapRemovedKeySet.forEach(packageProtocolURLIteratorMap::remove);
         }
     }
 }
