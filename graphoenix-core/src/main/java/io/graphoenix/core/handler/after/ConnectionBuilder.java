@@ -67,6 +67,9 @@ public class ConnectionBuilder implements OperationAfterHandler {
                 return Stream.empty();
             }
             String selectionName = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
+            if (jsonValue.asJsonObject().get(selectionName) == null || jsonValue.asJsonObject().get(selectionName).getValueType().equals(JsonValue.ValueType.NULL)) {
+                return Stream.empty();
+            }
             if (fieldDefinition.getType().hasList()) {
                 return IntStream.range(0, jsonValue.asJsonObject().get(selectionName).asJsonArray().size())
                         .mapToObj(index ->

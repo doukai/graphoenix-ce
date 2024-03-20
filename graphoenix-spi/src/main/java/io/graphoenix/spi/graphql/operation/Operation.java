@@ -214,7 +214,7 @@ public class Operation extends AbstractDefinition implements Definition {
 
     public Optional<String> getInvokeClassName() {
         return Optional.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
-                .flatMap(directive -> directive.getArgument(DIRECTIVE_INVOKE_ARGUMENT_CLASS_NAME_NAME))
+                .flatMap(directive -> directive.getArgumentOrEmpty(DIRECTIVE_INVOKE_ARGUMENT_CLASS_NAME_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -225,7 +225,7 @@ public class Operation extends AbstractDefinition implements Definition {
 
     public Optional<String> getInvokeMethodName() {
         return Optional.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
-                .flatMap(directive -> directive.getArgument(DIRECTIVE_INVOKE_ARGUMENT_METHOD_NAME_NAME))
+                .flatMap(directive -> directive.getArgumentOrEmpty(DIRECTIVE_INVOKE_ARGUMENT_METHOD_NAME_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -236,7 +236,7 @@ public class Operation extends AbstractDefinition implements Definition {
 
     public Optional<Integer> getInvokeIndexName() {
         return Optional.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
-                .flatMap(directive -> directive.getArgument(DIRECTIVE_INVOKE_ARGUMENT_METHOD_INDEX_NAME))
+                .flatMap(directive -> directive.getArgumentOrEmpty(DIRECTIVE_INVOKE_ARGUMENT_METHOD_INDEX_NAME))
                 .filter(ValueWithVariable::isInt)
                 .map(valueWithVariable -> valueWithVariable.asInt().getIntegerValue());
     }
@@ -247,7 +247,7 @@ public class Operation extends AbstractDefinition implements Definition {
 
     public Stream<Map.Entry<String, String>> getInvokeParameters() {
         return Stream.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
-                .flatMap(directive -> directive.getArgument(DIRECTIVE_INVOKE_ARGUMENT_PARAMETER_NAME).stream())
+                .flatMap(directive -> directive.getArgumentOrEmpty(DIRECTIVE_INVOKE_ARGUMENT_PARAMETER_NAME).stream())
                 .filter(ValueWithVariable::isArray)
                 .flatMap(valueWithVariable -> valueWithVariable.asArray().getValueWithVariables().stream())
                 .filter(ValueWithVariable::isObject)
@@ -266,7 +266,7 @@ public class Operation extends AbstractDefinition implements Definition {
 
     public Optional<String> getInvokeReturnClassName() {
         return Optional.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
-                .flatMap(directive -> directive.getArgument(DIRECTIVE_INVOKE_ARGUMENT_RETURN_CLASS_NAME_NAME))
+                .flatMap(directive -> directive.getArgumentOrEmpty(DIRECTIVE_INVOKE_ARGUMENT_RETURN_CLASS_NAME_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -277,7 +277,7 @@ public class Operation extends AbstractDefinition implements Definition {
 
     public Stream<String> getInvokeThrownTypes() {
         return Stream.ofNullable(getDirective(DIRECTIVE_INVOKE_NAME))
-                .flatMap(directive -> directive.getArgument(DIRECTIVE_INVOKE_ARGUMENT_THROWN_TYPES_NAME).stream())
+                .flatMap(directive -> directive.getArgumentOrEmpty(DIRECTIVE_INVOKE_ARGUMENT_THROWN_TYPES_NAME).stream())
                 .filter(ValueWithVariable::isArray)
                 .map(ValueWithVariable::asArray)
                 .flatMap(arrayValueWithVariable -> arrayValueWithVariable.getValueWithVariables().stream())

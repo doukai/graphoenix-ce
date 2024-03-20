@@ -187,7 +187,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                     .flatMap(subFieldDefinition ->
                                                             Stream.ofNullable(field.getArguments())
                                                                     .flatMap(arguments ->
-                                                                            arguments.getArgument(inputValue.getName())
+                                                                            arguments.getArgumentOrEmpty(inputValue.getName())
                                                                                     .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
                                                                     )
                                                                     .flatMap(valueWithVariable ->
@@ -202,11 +202,11 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                     )
                                                     )
                                     ),
-                            fieldDefinition.getArgument(INPUT_VALUE_EXS_NAME).stream()
+                            fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_EXS_NAME).stream()
                                     .flatMap(exsInputValue ->
                                             Stream.ofNullable(field.getArguments())
                                                     .flatMap(arguments ->
-                                                            arguments.getArgument(exsInputValue.getName())
+                                                            arguments.getArgumentOrEmpty(exsInputValue.getName())
                                                                     .or(() -> Optional.ofNullable(exsInputValue.getDefaultValue())).stream()
                                                     )
                                                     .filter(ValueWithVariable::isArray)
@@ -218,7 +218,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                                     .flatMap(subInputValue ->
                                                                                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                                                                                     .flatMap(subFieldDefinition ->
-                                                                                                            arrayValueWithVariable.getValueWithVariable(index).asObject().getValueWithVariable(subInputValue.getName())
+                                                                                                            arrayValueWithVariable.getValueWithVariable(index).asObject().getValueWithVariableOrEmpty(subInputValue.getName())
                                                                                                                     .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
                                                                                                                     .flatMap(subValueWithVariable ->
                                                                                                                             buildFetchItems(
@@ -236,11 +236,11 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                     .flatMap(stream -> stream)
                                                     )
                                     ),
-                            fieldDefinition.getArgument(INPUT_VALUE_WHERE_NAME).stream()
+                            fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_WHERE_NAME).stream()
                                     .flatMap(whereInputValue ->
                                             Stream.ofNullable(field.getArguments())
                                                     .flatMap(arguments ->
-                                                            arguments.getArgument(whereInputValue.getName())
+                                                            arguments.getArgumentOrEmpty(whereInputValue.getName())
                                                                     .or(() -> Optional.ofNullable(whereInputValue.getDefaultValue())).stream()
                                                     )
                                                     .filter(ValueWithVariable::isObject)
@@ -251,7 +251,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                     .flatMap(subInputValue ->
                                                                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                                                                     .flatMap(subFieldDefinition ->
-                                                                                            objectValueWithVariable.getValueWithVariable(subInputValue.getName())
+                                                                                            objectValueWithVariable.getValueWithVariableOrEmpty(subInputValue.getName())
                                                                                                     .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
                                                                                                     .flatMap(valueWithVariable ->
                                                                                                             buildFetchItems(
@@ -346,9 +346,9 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                     )
                                                     )
                                     ),
-                            inputValueTypeDefinition.asInputObject().getInputValue(INPUT_VALUE_EXS_NAME).stream()
+                            inputValueTypeDefinition.asInputObject().getInputValueOrEmpty(INPUT_VALUE_EXS_NAME).stream()
                                     .flatMap(exsInputValue ->
-                                            valueWithVariable.asObject().getValueWithVariable(exsInputValue.getName())
+                                            valueWithVariable.asObject().getValueWithVariableOrEmpty(exsInputValue.getName())
                                                     .or(() -> Optional.ofNullable(exsInputValue.getDefaultValue())).stream()
                                                     .filter(ValueWithVariable::isArray)
                                                     .map(ValueWithVariable::asArray)
@@ -359,7 +359,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                                     .flatMap(subInputValue ->
                                                                                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                                                                                     .flatMap(subFieldDefinition ->
-                                                                                                            arrayValueWithVariable.getValueWithVariable(index).asObject().getValueWithVariable(subInputValue.getName())
+                                                                                                            arrayValueWithVariable.getValueWithVariable(index).asObject().getValueWithVariableOrEmpty(subInputValue.getName())
                                                                                                                     .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
                                                                                                                     .flatMap(subValueWithVariable ->
                                                                                                                             buildFetchItems(
@@ -377,9 +377,9 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                     .flatMap(stream -> stream)
                                                     )
                                     ),
-                            inputValueTypeDefinition.asInputObject().getInputValue(INPUT_VALUE_WHERE_NAME).stream()
+                            inputValueTypeDefinition.asInputObject().getInputValueOrEmpty(INPUT_VALUE_WHERE_NAME).stream()
                                     .flatMap(whereInputValue ->
-                                            valueWithVariable.asObject().getValueWithVariable(whereInputValue.getName())
+                                            valueWithVariable.asObject().getValueWithVariableOrEmpty(whereInputValue.getName())
                                                     .or(() -> Optional.ofNullable(whereInputValue.getDefaultValue())).stream()
                                                     .filter(ValueWithVariable::isObject)
                                                     .map(ValueWithVariable::asObject)
@@ -389,7 +389,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                                                                     .flatMap(subInputValue ->
                                                                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                                                                     .flatMap(subFieldDefinition ->
-                                                                                            objectValueWithVariable.getValueWithVariable(subInputValue.getName())
+                                                                                            objectValueWithVariable.getValueWithVariableOrEmpty(subInputValue.getName())
                                                                                                     .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
                                                                                                     .flatMap(subValueWithVariable ->
                                                                                                             buildFetchItems(

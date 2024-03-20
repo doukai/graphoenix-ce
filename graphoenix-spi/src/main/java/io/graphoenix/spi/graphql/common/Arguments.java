@@ -143,12 +143,12 @@ public class Arguments extends AbstractMap<String, JsonValue> implements ValueWi
         return arguments;
     }
 
-    public ValueWithVariable getArgumentOrNull(String name) {
+    public ValueWithVariable getArgument(String name) {
         return arguments.get(name);
     }
 
-    public Optional<ValueWithVariable> getArgument(String name) {
-        return Optional.ofNullable(getArgumentOrNull(name));
+    public Optional<ValueWithVariable> getArgumentOrEmpty(String name) {
+        return Optional.ofNullable(getArgument(name));
     }
 
     public boolean hasArgument(String name) {

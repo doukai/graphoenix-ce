@@ -65,7 +65,7 @@ public class ProtobufConverter {
                 .map(entry ->
                         new AbstractMap.SimpleEntry<>(
                                 CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, entry.getKey()),
-                                toGraphQLJsonValue(entry.getValue(), fieldDefinition.getArgumentOrNull(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, entry.getKey())))
+                                toGraphQLJsonValue(entry.getValue(), fieldDefinition.getArgument(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, entry.getKey())))
                         )
                 )
                 .collect(JsonCollectors.toJsonObject());
@@ -80,7 +80,7 @@ public class ProtobufConverter {
                             .map(entry ->
                                     new AbstractMap.SimpleEntry<>(
                                             CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, entry.getKey()),
-                                            toGraphQLJsonValue(entry.getValue(), inputValueTypeDefinition.asInputObject().getInputValueOrNull(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, entry.getKey())))
+                                            toGraphQLJsonValue(entry.getValue(), inputValueTypeDefinition.asInputObject().getInputValue(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, entry.getKey())))
                                     )
                             )
                             .collect(JsonCollectors.toJsonObject());

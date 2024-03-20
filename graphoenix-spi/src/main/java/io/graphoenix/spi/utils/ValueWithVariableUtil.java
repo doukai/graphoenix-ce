@@ -12,7 +12,7 @@ public final class ValueWithVariableUtil {
 
     public static boolean isOr(Arguments arguments) {
         return Optional.ofNullable(arguments)
-                .flatMap(result -> result.getArgument(INPUT_VALUE_COND_NAME))
+                .flatMap(result -> result.getArgumentOrEmpty(INPUT_VALUE_COND_NAME))
                 .filter(ValueWithVariable::isEnum)
                 .map(field -> field.asEnum().getValue().equals(INPUT_CONDITIONAL_INPUT_VALUE_OR))
                 .orElse(false);
@@ -22,7 +22,7 @@ public final class ValueWithVariableUtil {
         return Optional.ofNullable(valueWithVariable)
                 .filter(ValueWithVariable::isObject)
                 .map(ValueWithVariable::asObject)
-                .flatMap(objectValueWithVariable -> objectValueWithVariable.getValueWithVariable(INPUT_VALUE_COND_NAME))
+                .flatMap(objectValueWithVariable -> objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_VALUE_COND_NAME))
                 .filter(ValueWithVariable::isEnum)
                 .map(field -> field.asEnum().getValue().equals(INPUT_CONDITIONAL_INPUT_VALUE_OR))
                 .orElse(false);
@@ -30,7 +30,7 @@ public final class ValueWithVariableUtil {
 
     public static boolean isNot(Arguments arguments) {
         return Optional.ofNullable(arguments)
-                .flatMap(result -> result.getArgument(INPUT_VALUE_NOT_NAME))
+                .flatMap(result -> result.getArgumentOrEmpty(INPUT_VALUE_NOT_NAME))
                 .filter(ValueWithVariable::isBoolean)
                 .map(field -> field.asBoolean().getValue())
                 .orElse(false);
@@ -40,7 +40,7 @@ public final class ValueWithVariableUtil {
         return Optional.ofNullable(valueWithVariable)
                 .filter(ValueWithVariable::isObject)
                 .map(ValueWithVariable::asObject)
-                .flatMap(objectValueWithVariable -> objectValueWithVariable.getValueWithVariable(INPUT_VALUE_NOT_NAME))
+                .flatMap(objectValueWithVariable -> objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_VALUE_NOT_NAME))
                 .filter(ValueWithVariable::isBoolean)
                 .map(field -> field.asBoolean().getValue())
                 .orElse(false);
@@ -48,7 +48,7 @@ public final class ValueWithVariableUtil {
 
     public static boolean skipNull(Arguments arguments) {
         return Optional.ofNullable(arguments)
-                .flatMap(result -> result.getArgument(INPUT_OPERATOR_INPUT_VALUE_SKIP_NULL_NAME))
+                .flatMap(result -> result.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_SKIP_NULL_NAME))
                 .filter(ValueWithVariable::isBoolean)
                 .map(field -> field.asBoolean().getValue())
                 .orElse(false);
@@ -58,7 +58,7 @@ public final class ValueWithVariableUtil {
         return Optional.ofNullable(valueWithVariable)
                 .filter(ValueWithVariable::isObject)
                 .map(ValueWithVariable::asObject)
-                .flatMap(objectValueWithVariable -> objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_SKIP_NULL_NAME))
+                .flatMap(objectValueWithVariable -> objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_SKIP_NULL_NAME))
                 .filter(ValueWithVariable::isBoolean)
                 .map(field -> field.asBoolean().getValue())
                 .orElse(false);

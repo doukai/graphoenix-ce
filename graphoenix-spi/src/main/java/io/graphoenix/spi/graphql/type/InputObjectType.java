@@ -88,7 +88,7 @@ public class InputObjectType extends AbstractDefinition implements Definition {
         return this;
     }
 
-    public InputValue getInputValueOrNull(String name) {
+    public InputValue getInputValue(String name) {
         return inputValueMap.get(name);
     }
 
@@ -96,8 +96,8 @@ public class InputObjectType extends AbstractDefinition implements Definition {
         return Iterators.get(inputValueMap.values().iterator(), index);
     }
 
-    public Optional<InputValue> getInputValue(String name) {
-        return Optional.ofNullable(getInputValueOrNull(name));
+    public Optional<InputValue> getInputValueOrEmpty(String name) {
+        return Optional.ofNullable(getInputValue(name));
     }
 
     public Collection<InputValue> getInputValues() {
@@ -136,7 +136,7 @@ public class InputObjectType extends AbstractDefinition implements Definition {
     public Collection<String> getInterfaces() {
         return Stream.ofNullable(getDirective(DIRECTIVE_IMPLEMENTS_NAME))
                 .flatMap(directive ->
-                        directive.getArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME).stream()
+                        directive.getArgumentOrEmpty(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME).stream()
                                 .filter(ValueWithVariable::isArray)
                                 .flatMap(valueWithVariable -> valueWithVariable.asArray().getValueWithVariables().stream())
                                 .filter(ValueWithVariable::isString)
@@ -152,7 +152,7 @@ public class InputObjectType extends AbstractDefinition implements Definition {
     public List<Tuple4<String, String, String, Boolean>> getInputInvokes() {
         return Stream.ofNullable(getDirective(DIRECTIVE_INVOKES_NAME))
                 .flatMap(directive ->
-                        directive.getArgument(DIRECTIVE_INVOKES_METHODS_NAME).stream()
+                        directive.getArgumentOrEmpty(DIRECTIVE_INVOKES_METHODS_NAME).stream()
                                 .filter(ValueWithVariable::isArray)
                                 .map(ValueWithVariable::asArray)
                                 .flatMap(arrayValueWithVariable -> arrayValueWithVariable.getValueWithVariables().stream())
@@ -163,7 +163,7 @@ public class InputObjectType extends AbstractDefinition implements Definition {
                                                 objectValueWithVariable.getValueWithVariableOrError(INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME).asString().getValue(),
                                                 objectValueWithVariable.getValueWithVariableOrError(INPUT_INVOKE_INPUT_VALUE_METHOD_NAME_NAME).asString().getValue(),
                                                 objectValueWithVariable.getValueWithVariableOrError(INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME).asString().getValue(),
-                                                objectValueWithVariable.getValueWithVariable(INPUT_INVOKE_INPUT_VALUE_ASYNC_NAME)
+                                                objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_INVOKE_INPUT_VALUE_ASYNC_NAME)
                                                         .map(valueWithVariable -> valueWithVariable.asBoolean().getValue())
                                                         .orElse(false)
                                         )

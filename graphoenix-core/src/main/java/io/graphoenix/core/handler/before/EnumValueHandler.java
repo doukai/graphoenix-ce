@@ -51,7 +51,7 @@ public class EnumValueHandler implements OperationBeforeHandler {
                                                 .map(Arguments::getArguments)
                                                 .flatMap(jsonValues -> jsonValues.entrySet().stream())
                                                 .peek(valueWithVariableEntry -> {
-                                                            InputValue inputValue = objectType.getField(field.getName()).getArgumentOrNull(valueWithVariableEntry.getKey());
+                                                            InputValue inputValue = objectType.getField(field.getName()).getArgument(valueWithVariableEntry.getKey());
                                                             valueWithVariableEntry.setValue(replaceEnumValue(inputValue, valueWithVariableEntry.getValue()));
                                                         }
                                                 )
@@ -77,7 +77,7 @@ public class EnumValueHandler implements OperationBeforeHandler {
             return new ObjectValueWithVariable(
                     valueWithVariable.asObject().getObjectValueWithVariable().entrySet().stream()
                             .peek(valueWithVariableEntry -> {
-                                        InputValue fieldInputValue = documentManager.getInputValueTypeDefinition(inputValue).asInputObject().getInputValueOrNull(valueWithVariableEntry.getKey());
+                                        InputValue fieldInputValue = documentManager.getInputValueTypeDefinition(inputValue).asInputObject().getInputValue(valueWithVariableEntry.getKey());
                                         valueWithVariableEntry.setValue(replaceEnumValue(fieldInputValue, valueWithVariableEntry.getValue()));
                                     }
                             )
@@ -90,7 +90,7 @@ public class EnumValueHandler implements OperationBeforeHandler {
             );
         } else {
             Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
-            if (inputValueTypeDefinition.isEnum() && (valueWithVariable.isString() || valueWithVariable.getValueType().equals(JsonValue.ValueType.STRING))) {
+            if (inputValueTypeDefinition.isEnum() && !valueWithVariable.isEnum() && (valueWithVariable.isString() || valueWithVariable.getValueType().equals(JsonValue.ValueType.STRING))) {
                 return new EnumValue(valueWithVariable.asString().getValue());
             } else {
                 return valueWithVariable;

@@ -57,7 +57,7 @@ public class ArgumentsTranslator {
                     .flatMap(Collection::stream)
                     .flatMap(argumentInput ->
                             Optional.ofNullable(field.getArguments())
-                                    .flatMap(arguments -> arguments.getArgument(argumentInput.getName()))
+                                    .flatMap(arguments -> arguments.getArgumentOrEmpty(argumentInput.getName()))
                                     .or(() -> Optional.ofNullable(argumentInput.getDefaultValue()))
                                     .stream()
                                     .map(valueWithVariable -> new AbstractMap.SimpleEntry<>(argumentInput, valueWithVariable))
@@ -101,21 +101,21 @@ public class ArgumentsTranslator {
 
             return expressionListToMultipleExpression(expressionList, isOr(field.getArguments()), isNot(field.getArguments()));
         } else {
-            return fieldDefinition.getArgument(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME)
+            return fieldDefinition.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME)
                     .flatMap(inputValue ->
                             Optional.ofNullable(field.getArguments())
                                     .map(arguments ->
-                                            arguments.getArgument(inputValue.getName())
+                                            arguments.getArgumentOrEmpty(inputValue.getName())
                                                     .filter(ValueWithVariable::isEnum)
                                                     .map(opr -> opr.asEnum().getValue())
                                                     .orElseGet(() ->
-                                                            arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                            arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
                                                                     .map(val -> INPUT_OPERATOR_INPUT_VALUE_EQ)
                                                                     .orElseGet(() ->
-                                                                            arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                                            arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
                                                                                     .map(val -> INPUT_OPERATOR_INPUT_VALUE_EQ)
                                                                                     .orElseGet(() ->
-                                                                                            arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
+                                                                                            arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
                                                                                                     .map(val -> INPUT_OPERATOR_INPUT_VALUE_IN)
                                                                                                     .orElseGet(() -> inputValue.getDefaultValue().asEnum().getValue())
                                                                                     )
@@ -128,23 +128,23 @@ public class ArgumentsTranslator {
                                     .flatMap(arguments -> {
                                                 if (fieldDefinition.getType().hasList()) {
                                                     Column column = graphqlFieldToColumn(fieldDefinition.getMapWithTypeOrError(), fieldDefinition.getMapWithToOrError(), level);
-                                                    return arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                    return arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
                                                             .flatMap(val ->
                                                                     valToExpression(column, opr, val, skipNull(arguments))
                                                             )
                                                             .or(() ->
-                                                                    arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
-                                                                            .flatMap(arr -> arrToExpression(column, opr, fieldDefinition.getArgumentOrNull(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(arguments)))
+                                                                    arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
+                                                                            .flatMap(arr -> arrToExpression(column, opr, fieldDefinition.getArgument(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(arguments)))
                                                             );
                                                 } else {
                                                     Column column = graphqlFieldToColumn(objectType.getName(), fieldDefinition.getName(), level);
-                                                    return arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                    return arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
                                                             .flatMap(val ->
                                                                     valToExpression(column, opr, val, skipNull(arguments))
                                                             )
                                                             .or(() ->
-                                                                    arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
-                                                                            .flatMap(arr -> arrToExpression(column, opr, fieldDefinition.getArgumentOrNull(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(arguments)))
+                                                                    arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
+                                                                            .flatMap(arr -> arrToExpression(column, opr, fieldDefinition.getArgument(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(arguments)))
                                                             );
                                                 }
                                             }
@@ -167,7 +167,7 @@ public class ArgumentsTranslator {
                             Optional.ofNullable(valueWithVariable)
                                     .filter(ValueWithVariable::isObject)
                                     .map(ValueWithVariable::asObject)
-                                    .flatMap(objectValueWithVariable -> objectValueWithVariable.getValueWithVariable(fieldInput.getName()))
+                                    .flatMap(objectValueWithVariable -> objectValueWithVariable.getValueWithVariableOrEmpty(fieldInput.getName()))
                                     .or(() -> Optional.ofNullable(fieldInput.getDefaultValue()))
                                     .stream()
                                     .map(field -> new AbstractMap.SimpleEntry<>(fieldInput, field))
@@ -212,23 +212,23 @@ public class ArgumentsTranslator {
             return expressionListToMultipleExpression(expressionList, isOr(valueWithVariable), isNot(valueWithVariable));
         } else {
             InputObjectType inputObject = documentManager.getInputValueTypeDefinition(inputValue).asInputObject();
-            return inputObject.getInputValue(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME)
+            return inputObject.getInputValueOrEmpty(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME)
                     .flatMap(fieldInput ->
                             Optional.ofNullable(valueWithVariable)
                                     .filter(ValueWithVariable::isObject)
                                     .map(ValueWithVariable::asObject)
                                     .map(objectValueWithVariable ->
-                                            objectValueWithVariable.getValueWithVariable(fieldInput.getName())
+                                            objectValueWithVariable.getValueWithVariableOrEmpty(fieldInput.getName())
                                                     .filter(ValueWithVariable::isEnum)
                                                     .map(opr -> opr.asEnum().getValue())
                                                     .orElseGet(() ->
-                                                            objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                            objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
                                                                     .map(val -> INPUT_OPERATOR_INPUT_VALUE_EQ)
                                                                     .orElseGet(() ->
-                                                                            objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                                            objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
                                                                                     .map(val -> INPUT_OPERATOR_INPUT_VALUE_EQ)
                                                                                     .orElseGet(() ->
-                                                                                            objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
+                                                                                            objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
                                                                                                     .map(val -> INPUT_OPERATOR_INPUT_VALUE_IN)
                                                                                                     .orElseGet(() -> fieldInput.getDefaultValue().asEnum().getValue())
                                                                                     )
@@ -243,24 +243,24 @@ public class ArgumentsTranslator {
                                     .flatMap(objectValueWithVariable -> {
                                                 if (fieldDefinition.getType().hasList()) {
                                                     Column column = graphqlFieldToColumn(fieldDefinition.getMapWithTypeOrError(), fieldDefinition.getMapWithToOrError(), level);
-                                                    return objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                    return objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
                                                             .flatMap(val ->
                                                                     valToExpression(column, opr, val, skipNull(objectValueWithVariable))
                                                             )
                                                             .or(() ->
-                                                                    objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
-                                                                            .flatMap(arr -> arrToExpression(column, opr, inputObject.getInputValueOrNull(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(objectValueWithVariable)))
+                                                                    objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
+                                                                            .flatMap(arr -> arrToExpression(column, opr, inputObject.getInputValue(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(objectValueWithVariable)))
                                                             )
                                                             .map(expression -> existsExpression(selectFromFieldType(objectType, fieldDefinition, expression, level)));
                                                 } else {
                                                     Column column = graphqlFieldToColumn(objectType.getName(), fieldDefinition.getName(), level);
-                                                    return objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                    return objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
                                                             .flatMap(val ->
                                                                     valToExpression(column, opr, val, skipNull(objectValueWithVariable))
                                                             )
                                                             .or(() ->
-                                                                    objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
-                                                                            .flatMap(arr -> arrToExpression(column, opr, inputObject.getInputValueOrNull(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(objectValueWithVariable)))
+                                                                    objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
+                                                                            .flatMap(arr -> arrToExpression(column, opr, inputObject.getInputValue(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(objectValueWithVariable)))
                                                             );
                                                 }
                                             }

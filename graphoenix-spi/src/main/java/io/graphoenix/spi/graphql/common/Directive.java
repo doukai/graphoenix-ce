@@ -50,12 +50,12 @@ public class Directive {
         return arguments;
     }
 
-    public ValueWithVariable getArgumentOrNull(String name) {
-        return arguments.getArgumentOrNull(name);
+    public ValueWithVariable getArgument(String name) {
+        return arguments.getArgument(name);
     }
 
-    public Optional<ValueWithVariable> getArgument(String name) {
-        return Optional.ofNullable(getArgumentOrNull(name));
+    public Optional<ValueWithVariable> getArgumentOrEmpty(String name) {
+        return Optional.ofNullable(getArgument(name));
     }
 
     public boolean hasArgument(String name) {

@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static io.graphoenix.core.handler.fetch.LocalFetchHandler.LOCAL_FETCH_NAME;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST;
 import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
@@ -161,14 +162,13 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
             String packageName = fieldDefinition.getPackageNameOrError();
             return Stream.of(new FetchItem(packageName, protocol, path, field.setAlias(getAliasFromPath(path)), null));
         } else if (fieldDefinition.isFetchField()) {
-            String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
             String fetchFrom = fieldDefinition.getFetchFromOrError();
             Field fetchField = new Field();
             if (fieldDefinition.hasFetchWith()) {
                 ObjectType fetchWithType = documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getFetchWithTypeOrError());
                 String packageName = fetchWithType.getPackageNameOrError();
                 if (jsonValue.asJsonObject().isNull(fetchFrom)) {
-                    return Stream.of(new FetchItem(packageName, protocol, path));
+                    return Stream.of(new FetchItem(packageName, LOCAL_FETCH_NAME, path));
                 }
                 String fetchWithFrom = fieldDefinition.getFetchWithFromOrError();
                 String fetchWithTo = fieldDefinition.getFetchWithToOrError();
@@ -210,7 +210,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
                                                         .flatMap(inputValue ->
                                                                 Stream.ofNullable(field.getArguments())
                                                                         .flatMap(arguments ->
-                                                                                arguments.getArgument(inputValue.getName())
+                                                                                arguments.getArgumentOrEmpty(inputValue.getName())
                                                                                         .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
                                                                         )
                                                                         .map(valueWithVariable -> new AbstractMap.SimpleEntry<>(inputValue.getName(), valueWithVariable))
@@ -237,8 +237,9 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
                         )
                         .orElse(fetchWithTo);
 
-                return Stream.of(new FetchItem(packageName, protocol, path, fetchField, target));
+                return Stream.of(new FetchItem(packageName, LOCAL_FETCH_NAME, path, fetchField, target));
             } else {
+                String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
                 String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
                 if (jsonValue.asJsonObject().isNull(fetchFrom)) {
                     return Stream.of(new FetchItem(packageName, protocol, path));
@@ -264,7 +265,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
                                                         .flatMap(inputValue ->
                                                                 Stream.ofNullable(field.getArguments())
                                                                         .flatMap(arguments ->
-                                                                                arguments.getArgument(inputValue.getName())
+                                                                                arguments.getArgumentOrEmpty(inputValue.getName())
                                                                                         .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
                                                                         )
                                                                         .map(valueWithVariable -> new AbstractMap.SimpleEntry<>(inputValue.getName(), valueWithVariable))

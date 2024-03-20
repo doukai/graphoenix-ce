@@ -157,17 +157,17 @@ public class QueryTranslator {
         Optional<Expression> whereExpression;
         if (documentManager.isMutationOperationType(objectType)) {
             String idName = fieldTypeDefinition.asObject().getIDFieldOrError().getName();
-            whereExpression = fieldDefinition.getArgument(INPUT_VALUE_WHERE_NAME)
+            whereExpression = fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_WHERE_NAME)
                     .flatMap(inputValue ->
                             Optional.ofNullable(field.getArguments())
-                                    .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
+                                    .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
                                     .flatMap(valueWithVariable -> argumentsTranslator.inputValueToWhereExpression(objectType, fieldDefinition, inputValue, valueWithVariable, level))
                     )
                     .or(() ->
-                            fieldDefinition.getArgument(INPUT_VALUE_LIST_NAME)
+                            fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_LIST_NAME)
                                     .flatMap(inputValue ->
                                             Optional.ofNullable(field.getArguments())
-                                                    .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
+                                                    .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
                                                     .filter(valueWithVariable -> !valueWithVariable.isNull())
                                                     .map(valueWithVariable -> {
                                                                 if (valueWithVariable.isVariable()) {
@@ -181,7 +181,7 @@ public class QueryTranslator {
                                                                                                     IntStream.range(0, valueWithVariable.asArray().getValueWithVariables().size())
                                                                                                             .mapToObj(index ->
                                                                                                                     valueWithVariable.asArray().getValueWithVariables().get(index).asObject()
-                                                                                                                            .getValueWithVariable(idName)
+                                                                                                                            .getValueWithVariableOrEmpty(idName)
                                                                                                                             .flatMap(DBValueUtil::idValueToDBValue)
                                                                                                                             .orElseGet(() -> createInsertIdUserVariable(fieldTypeDefinition.getName(), idName, 0, index))
                                                                                                             )
@@ -194,13 +194,13 @@ public class QueryTranslator {
                                                     )
                                     )
                                     .or(() ->
-                                            fieldDefinition.getArgument(idName)
+                                            fieldDefinition.getArgumentOrEmpty(idName)
                                                     .map(inputValue ->
                                                             new EqualsTo()
                                                                     .withLeftExpression(graphqlFieldToColumn(table, idName))
                                                                     .withRightExpression(
                                                                             Optional.ofNullable(field.getArguments())
-                                                                                    .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
+                                                                                    .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
                                                                                     .flatMap(DBValueUtil::idValueToDBValue)
                                                                                     .orElseGet(() -> createInsertIdUserVariable(fieldTypeDefinition.getName(), idName, 0, 0))
                                                                     )
@@ -411,10 +411,10 @@ public class QueryTranslator {
         if (fieldDefinition.getArguments() != null) {
             ObjectType fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition).asObject();
 
-            List<Column> columnList = Stream.ofNullable(fieldDefinition.getArgumentOrNull(INPUT_VALUE_GROUP_BY_NAME))
+            List<Column> columnList = Stream.ofNullable(fieldDefinition.getArgument(INPUT_VALUE_GROUP_BY_NAME))
                     .flatMap(inputValue ->
                             Optional.ofNullable(field.getArguments())
-                                    .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
+                                    .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
                                     .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
                                     .stream()
                     )
@@ -437,10 +437,10 @@ public class QueryTranslator {
         if (fieldDefinition.getArguments() != null) {
             if (fieldTypeDefinition.isObject()) {
                 Table table = typeToTable(fieldTypeDefinition.asObject(), level);
-                return fieldDefinition.getArgument(INPUT_VALUE_ORDER_BY_NAME)
+                return fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_ORDER_BY_NAME)
                         .flatMap(inputValue ->
                                 Optional.ofNullable(field.getArguments())
-                                        .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
+                                        .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
                                         .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
                         )
                         .filter(ValueWithVariable::isObject)
@@ -466,10 +466,10 @@ public class QueryTranslator {
                         .collect(Collectors.toList());
             } else {
                 Table withTable = graphqlTypeToTable(fieldDefinition.getMapWithTypeOrError(), level);
-                return fieldDefinition.getArgument(INPUT_VALUE_SORT_NAME)
+                return fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_SORT_NAME)
                         .flatMap(inputValue ->
                                 Optional.ofNullable(field.getArguments())
-                                        .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
+                                        .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
                                         .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
                         )
                         .filter(ValueWithVariable::isEnum)
@@ -488,17 +488,17 @@ public class QueryTranslator {
 
     protected Limit argumentsToLimit(FieldDefinition fieldDefinition, Field field) {
         if (fieldDefinition.getArguments() != null) {
-            return fieldDefinition.getArgument(INPUT_VALUE_FIRST_NAME)
+            return fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_FIRST_NAME)
                     .flatMap(inputValue ->
                             Optional.ofNullable(field.getArguments())
-                                    .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
+                                    .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
                                     .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
                     )
                     .or(() ->
-                            fieldDefinition.getArgument(INPUT_VALUE_LAST_NAME)
+                            fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_LAST_NAME)
                                     .flatMap(inputValue ->
                                             Optional.ofNullable(field.getArguments())
-                                                    .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
+                                                    .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
                                                     .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
                                     )
                     )
@@ -507,10 +507,10 @@ public class QueryTranslator {
                             new Limit()
                                     .withRowCount(leafValueToDBValue(valueWithVariable))
                                     .withOffset(
-                                            fieldDefinition.getArgument(INPUT_VALUE_OFFSET_NAME)
+                                            fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_OFFSET_NAME)
                                                     .flatMap(inputValue ->
                                                             Optional.ofNullable(field.getArguments())
-                                                                    .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
+                                                                    .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
                                                                     .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
                                                     )
                                                     .filter(ValueWithVariable::isInt)

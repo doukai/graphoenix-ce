@@ -146,6 +146,7 @@ public class Hammurabi {
     public static final String DIRECTIVE_OPTIONS_ARGUMENT_DEFAULT_NAME = "default";
     public static final String DIRECTIVE_OPTIONS_ARGUMENT_LENGTH_NAME = "length";
     public static final String DIRECTIVE_OPTIONS_ARGUMENT_DECIMALS_NAME = "decimals";
+    public static final String DIRECTIVE_OPTIONS_ARGUMENT_PROTOCOL_NAME = "protocol";
 
 
     public static final String DIRECTIVE_FETCH_NAME = "fetch";

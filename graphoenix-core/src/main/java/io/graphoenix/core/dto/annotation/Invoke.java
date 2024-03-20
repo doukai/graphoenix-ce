@@ -23,6 +23,8 @@ public @interface Invoke {
 
   String[] thrownTypes() default {};
 
+  boolean async() default false;
+
   String $className() default "";
 
   String $methodName() default "";
@@ -32,4 +34,6 @@ public @interface Invoke {
   String $returnClassName() default "";
 
   String $thrownTypes() default "";
+
+  String $async() default "";
 }

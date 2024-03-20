@@ -2,8 +2,10 @@ package io.graphoenix.core.dto.inputObjectType;
 
 import com.dslplatform.json.CompiledJson;
 import jakarta.annotation.Generated;
+import java.lang.Boolean;
 import java.lang.String;
 import java.util.Collection;
+import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Input;
 
 @CompiledJson
@@ -19,6 +21,9 @@ public class Invoke {
   private String returnClassName;
 
   private Collection<String> thrownTypes;
+
+  @DefaultValue("false")
+  private Boolean async;
 
   public String getClassName() {
     return this.className;
@@ -58,5 +63,13 @@ public class Invoke {
 
   public void setThrownTypes(Collection<String> thrownTypes) {
     this.thrownTypes = thrownTypes;
+  }
+
+  public Boolean getAsync() {
+    return this.async;
+  }
+
+  public void setAsync(Boolean async) {
+    this.async = async;
   }
 }

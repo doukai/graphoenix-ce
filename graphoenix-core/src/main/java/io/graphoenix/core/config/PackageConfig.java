@@ -18,6 +18,9 @@ public class PackageConfig {
     private String packageLoadBalance = LOAD_BALANCE_ROUND_ROBIN;
 
     @Optional
+    private String defaultFetchProtocol = "GRPC";
+
+    @Optional
     private Map<String, Object> members;
 
     @Optional
@@ -91,6 +94,14 @@ public class PackageConfig {
 
     public void setPackageLoadBalance(String packageLoadBalance) {
         this.packageLoadBalance = packageLoadBalance;
+    }
+
+    public String getDefaultFetchProtocol() {
+        return defaultFetchProtocol;
+    }
+
+    public void setDefaultFetchProtocol(String defaultFetchProtocol) {
+        this.defaultFetchProtocol = defaultFetchProtocol;
     }
 
     public Set<String> getLocalPackageNames() {

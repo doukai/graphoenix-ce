@@ -76,7 +76,7 @@ public class MutationTranslator {
     protected Stream<Statement> fieldToMutationStatementStream(ObjectType objectType, FieldDefinition fieldDefinition, Field field) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject()) {
-            return fieldDefinition.getArgument(INPUT_VALUE_LIST_NAME)
+            return fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_LIST_NAME)
                     .flatMap(inputValue -> {
                                 Table table = typeToTable(fieldTypeDefinition.asObject());
                                 List<FieldDefinition> leafFieldDefinitionList = fieldTypeDefinition.asObject().getFields().stream()
@@ -88,7 +88,7 @@ public class MutationTranslator {
                                         .collect(Collectors.toList());
 
                                 return Optional.ofNullable(field.getArguments())
-                                        .flatMap(arguments -> arguments.getArgument(inputValue.getName()))
+                                        .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
                                         .filter(valueWithVariable -> !valueWithVariable.isNull())
                                         .map(valueWithVariable -> {
                                                     if (valueWithVariable.isVariable()) {
@@ -126,7 +126,7 @@ public class MutationTranslator {
                                         .flatMap(Collection::stream)
                                         .flatMap(argumentInput ->
                                                 Optional.ofNullable(field.getArguments())
-                                                        .flatMap(arguments -> arguments.getArgument(argumentInput.getName()))
+                                                        .flatMap(arguments -> arguments.getArgumentOrEmpty(argumentInput.getName()))
                                                         .or(() -> Optional.ofNullable(argumentInput.getDefaultValue()))
                                                         .stream()
                                                         .map(valueWithVariable -> new AbstractMap.SimpleEntry<>(argumentInput, valueWithVariable))
@@ -158,7 +158,7 @@ public class MutationTranslator {
                         Optional.ofNullable(valueWithVariable)
                                 .filter(ValueWithVariable::isObject)
                                 .map(ValueWithVariable::asObject)
-                                .flatMap(objectValueWithVariable -> objectValueWithVariable.getValueWithVariable(fieldInput.getName()))
+                                .flatMap(objectValueWithVariable -> objectValueWithVariable.getValueWithVariableOrEmpty(fieldInput.getName()))
                                 .or(() -> Optional.ofNullable(fieldInput.getDefaultValue()))
                                 .stream()
                                 .map(field -> new AbstractMap.SimpleEntry<>(fieldInput, field))
@@ -296,9 +296,9 @@ public class MutationTranslator {
                 .flatMap(DBValueUtil::idValueToDBValue)
                 .or(() ->
                         whereInputValueEntry
-                                .flatMap(entry -> entry.getValue().asObject().getValueWithVariable(idName))
+                                .flatMap(entry -> entry.getValue().asObject().getValueWithVariableOrEmpty(idName))
                                 .filter(ValueWithVariable::isObject)
-                                .flatMap(valueWithVariable -> valueWithVariable.asObject().getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
+                                .flatMap(valueWithVariable -> valueWithVariable.asObject().getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
                                 .flatMap(DBValueUtil::idValueToDBValue)
                 )
                 .orElseGet(() -> createInsertIdUserVariable(fieldTypeDefinition.asObject().getName(), idName, level, index));
@@ -446,7 +446,7 @@ public class MutationTranslator {
                         .map(ValueWithVariable::asObject)
                         .filter(objectValueWithVariable -> !objectValueWithVariable.containsKey(FIELD_DEPRECATED_NAME))
                         .filter(objectValueWithVariable ->
-                                objectValueWithVariable.getValueWithVariable(FIELD_DEPRECATED_NAME)
+                                objectValueWithVariable.getValueWithVariableOrEmpty(FIELD_DEPRECATED_NAME)
                                         .map(isDeprecated -> isDeprecated.asBoolean().getValue())
                                         .orElse(false)
                         )
@@ -492,15 +492,15 @@ public class MutationTranslator {
                         .filter(ValueWithVariable::isObject)
                         .map(ValueWithVariable::asObject)
                         .flatMap(objectValueWithVariable ->
-                                objectValueWithVariable.getValueWithVariable(idName)
+                                objectValueWithVariable.getValueWithVariableOrEmpty(idName)
                                         .or(() ->
-                                                objectValueWithVariable.getValueWithVariable(INPUT_VALUE_WHERE_NAME)
+                                                objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_VALUE_WHERE_NAME)
                                                         .filter(ValueWithVariable::isObject)
                                                         .map(ValueWithVariable::asObject)
-                                                        .flatMap(where -> where.getValueWithVariable(idName))
+                                                        .flatMap(where -> where.getValueWithVariableOrEmpty(idName))
                                                         .filter(ValueWithVariable::isObject)
                                                         .map(ValueWithVariable::asObject)
-                                                        .flatMap(id -> id.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
+                                                        .flatMap(id -> id.getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
                                         )
                                         .stream()
                         )
@@ -531,20 +531,20 @@ public class MutationTranslator {
                         .map(ValueWithVariable::asObject)
                         .filter(objectValueWithVariable -> objectValueWithVariable.containsKey(FIELD_DEPRECATED_NAME))
                         .filter(objectValueWithVariable ->
-                                objectValueWithVariable.getValueWithVariable(FIELD_DEPRECATED_NAME)
+                                objectValueWithVariable.getValueWithVariableOrEmpty(FIELD_DEPRECATED_NAME)
                                         .map(isDeprecated -> isDeprecated.asBoolean().getValue())
                                         .orElse(false)
                         )
                         .flatMap(objectValueWithVariable ->
-                                objectValueWithVariable.getValueWithVariable(idName)
+                                objectValueWithVariable.getValueWithVariableOrEmpty(idName)
                                         .or(() ->
-                                                objectValueWithVariable.getValueWithVariable(INPUT_VALUE_WHERE_NAME)
+                                                objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_VALUE_WHERE_NAME)
                                                         .filter(ValueWithVariable::isObject)
                                                         .map(ValueWithVariable::asObject)
-                                                        .flatMap(where -> where.getValueWithVariable(idName))
+                                                        .flatMap(where -> where.getValueWithVariableOrEmpty(idName))
                                                         .filter(ValueWithVariable::isObject)
                                                         .map(ValueWithVariable::asObject)
-                                                        .flatMap(id -> id.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
+                                                        .flatMap(id -> id.getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
                                         )
                                         .stream()
                         )
@@ -591,7 +591,7 @@ public class MutationTranslator {
                 List<Expression> idValueExpressionList = IntStream.range(0, valueWithVariable.asArray().size())
                         .filter(index -> valueWithVariable.asArray().getValueWithVariables().get(index).isObject())
                         .mapToObj(index ->
-                                valueWithVariable.asArray().getValueWithVariables().get(index).asObject().getValueWithVariable(idFieldName)
+                                valueWithVariable.asArray().getValueWithVariables().get(index).asObject().getValueWithVariableOrEmpty(idFieldName)
                                         .flatMap(DBValueUtil::idValueToDBValue)
                                         .orElseGet(() -> createInsertIdUserVariable(fieldTypeDefinition.asObject().getName(), idFieldName, level, index))
                         )

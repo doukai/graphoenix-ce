@@ -80,56 +80,50 @@ public class GossipPackageProvider implements PackageProvider {
     }
 
     private void mergeURLs(List<PackageURL> packageURLList) {
-        Set<String> packageNameSet = packageURLList.stream()
-                .map(PackageURL::getPackageName)
-                .collect(Collectors.toSet());
-
-        packageProtocolURLListMap
-                .putAll(
-                        packageURLList.stream()
-                                .collect(
+        Map<String, Map<String, List<PackageURL>>> mergedPackageProtocolURLListMap = packageURLList.stream()
+                .collect(
+                        Collectors.groupingBy(
+                                PackageURL::getPackageName,
+                                Collectors.mapping(
+                                        packageURL -> packageURL,
                                         Collectors.groupingBy(
-                                                PackageURL::getPackageName,
-                                                Collectors.mapping(
-                                                        packageURL -> packageURL,
-                                                        Collectors.groupingBy(
-                                                                PackageURL::getProtocol,
-                                                                Collectors.toList()
-                                                        )
-                                                )
+                                                PackageURL::getProtocol,
+                                                Collectors.toList()
                                         )
                                 )
+                        )
                 );
 
-        Set<String> packageProtocolURLListMapRemovedKeySet = packageProtocolURLListMap.keySet().stream()
-                .filter(key -> !packageNameSet.contains(key))
-                .collect(Collectors.toSet());
-
-        packageProtocolURLListMapRemovedKeySet.forEach(packageProtocolURLListMap::remove);
+        packageProtocolURLListMap.putAll(mergedPackageProtocolURLListMap);
+        packageProtocolURLListMap.keySet()
+                .removeAll(
+                        packageProtocolURLListMap.keySet().stream()
+                                .filter(key -> !mergedPackageProtocolURLListMap.containsKey(key))
+                                .collect(Collectors.toSet())
+                );
 
         if (packageConfig.getPackageLoadBalance().equals(LOAD_BALANCE_ROUND_ROBIN)) {
-            packageProtocolURLIteratorMap
-                    .putAll(
-                            packageURLList.stream()
-                                    .collect(
+            Map<String, Map<String, Iterator<PackageURL>>> mergedPackageProtocolURLIteratorMap = packageURLList.stream()
+                    .collect(
+                            Collectors.groupingBy(
+                                    PackageURL::getPackageName,
+                                    Collectors.mapping(
+                                            packageURL -> packageURL,
                                             Collectors.groupingBy(
-                                                    PackageURL::getPackageName,
-                                                    Collectors.mapping(
-                                                            packageURL -> packageURL,
-                                                            Collectors.groupingBy(
-                                                                    PackageURL::getProtocol,
-                                                                    Collectors.collectingAndThen(Collectors.toList(), Iterators::cycle)
-                                                            )
-                                                    )
+                                                    PackageURL::getProtocol,
+                                                    Collectors.collectingAndThen(Collectors.toList(), Iterators::cycle)
                                             )
                                     )
+                            )
                     );
 
-            Set<String> packageProtocolURLIteratorMapRemovedKeySet = packageProtocolURLIteratorMap.keySet().stream()
-                    .filter(key -> !packageNameSet.contains(key))
-                    .collect(Collectors.toSet());
-
-            packageProtocolURLIteratorMapRemovedKeySet.forEach(packageProtocolURLIteratorMap::remove);
+            packageProtocolURLIteratorMap.putAll(mergedPackageProtocolURLIteratorMap);
+            packageProtocolURLIteratorMap.keySet()
+                    .removeAll(
+                            packageProtocolURLIteratorMap.keySet().stream()
+                                    .filter(key -> !mergedPackageProtocolURLIteratorMap.containsKey(key))
+                                    .collect(Collectors.toSet())
+                    );
         }
     }
 }

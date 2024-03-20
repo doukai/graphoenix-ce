@@ -80,7 +80,7 @@ public class SubscriptionArgumentsFieldsRegister implements OperationBeforeHandl
                                                         .flatMap(subFieldDefinition ->
                                                                 Stream.ofNullable(field.getArguments())
                                                                         .flatMap(arguments ->
-                                                                                arguments.getArgument(inputValue.getName())
+                                                                                arguments.getArgumentOrEmpty(inputValue.getName())
                                                                                         .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
                                                                         )
                                                                         .map(valueWithVariable -> {
@@ -99,11 +99,11 @@ public class SubscriptionArgumentsFieldsRegister implements OperationBeforeHandl
                                         )
                         )
                         .collect(Collectors.toList()),
-                fieldDefinition.getArgument(INPUT_VALUE_EXS_NAME).stream()
+                fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_EXS_NAME).stream()
                         .flatMap(exsInputValue ->
                                 Stream.ofNullable(field.getArguments())
                                         .flatMap(arguments ->
-                                                arguments.getArgument(exsInputValue.getName())
+                                                arguments.getArgumentOrEmpty(exsInputValue.getName())
                                                         .or(() -> Optional.ofNullable(exsInputValue.getDefaultValue())).stream()
                                         )
                                         .filter(ValueWithVariable::isArray)
@@ -115,7 +115,7 @@ public class SubscriptionArgumentsFieldsRegister implements OperationBeforeHandl
                                                                         .flatMap(subInputValue ->
                                                                                 Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                                                                         .flatMap(subFieldDefinition ->
-                                                                                                arrayValueWithVariable.getValueWithVariable(index).asObject().getValueWithVariable(subInputValue.getName())
+                                                                                                arrayValueWithVariable.getValueWithVariable(index).asObject().getValueWithVariableOrEmpty(subInputValue.getName())
                                                                                                         .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
                                                                                                         .map(subValueWithVariable -> {
                                                                                                                     Field argumentField = new Field(subFieldDefinition.getName()).addDirective(new Directive(DIRECTIVE_HIDE_NAME));
@@ -167,9 +167,9 @@ public class SubscriptionArgumentsFieldsRegister implements OperationBeforeHandl
                                         )
                         )
                         .collect(Collectors.toList()),
-                inputValueTypeDefinition.asInputObject().getInputValue(INPUT_VALUE_EXS_NAME).stream()
+                inputValueTypeDefinition.asInputObject().getInputValueOrEmpty(INPUT_VALUE_EXS_NAME).stream()
                         .flatMap(exsInputValue ->
-                                valueWithVariable.asObject().getValueWithVariable(exsInputValue.getName())
+                                valueWithVariable.asObject().getValueWithVariableOrEmpty(exsInputValue.getName())
                                         .or(() -> Optional.ofNullable(exsInputValue.getDefaultValue())).stream()
                                         .filter(ValueWithVariable::isArray)
                                         .map(ValueWithVariable::asArray)
@@ -180,7 +180,7 @@ public class SubscriptionArgumentsFieldsRegister implements OperationBeforeHandl
                                                                         .flatMap(subInputValue ->
                                                                                 Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                                                                         .flatMap(subFieldDefinition ->
-                                                                                                arrayValueWithVariable.getValueWithVariable(index).asObject().getValueWithVariable(subInputValue.getName())
+                                                                                                arrayValueWithVariable.getValueWithVariable(index).asObject().getValueWithVariableOrEmpty(subInputValue.getName())
                                                                                                         .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
                                                                                                         .map(subValueWithVariable -> {
                                                                                                                     Field inputValueField = new Field(subFieldDefinition.getName()).addDirective(new Directive(DIRECTIVE_HIDE_NAME));

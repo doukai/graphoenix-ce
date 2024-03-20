@@ -20,4 +20,6 @@ public @interface Invoke2 {
   String returnClassName() default "";
 
   String[] thrownTypes() default {};
+
+  boolean async() default false;
 }

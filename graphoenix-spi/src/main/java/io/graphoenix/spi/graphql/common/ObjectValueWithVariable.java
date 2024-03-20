@@ -123,15 +123,15 @@ public class ObjectValueWithVariable extends AbstractMap<String, JsonValue> impl
                 .collect(Collectors.toSet());
     }
 
-    public ValueWithVariable getValueWithVariableOrNull(String name) {
+    public ValueWithVariable getValueWithVariable(String name) {
         return objectValueWithVariable.get(name);
     }
 
     public ValueWithVariable getValueWithVariableOrError(String name) {
-        return getValueWithVariable(name).orElseThrow(() -> new GraphQLErrors(GraphQLErrorType.ARGUMENT_NOT_EXIST.bind(name)));
+        return getValueWithVariableOrEmpty(name).orElseThrow(() -> new GraphQLErrors(GraphQLErrorType.ARGUMENT_NOT_EXIST.bind(name)));
     }
 
-    public Optional<ValueWithVariable> getValueWithVariable(String name) {
+    public Optional<ValueWithVariable> getValueWithVariableOrEmpty(String name) {
         return Optional.ofNullable(objectValueWithVariable.get(name));
     }
 

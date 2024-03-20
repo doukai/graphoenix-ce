@@ -62,7 +62,7 @@ public class MutationFetchFieldsMergeHandler implements OperationBeforeHandler {
                                             .flatMap(subFieldDefinition ->
                                                     Stream.ofNullable(field.getArguments())
                                                             .flatMap(arguments ->
-                                                                    arguments.getArgument(inputValue.getName())
+                                                                    arguments.getArgumentOrEmpty(inputValue.getName())
                                                                             .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
                                                             )
                                                             .flatMap(valueWithVariable -> buildFetch(subFieldDefinition, inputValue, valueWithVariable))
@@ -90,7 +90,7 @@ public class MutationFetchFieldsMergeHandler implements OperationBeforeHandler {
                                                         .filter(ValueWithVariable::isObject)
                                                         .map(ValueWithVariable::asObject)
                                                         .flatMap(objectValueWithVariable ->
-                                                                objectValueWithVariable.getValueWithVariable(subFieldDefinition.getName()).stream()
+                                                                objectValueWithVariable.getValueWithVariableOrEmpty(subFieldDefinition.getName()).stream()
                                                                         .flatMap(subValueWithVariable -> buildFetch(subFieldDefinition, subInputValue, subValueWithVariable))
                                                         )
                                         )

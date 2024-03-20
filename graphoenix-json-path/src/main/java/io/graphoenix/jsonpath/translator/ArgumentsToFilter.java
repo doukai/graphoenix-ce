@@ -47,7 +47,7 @@ public class ArgumentsToFilter {
                     .flatMap(Collection::stream)
                     .flatMap(argumentInput ->
                             Optional.ofNullable(field.getArguments())
-                                    .flatMap(arguments -> arguments.getArgument(argumentInput.getName()))
+                                    .flatMap(arguments -> arguments.getArgumentOrEmpty(argumentInput.getName()))
                                     .or(() -> Optional.ofNullable(argumentInput.getDefaultValue()))
                                     .stream()
                                     .map(valueWithVariable -> new AbstractMap.SimpleEntry<>(argumentInput, valueWithVariable))
@@ -91,21 +91,21 @@ public class ArgumentsToFilter {
 
             return expressionListToMultipleExpression(expressionList, isOr(field.getArguments()), isNot(field.getArguments()), true);
         } else {
-            return fieldDefinition.getArgument(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME)
+            return fieldDefinition.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME)
                     .flatMap(inputValue ->
                             Optional.ofNullable(field.getArguments())
                                     .map(arguments ->
-                                            arguments.getArgument(inputValue.getName())
+                                            arguments.getArgumentOrEmpty(inputValue.getName())
                                                     .filter(ValueWithVariable::isEnum)
                                                     .map(opr -> opr.asEnum().getValue())
                                                     .orElseGet(() ->
-                                                            arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                            arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
                                                                     .map(val -> INPUT_OPERATOR_INPUT_VALUE_EQ)
                                                                     .orElseGet(() ->
-                                                                            arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                                            arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
                                                                                     .map(val -> INPUT_OPERATOR_INPUT_VALUE_EQ)
                                                                                     .orElseGet(() ->
-                                                                                            arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
+                                                                                            arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
                                                                                                     .map(val -> INPUT_OPERATOR_INPUT_VALUE_IN)
                                                                                                     .orElseGet(() -> inputValue.getDefaultValue().asEnum().getValue())
                                                                                     )
@@ -116,12 +116,12 @@ public class ArgumentsToFilter {
                     .flatMap(opr ->
                             Optional.of(field.getArguments())
                                     .flatMap(arguments ->
-                                            arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                            arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
                                                     .flatMap(val ->
                                                             operatorToExpression(path + "." + fieldDefinition.getName(), opr, val, skipNull(arguments))
                                                     )
                                                     .or(() ->
-                                                            arguments.getArgument(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
+                                                            arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
                                                                     .flatMap(arr -> operatorToExpression(path + "." + fieldDefinition.getName(), opr, arr, skipNull(arguments)))
                                                     )
                                     )
@@ -143,7 +143,7 @@ public class ArgumentsToFilter {
                             Optional.ofNullable(valueWithVariable)
                                     .filter(ValueWithVariable::isObject)
                                     .map(ValueWithVariable::asObject)
-                                    .flatMap(objectValueWithVariable -> objectValueWithVariable.getValueWithVariable(fieldInput.getName()))
+                                    .flatMap(objectValueWithVariable -> objectValueWithVariable.getValueWithVariableOrEmpty(fieldInput.getName()))
                                     .or(() -> Optional.ofNullable(fieldInput.getDefaultValue()))
                                     .stream()
                                     .map(field -> new AbstractMap.SimpleEntry<>(fieldInput, field))
@@ -188,23 +188,23 @@ public class ArgumentsToFilter {
             return expressionListToMultipleExpression(expressionList, isOr(valueWithVariable), isNot(valueWithVariable));
         } else {
             InputObjectType inputObject = documentManager.getInputValueTypeDefinition(inputValue).asInputObject();
-            return inputObject.getInputValue(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME)
+            return inputObject.getInputValueOrEmpty(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME)
                     .flatMap(fieldInput ->
                             Optional.ofNullable(valueWithVariable)
                                     .filter(ValueWithVariable::isObject)
                                     .map(ValueWithVariable::asObject)
                                     .map(objectValueWithVariable ->
-                                            objectValueWithVariable.getValueWithVariable(fieldInput.getName())
+                                            objectValueWithVariable.getValueWithVariableOrEmpty(fieldInput.getName())
                                                     .filter(ValueWithVariable::isEnum)
                                                     .map(opr -> opr.asEnum().getValue())
                                                     .orElseGet(() ->
-                                                            objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                            objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
                                                                     .map(val -> INPUT_OPERATOR_INPUT_VALUE_EQ)
                                                                     .orElseGet(() ->
-                                                                            objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                                            objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
                                                                                     .map(val -> INPUT_OPERATOR_INPUT_VALUE_EQ)
                                                                                     .orElseGet(() ->
-                                                                                            objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
+                                                                                            objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
                                                                                                     .map(val -> INPUT_OPERATOR_INPUT_VALUE_IN)
                                                                                                     .orElseGet(() -> fieldInput.getDefaultValue().asEnum().getValue())
                                                                                     )
@@ -217,12 +217,12 @@ public class ArgumentsToFilter {
                                     .filter(ValueWithVariable::isObject)
                                     .map(ValueWithVariable::asObject)
                                     .flatMap(objectValueWithVariable ->
-                                            objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                            objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
                                                     .flatMap(val ->
                                                             operatorToExpression(path, opr, val, skipNull(objectValueWithVariable))
                                                     )
                                                     .or(() ->
-                                                            objectValueWithVariable.getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
+                                                            objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
                                                                     .flatMap(arr -> operatorToExpression(path, opr, arr, skipNull(objectValueWithVariable)))
                                                     )
                                     )

@@ -227,7 +227,7 @@ public class Field extends AbstractDefinition implements Selection {
     public Field getField(String name) {
         return this.selections.stream()
                 .filter(Selection::isField)
-                .map(selection -> (Field) selection)
+                .map(Selection::asField)
                 .filter(field -> field.getAlias() != null && field.getAlias().equals(name) || field.getName().equals(name))
                 .findFirst()
                 .orElse(null);
@@ -293,7 +293,7 @@ public class Field extends AbstractDefinition implements Selection {
 
     public Optional<String> getFormatValue() {
         return Optional.ofNullable(getDirective(DIRECTIVE_FORMAT_NAME))
-                .flatMap(directive -> directive.getArgument(DIRECTIVE_FORMAT_ARGUMENT_VALUE_NAME))
+                .flatMap(directive -> directive.getArgumentOrEmpty(DIRECTIVE_FORMAT_ARGUMENT_VALUE_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
@@ -304,7 +304,7 @@ public class Field extends AbstractDefinition implements Selection {
 
     public Optional<String> getFormatLocale() {
         return Optional.ofNullable(getDirective(DIRECTIVE_FORMAT_NAME))
-                .flatMap(directive -> directive.getArgument(DIRECTIVE_FORMAT_ARGUMENT_LOCALE_NAME))
+                .flatMap(directive -> directive.getArgumentOrEmpty(DIRECTIVE_FORMAT_ARGUMENT_LOCALE_NAME))
                 .filter(ValueWithVariable::isString)
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }

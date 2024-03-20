@@ -104,7 +104,7 @@ public class OperationBuilder {
                                                 .flatMap(subFieldDefinition ->
                                                         Stream.ofNullable(field.getArguments())
                                                                 .flatMap(arguments ->
-                                                                        arguments.getArgument(inputValue.getName())
+                                                                        arguments.getArgumentOrEmpty(inputValue.getName())
                                                                                 .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
                                                                 )
                                                                 .map(valueWithVariable -> {
@@ -118,11 +118,11 @@ public class OperationBuilder {
                                                                 )
                                                 )
                                 ),
-                        fieldDefinition.getArgument(INPUT_VALUE_LIST_NAME).stream()
+                        fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_LIST_NAME).stream()
                                 .flatMap(listInputValue ->
                                         Stream.ofNullable(field.getArguments())
                                                 .flatMap(arguments ->
-                                                        arguments.getArgument(listInputValue.getName())
+                                                        arguments.getArgumentOrEmpty(listInputValue.getName())
                                                                 .or(() -> Optional.ofNullable(listInputValue.getDefaultValue())).stream()
                                                 )
                                                 .filter(ValueWithVariable::isArray)
@@ -134,7 +134,7 @@ public class OperationBuilder {
                                                                                 .flatMap(subInputValue ->
                                                                                         Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                                                                                 .flatMap(subFieldDefinition ->
-                                                                                                        arrayValueWithVariable.getValueWithVariable(index).asObject().getValueWithVariable(subInputValue.getName())
+                                                                                                        arrayValueWithVariable.getValueWithVariable(index).asObject().getValueWithVariableOrEmpty(subInputValue.getName())
                                                                                                                 .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
                                                                                                                 .map(subValueWithVariable -> {
                                                                                                                             Field inputValueField = new Field(subFieldDefinition.getName()).addDirective(new Directive(DIRECTIVE_HIDE_NAME));

@@ -10,8 +10,10 @@ import jakarta.json.JsonValue;
 import reactor.core.publisher.Mono;
 
 @ApplicationScoped
-@Named("local")
+@Named(LocalFetchHandler.LOCAL_FETCH_NAME)
 public class LocalFetchHandler implements FetchHandler {
+
+    public static final String LOCAL_FETCH_NAME = "local";
 
     private final OperationHandler operationHandler;
 

@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static io.graphoenix.core.handler.fetch.LocalFetchHandler.LOCAL_FETCH_NAME;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST;
 import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
@@ -129,11 +130,11 @@ public class MutationAfterFetchHandler implements OperationAfterHandler {
             if (fieldDefinition.getType().hasList()) {
                 return Stream
                         .concat(
-                                fieldDefinition.getArgument(INPUT_VALUE_LIST_NAME).stream()
+                                fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_LIST_NAME).stream()
                                         .flatMap(listInputValue ->
                                                 Stream.ofNullable(field.getArguments())
                                                         .flatMap(arguments ->
-                                                                arguments.getArgument(listInputValue.getName())
+                                                                arguments.getArgumentOrEmpty(listInputValue.getName())
                                                                         .or(() -> Optional.ofNullable(listInputValue.getDefaultValue())).stream()
                                                         )
                                                         .filter(ValueWithVariable::isArray)
@@ -145,7 +146,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler {
                                                                                         .flatMap(subInputValue ->
                                                                                                 Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                                                                                         .flatMap(subFieldDefinition ->
-                                                                                                                arrayValueWithVariable.getValueWithVariable(index).asObject().getValueWithVariable(subInputValue.getName())
+                                                                                                                arrayValueWithVariable.getValueWithVariable(index).asObject().getValueWithVariableOrEmpty(subInputValue.getName())
                                                                                                                         .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
                                                                                                                         .flatMap(subValueWithVariable ->
                                                                                                                                 buildFetchItems(
@@ -173,7 +174,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler {
                                                                         .flatMap(subFieldDefinition ->
                                                                                 Stream.ofNullable(field.getArguments())
                                                                                         .flatMap(arguments ->
-                                                                                                arguments.getArgument(inputValue.getName())
+                                                                                                arguments.getArgumentOrEmpty(inputValue.getName())
                                                                                                         .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
                                                                                         )
                                                                                         .flatMap(valueWithVariable ->
@@ -199,7 +200,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler {
                                         .flatMap(subFieldDefinition ->
                                                 Stream.ofNullable(field.getArguments())
                                                         .flatMap(arguments ->
-                                                                arguments.getArgument(inputValue.getName())
+                                                                arguments.getArgumentOrEmpty(inputValue.getName())
                                                                         .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
                                                         )
                                                         .flatMap(valueWithVariable ->
@@ -230,7 +231,6 @@ public class MutationAfterFetchHandler implements OperationAfterHandler {
             String packageName = fieldDefinition.getPackageNameOrError();
             return Stream.of(new FetchItem(packageName, protocol, path, field.setAlias(getAliasFromPath(path)), null));
         } else if (fieldDefinition.isFetchField()) {
-            String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
             String fetchFrom = fieldDefinition.getFetchFromOrError();
             if (fieldTypeDefinition.isObject()) {
                 FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
@@ -239,7 +239,6 @@ public class MutationAfterFetchHandler implements OperationAfterHandler {
                     String packageName = fetchWithType.getPackageNameOrError();
                     String fetchWithFrom = fieldDefinition.getFetchWithFromOrError();
                     String fetchWithTo = fieldDefinition.getFetchWithToOrError();
-
                     if (fieldDefinition.getType().hasList()) {
                         return valueWithVariable.asArray().stream()
                                 .map(item ->
@@ -269,7 +268,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler {
                                             } else {
                                                 id = UUID.randomUUID().toString();
                                             }
-                                            return new FetchItem(packageName, protocol, path, fetchWithType.getName(), item, id, fetchWithType.getIDFieldOrError().getName());
+                                            return new FetchItem(packageName, LOCAL_FETCH_NAME, path, fetchWithType.getName(), item, id, fetchWithType.getIDFieldOrError().getName());
                                         }
                                 );
                     } else {
@@ -297,9 +296,10 @@ public class MutationAfterFetchHandler implements OperationAfterHandler {
                                         valueWithVariable
                                 )
                                 .build();
-                        return Stream.of(new FetchItem(packageName, protocol, path, fetchWithType.getName(), mutationJsonValue, id, fetchWithType.getIDFieldOrError().getName()));
+                        return Stream.of(new FetchItem(packageName, LOCAL_FETCH_NAME, path, fetchWithType.getName(), mutationJsonValue, id, fetchWithType.getIDFieldOrError().getName()));
                     }
                 } else {
+                    String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
                     String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
                     String fetchTo = fieldDefinition.getFetchToOrError();
                     if (fieldDefinition.getType().hasList()) {
@@ -349,7 +349,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler {
                                 )
                                 .map(item -> {
                                             String id = UUID.randomUUID().toString();
-                                            return new FetchItem(packageName, protocol, path, fetchWithType.getName(), item, id, fetchWithType.getIDFieldOrError().getName());
+                                            return new FetchItem(packageName, LOCAL_FETCH_NAME, path, fetchWithType.getName(), item, id, fetchWithType.getIDFieldOrError().getName());
                                         }
                                 );
                     }

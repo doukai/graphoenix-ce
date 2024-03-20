@@ -16,9 +16,6 @@ public class GraphQLConfig {
     private String graphQLPath = "graphql";
 
     @Optional
-    private String[] suffix = {"graphql", "gql"};
-
-    @Optional
     private Boolean build = true;
 
     @Optional
@@ -49,14 +46,6 @@ public class GraphQLConfig {
 
     public void setGraphQLPath(String graphQLPath) {
         this.graphQLPath = graphQLPath;
-    }
-
-    public String[] getSuffix() {
-        return suffix;
-    }
-
-    public void setSuffix(String[] suffix) {
-        this.suffix = suffix;
     }
 
     public Boolean getBuild() {

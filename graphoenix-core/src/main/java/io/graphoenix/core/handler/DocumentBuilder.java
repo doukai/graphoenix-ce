@@ -73,7 +73,6 @@ public class DocumentBuilder {
                                 .filter(objectType -> !documentManager.isOperationType(objectType))
                                 .flatMap(objectType ->
                                         objectType.getFields().stream()
-                                                .filter(FieldDefinition::isFetchAnchor)
                                                 .filter(FieldDefinition::hasFetchWith)
                                                 .map(fieldDefinition -> buildFetchWithObject(objectType, fieldDefinition))
                                 )
@@ -241,6 +240,7 @@ public class DocumentBuilder {
                                                         )
                                                 )
                                                 .addArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME, documentManager.getFieldTypeDefinition(fieldDefinition).asObject().getIDFieldOrError().getName())
+                                                .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, fieldDefinition.getProtocol().orElseGet(() -> new EnumValue(packageConfig.getDefaultFetchProtocol())))
                                 )
                 );
         return objectType;
@@ -310,16 +310,10 @@ public class DocumentBuilder {
                         new FieldDefinition(typeNameToFieldName(objectType.getName()))
                                 .setType(new TypeName(objectType.getName()))
                                 .addDirective(
-                                        fieldDefinition.isFetchAnchor() ?
-                                                new Directive(DIRECTIVE_MAP_NAME)
-                                                        .addArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME, fieldDefinition.getFetchWithFromOrError())
-                                                        .addArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME, fieldDefinition.getFetchFromOrError())
-                                                        .addArgument(DIRECTIVE_MAP_ARGUMENT_ANCHOR_NAME, true) :
-                                                new Directive(DIRECTIVE_FETCH_NAME)
-                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME, fieldDefinition.getFetchWithFromOrError())
-                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME, fieldDefinition.getFetchFromOrError())
-                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_ANCHOR_NAME, true)
-                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, fieldDefinition.getFetchProtocolOrError())
+                                        new Directive(DIRECTIVE_MAP_NAME)
+                                                .addArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME, fieldDefinition.getFetchWithFromOrError())
+                                                .addArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME, fieldDefinition.getFetchFromOrError())
+                                                .addArgument(DIRECTIVE_MAP_ARGUMENT_ANCHOR_NAME, true)
                                 )
                 )
                 .addDirective(
@@ -432,14 +426,10 @@ public class DocumentBuilder {
                                         (FieldDefinition) new FieldDefinition(typeNameToFieldName(fieldDefinition.getFetchWithTypeOrError()))
                                                 .setType(new ListType(new TypeName(fieldDefinition.getFetchWithTypeOrError())))
                                                 .addDirective(
-                                                        fieldDefinition.isFetchAnchor() ?
-                                                                new Directive(DIRECTIVE_MAP_NAME)
-                                                                        .addArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME, fieldDefinition.getFetchFromOrError())
-                                                                        .addArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME, fieldDefinition.getFetchWithFromOrError()) :
-                                                                new Directive(DIRECTIVE_FETCH_NAME)
-                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME, fieldDefinition.getFetchFromOrError())
-                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME, fieldDefinition.getFetchWithFromOrError())
-                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, fieldDefinition.getFetchProtocolOrError())
+                                                        new Directive(DIRECTIVE_FETCH_NAME)
+                                                                .addArgument(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME, fieldDefinition.getFetchFromOrError())
+                                                                .addArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME, fieldDefinition.getFetchWithFromOrError())
+                                                                .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, new EnumValue(ENUM_PROTOCOL_ENUM_VALUE_LOCAL))
                                                 )
                                 )
                                 .collect(Collectors.toList())
