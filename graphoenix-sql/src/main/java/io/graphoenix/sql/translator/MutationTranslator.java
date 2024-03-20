@@ -721,7 +721,7 @@ public class MutationTranslator {
                 parentColumnEqualsTo.setRightExpression(parentColumnExpression);
             }
 
-            if (fieldDefinition.isMapAnchor()) {
+            if (documentManager.isMapAnchor(objectType, fieldDefinition)) {
                 return updateExpression(
                         parentTable,
                         Collections.singletonList(new UpdateSet(parentColumn, new NullValue())),
@@ -799,7 +799,7 @@ public class MutationTranslator {
                 return insertExpression(withTable, Arrays.asList(withParentColumn, withColumn), Arrays.asList(parentColumnExpression, columnExpression));
             }
         } else {
-            if (fieldDefinition.isMapAnchor()) {
+            if (documentManager.isMapAnchor(objectType, fieldDefinition)) {
                 EqualsTo parentIdEqualsTo = new EqualsTo()
                         .withLeftExpression(parentIdColumn)
                         .withRightExpression(parentIdExpression);

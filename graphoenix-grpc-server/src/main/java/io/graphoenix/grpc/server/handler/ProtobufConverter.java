@@ -132,21 +132,23 @@ public class ProtobufConverter {
         try {
             Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
             switch (jsonValue.getValueType()) {
+                case NULL:
+                    return jsonValue;
                 case OBJECT:
                     return jsonValue.asJsonObject().entrySet().stream()
+                            .filter(entry -> !entry.getValue().getValueType().equals(JsonValue.ValueType.NULL))
                             .map(entry ->
                                     new AbstractMap.SimpleEntry<>(
                                             CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, entry.getKey()),
-                                            toProtobufJsonValue(entry.getValue(), fieldDefinition.asObject().getField(CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, entry.getKey())))
+                                            toProtobufJsonValue(entry.getValue(), fieldTypeDefinition.asObject().getField(CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, entry.getKey())))
                                     )
                             )
                             .collect(JsonCollectors.toJsonObject());
                 case ARRAY:
                     return jsonValue.asJsonArray().stream()
+                            .filter(item -> !item.getValueType().equals(JsonValue.ValueType.NULL))
                             .map(item -> toProtobufJsonValue(item, fieldDefinition))
                             .collect(JsonCollectors.toJsonArray());
-                case NULL:
-                    return jsonValue;
                 default:
                     if (fieldTypeDefinition.isEnum()) {
                         String enumSuffix = "_" + CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, fieldTypeDefinition.getName());

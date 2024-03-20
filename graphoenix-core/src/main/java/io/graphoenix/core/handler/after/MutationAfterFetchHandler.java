@@ -319,7 +319,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler {
                                             return new FetchItem(packageName, protocol, path, fieldTypeDefinition.getName(), item, id, idField.getName());
                                         }
                                 );
-                    } else if (!fieldDefinition.isFetchAnchor()) {
+                    } else if (!documentManager.isFetchAnchor(objectType, fieldDefinition)) {
                         String id;
                         if (valueWithVariable.asJsonObject().containsKey(idField.getName())) {
                             id = getId(valueWithVariable.asJsonObject().get(idField.getName()));

@@ -405,7 +405,7 @@ public class DocumentBuilder {
                 .addFields(
                         objectType.getFields().stream()
                                 .filter(FieldDefinition::isFetchField)
-                                .filter(FieldDefinition::isFetchAnchor)
+                                .filter(fieldDefinition -> documentManager.isFetchAnchor(objectType, fieldDefinition))
                                 .filter(FieldDefinition -> !FieldDefinition.hasFetchWith())
                                 .filter(fieldDefinition -> objectType.getFields().stream().noneMatch(item -> item.getName().equals(fieldDefinition.getFetchFromOrError())))
                                 .map(fieldDefinition ->
@@ -437,7 +437,7 @@ public class DocumentBuilder {
                 .addFields(
                         objectType.getFields().stream()
                                 .filter(FieldDefinition::isMapField)
-                                .filter(FieldDefinition::isMapAnchor)
+                                .filter(fieldDefinition -> documentManager.isMapAnchor(objectType, fieldDefinition))
                                 .filter(fieldDefinition -> !fieldDefinition.hasMapWith())
                                 .filter(fieldDefinition -> objectType.getFields().stream().noneMatch(item -> item.getName().equals(fieldDefinition.getMapFromOrError())))
                                 .map(fieldDefinition ->

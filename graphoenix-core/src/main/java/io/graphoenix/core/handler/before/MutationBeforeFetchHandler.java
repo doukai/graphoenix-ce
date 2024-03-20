@@ -144,6 +144,7 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler {
                                                                     )
                                                                     .flatMap(valueWithVariable ->
                                                                             buildFetchItems(
+                                                                                    fieldTypeDefinition.asObject(),
                                                                                     field,
                                                                                     "",
                                                                                     subFieldDefinition,
@@ -173,6 +174,7 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler {
                                                                                                                     .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
                                                                                                                     .flatMap(subValueWithVariable ->
                                                                                                                             buildFetchItems(
+                                                                                                                                    fieldTypeDefinition.asObject(),
                                                                                                                                     field,
                                                                                                                                     "/" + INPUT_VALUE_LIST_NAME + "/" + index,
                                                                                                                                     subFieldDefinition,
@@ -191,13 +193,13 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler {
         return Stream.empty();
     }
 
-    public Stream<FetchItem> buildFetchItems(Field field, String path, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable) {
+    public Stream<FetchItem> buildFetchItems(ObjectType objectType, Field field, String path, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable) {
         if (valueWithVariable.isNull()) {
             return Stream.empty();
         }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldDefinition.isFetchField()) {
-            if (!fieldDefinition.getType().hasList() && fieldDefinition.isFetchAnchor()) {
+            if (!fieldDefinition.getType().hasList() && documentManager.isFetchAnchor(objectType, fieldDefinition)) {
                 String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
                 String fetchFrom = fieldDefinition.getFetchFromOrError();
                 String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
@@ -240,6 +242,7 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler {
                                                                             )
                                                                             .flatMap(subValueWithVariable ->
                                                                                     buildFetchItems(
+                                                                                            fieldTypeDefinition.asObject(),
                                                                                             field,
                                                                                             path + "/" + fieldDefinition.getName() + "/" + index,
                                                                                             subFieldDefinition,
@@ -257,6 +260,7 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler {
                                                             )
                                                             .flatMap(subValueWithVariable ->
                                                                     buildFetchItems(
+                                                                            fieldTypeDefinition.asObject(),
                                                                             field,
                                                                             path + "/" + fieldDefinition.getName(),
                                                                             subFieldDefinition,
