@@ -3,6 +3,7 @@ package io.graphoenix.spi.error;
 import org.eclipse.microprofile.graphql.GraphQLException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -91,6 +92,11 @@ public class GraphQLErrors extends RuntimeException {
 
     public GraphQLErrors add(GraphQLError graphQLError) {
         this.errors.add(graphQLError);
+        return this;
+    }
+
+    public GraphQLErrors addAll(Collection<GraphQLError> graphQLErrors) {
+        this.errors.addAll(graphQLErrors);
         return this;
     }
 

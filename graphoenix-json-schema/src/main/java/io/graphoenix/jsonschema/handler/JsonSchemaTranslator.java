@@ -1,33 +1,36 @@
 package io.graphoenix.jsonschema.handler;
 
-import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.spi.graphql.Definition;
-import io.graphoenix.spi.graphql.common.ArrayValueWithVariable;
 import io.graphoenix.spi.graphql.common.Directive;
 import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
-import io.graphoenix.spi.graphql.common.ValueWithVariable;
-import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.InputObjectType;
 import io.graphoenix.spi.graphql.type.ObjectType;
 import io.graphoenix.spi.graphql.type.Type;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonCollectors;
+import org.tinylog.Logger;
 
-import java.io.StringWriter;
+import javax.annotation.processing.Filer;
+import javax.tools.FileObject;
+import javax.tools.StandardLocation;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.graphoenix.jsonschema.utils.ValidationUtil.*;
+import static io.graphoenix.jsonschema.utils.ValidationUtil.getJsonSchemaDirective;
+import static io.graphoenix.jsonschema.utils.ValidationUtil.getJsonSchemaObjectArgument;
 import static io.graphoenix.spi.constant.Hammurabi.*;
+import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 import static jakarta.json.JsonValue.TRUE;
 
 @ApplicationScoped
@@ -42,221 +45,238 @@ public class JsonSchemaTranslator {
         this.jsonProvider = jsonProvider;
     }
 
-    public Stream<Map.Entry<String, String>> objectToJsonSchemaStringStream(InputObjectType inputObjectType) {
-        return inputObjectToJsonSchema(inputObjectType)
-                .map(jsonValue -> {
-                            StringWriter stringWriter = new StringWriter();
-                            jsonProvider.createWriter(stringWriter).write(jsonValue);
-                            return new AbstractMap.SimpleEntry<>(jsonValue.asJsonObject().getString("$id").substring(1), stringWriter.toString());
+    public void writeToFiler(Filer filer) {
+        documentManager.getDocument().getInputObjectTypes()
+                .filter(inputObjectType -> !inputObjectType.isInputInterface())
+                .flatMap(this::inputObjectToJsonSchema)
+                .forEach(entry -> {
+                            try {
+                                FileObject schema = filer.createResource(StandardLocation.CLASS_OUTPUT, "", "META-INF/schema/" + entry.getKey());
+                                Writer writer = schema.openWriter();
+                                writer.write(entry.getValue().toString());
+                                writer.close();
+                            } catch (IOException e) {
+                                Logger.error(e);
+                            }
+                        }
+                );
+
+        documentManager.getDocument().getObjectTypes()
+                .filter(documentManager::isOperationType)
+                .forEach(objectType -> {
+                            try {
+                                FileObject schema = filer.createResource(StandardLocation.CLASS_OUTPUT, "", "META-INF/schema/" + objectType.getName());
+                                Writer writer = schema.openWriter();
+                                writer.write(operationObjectToJsonSchema(objectType).toString());
+                                writer.close();
+                            } catch (IOException e) {
+                                Logger.error(e);
+                            }
                         }
                 );
     }
 
-    public Map.Entry<String, String> operationObjectToJsonSchemaString(GraphqlParser.OperationTypeDefinitionContext operationTypeDefinitionContext) {
-        JsonValue jsonValue = operationObjectToJsonSchema(operationTypeDefinitionContext);
-        StringWriter stringWriter = new StringWriter();
-        jsonProvider.createWriter(stringWriter).write(jsonValue);
-        return new AbstractMap.SimpleEntry<>(jsonValue.asJsonObject().getString("$id").substring(1), stringWriter.toString());
-    }
-
-    public Stream<JsonValue> inputObjectToJsonSchema(InputObjectType inputObjectType) {
+    public Stream<Map.Entry<String, JsonValue>> inputObjectToJsonSchema(InputObjectType inputObjectType) {
+        String mutationTypeName = documentManager.getDocument().getMutationOperationTypeOrError().getName();
+        String queryTypeName = documentManager.getDocument().getQueryOperationTypeOrError().getName();
+        String subscriptionTypeName = documentManager.getDocument().getSubscriptionOperationTypeOrError().getName();
         if (inputObjectType.getName().endsWith(SUFFIX_INPUT)) {
             String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_INPUT));
             Definition definition = documentManager.getDocument().getDefinition(objectTypeName);
             if (definition.isObject()) {
-                JsonObjectBuilder updateBuilder = getJsonSchemaDirective(inputObjectType)
-                        .map(this::buildValidation)
-                        .orElseGet(jsonProvider::createObjectBuilder)
+                JsonObjectBuilder updateBuilder = buildJsonSchemaBuilder(inputObjectType)
                         .add("$id", jsonProvider.createValue("#" + inputObjectType.getName() + "_update"))
                         .add("type", jsonProvider.createValue("object"))
-                        .add("properties", inputObjectToUpdateProperties(inputObjectType, definition.isObject()))
+                        .add("properties", inputObjectToUpdateProperties(inputObjectType, definition.asObject()))
                         .add("additionalProperties", TRUE)
                         .add("required", jsonProvider.createArrayBuilder().add(INPUT_VALUE_WHERE_NAME));
 
-                JsonObjectBuilder builder = getJsonSchemaDirective(inputObjectType)
-                        .map(this::buildValidation)
-                        .orElseGet(jsonProvider::createObjectBuilder)
-                        .add("$id", jsonProvider.createValue("#" + inputObjectType.name().getText()))
+                JsonObjectBuilder builder = buildJsonSchemaBuilder(inputObjectType)
+                        .add("$id", jsonProvider.createValue("#" + inputObjectType.getName()))
                         .add("type", jsonProvider.createValue("object"))
-                        .add("properties", inputObjectToInsertProperties(inputObjectType, definition.isObject()))
+                        .add("properties", inputObjectToInsertProperties(inputObjectType, definition.asObject()))
                         .add("additionalProperties", TRUE)
-                        .add("required", buildRequired(definition.isObject()));
-                return Stream.of(updateBuilder.build(), builder.build());
-            }
-        } else if (inputObjectType.name().getText().endsWith(LIST_SUFFIX + mutationTypeName + ARGUMENTS_SUFFIX)) {
-            String objectTypeName = inputObjectType.name().getText().substring(0, inputObjectType.name().getText().lastIndexOf(LIST_SUFFIX + mutationTypeName + ARGUMENTS_SUFFIX));
-            if (documentManager.isObject(objectTypeName)) {
-                GraphqlParser.ObjectTypeDefinitionContext objectTypeDefinitionContext = documentManager.getObject(objectTypeName).orElseThrow(() -> new GraphQLErrors(TYPE_NOT_EXIST.bind(objectTypeName)));
-                String schemaName = mutationTypeName + "_" + NAME_UTIL.getSchemaFieldName(objectTypeName) + LIST_SUFFIX + "_" + ARGUMENTS_SUFFIX;
-                JsonObjectBuilder updateBuilder = getJsonSchemaDirective(inputObjectType.directives())
-                        .map(this::buildValidation)
-                        .orElseGet(jsonProvider::createObjectBuilder)
-                        .add("$id", jsonProvider.createValue("#" + schemaName + "_update"))
-                        .add("type", jsonProvider.createValue("object"))
-                        .add("properties", inputObjectToUpdateProperties(inputObjectType, objectTypeDefinitionContext))
-                        .add("additionalProperties", TRUE)
-                        .add("required", jsonProvider.createArrayBuilder().add(WHERE_INPUT_NAME));
+                        .add("required", buildRequired(definition.asObject()));
 
-                JsonObjectBuilder builder = getJsonSchemaDirective(inputObjectType.directives())
-                        .map(this::buildValidation)
-                        .orElseGet(jsonProvider::createObjectBuilder)
-                        .add("$id", jsonProvider.createValue("#" + schemaName))
+                return Stream.of(
+                        new AbstractMap.SimpleEntry<>(inputObjectType.getName() + "_update", updateBuilder.build()),
+                        new AbstractMap.SimpleEntry<>(inputObjectType.getName(), builder.build())
+                );
+            }
+        } else if (inputObjectType.getName().endsWith(SUFFIX_LIST + mutationTypeName + SUFFIX_ARGUMENTS)) {
+            String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_LIST + mutationTypeName + SUFFIX_ARGUMENTS));
+            Definition definition = documentManager.getDocument().getDefinition(objectTypeName);
+            if (definition.isObject()) {
+                String operationFieldName = mutationTypeName + "_" + typeNameToFieldName(objectTypeName) + SUFFIX_LIST + "_" + SUFFIX_ARGUMENTS;
+                JsonObjectBuilder updateBuilder = buildJsonSchemaBuilder(inputObjectType)
+                        .add("$id", jsonProvider.createValue("#" + operationFieldName + "_update"))
+                        .add("type", jsonProvider.createValue("object"))
+                        .add("properties", inputObjectToUpdateProperties(inputObjectType, definition.asObject()))
+                        .add("additionalProperties", TRUE)
+                        .add("required", jsonProvider.createArrayBuilder().add(INPUT_VALUE_WHERE_NAME));
+
+                JsonObjectBuilder builder = buildJsonSchemaBuilder(inputObjectType)
+                        .add("$id", jsonProvider.createValue("#" + operationFieldName))
                         .add("type", jsonProvider.createValue("object"))
                         .add("properties", inputObjectToListProperties(inputObjectType))
                         .add("additionalProperties", TRUE)
-                        .add("required", jsonProvider.createArrayBuilder().add(LIST_INPUT_NAME));
-                return Stream.of(updateBuilder.build(), builder.build());
-            }
-        } else if (inputObjectType.name().getText().endsWith(mutationTypeName + ARGUMENTS_SUFFIX)) {
-            String objectTypeName = inputObjectType.name().getText().substring(0, inputObjectType.name().getText().lastIndexOf(mutationTypeName + ARGUMENTS_SUFFIX));
-            if (documentManager.isObject(objectTypeName)) {
-                GraphqlParser.ObjectTypeDefinitionContext objectTypeDefinitionContext = documentManager.getObject(objectTypeName).orElseThrow(() -> new GraphQLErrors(TYPE_NOT_EXIST.bind(objectTypeName)));
-                String schemaName = mutationTypeName + "_" + NAME_UTIL.getSchemaFieldName(objectTypeName) + "_" + ARGUMENTS_SUFFIX;
-                JsonObjectBuilder updateBuilder = getJsonSchemaDirective(inputObjectType.directives())
-                        .map(this::buildValidation)
-                        .orElseGet(jsonProvider::createObjectBuilder)
-                        .add("$id", jsonProvider.createValue("#" + schemaName + "_update"))
-                        .add("type", jsonProvider.createValue("object"))
-                        .add("properties", inputObjectToUpdateProperties(inputObjectType, objectTypeDefinitionContext))
-                        .add("additionalProperties", TRUE)
-                        .add("required", jsonProvider.createArrayBuilder().add(WHERE_INPUT_NAME));
+                        .add("required", jsonProvider.createArrayBuilder().add(INPUT_VALUE_LIST_NAME));
 
-                JsonObjectBuilder builder = getJsonSchemaDirective(inputObjectType.directives())
-                        .map(this::buildValidation)
-                        .orElseGet(jsonProvider::createObjectBuilder)
-                        .add("$id", jsonProvider.createValue("#" + schemaName))
-                        .add("type", jsonProvider.createValue("object"))
-                        .add("properties", inputObjectToInsertProperties(inputObjectType, objectTypeDefinitionContext))
-                        .add("additionalProperties", TRUE)
-                        .add("required", buildRequired(objectTypeDefinitionContext));
-                return Stream.of(updateBuilder.build(), builder.build());
+                return Stream.of(
+                        new AbstractMap.SimpleEntry<>(operationFieldName + "_update", updateBuilder.build()),
+                        new AbstractMap.SimpleEntry<>(operationFieldName, builder.build())
+                );
             }
-        } else if (inputObjectType.name().getText().endsWith(LIST_SUFFIX + queryTypeName + ARGUMENTS_SUFFIX)) {
-            String objectTypeName = inputObjectType.name().getText().substring(0, inputObjectType.name().getText().lastIndexOf(LIST_SUFFIX + queryTypeName + ARGUMENTS_SUFFIX));
-            if (documentManager.isObject(objectTypeName)) {
-                String schemaName = queryTypeName + "_" + NAME_UTIL.getSchemaFieldName(objectTypeName) + LIST_SUFFIX + "_" + ARGUMENTS_SUFFIX;
-                JsonObjectBuilder builder = getJsonSchemaDirective(inputObjectType.directives())
-                        .map(this::buildValidation)
-                        .orElseGet(jsonProvider::createObjectBuilder)
-                        .add("$id", jsonProvider.createValue("#" + schemaName))
+        } else if (inputObjectType.getName().endsWith(mutationTypeName + SUFFIX_ARGUMENTS)) {
+            String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(mutationTypeName + SUFFIX_ARGUMENTS));
+            Definition definition = documentManager.getDocument().getDefinition(objectTypeName);
+            if (definition.isObject()) {
+                String operationFieldName = mutationTypeName + "_" + typeNameToFieldName(objectTypeName) + "_" + SUFFIX_ARGUMENTS;
+                JsonObjectBuilder updateBuilder = buildJsonSchemaBuilder(inputObjectType)
+                        .add("$id", jsonProvider.createValue("#" + operationFieldName + "_update"))
+                        .add("type", jsonProvider.createValue("object"))
+                        .add("properties", inputObjectToUpdateProperties(inputObjectType, definition.asObject()))
+                        .add("additionalProperties", TRUE)
+                        .add("required", jsonProvider.createArrayBuilder().add(INPUT_VALUE_WHERE_NAME));
+
+                JsonObjectBuilder builder = buildJsonSchemaBuilder(inputObjectType)
+                        .add("$id", jsonProvider.createValue("#" + operationFieldName))
+                        .add("type", jsonProvider.createValue("object"))
+                        .add("properties", inputObjectToInsertProperties(inputObjectType, definition.asObject()))
+                        .add("additionalProperties", TRUE)
+                        .add("required", buildRequired(definition.asObject()));
+
+                return Stream.of(
+                        new AbstractMap.SimpleEntry<>(operationFieldName + "_update", updateBuilder.build()),
+                        new AbstractMap.SimpleEntry<>(operationFieldName, builder.build())
+                );
+            }
+        } else if (inputObjectType.getName().endsWith(SUFFIX_LIST + queryTypeName + SUFFIX_ARGUMENTS)) {
+            String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_LIST + queryTypeName + SUFFIX_ARGUMENTS));
+            Definition definition = documentManager.getDocument().getDefinition(objectTypeName);
+            if (definition.isObject()) {
+                String operationFieldName = queryTypeName + "_" + typeNameToFieldName(objectTypeName) + SUFFIX_LIST + "_" + SUFFIX_ARGUMENTS;
+                JsonObjectBuilder builder = buildJsonSchemaBuilder(inputObjectType)
+                        .add("$id", jsonProvider.createValue("#" + operationFieldName))
                         .add("type", jsonProvider.createValue("object"))
                         .add("properties", inputObjectToProperties(inputObjectType))
                         .add("additionalProperties", TRUE)
                         .add("required", buildRequired(inputObjectType));
-                return Stream.of(builder.build());
+
+                return Stream.of(
+                        new AbstractMap.SimpleEntry<>(operationFieldName, builder.build())
+                );
             }
-        } else if (inputObjectType.name().getText().endsWith(queryTypeName + ARGUMENTS_SUFFIX)) {
-            String objectTypeName = inputObjectType.name().getText().substring(0, inputObjectType.name().getText().lastIndexOf(queryTypeName + ARGUMENTS_SUFFIX));
-            if (documentManager.isObject(objectTypeName)) {
-                String schemaName = queryTypeName + "_" + NAME_UTIL.getSchemaFieldName(objectTypeName) + "_" + ARGUMENTS_SUFFIX;
-                JsonObjectBuilder builder = getJsonSchemaDirective(inputObjectType.directives())
-                        .map(this::buildValidation)
-                        .orElseGet(jsonProvider::createObjectBuilder)
-                        .add("$id", jsonProvider.createValue("#" + schemaName))
+        } else if (inputObjectType.getName().endsWith(queryTypeName + SUFFIX_ARGUMENTS)) {
+            String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(queryTypeName + SUFFIX_ARGUMENTS));
+            Definition definition = documentManager.getDocument().getDefinition(objectTypeName);
+            if (definition.isObject()) {
+                String operationFieldName = queryTypeName + "_" + typeNameToFieldName(objectTypeName) + "_" + SUFFIX_ARGUMENTS;
+                JsonObjectBuilder builder = buildJsonSchemaBuilder(inputObjectType)
+                        .add("$id", jsonProvider.createValue("#" + operationFieldName))
                         .add("type", jsonProvider.createValue("object"))
                         .add("properties", inputObjectToProperties(inputObjectType))
                         .add("additionalProperties", TRUE)
                         .add("required", buildRequired(inputObjectType));
-                return Stream.of(builder.build());
+
+                return Stream.of(
+                        new AbstractMap.SimpleEntry<>(operationFieldName, builder.build())
+                );
             }
-        } else if (inputObjectType.name().getText().endsWith(LIST_SUFFIX + subscriptionTypeName + ARGUMENTS_SUFFIX)) {
-            String objectTypeName = inputObjectType.name().getText().substring(0, inputObjectType.name().getText().lastIndexOf(LIST_SUFFIX + subscriptionTypeName + ARGUMENTS_SUFFIX));
-            if (documentManager.isObject(objectTypeName)) {
-                String schemaName = subscriptionTypeName + "_" + NAME_UTIL.getSchemaFieldName(objectTypeName) + LIST_SUFFIX + "_" + ARGUMENTS_SUFFIX;
-                JsonObjectBuilder builder = getJsonSchemaDirective(inputObjectType.directives())
-                        .map(this::buildValidation)
-                        .orElseGet(jsonProvider::createObjectBuilder)
-                        .add("$id", jsonProvider.createValue("#" + schemaName))
+        } else if (inputObjectType.getName().endsWith(SUFFIX_LIST + subscriptionTypeName + SUFFIX_ARGUMENTS)) {
+            String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_LIST + subscriptionTypeName + SUFFIX_ARGUMENTS));
+            Definition definition = documentManager.getDocument().getDefinition(objectTypeName);
+            if (definition.isObject()) {
+                String operationFieldName = subscriptionTypeName + "_" + typeNameToFieldName(objectTypeName) + SUFFIX_LIST + "_" + SUFFIX_ARGUMENTS;
+                JsonObjectBuilder builder = buildJsonSchemaBuilder(inputObjectType)
+                        .add("$id", jsonProvider.createValue("#" + operationFieldName))
                         .add("type", jsonProvider.createValue("object"))
                         .add("properties", inputObjectToProperties(inputObjectType))
                         .add("additionalProperties", TRUE)
                         .add("required", buildRequired(inputObjectType));
-                return Stream.of(builder.build());
+
+                return Stream.of(
+                        new AbstractMap.SimpleEntry<>(operationFieldName, builder.build())
+                );
             }
-        } else if (inputObjectType.name().getText().endsWith(subscriptionTypeName + ARGUMENTS_SUFFIX)) {
-            String objectTypeName = inputObjectType.name().getText().substring(0, inputObjectType.name().getText().lastIndexOf(subscriptionTypeName + ARGUMENTS_SUFFIX));
-            if (documentManager.isObject(objectTypeName)) {
-                String schemaName = subscriptionTypeName + "_" + NAME_UTIL.getSchemaFieldName(objectTypeName) + "_" + ARGUMENTS_SUFFIX;
-                JsonObjectBuilder builder = getJsonSchemaDirective(inputObjectType.directives())
-                        .map(this::buildValidation)
-                        .orElseGet(jsonProvider::createObjectBuilder)
-                        .add("$id", jsonProvider.createValue("#" + schemaName))
+        } else if (inputObjectType.getName().endsWith(subscriptionTypeName + SUFFIX_ARGUMENTS)) {
+            String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(subscriptionTypeName + SUFFIX_ARGUMENTS));
+            Definition definition = documentManager.getDocument().getDefinition(objectTypeName);
+            if (definition.isObject()) {
+                String operationFieldName = subscriptionTypeName + "_" + typeNameToFieldName(objectTypeName) + "_" + SUFFIX_ARGUMENTS;
+                JsonObjectBuilder builder = buildJsonSchemaBuilder(inputObjectType)
+                        .add("$id", jsonProvider.createValue("#" + operationFieldName))
                         .add("type", jsonProvider.createValue("object"))
                         .add("properties", inputObjectToProperties(inputObjectType))
                         .add("additionalProperties", TRUE)
                         .add("required", buildRequired(inputObjectType));
-                return Stream.of(builder.build());
+
+                return Stream.of(
+                        new AbstractMap.SimpleEntry<>(operationFieldName, builder.build())
+                );
             }
         }
-        JsonObjectBuilder builder = getJsonSchemaDirective(inputObjectType.directives())
-                .map(this::buildValidation)
-                .orElseGet(jsonProvider::createObjectBuilder)
-                .add("$id", jsonProvider.createValue("#" + inputObjectType.name().getText()))
+        JsonObjectBuilder builder = buildJsonSchemaBuilder(inputObjectType)
+                .add("$id", jsonProvider.createValue("#" + inputObjectType.getName()))
                 .add("type", jsonProvider.createValue("object"))
                 .add("properties", inputObjectToProperties(inputObjectType))
                 .add("additionalProperties", TRUE)
                 .add("required", buildRequired(inputObjectType));
-        return Stream.of(builder.build());
+
+        return Stream.of(
+                new AbstractMap.SimpleEntry<>(inputObjectType.getName(), builder.build())
+        );
     }
 
-    public JsonValue operationObjectToJsonSchema(GraphqlParser.OperationTypeDefinitionContext operationTypeDefinitionContext) {
-        String operationTypeName = operationTypeDefinitionContext.typeName().name().getText();
-        GraphqlParser.ObjectTypeDefinitionContext objectTypeDefinitionContext = documentManager.getObject(operationTypeName)
-                .orElseThrow(() -> new GraphQLErrors(GraphQLErrorType.TYPE_NOT_EXIST.bind(operationTypeDefinitionContext.typeName().name().getText())));
+    public JsonValue operationObjectToJsonSchema(ObjectType operationType) {
         JsonObjectBuilder jsonSchemaBuilder = jsonProvider.createObjectBuilder();
-
-        JsonObjectBuilder builder = jsonSchemaBuilder.add("$id", jsonProvider.createValue("#" + objectTypeDefinitionContext.name().getText()))
+        JsonObjectBuilder builder = jsonSchemaBuilder.add("$id", jsonProvider.createValue("#" + operationType.getName()))
                 .add("type", jsonProvider.createValue("object"))
                 .add("additionalProperties", TRUE);
 
-        JsonObjectBuilder propertiesBuilder = jsonProvider.createObjectBuilder();
-        objectTypeDefinitionContext.fieldsDefinition().fieldDefinition().stream()
-                .filter(fieldDefinitionContext -> fieldDefinitionContext.argumentsDefinition() != null)
-                .forEach(fieldDefinitionContext -> {
-                            if (documentManager.isInvokeField(fieldDefinitionContext)) {
-                                propertiesBuilder.add(
-                                        fieldDefinitionContext.name().getText(),
-                                        buildNullableType(
+        JsonObject properties = operationType.getFields().stream()
+                .filter(fieldDefinition -> fieldDefinition.getArguments() != null)
+                .map(fieldDefinition -> {
+                            if (fieldDefinition.isInvokeField()) {
+                                return new AbstractMap.SimpleEntry<>(
+                                        fieldDefinition.getName(),
+                                        (JsonValue) buildNullableType(
                                                 jsonProvider.createObjectBuilder()
-                                                        .add("$ref", operationTypeName + "_" + fieldDefinitionContext.name().getText() + "_" + ARGUMENTS_SUFFIX)
+                                                        .add("$ref", operationType.getName() + "_" + fieldDefinition.getName() + "_" + SUFFIX_ARGUMENTS)
                                         )
                                 );
                             } else {
-                                if (operationTypeDefinitionContext.operationType().MUTATION() != null) {
+                                if (documentManager.isMutationOperationType(operationType)) {
                                     JsonArrayBuilder jsonArrayBuilder = jsonProvider.createArrayBuilder()
-                                            .add(jsonProvider.createObjectBuilder()
-                                                    .add("$ref", operationTypeName + "_" + fieldDefinitionContext.name().getText() + "_" + ARGUMENTS_SUFFIX)
+                                            .add(
+                                                    jsonProvider.createObjectBuilder()
+                                                            .add("$ref", operationType.getName() + "_" + fieldDefinition.getName() + "_" + SUFFIX_ARGUMENTS)
                                             )
-                                            .add(jsonProvider.createObjectBuilder()
-                                                    .add("$ref", operationTypeName + "_" + fieldDefinitionContext.name().getText() + "_" + ARGUMENTS_SUFFIX + "_update")
+                                            .add(
+                                                    jsonProvider.createObjectBuilder()
+                                                            .add("$ref", operationType.getName() + "_" + fieldDefinition.getName() + "_" + SUFFIX_ARGUMENTS + "_update")
                                             );
-                                    propertiesBuilder.add(
-                                            fieldDefinitionContext.name().getText(),
-                                            buildNullableType(
+                                    return new AbstractMap.SimpleEntry<>(
+                                            fieldDefinition.getName(),
+                                            (JsonValue) buildNullableType(
                                                     jsonProvider.createObjectBuilder().add("anyOf", jsonArrayBuilder)
                                             )
                                     );
                                 } else {
-                                    propertiesBuilder.add(
-                                            fieldDefinitionContext.name().getText(),
-                                            buildNullableType(
+                                    return new AbstractMap.SimpleEntry<>(
+                                            fieldDefinition.getName(),
+                                            (JsonValue) buildNullableType(
                                                     jsonProvider.createObjectBuilder()
-                                                            .add("$ref", operationTypeName + "_" + fieldDefinitionContext.name().getText() + "_" + ARGUMENTS_SUFFIX)
+                                                            .add("$ref", operationType.getName() + "_" + fieldDefinition.getName() + "_" + SUFFIX_ARGUMENTS)
                                             )
                                     );
                                 }
                             }
                         }
-                );
-        builder.add("properties", propertiesBuilder);
+                )
+                .collect(JsonCollectors.toJsonObject());
+        builder.add("properties", properties);
         return builder.build();
-    }
-
-    protected JsonValue buildRequired(FieldDefinition fieldDefinition) {
-        return fieldDefinition.getArguments().stream()
-                .filter(inputValue -> inputValue.getType().isNonNull())
-                .map(inputValue -> jsonProvider.createValue(inputValue.getName()))
-                .collect(JsonCollectors.toJsonArray());
     }
 
     protected JsonValue buildRequired(InputObjectType inputObjectType) {
@@ -273,122 +293,98 @@ public class JsonSchemaTranslator {
                 .collect(JsonCollectors.toJsonArray());
     }
 
-    protected JsonObjectBuilder inputObjectToProperties(GraphqlParser.InputObjectTypeDefinitionContext inputObjectTypeDefinitionContext) {
-        JsonObjectBuilder propertiesBuilder = jsonProvider.createObjectBuilder();
-        inputObjectTypeDefinitionContext.inputObjectValueDefinitions().inputValueDefinition()
-                .forEach(inputValueDefinitionContext ->
-                        propertiesBuilder.add(inputValueDefinitionContext.name().getText(), fieldToProperty(inputValueDefinitionContext.type(), getJsonSchemaDirective(inputValueDefinitionContext.directives()).orElse(null)))
-                );
-        return propertiesBuilder;
+    protected JsonObject inputObjectToProperties(InputObjectType inputObjectType) {
+        return inputObjectType.getInputValues().stream()
+                .map(inputValue ->
+                        new AbstractMap.SimpleEntry<>(inputValue.getName(), (JsonValue) fieldToProperty(inputValue.getType(), getJsonSchemaDirective(inputValue).orElse(null)))
+                )
+                .collect(JsonCollectors.toJsonObject());
     }
 
-    protected JsonObjectBuilder inputObjectToUpdateProperties(InputObjectType inputObjectType, ObjectType objectType) {
-        JsonObjectBuilder propertiesBuilder = jsonProvider.createObjectBuilder();
-        inputObjectType.getInputValues().stream()
+    protected JsonObject inputObjectToUpdateProperties(InputObjectType inputObjectType, ObjectType objectType) {
+        return inputObjectType.getInputValues().stream()
                 .filter(inputValue -> !inputValue.getName().equals(INPUT_VALUE_LIST_NAME))
-                .forEach(inputValue -> {
+                .map(inputValue -> {
                             if (INPUT_VALUE_WHERE_NAME.equals(inputValue.getName())) {
-                                JsonObjectBuilder propertyBuilder = getJsonSchemaDirective(inputValue)
-                                        .map(this::buildValidation)
-                                        .orElseGet(jsonProvider::createObjectBuilder);
-                                propertiesBuilder.add(inputValue.getName(), buildType(inputValue.getType(), propertyBuilder));
+                                return new AbstractMap.SimpleEntry<>(inputValue.getName(), (JsonValue) buildType(inputValue.getType(), buildJsonSchemaBuilder(inputValue)).build());
                             } else {
-                                Optional.ofNullable(objectType.getField(inputValue.getName()))
-                                        .ifPresentOrElse(
-                                                fieldDefinition ->
-                                                        propertiesBuilder.add(fieldDefinition.getName(), fieldToProperty(fieldDefinitionFromInputValueDefinition.get().type(), getJsonSchemaDirective(fieldDefinitionFromInputValueDefinition.get().directives()).orElse(null)));
-
+                                return Optional.ofNullable(objectType.getField(inputValue.getName()))
+                                        .map(fieldDefinition -> new AbstractMap.SimpleEntry<>(fieldDefinition.getName(), (JsonValue) fieldToProperty(fieldDefinition.getType(), getJsonSchemaDirective(fieldDefinition).orElse(null)).build()))
+                                        .orElseGet(() ->
+                                                new AbstractMap.SimpleEntry<>(inputValue.getName(), fieldToProperty(inputValue.getType(), getJsonSchemaDirective(inputValue).orElse(null)).build())
                                         );
-                                Optional<GraphqlParser.FieldDefinitionContext> fieldDefinitionFromInputValueDefinition = documentManager.getFieldDefinitionFromInputValueDefinition(objectTypeDefinitionContext, inputValueDefinitionContext);
-                                if (fieldDefinitionFromInputValueDefinition.isPresent()) {
-                                    propertiesBuilder.add(fieldDefinitionFromInputValueDefinition.get().name().getText(), fieldToProperty(fieldDefinitionFromInputValueDefinition.get().type(), getJsonSchemaDirective(fieldDefinitionFromInputValueDefinition.get().directives()).orElse(null)));
-                                } else {
-                                    propertiesBuilder.add(inputValueDefinitionContext.name().getText(), fieldToProperty(inputValueDefinitionContext.type(), getJsonSchemaDirective(inputValueDefinitionContext.directives()).orElse(null)));
-                                }
                             }
                         }
-                );
-        return propertiesBuilder;
+                )
+                .collect(JsonCollectors.toJsonObject());
     }
 
-    protected JsonObjectBuilder inputObjectToListProperties(GraphqlParser.InputObjectTypeDefinitionContext inputObjectTypeDefinitionContext) {
-        JsonObjectBuilder propertiesBuilder = jsonProvider.createObjectBuilder();
-        inputObjectTypeDefinitionContext.inputObjectValueDefinitions().inputValueDefinition().stream()
-                .filter(inputValueDefinitionContext -> inputValueDefinitionContext.name().getText().equals(LIST_INPUT_NAME))
-                .forEach(inputValueDefinitionContext ->
-                        propertiesBuilder.add(inputValueDefinitionContext.name().getText(), fieldToProperty(inputValueDefinitionContext.type(), getJsonSchemaDirective(inputValueDefinitionContext.directives()).orElse(null)))
-                );
-        return propertiesBuilder;
+    protected JsonObject inputObjectToListProperties(InputObjectType inputObjectType) {
+        return inputObjectType.getInputValues().stream()
+                .filter(inputValue -> inputValue.getName().equals(INPUT_VALUE_LIST_NAME))
+                .map(inputValue ->
+                        new AbstractMap.SimpleEntry<>(inputValue.getName(), (JsonValue) fieldToProperty(inputValue.getType(), getJsonSchemaDirective(inputValue).orElse(null)))
+                )
+                .collect(JsonCollectors.toJsonObject());
     }
 
-    protected JsonObjectBuilder inputObjectToInsertProperties(GraphqlParser.InputObjectTypeDefinitionContext inputObjectTypeDefinitionContext, GraphqlParser.ObjectTypeDefinitionContext objectTypeDefinitionContext) {
-        JsonObjectBuilder propertiesBuilder = jsonProvider.createObjectBuilder();
-        inputObjectTypeDefinitionContext.inputObjectValueDefinitions().inputValueDefinition().stream()
-                .filter(inputValueDefinitionContext -> !inputValueDefinitionContext.name().getText().equals(WHERE_INPUT_NAME))
-                .filter(inputValueDefinitionContext -> !inputValueDefinitionContext.name().getText().equals(LIST_INPUT_NAME))
-                .forEach(inputValueDefinitionContext -> {
-                            Optional<GraphqlParser.FieldDefinitionContext> fieldDefinitionFromInputValueDefinition = documentManager.getFieldDefinitionFromInputValueDefinition(objectTypeDefinitionContext, inputValueDefinitionContext);
-                            if (fieldDefinitionFromInputValueDefinition.isPresent()) {
-                                propertiesBuilder.add(fieldDefinitionFromInputValueDefinition.get().name().getText(), fieldToProperty(fieldDefinitionFromInputValueDefinition.get().type(), getJsonSchemaDirective(fieldDefinitionFromInputValueDefinition.get().directives()).orElse(null)));
-                            } else {
-                                propertiesBuilder.add(inputValueDefinitionContext.name().getText(), fieldToProperty(inputValueDefinitionContext.type(), getJsonSchemaDirective(inputValueDefinitionContext.directives()).orElse(null)));
-                            }
-                        }
-                );
-        return propertiesBuilder;
+    protected JsonObject inputObjectToInsertProperties(InputObjectType inputObjectType, ObjectType objectType) {
+        return inputObjectType.getInputValues().stream()
+                .filter(inputValue -> inputValue.getName().equals(INPUT_VALUE_WHERE_NAME))
+                .filter(inputValue -> inputValue.getName().equals(INPUT_VALUE_LIST_NAME))
+                .map(inputValue ->
+                        Optional.ofNullable(objectType.getField(inputValue.getName()))
+                                .map(fieldDefinition -> new AbstractMap.SimpleEntry<>(fieldDefinition.getName(), (JsonValue) fieldToProperty(fieldDefinition.getType(), getJsonSchemaDirective(fieldDefinition).orElse(null)).build()))
+                                .orElseGet(() ->
+                                        new AbstractMap.SimpleEntry<>(inputValue.getName(), fieldToProperty(inputValue.getType(), getJsonSchemaDirective(inputValue).orElse(null)).build())
+                                )
+                )
+                .collect(JsonCollectors.toJsonObject());
     }
 
     protected JsonObjectBuilder fieldToProperty(Type type, Directive directive) {
-        JsonObjectBuilder propertyBuilder = Optional.ofNullable(directive)
-                .map(this::buildValidation)
-                .orElseGet(jsonProvider::createObjectBuilder);
+        JsonObjectBuilder propertyBuilder = buildJsonSchemaBuilder(directive);
         if (type.isList()) {
-            propertyBuilder.add("type", jsonProvider.createValue("array"));
-            GraphqlParser.ObjectValueWithVariableContext objectValueWithVariableContext = Optional.ofNullable(directive)
-                    .flatMap(directive1 -> getJsonSchemaObjectArgument(directive1, "items"))
-                    .orElse(null);
-            propertyBuilder.add("items", fieldToProperty(type.asListType().getType(), objectValueWithVariableContext));
-            return propertyBuilder;
-        } else if (typeContext.nonNullType() != null) {
-            if (typeContext.nonNullType().listType() != null) {
-                propertyBuilder.add("type", jsonProvider.createValue("array"));
-                GraphqlParser.ObjectValueWithVariableContext objectValueWithVariableContext = Optional.ofNullable(directiveContext)
-                        .flatMap(arrayDirectiveContext -> getJsonSchemaObjectArgument(arrayDirectiveContext, "items"))
-                        .orElse(null);
-                propertyBuilder.add("items", fieldToProperty(typeContext.nonNullType().listType().type(), objectValueWithVariableContext));
-                return propertyBuilder;
+            return propertyBuilder
+                    .add("type", jsonProvider.createValue("array"))
+                    .add(
+                            "items",
+                            fieldToProperty(
+                                    type.asListType().getType(),
+                                    getJsonSchemaObjectArgument(directive, "items").orElse(null)
+                            )
+                    );
+        } else if (type.isNonNull()) {
+            if (type.asNonNullType().getType().isList()) {
+                return fieldToProperty(type.asNonNullType().getType(), directive);
             } else {
-                return buildType(typeContext.nonNullType().typeName(), propertyBuilder);
+                return buildType(type.asNonNullType().getType().asTypeName(), propertyBuilder);
             }
         } else {
-            return buildNullableType(buildType(typeContext.typeName(), propertyBuilder));
+            return buildNullableType(buildType(type.asTypeName(), propertyBuilder));
         }
     }
 
-    protected JsonObjectBuilder fieldToProperty(GraphqlParser.TypeContext typeContext, ObjectValueWithVariable objectValueWithVariable) {
-        JsonObjectBuilder propertyBuilder = Optional.ofNullable(objectValueWithVariable)
-                .map(this::buildValidation)
-                .orElseGet(jsonProvider::createObjectBuilder);
-        if (typeContext.listType() != null) {
-            propertyBuilder.add("type", jsonProvider.createValue("array"));
-            GraphqlParser.ObjectValueWithVariableContext subObjectValueWithVariableContext = Optional.ofNullable(objectValueWithVariableContext)
-                    .flatMap(arrayObjectValueWithVariableContext -> getJsonSchemaObjectArgument(arrayObjectValueWithVariableContext, "items"))
-                    .orElse(null);
-            propertyBuilder.add("items", fieldToProperty(typeContext.listType().type(), subObjectValueWithVariableContext));
-            return propertyBuilder;
-        } else if (typeContext.nonNullType() != null) {
-            if (typeContext.nonNullType().listType() != null) {
-                propertyBuilder.add("type", jsonProvider.createValue("array"));
-                GraphqlParser.ObjectValueWithVariableContext subObjectValueWithVariableContext = Optional.ofNullable(objectValueWithVariableContext)
-                        .flatMap(arrayObjectValueWithVariableContext -> getJsonSchemaObjectArgument(arrayObjectValueWithVariableContext, "items"))
-                        .orElse(null);
-                propertyBuilder.add("items", fieldToProperty(typeContext.nonNullType().listType().type(), subObjectValueWithVariableContext));
-                return propertyBuilder;
+    protected JsonObjectBuilder fieldToProperty(Type type, ObjectValueWithVariable objectValueWithVariable) {
+        JsonObjectBuilder propertyBuilder = buildJsonSchemaBuilder(objectValueWithVariable);
+        if (type.isList()) {
+            return propertyBuilder
+                    .add("type", jsonProvider.createValue("array"))
+                    .add(
+                            "items",
+                            fieldToProperty(
+                                    type.asListType().getType(),
+                                    getJsonSchemaObjectArgument(objectValueWithVariable, "items").orElse(null)
+                            )
+                    );
+        } else if (type.isNonNull()) {
+            if (type.asNonNullType().getType().isList()) {
+                return fieldToProperty(type.asNonNullType().getType(), objectValueWithVariable);
             } else {
-                return buildType(typeContext.nonNullType().typeName(), propertyBuilder);
+                return buildType(type.asNonNullType().getType().asTypeName(), propertyBuilder);
             }
         } else {
-            return buildNullableType(buildType(typeContext.typeName(), propertyBuilder));
+            return buildNullableType(buildType(type.asTypeName(), propertyBuilder));
         }
     }
 
@@ -427,7 +423,8 @@ public class JsonSchemaTranslator {
         } else if (definition.isInputObject()) {
             if (fieldTypeName.endsWith(SUFFIX_INPUT)) {
                 jsonObjectBuilder
-                        .add("anyOf",
+                        .add(
+                                "anyOf",
                                 jsonProvider.createArrayBuilder()
                                         .add(jsonProvider.createObjectBuilder().add("$ref", jsonProvider.createValue(fieldTypeName)))
                                         .add(jsonProvider.createObjectBuilder().add("$ref", jsonProvider.createValue(fieldTypeName + "_update")))
@@ -437,7 +434,8 @@ public class JsonSchemaTranslator {
             }
         } else if (definition.isObject()) {
             jsonObjectBuilder
-                    .add("anyOf",
+                    .add(
+                            "anyOf",
                             jsonProvider.createArrayBuilder()
                                     .add(jsonProvider.createObjectBuilder().add("$ref", jsonProvider.createValue(fieldTypeName + SUFFIX_INPUT)))
                                     .add(jsonProvider.createObjectBuilder().add("$ref", jsonProvider.createValue(fieldTypeName + SUFFIX_INPUT + "_update")))
@@ -448,206 +446,29 @@ public class JsonSchemaTranslator {
 
     protected JsonObjectBuilder buildNullableType(JsonObjectBuilder typeBuilder) {
         return jsonProvider.createObjectBuilder()
-                .add("anyOf",
+                .add(
+                        "anyOf",
                         jsonProvider.createArrayBuilder()
                                 .add(typeBuilder)
                                 .add(jsonProvider.createObjectBuilder().add("type", jsonProvider.createValue("null")))
                 );
     }
 
-    protected JsonObjectBuilder buildValidation(Directive directive) {
-        JsonObjectBuilder validationBuilder = jsonProvider.createObjectBuilder();
-
-        getJsonSchemaIntArgument(directive, "minLength")
-                .ifPresent(minLength -> validationBuilder.add("minLength", minLength));
-        getJsonSchemaIntArgument(directive, "maxLength")
-                .ifPresent(maxLength -> validationBuilder.add("maxLength", maxLength));
-        getJsonSchemaStringArgument(directive, "pattern")
-                .ifPresent(pattern -> validationBuilder.add("pattern", pattern));
-        getJsonSchemaStringArgument(directive, "format")
-                .ifPresent(format -> validationBuilder.add("format", format));
-        getJsonSchemaStringArgument(directive, "contentMediaType")
-                .ifPresent(contentMediaType -> validationBuilder.add("contentMediaType", contentMediaType));
-        getJsonSchemaStringArgument(directive, "contentEncoding")
-                .ifPresent(contentEncoding -> validationBuilder.add("contentEncoding", contentEncoding));
-
-        getJsonSchemaFloatArgument(directive, "minimum")
-                .ifPresent(minimum -> validationBuilder.add("minimum", minimum));
-        getJsonSchemaFloatArgument(directive, "exclusiveMinimum")
-                .ifPresent(exclusiveMinimum -> validationBuilder.add("exclusiveMinimum", exclusiveMinimum));
-        getJsonSchemaFloatArgument(directive, "maximum")
-                .ifPresent(maximum -> validationBuilder.add("maximum", maximum));
-        getJsonSchemaFloatArgument(directive, "exclusiveMaximum")
-                .ifPresent(exclusiveMaximum -> validationBuilder.add("exclusiveMaximum", exclusiveMaximum));
-        getJsonSchemaFloatArgument(directive, "multipleOf")
-                .ifPresent(multipleOf -> validationBuilder.add("multipleOf", multipleOf));
-
-        getJsonSchemaStringArgument(directive, "const")
-                .ifPresent(constValue -> validationBuilder.add("const", constValue));
-
-        getJsonSchemaArrayArgument(directive, "allOf")
-                .ifPresent(arrayValueWithVariableContext -> {
-                            JsonArrayBuilder allOfBuilder = jsonProvider.createArrayBuilder();
-                            arrayValueWithVariableContext.valueWithVariable().stream()
-                                    .filter(valueWithVariableContext -> valueWithVariableContext.objectValueWithVariable() != null)
-                                    .forEach(valueWithVariableContext -> allOfBuilder.add(buildValidation(valueWithVariableContext.objectValueWithVariable())));
-                            validationBuilder.add("allOf", allOfBuilder);
-                        }
-                );
-
-        getJsonSchemaArrayArgument(directive, "anyOf")
-                .ifPresent(arrayValueWithVariableContext -> {
-                            JsonArrayBuilder anyOfBuilder = jsonProvider.createArrayBuilder();
-                            arrayValueWithVariableContext.valueWithVariable().stream()
-                                    .filter(valueWithVariableContext -> valueWithVariableContext.objectValueWithVariable() != null)
-                                    .forEach(valueWithVariableContext -> anyOfBuilder.add(buildValidation(valueWithVariableContext.objectValueWithVariable())));
-                            validationBuilder.add("anyOf", anyOfBuilder);
-                        }
-                );
-
-        getJsonSchemaArrayArgument(directive, "anyOf")
-                .ifPresent(arrayValueWithVariableContext -> {
-                            JsonArrayBuilder oneOfBuilder = jsonProvider.createArrayBuilder();
-                            arrayValueWithVariableContext.valueWithVariable().stream()
-                                    .filter(valueWithVariableContext -> valueWithVariableContext.objectValueWithVariable() != null)
-                                    .forEach(valueWithVariableContext -> oneOfBuilder.add(buildValidation(valueWithVariableContext.objectValueWithVariable())));
-                            validationBuilder.add("anyOf", oneOfBuilder);
-                        }
-                );
-
-        getJsonSchemaObjectArgument(directive, "not")
-                .ifPresent(not -> validationBuilder.add("not", buildValidation(not)));
-
-        getJsonSchemaArrayArgument(directive, "properties")
-                .ifPresent(arrayValueWithVariableContext -> validationBuilder.add("properties", buildProperties(arrayValueWithVariableContext)));
-
-        getJsonSchemaObjectArgument(directive, "if")
-                .ifPresent(ifValidation -> validationBuilder.add("if", buildValidation(ifValidation)));
-
-        getJsonSchemaObjectArgument(directive, "then")
-                .ifPresent(thenValidation -> validationBuilder.add("then", buildValidation(thenValidation)));
-
-        getJsonSchemaObjectArgument(directive, "else")
-                .ifPresent(elseValidation -> validationBuilder.add("else", buildValidation(elseValidation)));
-
-        getJsonSchemaArrayArgument(directive, "dependentRequired")
-                .ifPresent(arrayValueWithVariableContext -> validationBuilder.add("dependentRequired", buildDependentRequired(arrayValueWithVariableContext)));
-
-        return validationBuilder;
+    protected JsonObjectBuilder buildJsonSchemaBuilder(Definition definition) {
+        return getJsonSchemaDirective(definition)
+                .map(this::buildJsonSchemaBuilder)
+                .orElseGet(jsonProvider::createObjectBuilder);
     }
 
-    protected JsonObjectBuilder buildValidation(GraphqlParser.ObjectValueWithVariableContext objectValueWithVariableContext) {
-        JsonObjectBuilder validationBuilder = jsonProvider.createObjectBuilder();
-
-        getJsonSchemaIntArgument(objectValueWithVariableContext, "minLength")
-                .ifPresent(minLength -> validationBuilder.add("minLength", minLength));
-        getJsonSchemaIntArgument(objectValueWithVariableContext, "maxLength")
-                .ifPresent(maxLength -> validationBuilder.add("maxLength", maxLength));
-        getJsonSchemaStringArgument(objectValueWithVariableContext, "pattern")
-                .ifPresent(pattern -> validationBuilder.add("pattern", pattern));
-        getJsonSchemaStringArgument(objectValueWithVariableContext, "format")
-                .ifPresent(format -> validationBuilder.add("format", format));
-        getJsonSchemaStringArgument(objectValueWithVariableContext, "contentMediaType")
-                .ifPresent(contentMediaType -> validationBuilder.add("contentMediaType", contentMediaType));
-        getJsonSchemaStringArgument(objectValueWithVariableContext, "contentEncoding")
-                .ifPresent(contentEncoding -> validationBuilder.add("contentEncoding", contentEncoding));
-
-        getJsonSchemaFloatArgument(objectValueWithVariableContext, "minimum")
-                .ifPresent(minimum -> validationBuilder.add("minimum", minimum));
-        getJsonSchemaFloatArgument(objectValueWithVariableContext, "exclusiveMinimum")
-                .ifPresent(exclusiveMinimum -> validationBuilder.add("exclusiveMinimum", exclusiveMinimum));
-        getJsonSchemaFloatArgument(objectValueWithVariableContext, "maximum")
-                .ifPresent(maximum -> validationBuilder.add("maximum", maximum));
-        getJsonSchemaFloatArgument(objectValueWithVariableContext, "exclusiveMaximum")
-                .ifPresent(exclusiveMaximum -> validationBuilder.add("exclusiveMaximum", exclusiveMaximum));
-        getJsonSchemaFloatArgument(objectValueWithVariableContext, "multipleOf")
-                .ifPresent(multipleOf -> validationBuilder.add("multipleOf", multipleOf));
-
-        getJsonSchemaStringArgument(objectValueWithVariableContext, "const")
-                .ifPresent(constValue -> validationBuilder.add("const", constValue));
-
-        getJsonSchemaArrayArgument(objectValueWithVariableContext, "allOf")
-                .ifPresent(arrayValueWithVariableContext -> {
-                            JsonArrayBuilder allOfBuilder = jsonProvider.createArrayBuilder();
-                            arrayValueWithVariableContext.valueWithVariable().stream()
-                                    .filter(valueWithVariableContext -> valueWithVariableContext.objectValueWithVariable() != null)
-                                    .forEach(valueWithVariableContext -> allOfBuilder.add(buildValidation(valueWithVariableContext.objectValueWithVariable())));
-                            validationBuilder.add("allOf", allOfBuilder);
-                        }
-                );
-
-        getJsonSchemaArrayArgument(objectValueWithVariableContext, "anyOf")
-                .ifPresent(arrayValueWithVariableContext -> {
-                            JsonArrayBuilder anyOfBuilder = jsonProvider.createArrayBuilder();
-                            arrayValueWithVariableContext.valueWithVariable().stream()
-                                    .filter(valueWithVariableContext -> valueWithVariableContext.objectValueWithVariable() != null)
-                                    .forEach(valueWithVariableContext -> anyOfBuilder.add(buildValidation(valueWithVariableContext.objectValueWithVariable())));
-                            validationBuilder.add("anyOf", anyOfBuilder);
-                        }
-                );
-
-        getJsonSchemaArrayArgument(objectValueWithVariableContext, "anyOf")
-                .ifPresent(arrayValueWithVariableContext -> {
-                            JsonArrayBuilder oneOfBuilder = jsonProvider.createArrayBuilder();
-                            arrayValueWithVariableContext.valueWithVariable().stream()
-                                    .filter(valueWithVariableContext -> valueWithVariableContext.objectValueWithVariable() != null)
-                                    .forEach(valueWithVariableContext -> oneOfBuilder.add(buildValidation(valueWithVariableContext.objectValueWithVariable())));
-                            validationBuilder.add("anyOf", oneOfBuilder);
-                        }
-                );
-
-        getJsonSchemaObjectArgument(objectValueWithVariableContext, "not")
-                .ifPresent(not -> validationBuilder.add("not", buildValidation(not)));
-
-        getJsonSchemaArrayArgument(objectValueWithVariableContext, "properties")
-                .ifPresent(arrayValueWithVariableContext -> validationBuilder.add("properties", buildProperties(arrayValueWithVariableContext)));
-
-        getJsonSchemaObjectArgument(objectValueWithVariableContext, "if")
-                .ifPresent(ifValidation -> validationBuilder.add("if", buildValidation(ifValidation)));
-
-        getJsonSchemaObjectArgument(objectValueWithVariableContext, "then")
-                .ifPresent(thenValidation -> validationBuilder.add("then", buildValidation(thenValidation)));
-
-        getJsonSchemaObjectArgument(objectValueWithVariableContext, "else")
-                .ifPresent(elseValidation -> validationBuilder.add("else", buildValidation(elseValidation)));
-
-        getJsonSchemaArrayArgument(objectValueWithVariableContext, "dependentRequired")
-                .ifPresent(arrayValueWithVariableContext -> validationBuilder.add("dependentRequired", buildDependentRequired(arrayValueWithVariableContext)));
-
-        return validationBuilder;
+    protected JsonObjectBuilder buildJsonSchemaBuilder(Directive directive) {
+        return Optional.ofNullable(directive)
+                .map(jsonSchemaDirective -> jsonProvider.createObjectBuilder(jsonSchemaDirective.getArguments().asJsonObject()))
+                .orElseGet(jsonProvider::createObjectBuilder);
     }
 
-    protected JsonObjectBuilder buildProperties(GraphqlParser.ArrayValueWithVariableContext arrayValueWithVariableContext) {
-        JsonObjectBuilder propertiesBuilder = jsonProvider.createObjectBuilder();
-        arrayValueWithVariableContext.valueWithVariable().stream()
-                .filter(property -> property.objectValueWithVariable() != null)
-                .forEach(property ->
-                        getJsonSchemaStringArgument(property.objectValueWithVariable(), "name")
-                                .ifPresent(name ->
-                                        getJsonSchemaObjectArgument(property.objectValueWithVariable(), "validation")
-                                                .ifPresent(validation ->
-                                                        propertiesBuilder.add(name, buildValidation(validation))
-                                                )
-                                )
-                );
-        return propertiesBuilder;
-    }
-
-    protected JsonObjectBuilder buildDependentRequired(ArrayValueWithVariable arrayValueWithVariable) {
-        JsonObjectBuilder dependentRequiredBuilder = jsonProvider.createObjectBuilder();
-        arrayValueWithVariable.getValueWithVariables().stream()
-                .filter(ValueWithVariable::isObject)
-                .forEach(property ->
-                        getJsonSchemaStringArgument(property.asObject(), "name")
-                                .map(name ->
-                                        getJsonSchemaArrayArgument(property.asObject(), "required")
-                                                .map(required ->
-                                                        required.getValueWithVariables().stream()
-                                                                .filter(ValueWithVariable::isString)
-                                                                .map(item -> item.asString().getValue())
-                                                )
-                                )
-                );
-        return dependentRequiredBuilder;
+    protected JsonObjectBuilder buildJsonSchemaBuilder(ObjectValueWithVariable objectValueWithVariable) {
+        return Optional.ofNullable(objectValueWithVariable)
+                .map(jsonSchemaObjectValueWithVariable -> jsonProvider.createObjectBuilder(jsonSchemaObjectValueWithVariable.asJsonObject()))
+                .orElseGet(jsonProvider::createObjectBuilder);
     }
 }
