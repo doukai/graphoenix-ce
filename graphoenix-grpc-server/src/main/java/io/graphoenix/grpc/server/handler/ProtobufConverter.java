@@ -50,7 +50,17 @@ public class ProtobufConverter {
 
     public Message fromJsonValue(JsonValue jsonValue, Message.Builder builder, FieldDefinition fieldDefinition) {
         try {
-            JsonFormat.parser().ignoringUnknownFields().merge(toProtobufJsonValue(jsonValue, fieldDefinition).toString(), builder);
+            JsonFormat.parser().ignoringUnknownFields()
+                    .merge(
+                            jsonProvider.createObjectBuilder()
+                                    .add(
+                                            CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, fieldDefinition.getName()),
+                                            toProtobufJsonValue(jsonValue, fieldDefinition)
+                                    )
+                                    .build()
+                                    .toString(),
+                            builder
+                    );
             return builder.build();
         } catch (InvalidProtocolBufferException e) {
             throw new RuntimeException(e);
@@ -75,6 +85,8 @@ public class ProtobufConverter {
         try {
             Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
             switch (jsonValue.getValueType()) {
+                case NULL:
+                    return jsonValue;
                 case OBJECT:
                     return jsonValue.asJsonObject().entrySet().stream()
                             .map(entry ->
@@ -88,8 +100,6 @@ public class ProtobufConverter {
                     return jsonValue.asJsonArray().stream()
                             .map(item -> toGraphQLJsonValue(item, inputValue))
                             .collect(JsonCollectors.toJsonArray());
-                case NULL:
-                    return jsonValue;
                 default:
                     if (inputValueTypeDefinition.isEnum()) {
                         String enumSuffix = "_" + CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, inputValueTypeDefinition.getName());
@@ -99,27 +109,27 @@ public class ProtobufConverter {
                         Timestamp.Builder builder = Timestamp.newBuilder();
                         JsonFormat.parser().merge(jsonValue.toString(), builder);
                         Timestamp timestamp = builder.build();
-                        jsonProvider.createValue(LocalDateTime.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos(), ZoneOffset.UTC).toString());
+                        return jsonProvider.createValue(LocalDateTime.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos(), ZoneOffset.UTC).toString());
                     } else if (inputValueTypeDefinition.getName().equals(SCALA_DATE_NAME)) {
                         Date.Builder builder = Date.newBuilder();
                         JsonFormat.parser().merge(jsonValue.toString(), builder);
                         Date date = builder.build();
-                        jsonProvider.createValue(LocalDate.of(date.getYear(), date.getMonth(), date.getDay()).toString());
+                        return jsonProvider.createValue(LocalDate.of(date.getYear(), date.getMonth(), date.getDay()).toString());
                     } else if (inputValueTypeDefinition.getName().equals(SCALA_TIME_NAME)) {
                         TimeOfDay.Builder builder = TimeOfDay.newBuilder();
                         JsonFormat.parser().merge(jsonValue.toString(), builder);
                         TimeOfDay timeOfDay = builder.build();
-                        jsonProvider.createValue(LocalTime.of(timeOfDay.getHours(), timeOfDay.getMinutes(), timeOfDay.getSeconds(), timeOfDay.getNanos()).toString());
+                        return jsonProvider.createValue(LocalTime.of(timeOfDay.getHours(), timeOfDay.getMinutes(), timeOfDay.getSeconds(), timeOfDay.getNanos()).toString());
                     } else if (inputValueTypeDefinition.getName().equals(SCALA_BIG_DECIMAL_NAME)) {
                         Decimal.Builder builder = Decimal.newBuilder();
                         JsonFormat.parser().merge(jsonValue.toString(), builder);
                         Decimal decimal = builder.build();
-                        jsonProvider.createValue(new BigDecimal(decimal.getValue()));
+                        return jsonProvider.createValue(new BigDecimal(decimal.getValue()));
                     } else if (inputValueTypeDefinition.getName().equals(SCALA_BIG_INTEGER_NAME)) {
                         Decimal.Builder builder = Decimal.newBuilder();
                         JsonFormat.parser().merge(jsonValue.toString(), builder);
                         Decimal decimal = builder.build();
-                        jsonProvider.createValue(new BigInteger(decimal.getValue()));
+                        return jsonProvider.createValue(new BigInteger(decimal.getValue()));
                     }
                     return jsonValue;
             }
@@ -136,17 +146,15 @@ public class ProtobufConverter {
                     return jsonValue;
                 case OBJECT:
                     return jsonValue.asJsonObject().entrySet().stream()
-                            .filter(entry -> !entry.getValue().getValueType().equals(JsonValue.ValueType.NULL))
                             .map(entry ->
                                     new AbstractMap.SimpleEntry<>(
                                             CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, entry.getKey()),
-                                            toProtobufJsonValue(entry.getValue(), fieldTypeDefinition.asObject().getField(CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, entry.getKey())))
+                                            toProtobufJsonValue(entry.getValue(), fieldTypeDefinition.asObject().getField(entry.getKey()))
                                     )
                             )
                             .collect(JsonCollectors.toJsonObject());
                 case ARRAY:
                     return jsonValue.asJsonArray().stream()
-                            .filter(item -> !item.getValueType().equals(JsonValue.ValueType.NULL))
                             .map(item -> toProtobufJsonValue(item, fieldDefinition))
                             .collect(JsonCollectors.toJsonArray());
                 default:
@@ -157,7 +165,7 @@ public class ProtobufConverter {
                     } else if (fieldTypeDefinition.getName().equals(SCALA_TIMESTAMP_NAME)) {
                         LocalDateTime localDateTime = jsonb.fromJson(jsonValue.toString(), LocalDateTime.class);
                         Instant instant = localDateTime.toInstant(ZoneOffset.UTC);
-                        jsonProvider.createValue(
+                        return jsonProvider.createValue(
                                 JsonFormat.printer()
                                         .print(
                                                 Timestamp.newBuilder()
@@ -168,7 +176,7 @@ public class ProtobufConverter {
                         );
                     } else if (fieldTypeDefinition.getName().equals(SCALA_DATE_NAME)) {
                         LocalDate localDate = jsonb.fromJson(jsonValue.toString(), LocalDate.class);
-                        jsonProvider.createValue(
+                        return jsonProvider.createValue(
                                 JsonFormat.printer()
                                         .print(
                                                 Date.newBuilder()
@@ -180,7 +188,7 @@ public class ProtobufConverter {
                         );
                     } else if (fieldTypeDefinition.getName().equals(SCALA_TIME_NAME)) {
                         LocalTime localTime = jsonb.fromJson(jsonValue.toString(), LocalTime.class);
-                        jsonProvider.createValue(
+                        return jsonProvider.createValue(
                                 JsonFormat.printer()
                                         .print(
                                                 TimeOfDay.newBuilder()
@@ -193,7 +201,7 @@ public class ProtobufConverter {
                         );
                     } else if (fieldTypeDefinition.getName().equals(SCALA_BIG_DECIMAL_NAME)) {
                         BigDecimal bigDecimal = jsonb.fromJson(jsonValue.toString(), BigDecimal.class);
-                        jsonProvider.createValue(
+                        return jsonProvider.createValue(
                                 JsonFormat.printer()
                                         .print(
                                                 Decimal.newBuilder()
@@ -203,7 +211,7 @@ public class ProtobufConverter {
                         );
                     } else if (fieldTypeDefinition.getName().equals(SCALA_BIG_INTEGER_NAME)) {
                         BigInteger bigInteger = jsonb.fromJson(jsonValue.toString(), BigInteger.class);
-                        jsonProvider.createValue(
+                        return jsonProvider.createValue(
                                 JsonFormat.printer()
                                         .print(
                                                 Decimal.newBuilder()
