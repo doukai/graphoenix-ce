@@ -67,9 +67,6 @@ public class ConnectionBuilder implements OperationAfterHandler {
                 return Stream.empty();
             }
             String selectionName = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
-            if (jsonValue.asJsonObject().get(selectionName) == null || jsonValue.asJsonObject().get(selectionName).getValueType().equals(JsonValue.ValueType.NULL)) {
-                return Stream.empty();
-            }
             if (fieldDefinition.getType().hasList()) {
                 return IntStream.range(0, jsonValue.asJsonObject().get(selectionName).asJsonArray().size())
                         .mapToObj(index ->
@@ -85,6 +82,9 @@ public class ConnectionBuilder implements OperationAfterHandler {
             } else {
                 if (fieldDefinition.isConnectionField()) {
                     String filedName = fieldDefinition.getConnectionFieldOrError();
+                    if (jsonValue.asJsonObject().get(filedName) == null || jsonValue.asJsonObject().get(filedName).getValueType().equals(JsonValue.ValueType.NULL)) {
+                        return Stream.of(NULL);
+                    }
                     String aggName = fieldDefinition.getConnectionAggOrError();
                     FieldDefinition nodeFieldDefinition = documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(FIELD_EDGES_NAME)).asObject().getField(FIELD_NODE_NAME);
                     JsonValue connectionJsonValue = buildConnection(nodeFieldDefinition, field, jsonValue.asJsonObject().get(filedName), jsonValue.asJsonObject().get(aggName));
@@ -142,32 +142,32 @@ public class ConnectionBuilder implements OperationAfterHandler {
             FieldDefinition cursorFieldDefinition = nodeFieldTypeDefinition.getCursorField()
                     .orElseGet(nodeFieldTypeDefinition::getIDFieldOrError);
 
-            for (Field field : connectionField.getFields()) {
-                int size = fieldJsonValue.getValueType().equals(JsonValue.ValueType.NULL) ? 0 : fieldJsonValue.asJsonArray().size();
-                int limit = size;
-                boolean isLast = false;
-                boolean isBefore = false;
-                boolean isAfter = false;
-                if (field.getArguments() != null && !field.getArguments().isEmpty()) {
-                    limit = field.getArguments().getArguments().entrySet().stream()
-                            .filter(entry -> entry.getKey().equals(INPUT_VALUE_FIRST_NAME))
-                            .filter(entry -> entry.getValue().isInt())
-                            .findFirst()
-                            .map(entry -> entry.getValue().asInt().getIntegerValue())
-                            .orElseGet(() ->
-                                    field.getArguments().getArguments().entrySet().stream()
-                                            .filter(entry -> entry.getKey().equals(INPUT_VALUE_AFTER_NAME))
-                                            .filter(entry -> entry.getValue().isInt())
-                                            .findFirst()
-                                            .map(entry -> entry.getValue().asInt().getIntegerValue())
-                                            .orElse(size)
-                            );
-                    isLast = field.getArguments().getArguments().entrySet().stream().anyMatch(entry -> entry.getKey().equals(INPUT_VALUE_LAST_NAME));
-                    isBefore = field.getArguments().getArguments().entrySet().stream().anyMatch(entry -> entry.getKey().equals(INPUT_VALUE_BEFORE_NAME));
-                    isAfter = field.getArguments().getArguments().entrySet().stream().anyMatch(entry -> entry.getKey().equals(INPUT_VALUE_AFTER_NAME));
-                }
-                boolean isFirst = !isLast;
+            int size = fieldJsonValue.getValueType().equals(JsonValue.ValueType.NULL) ? 0 : fieldJsonValue.asJsonArray().size();
+            int limit = size;
+            boolean isLast = false;
+            boolean isBefore = false;
+            boolean isAfter = false;
+            if (connectionField.getArguments() != null && !connectionField.getArguments().isEmpty()) {
+                limit = connectionField.getArguments().getArguments().entrySet().stream()
+                        .filter(entry -> entry.getKey().equals(INPUT_VALUE_FIRST_NAME))
+                        .filter(entry -> entry.getValue().isInt())
+                        .findFirst()
+                        .map(entry -> entry.getValue().asInt().getIntegerValue())
+                        .orElseGet(() ->
+                                connectionField.getArguments().getArguments().entrySet().stream()
+                                        .filter(entry -> entry.getKey().equals(INPUT_VALUE_AFTER_NAME))
+                                        .filter(entry -> entry.getValue().isInt())
+                                        .findFirst()
+                                        .map(entry -> entry.getValue().asInt().getIntegerValue())
+                                        .orElse(size)
+                        );
+                isLast = connectionField.getArguments().getArguments().entrySet().stream().anyMatch(entry -> entry.getKey().equals(INPUT_VALUE_LAST_NAME));
+                isBefore = connectionField.getArguments().getArguments().entrySet().stream().anyMatch(entry -> entry.getKey().equals(INPUT_VALUE_BEFORE_NAME));
+                isAfter = connectionField.getArguments().getArguments().entrySet().stream().anyMatch(entry -> entry.getKey().equals(INPUT_VALUE_AFTER_NAME));
+            }
+            boolean isFirst = !isLast;
 
+            for (Field field : connectionField.getFields()) {
                 switch (field.getName()) {
                     case FIELD_TOTAL_COUNT_NAME:
                         FieldDefinition idField = nodeFieldTypeDefinition.getIDFieldOrError();

@@ -69,24 +69,17 @@ public class JsonSchemaValidator implements OperationBeforeHandler {
 
     protected Stream<ValidationMessage> validateSelection(Operation operation, Field field) {
         try {
-            String jsonSchemaName;
+            String operationTypeName;
             if (operation.getOperationType() == null || operation.getOperationType().equals(OPERATION_QUERY_NAME)) {
-                String operationTypeName = documentManager.getDocument().getQueryOperationTypeOrError().getName();
-                jsonSchemaName = operationTypeName + "_" + field.getName() + "_" + SUFFIX_ARGUMENTS;
+                operationTypeName = documentManager.getDocument().getQueryOperationTypeOrError().getName();
             } else if (operation.getOperationType().equals(OPERATION_SUBSCRIPTION_NAME)) {
-                String operationTypeName = documentManager.getDocument().getSubscriptionOperationTypeOrError().getName();
-                jsonSchemaName = operationTypeName + "_" + field.getName() + "_" + SUFFIX_ARGUMENTS;
+                operationTypeName = documentManager.getDocument().getSubscriptionOperationTypeOrError().getName();
             } else if (operation.getOperationType().equals(OPERATION_MUTATION_NAME)) {
-                String operationTypeName = documentManager.getDocument().getMutationOperationTypeOrError().getName();
-                if (field.getArguments().containsKey(INPUT_VALUE_WHERE_NAME)) {
-                    jsonSchemaName = operationTypeName + "_" + field.getName() + "_" + SUFFIX_ARGUMENTS + "_update";
-                } else {
-                    jsonSchemaName = operationTypeName + "_" + field.getName() + "_" + SUFFIX_ARGUMENTS;
-                }
+                operationTypeName = documentManager.getDocument().getMutationOperationTypeOrError().getName();
             } else {
                 throw new GraphQLErrors(UNSUPPORTED_OPERATION_TYPE.bind(operation.getOperationType()));
             }
-            return validate(jsonSchemaName, field.getArguments().toJson()).stream();
+            return validate(operationTypeName + "_" + field.getName() + "_" + SUFFIX_ARGUMENTS, field.getArguments().toJson()).stream();
         } catch (JsonProcessingException e) {
             throw new GraphQLErrors(e);
         }

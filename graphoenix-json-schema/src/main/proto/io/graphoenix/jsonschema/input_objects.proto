@@ -41,9 +41,5 @@ message Property {
     repeated string required = 3;
 }
 message Query_jsonSchema_Arguments {
-    string json_schema_name = 1;
-}
-message Query_operationSchema_Arguments {
-    string operation_type = 1;
-    repeated string field_name_set = 2;
+    string name = 1;
 }

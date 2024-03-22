@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface Query_jsonSchema_Arguments {
-  String jsonSchemaName() default "";
+  String name() default "";
 
-  String $jsonSchemaName() default "";
+  String $name() default "";
 }

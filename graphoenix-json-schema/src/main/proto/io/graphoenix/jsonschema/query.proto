@@ -14,5 +14,4 @@ import "io/graphoenix/jsonschema/query_responses.proto";
 
 service QueryService {
     rpc JsonSchema (QueryJsonSchemaRequest) returns (QueryJsonSchemaResponse);
-    rpc OperationSchema (QueryOperationSchemaRequest) returns (QueryOperationSchemaResponse);
 }

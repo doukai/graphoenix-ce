@@ -13,11 +13,5 @@ import "io/graphoenix/jsonschema/input_objects.proto";
 message QueryJsonSchemaRequest {
     optional string selection_set = 1;
     optional string arguments = 2;
-    string json_schema_name = 3;
-}
-message QueryOperationSchemaRequest {
-    optional string selection_set = 1;
-    optional string arguments = 2;
-    string operation_type = 3;
-    repeated string field_name_set = 4;
+    string name = 3;
 }

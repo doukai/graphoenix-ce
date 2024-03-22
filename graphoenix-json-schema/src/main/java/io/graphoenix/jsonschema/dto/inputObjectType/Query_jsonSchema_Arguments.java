@@ -9,13 +9,13 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 public class Query_jsonSchema_Arguments {
-  private String jsonSchemaName;
+  private String name;
 
-  public String getJsonSchemaName() {
-    return this.jsonSchemaName;
+  public String getName() {
+    return this.name;
   }
 
-  public void setJsonSchemaName(String jsonSchemaName) {
-    this.jsonSchemaName = jsonSchemaName;
+  public void setName(String name) {
+    this.name = name;
   }
 }
