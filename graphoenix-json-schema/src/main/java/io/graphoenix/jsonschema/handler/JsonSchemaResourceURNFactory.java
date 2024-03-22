@@ -11,9 +11,9 @@ import java.util.Objects;
 public class JsonSchemaResourceURNFactory implements URNFactory {
 
     @Override
-    public URI create(String urn) {
+    public URI create(String name) {
         try {
-            return Objects.requireNonNull(getClass().getClassLoader().getResource("META-INF/schema/" + urn)).toURI();
+            return Objects.requireNonNull(getClass().getClassLoader().getResource("META-INF/schema/" + name)).toURI();
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }

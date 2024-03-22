@@ -413,7 +413,7 @@ public class InvokeHandlerBuilder {
                                                                                                                 .add(".collectList()\n");
                                                                                                     } else {
                                                                                                         codeBlockBuilder
-                                                                                                                .add("return $T.just($L.get().$L($L))\n",
+                                                                                                                .add("return $T.justOrEmpty($L.get().$L($L))\n",
                                                                                                                         ClassName.get(Mono.class),
                                                                                                                         apiVariableName,
                                                                                                                         methodName,
@@ -513,7 +513,7 @@ public class InvokeHandlerBuilder {
                                                                                                             .build();
                                                                                                 }
                                                                                         ),
-                                                                                Stream.of(CodeBlock.builder().add(CodeBlock.of("default:\n")).indent().add(CodeBlock.of("return $T.just(new $T<>(selectionName, jsonValue.asJsonObject().get(selectionName)));\n", ClassName.get(Mono.class), ClassName.get(AbstractMap.SimpleEntry.class))).unindent().build())
+                                                                                Stream.of(CodeBlock.builder().add(CodeBlock.of("default:\n")).indent().add(CodeBlock.of("return $T.justOrEmpty(new $T<>(selectionName, jsonValue.asJsonObject().get(selectionName)));\n", ClassName.get(Mono.class), ClassName.get(AbstractMap.SimpleEntry.class))).unindent().build())
                                                                         )
                                                                         .collect(Collectors.toList()),
                                                                 System.lineSeparator()

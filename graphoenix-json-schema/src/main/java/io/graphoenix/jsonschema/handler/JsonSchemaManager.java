@@ -15,10 +15,10 @@ public class JsonSchemaManager {
 
     private final Map<String, String> jsonSchemaMap = new ConcurrentHashMap<>();
 
-    public String getJsonSchema(String objectName) {
+    public String getJsonSchema(String name) {
         return jsonSchemaMap
                 .computeIfAbsent(
-                        objectName,
+                        name,
                         k -> new BufferedReader(new InputStreamReader(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("META-INF/schema/" + k)), StandardCharsets.UTF_8))
                                 .lines()
                                 .collect(Collectors.joining("\n"))

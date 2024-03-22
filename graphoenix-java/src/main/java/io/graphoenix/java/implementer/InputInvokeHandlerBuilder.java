@@ -201,7 +201,7 @@ public class InputInvokeHandlerBuilder {
                 index++;
             }
         } else {
-            codeBlockBuilder.add("return $T.just($L)\n", ClassName.get(Mono.class), typeParameterName);
+            codeBlockBuilder.add("return $T.justOrEmpty($L)\n", ClassName.get(Mono.class), typeParameterName);
         }
 
         codeBlockBuilder
