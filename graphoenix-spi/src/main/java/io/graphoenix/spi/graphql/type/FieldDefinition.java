@@ -202,6 +202,14 @@ public class FieldDefinition extends AbstractDefinition {
                 .orElse(false);
     }
 
+    public boolean isUnique() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_OPTIONS_NAME))
+                .flatMap(directive -> directive.getArgumentOrEmpty(DIRECTIVE_OPTIONS_ARGUMENT_UNIQUE_NAME))
+                .filter(ValueWithVariable::isBoolean)
+                .map(valueWithVariable -> valueWithVariable.asBoolean().getValue())
+                .orElse(false);
+    }
+
     public String getTypeNameWithoutID() {
         String fieldTypeName = getTypeName().orElseGet(() -> getType().getTypeName().getName());
         if (SCALA_ID_NAME.equals(fieldTypeName)) {

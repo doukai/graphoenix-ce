@@ -5,7 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Objects;
+import java.net.URL;
 
 @ApplicationScoped
 public class JsonSchemaResourceURNFactory implements URNFactory {
@@ -13,7 +13,11 @@ public class JsonSchemaResourceURNFactory implements URNFactory {
     @Override
     public URI create(String name) {
         try {
-            return Objects.requireNonNull(getClass().getClassLoader().getResource("META-INF/schema/" + name)).toURI();
+            URL url = getClass().getClassLoader().getResource("META-INF/schema/" + name);
+            if (url == null) {
+                return null;
+            }
+            return url.toURI();
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
