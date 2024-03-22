@@ -163,9 +163,7 @@ public class JsonSchemaTranslator {
                         .add("additionalProperties", TRUE)
                         .add("required", buildRequired(inputObjectType));
 
-                return Stream.of(
-                        new AbstractMap.SimpleEntry<>(operationFieldName, builder.build())
-                );
+                return Stream.of(new AbstractMap.SimpleEntry<>(operationFieldName, builder.build()));
             }
         } else if (inputObjectType.getName().endsWith(queryTypeName + SUFFIX_ARGUMENTS)) {
             String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(queryTypeName + SUFFIX_ARGUMENTS));
@@ -179,9 +177,7 @@ public class JsonSchemaTranslator {
                         .add("additionalProperties", TRUE)
                         .add("required", buildRequired(inputObjectType));
 
-                return Stream.of(
-                        new AbstractMap.SimpleEntry<>(operationFieldName, builder.build())
-                );
+                return Stream.of(new AbstractMap.SimpleEntry<>(operationFieldName, builder.build()));
             }
         } else if (inputObjectType.getName().endsWith(SUFFIX_LIST + subscriptionTypeName + SUFFIX_ARGUMENTS)) {
             String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_LIST + subscriptionTypeName + SUFFIX_ARGUMENTS));
@@ -195,9 +191,7 @@ public class JsonSchemaTranslator {
                         .add("additionalProperties", TRUE)
                         .add("required", buildRequired(inputObjectType));
 
-                return Stream.of(
-                        new AbstractMap.SimpleEntry<>(operationFieldName, builder.build())
-                );
+                return Stream.of(new AbstractMap.SimpleEntry<>(operationFieldName, builder.build()));
             }
         } else if (inputObjectType.getName().endsWith(subscriptionTypeName + SUFFIX_ARGUMENTS)) {
             String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(subscriptionTypeName + SUFFIX_ARGUMENTS));
@@ -211,9 +205,7 @@ public class JsonSchemaTranslator {
                         .add("additionalProperties", TRUE)
                         .add("required", buildRequired(inputObjectType));
 
-                return Stream.of(
-                        new AbstractMap.SimpleEntry<>(operationFieldName, builder.build())
-                );
+                return Stream.of(new AbstractMap.SimpleEntry<>(operationFieldName, builder.build()));
             }
         }
         JsonObjectBuilder builder = buildJsonSchemaBuilder(inputObjectType)
@@ -223,9 +215,7 @@ public class JsonSchemaTranslator {
                 .add("additionalProperties", TRUE)
                 .add("required", buildRequired(inputObjectType));
 
-        return Stream.of(
-                new AbstractMap.SimpleEntry<>(inputObjectType.getName(), builder.build())
-        );
+        return Stream.of(new AbstractMap.SimpleEntry<>(inputObjectType.getName(), builder.build()));
     }
 
     public JsonValue operationObjectToJsonSchema(ObjectType operationType) {
@@ -240,35 +230,21 @@ public class JsonSchemaTranslator {
                             if (fieldDefinition.isInvokeField()) {
                                 return new AbstractMap.SimpleEntry<>(
                                         fieldDefinition.getName(),
-                                        (JsonValue) buildNullableType(
-                                                jsonProvider.createObjectBuilder()
-                                                        .add("$ref", operationType.getName() + "_" + fieldDefinition.getName() + "_" + SUFFIX_ARGUMENTS)
-                                        )
+                                        (JsonValue) buildNullableType(jsonProvider.createObjectBuilder().add("$ref", operationType.getName() + "_" + fieldDefinition.getName() + "_" + SUFFIX_ARGUMENTS)).build()
                                 );
                             } else {
                                 if (documentManager.isMutationOperationType(operationType)) {
                                     JsonArrayBuilder jsonArrayBuilder = jsonProvider.createArrayBuilder()
-                                            .add(
-                                                    jsonProvider.createObjectBuilder()
-                                                            .add("$ref", operationType.getName() + "_" + fieldDefinition.getName() + "_" + SUFFIX_ARGUMENTS)
-                                            )
-                                            .add(
-                                                    jsonProvider.createObjectBuilder()
-                                                            .add("$ref", operationType.getName() + "_" + fieldDefinition.getName() + "_" + SUFFIX_ARGUMENTS + "_update")
-                                            );
+                                            .add(jsonProvider.createObjectBuilder().add("$ref", operationType.getName() + "_" + fieldDefinition.getName() + "_" + SUFFIX_ARGUMENTS))
+                                            .add(jsonProvider.createObjectBuilder().add("$ref", operationType.getName() + "_" + fieldDefinition.getName() + "_" + SUFFIX_ARGUMENTS + "_update"));
                                     return new AbstractMap.SimpleEntry<>(
                                             fieldDefinition.getName(),
-                                            (JsonValue) buildNullableType(
-                                                    jsonProvider.createObjectBuilder().add("anyOf", jsonArrayBuilder)
-                                            )
+                                            (JsonValue) buildNullableType(jsonProvider.createObjectBuilder().add("anyOf", jsonArrayBuilder)).build()
                                     );
                                 } else {
                                     return new AbstractMap.SimpleEntry<>(
                                             fieldDefinition.getName(),
-                                            (JsonValue) buildNullableType(
-                                                    jsonProvider.createObjectBuilder()
-                                                            .add("$ref", operationType.getName() + "_" + fieldDefinition.getName() + "_" + SUFFIX_ARGUMENTS)
-                                            )
+                                            (JsonValue) buildNullableType(jsonProvider.createObjectBuilder().add("$ref", operationType.getName() + "_" + fieldDefinition.getName() + "_" + SUFFIX_ARGUMENTS)).build()
                                     );
                                 }
                             }
@@ -296,7 +272,7 @@ public class JsonSchemaTranslator {
     protected JsonObject inputObjectToProperties(InputObjectType inputObjectType) {
         return inputObjectType.getInputValues().stream()
                 .map(inputValue ->
-                        new AbstractMap.SimpleEntry<>(inputValue.getName(), (JsonValue) fieldToProperty(inputValue.getType(), getJsonSchemaDirective(inputValue).orElse(null)))
+                        new AbstractMap.SimpleEntry<>(inputValue.getName(), (JsonValue) fieldToProperty(inputValue.getType(), getJsonSchemaDirective(inputValue).orElse(null)).build())
                 )
                 .collect(JsonCollectors.toJsonObject());
     }
@@ -323,15 +299,15 @@ public class JsonSchemaTranslator {
         return inputObjectType.getInputValues().stream()
                 .filter(inputValue -> inputValue.getName().equals(INPUT_VALUE_LIST_NAME))
                 .map(inputValue ->
-                        new AbstractMap.SimpleEntry<>(inputValue.getName(), (JsonValue) fieldToProperty(inputValue.getType(), getJsonSchemaDirective(inputValue).orElse(null)))
+                        new AbstractMap.SimpleEntry<>(inputValue.getName(), (JsonValue) fieldToProperty(inputValue.getType(), getJsonSchemaDirective(inputValue).orElse(null)).build())
                 )
                 .collect(JsonCollectors.toJsonObject());
     }
 
     protected JsonObject inputObjectToInsertProperties(InputObjectType inputObjectType, ObjectType objectType) {
         return inputObjectType.getInputValues().stream()
-                .filter(inputValue -> inputValue.getName().equals(INPUT_VALUE_WHERE_NAME))
-                .filter(inputValue -> inputValue.getName().equals(INPUT_VALUE_LIST_NAME))
+                .filter(inputValue -> !inputValue.getName().equals(INPUT_VALUE_WHERE_NAME))
+                .filter(inputValue -> !inputValue.getName().equals(INPUT_VALUE_LIST_NAME))
                 .map(inputValue ->
                         Optional.ofNullable(objectType.getField(inputValue.getName()))
                                 .map(fieldDefinition -> new AbstractMap.SimpleEntry<>(fieldDefinition.getName(), (JsonValue) fieldToProperty(fieldDefinition.getType(), getJsonSchemaDirective(fieldDefinition).orElse(null)).build()))
@@ -425,7 +401,8 @@ public class JsonSchemaTranslator {
                 jsonObjectBuilder
                         .add(
                                 "anyOf",
-                                jsonProvider.createArrayBuilder()
+                                jsonProvider
+                                        .createArrayBuilder()
                                         .add(jsonProvider.createObjectBuilder().add("$ref", jsonProvider.createValue(fieldTypeName)))
                                         .add(jsonProvider.createObjectBuilder().add("$ref", jsonProvider.createValue(fieldTypeName + "_update")))
                         );
@@ -436,7 +413,8 @@ public class JsonSchemaTranslator {
             jsonObjectBuilder
                     .add(
                             "anyOf",
-                            jsonProvider.createArrayBuilder()
+                            jsonProvider
+                                    .createArrayBuilder()
                                     .add(jsonProvider.createObjectBuilder().add("$ref", jsonProvider.createValue(fieldTypeName + SUFFIX_INPUT)))
                                     .add(jsonProvider.createObjectBuilder().add("$ref", jsonProvider.createValue(fieldTypeName + SUFFIX_INPUT + "_update")))
                     );
@@ -448,7 +426,8 @@ public class JsonSchemaTranslator {
         return jsonProvider.createObjectBuilder()
                 .add(
                         "anyOf",
-                        jsonProvider.createArrayBuilder()
+                        jsonProvider
+                                .createArrayBuilder()
                                 .add(typeBuilder)
                                 .add(jsonProvider.createObjectBuilder().add("type", jsonProvider.createValue("null")))
                 );

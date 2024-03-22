@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.graphoenix.jsonschema.dto.inputObjectType.grpc";
+
+package io.graphoenix.jsonschema;
+
+import "io/graphoenix/jsonschema/enums.proto";
+
+message JsonSchema {
+    int32 min_length = 1;
+    int32 max_length = 2;
+    string pattern = 3;
+    string format = 4;
+    string content_media_type = 5;
+    string content_encoding = 6;
+    float minimum = 7;
+    float exclusive_minimum = 8;
+    float maximum = 9;
+    float exclusive_maximum = 10;
+    float multiple_of = 11;
+    string const = 12;
+    repeated string enum = 13;
+    JsonSchema items = 14;
+    int32 min_items = 15;
+    int32 max_items = 16;
+    bool unique_items = 17;
+    repeated JsonSchema all_of = 18;
+    repeated JsonSchema any_of = 19;
+    repeated JsonSchema one_of = 20;
+    JsonSchema not = 21;
+    repeated Property properties = 22;
+    JsonSchema if = 23;
+    JsonSchema then = 24;
+    JsonSchema else = 25;
+    repeated Property dependent_required = 26;
+}
+message Property {
+    optional string name = 1;
+    JsonSchema validation = 2;
+    repeated string required = 3;
+}
+message Query_jsonSchema_Arguments {
+    string json_schema_name = 1;
+}
+message Query_operationSchema_Arguments {
+    string operation_type = 1;
+    repeated string field_name_set = 2;
+}

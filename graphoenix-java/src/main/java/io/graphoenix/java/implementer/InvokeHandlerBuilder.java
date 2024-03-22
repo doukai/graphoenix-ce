@@ -377,7 +377,7 @@ public class InvokeHandlerBuilder {
                                                                                                                     .map(parameter ->
                                                                                                                             CodeBlock.of("jsonb.fromJson(field.getArguments().get($S).toString(), $T.class)",
                                                                                                                                     parameter.getKey(),
-                                                                                                                                    toTypeName(parameter.getValue())
+                                                                                                                                    toClassName(getClassName(parameter.getValue()))
                                                                                                                             )
                                                                                                                     )
                                                                                                                     .collect(Collectors.toList()), ", ");

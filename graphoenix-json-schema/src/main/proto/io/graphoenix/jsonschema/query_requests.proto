@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.graphoenix.jsonschema.grpc";
+
+package io.graphoenix.jsonschema;
+
+import "io/graphoenix/jsonschema/enums.proto";
+import "io/graphoenix/jsonschema/objects.proto";
+import "io/graphoenix/jsonschema/interfaces.proto";
+import "io/graphoenix/jsonschema/input_objects.proto";
+
+message QueryJsonSchemaRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string json_schema_name = 3;
+}
+message QueryOperationSchemaRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string operation_type = 3;
+    repeated string field_name_set = 4;
+}

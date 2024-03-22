@@ -53,7 +53,7 @@ public class JsonSchemaValidator implements OperationBeforeHandler {
                 .flatMap(field -> validateSelection(operation, field))
                 .collect(Collectors.toSet());
 
-        if (messageSet.size() > 0) {
+        if (!messageSet.isEmpty()) {
             throw new GraphQLErrors()
                     .addAll(
                             messageSet.stream()

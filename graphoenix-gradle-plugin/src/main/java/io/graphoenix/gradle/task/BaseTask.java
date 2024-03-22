@@ -353,7 +353,12 @@ public class BaseTask extends DefaultTask {
                                 typeDeclaration.getMethods().stream()
                                         .filter(methodDeclaration -> methodDeclaration.isAnnotationPresent(Query.class))
                                         .forEach(methodDeclaration ->
-                                                documentManager.getDocument().getQueryOperationTypeOrError()
+                                                documentManager.getDocument().getQueryOperationType()
+                                                        .orElseGet(() ->
+                                                                (ObjectType) documentManager.getDocument()
+                                                                        .addDefinition(new ObjectType(TYPE_QUERY_NAME))
+                                                                        .getDefinition(TYPE_QUERY_NAME)
+                                                        )
                                                         .addField(
                                                                 new FieldDefinition(getQueryNameFromMethodDeclaration(methodDeclaration).orElseGet(() -> getInvokeFieldName(methodDeclaration.getName().getIdentifier())))
                                                                         .setType(getInvokeFieldTypeName(methodDeclaration.getType()))
@@ -410,7 +415,12 @@ public class BaseTask extends DefaultTask {
                                 typeDeclaration.getMethods().stream()
                                         .filter(methodDeclaration -> methodDeclaration.isAnnotationPresent(Mutation.class))
                                         .forEach(methodDeclaration ->
-                                                documentManager.getDocument().getMutationOperationTypeOrError()
+                                                documentManager.getDocument().getMutationOperationType()
+                                                        .orElseGet(() ->
+                                                                (ObjectType) documentManager.getDocument()
+                                                                        .addDefinition(new ObjectType(TYPE_MUTATION_NAME))
+                                                                        .getDefinition(TYPE_MUTATION_NAME)
+                                                        )
                                                         .addField(
                                                                 new FieldDefinition(getMutationNameFromMethodDeclaration(methodDeclaration).orElseGet(() -> getInvokeFieldName(methodDeclaration.getName().getIdentifier())))
                                                                         .setType(getInvokeFieldTypeName(methodDeclaration.getType()))
