@@ -15,6 +15,7 @@ import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonValue;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
@@ -48,23 +49,29 @@ public class JsonSchemaValidator implements OperationBeforeHandler {
 
     @Override
     public Mono<Operation> handle(Operation operation, Map<String, JsonValue> variables) {
-        Set<ValidationMessage> messageSet = operation.getFields().stream()
+        return Flux
+                .fromIterable(operation.getFields())
                 .filter(field -> field.getArguments() != null)
-                .flatMap(field -> validateSelection(operation, field))
-                .collect(Collectors.toSet());
-
-        if (!messageSet.isEmpty()) {
-            throw new GraphQLErrors()
-                    .addAll(
-                            messageSet.stream()
-                                    .map(validationMessage ->
-                                            new GraphQLError(validationMessage.getMessage())
-                                                    .setSchemaPath(validationMessage.getSchemaPath())
-                                    )
-                                    .collect(Collectors.toList())
-                    );
-        }
-        return Mono.just(operation);
+                .flatMap(field -> Flux.fromStream(validateSelection(operation, field)))
+                .collectList()
+                .flatMap(validationMessages -> {
+                            if (!validationMessages.isEmpty()) {
+                                return Mono
+                                        .error(
+                                                new GraphQLErrors()
+                                                        .addAll(
+                                                                validationMessages.stream()
+                                                                        .map(validationMessage ->
+                                                                                new GraphQLError(validationMessage.getMessage())
+                                                                                        .setSchemaPath(validationMessage.getSchemaPath())
+                                                                        )
+                                                                        .collect(Collectors.toList())
+                                                        )
+                                        );
+                            }
+                            return Mono.just(operation);
+                        }
+                );
     }
 
     protected Stream<ValidationMessage> validateSelection(Operation operation, Field field) {

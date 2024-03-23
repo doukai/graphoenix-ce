@@ -142,8 +142,7 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
                                                                                         valueEntry.getValue()
                                                                                 )
                                                                                 .map(path ->
-                                                                                        new GraphQLError()
-                                                                                                .setMessage(valueEntry.getKey().toString())
+                                                                                        new GraphQLError(valueEntry.getKey().toString())
                                                                                                 .setSchemaPath(path)
                                                                                 )
                                                                 )
