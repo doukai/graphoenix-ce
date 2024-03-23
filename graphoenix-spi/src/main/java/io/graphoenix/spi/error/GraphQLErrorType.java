@@ -84,6 +84,8 @@ public enum GraphQLErrorType {
     CONNECTION_FIELD_NOT_EXIST(-84, "@connection field argument not exist in connection filed: %s"),
     CONNECTION_AGG_FIELD_NOT_EXIST(-85, "@connection agg argument not exist in connection filed: %s"),
 
+    EXISTED_UNIQUE_VALUES(-90, "existed unique values"),
+
     SYNTAX_ERROR(-91, "graphql syntax error: %s line: %s column %s"),
 
     UNKNOWN(-99, "unknown graphql error");

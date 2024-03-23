@@ -26,7 +26,7 @@ import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_OPERATION_TYPE;
 
 @ApplicationScoped
-@Priority(105)
+@Priority(110)
 public class JsonSchemaValidator implements OperationBeforeHandler {
 
     private final ObjectMapper mapper = new ObjectMapper();

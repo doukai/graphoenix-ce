@@ -1,6 +1,8 @@
 package io.graphoenix.core.handler.before;
 
 import io.graphoenix.core.handler.DocumentManager;
+import io.graphoenix.spi.error.GraphQLError;
+import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.common.EnumValue;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
@@ -11,6 +13,7 @@ import io.graphoenix.spi.graphql.type.InputValue;
 import io.graphoenix.spi.graphql.type.ObjectType;
 import io.graphoenix.spi.handler.OperationBeforeHandler;
 import io.graphoenix.spi.handler.OperationHandler;
+import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonValue;
@@ -27,9 +30,11 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
+import static io.graphoenix.spi.error.GraphQLErrorType.EXISTED_UNIQUE_VALUES;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 
 @ApplicationScoped
+@Priority(105)
 public class UniqueValidationHandler implements OperationBeforeHandler {
 
     private final DocumentManager documentManager;
@@ -46,7 +51,7 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
     @Override
     public Mono<Operation> mutation(Operation operation, Map<String, JsonValue> variables) {
         ObjectType operationType = documentManager.getOperationTypeOrError(operation);
-        Flux
+        return Flux
                 .fromIterable(
                         operation.getFields().stream()
                                 .flatMap(field -> buildUniqueItems(operationType.getField(field.getName()), field))
@@ -58,90 +63,101 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
                                 )
                                 .entrySet()
                 )
-                .map(typeEntry -> {
-                            Map<String, List<Tuple4<String, String, ValueWithVariable, String>>> fieldMap = typeEntry.getValue().stream()
-                                    .collect(
-                                            Collectors.groupingBy(
-                                                    Tuple4::getT2,
-                                                    Collectors.toList()
-                                            )
-                                    );
-
-                            Map<String, Map<ValueWithVariable, List<String>>> pathMap = typeEntry.getValue().stream()
-                                    .collect(
-                                            Collectors.groupingBy(
-                                                    Tuple4::getT2,
-                                                    Collectors.groupingBy(
-                                                            Tuple4::getT3,
-                                                            Collectors.mapping(
-                                                                    Tuple4::getT4,
-                                                                    Collectors.toList()
-                                                            )
-                                                    )
-                                            )
-                                    );
-
-                            Field field = new Field(typeNameToFieldName(typeEntry.getKey()) + SUFFIX_LIST)
-                                    .setArguments(
-                                            Stream
-                                                    .concat(
-                                                            Stream.of(new AbstractMap.SimpleEntry<>(INPUT_VALUE_COND_NAME, (JsonValue) new EnumValue(INPUT_CONDITIONAL_INPUT_VALUE_OR))),
-                                                            fieldMap.entrySet().stream()
-                                                                    .map(fieldEntry ->
-                                                                            new AbstractMap.SimpleEntry<>(
-                                                                                    fieldEntry.getKey(),
-                                                                                    (JsonValue) jsonProvider.createObjectBuilder()
-                                                                                            .add(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME, new EnumValue(INPUT_OPERATOR_INPUT_VALUE_IN))
-                                                                                            .add(
-                                                                                                    INPUT_OPERATOR_INPUT_VALUE_ARR_NAME,
-                                                                                                    fieldEntry.getValue().stream()
-                                                                                                            .map(Tuple4::getT3)
-                                                                                                            .collect(JsonCollectors.toJsonArray())
-                                                                                            )
-                                                                                            .build()
-                                                                            )
-                                                                    )
-                                                    )
-                                                    .collect(JsonCollectors.toJsonObject())
-                                    )
-                                    .setSelections(
-                                            fieldMap.keySet().stream()
-                                                    .map(Field::new)
-                                                    .collect(Collectors.toList())
-                                    );
-                            return new AbstractMap.SimpleEntry<>(field, pathMap);
-                        }
+                .flatMap(typeEntry ->
+                        Flux
+                                .fromIterable(
+                                        typeEntry.getValue().stream()
+                                                .collect(
+                                                        Collectors.groupingBy(
+                                                                Tuple4::getT2,
+                                                                Collectors.toList()
+                                                        )
+                                                )
+                                                .entrySet()
+                                )
+                                .map(fieldEntry ->
+                                        new AbstractMap.SimpleEntry<>(
+                                                new Field(typeNameToFieldName(typeEntry.getKey()) + SUFFIX_LIST)
+                                                        .setAlias(typeNameToFieldName(typeEntry.getKey()) + "_" + fieldEntry.getKey())
+                                                        .setArguments(
+                                                                jsonProvider.createObjectBuilder()
+                                                                        .add(fieldEntry.getKey(),
+                                                                                jsonProvider.createObjectBuilder()
+                                                                                        .add(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME, new EnumValue(INPUT_OPERATOR_INPUT_VALUE_IN))
+                                                                                        .add(
+                                                                                                INPUT_OPERATOR_INPUT_VALUE_ARR_NAME,
+                                                                                                fieldEntry.getValue().stream()
+                                                                                                        .map(Tuple4::getT3)
+                                                                                                        .collect(JsonCollectors.toJsonArray())
+                                                                                        )
+                                                                        )
+                                                                        .build()
+                                                        )
+                                                        .addSelection(new Field(fieldEntry.getKey())),
+                                                fieldEntry.getValue()
+                                        )
+                                )
                 )
                 .collectList()
-                .flatMap(fieldEntryList ->
-                        Mono.from(
-                                operationHandler.handle(
-                                        new Operation()
-                                                .setOperationType(OPERATION_QUERY_NAME)
-                                                .setSelections(
-                                                        fieldEntryList.stream()
-                                                                .map(AbstractMap.SimpleEntry::getKey)
-                                                                .collect(Collectors.toList())
+                .flatMapMany(fieldEntryList ->
+                        Mono
+                                .from(
+                                        operationHandler.handle(
+                                                new Operation()
+                                                        .setOperationType(OPERATION_QUERY_NAME)
+                                                        .setSelections(
+                                                                fieldEntryList.stream()
+                                                                        .map(AbstractMap.SimpleEntry::getKey)
+                                                                        .collect(Collectors.toList())
+                                                        )
+                                        )
+
+                                )
+                                .flatMapMany(jsonValue ->
+                                        Flux
+                                                .fromIterable(fieldEntryList)
+                                                .filter(entry -> !jsonValue.asJsonObject().isNull(entry.getKey().getAlias()))
+                                                .flatMap(fieldEntry ->
+                                                        Flux
+                                                                .fromIterable(
+                                                                        fieldEntry.getValue().stream()
+                                                                                .collect(
+                                                                                        Collectors.groupingBy(
+                                                                                                Tuple4::getT3,
+                                                                                                Collectors.mapping(
+                                                                                                        Tuple4::getT4,
+                                                                                                        Collectors.toList()
+                                                                                                )
+                                                                                        )
+                                                                                )
+                                                                                .entrySet()
+                                                                )
+                                                                .filter(valueEntry ->
+                                                                        jsonValue.asJsonObject().getJsonArray(fieldEntry.getKey().getAlias()).stream()
+                                                                                .anyMatch(item -> item.toString().equals(valueEntry.getKey().toString()))
+                                                                )
+                                                                .flatMap(valueEntry ->
+                                                                        Flux
+                                                                                .fromIterable(
+                                                                                        valueEntry.getValue()
+                                                                                )
+                                                                                .map(path ->
+                                                                                        new GraphQLError()
+                                                                                                .setMessage(valueEntry.getKey().toString())
+                                                                                                .setSchemaPath(path)
+                                                                                )
+                                                                )
                                                 )
                                 )
-                        )
                 )
-                .map(jsonValue -> {
-                            jsonValue.asJsonObject().entrySet().stream()
-                                    .filter(typeEntry -> !typeEntry.getValue().getValueType().equals(JsonValue.ValueType.NULL))
-                                    .flatMap(typeEntry ->
-                                            typeEntry.getValue().asJsonArray().stream()
-                                                    .map(JsonValue::asJsonObject)
-                                                    .flatMap(jsonObject -> jsonObject.entrySet().stream())
-                                                    .filter(fieldEntry -> fieldEntry.getValue().getValueType().equals(JsonValue.ValueType.NULL))
-                                                    .flatMap(fieldEntry ->)
-                                    )
-
-
+                .collectList()
+                .flatMap(graphQLErrors -> {
+                            if (!graphQLErrors.isEmpty()) {
+                                return Mono.error(new GraphQLErrors(EXISTED_UNIQUE_VALUES).addAll(graphQLErrors));
+                            }
+                            return Mono.just(operation);
                         }
-                )
-
-        return OperationBeforeHandler.super.mutation(operation, variables);
+                );
     }
 
     public Stream<Tuple4<String, String, ValueWithVariable, String>> buildUniqueItems(FieldDefinition fieldDefinition, Field field) {
