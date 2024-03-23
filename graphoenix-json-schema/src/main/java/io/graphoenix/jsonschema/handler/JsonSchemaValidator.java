@@ -20,7 +20,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
@@ -50,24 +49,16 @@ public class JsonSchemaValidator implements OperationBeforeHandler {
     @Override
     public Mono<Operation> handle(Operation operation, Map<String, JsonValue> variables) {
         return Flux
-                .fromIterable(operation.getFields())
-                .filter(field -> field.getArguments() != null)
-                .flatMap(field -> Flux.fromStream(validateSelection(operation, field)))
+                .fromStream(
+                        operation.getFields().stream()
+                                .filter(field -> field.getArguments() != null)
+                                .flatMap(field -> validateSelection(operation, field))
+                                .map(validationMessage -> new GraphQLError(validationMessage.getMessage()).setSchemaPath(validationMessage.getSchemaPath()))
+                )
                 .collectList()
-                .flatMap(validationMessages -> {
-                            if (!validationMessages.isEmpty()) {
-                                return Mono
-                                        .error(
-                                                new GraphQLErrors()
-                                                        .addAll(
-                                                                validationMessages.stream()
-                                                                        .map(validationMessage ->
-                                                                                new GraphQLError(validationMessage.getMessage())
-                                                                                        .setSchemaPath(validationMessage.getSchemaPath())
-                                                                        )
-                                                                        .collect(Collectors.toList())
-                                                        )
-                                        );
+                .flatMap(graphQLErrors -> {
+                            if (!graphQLErrors.isEmpty()) {
+                                return Mono.error(new GraphQLErrors().addAll(graphQLErrors));
                             }
                             return Mono.just(operation);
                         }

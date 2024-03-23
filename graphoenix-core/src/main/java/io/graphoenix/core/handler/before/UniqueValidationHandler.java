@@ -52,7 +52,7 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
     public Mono<Operation> mutation(Operation operation, Map<String, JsonValue> variables) {
         ObjectType operationType = documentManager.getOperationTypeOrError(operation);
         return Flux
-                .fromIterable(
+                .fromStream(
                         operation.getFields().stream()
                                 .flatMap(field -> buildUniqueItems(operationType.getField(field.getName()), field))
                                 .collect(
@@ -61,11 +61,8 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
                                                 Collectors.toList()
                                         )
                                 )
-                                .entrySet()
-                )
-                .flatMap(typeEntry ->
-                        Flux
-                                .fromIterable(
+                                .entrySet().stream()
+                                .flatMap(typeEntry ->
                                         typeEntry.getValue().stream()
                                                 .collect(
                                                         Collectors.groupingBy(
@@ -73,29 +70,29 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
                                                                 Collectors.toList()
                                                         )
                                                 )
-                                                .entrySet()
-                                )
-                                .map(fieldEntry ->
-                                        new AbstractMap.SimpleEntry<>(
-                                                new Field(typeNameToFieldName(typeEntry.getKey()) + SUFFIX_LIST)
-                                                        .setAlias(typeNameToFieldName(typeEntry.getKey()) + "_" + fieldEntry.getKey())
-                                                        .setArguments(
-                                                                jsonProvider.createObjectBuilder()
-                                                                        .add(fieldEntry.getKey(),
+                                                .entrySet().stream()
+                                                .map(fieldEntry ->
+                                                        new AbstractMap.SimpleEntry<>(
+                                                                new Field(typeNameToFieldName(typeEntry.getKey()) + SUFFIX_LIST)
+                                                                        .setAlias(typeNameToFieldName(typeEntry.getKey()) + "_" + fieldEntry.getKey())
+                                                                        .setArguments(
                                                                                 jsonProvider.createObjectBuilder()
-                                                                                        .add(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME, new EnumValue(INPUT_OPERATOR_INPUT_VALUE_IN))
-                                                                                        .add(
-                                                                                                INPUT_OPERATOR_INPUT_VALUE_ARR_NAME,
-                                                                                                fieldEntry.getValue().stream()
-                                                                                                        .map(Tuple4::getT3)
-                                                                                                        .collect(JsonCollectors.toJsonArray())
+                                                                                        .add(fieldEntry.getKey(),
+                                                                                                jsonProvider.createObjectBuilder()
+                                                                                                        .add(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME, new EnumValue(INPUT_OPERATOR_INPUT_VALUE_IN))
+                                                                                                        .add(
+                                                                                                                INPUT_OPERATOR_INPUT_VALUE_ARR_NAME,
+                                                                                                                fieldEntry.getValue().stream()
+                                                                                                                        .map(Tuple4::getT3)
+                                                                                                                        .collect(JsonCollectors.toJsonArray())
+                                                                                                        )
                                                                                         )
+                                                                                        .build()
                                                                         )
-                                                                        .build()
+                                                                        .addSelection(new Field(fieldEntry.getKey())),
+                                                                fieldEntry.getValue()
                                                         )
-                                                        .addSelection(new Field(fieldEntry.getKey())),
-                                                fieldEntry.getValue()
-                                        )
+                                                )
                                 )
                 )
                 .collectList()
@@ -111,15 +108,13 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
                                                                         .collect(Collectors.toList())
                                                         )
                                         )
-
                                 )
                                 .flatMapMany(jsonValue ->
                                         Flux
-                                                .fromIterable(fieldEntryList)
-                                                .filter(entry -> !jsonValue.asJsonObject().isNull(entry.getKey().getAlias()))
-                                                .flatMap(fieldEntry ->
-                                                        Flux
-                                                                .fromIterable(
+                                                .fromStream(
+                                                        fieldEntryList.stream()
+                                                                .filter(entry -> !jsonValue.asJsonObject().isNull(entry.getKey().getAlias()))
+                                                                .flatMap(fieldEntry ->
                                                                         fieldEntry.getValue().stream()
                                                                                 .collect(
                                                                                         Collectors.groupingBy(
@@ -130,20 +125,14 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
                                                                                                 )
                                                                                         )
                                                                                 )
-                                                                                .entrySet()
-                                                                )
-                                                                .filter(valueEntry ->
-                                                                        jsonValue.asJsonObject().getJsonArray(fieldEntry.getKey().getAlias()).stream()
-                                                                                .anyMatch(item -> item.toString().equals(valueEntry.getKey().toString()))
-                                                                )
-                                                                .flatMap(valueEntry ->
-                                                                        Flux
-                                                                                .fromIterable(
-                                                                                        valueEntry.getValue()
+                                                                                .entrySet().stream()
+                                                                                .filter(valueEntry ->
+                                                                                        jsonValue.asJsonObject().getJsonArray(fieldEntry.getKey().getAlias()).stream()
+                                                                                                .anyMatch(item -> item.toString().equals(valueEntry.getKey().toString()))
                                                                                 )
-                                                                                .map(path ->
-                                                                                        new GraphQLError(valueEntry.getKey().toString())
-                                                                                                .setSchemaPath(path)
+                                                                                .flatMap(valueEntry ->
+                                                                                        valueEntry.getValue().stream()
+                                                                                                .map(path -> new GraphQLError(valueEntry.getKey().toString()).setSchemaPath(path))
                                                                                 )
                                                                 )
                                                 )
@@ -221,7 +210,6 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
                     );
         }
         return Stream.empty();
-
     }
 
     public Stream<Tuple4<String, String, ValueWithVariable, String>> buildUniqueItems(ObjectType objectType, String path, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable) {

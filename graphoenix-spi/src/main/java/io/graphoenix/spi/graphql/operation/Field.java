@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
-import static io.graphoenix.spi.utils.DocumentUtil.graphqlToSelectionSet;
+import static io.graphoenix.spi.utils.DocumentUtil.*;
 
 public class Field extends AbstractDefinition implements Selection {
 
@@ -31,6 +31,10 @@ public class Field extends AbstractDefinition implements Selection {
 
     public Field(String name) {
         super(name);
+    }
+
+    public static Field fromString(String graphQL) {
+        return new Field(graphqlToSelection(graphQL));
     }
 
     public Field(GraphqlParser.SelectionContext selectionContext) {

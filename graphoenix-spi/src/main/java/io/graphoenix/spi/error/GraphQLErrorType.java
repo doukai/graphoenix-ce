@@ -68,6 +68,8 @@ public enum GraphQLErrorType {
     FETCH_WITH_TO_FIELD_NOT_EXIST(-62, "fetch with type to field not exist: %s"),
     FETCH_WITH_FROM_OBJECT_FIELD_NOT_EXIST(-63, "fetch with type from object field not exist: %s"),
     FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST(-64, "fetch with type to object field not exist: %s"),
+    MUTATION_BEFORE_FIELD_ARGUMENT_NOT_EXIST(-65, "field argument not exist in @mutationBefore directive: %s"),
+    MUTATION_BEFORE_PROTOCOL_ARGUMENT_NOT_EXIST(-66, "protocol argument not exist in @mutationBefore directive: %s"),
 
     CLASS_NAME_ARGUMENT_NOT_EXIST(-71, "classname not exist in @class directive: %s"),
     ANNOTATION_NAME_ARGUMENT_NOT_EXIST(-72, "annotationName not exist in @class directive: %s"),
