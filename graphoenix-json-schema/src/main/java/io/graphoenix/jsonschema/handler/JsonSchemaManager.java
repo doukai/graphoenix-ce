@@ -24,7 +24,6 @@ public class JsonSchemaManager {
             String jsonSchema = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))
                     .lines()
                     .collect(Collectors.joining("\n"));
-            inputStream.close();
             return jsonSchemaMap.computeIfAbsent(name, k -> jsonSchema);
         } catch (IOException e) {
             throw new RuntimeException(e);
