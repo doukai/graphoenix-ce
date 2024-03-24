@@ -164,6 +164,7 @@ public class Hammurabi {
     public static final String DIRECTIVE_MUTATION_BEFORE_NAME = "mutationBefore";
     public static final String DIRECTIVE_MUTATION_BEFORE_ARGUMENT_PROTOCOL_NAME = "protocol";
     public static final String DIRECTIVE_MUTATION_BEFORE_ARGUMENT_FIELD_NAME = "field";
+    public static final String DIRECTIVE_MUTATION_BEFORE_ARGUMENT_TARGET_NAME = "target";
 
     public static final String ENUM_PROTOCOL_ENUM_VALUE_LOCAL = "LOCAL";
     public static final String ENUM_PROTOCOL_ENUM_VALUE_GRPC = "GRPC";

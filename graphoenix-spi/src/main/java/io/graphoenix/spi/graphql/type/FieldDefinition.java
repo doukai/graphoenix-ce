@@ -519,6 +519,17 @@ public class FieldDefinition extends AbstractDefinition {
         return getFetchProtocol().orElseThrow(() -> new GraphQLErrors(MUTATION_BEFORE_PROTOCOL_ARGUMENT_NOT_EXIST.bind(toString())));
     }
 
+    public Optional<String> getMutationBeforeTarget() {
+        return Optional.ofNullable(getDirective(DIRECTIVE_MUTATION_BEFORE_NAME))
+                .flatMap(directive -> directive.getArgumentOrEmpty(DIRECTIVE_MUTATION_BEFORE_ARGUMENT_TARGET_NAME))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> valueWithVariable.asString().getValue());
+    }
+
+    public String getMutationBeforeTargetOrNull() {
+        return getMutationBeforeTarget().orElse(null);
+    }
+
     public boolean hasFormat() {
         return hasDirective(DIRECTIVE_FORMAT_NAME);
     }
