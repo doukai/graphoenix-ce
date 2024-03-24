@@ -211,7 +211,7 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler {
             Field mutationBeforeField = Field.fromString(fieldDefinition.getMutationBeforeFieldOrError());
             FieldDefinition mutationBeforeFieldDefinition = documentManager.getDocument().getMutationOperationTypeOrError().getField(mutationBeforeField.getName());
             String target = fieldDefinition.getMutationBeforeTargetOrNull();
-            String packageName = mutationBeforeFieldDefinition.getPackageNameOrError();
+            String packageName = mutationBeforeFieldDefinition.getPackageName().orElseGet(packageConfig::getPackageName);
             if (packageManager.isLocalPackage(mutationBeforeFieldDefinition)) {
                 return Stream.of(new FetchItem(packageName, LOCAL_FETCH_NAME, path, mutationBeforeField.setAlias(getAliasFromPath(path)), target));
             } else {

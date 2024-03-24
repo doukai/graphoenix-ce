@@ -17,7 +17,7 @@ public class GraphQLErrors extends RuntimeException {
     }
 
     public GraphQLErrors(GraphQLErrorType graphQLErrorType) {
-        this.errors.add(new GraphQLError(graphQLErrorType.toString()));
+        this.errors.add(new GraphQLError(graphQLErrorType));
     }
 
     public GraphQLErrors(GraphQLErrorType graphQLErrorType, int line, int column) {

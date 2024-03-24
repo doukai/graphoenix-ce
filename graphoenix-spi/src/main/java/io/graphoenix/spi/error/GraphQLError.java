@@ -2,9 +2,10 @@ package io.graphoenix.spi.error;
 
 import org.eclipse.microprofile.graphql.GraphQLException;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.graphoenix.spi.utils.ErrorInfoUtil.getErrorCode;
 import static io.graphoenix.spi.utils.ErrorInfoUtil.getErrorMessage;
@@ -20,6 +21,17 @@ public class GraphQLError {
     private GraphQLErrorExtensions extensions;
 
     public GraphQLError() {
+    }
+
+    public GraphQLError(GraphQLErrorType graphQLErrorType) {
+        this.message = graphQLErrorType.toString();
+        this.extensions = new GraphQLErrorExtensions(graphQLErrorType.getCode());
+    }
+
+    public GraphQLError(GraphQLErrorType graphQLErrorType, int line, int column) {
+        this.message = graphQLErrorType.toString();
+        this.extensions = new GraphQLErrorExtensions(graphQLErrorType.getCode());
+        this.locations = Collections.singletonList(new GraphQLLocation(line, column));
     }
 
     public GraphQLError(GraphQLException graphQLException) {
@@ -84,8 +96,10 @@ public class GraphQLError {
         return this;
     }
 
-    public GraphQLError setSchemaPath(String schemaPath) {
-        this.path = Arrays.asList(schemaPath.replaceFirst("#/properties/", "").split("/"));
+    public GraphQLError setPath(String path) {
+        this.path = Stream.of(path.split("/"))
+                .filter(item -> !item.isBlank())
+                .collect(Collectors.toList());
         return this;
     }
 

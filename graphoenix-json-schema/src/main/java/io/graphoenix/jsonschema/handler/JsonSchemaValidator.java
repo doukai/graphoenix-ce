@@ -20,13 +20,14 @@ import reactor.core.publisher.Mono;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_OPERATION_TYPE;
 
 @ApplicationScoped
-@Priority(110)
+@Priority(105)
 public class JsonSchemaValidator implements OperationBeforeHandler {
 
     private final ObjectMapper mapper = new ObjectMapper();
@@ -53,7 +54,7 @@ public class JsonSchemaValidator implements OperationBeforeHandler {
                         operation.getFields().stream()
                                 .filter(field -> field.getArguments() != null)
                                 .flatMap(field -> validateSelection(operation, field))
-                                .map(validationMessage -> new GraphQLError(validationMessage.getMessage()).setSchemaPath(validationMessage.getSchemaPath()))
+                                .map(validationMessage -> new GraphQLError(validationMessage.getMessage()).setPath(validationMessageToGraphQLPath(validationMessage)))
                 )
                 .collectList()
                 .flatMap(graphQLErrors -> {
@@ -80,6 +81,36 @@ public class JsonSchemaValidator implements OperationBeforeHandler {
             return validate(operationTypeName + "_" + field.getName() + "_" + SUFFIX_ARGUMENTS, field.getArguments().toJson()).stream();
         } catch (JsonProcessingException e) {
             throw new GraphQLErrors(e);
+        }
+    }
+
+    private String validationMessageToGraphQLPath(ValidationMessage validationMessage) {
+        Stream<String> pathStream = Stream.of(validationMessage.getPath().split("\\."))
+                .flatMap(item -> {
+                            if (item.contains("[")) {
+                                return Stream
+                                        .of(
+                                                item.substring(0, item.lastIndexOf("[")),
+                                                item.substring(item.lastIndexOf("[") + 1, item.length() - 1)
+                                        );
+                            } else {
+                                return Stream.of(item);
+                            }
+                        }
+                )
+                .filter(item -> !item.equals("$"));
+
+        if (validationMessage.getType().equals("required")) {
+            return Stream
+                    .concat(
+                            pathStream,
+                            Stream.of(validationMessage.getArguments()[0])
+                    )
+                    .collect(Collectors.joining("/"));
+
+        } else {
+            return pathStream
+                    .collect(Collectors.joining("/"));
         }
     }
 }

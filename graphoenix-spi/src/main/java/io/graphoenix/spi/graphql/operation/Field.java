@@ -34,7 +34,7 @@ public class Field extends AbstractDefinition implements Selection {
     }
 
     public static Field fromString(String graphQL) {
-        return new Field(graphqlToSelection(graphQL));
+        return new Field(graphqlToSelection(graphQL.replaceAll("\\\\", "")));
     }
 
     public Field(GraphqlParser.SelectionContext selectionContext) {

@@ -34,7 +34,7 @@ import static io.graphoenix.spi.error.GraphQLErrorType.EXISTED_UNIQUE_VALUES;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 
 @ApplicationScoped
-@Priority(105)
+@Priority(110)
 public class UniqueValidationHandler implements OperationBeforeHandler {
 
     private final DocumentManager documentManager;
@@ -128,11 +128,12 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
                                                                                 .entrySet().stream()
                                                                                 .filter(valueEntry ->
                                                                                         jsonValue.asJsonObject().getJsonArray(fieldEntry.getKey().getAlias()).stream()
-                                                                                                .anyMatch(item -> item.toString().equals(valueEntry.getKey().toString()))
+                                                                                                .flatMap(item -> item.asJsonObject().values().stream())
+                                                                                                .anyMatch(value -> value.toString().equals(valueEntry.getKey().toString()))
                                                                                 )
                                                                                 .flatMap(valueEntry ->
                                                                                         valueEntry.getValue().stream()
-                                                                                                .map(path -> new GraphQLError(valueEntry.getKey().toString()).setSchemaPath(path))
+                                                                                                .map(path -> new GraphQLError(EXISTED_UNIQUE_VALUES).setPath(path))
                                                                                 )
                                                                 )
                                                 )
@@ -141,7 +142,7 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
                 .collectList()
                 .flatMap(graphQLErrors -> {
                             if (!graphQLErrors.isEmpty()) {
-                                return Mono.error(new GraphQLErrors(EXISTED_UNIQUE_VALUES).addAll(graphQLErrors));
+                                return Mono.error(new GraphQLErrors().addAll(graphQLErrors));
                             }
                             return Mono.just(operation);
                         }
@@ -218,7 +219,7 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
         }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldDefinition.isUnique()) {
-            return Stream.of(Tuples.of(objectType.getName(), fieldDefinition.getName(), valueWithVariable, path));
+            return Stream.of(Tuples.of(objectType.getName(), fieldDefinition.getName(), valueWithVariable, path + "/" + fieldDefinition.getName()));
         } else if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
             return inputValueTypeDefinition.asInputObject().getInputValues().stream()

@@ -506,7 +506,7 @@ public class FieldDefinition extends AbstractDefinition {
     }
 
     public String getMutationBeforeFieldOrError() {
-        return getFetchWithFrom().orElseThrow(() -> new GraphQLErrors(MUTATION_BEFORE_FIELD_ARGUMENT_NOT_EXIST.bind(toString())));
+        return getMutationBeforeField().orElseThrow(() -> new GraphQLErrors(MUTATION_BEFORE_FIELD_ARGUMENT_NOT_EXIST.bind(toString())));
     }
 
     public Optional<EnumValue> getMutationBeforeProtocol() {
@@ -516,7 +516,7 @@ public class FieldDefinition extends AbstractDefinition {
     }
 
     public EnumValue getMutationBeforeProtocolOrError() {
-        return getFetchProtocol().orElseThrow(() -> new GraphQLErrors(MUTATION_BEFORE_PROTOCOL_ARGUMENT_NOT_EXIST.bind(toString())));
+        return getMutationBeforeProtocol().orElseThrow(() -> new GraphQLErrors(MUTATION_BEFORE_PROTOCOL_ARGUMENT_NOT_EXIST.bind(toString())));
     }
 
     public Optional<String> getMutationBeforeTarget() {
