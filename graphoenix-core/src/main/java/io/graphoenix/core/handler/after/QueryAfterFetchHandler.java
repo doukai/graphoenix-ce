@@ -173,7 +173,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
                 String fetchWithFrom = fieldDefinition.getFetchWithFromOrError();
                 String fetchWithTo = fieldDefinition.getFetchWithToOrError();
                 fetchField
-                        .setAlias(getAliasFromPath(path + "/" + fetchFrom))
+                        .setAlias(getAliasFromPath(path))
                         .setArguments(
                                 Map.of(
                                         fetchWithFrom,
@@ -246,7 +246,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
                 }
                 String fetchTo = fieldDefinition.getFetchToOrError();
                 fetchField
-                        .setAlias(getAliasFromPath(path + "/" + fetchFrom))
+                        .setAlias(getAliasFromPath(path))
                         .setArguments(
                                 Stream
                                         .concat(
