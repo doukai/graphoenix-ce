@@ -229,7 +229,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler {
         if (documentManager.isMutationOperationType(objectType) && !packageManager.isLocalPackage(fieldDefinition)) {
             String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
             String packageName = fieldDefinition.getPackageNameOrError();
-            return Stream.of(new FetchItem(packageName, protocol, path, field.setAlias(getAliasFromPath(path)), null));
+            return Stream.of(new FetchItem(packageName, protocol, path, field, null));
         } else if (fieldDefinition.isFetchField()) {
             String fetchFrom = fieldDefinition.getFetchFromOrError();
             if (fieldTypeDefinition.isObject()) {

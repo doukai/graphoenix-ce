@@ -160,7 +160,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
         if (documentManager.isQueryOperationType(objectType) && !packageManager.isLocalPackage(fieldDefinition)) {
             String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
             String packageName = fieldDefinition.getPackageNameOrError();
-            return Stream.of(new FetchItem(packageName, protocol, path, field.setAlias(getAliasFromPath(path)), null));
+            return Stream.of(new FetchItem(packageName, protocol, path, field, null));
         } else if (fieldDefinition.isFetchField()) {
             String fetchFrom = fieldDefinition.getFetchFromOrError();
             Field fetchField = new Field();
@@ -173,7 +173,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
                 String fetchWithFrom = fieldDefinition.getFetchWithFromOrError();
                 String fetchWithTo = fieldDefinition.getFetchWithToOrError();
                 fetchField
-                        .setAlias(getAliasFromPath(path))
+                        .setAlias(getAliasFromPath(path + "/" + fetchFrom))
                         .setArguments(
                                 Map.of(
                                         fetchWithFrom,
@@ -246,7 +246,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
                 }
                 String fetchTo = fieldDefinition.getFetchToOrError();
                 fetchField
-                        .setAlias(getAliasFromPath(path))
+                        .setAlias(getAliasFromPath(path + "/" + fetchFrom))
                         .setArguments(
                                 Stream
                                         .concat(
