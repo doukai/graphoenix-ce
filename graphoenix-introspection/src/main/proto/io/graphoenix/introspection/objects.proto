@@ -241,8 +241,8 @@ message IntroDirective {
     IntroDirectiveLocationsRelation intro_directive_locations_relation_aggregate = 20;
     IntroDirectiveLocationsRelationConnection intro_directive_locations_relation_connection = 21;
     int32 name_count = 22;
-    int32 name_max = 23;
-    int32 name_min = 24;
+    string name_max = 23;
+    string name_min = 24;
     int32 description_count = 25;
     string description_max = 26;
     string description_min = 27;

@@ -67,9 +67,9 @@ public class __Directive implements Meta {
 
   private Integer nameCount;
 
-  private Integer nameMax;
+  private String nameMax;
 
-  private Integer nameMin;
+  private String nameMin;
 
   private Integer descriptionCount;
 
@@ -282,19 +282,19 @@ public class __Directive implements Meta {
     this.nameCount = nameCount;
   }
 
-  public Integer getNameMax() {
+  public String getNameMax() {
     return this.nameMax;
   }
 
-  public void setNameMax(Integer nameMax) {
+  public void setNameMax(String nameMax) {
     this.nameMax = nameMax;
   }
 
-  public Integer getNameMin() {
+  public String getNameMin() {
     return this.nameMin;
   }
 
-  public void setNameMin(Integer nameMin) {
+  public void setNameMin(String nameMin) {
     this.nameMin = nameMin;
   }
 

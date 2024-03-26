@@ -62,7 +62,7 @@ type __EnumValue {
 }
 
 type __Directive {
-    name: ID!
+    name: ID! @options(type: "String")
     ofSchema: __Schema @map(from: "schemaId" to: "id" anchor: true)
     description: String
     locations: [__DirectiveLocation!]!
