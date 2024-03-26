@@ -20,9 +20,11 @@ public class __TypePossibleTypesListMutationArguments implements MetaInput {
 
   private String typeName;
 
-  private __TypeInput __type;
+  private __TypeInput typeNameType;
 
   private String possibleTypeName;
+
+  private __TypeInput possibleTypeNameType;
 
   private Boolean isDeprecated;
 
@@ -63,12 +65,12 @@ public class __TypePossibleTypesListMutationArguments implements MetaInput {
     this.typeName = typeName;
   }
 
-  public __TypeInput get__type() {
-    return this.__type;
+  public __TypeInput getTypeNameType() {
+    return this.typeNameType;
   }
 
-  public void set__type(__TypeInput __type) {
-    this.__type = __type;
+  public void setTypeNameType(__TypeInput typeNameType) {
+    this.typeNameType = typeNameType;
   }
 
   public String getPossibleTypeName() {
@@ -77,6 +79,14 @@ public class __TypePossibleTypesListMutationArguments implements MetaInput {
 
   public void setPossibleTypeName(String possibleTypeName) {
     this.possibleTypeName = possibleTypeName;
+  }
+
+  public __TypeInput getPossibleTypeNameType() {
+    return this.possibleTypeNameType;
+  }
+
+  public void setPossibleTypeNameType(__TypeInput possibleTypeNameType) {
+    this.possibleTypeNameType = possibleTypeNameType;
   }
 
   public Boolean getIsDeprecated() {

@@ -19,9 +19,11 @@ public class __TypeInterfacesInput implements MetaInput {
 
   private String typeName;
 
-  private __TypeInput __type;
+  private __TypeInput typeNameType;
 
   private String interfaceName;
+
+  private __TypeInput interfaceNameType;
 
   private Boolean isDeprecated;
 
@@ -60,12 +62,12 @@ public class __TypeInterfacesInput implements MetaInput {
     this.typeName = typeName;
   }
 
-  public __TypeInput get__type() {
-    return this.__type;
+  public __TypeInput getTypeNameType() {
+    return this.typeNameType;
   }
 
-  public void set__type(__TypeInput __type) {
-    this.__type = __type;
+  public void setTypeNameType(__TypeInput typeNameType) {
+    this.typeNameType = typeNameType;
   }
 
   public String getInterfaceName() {
@@ -74,6 +76,14 @@ public class __TypeInterfacesInput implements MetaInput {
 
   public void setInterfaceName(String interfaceName) {
     this.interfaceName = interfaceName;
+  }
+
+  public __TypeInput getInterfaceNameType() {
+    return this.interfaceNameType;
+  }
+
+  public void setInterfaceNameType(__TypeInput interfaceNameType) {
+    this.interfaceNameType = interfaceNameType;
   }
 
   public Boolean getIsDeprecated() {

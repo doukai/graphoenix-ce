@@ -21,7 +21,7 @@ public class __DirectiveLocationsRelation implements Meta {
 
   private String __directiveRef;
 
-  private __Directive __directive;
+  private __Directive __directiveRefType;
 
   private __DirectiveLocation locationsRef;
 
@@ -71,12 +71,12 @@ public class __DirectiveLocationsRelation implements Meta {
     this.__directiveRef = __directiveRef;
   }
 
-  public __Directive get__directive() {
-    return this.__directive;
+  public __Directive get__directiveRefType() {
+    return this.__directiveRefType;
   }
 
-  public void set__directive(__Directive __directive) {
-    this.__directive = __directive;
+  public void set__directiveRefType(__Directive __directiveRefType) {
+    this.__directiveRefType = __directiveRefType;
   }
 
   public __DirectiveLocation getLocationsRef() {

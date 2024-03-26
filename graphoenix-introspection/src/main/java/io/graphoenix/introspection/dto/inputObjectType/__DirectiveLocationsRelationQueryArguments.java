@@ -22,7 +22,7 @@ public class __DirectiveLocationsRelationQueryArguments implements MetaExpressio
 
   private StringExpression __directiveRef;
 
-  private __DirectiveExpression __directive;
+  private __DirectiveExpression __directiveRefType;
 
   private __DirectiveLocationExpression locationsRef;
 
@@ -71,12 +71,12 @@ public class __DirectiveLocationsRelationQueryArguments implements MetaExpressio
     this.__directiveRef = __directiveRef;
   }
 
-  public __DirectiveExpression get__directive() {
-    return this.__directive;
+  public __DirectiveExpression get__directiveRefType() {
+    return this.__directiveRefType;
   }
 
-  public void set__directive(__DirectiveExpression __directive) {
-    this.__directive = __directive;
+  public void set__directiveRefType(__DirectiveExpression __directiveRefType) {
+    this.__directiveRefType = __directiveRefType;
   }
 
   public __DirectiveLocationExpression getLocationsRef() {

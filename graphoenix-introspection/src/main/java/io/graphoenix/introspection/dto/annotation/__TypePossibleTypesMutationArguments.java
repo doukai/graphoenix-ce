@@ -17,9 +17,11 @@ public @interface __TypePossibleTypesMutationArguments {
 
   String typeName() default "";
 
-  __TypeInput1 __type() default @__TypeInput1;
+  __TypeInput1 typeNameType() default @__TypeInput1;
 
   String possibleTypeName() default "";
+
+  __TypeInput1 possibleTypeNameType() default @__TypeInput1;
 
   boolean isDeprecated() default false;
 
@@ -45,9 +47,11 @@ public @interface __TypePossibleTypesMutationArguments {
 
   String $typeName() default "";
 
-  String $__type() default "";
+  String $typeNameType() default "";
 
   String $possibleTypeName() default "";
+
+  String $possibleTypeNameType() default "";
 
   String $isDeprecated() default "";
 

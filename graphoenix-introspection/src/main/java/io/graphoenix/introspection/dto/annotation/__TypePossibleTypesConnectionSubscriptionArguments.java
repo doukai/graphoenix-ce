@@ -20,9 +20,11 @@ public @interface __TypePossibleTypesConnectionSubscriptionArguments {
 
   StringExpression1 typeName() default @StringExpression1;
 
-  __TypeExpression1 __type() default @__TypeExpression1;
+  __TypeExpression1 typeNameType() default @__TypeExpression1;
 
   StringExpression1 possibleTypeName() default @StringExpression1;
+
+  __TypeExpression1 possibleTypeNameType() default @__TypeExpression1;
 
   boolean includeDeprecated() default false;
 
@@ -66,9 +68,11 @@ public @interface __TypePossibleTypesConnectionSubscriptionArguments {
 
   String $typeName() default "";
 
-  String $__type() default "";
+  String $typeNameType() default "";
 
   String $possibleTypeName() default "";
+
+  String $possibleTypeNameType() default "";
 
   String $includeDeprecated() default "";
 

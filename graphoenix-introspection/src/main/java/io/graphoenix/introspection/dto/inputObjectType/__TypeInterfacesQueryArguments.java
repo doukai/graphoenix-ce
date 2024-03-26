@@ -21,9 +21,11 @@ public class __TypeInterfacesQueryArguments implements MetaExpression {
 
   private StringExpression typeName;
 
-  private __TypeExpression __type;
+  private __TypeExpression typeNameType;
 
   private StringExpression interfaceName;
+
+  private __TypeExpression interfaceNameType;
 
   @DefaultValue("false")
   private Boolean includeDeprecated;
@@ -70,12 +72,12 @@ public class __TypeInterfacesQueryArguments implements MetaExpression {
     this.typeName = typeName;
   }
 
-  public __TypeExpression get__type() {
-    return this.__type;
+  public __TypeExpression getTypeNameType() {
+    return this.typeNameType;
   }
 
-  public void set__type(__TypeExpression __type) {
-    this.__type = __type;
+  public void setTypeNameType(__TypeExpression typeNameType) {
+    this.typeNameType = typeNameType;
   }
 
   public StringExpression getInterfaceName() {
@@ -84,6 +86,14 @@ public class __TypeInterfacesQueryArguments implements MetaExpression {
 
   public void setInterfaceName(StringExpression interfaceName) {
     this.interfaceName = interfaceName;
+  }
+
+  public __TypeExpression getInterfaceNameType() {
+    return this.interfaceNameType;
+  }
+
+  public void setInterfaceNameType(__TypeExpression interfaceNameType) {
+    this.interfaceNameType = interfaceNameType;
   }
 
   public Boolean getIncludeDeprecated() {

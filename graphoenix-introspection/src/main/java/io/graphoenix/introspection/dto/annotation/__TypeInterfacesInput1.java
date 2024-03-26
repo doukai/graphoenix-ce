@@ -17,9 +17,11 @@ public @interface __TypeInterfacesInput1 {
 
   String typeName() default "";
 
-  __TypeInput2 __type() default @__TypeInput2;
+  __TypeInput2 typeNameType() default @__TypeInput2;
 
   String interfaceName() default "";
+
+  __TypeInput2 interfaceNameType() default @__TypeInput2;
 
   boolean isDeprecated() default false;
 
@@ -45,9 +47,11 @@ public @interface __TypeInterfacesInput1 {
 
   String $typeName() default "";
 
-  String $__type() default "";
+  String $typeNameType() default "";
 
   String $interfaceName() default "";
+
+  String $interfaceNameType() default "";
 
   String $isDeprecated() default "";
 

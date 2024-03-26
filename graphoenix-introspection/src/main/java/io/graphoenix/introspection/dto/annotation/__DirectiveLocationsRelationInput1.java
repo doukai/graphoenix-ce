@@ -18,7 +18,7 @@ public @interface __DirectiveLocationsRelationInput1 {
 
   String __directiveRef() default "";
 
-  __DirectiveInput2 __directive() default @__DirectiveInput2;
+  __DirectiveInput2 __directiveRefType() default @__DirectiveInput2;
 
   __DirectiveLocation locationsRef() default __DirectiveLocation.QUERY;
 
@@ -46,7 +46,7 @@ public @interface __DirectiveLocationsRelationInput1 {
 
   String $__directiveRef() default "";
 
-  String $__directive() default "";
+  String $__directiveRefType() default "";
 
   String $locationsRef() default "";
 

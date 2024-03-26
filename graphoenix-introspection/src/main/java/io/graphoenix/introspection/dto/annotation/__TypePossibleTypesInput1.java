@@ -17,9 +17,11 @@ public @interface __TypePossibleTypesInput1 {
 
   String typeName() default "";
 
-  __TypeInput2 __type() default @__TypeInput2;
+  __TypeInput2 typeNameType() default @__TypeInput2;
 
   String possibleTypeName() default "";
+
+  __TypeInput2 possibleTypeNameType() default @__TypeInput2;
 
   boolean isDeprecated() default false;
 
@@ -45,9 +47,11 @@ public @interface __TypePossibleTypesInput1 {
 
   String $typeName() default "";
 
-  String $__type() default "";
+  String $typeNameType() default "";
 
   String $possibleTypeName() default "";
+
+  String $possibleTypeNameType() default "";
 
   String $isDeprecated() default "";
 

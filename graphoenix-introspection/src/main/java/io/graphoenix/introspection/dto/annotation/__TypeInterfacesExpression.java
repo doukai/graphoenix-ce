@@ -20,9 +20,11 @@ public @interface __TypeInterfacesExpression {
 
   StringExpression1 typeName() default @StringExpression1;
 
-  __TypeExpression1 __type() default @__TypeExpression1;
+  __TypeExpression1 typeNameType() default @__TypeExpression1;
 
   StringExpression1 interfaceName() default @StringExpression1;
+
+  __TypeExpression1 interfaceNameType() default @__TypeExpression1;
 
   boolean includeDeprecated() default false;
 
@@ -52,9 +54,11 @@ public @interface __TypeInterfacesExpression {
 
   String $typeName() default "";
 
-  String $__type() default "";
+  String $typeNameType() default "";
 
   String $interfaceName() default "";
+
+  String $interfaceNameType() default "";
 
   String $includeDeprecated() default "";
 

@@ -20,9 +20,11 @@ public @interface __TypePossibleTypesExpression1 {
 
   StringExpression2 typeName() default @StringExpression2;
 
-  __TypeExpression2 __type() default @__TypeExpression2;
+  __TypeExpression2 typeNameType() default @__TypeExpression2;
 
   StringExpression2 possibleTypeName() default @StringExpression2;
+
+  __TypeExpression2 possibleTypeNameType() default @__TypeExpression2;
 
   boolean includeDeprecated() default false;
 
@@ -52,9 +54,11 @@ public @interface __TypePossibleTypesExpression1 {
 
   String $typeName() default "";
 
-  String $__type() default "";
+  String $typeNameType() default "";
 
   String $possibleTypeName() default "";
+
+  String $possibleTypeNameType() default "";
 
   String $includeDeprecated() default "";
 

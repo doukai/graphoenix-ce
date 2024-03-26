@@ -20,7 +20,7 @@ public class __DirectiveLocationsRelationMutationArguments implements MetaInput 
 
   private String __directiveRef;
 
-  private __DirectiveInput __directive;
+  private __DirectiveInput __directiveRefType;
 
   private __DirectiveLocation locationsRef;
 
@@ -61,12 +61,12 @@ public class __DirectiveLocationsRelationMutationArguments implements MetaInput 
     this.__directiveRef = __directiveRef;
   }
 
-  public __DirectiveInput get__directive() {
-    return this.__directive;
+  public __DirectiveInput get__directiveRefType() {
+    return this.__directiveRefType;
   }
 
-  public void set__directive(__DirectiveInput __directive) {
-    this.__directive = __directive;
+  public void set__directiveRefType(__DirectiveInput __directiveRefType) {
+    this.__directiveRefType = __directiveRefType;
   }
 
   public __DirectiveLocation getLocationsRef() {

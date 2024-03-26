@@ -253,7 +253,7 @@ public class DocumentBuilder {
                                 .setType(documentManager.getFieldMapFromFieldDefinition(objectType, fieldDefinition).getTypeNameWithoutID())
                 )
                 .addField(
-                        new FieldDefinition(typeNameToFieldName(objectType.getName()))
+                        new FieldDefinition(fieldDefinition.getMapWithFromOrError() + SUFFIX_TYPE)
                                 .setType(new TypeName(objectType.getName()))
                                 .addDirective(
                                         new Directive(DIRECTIVE_MAP_NAME)
@@ -283,7 +283,7 @@ public class DocumentBuilder {
                                                         .setType(new TypeName(mapToFieldDefinition.getTypeNameWithoutID()))
                                         )
                                         .addField(
-                                                new FieldDefinition(typeNameToFieldName(fieldDefinition.getType().getTypeName().getName()))
+                                                new FieldDefinition(fieldDefinition.getMapWithToOrError() + SUFFIX_TYPE)
                                                         .setType(fieldDefinition.getType().getTypeName())
                                                         .addDirective(
                                                                 new Directive(DIRECTIVE_MAP_NAME)
@@ -308,7 +308,7 @@ public class DocumentBuilder {
                                 .setType(documentManager.getFieldFetchFromFieldDefinition(objectType, fieldDefinition).getTypeNameWithoutID())
                 )
                 .addField(
-                        new FieldDefinition(typeNameToFieldName(objectType.getName()))
+                        new FieldDefinition(fieldDefinition.getFetchWithFromOrError() + SUFFIX_TYPE)
                                 .setType(new TypeName(objectType.getName()))
                                 .addDirective(
                                         new Directive(DIRECTIVE_MAP_NAME)
@@ -338,7 +338,7 @@ public class DocumentBuilder {
                                                         .setType(new TypeName(fetchToFieldDefinition.getTypeNameWithoutID()))
                                         )
                                         .addField(
-                                                new FieldDefinition(typeNameToFieldName(fieldDefinition.getType().getTypeName().getName()))
+                                                new FieldDefinition(fieldDefinition.getFetchWithToOrError() + SUFFIX_TYPE)
                                                         .setType(fieldDefinition.getType().getTypeName())
                                                         .addDirective(
                                                                 new Directive(DIRECTIVE_FETCH_NAME)

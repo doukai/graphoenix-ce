@@ -229,5 +229,6 @@ public class Hammurabi {
     public static final String SUFFIX_MAX = "Max";
     public static final String SUFFIX_MIN = "Min";
     public static final String SUFFIX_REF = "Ref";
+    public static final String SUFFIX_TYPE = "Type";
     public static final String SUFFIX_RELATION = "Relation";
 }

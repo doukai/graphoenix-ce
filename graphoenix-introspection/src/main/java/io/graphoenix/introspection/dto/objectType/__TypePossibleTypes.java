@@ -20,9 +20,11 @@ public class __TypePossibleTypes implements Meta {
 
   private String typeName;
 
-  private __Type __type;
+  private __Type typeNameType;
 
   private String possibleTypeName;
+
+  private __Type possibleTypeNameType;
 
   private Boolean isDeprecated;
 
@@ -76,12 +78,12 @@ public class __TypePossibleTypes implements Meta {
     this.typeName = typeName;
   }
 
-  public __Type get__type() {
-    return this.__type;
+  public __Type getTypeNameType() {
+    return this.typeNameType;
   }
 
-  public void set__type(__Type __type) {
-    this.__type = __type;
+  public void setTypeNameType(__Type typeNameType) {
+    this.typeNameType = typeNameType;
   }
 
   public String getPossibleTypeName() {
@@ -90,6 +92,14 @@ public class __TypePossibleTypes implements Meta {
 
   public void setPossibleTypeName(String possibleTypeName) {
     this.possibleTypeName = possibleTypeName;
+  }
+
+  public __Type getPossibleTypeNameType() {
+    return this.possibleTypeNameType;
+  }
+
+  public void setPossibleTypeNameType(__Type possibleTypeNameType) {
+    this.possibleTypeNameType = possibleTypeNameType;
   }
 
   @Override

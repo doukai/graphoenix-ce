@@ -20,9 +20,11 @@ public class __TypeInterfaces implements Meta {
 
   private String typeName;
 
-  private __Type __type;
+  private __Type typeNameType;
 
   private String interfaceName;
+
+  private __Type interfaceNameType;
 
   private Boolean isDeprecated;
 
@@ -76,12 +78,12 @@ public class __TypeInterfaces implements Meta {
     this.typeName = typeName;
   }
 
-  public __Type get__type() {
-    return this.__type;
+  public __Type getTypeNameType() {
+    return this.typeNameType;
   }
 
-  public void set__type(__Type __type) {
-    this.__type = __type;
+  public void setTypeNameType(__Type typeNameType) {
+    this.typeNameType = typeNameType;
   }
 
   public String getInterfaceName() {
@@ -90,6 +92,14 @@ public class __TypeInterfaces implements Meta {
 
   public void setInterfaceName(String interfaceName) {
     this.interfaceName = interfaceName;
+  }
+
+  public __Type getInterfaceNameType() {
+    return this.interfaceNameType;
+  }
+
+  public void setInterfaceNameType(__Type interfaceNameType) {
+    this.interfaceNameType = interfaceNameType;
   }
 
   @Override
