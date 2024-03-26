@@ -1,0 +1,331 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.graphoenix.introspection.dto.objectType.grpc";
+
+package io.graphoenix.introspection;
+
+import "io/graphoenix/introspection/enums.proto";
+import "io/graphoenix/core/enums.proto";
+import "io/graphoenix/core/objects.proto";
+import "google/protobuf/timestamp.proto";
+
+message IntroSchema {
+    string id = 1;
+    repeated IntroType types = 2;
+    optional IntroType query_type = 3;
+    IntroType mutation_type = 4;
+    IntroType subscription_type = 5;
+    repeated IntroDirective directives = 6;
+    bool is_deprecated = 7;
+    int32 version = 8;
+    int32 realm_id = 9;
+    string create_user_id = 10;
+    google.protobuf.Timestamp create_time = 11;
+    string update_user_id = 12;
+    google.protobuf.Timestamp update_time = 13;
+    string create_group_id = 14;
+    string intro_typename = 15;
+    string query_type_name = 16;
+    string mutation_type_name = 17;
+    string subscription_type_name = 18;
+    IntroType types_aggregate = 19;
+    IntroTypeConnection types_connection = 20;
+    IntroDirective directives_aggregate = 21;
+    IntroDirectiveConnection directives_connection = 22;
+    int32 id_count = 23;
+    int32 id_max = 24;
+    int32 id_min = 25;
+    int32 query_type_name_count = 26;
+    string query_type_name_max = 27;
+    string query_type_name_min = 28;
+    int32 mutation_type_name_count = 29;
+    string mutation_type_name_max = 30;
+    string mutation_type_name_min = 31;
+    int32 subscription_type_name_count = 32;
+    string subscription_type_name_max = 33;
+    string subscription_type_name_min = 34;
+}
+message IntroType {
+    optional string name = 1;
+    IntroSchema of_schema = 2;
+    optional io.graphoenix.core.IntroTypeKind kind = 3;
+    string description = 4;
+    repeated IntroField fields = 5;
+    repeated IntroType interfaces = 6;
+    repeated IntroType possible_types = 7;
+    repeated IntroEnumValue enum_values = 8;
+    repeated IntroInputValue input_fields = 9;
+    IntroType of_type = 10;
+    bool is_deprecated = 11;
+    int32 version = 12;
+    int32 realm_id = 13;
+    string create_user_id = 14;
+    google.protobuf.Timestamp create_time = 15;
+    string update_user_id = 16;
+    google.protobuf.Timestamp update_time = 17;
+    string create_group_id = 18;
+    string intro_typename = 19;
+    int32 schema_id = 20;
+    string of_type_name = 21;
+    repeated IntroType__TypeRelation intro_type_type_relation = 22;
+    IntroField fields_aggregate = 23;
+    IntroFieldConnection fields_connection = 24;
+    IntroType interfaces_aggregate = 25;
+    IntroTypeConnection interfaces_connection = 26;
+    IntroType possible_types_aggregate = 27;
+    IntroTypeConnection possible_types_connection = 28;
+    IntroEnumValue enum_values_aggregate = 29;
+    IntroEnumValueConnection enum_values_connection = 30;
+    IntroInputValue input_fields_aggregate = 31;
+    IntroInputValueConnection input_fields_connection = 32;
+    IntroType__TypeRelation intro_type_type_relation_aggregate = 33;
+    IntroType__TypeRelationConnection intro_type_type_relation_connection = 34;
+    int32 name_count = 35;
+    string name_max = 36;
+    string name_min = 37;
+    int32 description_count = 38;
+    string description_max = 39;
+    string description_min = 40;
+    int32 of_type_name_count = 41;
+    string of_type_name_max = 42;
+    string of_type_name_min = 43;
+    int32 schema_id_count = 44;
+    int32 schema_id_sum = 45;
+    int32 schema_id_avg = 46;
+    int32 schema_id_max = 47;
+    int32 schema_id_min = 48;
+}
+message IntroField {
+    string id = 1;
+    string name = 2;
+    IntroType of_type = 3;
+    string description = 4;
+    repeated IntroInputValue args = 5;
+    optional IntroType type = 6;
+    string deprecation_reason = 7;
+    bool is_deprecated = 8;
+    int32 version = 9;
+    int32 realm_id = 10;
+    string create_user_id = 11;
+    google.protobuf.Timestamp create_time = 12;
+    string update_user_id = 13;
+    google.protobuf.Timestamp update_time = 14;
+    string create_group_id = 15;
+    string intro_typename = 16;
+    string of_type_name = 17;
+    string type_name = 18;
+    IntroInputValue args_aggregate = 19;
+    IntroInputValueConnection args_connection = 20;
+    int32 id_count = 21;
+    int32 id_max = 22;
+    int32 id_min = 23;
+    int32 name_count = 24;
+    string name_max = 25;
+    string name_min = 26;
+    int32 description_count = 27;
+    string description_max = 28;
+    string description_min = 29;
+    int32 deprecation_reason_count = 30;
+    string deprecation_reason_max = 31;
+    string deprecation_reason_min = 32;
+    int32 of_type_name_count = 33;
+    string of_type_name_max = 34;
+    string of_type_name_min = 35;
+    int32 type_name_count = 36;
+    string type_name_max = 37;
+    string type_name_min = 38;
+}
+message IntroInputValue {
+    string id = 1;
+    string name = 2;
+    IntroType of_type = 3;
+    int32 field_id = 4;
+    string directive_name = 5;
+    string description = 6;
+    optional IntroType type = 7;
+    string default_value = 8;
+    bool is_deprecated = 9;
+    int32 version = 10;
+    int32 realm_id = 11;
+    string create_user_id = 12;
+    google.protobuf.Timestamp create_time = 13;
+    string update_user_id = 14;
+    google.protobuf.Timestamp update_time = 15;
+    string create_group_id = 16;
+    string intro_typename = 17;
+    string of_type_name = 18;
+    string type_name = 19;
+    int32 id_count = 20;
+    int32 id_max = 21;
+    int32 id_min = 22;
+    int32 name_count = 23;
+    string name_max = 24;
+    string name_min = 25;
+    int32 directive_name_count = 26;
+    string directive_name_max = 27;
+    string directive_name_min = 28;
+    int32 description_count = 29;
+    string description_max = 30;
+    string description_min = 31;
+    int32 default_value_count = 32;
+    string default_value_max = 33;
+    string default_value_min = 34;
+    int32 of_type_name_count = 35;
+    string of_type_name_max = 36;
+    string of_type_name_min = 37;
+    int32 type_name_count = 38;
+    string type_name_max = 39;
+    string type_name_min = 40;
+    int32 field_id_count = 41;
+    int32 field_id_sum = 42;
+    int32 field_id_avg = 43;
+    int32 field_id_max = 44;
+    int32 field_id_min = 45;
+}
+message IntroEnumValue {
+    string id = 1;
+    string name = 2;
+    IntroType of_type = 3;
+    string description = 4;
+    string deprecation_reason = 5;
+    bool is_deprecated = 6;
+    int32 version = 7;
+    int32 realm_id = 8;
+    string create_user_id = 9;
+    google.protobuf.Timestamp create_time = 10;
+    string update_user_id = 11;
+    google.protobuf.Timestamp update_time = 12;
+    string create_group_id = 13;
+    string intro_typename = 14;
+    string of_type_name = 15;
+    int32 id_count = 16;
+    int32 id_max = 17;
+    int32 id_min = 18;
+    int32 name_count = 19;
+    string name_max = 20;
+    string name_min = 21;
+    int32 description_count = 22;
+    string description_max = 23;
+    string description_min = 24;
+    int32 deprecation_reason_count = 25;
+    string deprecation_reason_max = 26;
+    string deprecation_reason_min = 27;
+    int32 of_type_name_count = 28;
+    string of_type_name_max = 29;
+    string of_type_name_min = 30;
+}
+message IntroDirective {
+    optional string name = 1;
+    IntroSchema of_schema = 2;
+    string description = 3;
+    repeated io.graphoenix.core.IntroDirectiveLocation locations = 4;
+    repeated IntroInputValue args = 5;
+    optional bool is_repeatable = 6;
+    bool is_deprecated = 7;
+    int32 version = 8;
+    int32 realm_id = 9;
+    string create_user_id = 10;
+    google.protobuf.Timestamp create_time = 11;
+    string update_user_id = 12;
+    google.protobuf.Timestamp update_time = 13;
+    string create_group_id = 14;
+    string intro_typename = 15;
+    int32 schema_id = 16;
+    IntroInputValue args_aggregate = 17;
+    IntroInputValueConnection args_connection = 18;
+    int32 name_count = 19;
+    int32 name_max = 20;
+    int32 name_min = 21;
+    int32 description_count = 22;
+    string description_max = 23;
+    string description_min = 24;
+    int32 schema_id_count = 25;
+    int32 schema_id_sum = 26;
+    int32 schema_id_avg = 27;
+    int32 schema_id_max = 28;
+    int32 schema_id_min = 29;
+}
+message IntroType__TypeRelation {
+    string id = 1;
+    string intro_type_ref = 2;
+    IntroType intro_type = 3;
+    bool is_deprecated = 4;
+    int32 version = 5;
+    int32 realm_id = 6;
+    string create_user_id = 7;
+    google.protobuf.Timestamp create_time = 8;
+    string update_user_id = 9;
+    google.protobuf.Timestamp update_time = 10;
+    string create_group_id = 11;
+    string intro_typename = 12;
+    int32 id_count = 13;
+    int32 id_max = 14;
+    int32 id_min = 15;
+    int32 intro_type_ref_count = 16;
+    string intro_type_ref_max = 17;
+    string intro_type_ref_min = 18;
+}
+message IntroSchemaConnection {
+    int32 total_count = 1;
+    io.graphoenix.core.PageInfo page_info = 2;
+    repeated IntroSchemaEdge edges = 3;
+}
+message IntroSchemaEdge {
+    IntroSchema node = 1;
+    string cursor = 2;
+}
+message IntroTypeConnection {
+    int32 total_count = 1;
+    io.graphoenix.core.PageInfo page_info = 2;
+    repeated IntroTypeEdge edges = 3;
+}
+message IntroTypeEdge {
+    IntroType node = 1;
+    string cursor = 2;
+}
+message IntroFieldConnection {
+    int32 total_count = 1;
+    io.graphoenix.core.PageInfo page_info = 2;
+    repeated IntroFieldEdge edges = 3;
+}
+message IntroFieldEdge {
+    IntroField node = 1;
+    string cursor = 2;
+}
+message IntroInputValueConnection {
+    int32 total_count = 1;
+    io.graphoenix.core.PageInfo page_info = 2;
+    repeated IntroInputValueEdge edges = 3;
+}
+message IntroInputValueEdge {
+    IntroInputValue node = 1;
+    string cursor = 2;
+}
+message IntroEnumValueConnection {
+    int32 total_count = 1;
+    io.graphoenix.core.PageInfo page_info = 2;
+    repeated IntroEnumValueEdge edges = 3;
+}
+message IntroEnumValueEdge {
+    IntroEnumValue node = 1;
+    string cursor = 2;
+}
+message IntroDirectiveConnection {
+    int32 total_count = 1;
+    io.graphoenix.core.PageInfo page_info = 2;
+    repeated IntroDirectiveEdge edges = 3;
+}
+message IntroDirectiveEdge {
+    IntroDirective node = 1;
+    string cursor = 2;
+}
+message IntroType__TypeRelationConnection {
+    int32 total_count = 1;
+    io.graphoenix.core.PageInfo page_info = 2;
+    repeated IntroType__TypeRelationEdge edges = 3;
+}
+message IntroType__TypeRelationEdge {
+    IntroType__TypeRelation node = 1;
+    string cursor = 2;
+}

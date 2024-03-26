@@ -289,6 +289,12 @@ public class Document {
                 .map(Definition::asEnum);
     }
 
+    public Stream<ScalarType> getScalarTypes() {
+        return getDefinitions().stream()
+                .filter(Definition::isScalar)
+                .map(Definition::asScalar);
+    }
+
     public Stream<DirectiveDefinition> getDirectives() {
         return getDefinitions().stream()
                 .filter(Definition::isDirective)

@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.graphoenix.introspection.grpc";
+
+package io.graphoenix.introspection;
+
+import "io/graphoenix/introspection/enums.proto";
+import "io/graphoenix/introspection/objects.proto";
+import "io/graphoenix/introspection/interfaces.proto";
+import "io/graphoenix/introspection/input_objects.proto";
+import "io/graphoenix/core/enums.proto";
+import "google/protobuf/timestamp.proto";
+
+message MutationIntroSchemaResponse {
+    IntroSchema intro_schema = 1;
+}
+message MutationIntroSchemaListResponse {
+    repeated IntroSchema intro_schema_list = 1;
+}
+message MutationIntroTypeResponse {
+    IntroType intro_type = 1;
+}
+message MutationIntroTypeListResponse {
+    repeated IntroType intro_type_list = 1;
+}
+message MutationIntroFieldResponse {
+    IntroField intro_field = 1;
+}
+message MutationIntroFieldListResponse {
+    repeated IntroField intro_field_list = 1;
+}
+message MutationIntroInputValueResponse {
+    IntroInputValue intro_input_value = 1;
+}
+message MutationIntroInputValueListResponse {
+    repeated IntroInputValue intro_input_value_list = 1;
+}
+message MutationIntroEnumValueResponse {
+    IntroEnumValue intro_enum_value = 1;
+}
+message MutationIntroEnumValueListResponse {
+    repeated IntroEnumValue intro_enum_value_list = 1;
+}
+message MutationIntroDirectiveResponse {
+    IntroDirective intro_directive = 1;
+}
+message MutationIntroDirectiveListResponse {
+    repeated IntroDirective intro_directive_list = 1;
+}
+message MutationIntroTypeTypeRelationResponse {
+    IntroType__TypeRelation intro_type_type_relation = 1;
+}
+message MutationIntroTypeTypeRelationListResponse {
+    repeated IntroType__TypeRelation intro_type_type_relation_list = 1;
+}

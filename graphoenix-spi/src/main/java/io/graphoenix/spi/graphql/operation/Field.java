@@ -174,6 +174,22 @@ public class Field extends AbstractDefinition implements Selection {
         return this;
     }
 
+    public Field addArgument(String name, JsonValue jsonValue) {
+        if (this.arguments == null) {
+            this.arguments = new Arguments();
+        }
+        this.arguments.put(name, jsonValue);
+        return this;
+    }
+
+    public Field addArgument(String name, Object value) {
+        if (this.arguments == null) {
+            this.arguments = new Arguments();
+        }
+        this.arguments.put(name, value);
+        return this;
+    }
+
     public Field addArguments(JsonObject jsonObject) {
         return addArguments(new Arguments(jsonObject));
     }

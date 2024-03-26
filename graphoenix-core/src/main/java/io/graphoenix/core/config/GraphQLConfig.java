@@ -19,6 +19,9 @@ public class GraphQLConfig {
     private Boolean build = true;
 
     @Optional
+    private Boolean buildIntrospection = false;
+
+    @Optional
     private Boolean mapToLocalFetch = false;
 
     @Optional
@@ -54,6 +57,14 @@ public class GraphQLConfig {
 
     public void setBuild(Boolean build) {
         this.build = build;
+    }
+
+    public Boolean getBuildIntrospection() {
+        return buildIntrospection;
+    }
+
+    public void setBuildIntrospection(Boolean buildIntrospection) {
+        this.buildIntrospection = buildIntrospection;
     }
 
     public Boolean getMapToLocalFetch() {

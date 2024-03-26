@@ -1,0 +1,331 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.graphoenix.introspection.grpc";
+
+package io.graphoenix.introspection;
+
+import "io/graphoenix/introspection/enums.proto";
+import "io/graphoenix/introspection/objects.proto";
+import "io/graphoenix/introspection/interfaces.proto";
+import "io/graphoenix/introspection/input_objects.proto";
+import "io/graphoenix/core/enums.proto";
+import "google/protobuf/timestamp.proto";
+
+message MutationIntroSchemaRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    repeated IntroTypeInput types = 4;
+    IntroTypeInput query_type = 5;
+    IntroTypeInput mutation_type = 6;
+    IntroTypeInput subscription_type = 7;
+    repeated IntroDirectiveInput directives = 8;
+    bool is_deprecated = 9;
+    int32 version = 10;
+    int32 realm_id = 11;
+    string create_user_id = 12;
+    google.protobuf.Timestamp create_time = 13;
+    string update_user_id = 14;
+    google.protobuf.Timestamp update_time = 15;
+    string create_group_id = 16;
+    string intro_typename = 17;
+    string query_type_name = 18;
+    string mutation_type_name = 19;
+    string subscription_type_name = 20;
+    IntroSchemaExpression where = 21;
+}
+message MutationIntroSchemaListRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    repeated IntroTypeInput types = 4;
+    IntroTypeInput query_type = 5;
+    IntroTypeInput mutation_type = 6;
+    IntroTypeInput subscription_type = 7;
+    repeated IntroDirectiveInput directives = 8;
+    bool is_deprecated = 9;
+    int32 version = 10;
+    int32 realm_id = 11;
+    string create_user_id = 12;
+    google.protobuf.Timestamp create_time = 13;
+    string update_user_id = 14;
+    google.protobuf.Timestamp update_time = 15;
+    string create_group_id = 16;
+    string intro_typename = 17;
+    string query_type_name = 18;
+    string mutation_type_name = 19;
+    string subscription_type_name = 20;
+    repeated IntroSchemaInput list = 21;
+    IntroSchemaExpression where = 22;
+}
+message MutationIntroTypeRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string name = 3;
+    IntroSchemaInput of_schema = 4;
+    io.graphoenix.core.IntroTypeKind kind = 5;
+    string description = 6;
+    repeated IntroFieldInput fields = 7;
+    repeated IntroTypeInput interfaces = 8;
+    repeated IntroTypeInput possible_types = 9;
+    repeated IntroEnumValueInput enum_values = 10;
+    repeated IntroInputValueInput input_fields = 11;
+    IntroTypeInput of_type = 12;
+    bool is_deprecated = 13;
+    int32 version = 14;
+    int32 realm_id = 15;
+    string create_user_id = 16;
+    google.protobuf.Timestamp create_time = 17;
+    string update_user_id = 18;
+    google.protobuf.Timestamp update_time = 19;
+    string create_group_id = 20;
+    string intro_typename = 21;
+    int32 schema_id = 22;
+    string of_type_name = 23;
+    repeated IntroType__TypeRelationInput intro_type_type_relation = 24;
+    IntroTypeExpression where = 25;
+}
+message MutationIntroTypeListRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string name = 3;
+    IntroSchemaInput of_schema = 4;
+    io.graphoenix.core.IntroTypeKind kind = 5;
+    string description = 6;
+    repeated IntroFieldInput fields = 7;
+    repeated IntroTypeInput interfaces = 8;
+    repeated IntroTypeInput possible_types = 9;
+    repeated IntroEnumValueInput enum_values = 10;
+    repeated IntroInputValueInput input_fields = 11;
+    IntroTypeInput of_type = 12;
+    bool is_deprecated = 13;
+    int32 version = 14;
+    int32 realm_id = 15;
+    string create_user_id = 16;
+    google.protobuf.Timestamp create_time = 17;
+    string update_user_id = 18;
+    google.protobuf.Timestamp update_time = 19;
+    string create_group_id = 20;
+    string intro_typename = 21;
+    int32 schema_id = 22;
+    string of_type_name = 23;
+    repeated IntroType__TypeRelationInput intro_type_type_relation = 24;
+    repeated IntroTypeInput list = 25;
+    IntroTypeExpression where = 26;
+}
+message MutationIntroFieldRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string name = 4;
+    IntroTypeInput of_type = 5;
+    string description = 6;
+    repeated IntroInputValueInput args = 7;
+    IntroTypeInput type = 8;
+    string deprecation_reason = 9;
+    bool is_deprecated = 10;
+    int32 version = 11;
+    int32 realm_id = 12;
+    string create_user_id = 13;
+    google.protobuf.Timestamp create_time = 14;
+    string update_user_id = 15;
+    google.protobuf.Timestamp update_time = 16;
+    string create_group_id = 17;
+    string intro_typename = 18;
+    string of_type_name = 19;
+    string type_name = 20;
+    IntroFieldExpression where = 21;
+}
+message MutationIntroFieldListRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string name = 4;
+    IntroTypeInput of_type = 5;
+    string description = 6;
+    repeated IntroInputValueInput args = 7;
+    IntroTypeInput type = 8;
+    string deprecation_reason = 9;
+    bool is_deprecated = 10;
+    int32 version = 11;
+    int32 realm_id = 12;
+    string create_user_id = 13;
+    google.protobuf.Timestamp create_time = 14;
+    string update_user_id = 15;
+    google.protobuf.Timestamp update_time = 16;
+    string create_group_id = 17;
+    string intro_typename = 18;
+    string of_type_name = 19;
+    string type_name = 20;
+    repeated IntroFieldInput list = 21;
+    IntroFieldExpression where = 22;
+}
+message MutationIntroInputValueRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string name = 4;
+    IntroTypeInput of_type = 5;
+    int32 field_id = 6;
+    string directive_name = 7;
+    string description = 8;
+    IntroTypeInput type = 9;
+    string default_value = 10;
+    bool is_deprecated = 11;
+    int32 version = 12;
+    int32 realm_id = 13;
+    string create_user_id = 14;
+    google.protobuf.Timestamp create_time = 15;
+    string update_user_id = 16;
+    google.protobuf.Timestamp update_time = 17;
+    string create_group_id = 18;
+    string intro_typename = 19;
+    string of_type_name = 20;
+    string type_name = 21;
+    IntroInputValueExpression where = 22;
+}
+message MutationIntroInputValueListRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string name = 4;
+    IntroTypeInput of_type = 5;
+    int32 field_id = 6;
+    string directive_name = 7;
+    string description = 8;
+    IntroTypeInput type = 9;
+    string default_value = 10;
+    bool is_deprecated = 11;
+    int32 version = 12;
+    int32 realm_id = 13;
+    string create_user_id = 14;
+    google.protobuf.Timestamp create_time = 15;
+    string update_user_id = 16;
+    google.protobuf.Timestamp update_time = 17;
+    string create_group_id = 18;
+    string intro_typename = 19;
+    string of_type_name = 20;
+    string type_name = 21;
+    repeated IntroInputValueInput list = 22;
+    IntroInputValueExpression where = 23;
+}
+message MutationIntroEnumValueRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string name = 4;
+    IntroTypeInput of_type = 5;
+    string description = 6;
+    string deprecation_reason = 7;
+    bool is_deprecated = 8;
+    int32 version = 9;
+    int32 realm_id = 10;
+    string create_user_id = 11;
+    google.protobuf.Timestamp create_time = 12;
+    string update_user_id = 13;
+    google.protobuf.Timestamp update_time = 14;
+    string create_group_id = 15;
+    string intro_typename = 16;
+    string of_type_name = 17;
+    IntroEnumValueExpression where = 18;
+}
+message MutationIntroEnumValueListRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string name = 4;
+    IntroTypeInput of_type = 5;
+    string description = 6;
+    string deprecation_reason = 7;
+    bool is_deprecated = 8;
+    int32 version = 9;
+    int32 realm_id = 10;
+    string create_user_id = 11;
+    google.protobuf.Timestamp create_time = 12;
+    string update_user_id = 13;
+    google.protobuf.Timestamp update_time = 14;
+    string create_group_id = 15;
+    string intro_typename = 16;
+    string of_type_name = 17;
+    repeated IntroEnumValueInput list = 18;
+    IntroEnumValueExpression where = 19;
+}
+message MutationIntroDirectiveRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string name = 3;
+    IntroSchemaInput of_schema = 4;
+    string description = 5;
+    repeated io.graphoenix.core.IntroDirectiveLocation locations = 6;
+    repeated IntroInputValueInput args = 7;
+    bool is_repeatable = 8;
+    bool is_deprecated = 9;
+    int32 version = 10;
+    int32 realm_id = 11;
+    string create_user_id = 12;
+    google.protobuf.Timestamp create_time = 13;
+    string update_user_id = 14;
+    google.protobuf.Timestamp update_time = 15;
+    string create_group_id = 16;
+    string intro_typename = 17;
+    int32 schema_id = 18;
+    IntroDirectiveExpression where = 19;
+}
+message MutationIntroDirectiveListRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string name = 3;
+    IntroSchemaInput of_schema = 4;
+    string description = 5;
+    repeated io.graphoenix.core.IntroDirectiveLocation locations = 6;
+    repeated IntroInputValueInput args = 7;
+    bool is_repeatable = 8;
+    bool is_deprecated = 9;
+    int32 version = 10;
+    int32 realm_id = 11;
+    string create_user_id = 12;
+    google.protobuf.Timestamp create_time = 13;
+    string update_user_id = 14;
+    google.protobuf.Timestamp update_time = 15;
+    string create_group_id = 16;
+    string intro_typename = 17;
+    int32 schema_id = 18;
+    repeated IntroDirectiveInput list = 19;
+    IntroDirectiveExpression where = 20;
+}
+message MutationIntroTypeTypeRelationRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string intro_type_ref = 4;
+    IntroTypeInput intro_type = 5;
+    bool is_deprecated = 6;
+    int32 version = 7;
+    int32 realm_id = 8;
+    string create_user_id = 9;
+    google.protobuf.Timestamp create_time = 10;
+    string update_user_id = 11;
+    google.protobuf.Timestamp update_time = 12;
+    string create_group_id = 13;
+    string intro_typename = 14;
+    IntroType__TypeRelationExpression where = 15;
+}
+message MutationIntroTypeTypeRelationListRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string intro_type_ref = 4;
+    IntroTypeInput intro_type = 5;
+    bool is_deprecated = 6;
+    int32 version = 7;
+    int32 realm_id = 8;
+    string create_user_id = 9;
+    google.protobuf.Timestamp create_time = 10;
+    string update_user_id = 11;
+    google.protobuf.Timestamp update_time = 12;
+    string create_group_id = 13;
+    string intro_typename = 14;
+    repeated IntroType__TypeRelationInput list = 15;
+    IntroType__TypeRelationExpression where = 16;
+}

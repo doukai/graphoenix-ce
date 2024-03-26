@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.graphoenix.introspection.grpc";
+
+package io.graphoenix.introspection;
+
+import "io/graphoenix/introspection/enums.proto";
+import "io/graphoenix/introspection/objects.proto";
+import "io/graphoenix/introspection/interfaces.proto";
+import "io/graphoenix/introspection/input_objects.proto";
+import "io/graphoenix/introspection/query_requests.proto";
+import "io/graphoenix/introspection/query_responses.proto";
+
+service QueryService {
+    rpc IntroSchema (QueryIntroSchemaRequest) returns (QueryIntroSchemaResponse);
+    rpc IntroSchemaList (QueryIntroSchemaListRequest) returns (QueryIntroSchemaListResponse);
+    rpc IntroSchemaConnection (QueryIntroSchemaConnectionRequest) returns (QueryIntroSchemaConnectionResponse);
+    rpc IntroType (QueryIntroTypeRequest) returns (QueryIntroTypeResponse);
+    rpc IntroTypeList (QueryIntroTypeListRequest) returns (QueryIntroTypeListResponse);
+    rpc IntroTypeConnection (QueryIntroTypeConnectionRequest) returns (QueryIntroTypeConnectionResponse);
+    rpc IntroField (QueryIntroFieldRequest) returns (QueryIntroFieldResponse);
+    rpc IntroFieldList (QueryIntroFieldListRequest) returns (QueryIntroFieldListResponse);
+    rpc IntroFieldConnection (QueryIntroFieldConnectionRequest) returns (QueryIntroFieldConnectionResponse);
+    rpc IntroInputValue (QueryIntroInputValueRequest) returns (QueryIntroInputValueResponse);
+    rpc IntroInputValueList (QueryIntroInputValueListRequest) returns (QueryIntroInputValueListResponse);
+    rpc IntroInputValueConnection (QueryIntroInputValueConnectionRequest) returns (QueryIntroInputValueConnectionResponse);
+    rpc IntroEnumValue (QueryIntroEnumValueRequest) returns (QueryIntroEnumValueResponse);
+    rpc IntroEnumValueList (QueryIntroEnumValueListRequest) returns (QueryIntroEnumValueListResponse);
+    rpc IntroEnumValueConnection (QueryIntroEnumValueConnectionRequest) returns (QueryIntroEnumValueConnectionResponse);
+    rpc IntroDirective (QueryIntroDirectiveRequest) returns (QueryIntroDirectiveResponse);
+    rpc IntroDirectiveList (QueryIntroDirectiveListRequest) returns (QueryIntroDirectiveListResponse);
+    rpc IntroDirectiveConnection (QueryIntroDirectiveConnectionRequest) returns (QueryIntroDirectiveConnectionResponse);
+    rpc IntroTypeTypeRelation (QueryIntroTypeTypeRelationRequest) returns (QueryIntroTypeTypeRelationResponse);
+    rpc IntroTypeTypeRelationList (QueryIntroTypeTypeRelationListRequest) returns (QueryIntroTypeTypeRelationListResponse);
+    rpc IntroTypeTypeRelationConnection (QueryIntroTypeTypeRelationConnectionRequest) returns (QueryIntroTypeTypeRelationConnectionResponse);
+}
