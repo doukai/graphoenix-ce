@@ -56,7 +56,9 @@ public @interface __TypeInput {
 
   String ofTypeName() default "";
 
-  __Type__TypeRelationInput1[] __typeTypeRelation() default {};
+  __TypeInterfacesInput1[] __typeInterfaces() default {};
+
+  __TypePossibleTypesInput1[] __typePossibleTypes() default {};
 
   __TypeExpression1 where() default @__TypeExpression1;
 
@@ -102,7 +104,9 @@ public @interface __TypeInput {
 
   String $ofTypeName() default "";
 
-  String $__typeTypeRelation() default "";
+  String $__typeInterfaces() default "";
+
+  String $__typePossibleTypes() default "";
 
   String $where() default "";
 }

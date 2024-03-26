@@ -53,6 +53,8 @@ public class __DirectiveListQueryArguments implements MetaExpression {
 
   private IntExpression schemaId;
 
+  private __DirectiveLocationsRelationExpression __directiveLocationsRelation;
+
   private __DirectiveOrderBy orderBy;
 
   private Collection<String> groupBy;
@@ -213,6 +215,15 @@ public class __DirectiveListQueryArguments implements MetaExpression {
 
   public void setSchemaId(IntExpression schemaId) {
     this.schemaId = schemaId;
+  }
+
+  public __DirectiveLocationsRelationExpression get__directiveLocationsRelation() {
+    return this.__directiveLocationsRelation;
+  }
+
+  public void set__directiveLocationsRelation(
+      __DirectiveLocationsRelationExpression __directiveLocationsRelation) {
+    this.__directiveLocationsRelation = __directiveLocationsRelation;
   }
 
   public __DirectiveOrderBy getOrderBy() {

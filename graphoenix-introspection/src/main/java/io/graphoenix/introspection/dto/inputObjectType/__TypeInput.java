@@ -60,7 +60,9 @@ public class __TypeInput implements MetaInput {
 
   private String ofTypeName;
 
-  private Collection<__Type__TypeRelationInput> __typeTypeRelation;
+  private Collection<__TypeInterfacesInput> __typeInterfaces;
+
+  private Collection<__TypePossibleTypesInput> __typePossibleTypes;
 
   private __TypeExpression where;
 
@@ -246,12 +248,20 @@ public class __TypeInput implements MetaInput {
     this.ofTypeName = ofTypeName;
   }
 
-  public Collection<__Type__TypeRelationInput> get__typeTypeRelation() {
-    return this.__typeTypeRelation;
+  public Collection<__TypeInterfacesInput> get__typeInterfaces() {
+    return this.__typeInterfaces;
   }
 
-  public void set__typeTypeRelation(Collection<__Type__TypeRelationInput> __typeTypeRelation) {
-    this.__typeTypeRelation = __typeTypeRelation;
+  public void set__typeInterfaces(Collection<__TypeInterfacesInput> __typeInterfaces) {
+    this.__typeInterfaces = __typeInterfaces;
+  }
+
+  public Collection<__TypePossibleTypesInput> get__typePossibleTypes() {
+    return this.__typePossibleTypes;
+  }
+
+  public void set__typePossibleTypes(Collection<__TypePossibleTypesInput> __typePossibleTypes) {
+    this.__typePossibleTypes = __typePossibleTypes;
   }
 
   public __TypeExpression getWhere() {

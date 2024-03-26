@@ -63,7 +63,9 @@ public class __Type implements Meta {
 
   private String ofTypeName;
 
-  private Collection<__Type__TypeRelation> __typeTypeRelation;
+  private Collection<__TypeInterfaces> __typeInterfaces;
+
+  private Collection<__TypePossibleTypes> __typePossibleTypes;
 
   private __Field fieldsAggregate;
 
@@ -85,9 +87,13 @@ public class __Type implements Meta {
 
   private __InputValueConnection inputFieldsConnection;
 
-  private __Type__TypeRelation __typeTypeRelationAggregate;
+  private __TypeInterfaces __typeInterfacesAggregate;
 
-  private __Type__TypeRelationConnection __typeTypeRelationConnection;
+  private __TypeInterfacesConnection __typeInterfacesConnection;
+
+  private __TypePossibleTypes __typePossibleTypesAggregate;
+
+  private __TypePossibleTypesConnection __typePossibleTypesConnection;
 
   private Integer nameCount;
 
@@ -301,12 +307,20 @@ public class __Type implements Meta {
     this.ofTypeName = ofTypeName;
   }
 
-  public Collection<__Type__TypeRelation> get__typeTypeRelation() {
-    return this.__typeTypeRelation;
+  public Collection<__TypeInterfaces> get__typeInterfaces() {
+    return this.__typeInterfaces;
   }
 
-  public void set__typeTypeRelation(Collection<__Type__TypeRelation> __typeTypeRelation) {
-    this.__typeTypeRelation = __typeTypeRelation;
+  public void set__typeInterfaces(Collection<__TypeInterfaces> __typeInterfaces) {
+    this.__typeInterfaces = __typeInterfaces;
+  }
+
+  public Collection<__TypePossibleTypes> get__typePossibleTypes() {
+    return this.__typePossibleTypes;
+  }
+
+  public void set__typePossibleTypes(Collection<__TypePossibleTypes> __typePossibleTypes) {
+    this.__typePossibleTypes = __typePossibleTypes;
   }
 
   public __Field getFieldsAggregate() {
@@ -389,21 +403,37 @@ public class __Type implements Meta {
     this.inputFieldsConnection = inputFieldsConnection;
   }
 
-  public __Type__TypeRelation get__typeTypeRelationAggregate() {
-    return this.__typeTypeRelationAggregate;
+  public __TypeInterfaces get__typeInterfacesAggregate() {
+    return this.__typeInterfacesAggregate;
   }
 
-  public void set__typeTypeRelationAggregate(__Type__TypeRelation __typeTypeRelationAggregate) {
-    this.__typeTypeRelationAggregate = __typeTypeRelationAggregate;
+  public void set__typeInterfacesAggregate(__TypeInterfaces __typeInterfacesAggregate) {
+    this.__typeInterfacesAggregate = __typeInterfacesAggregate;
   }
 
-  public __Type__TypeRelationConnection get__typeTypeRelationConnection() {
-    return this.__typeTypeRelationConnection;
+  public __TypeInterfacesConnection get__typeInterfacesConnection() {
+    return this.__typeInterfacesConnection;
   }
 
-  public void set__typeTypeRelationConnection(
-      __Type__TypeRelationConnection __typeTypeRelationConnection) {
-    this.__typeTypeRelationConnection = __typeTypeRelationConnection;
+  public void set__typeInterfacesConnection(__TypeInterfacesConnection __typeInterfacesConnection) {
+    this.__typeInterfacesConnection = __typeInterfacesConnection;
+  }
+
+  public __TypePossibleTypes get__typePossibleTypesAggregate() {
+    return this.__typePossibleTypesAggregate;
+  }
+
+  public void set__typePossibleTypesAggregate(__TypePossibleTypes __typePossibleTypesAggregate) {
+    this.__typePossibleTypesAggregate = __typePossibleTypesAggregate;
+  }
+
+  public __TypePossibleTypesConnection get__typePossibleTypesConnection() {
+    return this.__typePossibleTypesConnection;
+  }
+
+  public void set__typePossibleTypesConnection(
+      __TypePossibleTypesConnection __typePossibleTypesConnection) {
+    this.__typePossibleTypesConnection = __typePossibleTypesConnection;
   }
 
   public Integer getNameCount() {

@@ -50,6 +50,9 @@ public @interface __DirectiveListQueryArguments {
 
   IntExpression1 schemaId() default @IntExpression1;
 
+  __DirectiveLocationsRelationExpression1 __directiveLocationsRelation(
+      ) default @__DirectiveLocationsRelationExpression1;
+
   __DirectiveOrderBy1 orderBy() default @__DirectiveOrderBy1;
 
   String[] groupBy() default {};
@@ -101,6 +104,8 @@ public @interface __DirectiveListQueryArguments {
   String $__typename() default "";
 
   String $schemaId() default "";
+
+  String $__directiveLocationsRelation() default "";
 
   String $orderBy() default "";
 

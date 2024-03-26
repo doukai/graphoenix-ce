@@ -47,12 +47,12 @@ public class DefaultOperationHandler implements OperationHandler {
     private final Provider<SubscriptionDataListener> subscriptionDataListenerProvider = BeanContext.getProvider(SubscriptionDataListener.class);
 
     @Override
-    public Publisher<JsonValue> handle(Operation operation, Map<String, JsonValue> variables, String token, String operationId) {
+    public Publisher<JsonValue> handle(Operation operation, Map<String, JsonValue> variables, Integer groupSize, String token, String operationId) {
         switch (operation.getOperationType()) {
             case OPERATION_QUERY_NAME:
                 return query(operation, variables);
             case OPERATION_MUTATION_NAME:
-                return mutation(operation, variables);
+                return mutation(operation, variables, groupSize);
             case OPERATION_SUBSCRIPTION_NAME:
                 return subscription(operation, variables, token, operationId);
             default:
@@ -82,7 +82,7 @@ public class DefaultOperationHandler implements OperationHandler {
     }
 
     @Transactional
-    public Mono<JsonValue> mutation(Operation operation, Map<String, JsonValue> variables) {
+    public Mono<JsonValue> mutation(Operation operation, Map<String, JsonValue> variables, Integer groupSize) {
         return Flux.fromIterable(operationBeforeHandlerProviderList)
                 .reduce(
                         Mono.just(operation),
@@ -90,7 +90,7 @@ public class DefaultOperationHandler implements OperationHandler {
                 )
                 .flatMap(operationMono -> operationMono)
                 .flatMap(operationAfterHandler ->
-                        mutationHandlerProvider.get().mutation(operationAfterHandler)
+                        mutationHandlerProvider.get().mutation(operationAfterHandler, groupSize)
                                 .flatMap(jsonValue ->
                                         Flux.fromIterable(operationAfterHandlerProviderList)
                                                 .reduce(

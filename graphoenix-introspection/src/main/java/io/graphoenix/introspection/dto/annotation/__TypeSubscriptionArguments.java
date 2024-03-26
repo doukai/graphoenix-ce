@@ -59,7 +59,9 @@ public @interface __TypeSubscriptionArguments {
 
   StringExpression1 ofTypeName() default @StringExpression1;
 
-  __Type__TypeRelationExpression1 __typeTypeRelation() default @__Type__TypeRelationExpression1;
+  __TypeInterfacesExpression1 __typeInterfaces() default @__TypeInterfacesExpression1;
+
+  __TypePossibleTypesExpression1 __typePossibleTypes() default @__TypePossibleTypesExpression1;
 
   String[] groupBy() default {};
 
@@ -111,7 +113,9 @@ public @interface __TypeSubscriptionArguments {
 
   String $ofTypeName() default "";
 
-  String $__typeTypeRelation() default "";
+  String $__typeInterfaces() default "";
+
+  String $__typePossibleTypes() default "";
 
   String $groupBy() default "";
 

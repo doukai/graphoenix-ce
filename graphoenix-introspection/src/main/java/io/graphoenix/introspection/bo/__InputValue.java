@@ -1,7 +1,6 @@
 package io.graphoenix.introspection.bo;
 
 import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
-import io.graphoenix.spi.graphql.common.ValueWithVariable;
 
 public class __InputValue {
 
@@ -11,7 +10,7 @@ public class __InputValue {
 
     private __Type type;
 
-    private ValueWithVariable defaultValue;
+    private String defaultValue;
 
     public String getName() {
         return name;
@@ -37,11 +36,11 @@ public class __InputValue {
         this.type = type;
     }
 
-    public ValueWithVariable getDefaultValue() {
+    public String getDefaultValue() {
         return defaultValue;
     }
 
-    public void setDefaultValue(ValueWithVariable defaultValue) {
+    public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
     }
 

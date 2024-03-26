@@ -57,12 +57,30 @@ public @interface Subscription {
   __DirectiveConnectionSubscriptionArguments __directiveConnection(
       ) default @__DirectiveConnectionSubscriptionArguments;
 
-  __Type__TypeRelationSubscriptionArguments __typeTypeRelation(
-      ) default @__Type__TypeRelationSubscriptionArguments;
+  __TypeInterfacesSubscriptionArguments __typeInterfaces(
+      ) default @__TypeInterfacesSubscriptionArguments;
 
-  __Type__TypeRelationListSubscriptionArguments __typeTypeRelationList(
-      ) default @__Type__TypeRelationListSubscriptionArguments;
+  __TypeInterfacesListSubscriptionArguments __typeInterfacesList(
+      ) default @__TypeInterfacesListSubscriptionArguments;
 
-  __Type__TypeRelationConnectionSubscriptionArguments __typeTypeRelationConnection(
-      ) default @__Type__TypeRelationConnectionSubscriptionArguments;
+  __TypeInterfacesConnectionSubscriptionArguments __typeInterfacesConnection(
+      ) default @__TypeInterfacesConnectionSubscriptionArguments;
+
+  __TypePossibleTypesSubscriptionArguments __typePossibleTypes(
+      ) default @__TypePossibleTypesSubscriptionArguments;
+
+  __TypePossibleTypesListSubscriptionArguments __typePossibleTypesList(
+      ) default @__TypePossibleTypesListSubscriptionArguments;
+
+  __TypePossibleTypesConnectionSubscriptionArguments __typePossibleTypesConnection(
+      ) default @__TypePossibleTypesConnectionSubscriptionArguments;
+
+  __DirectiveLocationsRelationSubscriptionArguments __directiveLocationsRelation(
+      ) default @__DirectiveLocationsRelationSubscriptionArguments;
+
+  __DirectiveLocationsRelationListSubscriptionArguments __directiveLocationsRelationList(
+      ) default @__DirectiveLocationsRelationListSubscriptionArguments;
+
+  __DirectiveLocationsRelationConnectionSubscriptionArguments __directiveLocationsRelationConnection(
+      ) default @__DirectiveLocationsRelationConnectionSubscriptionArguments;
 }

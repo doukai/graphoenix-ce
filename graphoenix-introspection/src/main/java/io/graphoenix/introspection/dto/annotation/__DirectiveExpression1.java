@@ -50,6 +50,9 @@ public @interface __DirectiveExpression1 {
 
   IntExpression2 schemaId() default @IntExpression2;
 
+  __DirectiveLocationsRelationExpression2 __directiveLocationsRelation(
+      ) default @__DirectiveLocationsRelationExpression2;
+
   boolean not() default false;
 
   Conditional cond() default Conditional.AND;
@@ -87,6 +90,8 @@ public @interface __DirectiveExpression1 {
   String $__typename() default "";
 
   String $schemaId() default "";
+
+  String $__directiveLocationsRelation() default "";
 
   String $not() default "";
 

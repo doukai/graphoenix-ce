@@ -61,7 +61,9 @@ public class __TypeQueryArguments implements MetaExpression {
 
   private StringExpression ofTypeName;
 
-  private __Type__TypeRelationExpression __typeTypeRelation;
+  private __TypeInterfacesExpression __typeInterfaces;
+
+  private __TypePossibleTypesExpression __typePossibleTypes;
 
   private Collection<String> groupBy;
 
@@ -253,12 +255,20 @@ public class __TypeQueryArguments implements MetaExpression {
     this.ofTypeName = ofTypeName;
   }
 
-  public __Type__TypeRelationExpression get__typeTypeRelation() {
-    return this.__typeTypeRelation;
+  public __TypeInterfacesExpression get__typeInterfaces() {
+    return this.__typeInterfaces;
   }
 
-  public void set__typeTypeRelation(__Type__TypeRelationExpression __typeTypeRelation) {
-    this.__typeTypeRelation = __typeTypeRelation;
+  public void set__typeInterfaces(__TypeInterfacesExpression __typeInterfaces) {
+    this.__typeInterfaces = __typeInterfaces;
+  }
+
+  public __TypePossibleTypesExpression get__typePossibleTypes() {
+    return this.__typePossibleTypes;
+  }
+
+  public void set__typePossibleTypes(__TypePossibleTypesExpression __typePossibleTypes) {
+    this.__typePossibleTypes = __typePossibleTypes;
   }
 
   public Collection<String> getGroupBy() {

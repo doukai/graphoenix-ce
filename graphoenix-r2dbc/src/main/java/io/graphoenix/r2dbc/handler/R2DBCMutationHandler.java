@@ -44,12 +44,21 @@ public class R2DBCMutationHandler implements MutationHandler {
     }
 
     @Override
-    public Mono<JsonValue> mutation(Operation operation) {
+    public Mono<JsonValue> mutation(Operation operation, Integer groupSize) {
         if (r2DBCConfig.getAllowMultiQueries()) {
-            return mutationExecutor.executeMutations(mutationTranslator.operationToStatementSQLStream(operation))
-                    .doOnSuccess(count -> Logger.info("mutation count: {}", count))
-                    .then(queryExecutor.executeQuery(queryTranslator.operationToSelectSQL(operation)))
-                    .map(json -> jsonProvider.createReader(new StringReader(json)).readValue());
+            if (groupSize != null) {
+                return mutationExecutor.executeMutationsInBatchByGroup(mutationTranslator.operationToStatementSQLStream(operation), groupSize)
+                        .doOnNext(count -> Logger.info("mutation count: {}", count))
+                        .reduce(Long::sum)
+                        .doOnSuccess(count -> Logger.info("mutation total count: {}", count))
+                        .then(queryExecutor.executeQuery(queryTranslator.operationToSelectSQL(operation)))
+                        .map(json -> jsonProvider.createReader(new StringReader(json)).readValue());
+            } else {
+                return mutationExecutor.executeMutations(mutationTranslator.operationToStatementSQLStream(operation))
+                        .doOnSuccess(count -> Logger.info("mutation count: {}", count))
+                        .then(queryExecutor.executeQuery(queryTranslator.operationToSelectSQL(operation)))
+                        .map(json -> jsonProvider.createReader(new StringReader(json)).readValue());
+            }
         } else {
             return mutationExecutor.executeMutationsFlux(mutationTranslator.operationToStatementSQLStream(operation))
                     .doOnNext(count -> Logger.info("mutation count: {}", count))

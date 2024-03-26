@@ -56,7 +56,9 @@ public @interface __TypeListMutationArguments {
 
   String ofTypeName() default "";
 
-  __Type__TypeRelationInput1[] __typeTypeRelation() default {};
+  __TypeInterfacesInput1[] __typeInterfaces() default {};
+
+  __TypePossibleTypesInput1[] __typePossibleTypes() default {};
 
   __TypeInput1[] list() default {};
 
@@ -104,7 +106,9 @@ public @interface __TypeListMutationArguments {
 
   String $ofTypeName() default "";
 
-  String $__typeTypeRelation() default "";
+  String $__typeInterfaces() default "";
+
+  String $__typePossibleTypes() default "";
 
   String $list() default "";
 

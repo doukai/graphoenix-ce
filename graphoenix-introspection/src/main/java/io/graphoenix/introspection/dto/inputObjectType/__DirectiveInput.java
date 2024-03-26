@@ -50,6 +50,8 @@ public class __DirectiveInput implements MetaInput {
 
   private Integer schemaId;
 
+  private Collection<__DirectiveLocationsRelationInput> __directiveLocationsRelation;
+
   private __DirectiveExpression where;
 
   public String getName() {
@@ -192,6 +194,15 @@ public class __DirectiveInput implements MetaInput {
 
   public void setSchemaId(Integer schemaId) {
     this.schemaId = schemaId;
+  }
+
+  public Collection<__DirectiveLocationsRelationInput> get__directiveLocationsRelation() {
+    return this.__directiveLocationsRelation;
+  }
+
+  public void set__directiveLocationsRelation(
+      Collection<__DirectiveLocationsRelationInput> __directiveLocationsRelation) {
+    this.__directiveLocationsRelation = __directiveLocationsRelation;
   }
 
   public __DirectiveExpression getWhere() {

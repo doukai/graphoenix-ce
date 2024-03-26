@@ -33,9 +33,17 @@ public class Mutation {
 
   private Collection<__Directive> __directiveList;
 
-  private __Type__TypeRelation __typeTypeRelation;
+  private __TypeInterfaces __typeInterfaces;
 
-  private Collection<__Type__TypeRelation> __typeTypeRelationList;
+  private Collection<__TypeInterfaces> __typeInterfacesList;
+
+  private __TypePossibleTypes __typePossibleTypes;
+
+  private Collection<__TypePossibleTypes> __typePossibleTypesList;
+
+  private __DirectiveLocationsRelation __directiveLocationsRelation;
+
+  private Collection<__DirectiveLocationsRelation> __directiveLocationsRelationList;
 
   public __Schema get__schema() {
     return this.__schema;
@@ -133,19 +141,53 @@ public class Mutation {
     this.__directiveList = __directiveList;
   }
 
-  public __Type__TypeRelation get__typeTypeRelation() {
-    return this.__typeTypeRelation;
+  public __TypeInterfaces get__typeInterfaces() {
+    return this.__typeInterfaces;
   }
 
-  public void set__typeTypeRelation(__Type__TypeRelation __typeTypeRelation) {
-    this.__typeTypeRelation = __typeTypeRelation;
+  public void set__typeInterfaces(__TypeInterfaces __typeInterfaces) {
+    this.__typeInterfaces = __typeInterfaces;
   }
 
-  public Collection<__Type__TypeRelation> get__typeTypeRelationList() {
-    return this.__typeTypeRelationList;
+  public Collection<__TypeInterfaces> get__typeInterfacesList() {
+    return this.__typeInterfacesList;
   }
 
-  public void set__typeTypeRelationList(Collection<__Type__TypeRelation> __typeTypeRelationList) {
-    this.__typeTypeRelationList = __typeTypeRelationList;
+  public void set__typeInterfacesList(Collection<__TypeInterfaces> __typeInterfacesList) {
+    this.__typeInterfacesList = __typeInterfacesList;
+  }
+
+  public __TypePossibleTypes get__typePossibleTypes() {
+    return this.__typePossibleTypes;
+  }
+
+  public void set__typePossibleTypes(__TypePossibleTypes __typePossibleTypes) {
+    this.__typePossibleTypes = __typePossibleTypes;
+  }
+
+  public Collection<__TypePossibleTypes> get__typePossibleTypesList() {
+    return this.__typePossibleTypesList;
+  }
+
+  public void set__typePossibleTypesList(Collection<__TypePossibleTypes> __typePossibleTypesList) {
+    this.__typePossibleTypesList = __typePossibleTypesList;
+  }
+
+  public __DirectiveLocationsRelation get__directiveLocationsRelation() {
+    return this.__directiveLocationsRelation;
+  }
+
+  public void set__directiveLocationsRelation(
+      __DirectiveLocationsRelation __directiveLocationsRelation) {
+    this.__directiveLocationsRelation = __directiveLocationsRelation;
+  }
+
+  public Collection<__DirectiveLocationsRelation> get__directiveLocationsRelationList() {
+    return this.__directiveLocationsRelationList;
+  }
+
+  public void set__directiveLocationsRelationList(
+      Collection<__DirectiveLocationsRelation> __directiveLocationsRelationList) {
+    this.__directiveLocationsRelationList = __directiveLocationsRelationList;
   }
 }

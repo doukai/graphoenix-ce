@@ -68,33 +68,36 @@ message IntroType {
     string intro_typename = 19;
     int32 schema_id = 20;
     string of_type_name = 21;
-    repeated IntroType__TypeRelation intro_type_type_relation = 22;
-    IntroField fields_aggregate = 23;
-    IntroFieldConnection fields_connection = 24;
-    IntroType interfaces_aggregate = 25;
-    IntroTypeConnection interfaces_connection = 26;
-    IntroType possible_types_aggregate = 27;
-    IntroTypeConnection possible_types_connection = 28;
-    IntroEnumValue enum_values_aggregate = 29;
-    IntroEnumValueConnection enum_values_connection = 30;
-    IntroInputValue input_fields_aggregate = 31;
-    IntroInputValueConnection input_fields_connection = 32;
-    IntroType__TypeRelation intro_type_type_relation_aggregate = 33;
-    IntroType__TypeRelationConnection intro_type_type_relation_connection = 34;
-    int32 name_count = 35;
-    string name_max = 36;
-    string name_min = 37;
-    int32 description_count = 38;
-    string description_max = 39;
-    string description_min = 40;
-    int32 of_type_name_count = 41;
-    string of_type_name_max = 42;
-    string of_type_name_min = 43;
-    int32 schema_id_count = 44;
-    int32 schema_id_sum = 45;
-    int32 schema_id_avg = 46;
-    int32 schema_id_max = 47;
-    int32 schema_id_min = 48;
+    repeated IntroTypeInterfaces intro_type_interfaces = 22;
+    repeated IntroTypePossibleTypes intro_type_possible_types = 23;
+    IntroField fields_aggregate = 24;
+    IntroFieldConnection fields_connection = 25;
+    IntroType interfaces_aggregate = 26;
+    IntroTypeConnection interfaces_connection = 27;
+    IntroType possible_types_aggregate = 28;
+    IntroTypeConnection possible_types_connection = 29;
+    IntroEnumValue enum_values_aggregate = 30;
+    IntroEnumValueConnection enum_values_connection = 31;
+    IntroInputValue input_fields_aggregate = 32;
+    IntroInputValueConnection input_fields_connection = 33;
+    IntroTypeInterfaces intro_type_interfaces_aggregate = 34;
+    IntroTypeInterfacesConnection intro_type_interfaces_connection = 35;
+    IntroTypePossibleTypes intro_type_possible_types_aggregate = 36;
+    IntroTypePossibleTypesConnection intro_type_possible_types_connection = 37;
+    int32 name_count = 38;
+    string name_max = 39;
+    string name_min = 40;
+    int32 description_count = 41;
+    string description_max = 42;
+    string description_min = 43;
+    int32 of_type_name_count = 44;
+    string of_type_name_max = 45;
+    string of_type_name_min = 46;
+    int32 schema_id_count = 47;
+    int32 schema_id_sum = 48;
+    int32 schema_id_avg = 49;
+    int32 schema_id_max = 50;
+    int32 schema_id_min = 51;
 }
 message IntroField {
     string id = 1;
@@ -232,39 +235,91 @@ message IntroDirective {
     string create_group_id = 14;
     string intro_typename = 15;
     int32 schema_id = 16;
-    IntroInputValue args_aggregate = 17;
-    IntroInputValueConnection args_connection = 18;
-    int32 name_count = 19;
-    int32 name_max = 20;
-    int32 name_min = 21;
-    int32 description_count = 22;
-    string description_max = 23;
-    string description_min = 24;
-    int32 schema_id_count = 25;
-    int32 schema_id_sum = 26;
-    int32 schema_id_avg = 27;
-    int32 schema_id_max = 28;
-    int32 schema_id_min = 29;
+    repeated IntroDirectiveLocationsRelation intro_directive_locations_relation = 17;
+    IntroInputValue args_aggregate = 18;
+    IntroInputValueConnection args_connection = 19;
+    IntroDirectiveLocationsRelation intro_directive_locations_relation_aggregate = 20;
+    IntroDirectiveLocationsRelationConnection intro_directive_locations_relation_connection = 21;
+    int32 name_count = 22;
+    int32 name_max = 23;
+    int32 name_min = 24;
+    int32 description_count = 25;
+    string description_max = 26;
+    string description_min = 27;
+    int32 schema_id_count = 28;
+    int32 schema_id_sum = 29;
+    int32 schema_id_avg = 30;
+    int32 schema_id_max = 31;
+    int32 schema_id_min = 32;
 }
-message IntroType__TypeRelation {
+message IntroTypeInterfaces {
     string id = 1;
-    string intro_type_ref = 2;
+    string type_name = 2;
     IntroType intro_type = 3;
-    bool is_deprecated = 4;
-    int32 version = 5;
-    int32 realm_id = 6;
-    string create_user_id = 7;
-    google.protobuf.Timestamp create_time = 8;
-    string update_user_id = 9;
-    google.protobuf.Timestamp update_time = 10;
-    string create_group_id = 11;
-    string intro_typename = 12;
-    int32 id_count = 13;
-    int32 id_max = 14;
-    int32 id_min = 15;
-    int32 intro_type_ref_count = 16;
-    string intro_type_ref_max = 17;
-    string intro_type_ref_min = 18;
+    string interface_name = 4;
+    bool is_deprecated = 5;
+    int32 version = 6;
+    int32 realm_id = 7;
+    string create_user_id = 8;
+    google.protobuf.Timestamp create_time = 9;
+    string update_user_id = 10;
+    google.protobuf.Timestamp update_time = 11;
+    string create_group_id = 12;
+    string intro_typename = 13;
+    int32 id_count = 14;
+    int32 id_max = 15;
+    int32 id_min = 16;
+    int32 type_name_count = 17;
+    string type_name_max = 18;
+    string type_name_min = 19;
+    int32 interface_name_count = 20;
+    string interface_name_max = 21;
+    string interface_name_min = 22;
+}
+message IntroTypePossibleTypes {
+    string id = 1;
+    string type_name = 2;
+    IntroType intro_type = 3;
+    string possible_type_name = 4;
+    bool is_deprecated = 5;
+    int32 version = 6;
+    int32 realm_id = 7;
+    string create_user_id = 8;
+    google.protobuf.Timestamp create_time = 9;
+    string update_user_id = 10;
+    google.protobuf.Timestamp update_time = 11;
+    string create_group_id = 12;
+    string intro_typename = 13;
+    int32 id_count = 14;
+    int32 id_max = 15;
+    int32 id_min = 16;
+    int32 type_name_count = 17;
+    string type_name_max = 18;
+    string type_name_min = 19;
+    int32 possible_type_name_count = 20;
+    string possible_type_name_max = 21;
+    string possible_type_name_min = 22;
+}
+message IntroDirectiveLocationsRelation {
+    string id = 1;
+    string intro_directive_ref = 2;
+    IntroDirective intro_directive = 3;
+    io.graphoenix.core.IntroDirectiveLocation locations_ref = 4;
+    bool is_deprecated = 5;
+    int32 version = 6;
+    int32 realm_id = 7;
+    string create_user_id = 8;
+    google.protobuf.Timestamp create_time = 9;
+    string update_user_id = 10;
+    google.protobuf.Timestamp update_time = 11;
+    string create_group_id = 12;
+    string intro_typename = 13;
+    int32 id_count = 14;
+    int32 id_max = 15;
+    int32 id_min = 16;
+    int32 intro_directive_ref_count = 17;
+    string intro_directive_ref_max = 18;
+    string intro_directive_ref_min = 19;
 }
 message IntroSchemaConnection {
     int32 total_count = 1;
@@ -320,12 +375,30 @@ message IntroDirectiveEdge {
     IntroDirective node = 1;
     string cursor = 2;
 }
-message IntroType__TypeRelationConnection {
+message IntroTypeInterfacesConnection {
     int32 total_count = 1;
     io.graphoenix.core.PageInfo page_info = 2;
-    repeated IntroType__TypeRelationEdge edges = 3;
+    repeated IntroTypeInterfacesEdge edges = 3;
 }
-message IntroType__TypeRelationEdge {
-    IntroType__TypeRelation node = 1;
+message IntroTypeInterfacesEdge {
+    IntroTypeInterfaces node = 1;
+    string cursor = 2;
+}
+message IntroTypePossibleTypesConnection {
+    int32 total_count = 1;
+    io.graphoenix.core.PageInfo page_info = 2;
+    repeated IntroTypePossibleTypesEdge edges = 3;
+}
+message IntroTypePossibleTypesEdge {
+    IntroTypePossibleTypes node = 1;
+    string cursor = 2;
+}
+message IntroDirectiveLocationsRelationConnection {
+    int32 total_count = 1;
+    io.graphoenix.core.PageInfo page_info = 2;
+    repeated IntroDirectiveLocationsRelationEdge edges = 3;
+}
+message IntroDirectiveLocationsRelationEdge {
+    IntroDirectiveLocationsRelation node = 1;
     string cursor = 2;
 }

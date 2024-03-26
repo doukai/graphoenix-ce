@@ -48,9 +48,21 @@ message MutationIntroDirectiveResponse {
 message MutationIntroDirectiveListResponse {
     repeated IntroDirective intro_directive_list = 1;
 }
-message MutationIntroTypeTypeRelationResponse {
-    IntroType__TypeRelation intro_type_type_relation = 1;
+message MutationIntroTypeInterfacesResponse {
+    IntroTypeInterfaces intro_type_interfaces = 1;
 }
-message MutationIntroTypeTypeRelationListResponse {
-    repeated IntroType__TypeRelation intro_type_type_relation_list = 1;
+message MutationIntroTypeInterfacesListResponse {
+    repeated IntroTypeInterfaces intro_type_interfaces_list = 1;
+}
+message MutationIntroTypePossibleTypesResponse {
+    IntroTypePossibleTypes intro_type_possible_types = 1;
+}
+message MutationIntroTypePossibleTypesListResponse {
+    repeated IntroTypePossibleTypes intro_type_possible_types_list = 1;
+}
+message MutationIntroDirectiveLocationsRelationResponse {
+    IntroDirectiveLocationsRelation intro_directive_locations_relation = 1;
+}
+message MutationIntroDirectiveLocationsRelationListResponse {
+    repeated IntroDirectiveLocationsRelation intro_directive_locations_relation_list = 1;
 }

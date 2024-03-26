@@ -50,6 +50,8 @@ public class __DirectiveListMutationArguments implements MetaInput {
 
   private Integer schemaId;
 
+  private Collection<__DirectiveLocationsRelationInput> __directiveLocationsRelation;
+
   private Collection<__DirectiveInput> list;
 
   private __DirectiveExpression where;
@@ -194,6 +196,15 @@ public class __DirectiveListMutationArguments implements MetaInput {
 
   public void setSchemaId(Integer schemaId) {
     this.schemaId = schemaId;
+  }
+
+  public Collection<__DirectiveLocationsRelationInput> get__directiveLocationsRelation() {
+    return this.__directiveLocationsRelation;
+  }
+
+  public void set__directiveLocationsRelation(
+      Collection<__DirectiveLocationsRelationInput> __directiveLocationsRelation) {
+    this.__directiveLocationsRelation = __directiveLocationsRelation;
   }
 
   public Collection<__DirectiveInput> getList() {

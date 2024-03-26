@@ -110,7 +110,6 @@ public class IntrospectionMutationBuilder {
         }
 
         Logger.info("introspection schema mutation build success");
-        Logger.debug("\r\n{}", operation.toString());
         return operation;
     }
 
@@ -154,7 +153,6 @@ public class IntrospectionMutationBuilder {
         );
 
         Logger.info("introspection schema build success");
-        Logger.debug("\r\n{}", schema.toString());
         return schema;
     }
 
@@ -328,7 +326,7 @@ public class IntrospectionMutationBuilder {
         }
 
         if (inputValue.getDefaultValue() != null) {
-            __inputValue.setDefaultValue(inputValue.getDefaultValue());
+            __inputValue.setDefaultValue(inputValue.getDefaultValue().toString());
         }
         __inputValue.setType(buildType(inputValue.getType(), level));
         return __inputValue;

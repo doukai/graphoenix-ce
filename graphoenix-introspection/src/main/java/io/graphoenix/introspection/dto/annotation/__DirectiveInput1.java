@@ -46,6 +46,8 @@ public @interface __DirectiveInput1 {
 
   int schemaId() default 0;
 
+  __DirectiveLocationsRelationInput2[] __directiveLocationsRelation() default {};
+
   __DirectiveExpression2 where() default @__DirectiveExpression2;
 
   String $name() default "";
@@ -79,6 +81,8 @@ public @interface __DirectiveInput1 {
   String $__typename() default "";
 
   String $schemaId() default "";
+
+  String $__directiveLocationsRelation() default "";
 
   String $where() default "";
 }

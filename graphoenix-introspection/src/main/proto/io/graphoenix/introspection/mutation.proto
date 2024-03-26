@@ -25,6 +25,10 @@ service MutationService {
     rpc IntroEnumValueList (MutationIntroEnumValueListRequest) returns (MutationIntroEnumValueListResponse);
     rpc IntroDirective (MutationIntroDirectiveRequest) returns (MutationIntroDirectiveResponse);
     rpc IntroDirectiveList (MutationIntroDirectiveListRequest) returns (MutationIntroDirectiveListResponse);
-    rpc IntroTypeTypeRelation (MutationIntroTypeTypeRelationRequest) returns (MutationIntroTypeTypeRelationResponse);
-    rpc IntroTypeTypeRelationList (MutationIntroTypeTypeRelationListRequest) returns (MutationIntroTypeTypeRelationListResponse);
+    rpc IntroTypeInterfaces (MutationIntroTypeInterfacesRequest) returns (MutationIntroTypeInterfacesResponse);
+    rpc IntroTypeInterfacesList (MutationIntroTypeInterfacesListRequest) returns (MutationIntroTypeInterfacesListResponse);
+    rpc IntroTypePossibleTypes (MutationIntroTypePossibleTypesRequest) returns (MutationIntroTypePossibleTypesResponse);
+    rpc IntroTypePossibleTypesList (MutationIntroTypePossibleTypesListRequest) returns (MutationIntroTypePossibleTypesListResponse);
+    rpc IntroDirectiveLocationsRelation (MutationIntroDirectiveLocationsRelationRequest) returns (MutationIntroDirectiveLocationsRelationResponse);
+    rpc IntroDirectiveLocationsRelationList (MutationIntroDirectiveLocationsRelationListRequest) returns (MutationIntroDirectiveLocationsRelationListResponse);
 }

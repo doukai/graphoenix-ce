@@ -59,7 +59,9 @@ public @interface __TypeExpression1 {
 
   StringExpression2 ofTypeName() default @StringExpression2;
 
-  __Type__TypeRelationExpression2 __typeTypeRelation() default @__Type__TypeRelationExpression2;
+  __TypeInterfacesExpression2 __typeInterfaces() default @__TypeInterfacesExpression2;
+
+  __TypePossibleTypesExpression2 __typePossibleTypes() default @__TypePossibleTypesExpression2;
 
   boolean not() default false;
 
@@ -109,7 +111,9 @@ public @interface __TypeExpression1 {
 
   String $ofTypeName() default "";
 
-  String $__typeTypeRelation() default "";
+  String $__typeInterfaces() default "";
+
+  String $__typePossibleTypes() default "";
 
   String $not() default "";
 

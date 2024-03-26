@@ -91,10 +91,11 @@ message IntroTypeExpression {
     io.graphoenix.core.StringExpression intro_typename = 19;
     io.graphoenix.core.IntExpression schema_id = 20;
     io.graphoenix.core.StringExpression of_type_name = 21;
-    IntroType__TypeRelationExpression intro_type_type_relation = 22;
-    bool not = 23;
-    io.graphoenix.core.Conditional cond = 24;
-    repeated IntroTypeExpression exs = 25;
+    IntroTypeInterfacesExpression intro_type_interfaces = 22;
+    IntroTypePossibleTypesExpression intro_type_possible_types = 23;
+    bool not = 24;
+    io.graphoenix.core.Conditional cond = 25;
+    repeated IntroTypeExpression exs = 26;
 }
 message IntroTypeInput {
     string name = 1;
@@ -118,8 +119,9 @@ message IntroTypeInput {
     string intro_typename = 19;
     int32 schema_id = 20;
     string of_type_name = 21;
-    repeated IntroType__TypeRelationInput intro_type_type_relation = 22;
-    IntroTypeExpression where = 23;
+    repeated IntroTypeInterfacesInput intro_type_interfaces = 22;
+    repeated IntroTypePossibleTypesInput intro_type_possible_types = 23;
+    IntroTypeExpression where = 24;
 }
 message IntroTypeOrderBy {
     io.graphoenix.core.Sort name = 1;
@@ -334,9 +336,10 @@ message IntroDirectiveExpression {
     io.graphoenix.core.StringExpression create_group_id = 14;
     io.graphoenix.core.StringExpression intro_typename = 15;
     io.graphoenix.core.IntExpression schema_id = 16;
-    bool not = 17;
-    io.graphoenix.core.Conditional cond = 18;
-    repeated IntroDirectiveExpression exs = 19;
+    IntroDirectiveLocationsRelationExpression intro_directive_locations_relation = 17;
+    bool not = 18;
+    io.graphoenix.core.Conditional cond = 19;
+    repeated IntroDirectiveExpression exs = 20;
 }
 message IntroDirectiveInput {
     string name = 1;
@@ -355,7 +358,8 @@ message IntroDirectiveInput {
     string create_group_id = 14;
     string intro_typename = 15;
     int32 schema_id = 16;
-    IntroDirectiveExpression where = 17;
+    repeated IntroDirectiveLocationsRelationInput intro_directive_locations_relation = 17;
+    IntroDirectiveExpression where = 18;
 }
 message IntroDirectiveOrderBy {
     io.graphoenix.core.Sort name = 1;
@@ -372,50 +376,149 @@ message IntroDirectiveOrderBy {
     io.graphoenix.core.Sort intro_typename = 12;
     io.graphoenix.core.Sort schema_id = 13;
 }
-message IntroType__TypeRelationExpression {
+message IntroTypeInterfacesExpression {
     io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression intro_type_ref = 2;
+    io.graphoenix.core.StringExpression type_name = 2;
     IntroTypeExpression intro_type = 3;
-    bool include_deprecated = 4;
-    io.graphoenix.core.IntExpression version = 5;
-    io.graphoenix.core.IntExpression realm_id = 6;
-    io.graphoenix.core.StringExpression create_user_id = 7;
-    io.graphoenix.core.StringExpression create_time = 8;
-    io.graphoenix.core.StringExpression update_user_id = 9;
-    io.graphoenix.core.StringExpression update_time = 10;
-    io.graphoenix.core.StringExpression create_group_id = 11;
-    io.graphoenix.core.StringExpression intro_typename = 12;
-    bool not = 13;
-    io.graphoenix.core.Conditional cond = 14;
-    repeated IntroType__TypeRelationExpression exs = 15;
+    io.graphoenix.core.StringExpression interface_name = 4;
+    bool include_deprecated = 5;
+    io.graphoenix.core.IntExpression version = 6;
+    io.graphoenix.core.IntExpression realm_id = 7;
+    io.graphoenix.core.StringExpression create_user_id = 8;
+    io.graphoenix.core.StringExpression create_time = 9;
+    io.graphoenix.core.StringExpression update_user_id = 10;
+    io.graphoenix.core.StringExpression update_time = 11;
+    io.graphoenix.core.StringExpression create_group_id = 12;
+    io.graphoenix.core.StringExpression intro_typename = 13;
+    bool not = 14;
+    io.graphoenix.core.Conditional cond = 15;
+    repeated IntroTypeInterfacesExpression exs = 16;
 }
-message IntroType__TypeRelationInput {
+message IntroTypeInterfacesInput {
     string id = 1;
-    string intro_type_ref = 2;
+    string type_name = 2;
     IntroTypeInput intro_type = 3;
-    bool is_deprecated = 4;
-    int32 version = 5;
-    int32 realm_id = 6;
-    string create_user_id = 7;
-    google.protobuf.Timestamp create_time = 8;
-    string update_user_id = 9;
-    google.protobuf.Timestamp update_time = 10;
-    string create_group_id = 11;
-    string intro_typename = 12;
-    IntroType__TypeRelationExpression where = 13;
+    string interface_name = 4;
+    bool is_deprecated = 5;
+    int32 version = 6;
+    int32 realm_id = 7;
+    string create_user_id = 8;
+    google.protobuf.Timestamp create_time = 9;
+    string update_user_id = 10;
+    google.protobuf.Timestamp update_time = 11;
+    string create_group_id = 12;
+    string intro_typename = 13;
+    IntroTypeInterfacesExpression where = 14;
 }
-message IntroType__TypeRelationOrderBy {
+message IntroTypeInterfacesOrderBy {
     io.graphoenix.core.Sort id = 1;
-    io.graphoenix.core.Sort intro_type_ref = 2;
-    io.graphoenix.core.Sort is_deprecated = 3;
-    io.graphoenix.core.Sort version = 4;
-    io.graphoenix.core.Sort realm_id = 5;
-    io.graphoenix.core.Sort create_user_id = 6;
-    io.graphoenix.core.Sort create_time = 7;
-    io.graphoenix.core.Sort update_user_id = 8;
-    io.graphoenix.core.Sort update_time = 9;
-    io.graphoenix.core.Sort create_group_id = 10;
-    io.graphoenix.core.Sort intro_typename = 11;
+    io.graphoenix.core.Sort type_name = 2;
+    io.graphoenix.core.Sort interface_name = 3;
+    io.graphoenix.core.Sort is_deprecated = 4;
+    io.graphoenix.core.Sort version = 5;
+    io.graphoenix.core.Sort realm_id = 6;
+    io.graphoenix.core.Sort create_user_id = 7;
+    io.graphoenix.core.Sort create_time = 8;
+    io.graphoenix.core.Sort update_user_id = 9;
+    io.graphoenix.core.Sort update_time = 10;
+    io.graphoenix.core.Sort create_group_id = 11;
+    io.graphoenix.core.Sort intro_typename = 12;
+}
+message IntroTypePossibleTypesExpression {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression type_name = 2;
+    IntroTypeExpression intro_type = 3;
+    io.graphoenix.core.StringExpression possible_type_name = 4;
+    bool include_deprecated = 5;
+    io.graphoenix.core.IntExpression version = 6;
+    io.graphoenix.core.IntExpression realm_id = 7;
+    io.graphoenix.core.StringExpression create_user_id = 8;
+    io.graphoenix.core.StringExpression create_time = 9;
+    io.graphoenix.core.StringExpression update_user_id = 10;
+    io.graphoenix.core.StringExpression update_time = 11;
+    io.graphoenix.core.StringExpression create_group_id = 12;
+    io.graphoenix.core.StringExpression intro_typename = 13;
+    bool not = 14;
+    io.graphoenix.core.Conditional cond = 15;
+    repeated IntroTypePossibleTypesExpression exs = 16;
+}
+message IntroTypePossibleTypesInput {
+    string id = 1;
+    string type_name = 2;
+    IntroTypeInput intro_type = 3;
+    string possible_type_name = 4;
+    bool is_deprecated = 5;
+    int32 version = 6;
+    int32 realm_id = 7;
+    string create_user_id = 8;
+    google.protobuf.Timestamp create_time = 9;
+    string update_user_id = 10;
+    google.protobuf.Timestamp update_time = 11;
+    string create_group_id = 12;
+    string intro_typename = 13;
+    IntroTypePossibleTypesExpression where = 14;
+}
+message IntroTypePossibleTypesOrderBy {
+    io.graphoenix.core.Sort id = 1;
+    io.graphoenix.core.Sort type_name = 2;
+    io.graphoenix.core.Sort possible_type_name = 3;
+    io.graphoenix.core.Sort is_deprecated = 4;
+    io.graphoenix.core.Sort version = 5;
+    io.graphoenix.core.Sort realm_id = 6;
+    io.graphoenix.core.Sort create_user_id = 7;
+    io.graphoenix.core.Sort create_time = 8;
+    io.graphoenix.core.Sort update_user_id = 9;
+    io.graphoenix.core.Sort update_time = 10;
+    io.graphoenix.core.Sort create_group_id = 11;
+    io.graphoenix.core.Sort intro_typename = 12;
+}
+message IntroDirectiveLocationsRelationExpression {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression intro_directive_ref = 2;
+    IntroDirectiveExpression intro_directive = 3;
+    io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4;
+    bool include_deprecated = 5;
+    io.graphoenix.core.IntExpression version = 6;
+    io.graphoenix.core.IntExpression realm_id = 7;
+    io.graphoenix.core.StringExpression create_user_id = 8;
+    io.graphoenix.core.StringExpression create_time = 9;
+    io.graphoenix.core.StringExpression update_user_id = 10;
+    io.graphoenix.core.StringExpression update_time = 11;
+    io.graphoenix.core.StringExpression create_group_id = 12;
+    io.graphoenix.core.StringExpression intro_typename = 13;
+    bool not = 14;
+    io.graphoenix.core.Conditional cond = 15;
+    repeated IntroDirectiveLocationsRelationExpression exs = 16;
+}
+message IntroDirectiveLocationsRelationInput {
+    string id = 1;
+    string intro_directive_ref = 2;
+    IntroDirectiveInput intro_directive = 3;
+    io.graphoenix.core.IntroDirectiveLocation locations_ref = 4;
+    bool is_deprecated = 5;
+    int32 version = 6;
+    int32 realm_id = 7;
+    string create_user_id = 8;
+    google.protobuf.Timestamp create_time = 9;
+    string update_user_id = 10;
+    google.protobuf.Timestamp update_time = 11;
+    string create_group_id = 12;
+    string intro_typename = 13;
+    IntroDirectiveLocationsRelationExpression where = 14;
+}
+message IntroDirectiveLocationsRelationOrderBy {
+    io.graphoenix.core.Sort id = 1;
+    io.graphoenix.core.Sort intro_directive_ref = 2;
+    io.graphoenix.core.Sort locations_ref = 3;
+    io.graphoenix.core.Sort is_deprecated = 4;
+    io.graphoenix.core.Sort version = 5;
+    io.graphoenix.core.Sort realm_id = 6;
+    io.graphoenix.core.Sort create_user_id = 7;
+    io.graphoenix.core.Sort create_time = 8;
+    io.graphoenix.core.Sort update_user_id = 9;
+    io.graphoenix.core.Sort update_time = 10;
+    io.graphoenix.core.Sort create_group_id = 11;
+    io.graphoenix.core.Sort intro_typename = 12;
 }
 message IntroSchemaQueryArguments {
     io.graphoenix.core.StringExpression id = 1;
@@ -523,11 +626,12 @@ message IntroTypeQueryArguments {
     io.graphoenix.core.StringExpression intro_typename = 19;
     io.graphoenix.core.IntExpression schema_id = 20;
     io.graphoenix.core.StringExpression of_type_name = 21;
-    IntroType__TypeRelationExpression intro_type_type_relation = 22;
-    repeated string group_by = 23;
-    bool not = 24;
-    io.graphoenix.core.Conditional cond = 25;
-    repeated IntroTypeExpression exs = 26;
+    IntroTypeInterfacesExpression intro_type_interfaces = 22;
+    IntroTypePossibleTypesExpression intro_type_possible_types = 23;
+    repeated string group_by = 24;
+    bool not = 25;
+    io.graphoenix.core.Conditional cond = 26;
+    repeated IntroTypeExpression exs = 27;
 }
 message IntroTypeListQueryArguments {
     io.graphoenix.core.StringExpression name = 1;
@@ -551,17 +655,18 @@ message IntroTypeListQueryArguments {
     io.graphoenix.core.StringExpression intro_typename = 19;
     io.graphoenix.core.IntExpression schema_id = 20;
     io.graphoenix.core.StringExpression of_type_name = 21;
-    IntroType__TypeRelationExpression intro_type_type_relation = 22;
-    IntroTypeOrderBy order_by = 23;
-    repeated string group_by = 24;
-    bool not = 25;
-    io.graphoenix.core.Conditional cond = 26;
-    repeated IntroTypeExpression exs = 27;
-    int32 first = 28;
-    int32 last = 29;
-    int32 offset = 30;
-    string after = 31;
-    string before = 32;
+    IntroTypeInterfacesExpression intro_type_interfaces = 22;
+    IntroTypePossibleTypesExpression intro_type_possible_types = 23;
+    IntroTypeOrderBy order_by = 24;
+    repeated string group_by = 25;
+    bool not = 26;
+    io.graphoenix.core.Conditional cond = 27;
+    repeated IntroTypeExpression exs = 28;
+    int32 first = 29;
+    int32 last = 30;
+    int32 offset = 31;
+    string after = 32;
+    string before = 33;
 }
 message IntroTypeConnectionQueryArguments {
     io.graphoenix.core.StringExpression name = 1;
@@ -585,17 +690,18 @@ message IntroTypeConnectionQueryArguments {
     io.graphoenix.core.StringExpression intro_typename = 19;
     io.graphoenix.core.IntExpression schema_id = 20;
     io.graphoenix.core.StringExpression of_type_name = 21;
-    IntroType__TypeRelationExpression intro_type_type_relation = 22;
-    IntroTypeOrderBy order_by = 23;
-    repeated string group_by = 24;
-    bool not = 25;
-    io.graphoenix.core.Conditional cond = 26;
-    repeated IntroTypeExpression exs = 27;
-    int32 first = 28;
-    int32 last = 29;
-    int32 offset = 30;
-    string after = 31;
-    string before = 32;
+    IntroTypeInterfacesExpression intro_type_interfaces = 22;
+    IntroTypePossibleTypesExpression intro_type_possible_types = 23;
+    IntroTypeOrderBy order_by = 24;
+    repeated string group_by = 25;
+    bool not = 26;
+    io.graphoenix.core.Conditional cond = 27;
+    repeated IntroTypeExpression exs = 28;
+    int32 first = 29;
+    int32 last = 30;
+    int32 offset = 31;
+    string after = 32;
+    string before = 33;
 }
 message IntroFieldQueryArguments {
     io.graphoenix.core.StringExpression id = 1;
@@ -860,10 +966,11 @@ message IntroDirectiveQueryArguments {
     io.graphoenix.core.StringExpression create_group_id = 14;
     io.graphoenix.core.StringExpression intro_typename = 15;
     io.graphoenix.core.IntExpression schema_id = 16;
-    repeated string group_by = 17;
-    bool not = 18;
-    io.graphoenix.core.Conditional cond = 19;
-    repeated IntroDirectiveExpression exs = 20;
+    IntroDirectiveLocationsRelationExpression intro_directive_locations_relation = 17;
+    repeated string group_by = 18;
+    bool not = 19;
+    io.graphoenix.core.Conditional cond = 20;
+    repeated IntroDirectiveExpression exs = 21;
 }
 message IntroDirectiveListQueryArguments {
     io.graphoenix.core.StringExpression name = 1;
@@ -882,16 +989,17 @@ message IntroDirectiveListQueryArguments {
     io.graphoenix.core.StringExpression create_group_id = 14;
     io.graphoenix.core.StringExpression intro_typename = 15;
     io.graphoenix.core.IntExpression schema_id = 16;
-    IntroDirectiveOrderBy order_by = 17;
-    repeated string group_by = 18;
-    bool not = 19;
-    io.graphoenix.core.Conditional cond = 20;
-    repeated IntroDirectiveExpression exs = 21;
-    int32 first = 22;
-    int32 last = 23;
-    int32 offset = 24;
-    string after = 25;
-    string before = 26;
+    IntroDirectiveLocationsRelationExpression intro_directive_locations_relation = 17;
+    IntroDirectiveOrderBy order_by = 18;
+    repeated string group_by = 19;
+    bool not = 20;
+    io.graphoenix.core.Conditional cond = 21;
+    repeated IntroDirectiveExpression exs = 22;
+    int32 first = 23;
+    int32 last = 24;
+    int32 offset = 25;
+    string after = 26;
+    string before = 27;
 }
 message IntroDirectiveConnectionQueryArguments {
     io.graphoenix.core.StringExpression name = 1;
@@ -910,82 +1018,224 @@ message IntroDirectiveConnectionQueryArguments {
     io.graphoenix.core.StringExpression create_group_id = 14;
     io.graphoenix.core.StringExpression intro_typename = 15;
     io.graphoenix.core.IntExpression schema_id = 16;
-    IntroDirectiveOrderBy order_by = 17;
-    repeated string group_by = 18;
-    bool not = 19;
-    io.graphoenix.core.Conditional cond = 20;
-    repeated IntroDirectiveExpression exs = 21;
-    int32 first = 22;
-    int32 last = 23;
-    int32 offset = 24;
-    string after = 25;
-    string before = 26;
+    IntroDirectiveLocationsRelationExpression intro_directive_locations_relation = 17;
+    IntroDirectiveOrderBy order_by = 18;
+    repeated string group_by = 19;
+    bool not = 20;
+    io.graphoenix.core.Conditional cond = 21;
+    repeated IntroDirectiveExpression exs = 22;
+    int32 first = 23;
+    int32 last = 24;
+    int32 offset = 25;
+    string after = 26;
+    string before = 27;
 }
-message IntroType__TypeRelationQueryArguments {
+message IntroTypeInterfacesQueryArguments {
     io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression intro_type_ref = 2;
+    io.graphoenix.core.StringExpression type_name = 2;
     IntroTypeExpression intro_type = 3;
-    bool include_deprecated = 4;
-    io.graphoenix.core.IntExpression version = 5;
-    io.graphoenix.core.IntExpression realm_id = 6;
-    io.graphoenix.core.StringExpression create_user_id = 7;
-    io.graphoenix.core.StringExpression create_time = 8;
-    io.graphoenix.core.StringExpression update_user_id = 9;
-    io.graphoenix.core.StringExpression update_time = 10;
-    io.graphoenix.core.StringExpression create_group_id = 11;
-    io.graphoenix.core.StringExpression intro_typename = 12;
-    repeated string group_by = 13;
-    bool not = 14;
-    io.graphoenix.core.Conditional cond = 15;
-    repeated IntroType__TypeRelationExpression exs = 16;
-}
-message IntroType__TypeRelationListQueryArguments {
-    io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression intro_type_ref = 2;
-    IntroTypeExpression intro_type = 3;
-    bool include_deprecated = 4;
-    io.graphoenix.core.IntExpression version = 5;
-    io.graphoenix.core.IntExpression realm_id = 6;
-    io.graphoenix.core.StringExpression create_user_id = 7;
-    io.graphoenix.core.StringExpression create_time = 8;
-    io.graphoenix.core.StringExpression update_user_id = 9;
-    io.graphoenix.core.StringExpression update_time = 10;
-    io.graphoenix.core.StringExpression create_group_id = 11;
-    io.graphoenix.core.StringExpression intro_typename = 12;
-    IntroType__TypeRelationOrderBy order_by = 13;
+    io.graphoenix.core.StringExpression interface_name = 4;
+    bool include_deprecated = 5;
+    io.graphoenix.core.IntExpression version = 6;
+    io.graphoenix.core.IntExpression realm_id = 7;
+    io.graphoenix.core.StringExpression create_user_id = 8;
+    io.graphoenix.core.StringExpression create_time = 9;
+    io.graphoenix.core.StringExpression update_user_id = 10;
+    io.graphoenix.core.StringExpression update_time = 11;
+    io.graphoenix.core.StringExpression create_group_id = 12;
+    io.graphoenix.core.StringExpression intro_typename = 13;
     repeated string group_by = 14;
     bool not = 15;
     io.graphoenix.core.Conditional cond = 16;
-    repeated IntroType__TypeRelationExpression exs = 17;
-    int32 first = 18;
-    int32 last = 19;
-    int32 offset = 20;
-    string after = 21;
-    string before = 22;
+    repeated IntroTypeInterfacesExpression exs = 17;
 }
-message IntroType__TypeRelationConnectionQueryArguments {
+message IntroTypeInterfacesListQueryArguments {
     io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression intro_type_ref = 2;
+    io.graphoenix.core.StringExpression type_name = 2;
     IntroTypeExpression intro_type = 3;
-    bool include_deprecated = 4;
-    io.graphoenix.core.IntExpression version = 5;
-    io.graphoenix.core.IntExpression realm_id = 6;
-    io.graphoenix.core.StringExpression create_user_id = 7;
-    io.graphoenix.core.StringExpression create_time = 8;
-    io.graphoenix.core.StringExpression update_user_id = 9;
-    io.graphoenix.core.StringExpression update_time = 10;
-    io.graphoenix.core.StringExpression create_group_id = 11;
-    io.graphoenix.core.StringExpression intro_typename = 12;
-    IntroType__TypeRelationOrderBy order_by = 13;
+    io.graphoenix.core.StringExpression interface_name = 4;
+    bool include_deprecated = 5;
+    io.graphoenix.core.IntExpression version = 6;
+    io.graphoenix.core.IntExpression realm_id = 7;
+    io.graphoenix.core.StringExpression create_user_id = 8;
+    io.graphoenix.core.StringExpression create_time = 9;
+    io.graphoenix.core.StringExpression update_user_id = 10;
+    io.graphoenix.core.StringExpression update_time = 11;
+    io.graphoenix.core.StringExpression create_group_id = 12;
+    io.graphoenix.core.StringExpression intro_typename = 13;
+    IntroTypeInterfacesOrderBy order_by = 14;
+    repeated string group_by = 15;
+    bool not = 16;
+    io.graphoenix.core.Conditional cond = 17;
+    repeated IntroTypeInterfacesExpression exs = 18;
+    int32 first = 19;
+    int32 last = 20;
+    int32 offset = 21;
+    string after = 22;
+    string before = 23;
+}
+message IntroTypeInterfacesConnectionQueryArguments {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression type_name = 2;
+    IntroTypeExpression intro_type = 3;
+    io.graphoenix.core.StringExpression interface_name = 4;
+    bool include_deprecated = 5;
+    io.graphoenix.core.IntExpression version = 6;
+    io.graphoenix.core.IntExpression realm_id = 7;
+    io.graphoenix.core.StringExpression create_user_id = 8;
+    io.graphoenix.core.StringExpression create_time = 9;
+    io.graphoenix.core.StringExpression update_user_id = 10;
+    io.graphoenix.core.StringExpression update_time = 11;
+    io.graphoenix.core.StringExpression create_group_id = 12;
+    io.graphoenix.core.StringExpression intro_typename = 13;
+    IntroTypeInterfacesOrderBy order_by = 14;
+    repeated string group_by = 15;
+    bool not = 16;
+    io.graphoenix.core.Conditional cond = 17;
+    repeated IntroTypeInterfacesExpression exs = 18;
+    int32 first = 19;
+    int32 last = 20;
+    int32 offset = 21;
+    string after = 22;
+    string before = 23;
+}
+message IntroTypePossibleTypesQueryArguments {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression type_name = 2;
+    IntroTypeExpression intro_type = 3;
+    io.graphoenix.core.StringExpression possible_type_name = 4;
+    bool include_deprecated = 5;
+    io.graphoenix.core.IntExpression version = 6;
+    io.graphoenix.core.IntExpression realm_id = 7;
+    io.graphoenix.core.StringExpression create_user_id = 8;
+    io.graphoenix.core.StringExpression create_time = 9;
+    io.graphoenix.core.StringExpression update_user_id = 10;
+    io.graphoenix.core.StringExpression update_time = 11;
+    io.graphoenix.core.StringExpression create_group_id = 12;
+    io.graphoenix.core.StringExpression intro_typename = 13;
     repeated string group_by = 14;
     bool not = 15;
     io.graphoenix.core.Conditional cond = 16;
-    repeated IntroType__TypeRelationExpression exs = 17;
-    int32 first = 18;
-    int32 last = 19;
-    int32 offset = 20;
-    string after = 21;
-    string before = 22;
+    repeated IntroTypePossibleTypesExpression exs = 17;
+}
+message IntroTypePossibleTypesListQueryArguments {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression type_name = 2;
+    IntroTypeExpression intro_type = 3;
+    io.graphoenix.core.StringExpression possible_type_name = 4;
+    bool include_deprecated = 5;
+    io.graphoenix.core.IntExpression version = 6;
+    io.graphoenix.core.IntExpression realm_id = 7;
+    io.graphoenix.core.StringExpression create_user_id = 8;
+    io.graphoenix.core.StringExpression create_time = 9;
+    io.graphoenix.core.StringExpression update_user_id = 10;
+    io.graphoenix.core.StringExpression update_time = 11;
+    io.graphoenix.core.StringExpression create_group_id = 12;
+    io.graphoenix.core.StringExpression intro_typename = 13;
+    IntroTypePossibleTypesOrderBy order_by = 14;
+    repeated string group_by = 15;
+    bool not = 16;
+    io.graphoenix.core.Conditional cond = 17;
+    repeated IntroTypePossibleTypesExpression exs = 18;
+    int32 first = 19;
+    int32 last = 20;
+    int32 offset = 21;
+    string after = 22;
+    string before = 23;
+}
+message IntroTypePossibleTypesConnectionQueryArguments {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression type_name = 2;
+    IntroTypeExpression intro_type = 3;
+    io.graphoenix.core.StringExpression possible_type_name = 4;
+    bool include_deprecated = 5;
+    io.graphoenix.core.IntExpression version = 6;
+    io.graphoenix.core.IntExpression realm_id = 7;
+    io.graphoenix.core.StringExpression create_user_id = 8;
+    io.graphoenix.core.StringExpression create_time = 9;
+    io.graphoenix.core.StringExpression update_user_id = 10;
+    io.graphoenix.core.StringExpression update_time = 11;
+    io.graphoenix.core.StringExpression create_group_id = 12;
+    io.graphoenix.core.StringExpression intro_typename = 13;
+    IntroTypePossibleTypesOrderBy order_by = 14;
+    repeated string group_by = 15;
+    bool not = 16;
+    io.graphoenix.core.Conditional cond = 17;
+    repeated IntroTypePossibleTypesExpression exs = 18;
+    int32 first = 19;
+    int32 last = 20;
+    int32 offset = 21;
+    string after = 22;
+    string before = 23;
+}
+message IntroDirectiveLocationsRelationQueryArguments {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression intro_directive_ref = 2;
+    IntroDirectiveExpression intro_directive = 3;
+    io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4;
+    bool include_deprecated = 5;
+    io.graphoenix.core.IntExpression version = 6;
+    io.graphoenix.core.IntExpression realm_id = 7;
+    io.graphoenix.core.StringExpression create_user_id = 8;
+    io.graphoenix.core.StringExpression create_time = 9;
+    io.graphoenix.core.StringExpression update_user_id = 10;
+    io.graphoenix.core.StringExpression update_time = 11;
+    io.graphoenix.core.StringExpression create_group_id = 12;
+    io.graphoenix.core.StringExpression intro_typename = 13;
+    repeated string group_by = 14;
+    bool not = 15;
+    io.graphoenix.core.Conditional cond = 16;
+    repeated IntroDirectiveLocationsRelationExpression exs = 17;
+}
+message IntroDirectiveLocationsRelationListQueryArguments {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression intro_directive_ref = 2;
+    IntroDirectiveExpression intro_directive = 3;
+    io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4;
+    bool include_deprecated = 5;
+    io.graphoenix.core.IntExpression version = 6;
+    io.graphoenix.core.IntExpression realm_id = 7;
+    io.graphoenix.core.StringExpression create_user_id = 8;
+    io.graphoenix.core.StringExpression create_time = 9;
+    io.graphoenix.core.StringExpression update_user_id = 10;
+    io.graphoenix.core.StringExpression update_time = 11;
+    io.graphoenix.core.StringExpression create_group_id = 12;
+    io.graphoenix.core.StringExpression intro_typename = 13;
+    IntroDirectiveLocationsRelationOrderBy order_by = 14;
+    repeated string group_by = 15;
+    bool not = 16;
+    io.graphoenix.core.Conditional cond = 17;
+    repeated IntroDirectiveLocationsRelationExpression exs = 18;
+    int32 first = 19;
+    int32 last = 20;
+    int32 offset = 21;
+    string after = 22;
+    string before = 23;
+}
+message IntroDirectiveLocationsRelationConnectionQueryArguments {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression intro_directive_ref = 2;
+    IntroDirectiveExpression intro_directive = 3;
+    io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4;
+    bool include_deprecated = 5;
+    io.graphoenix.core.IntExpression version = 6;
+    io.graphoenix.core.IntExpression realm_id = 7;
+    io.graphoenix.core.StringExpression create_user_id = 8;
+    io.graphoenix.core.StringExpression create_time = 9;
+    io.graphoenix.core.StringExpression update_user_id = 10;
+    io.graphoenix.core.StringExpression update_time = 11;
+    io.graphoenix.core.StringExpression create_group_id = 12;
+    io.graphoenix.core.StringExpression intro_typename = 13;
+    IntroDirectiveLocationsRelationOrderBy order_by = 14;
+    repeated string group_by = 15;
+    bool not = 16;
+    io.graphoenix.core.Conditional cond = 17;
+    repeated IntroDirectiveLocationsRelationExpression exs = 18;
+    int32 first = 19;
+    int32 last = 20;
+    int32 offset = 21;
+    string after = 22;
+    string before = 23;
 }
 message IntroSchemaMutationArguments {
     string id = 1;
@@ -1052,8 +1302,9 @@ message IntroTypeMutationArguments {
     string intro_typename = 19;
     int32 schema_id = 20;
     string of_type_name = 21;
-    repeated IntroType__TypeRelationInput intro_type_type_relation = 22;
-    IntroTypeExpression where = 23;
+    repeated IntroTypeInterfacesInput intro_type_interfaces = 22;
+    repeated IntroTypePossibleTypesInput intro_type_possible_types = 23;
+    IntroTypeExpression where = 24;
 }
 message IntroTypeListMutationArguments {
     string name = 1;
@@ -1077,9 +1328,10 @@ message IntroTypeListMutationArguments {
     string intro_typename = 19;
     int32 schema_id = 20;
     string of_type_name = 21;
-    repeated IntroType__TypeRelationInput intro_type_type_relation = 22;
-    repeated IntroTypeInput list = 23;
-    IntroTypeExpression where = 24;
+    repeated IntroTypeInterfacesInput intro_type_interfaces = 22;
+    repeated IntroTypePossibleTypesInput intro_type_possible_types = 23;
+    repeated IntroTypeInput list = 24;
+    IntroTypeExpression where = 25;
 }
 message IntroFieldMutationArguments {
     string id = 1;
@@ -1223,7 +1475,8 @@ message IntroDirectiveMutationArguments {
     string create_group_id = 14;
     string intro_typename = 15;
     int32 schema_id = 16;
-    IntroDirectiveExpression where = 17;
+    repeated IntroDirectiveLocationsRelationInput intro_directive_locations_relation = 17;
+    IntroDirectiveExpression where = 18;
 }
 message IntroDirectiveListMutationArguments {
     string name = 1;
@@ -1242,39 +1495,108 @@ message IntroDirectiveListMutationArguments {
     string create_group_id = 14;
     string intro_typename = 15;
     int32 schema_id = 16;
-    repeated IntroDirectiveInput list = 17;
-    IntroDirectiveExpression where = 18;
+    repeated IntroDirectiveLocationsRelationInput intro_directive_locations_relation = 17;
+    repeated IntroDirectiveInput list = 18;
+    IntroDirectiveExpression where = 19;
 }
-message IntroType__TypeRelationMutationArguments {
+message IntroTypeInterfacesMutationArguments {
     string id = 1;
-    string intro_type_ref = 2;
+    string type_name = 2;
     IntroTypeInput intro_type = 3;
-    bool is_deprecated = 4;
-    int32 version = 5;
-    int32 realm_id = 6;
-    string create_user_id = 7;
-    google.protobuf.Timestamp create_time = 8;
-    string update_user_id = 9;
-    google.protobuf.Timestamp update_time = 10;
-    string create_group_id = 11;
-    string intro_typename = 12;
-    IntroType__TypeRelationExpression where = 13;
+    string interface_name = 4;
+    bool is_deprecated = 5;
+    int32 version = 6;
+    int32 realm_id = 7;
+    string create_user_id = 8;
+    google.protobuf.Timestamp create_time = 9;
+    string update_user_id = 10;
+    google.protobuf.Timestamp update_time = 11;
+    string create_group_id = 12;
+    string intro_typename = 13;
+    IntroTypeInterfacesExpression where = 14;
 }
-message IntroType__TypeRelationListMutationArguments {
+message IntroTypeInterfacesListMutationArguments {
     string id = 1;
-    string intro_type_ref = 2;
+    string type_name = 2;
     IntroTypeInput intro_type = 3;
-    bool is_deprecated = 4;
-    int32 version = 5;
-    int32 realm_id = 6;
-    string create_user_id = 7;
-    google.protobuf.Timestamp create_time = 8;
-    string update_user_id = 9;
-    google.protobuf.Timestamp update_time = 10;
-    string create_group_id = 11;
-    string intro_typename = 12;
-    repeated IntroType__TypeRelationInput list = 13;
-    IntroType__TypeRelationExpression where = 14;
+    string interface_name = 4;
+    bool is_deprecated = 5;
+    int32 version = 6;
+    int32 realm_id = 7;
+    string create_user_id = 8;
+    google.protobuf.Timestamp create_time = 9;
+    string update_user_id = 10;
+    google.protobuf.Timestamp update_time = 11;
+    string create_group_id = 12;
+    string intro_typename = 13;
+    repeated IntroTypeInterfacesInput list = 14;
+    IntroTypeInterfacesExpression where = 15;
+}
+message IntroTypePossibleTypesMutationArguments {
+    string id = 1;
+    string type_name = 2;
+    IntroTypeInput intro_type = 3;
+    string possible_type_name = 4;
+    bool is_deprecated = 5;
+    int32 version = 6;
+    int32 realm_id = 7;
+    string create_user_id = 8;
+    google.protobuf.Timestamp create_time = 9;
+    string update_user_id = 10;
+    google.protobuf.Timestamp update_time = 11;
+    string create_group_id = 12;
+    string intro_typename = 13;
+    IntroTypePossibleTypesExpression where = 14;
+}
+message IntroTypePossibleTypesListMutationArguments {
+    string id = 1;
+    string type_name = 2;
+    IntroTypeInput intro_type = 3;
+    string possible_type_name = 4;
+    bool is_deprecated = 5;
+    int32 version = 6;
+    int32 realm_id = 7;
+    string create_user_id = 8;
+    google.protobuf.Timestamp create_time = 9;
+    string update_user_id = 10;
+    google.protobuf.Timestamp update_time = 11;
+    string create_group_id = 12;
+    string intro_typename = 13;
+    repeated IntroTypePossibleTypesInput list = 14;
+    IntroTypePossibleTypesExpression where = 15;
+}
+message IntroDirectiveLocationsRelationMutationArguments {
+    string id = 1;
+    string intro_directive_ref = 2;
+    IntroDirectiveInput intro_directive = 3;
+    io.graphoenix.core.IntroDirectiveLocation locations_ref = 4;
+    bool is_deprecated = 5;
+    int32 version = 6;
+    int32 realm_id = 7;
+    string create_user_id = 8;
+    google.protobuf.Timestamp create_time = 9;
+    string update_user_id = 10;
+    google.protobuf.Timestamp update_time = 11;
+    string create_group_id = 12;
+    string intro_typename = 13;
+    IntroDirectiveLocationsRelationExpression where = 14;
+}
+message IntroDirectiveLocationsRelationListMutationArguments {
+    string id = 1;
+    string intro_directive_ref = 2;
+    IntroDirectiveInput intro_directive = 3;
+    io.graphoenix.core.IntroDirectiveLocation locations_ref = 4;
+    bool is_deprecated = 5;
+    int32 version = 6;
+    int32 realm_id = 7;
+    string create_user_id = 8;
+    google.protobuf.Timestamp create_time = 9;
+    string update_user_id = 10;
+    google.protobuf.Timestamp update_time = 11;
+    string create_group_id = 12;
+    string intro_typename = 13;
+    repeated IntroDirectiveLocationsRelationInput list = 14;
+    IntroDirectiveLocationsRelationExpression where = 15;
 }
 message IntroSchemaSubscriptionArguments {
     io.graphoenix.core.StringExpression id = 1;
@@ -1382,11 +1704,12 @@ message IntroTypeSubscriptionArguments {
     io.graphoenix.core.StringExpression intro_typename = 19;
     io.graphoenix.core.IntExpression schema_id = 20;
     io.graphoenix.core.StringExpression of_type_name = 21;
-    IntroType__TypeRelationExpression intro_type_type_relation = 22;
-    repeated string group_by = 23;
-    bool not = 24;
-    io.graphoenix.core.Conditional cond = 25;
-    repeated IntroTypeExpression exs = 26;
+    IntroTypeInterfacesExpression intro_type_interfaces = 22;
+    IntroTypePossibleTypesExpression intro_type_possible_types = 23;
+    repeated string group_by = 24;
+    bool not = 25;
+    io.graphoenix.core.Conditional cond = 26;
+    repeated IntroTypeExpression exs = 27;
 }
 message IntroTypeListSubscriptionArguments {
     io.graphoenix.core.StringExpression name = 1;
@@ -1410,17 +1733,18 @@ message IntroTypeListSubscriptionArguments {
     io.graphoenix.core.StringExpression intro_typename = 19;
     io.graphoenix.core.IntExpression schema_id = 20;
     io.graphoenix.core.StringExpression of_type_name = 21;
-    IntroType__TypeRelationExpression intro_type_type_relation = 22;
-    IntroTypeOrderBy order_by = 23;
-    repeated string group_by = 24;
-    bool not = 25;
-    io.graphoenix.core.Conditional cond = 26;
-    repeated IntroTypeExpression exs = 27;
-    int32 first = 28;
-    int32 last = 29;
-    int32 offset = 30;
-    string after = 31;
-    string before = 32;
+    IntroTypeInterfacesExpression intro_type_interfaces = 22;
+    IntroTypePossibleTypesExpression intro_type_possible_types = 23;
+    IntroTypeOrderBy order_by = 24;
+    repeated string group_by = 25;
+    bool not = 26;
+    io.graphoenix.core.Conditional cond = 27;
+    repeated IntroTypeExpression exs = 28;
+    int32 first = 29;
+    int32 last = 30;
+    int32 offset = 31;
+    string after = 32;
+    string before = 33;
 }
 message IntroTypeConnectionSubscriptionArguments {
     io.graphoenix.core.StringExpression name = 1;
@@ -1444,17 +1768,18 @@ message IntroTypeConnectionSubscriptionArguments {
     io.graphoenix.core.StringExpression intro_typename = 19;
     io.graphoenix.core.IntExpression schema_id = 20;
     io.graphoenix.core.StringExpression of_type_name = 21;
-    IntroType__TypeRelationExpression intro_type_type_relation = 22;
-    IntroTypeOrderBy order_by = 23;
-    repeated string group_by = 24;
-    bool not = 25;
-    io.graphoenix.core.Conditional cond = 26;
-    repeated IntroTypeExpression exs = 27;
-    int32 first = 28;
-    int32 last = 29;
-    int32 offset = 30;
-    string after = 31;
-    string before = 32;
+    IntroTypeInterfacesExpression intro_type_interfaces = 22;
+    IntroTypePossibleTypesExpression intro_type_possible_types = 23;
+    IntroTypeOrderBy order_by = 24;
+    repeated string group_by = 25;
+    bool not = 26;
+    io.graphoenix.core.Conditional cond = 27;
+    repeated IntroTypeExpression exs = 28;
+    int32 first = 29;
+    int32 last = 30;
+    int32 offset = 31;
+    string after = 32;
+    string before = 33;
 }
 message IntroFieldSubscriptionArguments {
     io.graphoenix.core.StringExpression id = 1;
@@ -1719,10 +2044,11 @@ message IntroDirectiveSubscriptionArguments {
     io.graphoenix.core.StringExpression create_group_id = 14;
     io.graphoenix.core.StringExpression intro_typename = 15;
     io.graphoenix.core.IntExpression schema_id = 16;
-    repeated string group_by = 17;
-    bool not = 18;
-    io.graphoenix.core.Conditional cond = 19;
-    repeated IntroDirectiveExpression exs = 20;
+    IntroDirectiveLocationsRelationExpression intro_directive_locations_relation = 17;
+    repeated string group_by = 18;
+    bool not = 19;
+    io.graphoenix.core.Conditional cond = 20;
+    repeated IntroDirectiveExpression exs = 21;
 }
 message IntroDirectiveListSubscriptionArguments {
     io.graphoenix.core.StringExpression name = 1;
@@ -1741,16 +2067,17 @@ message IntroDirectiveListSubscriptionArguments {
     io.graphoenix.core.StringExpression create_group_id = 14;
     io.graphoenix.core.StringExpression intro_typename = 15;
     io.graphoenix.core.IntExpression schema_id = 16;
-    IntroDirectiveOrderBy order_by = 17;
-    repeated string group_by = 18;
-    bool not = 19;
-    io.graphoenix.core.Conditional cond = 20;
-    repeated IntroDirectiveExpression exs = 21;
-    int32 first = 22;
-    int32 last = 23;
-    int32 offset = 24;
-    string after = 25;
-    string before = 26;
+    IntroDirectiveLocationsRelationExpression intro_directive_locations_relation = 17;
+    IntroDirectiveOrderBy order_by = 18;
+    repeated string group_by = 19;
+    bool not = 20;
+    io.graphoenix.core.Conditional cond = 21;
+    repeated IntroDirectiveExpression exs = 22;
+    int32 first = 23;
+    int32 last = 24;
+    int32 offset = 25;
+    string after = 26;
+    string before = 27;
 }
 message IntroDirectiveConnectionSubscriptionArguments {
     io.graphoenix.core.StringExpression name = 1;
@@ -1769,80 +2096,222 @@ message IntroDirectiveConnectionSubscriptionArguments {
     io.graphoenix.core.StringExpression create_group_id = 14;
     io.graphoenix.core.StringExpression intro_typename = 15;
     io.graphoenix.core.IntExpression schema_id = 16;
-    IntroDirectiveOrderBy order_by = 17;
-    repeated string group_by = 18;
-    bool not = 19;
-    io.graphoenix.core.Conditional cond = 20;
-    repeated IntroDirectiveExpression exs = 21;
-    int32 first = 22;
-    int32 last = 23;
-    int32 offset = 24;
-    string after = 25;
-    string before = 26;
+    IntroDirectiveLocationsRelationExpression intro_directive_locations_relation = 17;
+    IntroDirectiveOrderBy order_by = 18;
+    repeated string group_by = 19;
+    bool not = 20;
+    io.graphoenix.core.Conditional cond = 21;
+    repeated IntroDirectiveExpression exs = 22;
+    int32 first = 23;
+    int32 last = 24;
+    int32 offset = 25;
+    string after = 26;
+    string before = 27;
 }
-message IntroType__TypeRelationSubscriptionArguments {
+message IntroTypeInterfacesSubscriptionArguments {
     io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression intro_type_ref = 2;
+    io.graphoenix.core.StringExpression type_name = 2;
     IntroTypeExpression intro_type = 3;
-    bool include_deprecated = 4;
-    io.graphoenix.core.IntExpression version = 5;
-    io.graphoenix.core.IntExpression realm_id = 6;
-    io.graphoenix.core.StringExpression create_user_id = 7;
-    io.graphoenix.core.StringExpression create_time = 8;
-    io.graphoenix.core.StringExpression update_user_id = 9;
-    io.graphoenix.core.StringExpression update_time = 10;
-    io.graphoenix.core.StringExpression create_group_id = 11;
-    io.graphoenix.core.StringExpression intro_typename = 12;
-    repeated string group_by = 13;
-    bool not = 14;
-    io.graphoenix.core.Conditional cond = 15;
-    repeated IntroType__TypeRelationExpression exs = 16;
-}
-message IntroType__TypeRelationListSubscriptionArguments {
-    io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression intro_type_ref = 2;
-    IntroTypeExpression intro_type = 3;
-    bool include_deprecated = 4;
-    io.graphoenix.core.IntExpression version = 5;
-    io.graphoenix.core.IntExpression realm_id = 6;
-    io.graphoenix.core.StringExpression create_user_id = 7;
-    io.graphoenix.core.StringExpression create_time = 8;
-    io.graphoenix.core.StringExpression update_user_id = 9;
-    io.graphoenix.core.StringExpression update_time = 10;
-    io.graphoenix.core.StringExpression create_group_id = 11;
-    io.graphoenix.core.StringExpression intro_typename = 12;
-    IntroType__TypeRelationOrderBy order_by = 13;
+    io.graphoenix.core.StringExpression interface_name = 4;
+    bool include_deprecated = 5;
+    io.graphoenix.core.IntExpression version = 6;
+    io.graphoenix.core.IntExpression realm_id = 7;
+    io.graphoenix.core.StringExpression create_user_id = 8;
+    io.graphoenix.core.StringExpression create_time = 9;
+    io.graphoenix.core.StringExpression update_user_id = 10;
+    io.graphoenix.core.StringExpression update_time = 11;
+    io.graphoenix.core.StringExpression create_group_id = 12;
+    io.graphoenix.core.StringExpression intro_typename = 13;
     repeated string group_by = 14;
     bool not = 15;
     io.graphoenix.core.Conditional cond = 16;
-    repeated IntroType__TypeRelationExpression exs = 17;
-    int32 first = 18;
-    int32 last = 19;
-    int32 offset = 20;
-    string after = 21;
-    string before = 22;
+    repeated IntroTypeInterfacesExpression exs = 17;
 }
-message IntroType__TypeRelationConnectionSubscriptionArguments {
+message IntroTypeInterfacesListSubscriptionArguments {
     io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression intro_type_ref = 2;
+    io.graphoenix.core.StringExpression type_name = 2;
     IntroTypeExpression intro_type = 3;
-    bool include_deprecated = 4;
-    io.graphoenix.core.IntExpression version = 5;
-    io.graphoenix.core.IntExpression realm_id = 6;
-    io.graphoenix.core.StringExpression create_user_id = 7;
-    io.graphoenix.core.StringExpression create_time = 8;
-    io.graphoenix.core.StringExpression update_user_id = 9;
-    io.graphoenix.core.StringExpression update_time = 10;
-    io.graphoenix.core.StringExpression create_group_id = 11;
-    io.graphoenix.core.StringExpression intro_typename = 12;
-    IntroType__TypeRelationOrderBy order_by = 13;
+    io.graphoenix.core.StringExpression interface_name = 4;
+    bool include_deprecated = 5;
+    io.graphoenix.core.IntExpression version = 6;
+    io.graphoenix.core.IntExpression realm_id = 7;
+    io.graphoenix.core.StringExpression create_user_id = 8;
+    io.graphoenix.core.StringExpression create_time = 9;
+    io.graphoenix.core.StringExpression update_user_id = 10;
+    io.graphoenix.core.StringExpression update_time = 11;
+    io.graphoenix.core.StringExpression create_group_id = 12;
+    io.graphoenix.core.StringExpression intro_typename = 13;
+    IntroTypeInterfacesOrderBy order_by = 14;
+    repeated string group_by = 15;
+    bool not = 16;
+    io.graphoenix.core.Conditional cond = 17;
+    repeated IntroTypeInterfacesExpression exs = 18;
+    int32 first = 19;
+    int32 last = 20;
+    int32 offset = 21;
+    string after = 22;
+    string before = 23;
+}
+message IntroTypeInterfacesConnectionSubscriptionArguments {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression type_name = 2;
+    IntroTypeExpression intro_type = 3;
+    io.graphoenix.core.StringExpression interface_name = 4;
+    bool include_deprecated = 5;
+    io.graphoenix.core.IntExpression version = 6;
+    io.graphoenix.core.IntExpression realm_id = 7;
+    io.graphoenix.core.StringExpression create_user_id = 8;
+    io.graphoenix.core.StringExpression create_time = 9;
+    io.graphoenix.core.StringExpression update_user_id = 10;
+    io.graphoenix.core.StringExpression update_time = 11;
+    io.graphoenix.core.StringExpression create_group_id = 12;
+    io.graphoenix.core.StringExpression intro_typename = 13;
+    IntroTypeInterfacesOrderBy order_by = 14;
+    repeated string group_by = 15;
+    bool not = 16;
+    io.graphoenix.core.Conditional cond = 17;
+    repeated IntroTypeInterfacesExpression exs = 18;
+    int32 first = 19;
+    int32 last = 20;
+    int32 offset = 21;
+    string after = 22;
+    string before = 23;
+}
+message IntroTypePossibleTypesSubscriptionArguments {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression type_name = 2;
+    IntroTypeExpression intro_type = 3;
+    io.graphoenix.core.StringExpression possible_type_name = 4;
+    bool include_deprecated = 5;
+    io.graphoenix.core.IntExpression version = 6;
+    io.graphoenix.core.IntExpression realm_id = 7;
+    io.graphoenix.core.StringExpression create_user_id = 8;
+    io.graphoenix.core.StringExpression create_time = 9;
+    io.graphoenix.core.StringExpression update_user_id = 10;
+    io.graphoenix.core.StringExpression update_time = 11;
+    io.graphoenix.core.StringExpression create_group_id = 12;
+    io.graphoenix.core.StringExpression intro_typename = 13;
     repeated string group_by = 14;
     bool not = 15;
     io.graphoenix.core.Conditional cond = 16;
-    repeated IntroType__TypeRelationExpression exs = 17;
-    int32 first = 18;
-    int32 last = 19;
-    int32 offset = 20;
-    string after = 21;
-    string before = 22;
+    repeated IntroTypePossibleTypesExpression exs = 17;
+}
+message IntroTypePossibleTypesListSubscriptionArguments {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression type_name = 2;
+    IntroTypeExpression intro_type = 3;
+    io.graphoenix.core.StringExpression possible_type_name = 4;
+    bool include_deprecated = 5;
+    io.graphoenix.core.IntExpression version = 6;
+    io.graphoenix.core.IntExpression realm_id = 7;
+    io.graphoenix.core.StringExpression create_user_id = 8;
+    io.graphoenix.core.StringExpression create_time = 9;
+    io.graphoenix.core.StringExpression update_user_id = 10;
+    io.graphoenix.core.StringExpression update_time = 11;
+    io.graphoenix.core.StringExpression create_group_id = 12;
+    io.graphoenix.core.StringExpression intro_typename = 13;
+    IntroTypePossibleTypesOrderBy order_by = 14;
+    repeated string group_by = 15;
+    bool not = 16;
+    io.graphoenix.core.Conditional cond = 17;
+    repeated IntroTypePossibleTypesExpression exs = 18;
+    int32 first = 19;
+    int32 last = 20;
+    int32 offset = 21;
+    string after = 22;
+    string before = 23;
+}
+message IntroTypePossibleTypesConnectionSubscriptionArguments {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression type_name = 2;
+    IntroTypeExpression intro_type = 3;
+    io.graphoenix.core.StringExpression possible_type_name = 4;
+    bool include_deprecated = 5;
+    io.graphoenix.core.IntExpression version = 6;
+    io.graphoenix.core.IntExpression realm_id = 7;
+    io.graphoenix.core.StringExpression create_user_id = 8;
+    io.graphoenix.core.StringExpression create_time = 9;
+    io.graphoenix.core.StringExpression update_user_id = 10;
+    io.graphoenix.core.StringExpression update_time = 11;
+    io.graphoenix.core.StringExpression create_group_id = 12;
+    io.graphoenix.core.StringExpression intro_typename = 13;
+    IntroTypePossibleTypesOrderBy order_by = 14;
+    repeated string group_by = 15;
+    bool not = 16;
+    io.graphoenix.core.Conditional cond = 17;
+    repeated IntroTypePossibleTypesExpression exs = 18;
+    int32 first = 19;
+    int32 last = 20;
+    int32 offset = 21;
+    string after = 22;
+    string before = 23;
+}
+message IntroDirectiveLocationsRelationSubscriptionArguments {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression intro_directive_ref = 2;
+    IntroDirectiveExpression intro_directive = 3;
+    io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4;
+    bool include_deprecated = 5;
+    io.graphoenix.core.IntExpression version = 6;
+    io.graphoenix.core.IntExpression realm_id = 7;
+    io.graphoenix.core.StringExpression create_user_id = 8;
+    io.graphoenix.core.StringExpression create_time = 9;
+    io.graphoenix.core.StringExpression update_user_id = 10;
+    io.graphoenix.core.StringExpression update_time = 11;
+    io.graphoenix.core.StringExpression create_group_id = 12;
+    io.graphoenix.core.StringExpression intro_typename = 13;
+    repeated string group_by = 14;
+    bool not = 15;
+    io.graphoenix.core.Conditional cond = 16;
+    repeated IntroDirectiveLocationsRelationExpression exs = 17;
+}
+message IntroDirectiveLocationsRelationListSubscriptionArguments {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression intro_directive_ref = 2;
+    IntroDirectiveExpression intro_directive = 3;
+    io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4;
+    bool include_deprecated = 5;
+    io.graphoenix.core.IntExpression version = 6;
+    io.graphoenix.core.IntExpression realm_id = 7;
+    io.graphoenix.core.StringExpression create_user_id = 8;
+    io.graphoenix.core.StringExpression create_time = 9;
+    io.graphoenix.core.StringExpression update_user_id = 10;
+    io.graphoenix.core.StringExpression update_time = 11;
+    io.graphoenix.core.StringExpression create_group_id = 12;
+    io.graphoenix.core.StringExpression intro_typename = 13;
+    IntroDirectiveLocationsRelationOrderBy order_by = 14;
+    repeated string group_by = 15;
+    bool not = 16;
+    io.graphoenix.core.Conditional cond = 17;
+    repeated IntroDirectiveLocationsRelationExpression exs = 18;
+    int32 first = 19;
+    int32 last = 20;
+    int32 offset = 21;
+    string after = 22;
+    string before = 23;
+}
+message IntroDirectiveLocationsRelationConnectionSubscriptionArguments {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression intro_directive_ref = 2;
+    IntroDirectiveExpression intro_directive = 3;
+    io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4;
+    bool include_deprecated = 5;
+    io.graphoenix.core.IntExpression version = 6;
+    io.graphoenix.core.IntExpression realm_id = 7;
+    io.graphoenix.core.StringExpression create_user_id = 8;
+    io.graphoenix.core.StringExpression create_time = 9;
+    io.graphoenix.core.StringExpression update_user_id = 10;
+    io.graphoenix.core.StringExpression update_time = 11;
+    io.graphoenix.core.StringExpression create_group_id = 12;
+    io.graphoenix.core.StringExpression intro_typename = 13;
+    IntroDirectiveLocationsRelationOrderBy order_by = 14;
+    repeated string group_by = 15;
+    bool not = 16;
+    io.graphoenix.core.Conditional cond = 17;
+    repeated IntroDirectiveLocationsRelationExpression exs = 18;
+    int32 first = 19;
+    int32 last = 20;
+    int32 offset = 21;
+    string after = 22;
+    string before = 23;
 }

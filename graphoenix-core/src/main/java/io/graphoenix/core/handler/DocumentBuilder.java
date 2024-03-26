@@ -194,7 +194,6 @@ public class DocumentBuilder {
                 .filter(fieldDefinition -> fieldDefinition.getType().hasList())
                 .filter(fieldDefinition -> !fieldDefinition.isMapField())
                 .filter(fieldDefinition -> !fieldDefinition.isFetchField())
-                .filter(fieldDefinition -> packageManager.isLocalPackage(documentManager.getFieldTypeDefinition(fieldDefinition)))
                 .forEach(fieldDefinition ->
                         fieldDefinition
                                 .addDirective(

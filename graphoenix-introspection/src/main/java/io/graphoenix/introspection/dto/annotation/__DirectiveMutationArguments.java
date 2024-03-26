@@ -46,6 +46,8 @@ public @interface __DirectiveMutationArguments {
 
   int schemaId() default 0;
 
+  __DirectiveLocationsRelationInput1[] __directiveLocationsRelation() default {};
+
   __DirectiveExpression1 where() default @__DirectiveExpression1;
 
   String $name() default "";
@@ -79,6 +81,8 @@ public @interface __DirectiveMutationArguments {
   String $__typename() default "";
 
   String $schemaId() default "";
+
+  String $__directiveLocationsRelation() default "";
 
   String $where() default "";
 }

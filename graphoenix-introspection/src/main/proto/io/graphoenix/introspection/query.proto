@@ -31,7 +31,13 @@ service QueryService {
     rpc IntroDirective (QueryIntroDirectiveRequest) returns (QueryIntroDirectiveResponse);
     rpc IntroDirectiveList (QueryIntroDirectiveListRequest) returns (QueryIntroDirectiveListResponse);
     rpc IntroDirectiveConnection (QueryIntroDirectiveConnectionRequest) returns (QueryIntroDirectiveConnectionResponse);
-    rpc IntroTypeTypeRelation (QueryIntroTypeTypeRelationRequest) returns (QueryIntroTypeTypeRelationResponse);
-    rpc IntroTypeTypeRelationList (QueryIntroTypeTypeRelationListRequest) returns (QueryIntroTypeTypeRelationListResponse);
-    rpc IntroTypeTypeRelationConnection (QueryIntroTypeTypeRelationConnectionRequest) returns (QueryIntroTypeTypeRelationConnectionResponse);
+    rpc IntroTypeInterfaces (QueryIntroTypeInterfacesRequest) returns (QueryIntroTypeInterfacesResponse);
+    rpc IntroTypeInterfacesList (QueryIntroTypeInterfacesListRequest) returns (QueryIntroTypeInterfacesListResponse);
+    rpc IntroTypeInterfacesConnection (QueryIntroTypeInterfacesConnectionRequest) returns (QueryIntroTypeInterfacesConnectionResponse);
+    rpc IntroTypePossibleTypes (QueryIntroTypePossibleTypesRequest) returns (QueryIntroTypePossibleTypesResponse);
+    rpc IntroTypePossibleTypesList (QueryIntroTypePossibleTypesListRequest) returns (QueryIntroTypePossibleTypesListResponse);
+    rpc IntroTypePossibleTypesConnection (QueryIntroTypePossibleTypesConnectionRequest) returns (QueryIntroTypePossibleTypesConnectionResponse);
+    rpc IntroDirectiveLocationsRelation (QueryIntroDirectiveLocationsRelationRequest) returns (QueryIntroDirectiveLocationsRelationResponse);
+    rpc IntroDirectiveLocationsRelationList (QueryIntroDirectiveLocationsRelationListRequest) returns (QueryIntroDirectiveLocationsRelationListResponse);
+    rpc IntroDirectiveLocationsRelationConnection (QueryIntroDirectiveLocationsRelationConnectionRequest) returns (QueryIntroDirectiveLocationsRelationConnectionResponse);
 }

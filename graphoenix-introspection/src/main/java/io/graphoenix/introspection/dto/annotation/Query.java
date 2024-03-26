@@ -51,12 +51,29 @@ public @interface Query {
   __DirectiveConnectionQueryArguments __directiveConnection(
       ) default @__DirectiveConnectionQueryArguments;
 
-  __Type__TypeRelationQueryArguments __typeTypeRelation(
-      ) default @__Type__TypeRelationQueryArguments;
+  __TypeInterfacesQueryArguments __typeInterfaces() default @__TypeInterfacesQueryArguments;
 
-  __Type__TypeRelationListQueryArguments __typeTypeRelationList(
-      ) default @__Type__TypeRelationListQueryArguments;
+  __TypeInterfacesListQueryArguments __typeInterfacesList(
+      ) default @__TypeInterfacesListQueryArguments;
 
-  __Type__TypeRelationConnectionQueryArguments __typeTypeRelationConnection(
-      ) default @__Type__TypeRelationConnectionQueryArguments;
+  __TypeInterfacesConnectionQueryArguments __typeInterfacesConnection(
+      ) default @__TypeInterfacesConnectionQueryArguments;
+
+  __TypePossibleTypesQueryArguments __typePossibleTypes(
+      ) default @__TypePossibleTypesQueryArguments;
+
+  __TypePossibleTypesListQueryArguments __typePossibleTypesList(
+      ) default @__TypePossibleTypesListQueryArguments;
+
+  __TypePossibleTypesConnectionQueryArguments __typePossibleTypesConnection(
+      ) default @__TypePossibleTypesConnectionQueryArguments;
+
+  __DirectiveLocationsRelationQueryArguments __directiveLocationsRelation(
+      ) default @__DirectiveLocationsRelationQueryArguments;
+
+  __DirectiveLocationsRelationListQueryArguments __directiveLocationsRelationList(
+      ) default @__DirectiveLocationsRelationListQueryArguments;
+
+  __DirectiveLocationsRelationConnectionQueryArguments __directiveLocationsRelationConnection(
+      ) default @__DirectiveLocationsRelationConnectionQueryArguments;
 }

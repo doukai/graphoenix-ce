@@ -26,6 +26,8 @@ public @interface Options {
 
   int decimals() default 0;
 
+  boolean unique() default false;
+
   boolean autoIncrement() default false;
 
   Protocol protocol() default Protocol.GRPC;

@@ -24,6 +24,6 @@ public class LocalFetchHandler implements FetchHandler {
 
     @Override
     public Mono<JsonValue> request(String packageName, Operation operation) {
-        return Mono.from(operationHandler.handle(operation, null));
+        return Mono.from(operationHandler.handle(operation));
     }
 }

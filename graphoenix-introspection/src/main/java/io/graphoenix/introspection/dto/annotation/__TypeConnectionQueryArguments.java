@@ -59,7 +59,9 @@ public @interface __TypeConnectionQueryArguments {
 
   StringExpression1 ofTypeName() default @StringExpression1;
 
-  __Type__TypeRelationExpression1 __typeTypeRelation() default @__Type__TypeRelationExpression1;
+  __TypeInterfacesExpression1 __typeInterfaces() default @__TypeInterfacesExpression1;
+
+  __TypePossibleTypesExpression1 __typePossibleTypes() default @__TypePossibleTypesExpression1;
 
   __TypeOrderBy1 orderBy() default @__TypeOrderBy1;
 
@@ -123,7 +125,9 @@ public @interface __TypeConnectionQueryArguments {
 
   String $ofTypeName() default "";
 
-  String $__typeTypeRelation() default "";
+  String $__typeInterfaces() default "";
+
+  String $__typePossibleTypes() default "";
 
   String $orderBy() default "";
 

@@ -55,9 +55,15 @@ public class __Directive implements Meta {
 
   private Integer schemaId;
 
+  private Collection<__DirectiveLocationsRelation> __directiveLocationsRelation;
+
   private __InputValue argsAggregate;
 
   private __InputValueConnection argsConnection;
+
+  private __DirectiveLocationsRelation __directiveLocationsRelationAggregate;
+
+  private __DirectiveLocationsRelationConnection __directiveLocationsRelationConnection;
 
   private Integer nameCount;
 
@@ -225,6 +231,15 @@ public class __Directive implements Meta {
     this.schemaId = schemaId;
   }
 
+  public Collection<__DirectiveLocationsRelation> get__directiveLocationsRelation() {
+    return this.__directiveLocationsRelation;
+  }
+
+  public void set__directiveLocationsRelation(
+      Collection<__DirectiveLocationsRelation> __directiveLocationsRelation) {
+    this.__directiveLocationsRelation = __directiveLocationsRelation;
+  }
+
   public __InputValue getArgsAggregate() {
     return this.argsAggregate;
   }
@@ -239,6 +254,24 @@ public class __Directive implements Meta {
 
   public void setArgsConnection(__InputValueConnection argsConnection) {
     this.argsConnection = argsConnection;
+  }
+
+  public __DirectiveLocationsRelation get__directiveLocationsRelationAggregate() {
+    return this.__directiveLocationsRelationAggregate;
+  }
+
+  public void set__directiveLocationsRelationAggregate(
+      __DirectiveLocationsRelation __directiveLocationsRelationAggregate) {
+    this.__directiveLocationsRelationAggregate = __directiveLocationsRelationAggregate;
+  }
+
+  public __DirectiveLocationsRelationConnection get__directiveLocationsRelationConnection() {
+    return this.__directiveLocationsRelationConnection;
+  }
+
+  public void set__directiveLocationsRelationConnection(
+      __DirectiveLocationsRelationConnection __directiveLocationsRelationConnection) {
+    this.__directiveLocationsRelationConnection = __directiveLocationsRelationConnection;
   }
 
   public Integer getNameCount() {

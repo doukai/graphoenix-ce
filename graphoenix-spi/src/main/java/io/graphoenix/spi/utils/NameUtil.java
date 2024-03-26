@@ -25,7 +25,7 @@ public final class NameUtil {
     }
 
     public static String getTypeRefFieldName(String typeName) {
-        return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, typeName) + SUFFIX_REF;
+        return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, typeNameToFieldName(typeName)) + SUFFIX_REF;
     }
 
     public static String getAliasFromPath(String path) {
@@ -45,7 +45,7 @@ public final class NameUtil {
 
     public static String getGrpcFieldName(String name) {
         if (name.startsWith(PREFIX_INTROSPECTION)) {
-            return "intro" + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, name.replace(PREFIX_INTROSPECTION, ""));
+            return "intro" + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, name.replace(PREFIX_INTROSPECTION, ""));
         }
         return name;
     }

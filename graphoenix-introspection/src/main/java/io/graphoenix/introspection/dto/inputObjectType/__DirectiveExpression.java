@@ -51,6 +51,8 @@ public class __DirectiveExpression implements MetaExpression {
 
   private IntExpression schemaId;
 
+  private __DirectiveLocationsRelationExpression __directiveLocationsRelation;
+
   @DefaultValue("false")
   private Boolean not;
 
@@ -197,6 +199,15 @@ public class __DirectiveExpression implements MetaExpression {
 
   public void setSchemaId(IntExpression schemaId) {
     this.schemaId = schemaId;
+  }
+
+  public __DirectiveLocationsRelationExpression get__directiveLocationsRelation() {
+    return this.__directiveLocationsRelation;
+  }
+
+  public void set__directiveLocationsRelation(
+      __DirectiveLocationsRelationExpression __directiveLocationsRelation) {
+    this.__directiveLocationsRelation = __directiveLocationsRelation;
   }
 
   public Boolean getNot() {

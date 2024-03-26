@@ -36,9 +36,20 @@ public @interface Mutation {
 
   __DirectiveListMutationArguments __directiveList() default @__DirectiveListMutationArguments;
 
-  __Type__TypeRelationMutationArguments __typeTypeRelation(
-      ) default @__Type__TypeRelationMutationArguments;
+  __TypeInterfacesMutationArguments __typeInterfaces() default @__TypeInterfacesMutationArguments;
 
-  __Type__TypeRelationListMutationArguments __typeTypeRelationList(
-      ) default @__Type__TypeRelationListMutationArguments;
+  __TypeInterfacesListMutationArguments __typeInterfacesList(
+      ) default @__TypeInterfacesListMutationArguments;
+
+  __TypePossibleTypesMutationArguments __typePossibleTypes(
+      ) default @__TypePossibleTypesMutationArguments;
+
+  __TypePossibleTypesListMutationArguments __typePossibleTypesList(
+      ) default @__TypePossibleTypesListMutationArguments;
+
+  __DirectiveLocationsRelationMutationArguments __directiveLocationsRelation(
+      ) default @__DirectiveLocationsRelationMutationArguments;
+
+  __DirectiveLocationsRelationListMutationArguments __directiveLocationsRelationList(
+      ) default @__DirectiveLocationsRelationListMutationArguments;
 }

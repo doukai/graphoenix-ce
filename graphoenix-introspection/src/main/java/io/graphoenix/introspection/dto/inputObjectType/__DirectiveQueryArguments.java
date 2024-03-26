@@ -52,6 +52,8 @@ public class __DirectiveQueryArguments implements MetaExpression {
 
   private IntExpression schemaId;
 
+  private __DirectiveLocationsRelationExpression __directiveLocationsRelation;
+
   private Collection<String> groupBy;
 
   @DefaultValue("false")
@@ -200,6 +202,15 @@ public class __DirectiveQueryArguments implements MetaExpression {
 
   public void setSchemaId(IntExpression schemaId) {
     this.schemaId = schemaId;
+  }
+
+  public __DirectiveLocationsRelationExpression get__directiveLocationsRelation() {
+    return this.__directiveLocationsRelation;
+  }
+
+  public void set__directiveLocationsRelation(
+      __DirectiveLocationsRelationExpression __directiveLocationsRelation) {
+    this.__directiveLocationsRelation = __directiveLocationsRelation;
   }
 
   public Collection<String> getGroupBy() {
