@@ -250,7 +250,8 @@ public class DocumentBuilder {
                 .addField(new FieldDefinition(FIELD_ID_NAME).setType(new TypeName(SCALA_ID_NAME)))
                 .addField(
                         new FieldDefinition(fieldDefinition.getMapWithFromOrError())
-                                .setType(documentManager.getFieldMapFromFieldDefinition(objectType, fieldDefinition).getTypeNameWithoutID()))
+                                .setType(documentManager.getFieldMapFromFieldDefinition(objectType, fieldDefinition).getTypeNameWithoutID())
+                )
                 .addField(
                         new FieldDefinition(typeNameToFieldName(objectType.getName()))
                                 .setType(new TypeName(objectType.getName()))
@@ -304,7 +305,8 @@ public class DocumentBuilder {
                 .addField(new FieldDefinition(FIELD_ID_NAME).setType(new TypeName(SCALA_ID_NAME)))
                 .addField(
                         new FieldDefinition(fieldDefinition.getFetchWithFromOrError())
-                                .setType(documentManager.getFieldFetchFromFieldDefinition(objectType, fieldDefinition).getTypeNameWithoutID()))
+                                .setType(documentManager.getFieldFetchFromFieldDefinition(objectType, fieldDefinition).getTypeNameWithoutID())
+                )
                 .addField(
                         new FieldDefinition(typeNameToFieldName(objectType.getName()))
                                 .setType(new TypeName(objectType.getName()))

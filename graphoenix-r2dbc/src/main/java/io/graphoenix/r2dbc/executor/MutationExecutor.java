@@ -54,6 +54,10 @@ public class MutationExecutor {
                                                 sqlFlux.collectList()
                                                         .filter(sqlList -> !sqlList.isEmpty())
                                                         .flatMapMany(sqlList -> {
+                                                                    String sql = String.join(";\r\n", sqlList);
+                                                                    if (sql.contains("`__type`.`id`")) {
+                                                                        int i = 0;
+                                                                    }
                                                                     Batch batch = connection.createBatch();
                                                                     Logger.info("execute statement count:\r\n{}", sqlList.size());
                                                                     sqlList.forEach(batch::add);

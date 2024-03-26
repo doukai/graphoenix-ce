@@ -35,7 +35,7 @@ public class IntrospectionBuildEvent implements ScopeEvent {
         if (graphQLConfig.getBuildIntrospection()) {
             Logger.info("introspection build started");
             Operation operation = introspectionMutationBuilder.buildIntrospectionSchemaMutation();
-            return Mono.from(mutationHandler.mutation(operation))
+            return Mono.from(mutationHandler.mutation(operation, 500))
                     .doOnSuccess((jsonValue) -> Logger.info("introspection build success"))
                     .then();
         }

@@ -711,7 +711,7 @@ public class MutationTranslator {
         } else {
             Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
             Table table = typeToTable(fieldTypeDefinition.asObject());
-            Column column = graphqlFieldToColumn(table, fieldDefinition.getMapFromOrError());
+            Column column = graphqlFieldToColumn(table, fieldDefinition.getMapToOrError());
 
             EqualsTo parentColumnEqualsTo = new EqualsTo()
                     .withLeftExpression(column);
@@ -741,7 +741,11 @@ public class MutationTranslator {
                                             new InExpression()
                                                     .withLeftExpression(idColumn)
                                                     .withNot(notIn)
-                                                    .withRightExpression(new ExpressionList<>(idValueExpressionList))
+                                                    .withRightExpression(
+                                                            new Parenthesis(
+                                                                    new ExpressionList<>(idValueExpressionList)
+                                                            )
+                                                    )
                                     )
                             )
                     );
