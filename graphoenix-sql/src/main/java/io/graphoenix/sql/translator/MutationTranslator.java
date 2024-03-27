@@ -22,7 +22,6 @@ import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.create.table.ColDataType;
 import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.*;
@@ -46,12 +45,14 @@ public class MutationTranslator {
     private final DocumentManager documentManager;
     private final PackageManager packageManager;
     private final ArgumentsTranslator argumentsTranslator;
+    private final TypeTranslator typeTranslator;
 
     @Inject
-    public MutationTranslator(DocumentManager documentManager, PackageManager packageManager, ArgumentsTranslator argumentsTranslator) {
+    public MutationTranslator(DocumentManager documentManager, PackageManager packageManager, ArgumentsTranslator argumentsTranslator, TypeTranslator typeTranslator) {
         this.documentManager = documentManager;
         this.packageManager = packageManager;
         this.argumentsTranslator = argumentsTranslator;
+        this.typeTranslator = typeTranslator;
     }
 
     public Stream<String> operationToStatementSQLStream(Operation operation) {
@@ -172,12 +173,6 @@ public class MutationTranslator {
                                 objectType,
                                 fieldDefinition,
                                 parentIdExpression,
-                                inputValueValueWithVariableMap.entrySet().stream()
-                                        .filter(entry -> entry.getKey().getName().equals(fieldDefinition.getMapFromOrError()))
-                                        .findFirst()
-                                        .map(Map.Entry::getValue)
-                                        .map(DBValueUtil::leafValueToDBValue)
-                                        .orElse(null),
                                 null
                         )
                 );
@@ -513,7 +508,6 @@ public class MutationTranslator {
                                     objectType,
                                     fieldDefinition,
                                     parentIdExpression,
-                                    fromValueExpression,
                                     idValueWithVariableList.stream()
                                             .map(DBValueUtil::leafValueToDBValue)
                                             .collect(Collectors.toList())
@@ -557,7 +551,6 @@ public class MutationTranslator {
                                     objectType,
                                     fieldDefinition,
                                     parentIdExpression,
-                                    fromValueExpression,
                                     removeIdValueWithVariableList.stream()
                                             .map(DBValueUtil::leafValueToDBValue)
                                             .collect(Collectors.toList()),
@@ -577,7 +570,6 @@ public class MutationTranslator {
                         objectType,
                         fieldDefinition,
                         parentIdExpression,
-                        fromValueExpression,
                         null
                 );
                 return Stream
@@ -601,7 +593,6 @@ public class MutationTranslator {
                         objectType,
                         fieldDefinition,
                         parentIdExpression,
-                        fromValueExpression,
                         idValueExpressionList
                 );
                 return Stream
@@ -623,7 +614,6 @@ public class MutationTranslator {
                 objectType,
                 fieldDefinition,
                 parentIdExpression,
-                fromValueExpression,
                 null
         );
 
@@ -658,15 +648,13 @@ public class MutationTranslator {
     protected Statement removeMapStatement(ObjectType objectType,
                                            FieldDefinition fieldDefinition,
                                            Expression parentIdExpression,
-                                           Expression fromValueExpression,
                                            List<Expression> idValueExpressionList) {
-        return removeMapStatement(objectType, fieldDefinition, parentIdExpression, fromValueExpression, idValueExpressionList, true);
+        return removeMapStatement(objectType, fieldDefinition, parentIdExpression, idValueExpressionList, true);
     }
 
     protected Statement removeMapStatement(ObjectType objectType,
                                            FieldDefinition fieldDefinition,
                                            Expression parentIdExpression,
-                                           Expression fromValueExpression,
                                            List<Expression> idValueExpressionList,
                                            boolean notIn) {
         Table parentTable = typeToTable(objectType);
@@ -686,12 +674,9 @@ public class MutationTranslator {
             Column withParentColumn = graphqlFieldToColumn(withTable, fieldDefinition.getMapWithFromOrError());
 
             EqualsTo withParentColumnEqualsTo = new EqualsTo()
-                    .withLeftExpression(withParentColumn);
-            if (fromValueExpression != null) {
-                withParentColumnEqualsTo.setRightExpression(fromValueExpression);
-            } else {
-                withParentColumnEqualsTo.setRightExpression(parentColumnExpression);
-            }
+                    .withLeftExpression(withParentColumn)
+                    .withRightExpression(parentColumnExpression);
+
             if (idValueExpressionList != null && !idValueExpressionList.isEmpty()) {
                 Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
                 Table table = typeToTable(fieldTypeDefinition.asObject());
@@ -713,14 +698,6 @@ public class MutationTranslator {
             Table table = typeToTable(fieldTypeDefinition.asObject());
             Column column = graphqlFieldToColumn(table, fieldDefinition.getMapToOrError());
 
-            EqualsTo parentColumnEqualsTo = new EqualsTo()
-                    .withLeftExpression(column);
-            if (fromValueExpression != null) {
-                parentColumnEqualsTo.setRightExpression(fromValueExpression);
-            } else {
-                parentColumnEqualsTo.setRightExpression(parentColumnExpression);
-            }
-
             if (documentManager.isMapAnchor(objectType, fieldDefinition)) {
                 return updateExpression(
                         parentTable,
@@ -730,6 +707,10 @@ public class MutationTranslator {
                                 .withRightExpression(parentIdExpression)
                 );
             } else {
+                EqualsTo columnEqualsTo = new EqualsTo()
+                        .withLeftExpression(column)
+                        .withRightExpression(parentColumnExpression);
+
                 if (idValueExpressionList != null && !idValueExpressionList.isEmpty()) {
                     Column idColumn = graphqlFieldToColumn(table, fieldTypeDefinition.asObject().getIDFieldOrError().getName());
                     return updateExpression(
@@ -737,7 +718,7 @@ public class MutationTranslator {
                             Collections.singletonList(new UpdateSet(column, new NullValue())),
                             new MultiAndExpression(
                                     Arrays.asList(
-                                            parentColumnEqualsTo,
+                                            columnEqualsTo,
                                             new InExpression()
                                                     .withLeftExpression(idColumn)
                                                     .withNot(notIn)
@@ -753,7 +734,7 @@ public class MutationTranslator {
                     return updateExpression(
                             table,
                             Collections.singletonList(new UpdateSet(column, new NullValue())),
-                            parentColumnEqualsTo
+                            columnEqualsTo
                     );
                 }
             }
@@ -943,7 +924,7 @@ public class MutationTranslator {
                                                 .map(subField ->
                                                         new ColumnDefinition()
                                                                 .withColumnName(graphqlFieldNameToColumnName(subField.getName()))
-                                                                .withColDataType(buildJsonColumnDataType(documentManager.getInputValueTypeDefinition(inputValue)))
+                                                                .withColDataType(typeTranslator.createColDataType(subField))
                                                                 .addColumnSpecs("PATH", "'$." + subField.getName() + "'")
                                                 )
                                                 .collect(Collectors.toList())
@@ -964,59 +945,11 @@ public class MutationTranslator {
                                 .withColumnDefinitions(
                                         new ColumnDefinition()
                                                 .withColumnName(fieldDefinition.getName())
-                                                .withColDataType(buildJsonColumnDataType(documentManager.getFieldTypeDefinition(fieldDefinition)))
+                                                .withColDataType(typeTranslator.createColDataType(fieldDefinition))
                                                 .addColumnSpecs("PATH", "'$'")
                                 )
                                 .withAlias(new Alias(valueWithVariable.asVariable().getName()))
                 );
-    }
-
-    protected ColDataType buildJsonColumnDataType(Definition definition) {
-        ColDataType colDataType = new ColDataType();
-        if (definition.isEnum()) {
-            colDataType.setDataType("INT");
-        } else if (definition.isScalar()) {
-            switch (definition.getName()) {
-                case SCALA_ID_NAME:
-                case SCALA_STRING_NAME:
-                    colDataType
-                            .withDataType("VARCHAR")
-                            .setArgumentsStringList(Collections.singletonList("255"));
-                    break;
-                case SCALA_BOOLEAN_NAME:
-                    colDataType.setDataType("BOOL");
-                    break;
-                case SCALA_INT_NAME:
-                    colDataType.setDataType("INT");
-                    break;
-                case SCALA_FLOAT_NAME:
-                    colDataType.setDataType("FLOAT");
-                    break;
-                case SCALA_BIG_INTEGER_NAME:
-                    colDataType.setDataType("BIGINT");
-                    break;
-                case SCALA_BIG_DECIMAL_NAME:
-                    colDataType.setDataType("DECIMAL");
-                    break;
-                case SCALA_DATE_NAME:
-                    colDataType.setDataType("DATE");
-                    break;
-                case SCALA_TIME_NAME:
-                    colDataType.setDataType("TIME");
-                    break;
-                case SCALA_DATE_TIME_NAME:
-                    colDataType.setDataType("DATETIME");
-                    break;
-                case SCALA_TIMESTAMP_NAME:
-                    colDataType.setDataType("TIMESTAMP");
-                    break;
-                default:
-                    throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(definition.getName()));
-            }
-        } else {
-            throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(definition.getName()));
-        }
-        return colDataType;
     }
 
     protected Table typeToTable(ObjectType objectType) {

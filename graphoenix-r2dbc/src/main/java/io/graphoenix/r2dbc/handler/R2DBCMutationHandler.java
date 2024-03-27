@@ -48,9 +48,9 @@ public class R2DBCMutationHandler implements MutationHandler {
         if (r2DBCConfig.getAllowMultiQueries()) {
             if (groupSize != null) {
                 return mutationExecutor.executeMutationsInBatchByGroup(mutationTranslator.operationToStatementSQLStream(operation), groupSize)
-                        .doOnNext(count -> Logger.info("mutation count: {}", count))
+                        .doOnNext(count -> Logger.info("group mutation count: {}", count))
                         .reduce(Long::sum)
-                        .doOnSuccess(count -> Logger.info("mutation total count: {}", count))
+                        .doOnSuccess(count -> Logger.info("group mutation total count: {}", count))
                         .then(queryExecutor.executeQuery(queryTranslator.operationToSelectSQL(operation)))
                         .map(json -> jsonProvider.createReader(new StringReader(json)).readValue());
             } else {
