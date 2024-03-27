@@ -178,7 +178,14 @@ public final class ElementUtil {
                 typeName.equals(Set.class.getCanonicalName())) {
             elementType = new ListType(elementToTypeName(element, ((DeclaredType) typeMirror).getTypeArguments().get(0), types));
         } else {
-            elementType = new TypeName(getNameFromElement(types.asElement(typeMirror)));
+            Element typeElement = types.asElement(typeMirror);
+            String elementName = getNameFromElement(typeElement);
+            if (typeElement.getAnnotation(Type.class) != null ||
+                    typeElement.getAnnotation(Interface.class) != null) {
+                elementType = new TypeName(elementName + SUFFIX_INPUT);
+            } else {
+                elementType = new TypeName(elementName);
+            }
         }
 
         if (element.getAnnotation(NonNull.class) != null || typeMirror.getKind().isPrimitive()) {

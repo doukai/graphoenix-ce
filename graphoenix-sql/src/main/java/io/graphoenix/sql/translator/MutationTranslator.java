@@ -140,10 +140,6 @@ public class MutationTranslator {
         throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(field.toString()));
     }
 
-    protected Stream<Statement> objectToMutationStatementStream(ObjectType objectType, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable) {
-        return objectToMutationStatementStream(objectType, null, fieldDefinition, inputValue, valueWithVariable, 0, 0);
-    }
-
     protected Stream<Statement> objectToMutationStatementStream(ObjectType objectType,
                                                                 Expression parentIdExpression,
                                                                 FieldDefinition fieldDefinition,
@@ -298,22 +294,6 @@ public class MutationTranslator {
                 )
                 .orElseGet(() -> createInsertIdUserVariable(fieldTypeDefinition.asObject().getName(), idName, level, index));
 
-        Optional<ValueWithVariable> fromValueWithVariable = fieldDefinition.getMapFrom()
-                .flatMap(from ->
-                        inputValueValueWithVariableMap.entrySet().stream()
-                                .filter(entry -> entry.getKey().getName().equals(from))
-                                .findFirst()
-                )
-                .map(Map.Entry::getValue);
-
-        Optional<ValueWithVariable> toValueWithVariable = fieldDefinition.getMapTo()
-                .flatMap(to ->
-                        inputValueValueWithVariableMap.entrySet().stream()
-                                .filter(entry -> entry.getKey().getName().equals(to))
-                                .findFirst()
-                )
-                .map(Map.Entry::getValue);
-
         Stream<Statement> objectFieldMergeMapStatementStream = Stream.empty();
         if (parentIdExpression != null) {
             objectFieldMergeMapStatementStream = Stream.of(
@@ -321,13 +301,7 @@ public class MutationTranslator {
                             objectType,
                             fieldDefinition,
                             parentIdExpression,
-                            idExpression,
-                            fromValueWithVariable
-                                    .map(DBValueUtil::leafValueToDBValue)
-                                    .orElse(null),
-                            toValueWithVariable
-                                    .map(DBValueUtil::leafValueToDBValue)
-                                    .orElse(null)
+                            idExpression
                     )
             );
         }
@@ -367,9 +341,6 @@ public class MutationTranslator {
                                                 entry.getKey(),
                                                 entry.getValue(),
                                                 whereInputValueEntry.isPresent(),
-                                                fromValueWithVariable
-                                                        .map(DBValueUtil::leafValueToDBValue)
-                                                        .orElse(null),
                                                 level + 1
                                         )
                                 )
@@ -387,10 +358,7 @@ public class MutationTranslator {
                                                 fieldTypeDefinition.asObject(),
                                                 idExpression,
                                                 subField,
-                                                entry.getValue(),
-                                                fromValueWithVariable
-                                                        .map(DBValueUtil::leafValueToDBValue)
-                                                        .orElse(null)
+                                                entry.getValue()
                                         )
                                 )
                 );
@@ -411,7 +379,6 @@ public class MutationTranslator {
                                                                     InputValue inputValue,
                                                                     ValueWithVariable valueWithVariable,
                                                                     boolean merge,
-                                                                    Expression fromValueExpression,
                                                                     int level) {
         Stream<Statement> mutationStatementStream = Stream.empty();
         if (valueWithVariable.isVariable()) {
@@ -607,8 +574,7 @@ public class MutationTranslator {
     protected Stream<Statement> listLeafToStatementStream(ObjectType objectType,
                                                           Expression parentIdExpression,
                                                           FieldDefinition fieldDefinition,
-                                                          ValueWithVariable valueWithVariable,
-                                                          Expression fromValueExpression) {
+                                                          ValueWithVariable valueWithVariable) {
 
         Statement removeMapStatement = removeMapStatement(
                 objectType,
@@ -624,8 +590,7 @@ public class MutationTranslator {
                             objectType,
                             fieldDefinition,
                             valueWithVariable,
-                            parentIdExpression,
-                            fromValueExpression
+                            parentIdExpression
                     )
             );
         } else {
@@ -637,8 +602,7 @@ public class MutationTranslator {
                                             objectType,
                                             fieldDefinition,
                                             item,
-                                            parentIdExpression,
-                                            fromValueExpression
+                                            parentIdExpression
                                     )
                             )
             );
@@ -661,6 +625,8 @@ public class MutationTranslator {
         Column parentColumn = graphqlFieldToColumn(parentTable, fieldDefinition.getMapFromOrError());
         Column parentIdColumn = graphqlFieldToColumn(parentTable, objectType.getIDFieldOrError().getName());
 
+        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+
         Expression parentColumnExpression;
         if (fieldDefinition.getMapFromOrError().equals(objectType.getIDFieldOrError().getName())) {
             parentColumnExpression = parentIdExpression;
@@ -678,15 +644,14 @@ public class MutationTranslator {
                     .withRightExpression(parentColumnExpression);
 
             if (idValueExpressionList != null && !idValueExpressionList.isEmpty()) {
-                Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-                Table table = typeToTable(fieldTypeDefinition.asObject());
-                Column column = graphqlFieldToColumn(table, fieldDefinition.getMapToOrError());
-                Column idColumn = graphqlFieldToColumn(table, fieldTypeDefinition.asObject().getIDFieldOrError().getName());
                 Column withColumn = graphqlFieldToColumn(withTable, fieldDefinition.getMapWithToOrError());
                 InExpression inExpression = new InExpression().withLeftExpression(withColumn);
-                if (column.getColumnName().equals(idColumn.getColumnName())) {
+                if (fieldDefinition.getMapToOrError().equals(fieldTypeDefinition.asObject().getIDFieldOrError().getName())) {
                     inExpression.setRightExpression(new Parenthesis(new ExpressionList<>(idValueExpressionList)));
                 } else {
+                    Table table = typeToTable(fieldTypeDefinition.asObject());
+                    Column column = graphqlFieldToColumn(table, fieldDefinition.getMapToOrError());
+                    Column idColumn = graphqlFieldToColumn(table, fieldTypeDefinition.asObject().getIDFieldOrError().getName());
                     inExpression.setRightExpression(selectFieldByIdExpressionList(table, column, idColumn, idValueExpressionList));
                 }
                 return removeExpression(withTable, new MultiAndExpression(Arrays.asList(withParentColumnEqualsTo, inExpression)));
@@ -694,10 +659,6 @@ public class MutationTranslator {
                 return removeExpression(withTable, withParentColumnEqualsTo);
             }
         } else {
-            Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-            Table table = typeToTable(fieldTypeDefinition.asObject());
-            Column column = graphqlFieldToColumn(table, fieldDefinition.getMapToOrError());
-
             if (documentManager.isMapAnchor(objectType, fieldDefinition)) {
                 return updateExpression(
                         parentTable,
@@ -707,12 +668,14 @@ public class MutationTranslator {
                                 .withRightExpression(parentIdExpression)
                 );
             } else {
+                Table table = typeToTable(fieldTypeDefinition.asObject());
+                Column column = graphqlFieldToColumn(table, fieldDefinition.getMapToOrError());
+                Column idColumn = graphqlFieldToColumn(table, fieldTypeDefinition.asObject().getIDFieldOrError().getName());
                 EqualsTo columnEqualsTo = new EqualsTo()
                         .withLeftExpression(column)
                         .withRightExpression(parentColumnExpression);
 
                 if (idValueExpressionList != null && !idValueExpressionList.isEmpty()) {
-                    Column idColumn = graphqlFieldToColumn(table, fieldTypeDefinition.asObject().getIDFieldOrError().getName());
                     return updateExpression(
                             table,
                             Collections.singletonList(new UpdateSet(column, new NullValue())),
@@ -744,9 +707,7 @@ public class MutationTranslator {
     protected Statement mergeObjectMapStatement(ObjectType objectType,
                                                 FieldDefinition fieldDefinition,
                                                 Expression parentIdExpression,
-                                                Expression idExpression,
-                                                Expression fromValueExpression,
-                                                Expression toValueExpression) {
+                                                Expression idExpression) {
         Table parentTable = typeToTable(objectType);
         Column parentColumn = graphqlFieldToColumn(parentTable, fieldDefinition.getMapFromOrError());
         Column parentIdColumn = graphqlFieldToColumn(parentTable, objectType.getIDFieldOrError().getName());
@@ -773,27 +734,18 @@ public class MutationTranslator {
             Table withTable = graphqlTypeToTable(mapWithType);
             Column withParentColumn = graphqlFieldToColumn(withTable, fieldDefinition.getMapWithFromOrError());
             Column withColumn = graphqlFieldToColumn(withTable, fieldDefinition.getMapWithToOrError());
-
-            if (fromValueExpression != null && toValueExpression != null) {
-                return insertExpression(withTable, Arrays.asList(withParentColumn, withColumn), Arrays.asList(fromValueExpression, toValueExpression));
-            } else if (fromValueExpression != null) {
-                return insertExpression(withTable, Arrays.asList(withParentColumn, withColumn), Arrays.asList(fromValueExpression, columnExpression));
-            } else if (toValueExpression != null) {
-                return insertExpression(withTable, Arrays.asList(withParentColumn, withColumn), Arrays.asList(parentColumnExpression, toValueExpression));
-            } else {
-                return insertExpression(withTable, Arrays.asList(withParentColumn, withColumn), Arrays.asList(parentColumnExpression, columnExpression));
-            }
+            return insertExpression(withTable, Arrays.asList(withParentColumn, withColumn), Arrays.asList(parentColumnExpression, columnExpression));
         } else {
             if (documentManager.isMapAnchor(objectType, fieldDefinition)) {
                 EqualsTo parentIdEqualsTo = new EqualsTo()
                         .withLeftExpression(parentIdColumn)
                         .withRightExpression(parentIdExpression);
-                return updateExpression(parentTable, Collections.singletonList(new UpdateSet(parentColumn, Objects.requireNonNullElse(toValueExpression, columnExpression))), parentIdEqualsTo);
+                return updateExpression(parentTable, Collections.singletonList(new UpdateSet(parentColumn, columnExpression)), parentIdEqualsTo);
             } else {
                 EqualsTo idEqualsTo = new EqualsTo()
                         .withLeftExpression(idColumn)
                         .withRightExpression(idExpression);
-                return updateExpression(table, Collections.singletonList(new UpdateSet(column, Objects.requireNonNullElse(fromValueExpression, parentColumnExpression))), idEqualsTo);
+                return updateExpression(table, Collections.singletonList(new UpdateSet(column, parentColumnExpression)), idEqualsTo);
             }
         }
     }
@@ -801,8 +753,7 @@ public class MutationTranslator {
     protected Statement mergeLeafMapStatement(ObjectType objectType,
                                               FieldDefinition fieldDefinition,
                                               ValueWithVariable valueWithVariable,
-                                              Expression parentIdExpression,
-                                              Expression fromValueExpression) {
+                                              Expression parentIdExpression) {
 
         Table parentTable = typeToTable(objectType);
         Column parentColumn = graphqlFieldToColumn(parentTable, fieldDefinition.getMapFromOrError());
@@ -822,7 +773,7 @@ public class MutationTranslator {
         if (valueWithVariable.isVariable()) {
             return insertSelectExpression(withTable, Arrays.asList(withParentColumn, withColumn), selectVariablesFromJsonArray(parentColumnExpression, fieldDefinition, valueWithVariable));
         } else {
-            return insertExpression(withTable, Arrays.asList(withParentColumn, withColumn), Arrays.asList(Objects.requireNonNullElse(fromValueExpression, parentColumnExpression), leafValueToDBValue(valueWithVariable)));
+            return insertExpression(withTable, Arrays.asList(withParentColumn, withColumn), Arrays.asList(parentColumnExpression, leafValueToDBValue(valueWithVariable)));
         }
     }
 

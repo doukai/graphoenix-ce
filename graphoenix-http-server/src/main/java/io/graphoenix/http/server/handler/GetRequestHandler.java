@@ -3,6 +3,7 @@ package io.graphoenix.http.server.handler;
 import io.graphoenix.core.dto.GraphQLRequest;
 import io.graphoenix.http.server.codec.MimeType;
 import io.graphoenix.http.server.context.RequestScopeInstanceFactory;
+import io.graphoenix.http.server.utils.ResponseUtil;
 import io.graphoenix.spi.graphql.Document;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.handler.OperationHandler;
@@ -13,7 +14,6 @@ import io.netty.handler.codec.http.QueryStringDecoder;
 import io.nozdormu.spi.context.PublisherBeanContext;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
@@ -93,7 +93,7 @@ public class GetRequestHandler extends BaseHandler {
                                             Mono.from(operationHandler.handle(operation, graphQLRequest.getVariables()))
                                                     .contextWrite(PublisherBeanContext.of(Document.class, document))
                                     )
-                                    .map(JsonValue::toString)
+                                    .map(ResponseUtil::success)
                                     .doOnSuccess(jsonString -> response.status(HttpResponseStatus.OK))
                                     .onErrorResume(throwable -> this.errorHandler(throwable, response))
                                     .contextWrite(Context.of(REQUEST_ID, requestId))
