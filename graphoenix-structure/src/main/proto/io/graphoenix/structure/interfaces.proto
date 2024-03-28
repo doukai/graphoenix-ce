@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.graphoenix.structure.dto.objectType.grpc";
+
+package io.graphoenix.structure;
+
+import "io/graphoenix/structure/enums.proto";
+
+message TreeStruct {
+    string name = 1;
+    string path = 2;
+    int32 deep = 3;
+    string parent_id = 4;
+}
+message NamedStruct {
+    string name = 1;
+    string description = 2;
+}

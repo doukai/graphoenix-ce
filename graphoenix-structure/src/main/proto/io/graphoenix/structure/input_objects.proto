@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.graphoenix.structure.dto.inputObjectType.grpc";
+
+package io.graphoenix.structure;
+
+import "io/graphoenix/structure/enums.proto";
+import "io/graphoenix/core/enums.proto";
+import "io/graphoenix/core/input_objects.proto";
+import "google/protobuf/timestamp.proto";
+
+message TreeStructExpression {
+    io.graphoenix.core.StringExpression name = 1;
+    io.graphoenix.core.StringExpression path = 2;
+    io.graphoenix.core.IntExpression deep = 3;
+    io.graphoenix.core.StringExpression parent_id = 4;
+    bool include_deprecated = 5;
+    io.graphoenix.core.IntExpression version = 6;
+    io.graphoenix.core.IntExpression realm_id = 7;
+    io.graphoenix.core.StringExpression create_user_id = 8;
+    io.graphoenix.core.StringExpression create_time = 9;
+    io.graphoenix.core.StringExpression update_user_id = 10;
+    io.graphoenix.core.StringExpression update_time = 11;
+    io.graphoenix.core.StringExpression create_group_id = 12;
+    bool not = 13;
+    io.graphoenix.core.Conditional cond = 14;
+    repeated TreeStructExpression exs = 15;
+}
+message TreeStructInput {
+    string name = 1;
+    string path = 2;
+    int32 deep = 3;
+    string parent_id = 4;
+    bool is_deprecated = 5;
+    int32 version = 6;
+    int32 realm_id = 7;
+    string create_user_id = 8;
+    google.protobuf.Timestamp create_time = 9;
+    string update_user_id = 10;
+    google.protobuf.Timestamp update_time = 11;
+    string create_group_id = 12;
+    TreeStructExpression where = 13;
+}
+message NamedStructExpression {
+    io.graphoenix.core.StringExpression name = 1;
+    io.graphoenix.core.StringExpression description = 2;
+    bool include_deprecated = 3;
+    io.graphoenix.core.IntExpression version = 4;
+    io.graphoenix.core.IntExpression realm_id = 5;
+    io.graphoenix.core.StringExpression create_user_id = 6;
+    io.graphoenix.core.StringExpression create_time = 7;
+    io.graphoenix.core.StringExpression update_user_id = 8;
+    io.graphoenix.core.StringExpression update_time = 9;
+    io.graphoenix.core.StringExpression create_group_id = 10;
+    bool not = 11;
+    io.graphoenix.core.Conditional cond = 12;
+    repeated NamedStructExpression exs = 13;
+}
+message NamedStructInput {
+    string name = 1;
+    string description = 2;
+    bool is_deprecated = 3;
+    int32 version = 4;
+    int32 realm_id = 5;
+    string create_user_id = 6;
+    google.protobuf.Timestamp create_time = 7;
+    string update_user_id = 8;
+    google.protobuf.Timestamp update_time = 9;
+    string create_group_id = 10;
+    NamedStructExpression where = 11;
+}
