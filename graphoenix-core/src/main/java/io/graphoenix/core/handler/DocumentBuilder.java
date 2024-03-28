@@ -4,6 +4,7 @@ import com.google.common.collect.Streams;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.spi.error.GraphQLErrorType;
 import io.graphoenix.spi.error.GraphQLErrors;
+import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.Document;
 import io.graphoenix.spi.graphql.FieldsType;
@@ -770,7 +771,7 @@ public class DocumentBuilder {
     }
 
     public InputObjectType fieldsToExpression(FieldsType fieldsType) {
-        return new InputObjectType(fieldsType.getName() + InputType.EXPRESSION)
+        InputObjectType inputObjectType = new InputObjectType(fieldsType.getName() + InputType.EXPRESSION)
                 .setInputValues(buildInputValuesFromObjectType(fieldsType, InputType.EXPRESSION))
                 .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
                 .addInputValue(new InputValue(INPUT_VALUE_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_CONDITIONAL_INPUT_VALUE_AND)))
@@ -806,10 +807,14 @@ public class DocumentBuilder {
                                         )
                                 )
                 );
+        if (fieldsType instanceof InterfaceType) {
+            inputObjectType.addDirective(new Directive(DIRECTIVE_INTERFACE_NAME));
+        }
+        return inputObjectType;
     }
 
     public InputObjectType fieldsToInput(FieldsType fieldsType) {
-        return new InputObjectType(fieldsType.getName() + InputType.INPUT)
+        InputObjectType inputObjectType = new InputObjectType(fieldsType.getName() + InputType.INPUT)
                 .setInputValues(buildInputValuesFromObjectType(fieldsType, InputType.INPUT))
                 .addInputValue(new InputValue(INPUT_VALUE_WHERE_NAME).setType(new TypeName(fieldsType.getName() + InputType.EXPRESSION)))
                 .addDirective(
@@ -843,10 +848,14 @@ public class DocumentBuilder {
                                         )
                                 )
                 );
+        if (fieldsType instanceof InterfaceType) {
+            inputObjectType.addDirective(new Directive(DIRECTIVE_INTERFACE_NAME));
+        }
+        return inputObjectType;
     }
 
     public InputObjectType fieldsToOrderBy(FieldsType fieldsType) {
-        return new InputObjectType(fieldsType.getName() + InputType.ORDER_BY)
+        InputObjectType inputObjectType = new InputObjectType(fieldsType.getName() + InputType.ORDER_BY)
                 .setInputValues(buildInputValuesFromObjectType(fieldsType, InputType.ORDER_BY))
                 .addDirective(
                         new Directive(DIRECTIVE_PACKAGE_NAME)
@@ -864,6 +873,10 @@ public class DocumentBuilder {
                         new Directive(DIRECTIVE_GRPC_NAME)
                                 .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcInputObjectTypePackageName() + "." + getGrpcName(fieldsType.getName() + InputType.ORDER_BY))
                 );
+        if (fieldsType instanceof InterfaceType) {
+            inputObjectType.addDirective(new Directive(DIRECTIVE_INTERFACE_NAME));
+        }
+        return inputObjectType;
     }
 
     public InputObjectType enumToExpression(EnumType enumType) {

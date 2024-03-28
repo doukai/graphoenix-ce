@@ -3,6 +3,7 @@ package io.graphoenix.core.dto.annotation;
 import io.graphoenix.core.dto.enumType.Func;
 import io.graphoenix.core.dto.enumType.Operator;
 import jakarta.annotation.Generated;
+import java.lang.String;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -19,4 +20,10 @@ public @interface FuncExpression2 {
   Func val() default Func.COUNT;
 
   Func[] arr() default {};
+
+  String $opr() default "";
+
+  String $val() default "";
+
+  String $arr() default "";
 }

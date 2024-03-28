@@ -269,7 +269,7 @@ public class TypeSpecBuilder {
         builder.addMethods(methodSpecs);
 
         List<MethodSpec> variableMethodSpecs = inputObjectType.getInputValues().stream()
-                .filter(inputValue -> level < generatorConfig.getAnnotationLevel() - 1)
+                .filter(inputValue -> documentManager.getInputValueTypeDefinition(inputValue).isLeaf() || level < generatorConfig.getAnnotationLevel() - 1)
                 .map(inputValue ->
                         MethodSpec.methodBuilder("$" + inputValue.getName())
                                 .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)

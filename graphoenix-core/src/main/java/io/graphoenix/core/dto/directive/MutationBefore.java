@@ -1,5 +1,7 @@
-package io.graphoenix.core.dto.annotation;
+package io.graphoenix.core.dto.directive;
 
+import io.graphoenix.core.dto.enumType.Protocol;
+import io.graphoenix.spi.annotation.Directive;
 import jakarta.annotation.Generated;
 import java.lang.String;
 import java.lang.annotation.Documented;
@@ -11,17 +13,12 @@ import java.lang.annotation.Target;
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.METHOD)
-public @interface With2 {
-  String type() default "";
+@Directive("mutationBefore")
+@Target({ElementType.FIELD})
+public @interface MutationBefore {
+  Protocol protocol() default Protocol.LOCAL;
 
-  String from() default "";
+  String field() default "";
 
-  String to() default "";
-
-  String $type() default "";
-
-  String $from() default "";
-
-  String $to() default "";
+  String target() default "";
 }

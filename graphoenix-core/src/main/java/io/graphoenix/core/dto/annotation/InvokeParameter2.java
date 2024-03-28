@@ -16,4 +16,8 @@ public @interface InvokeParameter2 {
   String name() default "";
 
   String className() default "";
+
+  String $name() default "";
+
+  String $className() default "";
 }

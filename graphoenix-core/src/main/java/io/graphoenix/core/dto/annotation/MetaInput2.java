@@ -26,4 +26,18 @@ public @interface MetaInput2 {
   String updateTime() default "";
 
   String createGroupId() default "";
+
+  String $version() default "";
+
+  String $realmId() default "";
+
+  String $createUserId() default "";
+
+  String $createTime() default "";
+
+  String $updateUserId() default "";
+
+  String $updateTime() default "";
+
+  String $createGroupId() default "";
 }

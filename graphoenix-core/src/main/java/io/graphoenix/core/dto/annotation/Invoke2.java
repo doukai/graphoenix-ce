@@ -22,4 +22,14 @@ public @interface Invoke2 {
   String[] thrownTypes() default {};
 
   boolean async() default false;
+
+  String $className() default "";
+
+  String $methodName() default "";
+
+  String $returnClassName() default "";
+
+  String $thrownTypes() default "";
+
+  String $async() default "";
 }

@@ -3,6 +3,7 @@ package io.graphoenix.core.dto.annotation;
 import io.graphoenix.core.dto.enumType.Operator;
 import io.graphoenix.core.dto.enumType.Sort;
 import jakarta.annotation.Generated;
+import java.lang.String;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -19,4 +20,10 @@ public @interface SortExpression2 {
   Sort val() default Sort.ASC;
 
   Sort[] arr() default {};
+
+  String $opr() default "";
+
+  String $val() default "";
+
+  String $arr() default "";
 }

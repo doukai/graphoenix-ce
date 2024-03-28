@@ -21,4 +21,12 @@ public @interface IDExpression2 {
   String[] arr() default {};
 
   boolean skipNull() default false;
+
+  String $opr() default "";
+
+  String $val() default "";
+
+  String $arr() default "";
+
+  String $skipNull() default "";
 }
