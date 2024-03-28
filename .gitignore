@@ -35,3 +35,4 @@ out/
 
 ### VS Code ###
 .vscode/
+!**/webapp/**/node_modules/
