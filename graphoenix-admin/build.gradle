@@ -2,15 +2,30 @@ plugins {
     id 'java'
     id "com.github.node-gradle.node" version "7.0.2"
 }
+apply plugin: 'maven'
 
 group 'io.graphoenix'
 version '0.0.1-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    jcenter()
+    mavenLocal()
 }
 
 dependencies {
+    implementation project(':graphoenix-spi')
+    implementation 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
+    implementation 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
+    implementation "io.javalin:javalin:6.1.3"
+    implementation 'org.eclipse.jetty:jetty-proxy:11.0.20'
+    implementation 'com.google.auto.service:auto-service:1.0.1'
+
+    annotationProcessor project(':graphoenix-spi')
+    annotationProcessor 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
+    annotationProcessor 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
+    annotationProcessor 'com.google.auto.service:auto-service:1.0.1'
+
     testImplementation 'junit:junit:4.11'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
@@ -18,4 +33,32 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+node {
+    nodeProjectDir = file("${project.projectDir}/webapp")
+}
+
+def pnpmInstall = tasks.named("pnpmInstall")
+
+def buildTask = tasks.register("buildWebapp", NpxTask) {
+    command = "react-scripts"
+    args = ["build"]
+    dependsOn(pnpmInstall)
+    inputs.dir(fileTree("webapp").exclude("**/*.test.js").exclude("**/*.spec.js").exclude("**/__tests__/**/*.js"))
+    inputs.dir("webapp/node_modules")
+    inputs.dir("webapp/public")
+    outputs.dir("${buildDir}/webapp")
+    environment = ["BUILD_PATH": "${buildDir}/webapp/webroot"]
+}
+
+sourceSets {
+    java {
+        main {
+            resources {
+                // This makes the processResources task automatically depend on the buildWebapp one
+                srcDir(buildTask)
+            }
+        }
+    }
 }
