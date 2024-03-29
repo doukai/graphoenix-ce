@@ -40,8 +40,6 @@ public @interface NamedStructExpression1 {
 
   Conditional cond() default Conditional.AND;
 
-  NamedStructExpression2[] exs() default {};
-
   String $name() default "";
 
   String $description() default "";
@@ -65,6 +63,4 @@ public @interface NamedStructExpression1 {
   String $not() default "";
 
   String $cond() default "";
-
-  String $exs() default "";
 }

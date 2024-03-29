@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.graphoenix.spi.utils.ErrorInfoUtil.getErrorCode;
-import static io.graphoenix.spi.utils.ErrorInfoUtil.getErrorMessage;
-
 public class GraphQLError {
 
     private String message;
@@ -36,12 +33,12 @@ public class GraphQLError {
 
     public GraphQLError(GraphQLException graphQLException) {
         this.message = graphQLException.getMessage();
-        this.extensions = new GraphQLErrorExtensions(getErrorCode(graphQLException.getClass()));
+        this.extensions = new GraphQLErrorExtensions(ErrorInfo.getErrorCode(graphQLException.getClass()));
     }
 
     public GraphQLError(Throwable throwable) {
-        this.message = getErrorMessage(throwable.getClass());
-        this.extensions = new GraphQLErrorExtensions(getErrorCode(throwable.getClass()));
+        this.message = ErrorInfo.getErrorMessage(throwable.getClass());
+        this.extensions = new GraphQLErrorExtensions(ErrorInfo.getErrorCode(throwable.getClass()));
     }
 
     public GraphQLError(Integer code, String message) {

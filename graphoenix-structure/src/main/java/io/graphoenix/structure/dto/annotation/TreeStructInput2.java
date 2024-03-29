@@ -36,4 +36,28 @@ public @interface TreeStructInput2 {
   String updateTime() default "";
 
   String createGroupId() default "";
+
+  String $name() default "";
+
+  String $path() default "";
+
+  String $deep() default "";
+
+  String $parentId() default "";
+
+  String $isDeprecated() default "";
+
+  String $version() default "";
+
+  String $realmId() default "";
+
+  String $createUserId() default "";
+
+  String $createTime() default "";
+
+  String $updateUserId() default "";
+
+  String $updateTime() default "";
+
+  String $createGroupId() default "";
 }

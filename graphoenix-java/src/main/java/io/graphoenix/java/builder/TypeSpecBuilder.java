@@ -31,6 +31,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -118,7 +119,7 @@ public class TypeSpecBuilder {
                     .flatMap(fieldSpec ->
                             Stream.of(
                                     buildInterfaceGetter(fieldSpec),
-                                    buildInterfaceSetter(fieldSpec)
+                                    buildInputObjectInterfaceSetter(fieldSpec, inputObjectType.getInterfaces())
                             )
                     )
                     .collect(Collectors.toList());
@@ -332,7 +333,7 @@ public class TypeSpecBuilder {
                 .flatMap(fieldSpec ->
                         Stream.of(
                                 buildInterfaceGetter(fieldSpec),
-                                buildInterfaceSetter(fieldSpec)
+                                buildInterfaceSetter(fieldSpec, interfaceType.getInterfaces())
                         )
                 )
                 .collect(Collectors.toList());
@@ -656,6 +657,10 @@ public class TypeSpecBuilder {
 
     public TypeName buildType(io.graphoenix.spi.graphql.type.Type type) {
         if (type.isList()) {
+            Definition typeDefinition = documentManager.getDocument().getDefinition(type.getTypeName().getName());
+            if (typeDefinition.isInterface() || typeDefinition.isInputObject() && typeDefinition.asInputObject().isInputInterface()) {
+                return ParameterizedTypeName.get(ClassName.get(Collection.class), WildcardTypeName.subtypeOf(buildType(type.asListType().getType())));
+            }
             return ParameterizedTypeName.get(ClassName.get(Collection.class), buildType(type.asListType().getType()));
         } else if (type.isNonNull()) {
             return buildType(type.asNonNullType().getType());
@@ -746,17 +751,19 @@ public class TypeSpecBuilder {
     private MethodSpec buildSetter(FieldSpec fieldSpec, Collection<String> implementsInterfaces) {
         String setterName = getFieldSetterMethodName(fieldSpec.name);
         MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(setterName).addModifiers(Modifier.PUBLIC);
-        methodBuilder.addParameter(fieldSpec.type, fieldSpec.name);
-        methodBuilder.addStatement("this." + fieldSpec.name + " = " + fieldSpec.name);
 
-        if (Stream.ofNullable(implementsInterfaces)
-                .flatMap(Collection::stream)
-                .map(name -> documentManager.getDocument().getInterfaceTypeOrError(name))
-                .flatMap(interfaceType -> Stream.ofNullable(interfaceType.getFields()).flatMap(Collection::stream))
-                .anyMatch(fieldDefinition -> fieldSpec.name.equals(fieldDefinition.getName()))
-        ) {
-            methodBuilder.addAnnotation(Override.class);
-        }
+        getRootFieldType(fieldSpec.name, implementsInterfaces)
+                .ifPresentOrElse(
+                        typeName -> {
+                            methodBuilder.addAnnotation(Override.class);
+                            methodBuilder.addParameter(typeName, fieldSpec.name);
+                            methodBuilder.addStatement("this." + fieldSpec.name + " = ($T)" + fieldSpec.name, fieldSpec.type);
+                        },
+                        () -> {
+                            methodBuilder.addParameter(fieldSpec.type, fieldSpec.name);
+                            methodBuilder.addStatement("this." + fieldSpec.name + " = " + fieldSpec.name);
+                        }
+                );
         return methodBuilder.build();
     }
 
@@ -779,17 +786,19 @@ public class TypeSpecBuilder {
     private MethodSpec buildInputValueSetter(FieldSpec fieldSpec, Collection<String> implementsInterfaces) {
         String setterName = getFieldSetterMethodName(fieldSpec.name);
         MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(setterName).addModifiers(Modifier.PUBLIC);
-        methodBuilder.addParameter(fieldSpec.type, fieldSpec.name);
-        methodBuilder.addStatement("this." + fieldSpec.name + " = " + fieldSpec.name);
 
-        if (Stream.ofNullable(implementsInterfaces)
-                .flatMap(Collection::stream)
-                .map(name -> documentManager.getDocument().getInputObjectTypeOrError(name))
-                .flatMap(inputObjectType -> Stream.ofNullable(inputObjectType.getInputValues()).flatMap(Collection::stream))
-                .anyMatch(inputValue -> fieldSpec.name.equals(inputValue.getName()))
-        ) {
-            methodBuilder.addAnnotation(Override.class);
-        }
+        getRootInputValueType(fieldSpec.name, implementsInterfaces)
+                .ifPresentOrElse(
+                        typeName -> {
+                            methodBuilder.addAnnotation(Override.class);
+                            methodBuilder.addParameter(typeName, fieldSpec.name);
+                            methodBuilder.addStatement("this." + fieldSpec.name + " = ($T)" + fieldSpec.name, fieldSpec.type);
+                        },
+                        () -> {
+                            methodBuilder.addParameter(fieldSpec.type, fieldSpec.name);
+                            methodBuilder.addStatement("this." + fieldSpec.name + " = " + fieldSpec.name);
+                        }
+                );
         return methodBuilder.build();
     }
 
@@ -809,12 +818,38 @@ public class TypeSpecBuilder {
         return methodBuilder.build();
     }
 
-    private MethodSpec buildInterfaceSetter(FieldSpec fieldSpec) {
+    private MethodSpec buildInterfaceSetter(FieldSpec fieldSpec, Collection<String> implementsInterfaces) {
         String setterName = getFieldSetterMethodName(fieldSpec.name);
-        return MethodSpec.methodBuilder(setterName)
-                .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
-                .addParameter(fieldSpec.type, fieldSpec.name)
-                .build();
+        MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(setterName)
+                .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC);
+
+        getRootFieldType(fieldSpec.name, implementsInterfaces)
+                .ifPresentOrElse(
+                        typeName -> {
+                            methodBuilder.addParameter(typeName, fieldSpec.name);
+                        },
+                        () -> {
+                            methodBuilder.addParameter(fieldSpec.type, fieldSpec.name);
+                        }
+                );
+        return methodBuilder.build();
+    }
+
+    private MethodSpec buildInputObjectInterfaceSetter(FieldSpec fieldSpec, Collection<String> implementsInterfaces) {
+        String setterName = getFieldSetterMethodName(fieldSpec.name);
+        MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(setterName)
+                .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC);
+
+        getRootInputValueType(fieldSpec.name, implementsInterfaces)
+                .ifPresentOrElse(
+                        typeName -> {
+                            methodBuilder.addParameter(typeName, fieldSpec.name);
+                        },
+                        () -> {
+                            methodBuilder.addParameter(fieldSpec.type, fieldSpec.name);
+                        }
+                );
+        return methodBuilder.build();
     }
 
     public MethodSpec buildInterfaceGetter(FieldSpec fieldSpec) {
@@ -823,5 +858,37 @@ public class TypeSpecBuilder {
                 .returns(fieldSpec.type)
                 .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
                 .build();
+    }
+
+    private Optional<TypeName> getRootFieldType(String fieldName, Collection<String> implementsInterfaces) {
+        return Stream.ofNullable(implementsInterfaces)
+                .flatMap(Collection::stream)
+                .map(name -> documentManager.getDocument().getInterfaceTypeOrError(name))
+                .flatMap(interfaceType ->
+                        Stream.ofNullable(interfaceType.getFields())
+                                .flatMap(Collection::stream)
+                                .filter(fieldDefinition -> fieldName.equals(fieldDefinition.getName()))
+                                .map(inputValue ->
+                                        getRootFieldType(fieldName, interfaceType.getInterfaces())
+                                                .orElseGet(() -> buildType(inputValue.getType()))
+                                )
+                )
+                .findFirst();
+    }
+
+    private Optional<TypeName> getRootInputValueType(String fieldName, Collection<String> implementsInterfaces) {
+        return Stream.ofNullable(implementsInterfaces)
+                .flatMap(Collection::stream)
+                .map(name -> documentManager.getDocument().getInputObjectTypeOrError(name))
+                .flatMap(inputObjectType ->
+                        Stream.ofNullable(inputObjectType.getInputValues())
+                                .flatMap(Collection::stream)
+                                .filter(inputValue -> fieldName.equals(inputValue.getName()))
+                                .map(inputValue ->
+                                        getRootInputValueType(fieldName, inputObjectType.getInterfaces())
+                                                .orElseGet(() -> buildType(inputValue.getType()))
+                                )
+                )
+                .findFirst();
     }
 }

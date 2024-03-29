@@ -1,140 +1,73 @@
 package io.graphoenix.structure.dto.inputObjectType;
 
-import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.inputObjectType.MetaInput;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
 import java.lang.Integer;
-import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
 import org.eclipse.microprofile.graphql.Input;
 
-@CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
-public class NamedStructInput implements MetaInput {
-  private String name;
+public interface NamedStructInput extends MetaInput {
+  String name = null;
 
-  private String description;
+  String description = null;
 
-  private Boolean isDeprecated;
+  Boolean isDeprecated = null;
 
-  private Integer version;
+  Integer version = null;
 
-  private Integer realmId;
+  Integer realmId = null;
 
-  private String createUserId;
+  String createUserId = null;
 
-  private LocalDateTime createTime;
+  LocalDateTime createTime = null;
 
-  private String updateUserId;
+  String updateUserId = null;
 
-  private LocalDateTime updateTime;
+  LocalDateTime updateTime = null;
 
-  private String createGroupId;
+  String createGroupId = null;
 
-  private NamedStructExpression where;
+  String getName();
 
-  public String getName() {
-    return this.name;
-  }
+  void setName(String name);
 
-  public void setName(String name) {
-    this.name = name;
-  }
+  String getDescription();
 
-  public String getDescription() {
-    return this.description;
-  }
+  void setDescription(String description);
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+  Boolean getIsDeprecated();
 
-  public Boolean getIsDeprecated() {
-    return this.isDeprecated;
-  }
+  void setIsDeprecated(Boolean isDeprecated);
 
-  public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = isDeprecated;
-  }
+  Integer getVersion();
 
-  @Override
-  public Integer getVersion() {
-    return this.version;
-  }
+  void setVersion(Integer version);
 
-  @Override
-  public void setVersion(Integer version) {
-    this.version = version;
-  }
+  Integer getRealmId();
 
-  @Override
-  public Integer getRealmId() {
-    return this.realmId;
-  }
+  void setRealmId(Integer realmId);
 
-  @Override
-  public void setRealmId(Integer realmId) {
-    this.realmId = realmId;
-  }
+  String getCreateUserId();
 
-  @Override
-  public String getCreateUserId() {
-    return this.createUserId;
-  }
+  void setCreateUserId(String createUserId);
 
-  @Override
-  public void setCreateUserId(String createUserId) {
-    this.createUserId = createUserId;
-  }
+  LocalDateTime getCreateTime();
 
-  @Override
-  public LocalDateTime getCreateTime() {
-    return this.createTime;
-  }
+  void setCreateTime(LocalDateTime createTime);
 
-  @Override
-  public void setCreateTime(LocalDateTime createTime) {
-    this.createTime = createTime;
-  }
+  String getUpdateUserId();
 
-  @Override
-  public String getUpdateUserId() {
-    return this.updateUserId;
-  }
+  void setUpdateUserId(String updateUserId);
 
-  @Override
-  public void setUpdateUserId(String updateUserId) {
-    this.updateUserId = updateUserId;
-  }
+  LocalDateTime getUpdateTime();
 
-  @Override
-  public LocalDateTime getUpdateTime() {
-    return this.updateTime;
-  }
+  void setUpdateTime(LocalDateTime updateTime);
 
-  @Override
-  public void setUpdateTime(LocalDateTime updateTime) {
-    this.updateTime = updateTime;
-  }
+  String getCreateGroupId();
 
-  @Override
-  public String getCreateGroupId() {
-    return this.createGroupId;
-  }
-
-  @Override
-  public void setCreateGroupId(String createGroupId) {
-    this.createGroupId = createGroupId;
-  }
-
-  public NamedStructExpression getWhere() {
-    return this.where;
-  }
-
-  public void setWhere(NamedStructExpression where) {
-    this.where = where;
-  }
+  void setCreateGroupId(String createGroupId);
 }

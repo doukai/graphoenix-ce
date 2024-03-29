@@ -37,8 +37,6 @@ public @interface TreeStructInput {
 
   String createGroupId() default "";
 
-  TreeStructExpression1 where() default @TreeStructExpression1;
-
   String $name() default "";
 
   String $path() default "";
@@ -62,6 +60,4 @@ public @interface TreeStructInput {
   String $updateTime() default "";
 
   String $createGroupId() default "";
-
-  String $where() default "";
 }

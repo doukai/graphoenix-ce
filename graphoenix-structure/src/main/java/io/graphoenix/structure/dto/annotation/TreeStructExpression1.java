@@ -44,8 +44,6 @@ public @interface TreeStructExpression1 {
 
   Conditional cond() default Conditional.AND;
 
-  TreeStructExpression2[] exs() default {};
-
   String $name() default "";
 
   String $path() default "";
@@ -73,6 +71,4 @@ public @interface TreeStructExpression1 {
   String $not() default "";
 
   String $cond() default "";
-
-  String $exs() default "";
 }

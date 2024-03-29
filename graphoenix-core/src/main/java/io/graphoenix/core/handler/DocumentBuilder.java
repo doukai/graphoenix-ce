@@ -775,7 +775,6 @@ public class DocumentBuilder {
                 .setInputValues(buildInputValuesFromObjectType(fieldsType, InputType.EXPRESSION))
                 .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
                 .addInputValue(new InputValue(INPUT_VALUE_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_CONDITIONAL_INPUT_VALUE_AND)))
-                .addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(fieldsType.getName() + InputType.EXPRESSION))))
                 .addDirective(
                         new Directive(DIRECTIVE_PACKAGE_NAME)
                                 .addArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME, packageConfig.getPackageName())
@@ -809,6 +808,8 @@ public class DocumentBuilder {
                 );
         if (fieldsType instanceof InterfaceType) {
             inputObjectType.addDirective(new Directive(DIRECTIVE_INTERFACE_NAME));
+        } else {
+            inputObjectType.addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(fieldsType.getName() + InputType.EXPRESSION))));
         }
         return inputObjectType;
     }
@@ -816,7 +817,6 @@ public class DocumentBuilder {
     public InputObjectType fieldsToInput(FieldsType fieldsType) {
         InputObjectType inputObjectType = new InputObjectType(fieldsType.getName() + InputType.INPUT)
                 .setInputValues(buildInputValuesFromObjectType(fieldsType, InputType.INPUT))
-                .addInputValue(new InputValue(INPUT_VALUE_WHERE_NAME).setType(new TypeName(fieldsType.getName() + InputType.EXPRESSION)))
                 .addDirective(
                         new Directive(DIRECTIVE_PACKAGE_NAME)
                                 .addArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME, packageConfig.getPackageName())
@@ -850,6 +850,8 @@ public class DocumentBuilder {
                 );
         if (fieldsType instanceof InterfaceType) {
             inputObjectType.addDirective(new Directive(DIRECTIVE_INTERFACE_NAME));
+        } else {
+            inputObjectType.addInputValue(new InputValue(INPUT_VALUE_WHERE_NAME).setType(new TypeName(fieldsType.getName() + InputType.EXPRESSION)));
         }
         return inputObjectType;
     }

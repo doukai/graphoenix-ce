@@ -1,160 +1,85 @@
 package io.graphoenix.structure.dto.inputObjectType;
 
-import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.inputObjectType.MetaInput;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
 import java.lang.Integer;
-import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
 import org.eclipse.microprofile.graphql.Input;
 
-@CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
-public class TreeStructInput implements MetaInput {
-  private String name;
+public interface TreeStructInput extends MetaInput {
+  String name = null;
 
-  private String path;
+  String path = null;
 
-  private Integer deep;
+  Integer deep = null;
 
-  private String parentId;
+  String parentId = null;
 
-  private Boolean isDeprecated;
+  Boolean isDeprecated = null;
 
-  private Integer version;
+  Integer version = null;
 
-  private Integer realmId;
+  Integer realmId = null;
 
-  private String createUserId;
+  String createUserId = null;
 
-  private LocalDateTime createTime;
+  LocalDateTime createTime = null;
 
-  private String updateUserId;
+  String updateUserId = null;
 
-  private LocalDateTime updateTime;
+  LocalDateTime updateTime = null;
 
-  private String createGroupId;
+  String createGroupId = null;
 
-  private TreeStructExpression where;
+  String getName();
 
-  public String getName() {
-    return this.name;
-  }
+  void setName(String name);
 
-  public void setName(String name) {
-    this.name = name;
-  }
+  String getPath();
 
-  public String getPath() {
-    return this.path;
-  }
+  void setPath(String path);
 
-  public void setPath(String path) {
-    this.path = path;
-  }
+  Integer getDeep();
 
-  public Integer getDeep() {
-    return this.deep;
-  }
+  void setDeep(Integer deep);
 
-  public void setDeep(Integer deep) {
-    this.deep = deep;
-  }
+  String getParentId();
 
-  public String getParentId() {
-    return this.parentId;
-  }
+  void setParentId(String parentId);
 
-  public void setParentId(String parentId) {
-    this.parentId = parentId;
-  }
+  Boolean getIsDeprecated();
 
-  public Boolean getIsDeprecated() {
-    return this.isDeprecated;
-  }
+  void setIsDeprecated(Boolean isDeprecated);
 
-  public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = isDeprecated;
-  }
+  Integer getVersion();
 
-  @Override
-  public Integer getVersion() {
-    return this.version;
-  }
+  void setVersion(Integer version);
 
-  @Override
-  public void setVersion(Integer version) {
-    this.version = version;
-  }
+  Integer getRealmId();
 
-  @Override
-  public Integer getRealmId() {
-    return this.realmId;
-  }
+  void setRealmId(Integer realmId);
 
-  @Override
-  public void setRealmId(Integer realmId) {
-    this.realmId = realmId;
-  }
+  String getCreateUserId();
 
-  @Override
-  public String getCreateUserId() {
-    return this.createUserId;
-  }
+  void setCreateUserId(String createUserId);
 
-  @Override
-  public void setCreateUserId(String createUserId) {
-    this.createUserId = createUserId;
-  }
+  LocalDateTime getCreateTime();
 
-  @Override
-  public LocalDateTime getCreateTime() {
-    return this.createTime;
-  }
+  void setCreateTime(LocalDateTime createTime);
 
-  @Override
-  public void setCreateTime(LocalDateTime createTime) {
-    this.createTime = createTime;
-  }
+  String getUpdateUserId();
 
-  @Override
-  public String getUpdateUserId() {
-    return this.updateUserId;
-  }
+  void setUpdateUserId(String updateUserId);
 
-  @Override
-  public void setUpdateUserId(String updateUserId) {
-    this.updateUserId = updateUserId;
-  }
+  LocalDateTime getUpdateTime();
 
-  @Override
-  public LocalDateTime getUpdateTime() {
-    return this.updateTime;
-  }
+  void setUpdateTime(LocalDateTime updateTime);
 
-  @Override
-  public void setUpdateTime(LocalDateTime updateTime) {
-    this.updateTime = updateTime;
-  }
+  String getCreateGroupId();
 
-  @Override
-  public String getCreateGroupId() {
-    return this.createGroupId;
-  }
-
-  @Override
-  public void setCreateGroupId(String createGroupId) {
-    this.createGroupId = createGroupId;
-  }
-
-  public TreeStructExpression getWhere() {
-    return this.where;
-  }
-
-  public void setWhere(TreeStructExpression where) {
-    this.where = where;
-  }
+  void setCreateGroupId(String createGroupId);
 }

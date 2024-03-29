@@ -1,163 +1,85 @@
 package io.graphoenix.structure.dto.inputObjectType;
 
-import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.enumType.Conditional;
 import io.graphoenix.core.dto.inputObjectType.IntExpression;
 import io.graphoenix.core.dto.inputObjectType.MetaExpression;
 import io.graphoenix.core.dto.inputObjectType.StringExpression;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
-import java.lang.Override;
-import java.util.Collection;
-import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Input;
 
-@CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
-public class NamedStructExpression implements MetaExpression {
-  private StringExpression name;
+public interface NamedStructExpression extends MetaExpression {
+  StringExpression name = null;
 
-  private StringExpression description;
+  StringExpression description = null;
 
-  @DefaultValue("false")
-  private Boolean includeDeprecated;
+  Boolean includeDeprecated = null;
 
-  private IntExpression version;
+  IntExpression version = null;
 
-  private IntExpression realmId;
+  IntExpression realmId = null;
 
-  private StringExpression createUserId;
+  StringExpression createUserId = null;
 
-  private StringExpression createTime;
+  StringExpression createTime = null;
 
-  private StringExpression updateUserId;
+  StringExpression updateUserId = null;
 
-  private StringExpression updateTime;
+  StringExpression updateTime = null;
 
-  private StringExpression createGroupId;
+  StringExpression createGroupId = null;
 
-  @DefaultValue("false")
-  private Boolean not;
+  Boolean not = null;
 
-  @DefaultValue("AND")
-  private Conditional cond;
+  Conditional cond = null;
 
-  private Collection<NamedStructExpression> exs;
+  StringExpression getName();
 
-  public StringExpression getName() {
-    return this.name;
-  }
+  void setName(StringExpression name);
 
-  public void setName(StringExpression name) {
-    this.name = name;
-  }
+  StringExpression getDescription();
 
-  public StringExpression getDescription() {
-    return this.description;
-  }
+  void setDescription(StringExpression description);
 
-  public void setDescription(StringExpression description) {
-    this.description = description;
-  }
+  Boolean getIncludeDeprecated();
 
-  public Boolean getIncludeDeprecated() {
-    return this.includeDeprecated;
-  }
+  void setIncludeDeprecated(Boolean includeDeprecated);
 
-  public void setIncludeDeprecated(Boolean includeDeprecated) {
-    this.includeDeprecated = includeDeprecated;
-  }
+  IntExpression getVersion();
 
-  public IntExpression getVersion() {
-    return this.version;
-  }
+  void setVersion(IntExpression version);
 
-  public void setVersion(IntExpression version) {
-    this.version = version;
-  }
+  IntExpression getRealmId();
 
-  @Override
-  public IntExpression getRealmId() {
-    return this.realmId;
-  }
+  void setRealmId(IntExpression realmId);
 
-  @Override
-  public void setRealmId(IntExpression realmId) {
-    this.realmId = realmId;
-  }
+  StringExpression getCreateUserId();
 
-  @Override
-  public StringExpression getCreateUserId() {
-    return this.createUserId;
-  }
+  void setCreateUserId(StringExpression createUserId);
 
-  @Override
-  public void setCreateUserId(StringExpression createUserId) {
-    this.createUserId = createUserId;
-  }
+  StringExpression getCreateTime();
 
-  @Override
-  public StringExpression getCreateTime() {
-    return this.createTime;
-  }
+  void setCreateTime(StringExpression createTime);
 
-  @Override
-  public void setCreateTime(StringExpression createTime) {
-    this.createTime = createTime;
-  }
+  StringExpression getUpdateUserId();
 
-  @Override
-  public StringExpression getUpdateUserId() {
-    return this.updateUserId;
-  }
+  void setUpdateUserId(StringExpression updateUserId);
 
-  @Override
-  public void setUpdateUserId(StringExpression updateUserId) {
-    this.updateUserId = updateUserId;
-  }
+  StringExpression getUpdateTime();
 
-  @Override
-  public StringExpression getUpdateTime() {
-    return this.updateTime;
-  }
+  void setUpdateTime(StringExpression updateTime);
 
-  @Override
-  public void setUpdateTime(StringExpression updateTime) {
-    this.updateTime = updateTime;
-  }
+  StringExpression getCreateGroupId();
 
-  @Override
-  public StringExpression getCreateGroupId() {
-    return this.createGroupId;
-  }
+  void setCreateGroupId(StringExpression createGroupId);
 
-  @Override
-  public void setCreateGroupId(StringExpression createGroupId) {
-    this.createGroupId = createGroupId;
-  }
+  Boolean getNot();
 
-  public Boolean getNot() {
-    return this.not;
-  }
+  void setNot(Boolean not);
 
-  public void setNot(Boolean not) {
-    this.not = not;
-  }
+  Conditional getCond();
 
-  public Conditional getCond() {
-    return this.cond;
-  }
-
-  public void setCond(Conditional cond) {
-    this.cond = cond;
-  }
-
-  public Collection<NamedStructExpression> getExs() {
-    return this.exs;
-  }
-
-  public void setExs(Collection<NamedStructExpression> exs) {
-    this.exs = exs;
-  }
+  void setCond(Conditional cond);
 }

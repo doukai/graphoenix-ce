@@ -615,7 +615,7 @@ public class ProtobufFileBuilder {
                         IntStream.range(0, enumType.getEnumValues().size())
                                 .mapToObj(index ->
                                         new EnumField()
-                                                .setName(enumType.getEnumValue(index) + "_" + getGrpcEnumFieldName(enumType.getName()))
+                                                .setName(enumType.getEnumValue(index).getName() + "_" + getGrpcEnumFieldName(enumType.getName()))
                                                 .setDescription(enumType.getEnumValue(index).getDescription())
                                                 .setNumber(index)
                                 )
