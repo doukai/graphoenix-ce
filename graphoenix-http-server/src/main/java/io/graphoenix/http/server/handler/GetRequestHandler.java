@@ -12,7 +12,9 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.nozdormu.spi.context.PublisherBeanContext;
+import io.nozdormu.spi.event.ScopeEventResolver;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.json.spi.JsonProvider;
 import org.reactivestreams.Publisher;
@@ -25,6 +27,7 @@ import reactor.util.context.Context;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -69,7 +72,8 @@ public class GetRequestHandler extends BaseHandler {
                     .addHeader(HttpHeaderNames.CONNECTION, "keep-alive")
                     .status(HttpResponseStatus.ACCEPTED)
                     .send(
-                            requestScopeInstanceFactory.compute(requestId, HttpServerRequest.class, request)
+                            ScopeEventResolver.initialized(Map.of(REQUEST, request, RESPONSE, response, OPERATION, document.getOperationOrError()), RequestScoped.class)
+                                    .then(requestScopeInstanceFactory.compute(requestId, HttpServerRequest.class, request))
                                     .then(requestScopeInstanceFactory.compute(requestId, HttpServerResponse.class, response))
                                     .then(requestScopeInstanceFactory.compute(requestId, Operation.class, operation))
                                     .thenMany(
@@ -86,7 +90,8 @@ public class GetRequestHandler extends BaseHandler {
             return response
                     .addHeader(CONTENT_TYPE, MimeType.Application.JSON)
                     .sendString(
-                            requestScopeInstanceFactory.compute(requestId, HttpServerRequest.class, request)
+                            ScopeEventResolver.initialized(Map.of(REQUEST, request, RESPONSE, response, OPERATION, document.getOperationOrError()), RequestScoped.class)
+                                    .then(requestScopeInstanceFactory.compute(requestId, HttpServerRequest.class, request))
                                     .then(requestScopeInstanceFactory.compute(requestId, HttpServerResponse.class, response))
                                     .then(requestScopeInstanceFactory.compute(requestId, Operation.class, operation))
                                     .then(

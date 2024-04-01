@@ -556,6 +556,14 @@ public class FieldDefinition extends AbstractDefinition {
         return getFormatLocale().orElse(null);
     }
 
+    public boolean isPermitAll() {
+        return hasDirective(DIRECTIVE_PERMIT_ALL);
+    }
+
+    public boolean isDenyAll() {
+        return hasDirective(DIRECTIVE_DENY_ALL);
+    }
+
     @Override
     public String toString() {
         ST st = stGroupFile.getInstanceOf("fieldDefinitionDefinition");

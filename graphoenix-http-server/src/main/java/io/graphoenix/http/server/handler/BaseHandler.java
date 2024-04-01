@@ -14,6 +14,9 @@ import static io.graphoenix.http.server.utils.ResponseUtil.error;
 import static io.graphoenix.http.server.utils.ResponseUtil.next;
 
 public abstract class BaseHandler {
+    public static final String REQUEST = "request";
+    public static final String RESPONSE = "response";
+    public static final String OPERATION = "operation";
 
     protected Mono<Void> sessionHandler(Map<String, Object> context, Mono<Void> mono, ContextView contextView) {
         return context.containsKey(SESSION_ID) ?

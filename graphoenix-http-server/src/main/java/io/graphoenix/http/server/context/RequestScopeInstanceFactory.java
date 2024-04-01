@@ -2,12 +2,15 @@ package io.graphoenix.http.server.context;
 
 import io.graphoenix.core.context.CacheScopeInstanceFactory;
 import io.graphoenix.http.server.config.HttpServerConfig;
+import io.nozdormu.spi.event.ScopeEventResolver;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.tinylog.Logger;
 
 import java.time.Duration;
+import java.util.Map;
 
 @ApplicationScoped
 @Named("jakarta.enterprise.context.RequestScoped")
@@ -31,11 +34,11 @@ public class RequestScopeInstanceFactory extends CacheScopeInstanceFactory {
 
     @Override
     protected void onEviction(Object key, Object value) {
-        Logger.info("request : " + key + " eviction");
+        ScopeEventResolver.beforeDestroyed(Map.of("key", key, "value", value), RequestScoped.class).subscribe();
     }
 
     @Override
     protected void onRemoval(Object key, Object value) {
-        Logger.info("request : " + key + " removal");
+        ScopeEventResolver.destroyed(Map.of("key", key, "value", value), RequestScoped.class).subscribe();
     }
 }
