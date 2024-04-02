@@ -33,8 +33,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
-import static javax.lang.model.element.ElementKind.ENUM;
-import static javax.lang.model.element.ElementKind.METHOD;
+import static javax.lang.model.element.ElementKind.*;
 import static javax.lang.model.type.TypeKind.ARRAY;
 
 public final class ElementUtil {
@@ -180,8 +179,10 @@ public final class ElementUtil {
         } else {
             Element typeElement = types.asElement(typeMirror);
             String elementName = getNameFromElement(typeElement);
-            if (typeElement.getAnnotation(Type.class) != null ||
-                    typeElement.getAnnotation(Interface.class) != null) {
+            if (element.getKind().equals(PARAMETER) &&
+                    (typeElement.getAnnotation(Type.class) != null ||
+                            typeElement.getAnnotation(Interface.class) != null)
+            ) {
                 elementType = new TypeName(elementName + SUFFIX_INPUT);
             } else {
                 elementType = new TypeName(elementName);

@@ -96,28 +96,52 @@ public abstract class BaseProcessor extends AbstractProcessor {
                         roundEnv.getElementsAnnotatedWith(Enum.class).stream()
                                 .filter(element -> element.getAnnotation(Generated.class) == null)
                                 .filter(element -> element.getKind().equals(ElementKind.ENUM))
-                                .map(element -> new EnumType((TypeElement) element))
+                                .map(element ->
+                                        (EnumType) new EnumType((TypeElement) element)
+                                                .addDirective(
+                                                        new Directive(DIRECTIVE_PACKAGE_NAME)
+                                                                .addArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME, packageConfig.getPackageName())
+                                                )
+                                )
                                 .collect(Collectors.toList())
                 )
                 .addDefinitions(
                         roundEnv.getElementsAnnotatedWith(Interface.class).stream()
                                 .filter(element -> element.getAnnotation(Generated.class) == null)
                                 .filter(element -> element.getKind().equals(ElementKind.INTERFACE))
-                                .map(element -> new InterfaceType((TypeElement) element, types))
+                                .map(element ->
+                                        (InterfaceType) new InterfaceType((TypeElement) element, types)
+                                                .addDirective(
+                                                        new Directive(DIRECTIVE_PACKAGE_NAME)
+                                                                .addArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME, packageConfig.getPackageName())
+                                                )
+                                )
                                 .collect(Collectors.toList())
                 )
                 .addDefinitions(
                         roundEnv.getElementsAnnotatedWith(Type.class).stream()
                                 .filter(element -> element.getAnnotation(Generated.class) == null)
                                 .filter(element -> element.getKind().equals(ElementKind.CLASS))
-                                .map(element -> new ObjectType((TypeElement) element, types))
+                                .map(element ->
+                                        (ObjectType) new ObjectType((TypeElement) element, types)
+                                                .addDirective(
+                                                        new Directive(DIRECTIVE_PACKAGE_NAME)
+                                                                .addArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME, packageConfig.getPackageName())
+                                                )
+                                )
                                 .collect(Collectors.toList())
                 )
                 .addDefinitions(
                         roundEnv.getElementsAnnotatedWith(Input.class).stream()
                                 .filter(element -> element.getAnnotation(Generated.class) == null)
                                 .filter(element -> element.getKind().equals(ElementKind.CLASS))
-                                .map(element -> new InputObjectType((TypeElement) element, types))
+                                .map(element ->
+                                        (InputObjectType) new InputObjectType((TypeElement) element, types)
+                                                .addDirective(
+                                                        new Directive(DIRECTIVE_PACKAGE_NAME)
+                                                                .addArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME, packageConfig.getPackageName())
+                                                )
+                                )
                                 .collect(Collectors.toList())
                 )
                 .addDefinitions(
@@ -128,7 +152,13 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                         element.getEnclosedElements().stream()
                                                 .filter(subElement -> subElement.getAnnotation(Enum.class) != null)
                                                 .filter(subElement -> subElement.getKind().equals(ElementKind.ENUM))
-                                                .map(subElement -> new EnumType((TypeElement) subElement))
+                                                .map(subElement ->
+                                                        (EnumType) new EnumType((TypeElement) subElement)
+                                                                .addDirective(
+                                                                        new Directive(DIRECTIVE_PACKAGE_NAME)
+                                                                                .addArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME, packageConfig.getPackageName())
+                                                                )
+                                                )
                                 )
                                 .collect(Collectors.toList())
                 )
@@ -140,7 +170,13 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                         element.getEnclosedElements().stream()
                                                 .filter(subElement -> subElement.getAnnotation(Enum.class) != null)
                                                 .filter(subElement -> subElement.getKind().equals(ElementKind.ENUM))
-                                                .map(subElement -> new EnumType((TypeElement) subElement))
+                                                .map(subElement ->
+                                                        (EnumType) new EnumType((TypeElement) subElement)
+                                                                .addDirective(
+                                                                        new Directive(DIRECTIVE_PACKAGE_NAME)
+                                                                                .addArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME, packageConfig.getPackageName())
+                                                                )
+                                                )
                                 )
                                 .collect(Collectors.toList())
                 )
@@ -152,7 +188,13 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                         element.getEnclosedElements().stream()
                                                 .filter(subElement -> subElement.getAnnotation(Enum.class) != null)
                                                 .filter(subElement -> subElement.getKind().equals(ElementKind.ENUM))
-                                                .map(subElement -> new EnumType((TypeElement) subElement))
+                                                .map(subElement ->
+                                                        (EnumType) new EnumType((TypeElement) subElement)
+                                                                .addDirective(
+                                                                        new Directive(DIRECTIVE_PACKAGE_NAME)
+                                                                                .addArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME, packageConfig.getPackageName())
+                                                                )
+                                                )
                                 )
                                 .collect(Collectors.toList())
                 );
@@ -402,6 +444,8 @@ public abstract class BaseProcessor extends AbstractProcessor {
                     int layers = selectionSet.layers();
                     field.setSelections(buildFields(fieldTypeDefinition.asObject(), 0, layers));
                 }
+            } else {
+                field.setSelections(buildFields(fieldTypeDefinition.asObject(), 0, 0));
             }
         }
         return operation.addSelection(field);
@@ -419,14 +463,14 @@ public abstract class BaseProcessor extends AbstractProcessor {
                             if (fieldTypeDefinition.isObject()) {
                                 if (level < layers) {
                                     return Stream.of(
-                                            new Field(fieldTypeDefinition.getName())
+                                            new Field(fieldDefinition.getName())
                                                     .setSelections(buildFields(fieldTypeDefinition.asObject(), level + 1, layers))
                                     );
                                 } else {
                                     return Stream.empty();
                                 }
                             } else {
-                                return Stream.of(new Field(fieldTypeDefinition.getName()));
+                                return Stream.of(new Field(fieldDefinition.getName()));
                             }
                         }
                 )

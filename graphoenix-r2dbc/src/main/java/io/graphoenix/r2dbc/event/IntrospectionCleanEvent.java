@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 @Initialized(ApplicationScoped.class)
-@Priority(209)
+@Priority(290)
 public class IntrospectionCleanEvent implements ScopeEvent {
 
     private final GraphQLConfig graphQLConfig;

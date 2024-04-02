@@ -568,6 +568,10 @@ public class BaseTask extends DefaultTask {
                                 .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, resolvedReferenceTypeDeclaration.getQualifiedName())
                                 .addArgument(DIRECTIVE_CLASS_ARGUMENT_EXISTS_NAME, true)
                 )
+                .addDirective(
+                        new Directive(DIRECTIVE_PACKAGE_NAME)
+                                .addArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME, packageConfig.getPackageName())
+                )
                 .addDirective(new Directive(DIRECTIVE_CONTAINER_NAME));
     }
 
@@ -585,6 +589,10 @@ public class BaseTask extends DefaultTask {
                                 .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, resolvedReferenceTypeDeclaration.getQualifiedName())
                                 .addArgument(DIRECTIVE_CLASS_ARGUMENT_EXISTS_NAME, true)
                 )
+                .addDirective(
+                        new Directive(DIRECTIVE_PACKAGE_NAME)
+                                .addArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME, packageConfig.getPackageName())
+                )
                 .addDirective(new Directive(DIRECTIVE_CONTAINER_NAME));
     }
 
@@ -599,6 +607,10 @@ public class BaseTask extends DefaultTask {
                         new Directive(DIRECTIVE_CLASS_NAME)
                                 .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, resolvedReferenceTypeDeclaration.getQualifiedName())
                                 .addArgument(DIRECTIVE_CLASS_ARGUMENT_EXISTS_NAME, true)
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_PACKAGE_NAME)
+                                .addArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME, packageConfig.getPackageName())
                 )
                 .addDirective(new Directive(DIRECTIVE_CONTAINER_NAME));
     }
