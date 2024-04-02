@@ -33,10 +33,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.graphoenix.core.utils.TypeNameUtil.getArgumentTypeNames;
 import static io.graphoenix.core.utils.TypeNameUtil.getClassName;
 import static io.graphoenix.java.utils.NameUtil.*;
 import static io.graphoenix.java.utils.TypeNameUtil.toClassName;
-import static io.graphoenix.java.utils.TypeNameUtil.toTypeName;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 
 @ApplicationScoped
@@ -374,11 +374,22 @@ public class InvokeHandlerBuilder {
 
                                                                                                     CodeBlock parametersCodeBlock = CodeBlock.join(
                                                                                                             parameters.stream()
-                                                                                                                    .map(parameter ->
-                                                                                                                            CodeBlock.of("jsonb.fromJson(field.getArguments().get($S).toString(), $T.class)",
-                                                                                                                                    parameter.getKey(),
-                                                                                                                                    toClassName(getClassName(parameter.getValue()))
-                                                                                                                            )
+                                                                                                                    .map(parameter -> {
+                                                                                                                                String className = getClassName(parameter.getValue());
+                                                                                                                                String[] argumentTypeNames = getArgumentTypeNames(parameter.getValue());
+                                                                                                                                if (argumentTypeNames.length == 1) {
+                                                                                                                                    return CodeBlock.of("jsonb.fromJson(field.getArguments().get($S).toString(), new $T<$T<$T>>() {}.type)",
+                                                                                                                                            parameter.getKey(),
+                                                                                                                                            ClassName.get(TypeDefinition.class),
+                                                                                                                                            toClassName(className),
+                                                                                                                                            toClassName(argumentTypeNames[0])
+                                                                                                                                    );
+                                                                                                                                }
+                                                                                                                                return CodeBlock.of("jsonb.fromJson(field.getArguments().get($S).toString(), $T.class)",
+                                                                                                                                        parameter.getKey(),
+                                                                                                                                        toClassName(className)
+                                                                                                                                );
+                                                                                                                            }
                                                                                                                     )
                                                                                                                     .collect(Collectors.toList()), ", ");
 
