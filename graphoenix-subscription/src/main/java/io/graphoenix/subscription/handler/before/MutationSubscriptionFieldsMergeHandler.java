@@ -16,9 +16,13 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static io.graphoenix.core.handler.before.MutationFetchFieldsMergeHandler.MUTATION_FETCH_FIELDS_MERGE_HANDLER_PRIORITY;
+
 @ApplicationScoped
-@Priority(650)
+@Priority(MutationSubscriptionFieldsMergeHandler.MUTATION_SUBSCRIPTION_FIELDS_MERGE_HANDLER_PRIORITY)
 public class MutationSubscriptionFieldsMergeHandler implements OperationBeforeHandler {
+
+    public static final int MUTATION_SUBSCRIPTION_FIELDS_MERGE_HANDLER_PRIORITY = MUTATION_FETCH_FIELDS_MERGE_HANDLER_PRIORITY + 100;
 
     private final DocumentManager documentManager;
 

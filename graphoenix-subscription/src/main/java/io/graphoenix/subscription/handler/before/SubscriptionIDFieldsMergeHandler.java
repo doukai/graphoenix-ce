@@ -19,11 +19,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.graphoenix.core.handler.before.ConnectionSplitter.CONNECTION_SPLITTER_PRIORITY;
 import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_HIDE_NAME;
 
 @ApplicationScoped
-@Priority(575)
+@Priority(SubscriptionIDFieldsMergeHandler.SUBSCRIPTION_ID_FIELDS_MERGE_HANDLER_PRIORITY)
 public class SubscriptionIDFieldsMergeHandler implements OperationBeforeHandler {
+
+    public static final int SUBSCRIPTION_ID_FIELDS_MERGE_HANDLER_PRIORITY = CONNECTION_SPLITTER_PRIORITY + 175;
 
     private final DocumentManager documentManager;
 

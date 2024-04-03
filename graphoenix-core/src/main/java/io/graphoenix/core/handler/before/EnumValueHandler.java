@@ -19,9 +19,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.graphoenix.core.handler.before.FragmentHandler.FRAGMENT_HANDLER_PRIORITY;
+
 @ApplicationScoped
-@Priority(300)
+@Priority(EnumValueHandler.ENUM_VALUE_HANDLER_PRIORITY)
 public class EnumValueHandler implements OperationBeforeHandler {
+
+    public static final int ENUM_VALUE_HANDLER_PRIORITY = FRAGMENT_HANDLER_PRIORITY + 200;
 
     private final DocumentManager documentManager;
 

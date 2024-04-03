@@ -19,11 +19,14 @@ import reactor.core.publisher.Mono;
 import java.util.Collection;
 import java.util.Map;
 
+import static io.graphoenix.core.handler.before.VariableHandler.VARIABLE_HANDLER_PRIORITY;
 import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_SELECTION;
 
 @ApplicationScoped
-@Priority(100)
+@Priority(FragmentHandler.FRAGMENT_HANDLER_PRIORITY)
 public class FragmentHandler implements OperationBeforeHandler {
+
+    public static final int FRAGMENT_HANDLER_PRIORITY = VARIABLE_HANDLER_PRIORITY + 100;
 
     private final DocumentManager documentManager;
 

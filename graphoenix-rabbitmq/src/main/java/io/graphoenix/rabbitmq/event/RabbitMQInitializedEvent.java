@@ -10,13 +10,16 @@ import reactor.rabbitmq.Sender;
 
 import java.util.Map;
 
+import static io.graphoenix.core.event.DocumentInitializedEvent.DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY;
 import static io.graphoenix.rabbitmq.handler.RabbitMQSubscriptionHandler.SUBSCRIPTION_EXCHANGE_NAME;
 import static reactor.rabbitmq.ExchangeSpecification.exchange;
 
 @ApplicationScoped
 @Initialized(ApplicationScoped.class)
-@Priority(200)
+@Priority(RabbitMQInitializedEvent.RABBITMQ_INITIALIZED_SCOPE_EVENT_PRIORITY)
 public class RabbitMQInitializedEvent implements ScopeEvent {
+
+    public static final int RABBITMQ_INITIALIZED_SCOPE_EVENT_PRIORITY = DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY + 175;
 
     private final Sender sender;
 

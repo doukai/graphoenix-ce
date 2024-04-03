@@ -19,10 +19,14 @@ import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import static io.graphoenix.core.event.DocumentInitializedEvent.DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY;
+
 @ApplicationScoped
 @Initialized(ApplicationScoped.class)
-@Priority(0)
+@Priority(BannerScopeEvent.BANNER_SCOPE_EVENT_PRIORITY)
 public class BannerScopeEvent implements ScopeEvent {
+
+    public static final int BANNER_SCOPE_EVENT_PRIORITY = DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY - 1;
 
     public static final String BANNER_FILE_NAME = "banner.txt";
     public static final String VERSION_KEY = "GP-Version";

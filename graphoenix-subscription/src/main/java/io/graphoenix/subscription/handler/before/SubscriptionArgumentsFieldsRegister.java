@@ -24,10 +24,13 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
+import static io.graphoenix.subscription.handler.before.SubscriptionIDFieldsMergeHandler.SUBSCRIPTION_ID_FIELDS_MERGE_HANDLER_PRIORITY;
 
 @ApplicationScoped
-@Priority(675)
+@Priority(SubscriptionArgumentsFieldsRegister.SUBSCRIPTION_ARGUMENTS_FIELDS_REGISTER_PRIORITY)
 public class SubscriptionArgumentsFieldsRegister implements OperationBeforeHandler {
+
+    public static final int SUBSCRIPTION_ARGUMENTS_FIELDS_REGISTER_PRIORITY = SUBSCRIPTION_ID_FIELDS_MERGE_HANDLER_PRIORITY + 100;
 
     private final DocumentManager documentManager;
 

@@ -14,10 +14,14 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static io.graphoenix.core.event.DocumentInitializedEvent.DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY;
+
 @ApplicationScoped
 @Initialized(ApplicationScoped.class)
-@Priority(100)
+@Priority(TableInitializedEvent.TABLE_INITIALIZED_SCOPE_EVENT_PRIORITY)
 public class TableInitializedEvent implements ScopeEvent {
+
+    public static final int TABLE_INITIALIZED_SCOPE_EVENT_PRIORITY = DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY + 100;
 
     private final R2DBCConfig r2DBCConfig;
     private final TypeTranslator typeTranslator;

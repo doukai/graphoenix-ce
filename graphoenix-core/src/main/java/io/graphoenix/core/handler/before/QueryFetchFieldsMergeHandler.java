@@ -19,11 +19,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.graphoenix.core.handler.before.ConnectionSplitter.CONNECTION_SPLITTER_PRIORITY;
 import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_HIDE_NAME;
 
 @ApplicationScoped
-@Priority(500)
+@Priority(QueryFetchFieldsMergeHandler.QUERY_FETCH_FIELDS_MERGE_HANDLER_PRIORITY)
 public class QueryFetchFieldsMergeHandler implements OperationBeforeHandler {
+
+    public static final int QUERY_FETCH_FIELDS_MERGE_HANDLER_PRIORITY = CONNECTION_SPLITTER_PRIORITY + 100;
 
     private final DocumentManager documentManager;
 

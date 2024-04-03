@@ -20,8 +20,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @ApplicationScoped
-@Priority(0)
+@Priority(VariableHandler.VARIABLE_HANDLER_PRIORITY)
 public class VariableHandler implements OperationBeforeHandler {
+
+    public static final int VARIABLE_HANDLER_PRIORITY = 0;
 
     public Mono<Operation> handle(Operation operation, Map<String, JsonValue> variables) {
         Map<String, JsonValue> mergedVariables = mergeDefaultValues(operation.getVariableDefinitions(), variables);

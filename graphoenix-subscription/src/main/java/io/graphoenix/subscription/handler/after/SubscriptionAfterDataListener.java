@@ -9,9 +9,13 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.json.JsonValue;
 import reactor.core.publisher.Mono;
 
+import static io.graphoenix.core.handler.after.SelectionHandler.SELECTION_HANDLER_PRIORITY;
+
 @ApplicationScoped
-@Priority(Integer.MAX_VALUE - 225)
-public class SubscriptionDataListenerAfterHandler implements OperationAfterHandler {
+@Priority(SubscriptionAfterDataListener.SUBSCRIPTION_AFTER_DATA_LISTENER_PRIORITY)
+public class SubscriptionAfterDataListener implements OperationAfterHandler {
+
+    public static final int SUBSCRIPTION_AFTER_DATA_LISTENER_PRIORITY = SELECTION_HANDLER_PRIORITY - 125;
 
     @Override
     public Mono<JsonValue> subscription(Operation operation, JsonValue jsonValue) {

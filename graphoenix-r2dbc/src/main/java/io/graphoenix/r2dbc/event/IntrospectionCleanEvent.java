@@ -14,10 +14,14 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static io.graphoenix.core.event.DocumentInitializedEvent.DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY;
+
 @ApplicationScoped
 @Initialized(ApplicationScoped.class)
-@Priority(290)
+@Priority(IntrospectionCleanEvent.INTROSPECTION_CLEAN_SCOPE_EVENT_PRIORITY)
 public class IntrospectionCleanEvent implements ScopeEvent {
+
+    public static final int INTROSPECTION_CLEAN_SCOPE_EVENT_PRIORITY = DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY + 199;
 
     private final GraphQLConfig graphQLConfig;
     private final TypeTranslator typeTranslator;

@@ -27,12 +27,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.graphoenix.core.handler.before.EnumValueHandler.ENUM_VALUE_HANDLER_PRIORITY;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.OBJECT_SELECTION_NOT_EXIST;
 
 @ApplicationScoped
-@Priority(400)
+@Priority(ConnectionSplitter.CONNECTION_SPLITTER_PRIORITY)
 public class ConnectionSplitter implements OperationBeforeHandler {
+
+    public static final int CONNECTION_SPLITTER_PRIORITY = ENUM_VALUE_HANDLER_PRIORITY + 100;
 
     private final DocumentManager documentManager;
     private final PackageManager packageManager;

@@ -31,14 +31,17 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static io.graphoenix.core.handler.before.ConnectionSplitter.CONNECTION_SPLITTER_PRIORITY;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST;
 import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 
 @ApplicationScoped
-@Priority(800)
+@Priority(QueryBeforeFetchHandler.QUERY_BEFORE_FETCH_HANDLER_PRIORITY)
 public class QueryBeforeFetchHandler implements OperationBeforeHandler {
+
+    public static final int QUERY_BEFORE_FETCH_HANDLER_PRIORITY = CONNECTION_SPLITTER_PRIORITY + 400;
 
     private final DocumentManager documentManager;
     private final JsonProvider jsonProvider;

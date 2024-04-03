@@ -13,8 +13,10 @@ import java.util.Map;
 
 @ApplicationScoped
 @Initialized(ApplicationScoped.class)
-@Priority(1)
+@Priority(DocumentInitializedEvent.DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY)
 public class DocumentInitializedEvent implements ScopeEvent {
+
+    public static final int DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY = 0;
 
     private final DocumentManager documentManager;
 

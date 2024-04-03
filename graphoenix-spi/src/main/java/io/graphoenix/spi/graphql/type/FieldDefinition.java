@@ -9,6 +9,9 @@ import io.graphoenix.spi.graphql.common.Directive;
 import io.graphoenix.spi.graphql.common.EnumValue;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.nozdormu.spi.async.Async;
+import jakarta.annotation.security.DenyAll;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
@@ -84,6 +87,19 @@ public class FieldDefinition extends AbstractDefinition {
                         .addArgument(DIRECTIVE_INVOKE_ARGUMENT_RETURN_CLASS_NAME_NAME, getTypeWithArgumentsName(executableElement.getReturnType(), types))
                         .addArgument(DIRECTIVE_INVOKE_ASYNC_NAME, async)
         );
+
+        if (executableElement.getAnnotation(PermitAll.class) != null) {
+            addDirective(new Directive(DIRECTIVE_PERMIT_ALL));
+        }
+        if (executableElement.getAnnotation(DenyAll.class) != null) {
+            addDirective(new Directive(DIRECTIVE_DENY_ALL));
+        }
+        if (executableElement.getAnnotation(RolesAllowed.class) != null) {
+            Directive directive = new Directive()
+                    .setName(DIRECTIVE_ROLES_ALLOWED)
+                    .addArgument("roles", executableElement.getAnnotation(RolesAllowed.class).value());
+            addDirective(directive);
+        }
     }
 
     public Collection<InputValue> getArguments() {

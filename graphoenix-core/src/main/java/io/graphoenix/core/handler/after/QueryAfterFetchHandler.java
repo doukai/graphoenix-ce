@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static io.graphoenix.core.handler.after.ConnectionBuilder.CONNECTION_BUILDER_PRIORITY;
 import static io.graphoenix.core.handler.fetch.LocalFetchHandler.LOCAL_FETCH_NAME;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST;
@@ -37,8 +38,10 @@ import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 import static jakarta.json.JsonValue.NULL;
 
 @ApplicationScoped
-@Priority(Integer.MAX_VALUE - 400)
+@Priority(QueryAfterFetchHandler.QUERY_AFTER_FETCH_HANDLER_PRIORITY)
 public class QueryAfterFetchHandler implements OperationAfterHandler {
+
+    public static final int QUERY_AFTER_FETCH_HANDLER_PRIORITY = CONNECTION_BUILDER_PRIORITY - 100;
 
     private final DocumentManager documentManager;
     private final PackageManager packageManager;

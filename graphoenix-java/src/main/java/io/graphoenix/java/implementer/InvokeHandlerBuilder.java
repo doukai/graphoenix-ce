@@ -7,6 +7,7 @@ import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.OperationBuilder;
 import io.graphoenix.core.handler.PackageManager;
+import io.graphoenix.core.handler.after.SelectionHandler;
 import io.graphoenix.java.utils.TypeNameUtil;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Operation;
@@ -75,7 +76,7 @@ public class InvokeHandlerBuilder {
                 .addModifiers(Modifier.PUBLIC)
                 .addSuperinterface(OperationAfterHandler.class)
                 .addAnnotation(ApplicationScoped.class)
-                .addAnnotation(AnnotationSpec.builder(Priority.class).addMember("value", "$T.MAX_VALUE - 200", ClassName.get(Integer.class)).build())
+                .addAnnotation(AnnotationSpec.builder(Priority.class).addMember("value", "$T.SELECTION_HANDLER_PRIORITY - 100", ClassName.get(SelectionHandler.class)).build())
                 .addField(
                         FieldSpec.builder(
                                 ClassName.get(DocumentManager.class),

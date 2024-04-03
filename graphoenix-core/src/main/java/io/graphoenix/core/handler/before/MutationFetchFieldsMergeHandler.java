@@ -23,12 +23,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.graphoenix.core.handler.before.ConnectionSplitter.CONNECTION_SPLITTER_PRIORITY;
 import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_HIDE_NAME;
 import static io.graphoenix.spi.constant.Hammurabi.SUFFIX_INPUT;
 
 @ApplicationScoped
-@Priority(550)
+@Priority(MutationFetchFieldsMergeHandler.MUTATION_FETCH_FIELDS_MERGE_HANDLER_PRIORITY)
 public class MutationFetchFieldsMergeHandler implements OperationBeforeHandler {
+
+    public static final int MUTATION_FETCH_FIELDS_MERGE_HANDLER_PRIORITY = CONNECTION_SPLITTER_PRIORITY + 150;
 
     private final DocumentManager documentManager;
 

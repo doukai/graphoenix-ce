@@ -23,12 +23,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.graphoenix.core.handler.before.FragmentHandler.FRAGMENT_HANDLER_PRIORITY;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_OPERATION_TYPE;
 
 @ApplicationScoped
-@Priority(105)
+@Priority(JsonSchemaValidator.JSON_SCHEMA_VALIDATOR_PRIORITY)
 public class JsonSchemaValidator implements OperationBeforeHandler {
+
+    public static final int JSON_SCHEMA_VALIDATOR_PRIORITY = FRAGMENT_HANDLER_PRIORITY + 50;
 
     private final ObjectMapper mapper = new ObjectMapper();
     private final DocumentManager documentManager;

@@ -5,6 +5,7 @@ import com.squareup.javapoet.*;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.OperationBuilder;
+import io.graphoenix.core.handler.before.FragmentHandler;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.ObjectType;
@@ -59,7 +60,7 @@ public class ArgumentsInvokeHandlerBuilder {
                 .addSuperinterface(ClassName.get(OperationBeforeHandler.class))
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(ApplicationScoped.class)
-                .addAnnotation(AnnotationSpec.builder(Priority.class).addMember("value", "200").build())
+                .addAnnotation(AnnotationSpec.builder(Priority.class).addMember("value", "$T.FRAGMENT_HANDLER_PRIORITY + 100", ClassName.get(FragmentHandler.class)).build())
                 .addField(
                         FieldSpec.builder(
                                 ClassName.get(OperationBuilder.class),

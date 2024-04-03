@@ -20,12 +20,15 @@ import reactor.rabbitmq.Sender;
 
 import java.util.Optional;
 
+import static io.graphoenix.core.handler.after.SelectionHandler.SELECTION_HANDLER_PRIORITY;
 import static io.graphoenix.rabbitmq.handler.RabbitMQSubscriptionHandler.*;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 
 @ApplicationScoped
-@Priority(Integer.MAX_VALUE - 250)
+@Priority(MutationSendHandler.MUTATION_SEND_HANDLER_PRIORITY)
 public class MutationSendHandler implements OperationAfterHandler {
+
+    public static final int MUTATION_SEND_HANDLER_PRIORITY = SELECTION_HANDLER_PRIORITY - 150;
 
     private final DocumentManager documentManager;
 

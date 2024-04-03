@@ -34,14 +34,17 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static io.graphoenix.core.handler.before.ConnectionSplitter.CONNECTION_SPLITTER_PRIORITY;
 import static io.graphoenix.core.handler.fetch.LocalFetchHandler.LOCAL_FETCH_NAME;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 
 @ApplicationScoped
-@Priority(850)
+@Priority(MutationBeforeFetchHandler.MUTATION_BEFORE_FETCH_HANDLER_PRIORITY)
 public class MutationBeforeFetchHandler implements OperationBeforeHandler {
+
+    public static final int MUTATION_BEFORE_FETCH_HANDLER_PRIORITY = CONNECTION_SPLITTER_PRIORITY + 450;
 
     private final DocumentManager documentManager;
     private final PackageManager packageManager;

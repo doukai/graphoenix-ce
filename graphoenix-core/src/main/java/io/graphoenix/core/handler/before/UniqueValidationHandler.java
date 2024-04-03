@@ -29,13 +29,16 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static io.graphoenix.core.handler.before.FragmentHandler.FRAGMENT_HANDLER_PRIORITY;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.EXISTED_UNIQUE_VALUES;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 
 @ApplicationScoped
-@Priority(110)
+@Priority(UniqueValidationHandler.UNIQUE_VALIDATION_HANDLER_PRIORITY)
 public class UniqueValidationHandler implements OperationBeforeHandler {
+
+    public static final int UNIQUE_VALIDATION_HANDLER_PRIORITY = FRAGMENT_HANDLER_PRIORITY + 75;
 
     private final DocumentManager documentManager;
     private final JsonProvider jsonProvider;

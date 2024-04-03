@@ -33,8 +33,10 @@ import java.util.stream.Stream;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 
 @ApplicationScoped
-@Priority(Integer.MAX_VALUE - 100)
+@Priority(SelectionHandler.SELECTION_HANDLER_PRIORITY)
 public class SelectionHandler implements OperationAfterHandler {
+
+    public static final int SELECTION_HANDLER_PRIORITY = Integer.MAX_VALUE - 100;
 
     private final DocumentManager documentManager;
     private final ScalarFormatter scalarFormatter;

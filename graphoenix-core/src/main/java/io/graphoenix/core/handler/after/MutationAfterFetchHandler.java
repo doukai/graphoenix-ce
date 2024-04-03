@@ -33,14 +33,16 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static io.graphoenix.core.handler.after.ConnectionBuilder.CONNECTION_BUILDER_PRIORITY;
 import static io.graphoenix.core.handler.fetch.LocalFetchHandler.LOCAL_FETCH_NAME;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST;
-import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
 
 @ApplicationScoped
-@Priority(Integer.MAX_VALUE - 450)
+@Priority(MutationAfterFetchHandler.MUTATION_AFTER_FETCH_HANDLER_PRIORITY)
 public class MutationAfterFetchHandler implements OperationAfterHandler {
+
+    public static final int MUTATION_AFTER_FETCH_HANDLER_PRIORITY = CONNECTION_BUILDER_PRIORITY - 150;
 
     private final DocumentManager documentManager;
     private final PackageManager packageManager;
