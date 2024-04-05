@@ -1,5 +1,6 @@
 package io.graphoenix.r2dbc.context;
 
+import com.google.common.collect.Maps;
 import io.graphoenix.core.context.CacheScopeInstanceFactory;
 import io.graphoenix.r2dbc.config.R2DBCConfig;
 import io.nozdormu.spi.event.ScopeEventResolver;
@@ -28,16 +29,16 @@ public class TransactionScopeInstanceFactory extends CacheScopeInstanceFactory {
 
     @Override
     protected void onBuild(String key) {
-        ScopeEventResolver.initialized(Map.of("key", key), TransactionScoped.class).subscribe();
+        ScopeEventResolver.initialized(Maps.newHashMap(Map.of("key", key)), TransactionScoped.class).subscribe();
     }
 
     @Override
     protected void onEviction(Object key, Object value) {
-        ScopeEventResolver.beforeDestroyed(Map.of("key", key, "value", value), TransactionScoped.class).subscribe();
+        ScopeEventResolver.beforeDestroyed(Maps.newHashMap(Map.of("key", key, "value", value)), TransactionScoped.class).subscribe();
     }
 
     @Override
     protected void onRemoval(Object key, Object value) {
-        ScopeEventResolver.destroyed(Map.of("key", key, "value", value), TransactionScoped.class).subscribe();
+        ScopeEventResolver.destroyed(Maps.newHashMap(Map.of("key", key, "value", value)), TransactionScoped.class).subscribe();
     }
 }

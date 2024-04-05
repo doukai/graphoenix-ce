@@ -1,5 +1,6 @@
 package io.graphoenix.http.server.handler;
 
+import com.google.common.collect.Maps;
 import io.graphoenix.core.dto.GraphQLRequest;
 import io.graphoenix.http.server.codec.MimeType;
 import io.graphoenix.http.server.context.RequestScopeInstanceFactory;
@@ -72,7 +73,7 @@ public class GetRequestHandler extends BaseHandler {
                     .addHeader(HttpHeaderNames.CONNECTION, "keep-alive")
                     .status(HttpResponseStatus.ACCEPTED)
                     .send(
-                            ScopeEventResolver.initialized(Map.of(REQUEST, request, RESPONSE, response, OPERATION, document.getOperationOrError()), RequestScoped.class)
+                            ScopeEventResolver.initialized(Maps.newHashMap(Map.of(REQUEST, request, RESPONSE, response, OPERATION, document.getOperationOrError())), RequestScoped.class)
                                     .then(requestScopeInstanceFactory.compute(requestId, HttpServerRequest.class, request))
                                     .then(requestScopeInstanceFactory.compute(requestId, HttpServerResponse.class, response))
                                     .then(requestScopeInstanceFactory.compute(requestId, Operation.class, operation))
@@ -90,7 +91,7 @@ public class GetRequestHandler extends BaseHandler {
             return response
                     .addHeader(CONTENT_TYPE, MimeType.Application.JSON)
                     .sendString(
-                            ScopeEventResolver.initialized(Map.of(REQUEST, request, RESPONSE, response, OPERATION, document.getOperationOrError()), RequestScoped.class)
+                            ScopeEventResolver.initialized(Maps.newHashMap(Map.of(REQUEST, request, RESPONSE, response, OPERATION, document.getOperationOrError())), RequestScoped.class)
                                     .then(requestScopeInstanceFactory.compute(requestId, HttpServerRequest.class, request))
                                     .then(requestScopeInstanceFactory.compute(requestId, HttpServerResponse.class, response))
                                     .then(requestScopeInstanceFactory.compute(requestId, Operation.class, operation))

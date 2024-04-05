@@ -1,5 +1,6 @@
 package io.graphoenix.core.bootstrap;
 
+import com.google.common.collect.Maps;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.spi.bootstrap.Launcher;
@@ -85,7 +86,7 @@ public class ApplicationLauncher implements Launcher {
                     )
             );
 
-            ScopeEventResolver.initialized(Map.of("args", args), ApplicationScoped.class)
+            ScopeEventResolver.initialized(Maps.newHashMap(Map.of("args", args)), ApplicationScoped.class)
                     .then(Mono.fromRunnable(latch::countDown))
                     .block();
 

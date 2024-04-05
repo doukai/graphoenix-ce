@@ -1,5 +1,6 @@
 package io.graphoenix.http.server.handler;
 
+import com.google.common.collect.Maps;
 import io.graphoenix.core.dto.GraphQLRequest;
 import io.graphoenix.http.server.codec.MimeType;
 import io.graphoenix.http.server.context.RequestScopeInstanceFactory;
@@ -62,7 +63,7 @@ public class PostRequestHandler extends BaseHandler {
                                     .flatMap(graphQLRequest ->
                                             Mono.just(new Document(graphQLRequest.getQuery()))
                                                     .flatMap(document ->
-                                                            ScopeEventResolver.initialized(Map.of(REQUEST, request, RESPONSE, response, OPERATION, document.getOperationOrError()), RequestScoped.class)
+                                                            ScopeEventResolver.initialized(Maps.newHashMap(Map.of(REQUEST, request, RESPONSE, response, OPERATION, document.getOperationOrError())), RequestScoped.class)
                                                                     .then(requestScopeInstanceFactory.compute(requestId, HttpServerRequest.class, request))
                                                                     .then(requestScopeInstanceFactory.compute(requestId, HttpServerResponse.class, response))
                                                                     .then(requestScopeInstanceFactory.compute(requestId, Operation.class, document.getOperationOrError()))
@@ -84,7 +85,7 @@ public class PostRequestHandler extends BaseHandler {
                                     .flatMap(graphQLRequest ->
                                             Mono.just(new Document(graphQLRequest.getQuery()))
                                                     .flatMap(document ->
-                                                            ScopeEventResolver.initialized(Map.of(REQUEST, request, RESPONSE, response, OPERATION, document.getOperationOrError()), RequestScoped.class)
+                                                            ScopeEventResolver.initialized(Maps.newHashMap(Map.of(REQUEST, request, RESPONSE, response, OPERATION, document.getOperationOrError())), RequestScoped.class)
                                                                     .then(requestScopeInstanceFactory.compute(requestId, HttpServerRequest.class, request))
                                                                     .then(requestScopeInstanceFactory.compute(requestId, HttpServerResponse.class, response))
                                                                     .then(requestScopeInstanceFactory.compute(requestId, Operation.class, document.getOperationOrError()))
@@ -110,7 +111,7 @@ public class PostRequestHandler extends BaseHandler {
                                     .flatMapMany(graphQLRequest ->
                                             Flux.just(new Document(graphQLRequest.getQuery()))
                                                     .flatMap(document ->
-                                                            ScopeEventResolver.initialized(Map.of(REQUEST, request, RESPONSE, response, OPERATION, document.getOperationOrError()), RequestScoped.class)
+                                                            ScopeEventResolver.initialized(Maps.newHashMap(Map.of(REQUEST, request, RESPONSE, response, OPERATION, document.getOperationOrError())), RequestScoped.class)
                                                                     .then(requestScopeInstanceFactory.compute(requestId, HttpServerRequest.class, request))
                                                                     .then(requestScopeInstanceFactory.compute(requestId, HttpServerResponse.class, response))
                                                                     .then(requestScopeInstanceFactory.compute(requestId, Operation.class, document.getOperationOrError()))
