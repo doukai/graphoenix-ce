@@ -10,6 +10,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.eclipse.microprofile.graphql.Name;
 
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
@@ -18,13 +19,14 @@ import java.lang.annotation.Target;
 public @interface __TypeInterfacesExpression1 {
   StringExpression2 id() default @StringExpression2;
 
-  StringExpression2 typeName() default @StringExpression2;
+  StringExpression2 typeRef() default @StringExpression2;
 
-  __TypeExpression2 typeNameType() default @__TypeExpression2;
+  __TypeExpression2 type() default @__TypeExpression2;
 
-  StringExpression2 interfaceName() default @StringExpression2;
+  StringExpression2 interfaceRef() default @StringExpression2;
 
-  __TypeExpression2 interfaceNameType() default @__TypeExpression2;
+  @Name("interface")
+  __TypeExpression2 _interface() default @__TypeExpression2;
 
   boolean includeDeprecated() default false;
 
@@ -52,13 +54,13 @@ public @interface __TypeInterfacesExpression1 {
 
   String $id() default "";
 
-  String $typeName() default "";
+  String $typeRef() default "";
 
-  String $typeNameType() default "";
+  String $type() default "";
 
-  String $interfaceName() default "";
+  String $interfaceRef() default "";
 
-  String $interfaceNameType() default "";
+  String $interface() default "";
 
   String $includeDeprecated() default "";
 

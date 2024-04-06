@@ -18,13 +18,13 @@ import org.eclipse.microprofile.graphql.Input;
 public class __TypePossibleTypesExpression implements MetaExpression {
   private StringExpression id;
 
-  private StringExpression typeName;
+  private StringExpression typeRef;
 
-  private __TypeExpression typeNameType;
+  private __TypeExpression type;
 
-  private StringExpression possibleTypeName;
+  private StringExpression possibleTypeRef;
 
-  private __TypeExpression possibleTypeNameType;
+  private __TypeExpression possibleType;
 
   @DefaultValue("false")
   private Boolean includeDeprecated;
@@ -61,36 +61,36 @@ public class __TypePossibleTypesExpression implements MetaExpression {
     this.id = id;
   }
 
-  public StringExpression getTypeName() {
-    return this.typeName;
+  public StringExpression getTypeRef() {
+    return this.typeRef;
   }
 
-  public void setTypeName(StringExpression typeName) {
-    this.typeName = typeName;
+  public void setTypeRef(StringExpression typeRef) {
+    this.typeRef = typeRef;
   }
 
-  public __TypeExpression getTypeNameType() {
-    return this.typeNameType;
+  public __TypeExpression getType() {
+    return this.type;
   }
 
-  public void setTypeNameType(__TypeExpression typeNameType) {
-    this.typeNameType = typeNameType;
+  public void setType(__TypeExpression type) {
+    this.type = type;
   }
 
-  public StringExpression getPossibleTypeName() {
-    return this.possibleTypeName;
+  public StringExpression getPossibleTypeRef() {
+    return this.possibleTypeRef;
   }
 
-  public void setPossibleTypeName(StringExpression possibleTypeName) {
-    this.possibleTypeName = possibleTypeName;
+  public void setPossibleTypeRef(StringExpression possibleTypeRef) {
+    this.possibleTypeRef = possibleTypeRef;
   }
 
-  public __TypeExpression getPossibleTypeNameType() {
-    return this.possibleTypeNameType;
+  public __TypeExpression getPossibleType() {
+    return this.possibleType;
   }
 
-  public void setPossibleTypeNameType(__TypeExpression possibleTypeNameType) {
-    this.possibleTypeNameType = possibleTypeNameType;
+  public void setPossibleType(__TypeExpression possibleType) {
+    this.possibleType = possibleType;
   }
 
   public Boolean getIncludeDeprecated() {
@@ -116,7 +116,7 @@ public class __TypePossibleTypesExpression implements MetaExpression {
 
   @Override
   public void setRealmId(IntExpression realmId) {
-    this.realmId = realmId;
+    this.realmId = (IntExpression)realmId;
   }
 
   @Override
@@ -126,7 +126,7 @@ public class __TypePossibleTypesExpression implements MetaExpression {
 
   @Override
   public void setCreateUserId(StringExpression createUserId) {
-    this.createUserId = createUserId;
+    this.createUserId = (StringExpression)createUserId;
   }
 
   @Override
@@ -136,7 +136,7 @@ public class __TypePossibleTypesExpression implements MetaExpression {
 
   @Override
   public void setCreateTime(StringExpression createTime) {
-    this.createTime = createTime;
+    this.createTime = (StringExpression)createTime;
   }
 
   @Override
@@ -146,7 +146,7 @@ public class __TypePossibleTypesExpression implements MetaExpression {
 
   @Override
   public void setUpdateUserId(StringExpression updateUserId) {
-    this.updateUserId = updateUserId;
+    this.updateUserId = (StringExpression)updateUserId;
   }
 
   @Override
@@ -156,7 +156,7 @@ public class __TypePossibleTypesExpression implements MetaExpression {
 
   @Override
   public void setUpdateTime(StringExpression updateTime) {
-    this.updateTime = updateTime;
+    this.updateTime = (StringExpression)updateTime;
   }
 
   @Override
@@ -166,7 +166,7 @@ public class __TypePossibleTypesExpression implements MetaExpression {
 
   @Override
   public void setCreateGroupId(StringExpression createGroupId) {
-    this.createGroupId = createGroupId;
+    this.createGroupId = (StringExpression)createGroupId;
   }
 
   public StringExpression get__typename() {

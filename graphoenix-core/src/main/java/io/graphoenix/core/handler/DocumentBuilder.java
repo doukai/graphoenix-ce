@@ -4,7 +4,6 @@ import com.google.common.collect.Streams;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.spi.error.GraphQLErrorType;
 import io.graphoenix.spi.error.GraphQLErrors;
-import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.Document;
 import io.graphoenix.spi.graphql.FieldsType;
@@ -16,7 +15,10 @@ import io.graphoenix.spi.graphql.type.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -171,6 +173,7 @@ public class DocumentBuilder {
                 .filter(fieldDefinition -> !fieldDefinition.isMapField())
                 .filter(fieldDefinition -> !fieldDefinition.isFetchField())
                 .filter(fieldDefinition -> packageManager.isLocalPackage(documentManager.getFieldTypeDefinition(fieldDefinition)))
+                .filter(fieldDefinition -> !objectType.getName().equals(fieldDefinition.getType().getTypeName().getName()))
                 .forEach(fieldDefinition ->
                         fieldDefinition
                                 .addDirective(
@@ -223,6 +226,7 @@ public class DocumentBuilder {
                 .filter(fieldDefinition -> !fieldDefinition.isMapField())
                 .filter(fieldDefinition -> !fieldDefinition.isFetchField())
                 .filter(fieldDefinition -> !packageManager.isLocalPackage(documentManager.getFieldTypeDefinition(fieldDefinition)))
+                .filter(fieldDefinition -> !objectType.getName().equals(fieldDefinition.getType().getTypeName().getName()))
                 .forEach(fieldDefinition ->
                         fieldDefinition
                                 .addDirective(
@@ -254,7 +258,7 @@ public class DocumentBuilder {
                                 .setType(documentManager.getFieldMapFromFieldDefinition(objectType, fieldDefinition).getTypeNameWithoutID())
                 )
                 .addField(
-                        new FieldDefinition(fieldDefinition.getMapWithFromOrError() + SUFFIX_TYPE)
+                        new FieldDefinition(getTypeRefTypeFieldName(fieldDefinition.getMapWithFromOrError()))
                                 .setType(new TypeName(objectType.getName()))
                                 .addDirective(
                                         new Directive(DIRECTIVE_MAP_NAME)
@@ -284,7 +288,7 @@ public class DocumentBuilder {
                                                         .setType(new TypeName(mapToFieldDefinition.getTypeNameWithoutID()))
                                         )
                                         .addField(
-                                                new FieldDefinition(fieldDefinition.getMapWithToOrError() + SUFFIX_TYPE)
+                                                new FieldDefinition(getTypeRefTypeFieldName(fieldDefinition.getMapWithToOrError()))
                                                         .setType(fieldDefinition.getType().getTypeName())
                                                         .addDirective(
                                                                 new Directive(DIRECTIVE_MAP_NAME)
@@ -309,7 +313,7 @@ public class DocumentBuilder {
                                 .setType(documentManager.getFieldFetchFromFieldDefinition(objectType, fieldDefinition).getTypeNameWithoutID())
                 )
                 .addField(
-                        new FieldDefinition(fieldDefinition.getFetchWithFromOrError() + SUFFIX_TYPE)
+                        new FieldDefinition(getTypeRefTypeFieldName(fieldDefinition.getFetchWithFromOrError()))
                                 .setType(new TypeName(objectType.getName()))
                                 .addDirective(
                                         new Directive(DIRECTIVE_MAP_NAME)
@@ -339,7 +343,7 @@ public class DocumentBuilder {
                                                         .setType(new TypeName(fetchToFieldDefinition.getTypeNameWithoutID()))
                                         )
                                         .addField(
-                                                new FieldDefinition(fieldDefinition.getFetchWithToOrError() + SUFFIX_TYPE)
+                                                new FieldDefinition(getTypeRefTypeFieldName(fieldDefinition.getFetchWithToOrError()))
                                                         .setType(fieldDefinition.getType().getTypeName())
                                                         .addDirective(
                                                                 new Directive(DIRECTIVE_FETCH_NAME)

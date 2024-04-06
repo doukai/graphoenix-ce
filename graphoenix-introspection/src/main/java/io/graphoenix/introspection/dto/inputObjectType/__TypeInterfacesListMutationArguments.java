@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Input;
+import org.eclipse.microprofile.graphql.Name;
 
 @CompiledJson
 @Input
@@ -18,13 +19,14 @@ import org.eclipse.microprofile.graphql.Input;
 public class __TypeInterfacesListMutationArguments implements MetaInput {
   private String id;
 
-  private String typeName;
+  private String typeRef;
 
-  private __TypeInput typeNameType;
+  private __TypeInput type;
 
-  private String interfaceName;
+  private String interfaceRef;
 
-  private __TypeInput interfaceNameType;
+  @Name("interface")
+  private __TypeInput _interface;
 
   private Boolean isDeprecated;
 
@@ -57,36 +59,36 @@ public class __TypeInterfacesListMutationArguments implements MetaInput {
     this.id = id;
   }
 
-  public String getTypeName() {
-    return this.typeName;
+  public String getTypeRef() {
+    return this.typeRef;
   }
 
-  public void setTypeName(String typeName) {
-    this.typeName = typeName;
+  public void setTypeRef(String typeRef) {
+    this.typeRef = typeRef;
   }
 
-  public __TypeInput getTypeNameType() {
-    return this.typeNameType;
+  public __TypeInput getType() {
+    return this.type;
   }
 
-  public void setTypeNameType(__TypeInput typeNameType) {
-    this.typeNameType = typeNameType;
+  public void setType(__TypeInput type) {
+    this.type = type;
   }
 
-  public String getInterfaceName() {
-    return this.interfaceName;
+  public String getInterfaceRef() {
+    return this.interfaceRef;
   }
 
-  public void setInterfaceName(String interfaceName) {
-    this.interfaceName = interfaceName;
+  public void setInterfaceRef(String interfaceRef) {
+    this.interfaceRef = interfaceRef;
   }
 
-  public __TypeInput getInterfaceNameType() {
-    return this.interfaceNameType;
+  public __TypeInput get_interface() {
+    return this._interface;
   }
 
-  public void setInterfaceNameType(__TypeInput interfaceNameType) {
-    this.interfaceNameType = interfaceNameType;
+  public void set_interface(__TypeInput _interface) {
+    this._interface = _interface;
   }
 
   public Boolean getIsDeprecated() {
@@ -104,7 +106,7 @@ public class __TypeInterfacesListMutationArguments implements MetaInput {
 
   @Override
   public void setVersion(Integer version) {
-    this.version = version;
+    this.version = (Integer)version;
   }
 
   @Override
@@ -114,7 +116,7 @@ public class __TypeInterfacesListMutationArguments implements MetaInput {
 
   @Override
   public void setRealmId(Integer realmId) {
-    this.realmId = realmId;
+    this.realmId = (Integer)realmId;
   }
 
   @Override
@@ -124,7 +126,7 @@ public class __TypeInterfacesListMutationArguments implements MetaInput {
 
   @Override
   public void setCreateUserId(String createUserId) {
-    this.createUserId = createUserId;
+    this.createUserId = (String)createUserId;
   }
 
   @Override
@@ -134,7 +136,7 @@ public class __TypeInterfacesListMutationArguments implements MetaInput {
 
   @Override
   public void setCreateTime(LocalDateTime createTime) {
-    this.createTime = createTime;
+    this.createTime = (LocalDateTime)createTime;
   }
 
   @Override
@@ -144,7 +146,7 @@ public class __TypeInterfacesListMutationArguments implements MetaInput {
 
   @Override
   public void setUpdateUserId(String updateUserId) {
-    this.updateUserId = updateUserId;
+    this.updateUserId = (String)updateUserId;
   }
 
   @Override
@@ -154,7 +156,7 @@ public class __TypeInterfacesListMutationArguments implements MetaInput {
 
   @Override
   public void setUpdateTime(LocalDateTime updateTime) {
-    this.updateTime = updateTime;
+    this.updateTime = (LocalDateTime)updateTime;
   }
 
   @Override
@@ -164,7 +166,7 @@ public class __TypeInterfacesListMutationArguments implements MetaInput {
 
   @Override
   public void setCreateGroupId(String createGroupId) {
-    this.createGroupId = createGroupId;
+    this.createGroupId = (String)createGroupId;
   }
 
   public String get__typename() {

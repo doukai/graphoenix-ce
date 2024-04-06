@@ -41,4 +41,32 @@ public @interface __DirectiveInput2 {
   String __typename() default "__Directive";
 
   int schemaId() default 0;
+
+  String $name() default "";
+
+  String $description() default "";
+
+  String $locations() default "";
+
+  String $isRepeatable() default "";
+
+  String $isDeprecated() default "";
+
+  String $version() default "";
+
+  String $realmId() default "";
+
+  String $createUserId() default "";
+
+  String $createTime() default "";
+
+  String $updateUserId() default "";
+
+  String $updateTime() default "";
+
+  String $createGroupId() default "";
+
+  String $__typename() default "";
+
+  String $schemaId() default "";
 }

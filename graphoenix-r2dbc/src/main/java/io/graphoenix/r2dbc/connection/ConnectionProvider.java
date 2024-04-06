@@ -36,6 +36,7 @@ public class ConnectionProvider {
     public Mono<Void> close(Connection connection) {
         return inTransaction()
                 .filter(inTransaction -> !inTransaction)
-                .flatMap(inTransaction -> Mono.from(connection.close()));
+                .flatMap(inTransaction -> Mono.from(connection.close()))
+                .switchIfEmpty(Mono.from(connection.close()));
     }
 }

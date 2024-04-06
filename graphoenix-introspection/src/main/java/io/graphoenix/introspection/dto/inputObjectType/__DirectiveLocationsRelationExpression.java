@@ -21,7 +21,7 @@ public class __DirectiveLocationsRelationExpression implements MetaExpression {
 
   private StringExpression __directiveRef;
 
-  private __DirectiveExpression __directiveRefType;
+  private __DirectiveExpression __directive;
 
   private __DirectiveLocationExpression locationsRef;
 
@@ -68,12 +68,12 @@ public class __DirectiveLocationsRelationExpression implements MetaExpression {
     this.__directiveRef = __directiveRef;
   }
 
-  public __DirectiveExpression get__directiveRefType() {
-    return this.__directiveRefType;
+  public __DirectiveExpression get__directive() {
+    return this.__directive;
   }
 
-  public void set__directiveRefType(__DirectiveExpression __directiveRefType) {
-    this.__directiveRefType = __directiveRefType;
+  public void set__directive(__DirectiveExpression __directive) {
+    this.__directive = __directive;
   }
 
   public __DirectiveLocationExpression getLocationsRef() {
@@ -107,7 +107,7 @@ public class __DirectiveLocationsRelationExpression implements MetaExpression {
 
   @Override
   public void setRealmId(IntExpression realmId) {
-    this.realmId = realmId;
+    this.realmId = (IntExpression)realmId;
   }
 
   @Override
@@ -117,7 +117,7 @@ public class __DirectiveLocationsRelationExpression implements MetaExpression {
 
   @Override
   public void setCreateUserId(StringExpression createUserId) {
-    this.createUserId = createUserId;
+    this.createUserId = (StringExpression)createUserId;
   }
 
   @Override
@@ -127,7 +127,7 @@ public class __DirectiveLocationsRelationExpression implements MetaExpression {
 
   @Override
   public void setCreateTime(StringExpression createTime) {
-    this.createTime = createTime;
+    this.createTime = (StringExpression)createTime;
   }
 
   @Override
@@ -137,7 +137,7 @@ public class __DirectiveLocationsRelationExpression implements MetaExpression {
 
   @Override
   public void setUpdateUserId(StringExpression updateUserId) {
-    this.updateUserId = updateUserId;
+    this.updateUserId = (StringExpression)updateUserId;
   }
 
   @Override
@@ -147,7 +147,7 @@ public class __DirectiveLocationsRelationExpression implements MetaExpression {
 
   @Override
   public void setUpdateTime(StringExpression updateTime) {
-    this.updateTime = updateTime;
+    this.updateTime = (StringExpression)updateTime;
   }
 
   @Override
@@ -157,7 +157,7 @@ public class __DirectiveLocationsRelationExpression implements MetaExpression {
 
   @Override
   public void setCreateGroupId(StringExpression createGroupId) {
-    this.createGroupId = createGroupId;
+    this.createGroupId = (StringExpression)createGroupId;
   }
 
   public StringExpression get__typename() {

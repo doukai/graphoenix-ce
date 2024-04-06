@@ -15,13 +15,13 @@ import java.lang.annotation.Target;
 public @interface __TypePossibleTypesInput1 {
   String id() default "";
 
-  String typeName() default "";
+  String typeRef() default "";
 
-  __TypeInput2 typeNameType() default @__TypeInput2;
+  __TypeInput2 type() default @__TypeInput2;
 
-  String possibleTypeName() default "";
+  String possibleTypeRef() default "";
 
-  __TypeInput2 possibleTypeNameType() default @__TypeInput2;
+  __TypeInput2 possibleType() default @__TypeInput2;
 
   boolean isDeprecated() default false;
 
@@ -45,13 +45,13 @@ public @interface __TypePossibleTypesInput1 {
 
   String $id() default "";
 
-  String $typeName() default "";
+  String $typeRef() default "";
 
-  String $typeNameType() default "";
+  String $type() default "";
 
-  String $possibleTypeName() default "";
+  String $possibleTypeRef() default "";
 
-  String $possibleTypeNameType() default "";
+  String $possibleType() default "";
 
   String $isDeprecated() default "";
 

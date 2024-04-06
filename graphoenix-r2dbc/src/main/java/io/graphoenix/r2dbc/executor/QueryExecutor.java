@@ -35,10 +35,10 @@ public class QueryExecutor {
                             if (parameters != null) {
                                 parameters.forEach(statement::bind);
                             }
-                            return Mono.from(statement.execute());
+                            return Mono.from(statement.execute())
+                                    .flatMap(ResultUtil::getJsonStringFromResult);
                         },
                         connectionProvider::close
-                )
-                .flatMap(ResultUtil::getJsonStringFromResult);
+                );
     }
 }

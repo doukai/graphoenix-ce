@@ -11,9 +11,9 @@ import org.eclipse.microprofile.graphql.Input;
 public class __TypeInterfacesOrderBy {
   private Sort id;
 
-  private Sort typeName;
+  private Sort typeRef;
 
-  private Sort interfaceName;
+  private Sort interfaceRef;
 
   private Sort isDeprecated;
 
@@ -41,20 +41,20 @@ public class __TypeInterfacesOrderBy {
     this.id = id;
   }
 
-  public Sort getTypeName() {
-    return this.typeName;
+  public Sort getTypeRef() {
+    return this.typeRef;
   }
 
-  public void setTypeName(Sort typeName) {
-    this.typeName = typeName;
+  public void setTypeRef(Sort typeRef) {
+    this.typeRef = typeRef;
   }
 
-  public Sort getInterfaceName() {
-    return this.interfaceName;
+  public Sort getInterfaceRef() {
+    return this.interfaceRef;
   }
 
-  public void setInterfaceName(Sort interfaceName) {
-    this.interfaceName = interfaceName;
+  public void setInterfaceRef(Sort interfaceRef) {
+    this.interfaceRef = interfaceRef;
   }
 
   public Sort getIsDeprecated() {

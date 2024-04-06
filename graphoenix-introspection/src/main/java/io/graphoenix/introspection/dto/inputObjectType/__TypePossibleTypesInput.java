@@ -17,13 +17,13 @@ import org.eclipse.microprofile.graphql.Input;
 public class __TypePossibleTypesInput implements MetaInput {
   private String id;
 
-  private String typeName;
+  private String typeRef;
 
-  private __TypeInput typeNameType;
+  private __TypeInput type;
 
-  private String possibleTypeName;
+  private String possibleTypeRef;
 
-  private __TypeInput possibleTypeNameType;
+  private __TypeInput possibleType;
 
   private Boolean isDeprecated;
 
@@ -54,36 +54,36 @@ public class __TypePossibleTypesInput implements MetaInput {
     this.id = id;
   }
 
-  public String getTypeName() {
-    return this.typeName;
+  public String getTypeRef() {
+    return this.typeRef;
   }
 
-  public void setTypeName(String typeName) {
-    this.typeName = typeName;
+  public void setTypeRef(String typeRef) {
+    this.typeRef = typeRef;
   }
 
-  public __TypeInput getTypeNameType() {
-    return this.typeNameType;
+  public __TypeInput getType() {
+    return this.type;
   }
 
-  public void setTypeNameType(__TypeInput typeNameType) {
-    this.typeNameType = typeNameType;
+  public void setType(__TypeInput type) {
+    this.type = type;
   }
 
-  public String getPossibleTypeName() {
-    return this.possibleTypeName;
+  public String getPossibleTypeRef() {
+    return this.possibleTypeRef;
   }
 
-  public void setPossibleTypeName(String possibleTypeName) {
-    this.possibleTypeName = possibleTypeName;
+  public void setPossibleTypeRef(String possibleTypeRef) {
+    this.possibleTypeRef = possibleTypeRef;
   }
 
-  public __TypeInput getPossibleTypeNameType() {
-    return this.possibleTypeNameType;
+  public __TypeInput getPossibleType() {
+    return this.possibleType;
   }
 
-  public void setPossibleTypeNameType(__TypeInput possibleTypeNameType) {
-    this.possibleTypeNameType = possibleTypeNameType;
+  public void setPossibleType(__TypeInput possibleType) {
+    this.possibleType = possibleType;
   }
 
   public Boolean getIsDeprecated() {
@@ -101,7 +101,7 @@ public class __TypePossibleTypesInput implements MetaInput {
 
   @Override
   public void setVersion(Integer version) {
-    this.version = version;
+    this.version = (Integer)version;
   }
 
   @Override
@@ -111,7 +111,7 @@ public class __TypePossibleTypesInput implements MetaInput {
 
   @Override
   public void setRealmId(Integer realmId) {
-    this.realmId = realmId;
+    this.realmId = (Integer)realmId;
   }
 
   @Override
@@ -121,7 +121,7 @@ public class __TypePossibleTypesInput implements MetaInput {
 
   @Override
   public void setCreateUserId(String createUserId) {
-    this.createUserId = createUserId;
+    this.createUserId = (String)createUserId;
   }
 
   @Override
@@ -131,7 +131,7 @@ public class __TypePossibleTypesInput implements MetaInput {
 
   @Override
   public void setCreateTime(LocalDateTime createTime) {
-    this.createTime = createTime;
+    this.createTime = (LocalDateTime)createTime;
   }
 
   @Override
@@ -141,7 +141,7 @@ public class __TypePossibleTypesInput implements MetaInput {
 
   @Override
   public void setUpdateUserId(String updateUserId) {
-    this.updateUserId = updateUserId;
+    this.updateUserId = (String)updateUserId;
   }
 
   @Override
@@ -151,7 +151,7 @@ public class __TypePossibleTypesInput implements MetaInput {
 
   @Override
   public void setUpdateTime(LocalDateTime updateTime) {
-    this.updateTime = updateTime;
+    this.updateTime = (LocalDateTime)updateTime;
   }
 
   @Override
@@ -161,7 +161,7 @@ public class __TypePossibleTypesInput implements MetaInput {
 
   @Override
   public void setCreateGroupId(String createGroupId) {
-    this.createGroupId = createGroupId;
+    this.createGroupId = (String)createGroupId;
   }
 
   public String get__typename() {

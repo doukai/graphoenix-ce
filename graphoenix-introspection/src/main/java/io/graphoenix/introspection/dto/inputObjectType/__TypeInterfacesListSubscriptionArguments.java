@@ -13,6 +13,7 @@ import java.lang.String;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Input;
+import org.eclipse.microprofile.graphql.Name;
 
 @CompiledJson
 @Input
@@ -20,13 +21,14 @@ import org.eclipse.microprofile.graphql.Input;
 public class __TypeInterfacesListSubscriptionArguments implements MetaExpression {
   private StringExpression id;
 
-  private StringExpression typeName;
+  private StringExpression typeRef;
 
-  private __TypeExpression typeNameType;
+  private __TypeExpression type;
 
-  private StringExpression interfaceName;
+  private StringExpression interfaceRef;
 
-  private __TypeExpression interfaceNameType;
+  @Name("interface")
+  private __TypeExpression _interface;
 
   @DefaultValue("false")
   private Boolean includeDeprecated;
@@ -77,36 +79,36 @@ public class __TypeInterfacesListSubscriptionArguments implements MetaExpression
     this.id = id;
   }
 
-  public StringExpression getTypeName() {
-    return this.typeName;
+  public StringExpression getTypeRef() {
+    return this.typeRef;
   }
 
-  public void setTypeName(StringExpression typeName) {
-    this.typeName = typeName;
+  public void setTypeRef(StringExpression typeRef) {
+    this.typeRef = typeRef;
   }
 
-  public __TypeExpression getTypeNameType() {
-    return this.typeNameType;
+  public __TypeExpression getType() {
+    return this.type;
   }
 
-  public void setTypeNameType(__TypeExpression typeNameType) {
-    this.typeNameType = typeNameType;
+  public void setType(__TypeExpression type) {
+    this.type = type;
   }
 
-  public StringExpression getInterfaceName() {
-    return this.interfaceName;
+  public StringExpression getInterfaceRef() {
+    return this.interfaceRef;
   }
 
-  public void setInterfaceName(StringExpression interfaceName) {
-    this.interfaceName = interfaceName;
+  public void setInterfaceRef(StringExpression interfaceRef) {
+    this.interfaceRef = interfaceRef;
   }
 
-  public __TypeExpression getInterfaceNameType() {
-    return this.interfaceNameType;
+  public __TypeExpression get_interface() {
+    return this._interface;
   }
 
-  public void setInterfaceNameType(__TypeExpression interfaceNameType) {
-    this.interfaceNameType = interfaceNameType;
+  public void set_interface(__TypeExpression _interface) {
+    this._interface = _interface;
   }
 
   public Boolean getIncludeDeprecated() {
@@ -132,7 +134,7 @@ public class __TypeInterfacesListSubscriptionArguments implements MetaExpression
 
   @Override
   public void setRealmId(IntExpression realmId) {
-    this.realmId = realmId;
+    this.realmId = (IntExpression)realmId;
   }
 
   @Override
@@ -142,7 +144,7 @@ public class __TypeInterfacesListSubscriptionArguments implements MetaExpression
 
   @Override
   public void setCreateUserId(StringExpression createUserId) {
-    this.createUserId = createUserId;
+    this.createUserId = (StringExpression)createUserId;
   }
 
   @Override
@@ -152,7 +154,7 @@ public class __TypeInterfacesListSubscriptionArguments implements MetaExpression
 
   @Override
   public void setCreateTime(StringExpression createTime) {
-    this.createTime = createTime;
+    this.createTime = (StringExpression)createTime;
   }
 
   @Override
@@ -162,7 +164,7 @@ public class __TypeInterfacesListSubscriptionArguments implements MetaExpression
 
   @Override
   public void setUpdateUserId(StringExpression updateUserId) {
-    this.updateUserId = updateUserId;
+    this.updateUserId = (StringExpression)updateUserId;
   }
 
   @Override
@@ -172,7 +174,7 @@ public class __TypeInterfacesListSubscriptionArguments implements MetaExpression
 
   @Override
   public void setUpdateTime(StringExpression updateTime) {
-    this.updateTime = updateTime;
+    this.updateTime = (StringExpression)updateTime;
   }
 
   @Override
@@ -182,7 +184,7 @@ public class __TypeInterfacesListSubscriptionArguments implements MetaExpression
 
   @Override
   public void setCreateGroupId(StringExpression createGroupId) {
-    this.createGroupId = createGroupId;
+    this.createGroupId = (StringExpression)createGroupId;
   }
 
   public StringExpression get__typename() {

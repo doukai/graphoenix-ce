@@ -254,10 +254,10 @@ message IntroDirective {
 }
 message IntroTypeInterfaces {
     string id = 1;
-    string type_name = 2;
-    IntroType type_name_type = 3;
-    string interface_name = 4;
-    IntroType interface_name_type = 5;
+    string type_ref = 2;
+    IntroType type = 3;
+    string interface_ref = 4;
+    IntroType interface = 5;
     bool is_deprecated = 6;
     int32 version = 7;
     int32 realm_id = 8;
@@ -270,19 +270,19 @@ message IntroTypeInterfaces {
     int32 id_count = 15;
     int32 id_max = 16;
     int32 id_min = 17;
-    int32 type_name_count = 18;
-    string type_name_max = 19;
-    string type_name_min = 20;
-    int32 interface_name_count = 21;
-    string interface_name_max = 22;
-    string interface_name_min = 23;
+    int32 type_ref_count = 18;
+    string type_ref_max = 19;
+    string type_ref_min = 20;
+    int32 interface_ref_count = 21;
+    string interface_ref_max = 22;
+    string interface_ref_min = 23;
 }
 message IntroTypePossibleTypes {
     string id = 1;
-    string type_name = 2;
-    IntroType type_name_type = 3;
-    string possible_type_name = 4;
-    IntroType possible_type_name_type = 5;
+    string type_ref = 2;
+    IntroType type = 3;
+    string possible_type_ref = 4;
+    IntroType possible_type = 5;
     bool is_deprecated = 6;
     int32 version = 7;
     int32 realm_id = 8;
@@ -295,17 +295,17 @@ message IntroTypePossibleTypes {
     int32 id_count = 15;
     int32 id_max = 16;
     int32 id_min = 17;
-    int32 type_name_count = 18;
-    string type_name_max = 19;
-    string type_name_min = 20;
-    int32 possible_type_name_count = 21;
-    string possible_type_name_max = 22;
-    string possible_type_name_min = 23;
+    int32 type_ref_count = 18;
+    string type_ref_max = 19;
+    string type_ref_min = 20;
+    int32 possible_type_ref_count = 21;
+    string possible_type_ref_max = 22;
+    string possible_type_ref_min = 23;
 }
 message IntroDirectiveLocationsRelation {
     string id = 1;
     string intro_directive_ref = 2;
-    IntroDirective intro_directive_ref_type = 3;
+    IntroDirective intro_directive = 3;
     io.graphoenix.core.IntroDirectiveLocation locations_ref = 4;
     bool is_deprecated = 5;
     int32 version = 6;

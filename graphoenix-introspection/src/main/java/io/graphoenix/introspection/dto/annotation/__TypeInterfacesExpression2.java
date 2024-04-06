@@ -2,6 +2,7 @@ package io.graphoenix.introspection.dto.annotation;
 
 import io.graphoenix.core.dto.enumType.Conditional;
 import jakarta.annotation.Generated;
+import java.lang.String;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -18,4 +19,10 @@ public @interface __TypeInterfacesExpression2 {
   boolean not() default false;
 
   Conditional cond() default Conditional.AND;
+
+  String $includeDeprecated() default "";
+
+  String $not() default "";
+
+  String $cond() default "";
 }

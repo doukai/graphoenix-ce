@@ -18,13 +18,13 @@ public class __TypePossibleTypes implements Meta {
   @Id
   private String id;
 
-  private String typeName;
+  private String typeRef;
 
-  private __Type typeNameType;
+  private __Type type;
 
-  private String possibleTypeName;
+  private String possibleTypeRef;
 
-  private __Type possibleTypeNameType;
+  private __Type possibleType;
 
   private Boolean isDeprecated;
 
@@ -50,17 +50,17 @@ public class __TypePossibleTypes implements Meta {
 
   private Integer idMin;
 
-  private Integer typeNameCount;
+  private Integer typeRefCount;
 
-  private String typeNameMax;
+  private String typeRefMax;
 
-  private String typeNameMin;
+  private String typeRefMin;
 
-  private Integer possibleTypeNameCount;
+  private Integer possibleTypeRefCount;
 
-  private String possibleTypeNameMax;
+  private String possibleTypeRefMax;
 
-  private String possibleTypeNameMin;
+  private String possibleTypeRefMin;
 
   public String getId() {
     return this.id;
@@ -70,36 +70,36 @@ public class __TypePossibleTypes implements Meta {
     this.id = id;
   }
 
-  public String getTypeName() {
-    return this.typeName;
+  public String getTypeRef() {
+    return this.typeRef;
   }
 
-  public void setTypeName(String typeName) {
-    this.typeName = typeName;
+  public void setTypeRef(String typeRef) {
+    this.typeRef = typeRef;
   }
 
-  public __Type getTypeNameType() {
-    return this.typeNameType;
+  public __Type getType() {
+    return this.type;
   }
 
-  public void setTypeNameType(__Type typeNameType) {
-    this.typeNameType = typeNameType;
+  public void setType(__Type type) {
+    this.type = type;
   }
 
-  public String getPossibleTypeName() {
-    return this.possibleTypeName;
+  public String getPossibleTypeRef() {
+    return this.possibleTypeRef;
   }
 
-  public void setPossibleTypeName(String possibleTypeName) {
-    this.possibleTypeName = possibleTypeName;
+  public void setPossibleTypeRef(String possibleTypeRef) {
+    this.possibleTypeRef = possibleTypeRef;
   }
 
-  public __Type getPossibleTypeNameType() {
-    return this.possibleTypeNameType;
+  public __Type getPossibleType() {
+    return this.possibleType;
   }
 
-  public void setPossibleTypeNameType(__Type possibleTypeNameType) {
-    this.possibleTypeNameType = possibleTypeNameType;
+  public void setPossibleType(__Type possibleType) {
+    this.possibleType = possibleType;
   }
 
   @Override
@@ -109,7 +109,7 @@ public class __TypePossibleTypes implements Meta {
 
   @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = isDeprecated;
+    this.isDeprecated = (Boolean)isDeprecated;
   }
 
   @Override
@@ -119,7 +119,7 @@ public class __TypePossibleTypes implements Meta {
 
   @Override
   public void setVersion(Integer version) {
-    this.version = version;
+    this.version = (Integer)version;
   }
 
   @Override
@@ -129,7 +129,7 @@ public class __TypePossibleTypes implements Meta {
 
   @Override
   public void setRealmId(Integer realmId) {
-    this.realmId = realmId;
+    this.realmId = (Integer)realmId;
   }
 
   @Override
@@ -139,7 +139,7 @@ public class __TypePossibleTypes implements Meta {
 
   @Override
   public void setCreateUserId(String createUserId) {
-    this.createUserId = createUserId;
+    this.createUserId = (String)createUserId;
   }
 
   @Override
@@ -149,7 +149,7 @@ public class __TypePossibleTypes implements Meta {
 
   @Override
   public void setCreateTime(LocalDateTime createTime) {
-    this.createTime = createTime;
+    this.createTime = (LocalDateTime)createTime;
   }
 
   @Override
@@ -159,7 +159,7 @@ public class __TypePossibleTypes implements Meta {
 
   @Override
   public void setUpdateUserId(String updateUserId) {
-    this.updateUserId = updateUserId;
+    this.updateUserId = (String)updateUserId;
   }
 
   @Override
@@ -169,7 +169,7 @@ public class __TypePossibleTypes implements Meta {
 
   @Override
   public void setUpdateTime(LocalDateTime updateTime) {
-    this.updateTime = updateTime;
+    this.updateTime = (LocalDateTime)updateTime;
   }
 
   @Override
@@ -179,7 +179,7 @@ public class __TypePossibleTypes implements Meta {
 
   @Override
   public void setCreateGroupId(String createGroupId) {
-    this.createGroupId = createGroupId;
+    this.createGroupId = (String)createGroupId;
   }
 
   public String get__typename() {
@@ -214,51 +214,51 @@ public class __TypePossibleTypes implements Meta {
     this.idMin = idMin;
   }
 
-  public Integer getTypeNameCount() {
-    return this.typeNameCount;
+  public Integer getTypeRefCount() {
+    return this.typeRefCount;
   }
 
-  public void setTypeNameCount(Integer typeNameCount) {
-    this.typeNameCount = typeNameCount;
+  public void setTypeRefCount(Integer typeRefCount) {
+    this.typeRefCount = typeRefCount;
   }
 
-  public String getTypeNameMax() {
-    return this.typeNameMax;
+  public String getTypeRefMax() {
+    return this.typeRefMax;
   }
 
-  public void setTypeNameMax(String typeNameMax) {
-    this.typeNameMax = typeNameMax;
+  public void setTypeRefMax(String typeRefMax) {
+    this.typeRefMax = typeRefMax;
   }
 
-  public String getTypeNameMin() {
-    return this.typeNameMin;
+  public String getTypeRefMin() {
+    return this.typeRefMin;
   }
 
-  public void setTypeNameMin(String typeNameMin) {
-    this.typeNameMin = typeNameMin;
+  public void setTypeRefMin(String typeRefMin) {
+    this.typeRefMin = typeRefMin;
   }
 
-  public Integer getPossibleTypeNameCount() {
-    return this.possibleTypeNameCount;
+  public Integer getPossibleTypeRefCount() {
+    return this.possibleTypeRefCount;
   }
 
-  public void setPossibleTypeNameCount(Integer possibleTypeNameCount) {
-    this.possibleTypeNameCount = possibleTypeNameCount;
+  public void setPossibleTypeRefCount(Integer possibleTypeRefCount) {
+    this.possibleTypeRefCount = possibleTypeRefCount;
   }
 
-  public String getPossibleTypeNameMax() {
-    return this.possibleTypeNameMax;
+  public String getPossibleTypeRefMax() {
+    return this.possibleTypeRefMax;
   }
 
-  public void setPossibleTypeNameMax(String possibleTypeNameMax) {
-    this.possibleTypeNameMax = possibleTypeNameMax;
+  public void setPossibleTypeRefMax(String possibleTypeRefMax) {
+    this.possibleTypeRefMax = possibleTypeRefMax;
   }
 
-  public String getPossibleTypeNameMin() {
-    return this.possibleTypeNameMin;
+  public String getPossibleTypeRefMin() {
+    return this.possibleTypeRefMin;
   }
 
-  public void setPossibleTypeNameMin(String possibleTypeNameMin) {
-    this.possibleTypeNameMin = possibleTypeNameMin;
+  public void setPossibleTypeRefMin(String possibleTypeRefMin) {
+    this.possibleTypeRefMin = possibleTypeRefMin;
   }
 }

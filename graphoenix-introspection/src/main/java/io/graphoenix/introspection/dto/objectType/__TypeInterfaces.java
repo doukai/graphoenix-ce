@@ -9,6 +9,7 @@ import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
 import org.eclipse.microprofile.graphql.Id;
+import org.eclipse.microprofile.graphql.Name;
 import org.eclipse.microprofile.graphql.Type;
 
 @Type
@@ -18,13 +19,14 @@ public class __TypeInterfaces implements Meta {
   @Id
   private String id;
 
-  private String typeName;
+  private String typeRef;
 
-  private __Type typeNameType;
+  private __Type type;
 
-  private String interfaceName;
+  private String interfaceRef;
 
-  private __Type interfaceNameType;
+  @Name("interface")
+  private __Type _interface;
 
   private Boolean isDeprecated;
 
@@ -50,17 +52,17 @@ public class __TypeInterfaces implements Meta {
 
   private Integer idMin;
 
-  private Integer typeNameCount;
+  private Integer typeRefCount;
 
-  private String typeNameMax;
+  private String typeRefMax;
 
-  private String typeNameMin;
+  private String typeRefMin;
 
-  private Integer interfaceNameCount;
+  private Integer interfaceRefCount;
 
-  private String interfaceNameMax;
+  private String interfaceRefMax;
 
-  private String interfaceNameMin;
+  private String interfaceRefMin;
 
   public String getId() {
     return this.id;
@@ -70,36 +72,36 @@ public class __TypeInterfaces implements Meta {
     this.id = id;
   }
 
-  public String getTypeName() {
-    return this.typeName;
+  public String getTypeRef() {
+    return this.typeRef;
   }
 
-  public void setTypeName(String typeName) {
-    this.typeName = typeName;
+  public void setTypeRef(String typeRef) {
+    this.typeRef = typeRef;
   }
 
-  public __Type getTypeNameType() {
-    return this.typeNameType;
+  public __Type getType() {
+    return this.type;
   }
 
-  public void setTypeNameType(__Type typeNameType) {
-    this.typeNameType = typeNameType;
+  public void setType(__Type type) {
+    this.type = type;
   }
 
-  public String getInterfaceName() {
-    return this.interfaceName;
+  public String getInterfaceRef() {
+    return this.interfaceRef;
   }
 
-  public void setInterfaceName(String interfaceName) {
-    this.interfaceName = interfaceName;
+  public void setInterfaceRef(String interfaceRef) {
+    this.interfaceRef = interfaceRef;
   }
 
-  public __Type getInterfaceNameType() {
-    return this.interfaceNameType;
+  public __Type get_interface() {
+    return this._interface;
   }
 
-  public void setInterfaceNameType(__Type interfaceNameType) {
-    this.interfaceNameType = interfaceNameType;
+  public void set_interface(__Type _interface) {
+    this._interface = _interface;
   }
 
   @Override
@@ -109,7 +111,7 @@ public class __TypeInterfaces implements Meta {
 
   @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = isDeprecated;
+    this.isDeprecated = (Boolean)isDeprecated;
   }
 
   @Override
@@ -119,7 +121,7 @@ public class __TypeInterfaces implements Meta {
 
   @Override
   public void setVersion(Integer version) {
-    this.version = version;
+    this.version = (Integer)version;
   }
 
   @Override
@@ -129,7 +131,7 @@ public class __TypeInterfaces implements Meta {
 
   @Override
   public void setRealmId(Integer realmId) {
-    this.realmId = realmId;
+    this.realmId = (Integer)realmId;
   }
 
   @Override
@@ -139,7 +141,7 @@ public class __TypeInterfaces implements Meta {
 
   @Override
   public void setCreateUserId(String createUserId) {
-    this.createUserId = createUserId;
+    this.createUserId = (String)createUserId;
   }
 
   @Override
@@ -149,7 +151,7 @@ public class __TypeInterfaces implements Meta {
 
   @Override
   public void setCreateTime(LocalDateTime createTime) {
-    this.createTime = createTime;
+    this.createTime = (LocalDateTime)createTime;
   }
 
   @Override
@@ -159,7 +161,7 @@ public class __TypeInterfaces implements Meta {
 
   @Override
   public void setUpdateUserId(String updateUserId) {
-    this.updateUserId = updateUserId;
+    this.updateUserId = (String)updateUserId;
   }
 
   @Override
@@ -169,7 +171,7 @@ public class __TypeInterfaces implements Meta {
 
   @Override
   public void setUpdateTime(LocalDateTime updateTime) {
-    this.updateTime = updateTime;
+    this.updateTime = (LocalDateTime)updateTime;
   }
 
   @Override
@@ -179,7 +181,7 @@ public class __TypeInterfaces implements Meta {
 
   @Override
   public void setCreateGroupId(String createGroupId) {
-    this.createGroupId = createGroupId;
+    this.createGroupId = (String)createGroupId;
   }
 
   public String get__typename() {
@@ -214,51 +216,51 @@ public class __TypeInterfaces implements Meta {
     this.idMin = idMin;
   }
 
-  public Integer getTypeNameCount() {
-    return this.typeNameCount;
+  public Integer getTypeRefCount() {
+    return this.typeRefCount;
   }
 
-  public void setTypeNameCount(Integer typeNameCount) {
-    this.typeNameCount = typeNameCount;
+  public void setTypeRefCount(Integer typeRefCount) {
+    this.typeRefCount = typeRefCount;
   }
 
-  public String getTypeNameMax() {
-    return this.typeNameMax;
+  public String getTypeRefMax() {
+    return this.typeRefMax;
   }
 
-  public void setTypeNameMax(String typeNameMax) {
-    this.typeNameMax = typeNameMax;
+  public void setTypeRefMax(String typeRefMax) {
+    this.typeRefMax = typeRefMax;
   }
 
-  public String getTypeNameMin() {
-    return this.typeNameMin;
+  public String getTypeRefMin() {
+    return this.typeRefMin;
   }
 
-  public void setTypeNameMin(String typeNameMin) {
-    this.typeNameMin = typeNameMin;
+  public void setTypeRefMin(String typeRefMin) {
+    this.typeRefMin = typeRefMin;
   }
 
-  public Integer getInterfaceNameCount() {
-    return this.interfaceNameCount;
+  public Integer getInterfaceRefCount() {
+    return this.interfaceRefCount;
   }
 
-  public void setInterfaceNameCount(Integer interfaceNameCount) {
-    this.interfaceNameCount = interfaceNameCount;
+  public void setInterfaceRefCount(Integer interfaceRefCount) {
+    this.interfaceRefCount = interfaceRefCount;
   }
 
-  public String getInterfaceNameMax() {
-    return this.interfaceNameMax;
+  public String getInterfaceRefMax() {
+    return this.interfaceRefMax;
   }
 
-  public void setInterfaceNameMax(String interfaceNameMax) {
-    this.interfaceNameMax = interfaceNameMax;
+  public void setInterfaceRefMax(String interfaceRefMax) {
+    this.interfaceRefMax = interfaceRefMax;
   }
 
-  public String getInterfaceNameMin() {
-    return this.interfaceNameMin;
+  public String getInterfaceRefMin() {
+    return this.interfaceRefMin;
   }
 
-  public void setInterfaceNameMin(String interfaceNameMin) {
-    this.interfaceNameMin = interfaceNameMin;
+  public void setInterfaceRefMin(String interfaceRefMin) {
+    this.interfaceRefMin = interfaceRefMin;
   }
 }

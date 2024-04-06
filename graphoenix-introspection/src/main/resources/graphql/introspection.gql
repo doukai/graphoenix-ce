@@ -17,10 +17,10 @@ type __Type {
     fields: [__Field!] @map(from: "name" to: "ofTypeName")
 
     # OBJECT only
-    interfaces: [__Type!] @map(from: "name" with: {type: "__TypeInterfaces" from: "typeName" to: "interfaceName"} to: "name")
+    interfaces: [__Type!] @map(from: "name" with: {type: "__TypeInterfaces" from: "typeRef" to: "interfaceRef"} to: "name")
 
     # INTERFACE and UNION only
-    possibleTypes: [__Type!] @map(from: "name" with: {type: "__TypePossibleTypes" from: "typeName" to: "possibleTypeName"} to: "name")
+    possibleTypes: [__Type!] @map(from: "name" with: {type: "__TypePossibleTypes" from: "typeRef" to: "possibleTypeRef"} to: "name")
 
     # ENUM only
     enumValues: [__EnumValue!] @map(from: "name" to: "ofTypeName")

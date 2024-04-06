@@ -11,9 +11,9 @@ import org.eclipse.microprofile.graphql.Input;
 public class __TypePossibleTypesOrderBy {
   private Sort id;
 
-  private Sort typeName;
+  private Sort typeRef;
 
-  private Sort possibleTypeName;
+  private Sort possibleTypeRef;
 
   private Sort isDeprecated;
 
@@ -41,20 +41,20 @@ public class __TypePossibleTypesOrderBy {
     this.id = id;
   }
 
-  public Sort getTypeName() {
-    return this.typeName;
+  public Sort getTypeRef() {
+    return this.typeRef;
   }
 
-  public void setTypeName(Sort typeName) {
-    this.typeName = typeName;
+  public void setTypeRef(Sort typeRef) {
+    this.typeRef = typeRef;
   }
 
-  public Sort getPossibleTypeName() {
-    return this.possibleTypeName;
+  public Sort getPossibleTypeRef() {
+    return this.possibleTypeRef;
   }
 
-  public void setPossibleTypeName(Sort possibleTypeName) {
-    this.possibleTypeName = possibleTypeName;
+  public void setPossibleTypeRef(Sort possibleTypeRef) {
+    this.possibleTypeRef = possibleTypeRef;
   }
 
   public Sort getIsDeprecated() {

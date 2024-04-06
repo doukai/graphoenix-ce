@@ -38,4 +38,30 @@ public @interface __SchemaInput2 {
   String mutationTypeName() default "";
 
   String subscriptionTypeName() default "";
+
+  String $id() default "";
+
+  String $isDeprecated() default "";
+
+  String $version() default "";
+
+  String $realmId() default "";
+
+  String $createUserId() default "";
+
+  String $createTime() default "";
+
+  String $updateUserId() default "";
+
+  String $updateTime() default "";
+
+  String $createGroupId() default "";
+
+  String $__typename() default "";
+
+  String $queryTypeName() default "";
+
+  String $mutationTypeName() default "";
+
+  String $subscriptionTypeName() default "";
 }

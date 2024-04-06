@@ -18,7 +18,7 @@ public @interface __DirectiveLocationsRelationListMutationArguments {
 
   String __directiveRef() default "";
 
-  __DirectiveInput1 __directiveRefType() default @__DirectiveInput1;
+  __DirectiveInput1 __directive() default @__DirectiveInput1;
 
   __DirectiveLocation locationsRef() default __DirectiveLocation.QUERY;
 
@@ -48,7 +48,7 @@ public @interface __DirectiveLocationsRelationListMutationArguments {
 
   String $__directiveRef() default "";
 
-  String $__directiveRefType() default "";
+  String $__directive() default "";
 
   String $locationsRef() default "";
 

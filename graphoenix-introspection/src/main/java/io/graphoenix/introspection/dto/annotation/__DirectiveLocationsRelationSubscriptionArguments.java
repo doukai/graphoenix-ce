@@ -21,7 +21,7 @@ public @interface __DirectiveLocationsRelationSubscriptionArguments {
 
   StringExpression1 __directiveRef() default @StringExpression1;
 
-  __DirectiveExpression1 __directiveRefType() default @__DirectiveExpression1;
+  __DirectiveExpression1 __directive() default @__DirectiveExpression1;
 
   __DirectiveLocationExpression1 locationsRef() default @__DirectiveLocationExpression1;
 
@@ -55,7 +55,7 @@ public @interface __DirectiveLocationsRelationSubscriptionArguments {
 
   String $__directiveRef() default "";
 
-  String $__directiveRefType() default "";
+  String $__directive() default "";
 
   String $locationsRef() default "";
 

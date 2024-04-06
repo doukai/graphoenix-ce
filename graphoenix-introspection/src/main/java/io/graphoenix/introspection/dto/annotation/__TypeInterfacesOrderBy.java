@@ -16,9 +16,9 @@ import java.lang.annotation.Target;
 public @interface __TypeInterfacesOrderBy {
   Sort id() default Sort.ASC;
 
-  Sort typeName() default Sort.ASC;
+  Sort typeRef() default Sort.ASC;
 
-  Sort interfaceName() default Sort.ASC;
+  Sort interfaceRef() default Sort.ASC;
 
   Sort isDeprecated() default Sort.ASC;
 
@@ -40,9 +40,9 @@ public @interface __TypeInterfacesOrderBy {
 
   String $id() default "";
 
-  String $typeName() default "";
+  String $typeRef() default "";
 
-  String $interfaceName() default "";
+  String $interfaceRef() default "";
 
   String $isDeprecated() default "";
 

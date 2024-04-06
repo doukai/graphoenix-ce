@@ -16,9 +16,9 @@ import java.lang.annotation.Target;
 public @interface __TypePossibleTypesOrderBy {
   Sort id() default Sort.ASC;
 
-  Sort typeName() default Sort.ASC;
+  Sort typeRef() default Sort.ASC;
 
-  Sort possibleTypeName() default Sort.ASC;
+  Sort possibleTypeRef() default Sort.ASC;
 
   Sort isDeprecated() default Sort.ASC;
 
@@ -40,9 +40,9 @@ public @interface __TypePossibleTypesOrderBy {
 
   String $id() default "";
 
-  String $typeName() default "";
+  String $typeRef() default "";
 
-  String $possibleTypeName() default "";
+  String $possibleTypeRef() default "";
 
   String $isDeprecated() default "";
 

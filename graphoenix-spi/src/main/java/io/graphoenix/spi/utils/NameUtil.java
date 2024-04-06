@@ -28,6 +28,13 @@ public final class NameUtil {
         return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, typeNameToFieldName(typeName)) + SUFFIX_REF;
     }
 
+    public static String getTypeRefTypeFieldName(String typeRefFieldName) {
+        if (typeRefFieldName.endsWith(SUFFIX_REF)) {
+            return typeRefFieldName.substring(0, typeRefFieldName.lastIndexOf(SUFFIX_REF));
+        }
+        return typeRefFieldName + SUFFIX_TYPE;
+    }
+
     public static String getAliasFromPath(String path) {
         return path.replaceAll("/", "_");
     }

@@ -7,6 +7,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.eclipse.microprofile.graphql.Name;
 
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
@@ -15,13 +16,14 @@ import java.lang.annotation.Target;
 public @interface __TypeInterfacesInput {
   String id() default "";
 
-  String typeName() default "";
+  String typeRef() default "";
 
-  __TypeInput1 typeNameType() default @__TypeInput1;
+  __TypeInput1 type() default @__TypeInput1;
 
-  String interfaceName() default "";
+  String interfaceRef() default "";
 
-  __TypeInput1 interfaceNameType() default @__TypeInput1;
+  @Name("interface")
+  __TypeInput1 _interface() default @__TypeInput1;
 
   boolean isDeprecated() default false;
 
@@ -45,13 +47,13 @@ public @interface __TypeInterfacesInput {
 
   String $id() default "";
 
-  String $typeName() default "";
+  String $typeRef() default "";
 
-  String $typeNameType() default "";
+  String $type() default "";
 
-  String $interfaceName() default "";
+  String $interfaceRef() default "";
 
-  String $interfaceNameType() default "";
+  String $interface() default "";
 
   String $isDeprecated() default "";
 

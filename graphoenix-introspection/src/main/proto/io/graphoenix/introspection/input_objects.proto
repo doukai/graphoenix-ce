@@ -378,10 +378,10 @@ message IntroDirectiveOrderBy {
 }
 message IntroTypeInterfacesExpression {
     io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression type_name = 2;
-    IntroTypeExpression type_name_type = 3;
-    io.graphoenix.core.StringExpression interface_name = 4;
-    IntroTypeExpression interface_name_type = 5;
+    io.graphoenix.core.StringExpression type_ref = 2;
+    IntroTypeExpression type = 3;
+    io.graphoenix.core.StringExpression interface_ref = 4;
+    IntroTypeExpression interface = 5;
     bool include_deprecated = 6;
     io.graphoenix.core.IntExpression version = 7;
     io.graphoenix.core.IntExpression realm_id = 8;
@@ -397,10 +397,10 @@ message IntroTypeInterfacesExpression {
 }
 message IntroTypeInterfacesInput {
     string id = 1;
-    string type_name = 2;
-    IntroTypeInput type_name_type = 3;
-    string interface_name = 4;
-    IntroTypeInput interface_name_type = 5;
+    string type_ref = 2;
+    IntroTypeInput type = 3;
+    string interface_ref = 4;
+    IntroTypeInput interface = 5;
     bool is_deprecated = 6;
     int32 version = 7;
     int32 realm_id = 8;
@@ -414,8 +414,8 @@ message IntroTypeInterfacesInput {
 }
 message IntroTypeInterfacesOrderBy {
     io.graphoenix.core.Sort id = 1;
-    io.graphoenix.core.Sort type_name = 2;
-    io.graphoenix.core.Sort interface_name = 3;
+    io.graphoenix.core.Sort type_ref = 2;
+    io.graphoenix.core.Sort interface_ref = 3;
     io.graphoenix.core.Sort is_deprecated = 4;
     io.graphoenix.core.Sort version = 5;
     io.graphoenix.core.Sort realm_id = 6;
@@ -428,10 +428,10 @@ message IntroTypeInterfacesOrderBy {
 }
 message IntroTypePossibleTypesExpression {
     io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression type_name = 2;
-    IntroTypeExpression type_name_type = 3;
-    io.graphoenix.core.StringExpression possible_type_name = 4;
-    IntroTypeExpression possible_type_name_type = 5;
+    io.graphoenix.core.StringExpression type_ref = 2;
+    IntroTypeExpression type = 3;
+    io.graphoenix.core.StringExpression possible_type_ref = 4;
+    IntroTypeExpression possible_type = 5;
     bool include_deprecated = 6;
     io.graphoenix.core.IntExpression version = 7;
     io.graphoenix.core.IntExpression realm_id = 8;
@@ -447,10 +447,10 @@ message IntroTypePossibleTypesExpression {
 }
 message IntroTypePossibleTypesInput {
     string id = 1;
-    string type_name = 2;
-    IntroTypeInput type_name_type = 3;
-    string possible_type_name = 4;
-    IntroTypeInput possible_type_name_type = 5;
+    string type_ref = 2;
+    IntroTypeInput type = 3;
+    string possible_type_ref = 4;
+    IntroTypeInput possible_type = 5;
     bool is_deprecated = 6;
     int32 version = 7;
     int32 realm_id = 8;
@@ -464,8 +464,8 @@ message IntroTypePossibleTypesInput {
 }
 message IntroTypePossibleTypesOrderBy {
     io.graphoenix.core.Sort id = 1;
-    io.graphoenix.core.Sort type_name = 2;
-    io.graphoenix.core.Sort possible_type_name = 3;
+    io.graphoenix.core.Sort type_ref = 2;
+    io.graphoenix.core.Sort possible_type_ref = 3;
     io.graphoenix.core.Sort is_deprecated = 4;
     io.graphoenix.core.Sort version = 5;
     io.graphoenix.core.Sort realm_id = 6;
@@ -479,7 +479,7 @@ message IntroTypePossibleTypesOrderBy {
 message IntroDirectiveLocationsRelationExpression {
     io.graphoenix.core.StringExpression id = 1;
     io.graphoenix.core.StringExpression intro_directive_ref = 2;
-    IntroDirectiveExpression intro_directive_ref_type = 3;
+    IntroDirectiveExpression intro_directive = 3;
     io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4;
     bool include_deprecated = 5;
     io.graphoenix.core.IntExpression version = 6;
@@ -497,7 +497,7 @@ message IntroDirectiveLocationsRelationExpression {
 message IntroDirectiveLocationsRelationInput {
     string id = 1;
     string intro_directive_ref = 2;
-    IntroDirectiveInput intro_directive_ref_type = 3;
+    IntroDirectiveInput intro_directive = 3;
     io.graphoenix.core.IntroDirectiveLocation locations_ref = 4;
     bool is_deprecated = 5;
     int32 version = 6;
@@ -1036,10 +1036,10 @@ message IntroDirectiveConnectionQueryArguments {
 }
 message IntroTypeInterfacesQueryArguments {
     io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression type_name = 2;
-    IntroTypeExpression type_name_type = 3;
-    io.graphoenix.core.StringExpression interface_name = 4;
-    IntroTypeExpression interface_name_type = 5;
+    io.graphoenix.core.StringExpression type_ref = 2;
+    IntroTypeExpression type = 3;
+    io.graphoenix.core.StringExpression interface_ref = 4;
+    IntroTypeExpression interface = 5;
     bool include_deprecated = 6;
     io.graphoenix.core.IntExpression version = 7;
     io.graphoenix.core.IntExpression realm_id = 8;
@@ -1056,10 +1056,10 @@ message IntroTypeInterfacesQueryArguments {
 }
 message IntroTypeInterfacesListQueryArguments {
     io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression type_name = 2;
-    IntroTypeExpression type_name_type = 3;
-    io.graphoenix.core.StringExpression interface_name = 4;
-    IntroTypeExpression interface_name_type = 5;
+    io.graphoenix.core.StringExpression type_ref = 2;
+    IntroTypeExpression type = 3;
+    io.graphoenix.core.StringExpression interface_ref = 4;
+    IntroTypeExpression interface = 5;
     bool include_deprecated = 6;
     io.graphoenix.core.IntExpression version = 7;
     io.graphoenix.core.IntExpression realm_id = 8;
@@ -1082,10 +1082,10 @@ message IntroTypeInterfacesListQueryArguments {
 }
 message IntroTypeInterfacesConnectionQueryArguments {
     io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression type_name = 2;
-    IntroTypeExpression type_name_type = 3;
-    io.graphoenix.core.StringExpression interface_name = 4;
-    IntroTypeExpression interface_name_type = 5;
+    io.graphoenix.core.StringExpression type_ref = 2;
+    IntroTypeExpression type = 3;
+    io.graphoenix.core.StringExpression interface_ref = 4;
+    IntroTypeExpression interface = 5;
     bool include_deprecated = 6;
     io.graphoenix.core.IntExpression version = 7;
     io.graphoenix.core.IntExpression realm_id = 8;
@@ -1108,10 +1108,10 @@ message IntroTypeInterfacesConnectionQueryArguments {
 }
 message IntroTypePossibleTypesQueryArguments {
     io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression type_name = 2;
-    IntroTypeExpression type_name_type = 3;
-    io.graphoenix.core.StringExpression possible_type_name = 4;
-    IntroTypeExpression possible_type_name_type = 5;
+    io.graphoenix.core.StringExpression type_ref = 2;
+    IntroTypeExpression type = 3;
+    io.graphoenix.core.StringExpression possible_type_ref = 4;
+    IntroTypeExpression possible_type = 5;
     bool include_deprecated = 6;
     io.graphoenix.core.IntExpression version = 7;
     io.graphoenix.core.IntExpression realm_id = 8;
@@ -1128,10 +1128,10 @@ message IntroTypePossibleTypesQueryArguments {
 }
 message IntroTypePossibleTypesListQueryArguments {
     io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression type_name = 2;
-    IntroTypeExpression type_name_type = 3;
-    io.graphoenix.core.StringExpression possible_type_name = 4;
-    IntroTypeExpression possible_type_name_type = 5;
+    io.graphoenix.core.StringExpression type_ref = 2;
+    IntroTypeExpression type = 3;
+    io.graphoenix.core.StringExpression possible_type_ref = 4;
+    IntroTypeExpression possible_type = 5;
     bool include_deprecated = 6;
     io.graphoenix.core.IntExpression version = 7;
     io.graphoenix.core.IntExpression realm_id = 8;
@@ -1154,10 +1154,10 @@ message IntroTypePossibleTypesListQueryArguments {
 }
 message IntroTypePossibleTypesConnectionQueryArguments {
     io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression type_name = 2;
-    IntroTypeExpression type_name_type = 3;
-    io.graphoenix.core.StringExpression possible_type_name = 4;
-    IntroTypeExpression possible_type_name_type = 5;
+    io.graphoenix.core.StringExpression type_ref = 2;
+    IntroTypeExpression type = 3;
+    io.graphoenix.core.StringExpression possible_type_ref = 4;
+    IntroTypeExpression possible_type = 5;
     bool include_deprecated = 6;
     io.graphoenix.core.IntExpression version = 7;
     io.graphoenix.core.IntExpression realm_id = 8;
@@ -1181,7 +1181,7 @@ message IntroTypePossibleTypesConnectionQueryArguments {
 message IntroDirectiveLocationsRelationQueryArguments {
     io.graphoenix.core.StringExpression id = 1;
     io.graphoenix.core.StringExpression intro_directive_ref = 2;
-    IntroDirectiveExpression intro_directive_ref_type = 3;
+    IntroDirectiveExpression intro_directive = 3;
     io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4;
     bool include_deprecated = 5;
     io.graphoenix.core.IntExpression version = 6;
@@ -1200,7 +1200,7 @@ message IntroDirectiveLocationsRelationQueryArguments {
 message IntroDirectiveLocationsRelationListQueryArguments {
     io.graphoenix.core.StringExpression id = 1;
     io.graphoenix.core.StringExpression intro_directive_ref = 2;
-    IntroDirectiveExpression intro_directive_ref_type = 3;
+    IntroDirectiveExpression intro_directive = 3;
     io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4;
     bool include_deprecated = 5;
     io.graphoenix.core.IntExpression version = 6;
@@ -1225,7 +1225,7 @@ message IntroDirectiveLocationsRelationListQueryArguments {
 message IntroDirectiveLocationsRelationConnectionQueryArguments {
     io.graphoenix.core.StringExpression id = 1;
     io.graphoenix.core.StringExpression intro_directive_ref = 2;
-    IntroDirectiveExpression intro_directive_ref_type = 3;
+    IntroDirectiveExpression intro_directive = 3;
     io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4;
     bool include_deprecated = 5;
     io.graphoenix.core.IntExpression version = 6;
@@ -1511,10 +1511,10 @@ message IntroDirectiveListMutationArguments {
 }
 message IntroTypeInterfacesMutationArguments {
     string id = 1;
-    string type_name = 2;
-    IntroTypeInput type_name_type = 3;
-    string interface_name = 4;
-    IntroTypeInput interface_name_type = 5;
+    string type_ref = 2;
+    IntroTypeInput type = 3;
+    string interface_ref = 4;
+    IntroTypeInput interface = 5;
     bool is_deprecated = 6;
     int32 version = 7;
     int32 realm_id = 8;
@@ -1528,10 +1528,10 @@ message IntroTypeInterfacesMutationArguments {
 }
 message IntroTypeInterfacesListMutationArguments {
     string id = 1;
-    string type_name = 2;
-    IntroTypeInput type_name_type = 3;
-    string interface_name = 4;
-    IntroTypeInput interface_name_type = 5;
+    string type_ref = 2;
+    IntroTypeInput type = 3;
+    string interface_ref = 4;
+    IntroTypeInput interface = 5;
     bool is_deprecated = 6;
     int32 version = 7;
     int32 realm_id = 8;
@@ -1546,10 +1546,10 @@ message IntroTypeInterfacesListMutationArguments {
 }
 message IntroTypePossibleTypesMutationArguments {
     string id = 1;
-    string type_name = 2;
-    IntroTypeInput type_name_type = 3;
-    string possible_type_name = 4;
-    IntroTypeInput possible_type_name_type = 5;
+    string type_ref = 2;
+    IntroTypeInput type = 3;
+    string possible_type_ref = 4;
+    IntroTypeInput possible_type = 5;
     bool is_deprecated = 6;
     int32 version = 7;
     int32 realm_id = 8;
@@ -1563,10 +1563,10 @@ message IntroTypePossibleTypesMutationArguments {
 }
 message IntroTypePossibleTypesListMutationArguments {
     string id = 1;
-    string type_name = 2;
-    IntroTypeInput type_name_type = 3;
-    string possible_type_name = 4;
-    IntroTypeInput possible_type_name_type = 5;
+    string type_ref = 2;
+    IntroTypeInput type = 3;
+    string possible_type_ref = 4;
+    IntroTypeInput possible_type = 5;
     bool is_deprecated = 6;
     int32 version = 7;
     int32 realm_id = 8;
@@ -1582,7 +1582,7 @@ message IntroTypePossibleTypesListMutationArguments {
 message IntroDirectiveLocationsRelationMutationArguments {
     string id = 1;
     string intro_directive_ref = 2;
-    IntroDirectiveInput intro_directive_ref_type = 3;
+    IntroDirectiveInput intro_directive = 3;
     io.graphoenix.core.IntroDirectiveLocation locations_ref = 4;
     bool is_deprecated = 5;
     int32 version = 6;
@@ -1598,7 +1598,7 @@ message IntroDirectiveLocationsRelationMutationArguments {
 message IntroDirectiveLocationsRelationListMutationArguments {
     string id = 1;
     string intro_directive_ref = 2;
-    IntroDirectiveInput intro_directive_ref_type = 3;
+    IntroDirectiveInput intro_directive = 3;
     io.graphoenix.core.IntroDirectiveLocation locations_ref = 4;
     bool is_deprecated = 5;
     int32 version = 6;
@@ -2124,10 +2124,10 @@ message IntroDirectiveConnectionSubscriptionArguments {
 }
 message IntroTypeInterfacesSubscriptionArguments {
     io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression type_name = 2;
-    IntroTypeExpression type_name_type = 3;
-    io.graphoenix.core.StringExpression interface_name = 4;
-    IntroTypeExpression interface_name_type = 5;
+    io.graphoenix.core.StringExpression type_ref = 2;
+    IntroTypeExpression type = 3;
+    io.graphoenix.core.StringExpression interface_ref = 4;
+    IntroTypeExpression interface = 5;
     bool include_deprecated = 6;
     io.graphoenix.core.IntExpression version = 7;
     io.graphoenix.core.IntExpression realm_id = 8;
@@ -2144,10 +2144,10 @@ message IntroTypeInterfacesSubscriptionArguments {
 }
 message IntroTypeInterfacesListSubscriptionArguments {
     io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression type_name = 2;
-    IntroTypeExpression type_name_type = 3;
-    io.graphoenix.core.StringExpression interface_name = 4;
-    IntroTypeExpression interface_name_type = 5;
+    io.graphoenix.core.StringExpression type_ref = 2;
+    IntroTypeExpression type = 3;
+    io.graphoenix.core.StringExpression interface_ref = 4;
+    IntroTypeExpression interface = 5;
     bool include_deprecated = 6;
     io.graphoenix.core.IntExpression version = 7;
     io.graphoenix.core.IntExpression realm_id = 8;
@@ -2170,10 +2170,10 @@ message IntroTypeInterfacesListSubscriptionArguments {
 }
 message IntroTypeInterfacesConnectionSubscriptionArguments {
     io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression type_name = 2;
-    IntroTypeExpression type_name_type = 3;
-    io.graphoenix.core.StringExpression interface_name = 4;
-    IntroTypeExpression interface_name_type = 5;
+    io.graphoenix.core.StringExpression type_ref = 2;
+    IntroTypeExpression type = 3;
+    io.graphoenix.core.StringExpression interface_ref = 4;
+    IntroTypeExpression interface = 5;
     bool include_deprecated = 6;
     io.graphoenix.core.IntExpression version = 7;
     io.graphoenix.core.IntExpression realm_id = 8;
@@ -2196,10 +2196,10 @@ message IntroTypeInterfacesConnectionSubscriptionArguments {
 }
 message IntroTypePossibleTypesSubscriptionArguments {
     io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression type_name = 2;
-    IntroTypeExpression type_name_type = 3;
-    io.graphoenix.core.StringExpression possible_type_name = 4;
-    IntroTypeExpression possible_type_name_type = 5;
+    io.graphoenix.core.StringExpression type_ref = 2;
+    IntroTypeExpression type = 3;
+    io.graphoenix.core.StringExpression possible_type_ref = 4;
+    IntroTypeExpression possible_type = 5;
     bool include_deprecated = 6;
     io.graphoenix.core.IntExpression version = 7;
     io.graphoenix.core.IntExpression realm_id = 8;
@@ -2216,10 +2216,10 @@ message IntroTypePossibleTypesSubscriptionArguments {
 }
 message IntroTypePossibleTypesListSubscriptionArguments {
     io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression type_name = 2;
-    IntroTypeExpression type_name_type = 3;
-    io.graphoenix.core.StringExpression possible_type_name = 4;
-    IntroTypeExpression possible_type_name_type = 5;
+    io.graphoenix.core.StringExpression type_ref = 2;
+    IntroTypeExpression type = 3;
+    io.graphoenix.core.StringExpression possible_type_ref = 4;
+    IntroTypeExpression possible_type = 5;
     bool include_deprecated = 6;
     io.graphoenix.core.IntExpression version = 7;
     io.graphoenix.core.IntExpression realm_id = 8;
@@ -2242,10 +2242,10 @@ message IntroTypePossibleTypesListSubscriptionArguments {
 }
 message IntroTypePossibleTypesConnectionSubscriptionArguments {
     io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression type_name = 2;
-    IntroTypeExpression type_name_type = 3;
-    io.graphoenix.core.StringExpression possible_type_name = 4;
-    IntroTypeExpression possible_type_name_type = 5;
+    io.graphoenix.core.StringExpression type_ref = 2;
+    IntroTypeExpression type = 3;
+    io.graphoenix.core.StringExpression possible_type_ref = 4;
+    IntroTypeExpression possible_type = 5;
     bool include_deprecated = 6;
     io.graphoenix.core.IntExpression version = 7;
     io.graphoenix.core.IntExpression realm_id = 8;
@@ -2269,7 +2269,7 @@ message IntroTypePossibleTypesConnectionSubscriptionArguments {
 message IntroDirectiveLocationsRelationSubscriptionArguments {
     io.graphoenix.core.StringExpression id = 1;
     io.graphoenix.core.StringExpression intro_directive_ref = 2;
-    IntroDirectiveExpression intro_directive_ref_type = 3;
+    IntroDirectiveExpression intro_directive = 3;
     io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4;
     bool include_deprecated = 5;
     io.graphoenix.core.IntExpression version = 6;
@@ -2288,7 +2288,7 @@ message IntroDirectiveLocationsRelationSubscriptionArguments {
 message IntroDirectiveLocationsRelationListSubscriptionArguments {
     io.graphoenix.core.StringExpression id = 1;
     io.graphoenix.core.StringExpression intro_directive_ref = 2;
-    IntroDirectiveExpression intro_directive_ref_type = 3;
+    IntroDirectiveExpression intro_directive = 3;
     io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4;
     bool include_deprecated = 5;
     io.graphoenix.core.IntExpression version = 6;
@@ -2313,7 +2313,7 @@ message IntroDirectiveLocationsRelationListSubscriptionArguments {
 message IntroDirectiveLocationsRelationConnectionSubscriptionArguments {
     io.graphoenix.core.StringExpression id = 1;
     io.graphoenix.core.StringExpression intro_directive_ref = 2;
-    IntroDirectiveExpression intro_directive_ref_type = 3;
+    IntroDirectiveExpression intro_directive = 3;
     io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4;
     bool include_deprecated = 5;
     io.graphoenix.core.IntExpression version = 6;

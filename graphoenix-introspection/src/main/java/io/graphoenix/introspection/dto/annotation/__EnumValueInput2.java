@@ -40,4 +40,32 @@ public @interface __EnumValueInput2 {
   String __typename() default "__EnumValue";
 
   String ofTypeName() default "";
+
+  String $id() default "";
+
+  String $name() default "";
+
+  String $description() default "";
+
+  String $deprecationReason() default "";
+
+  String $isDeprecated() default "";
+
+  String $version() default "";
+
+  String $realmId() default "";
+
+  String $createUserId() default "";
+
+  String $createTime() default "";
+
+  String $updateUserId() default "";
+
+  String $updateTime() default "";
+
+  String $createGroupId() default "";
+
+  String $__typename() default "";
+
+  String $ofTypeName() default "";
 }

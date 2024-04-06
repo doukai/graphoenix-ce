@@ -41,4 +41,32 @@ public @interface __TypeInput2 {
   int schemaId() default 0;
 
   String ofTypeName() default "";
+
+  String $name() default "";
+
+  String $kind() default "";
+
+  String $description() default "";
+
+  String $isDeprecated() default "";
+
+  String $version() default "";
+
+  String $realmId() default "";
+
+  String $createUserId() default "";
+
+  String $createTime() default "";
+
+  String $updateUserId() default "";
+
+  String $updateTime() default "";
+
+  String $createGroupId() default "";
+
+  String $__typename() default "";
+
+  String $schemaId() default "";
+
+  String $ofTypeName() default "";
 }

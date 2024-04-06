@@ -15,9 +15,9 @@ import java.lang.annotation.Target;
 public @interface __TypeInterfacesInput2 {
   String id() default "";
 
-  String typeName() default "";
+  String typeRef() default "";
 
-  String interfaceName() default "";
+  String interfaceRef() default "";
 
   boolean isDeprecated() default false;
 
@@ -36,4 +36,28 @@ public @interface __TypeInterfacesInput2 {
   String createGroupId() default "";
 
   String __typename() default "__TypeInterfaces";
+
+  String $id() default "";
+
+  String $typeRef() default "";
+
+  String $interfaceRef() default "";
+
+  String $isDeprecated() default "";
+
+  String $version() default "";
+
+  String $realmId() default "";
+
+  String $createUserId() default "";
+
+  String $createTime() default "";
+
+  String $updateUserId() default "";
+
+  String $updateTime() default "";
+
+  String $createGroupId() default "";
+
+  String $__typename() default "";
 }

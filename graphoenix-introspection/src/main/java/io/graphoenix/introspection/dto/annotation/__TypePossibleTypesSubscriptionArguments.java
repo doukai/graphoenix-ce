@@ -18,13 +18,13 @@ import java.lang.annotation.Target;
 public @interface __TypePossibleTypesSubscriptionArguments {
   StringExpression1 id() default @StringExpression1;
 
-  StringExpression1 typeName() default @StringExpression1;
+  StringExpression1 typeRef() default @StringExpression1;
 
-  __TypeExpression1 typeNameType() default @__TypeExpression1;
+  __TypeExpression1 type() default @__TypeExpression1;
 
-  StringExpression1 possibleTypeName() default @StringExpression1;
+  StringExpression1 possibleTypeRef() default @StringExpression1;
 
-  __TypeExpression1 possibleTypeNameType() default @__TypeExpression1;
+  __TypeExpression1 possibleType() default @__TypeExpression1;
 
   boolean includeDeprecated() default false;
 
@@ -54,13 +54,13 @@ public @interface __TypePossibleTypesSubscriptionArguments {
 
   String $id() default "";
 
-  String $typeName() default "";
+  String $typeRef() default "";
 
-  String $typeNameType() default "";
+  String $type() default "";
 
-  String $possibleTypeName() default "";
+  String $possibleTypeRef() default "";
 
-  String $possibleTypeNameType() default "";
+  String $possibleType() default "";
 
   String $includeDeprecated() default "";
 

@@ -2,6 +2,7 @@ package io.graphoenix.introspection.dto.annotation;
 
 import io.graphoenix.core.dto.enumType.Sort;
 import jakarta.annotation.Generated;
+import java.lang.String;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -38,4 +39,30 @@ public @interface __SchemaOrderBy2 {
   Sort mutationTypeName() default Sort.ASC;
 
   Sort subscriptionTypeName() default Sort.ASC;
+
+  String $id() default "";
+
+  String $isDeprecated() default "";
+
+  String $version() default "";
+
+  String $realmId() default "";
+
+  String $createUserId() default "";
+
+  String $createTime() default "";
+
+  String $updateUserId() default "";
+
+  String $updateTime() default "";
+
+  String $createGroupId() default "";
+
+  String $__typename() default "";
+
+  String $queryTypeName() default "";
+
+  String $mutationTypeName() default "";
+
+  String $subscriptionTypeName() default "";
 }
