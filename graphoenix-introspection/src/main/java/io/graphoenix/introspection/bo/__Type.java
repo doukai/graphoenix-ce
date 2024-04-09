@@ -130,8 +130,8 @@ public class __Type {
                 .flatMap(Collection::stream)
                 .map(interfaceType -> {
                             ObjectValueWithVariable __typeInterfaces = new ObjectValueWithVariable();
-                            __typeInterfaces.put("typeName", this.getName());
-                            __typeInterfaces.put("interfaceName", interfaceType.getName());
+                            __typeInterfaces.put("typeRef", this.getName());
+                            __typeInterfaces.put("interfaceRef", interfaceType.getName());
                             return __typeInterfaces;
                         }
                 );
@@ -142,8 +142,8 @@ public class __Type {
                 .flatMap(Collection::stream)
                 .map(possibleType -> {
                             ObjectValueWithVariable __typePossibleTypes = new ObjectValueWithVariable();
-                            __typePossibleTypes.put("typeName", this.getName());
-                            __typePossibleTypes.put("possibleTypeName", possibleType.getName());
+                            __typePossibleTypes.put("typeRef", this.getName());
+                            __typePossibleTypes.put("possibleTypeRef", possibleType.getName());
                             return __typePossibleTypes;
                         }
                 );
