@@ -1082,6 +1082,14 @@ public class DocumentBuilder {
                     .addArgument(new InputValue(INPUT_VALUE_FIRST_NAME).setType(new TypeName(SCALA_INT_NAME)))
                     .addArgument(new InputValue(INPUT_VALUE_LAST_NAME).setType(new TypeName(SCALA_INT_NAME)))
                     .addArgument(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(new TypeName(SCALA_INT_NAME)));
+
+            objectType.getCursorField()
+                    .or(objectType::getIDField)
+                    .ifPresent(cursorField ->
+                            fieldDefinition
+                                    .addArgument(new InputValue(INPUT_VALUE_AFTER_NAME).setType(cursorField.getType().getTypeName()))
+                                    .addArgument(new InputValue(INPUT_VALUE_BEFORE_NAME).setType(cursorField.getType().getTypeName()))
+                    );
         }
         buildSecurity(objectType, fieldDefinition);
         return fieldDefinition;

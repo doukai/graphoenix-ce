@@ -99,6 +99,8 @@ message QueryIntroSchemaConnectionRequest {
     int32 first = 26;
     int32 last = 27;
     int32 offset = 28;
+    string after = 29;
+    string before = 30;
 }
 message QueryIntroTypeRequest {
     optional string selection_set = 1;
@@ -202,6 +204,8 @@ message QueryIntroTypeConnectionRequest {
     int32 first = 31;
     int32 last = 32;
     int32 offset = 33;
+    string after = 34;
+    string before = 35;
 }
 message QueryIntroFieldRequest {
     optional string selection_set = 1;
@@ -290,6 +294,8 @@ message QueryIntroFieldConnectionRequest {
     int32 first = 26;
     int32 last = 27;
     int32 offset = 28;
+    string after = 29;
+    string before = 30;
 }
 message QueryIntroInputValueRequest {
     optional string selection_set = 1;
@@ -381,6 +387,8 @@ message QueryIntroInputValueConnectionRequest {
     int32 first = 27;
     int32 last = 28;
     int32 offset = 29;
+    string after = 30;
+    string before = 31;
 }
 message QueryIntroEnumValueRequest {
     optional string selection_set = 1;
@@ -460,6 +468,8 @@ message QueryIntroEnumValueConnectionRequest {
     int32 first = 23;
     int32 last = 24;
     int32 offset = 25;
+    string after = 26;
+    string before = 27;
 }
 message QueryIntroDirectiveRequest {
     optional string selection_set = 1;
@@ -545,6 +555,8 @@ message QueryIntroDirectiveConnectionRequest {
     int32 first = 25;
     int32 last = 26;
     int32 offset = 27;
+    string after = 28;
+    string before = 29;
 }
 message QueryIntroTypeInterfacesRequest {
     optional string selection_set = 1;
@@ -621,6 +633,8 @@ message QueryIntroTypeInterfacesConnectionRequest {
     int32 first = 22;
     int32 last = 23;
     int32 offset = 24;
+    string after = 25;
+    string before = 26;
 }
 message QueryIntroTypePossibleTypesRequest {
     optional string selection_set = 1;
@@ -697,6 +711,8 @@ message QueryIntroTypePossibleTypesConnectionRequest {
     int32 first = 22;
     int32 last = 23;
     int32 offset = 24;
+    string after = 25;
+    string before = 26;
 }
 message QueryIntroDirectiveLocationsRelationRequest {
     optional string selection_set = 1;
@@ -770,4 +786,6 @@ message QueryIntroDirectiveLocationsRelationConnectionRequest {
     int32 first = 21;
     int32 last = 22;
     int32 offset = 23;
+    string after = 24;
+    string before = 25;
 }
