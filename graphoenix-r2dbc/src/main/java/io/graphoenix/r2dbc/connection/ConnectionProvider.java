@@ -21,9 +21,8 @@ public class ConnectionProvider {
     }
 
     public Mono<Connection> get() {
-        return transactionScopeInstanceFactory
-                .get(Connection.class, connectionCreator::createConnection)
-                .switchIfEmpty(connectionCreator.createConnection());
+        return transactionScopeInstanceFactory.get(Connection.class)
+                .switchIfEmpty(Mono.defer(connectionCreator::createConnection));
     }
 
     public Mono<Boolean> inTransaction() {
@@ -37,6 +36,6 @@ public class ConnectionProvider {
         return inTransaction()
                 .filter(inTransaction -> !inTransaction)
                 .flatMap(inTransaction -> Mono.from(connection.close()))
-                .switchIfEmpty(Mono.from(connection.close()));
+                .switchIfEmpty(Mono.defer(() -> Mono.from(connection.close())));
     }
 }
