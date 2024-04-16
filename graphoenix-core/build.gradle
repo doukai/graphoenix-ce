@@ -93,6 +93,7 @@ dependencies {
     compileOnly 'org.apache.tomcat:annotations-api:6.0.53' // necessary for Java 9+
 
     annotationProcessor project(':graphoenix-spi')
+    annotationProcessor project(':graphoenix-json')
     annotationProcessor 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
     annotationProcessor 'io.nozdormu:nozdormu-interceptor:0.0.1-SNAPSHOT'
     annotationProcessor 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'

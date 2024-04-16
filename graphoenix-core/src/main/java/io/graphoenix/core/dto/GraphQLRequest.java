@@ -3,8 +3,6 @@ package io.graphoenix.core.dto;
 import com.dslplatform.json.CompiledJson;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
-import jakarta.json.bind.Jsonb;
-import jakarta.json.bind.spi.JsonbProvider;
 import jakarta.json.spi.JsonProvider;
 
 import java.io.StringReader;
@@ -20,8 +18,6 @@ public class GraphQLRequest {
     private JsonObject variables;
 
     private static final JsonProvider jsonProvider = JsonProvider.provider();
-
-    private static final Jsonb jsonb = JsonbProvider.provider().create().build();
 
     public GraphQLRequest() {
     }
@@ -53,7 +49,11 @@ public class GraphQLRequest {
     }
 
     public static GraphQLRequest fromJson(JsonObject jsonObject) {
-        return jsonb.fromJson(jsonObject.toString(), GraphQLRequest.class);
+        return new GraphQLRequest(
+                jsonObject.containsKey("query") && !jsonObject.isNull("query") ? jsonObject.getString("query") : null,
+                jsonObject.containsKey("operationName") && !jsonObject.isNull("operationName") ? jsonObject.getString("operationName") : null,
+                jsonObject.containsKey("variables") && !jsonObject.isNull("variables") ? jsonObject.getJsonObject("variables") : null
+        );
     }
 
     public static GraphQLRequest fromJson(String json) {
