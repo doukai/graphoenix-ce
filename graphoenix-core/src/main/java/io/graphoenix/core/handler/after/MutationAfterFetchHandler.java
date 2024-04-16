@@ -124,7 +124,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler {
     }
 
     public Stream<FetchItem> buildFetchItems(ObjectType objectType, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
-        if (jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
+        if (jsonValue == null || jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
             return Stream.empty();
         }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);

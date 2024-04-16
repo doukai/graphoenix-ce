@@ -23,8 +23,12 @@ public class ConnectionProvider {
     public Mono<Connection> get() {
         return inTransaction()
                 .filter(inTransaction -> inTransaction)
-                .flatMap(inTransaction -> transactionScopeInstanceFactory.get(Connection.class, connectionCreator::createConnection))
-                .switchIfEmpty(Mono.defer(connectionCreator::createConnection));
+                .defaultIfEmpty(false)
+                .flatMap(inTransaction ->
+                        inTransaction ?
+                                transactionScopeInstanceFactory.get(Connection.class, connectionCreator::createConnection) :
+                                connectionCreator.createConnection()
+                );
     }
 
     public Mono<Boolean> inTransaction() {
@@ -36,8 +40,12 @@ public class ConnectionProvider {
 
     public Mono<Void> close(Connection connection) {
         return inTransaction()
-                .filter(inTransaction -> !inTransaction)
-                .flatMap(inTransaction -> Mono.from(connection.close()))
-                .switchIfEmpty(Mono.defer(() -> Mono.from(connection.close())));
+                .filter(inTransaction -> inTransaction)
+                .defaultIfEmpty(false)
+                .flatMap(inTransaction ->
+                        inTransaction ?
+                                Mono.empty() :
+                                Mono.from(connection.close())
+                );
     }
 }
