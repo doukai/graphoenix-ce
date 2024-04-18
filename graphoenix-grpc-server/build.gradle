@@ -33,3 +33,11 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+jar {
+    manifest {
+        attributes(
+                "GP-Protocol": "GRPC"
+        )
+    }
+}
