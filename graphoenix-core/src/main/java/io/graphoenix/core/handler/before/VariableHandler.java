@@ -56,6 +56,7 @@ public class VariableHandler implements OperationBeforeHandler {
                                         Stream.ofNullable(field.getArguments())
                                                 .map(Arguments::getArguments)
                                                 .flatMap(jsonValues -> jsonValues.entrySet().stream())
+                                                .filter(valueWithVariableEntry -> variables.containsKey(valueWithVariableEntry.getKey()))
                                                 .peek(valueWithVariableEntry -> {
                                                             if (valueWithVariableEntry.getValue().isVariable()) {
                                                                 valueWithVariableEntry.setValue(ValueWithVariable.of(variables.get(valueWithVariableEntry.getKey())));
@@ -92,6 +93,7 @@ public class VariableHandler implements OperationBeforeHandler {
                                         Stream.ofNullable(directive.getArguments())
                                                 .map(Arguments::getArguments)
                                                 .flatMap(jsonValues -> jsonValues.entrySet().stream())
+                                                .filter(valueWithVariableEntry -> variables.containsKey(valueWithVariableEntry.getKey()))
                                                 .peek(valueWithVariableEntry -> {
                                                             if (valueWithVariableEntry.getValue().isVariable()) {
                                                                 valueWithVariableEntry.setValue(ValueWithVariable.of(variables.get(valueWithVariableEntry.getKey())));
@@ -116,7 +118,7 @@ public class VariableHandler implements OperationBeforeHandler {
                                 .flatMap(Collection::stream),
                         Stream.ofNullable(variableDefinitions)
                                 .flatMap(Collection::stream)
-                                .filter(variableDefinition -> variableDefinition.getDefaultValue() != null && variables.get(variableDefinition.getVariable().getName()) == null)
+                                .filter(variableDefinition -> variableDefinition.getDefaultValue() != null && variables.containsKey(variableDefinition.getVariable().getName()))
                                 .map(variableDefinition -> new AbstractMap.SimpleEntry<>(variableDefinition.getVariable().getName(), variableDefinition.getDefaultValue()))
                 )
                 .collect(
