@@ -152,7 +152,7 @@ public class Field extends AbstractDefinition implements Selection {
     }
 
     public Field setArguments(Arguments arguments) {
-        if (arguments != null && !arguments.isEmpty()) {
+        if (arguments != null) {
             this.arguments = new Arguments(arguments);
         }
         return this;

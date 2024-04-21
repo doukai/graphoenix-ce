@@ -76,7 +76,7 @@ public class Operation extends AbstractDefinition implements Definition {
     }
 
     public Operation setVariableDefinitions(Collection<VariableDefinition> variableDefinitions) {
-        if (variableDefinitions != null && !variableDefinitions.isEmpty()) {
+        if (variableDefinitions != null) {
             this.variableDefinitionMap = variableDefinitions.stream()
                     .collect(
                             Collectors.toMap(

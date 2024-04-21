@@ -51,7 +51,7 @@ public class DirectiveDefinition extends AbstractDefinition implements Definitio
     }
 
     public DirectiveDefinition setArguments(Collection<InputValue> arguments) {
-        if (arguments != null && !arguments.isEmpty()) {
+        if (arguments != null) {
             this.argumentMap = arguments.stream()
                     .collect(
                             Collectors.toMap(
