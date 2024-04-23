@@ -27,6 +27,8 @@ public @interface MetaInput {
 
   String createGroupId() default "";
 
+  MetaExpression1 where() default @MetaExpression1;
+
   String $version() default "";
 
   String $realmId() default "";
@@ -40,4 +42,6 @@ public @interface MetaInput {
   String $updateTime() default "";
 
   String $createGroupId() default "";
+
+  String $where() default "";
 }

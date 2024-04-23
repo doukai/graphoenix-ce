@@ -98,6 +98,7 @@ input MetaInput @interface {
     updateUserId: String
     updateTime: Timestamp
     createGroupId: String
+    where: MetaExpression
 }
 input MetaExpression @interface {
     realmId: IntExpression
