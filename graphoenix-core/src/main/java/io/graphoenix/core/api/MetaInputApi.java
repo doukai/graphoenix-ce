@@ -13,7 +13,7 @@ public class MetaInputApi {
 
     public MetaInput invokeMetaInput(@Source MetaInput metaInput) {
         LocalDateTime now = LocalDateTime.now();
-        if (metaInput.getWhere() != null) {
+        if (metaInput.getWhere() != null || metaInput.getCreateTime() != null) {
             metaInput.setUpdateTime(now);
             metaInput.setVersion(metaInput.getVersion() + 1);
         } else {
