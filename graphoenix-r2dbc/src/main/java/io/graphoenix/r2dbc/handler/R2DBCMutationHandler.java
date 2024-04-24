@@ -51,21 +51,33 @@ public class R2DBCMutationHandler implements MutationHandler {
                         .doOnNext(count -> Logger.info("group mutation count: {}", count))
                         .reduce(Long::sum)
                         .doOnSuccess(count -> Logger.info("group mutation total count: {}", count))
-                        .then(queryExecutor.executeQuery(queryTranslator.operationToSelectSQL(operation)))
-                        .map(json -> jsonProvider.createReader(new StringReader(json)).readValue());
+                        .then(
+                                Mono.justOrEmpty(queryTranslator.operationToSelectSQL(operation))
+                                        .flatMap(queryExecutor::executeQuery)
+                        )
+                        .map(json -> jsonProvider.createReader(new StringReader(json)).readValue())
+                        .defaultIfEmpty(JsonValue.EMPTY_JSON_OBJECT);
             } else {
                 return mutationExecutor.executeMutations(mutationTranslator.operationToStatementSQLStream(operation))
                         .doOnSuccess(count -> Logger.info("mutation count: {}", count))
-                        .then(queryExecutor.executeQuery(queryTranslator.operationToSelectSQL(operation)))
-                        .map(json -> jsonProvider.createReader(new StringReader(json)).readValue());
+                        .then(
+                                Mono.justOrEmpty(queryTranslator.operationToSelectSQL(operation))
+                                        .flatMap(queryExecutor::executeQuery)
+                        )
+                        .map(json -> jsonProvider.createReader(new StringReader(json)).readValue())
+                        .defaultIfEmpty(JsonValue.EMPTY_JSON_OBJECT);
             }
         } else {
             return mutationExecutor.executeMutationsFlux(mutationTranslator.operationToStatementSQLStream(operation))
                     .doOnNext(count -> Logger.info("mutation count: {}", count))
                     .reduce(Long::sum)
                     .doOnSuccess(count -> Logger.info("mutation total count: {}", count))
-                    .then(queryExecutor.executeQuery(queryTranslator.operationToSelectSQL(operation)))
-                    .map(json -> jsonProvider.createReader(new StringReader(json)).readValue());
+                    .then(
+                            Mono.justOrEmpty(queryTranslator.operationToSelectSQL(operation))
+                                    .flatMap(queryExecutor::executeQuery)
+                    )
+                    .map(json -> jsonProvider.createReader(new StringReader(json)).readValue())
+                    .defaultIfEmpty(JsonValue.EMPTY_JSON_OBJECT);
         }
     }
 }

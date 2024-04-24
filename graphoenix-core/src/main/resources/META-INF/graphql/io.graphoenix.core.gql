@@ -98,7 +98,6 @@ input MetaInput @interface @package(name: "io.graphoenix.core") @class(name: "io
     updateUserId: String
     updateTime: Timestamp
     createGroupId: String
-    where: MetaExpression
 }
 input MetaExpression @interface @package(name: "io.graphoenix.core") @class(name: "io.graphoenix.core.dto.inputObjectType.MetaExpression") @grpc(name: "io.graphoenix.core.dto.inputObjectType.grpc.MetaExpression") @annotation(name: "io.graphoenix.core.dto.annotation.MetaExpression")  {
     realmId: IntExpression

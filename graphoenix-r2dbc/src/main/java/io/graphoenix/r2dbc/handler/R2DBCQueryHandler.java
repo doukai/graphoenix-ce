@@ -32,7 +32,9 @@ public class R2DBCQueryHandler implements QueryHandler {
 
     @Override
     public Mono<JsonValue> query(Operation operation) {
-        return queryExecutor.executeQuery(queryTranslator.operationToSelectSQL(operation))
-                .map(json -> jsonProvider.createReader(new StringReader(json)).readValue());
+        return Mono.justOrEmpty(queryTranslator.operationToSelectSQL(operation))
+                .flatMap(queryExecutor::executeQuery)
+                .map(json -> jsonProvider.createReader(new StringReader(json)).readValue())
+                .defaultIfEmpty(JsonValue.EMPTY_JSON_OBJECT);
     }
 }

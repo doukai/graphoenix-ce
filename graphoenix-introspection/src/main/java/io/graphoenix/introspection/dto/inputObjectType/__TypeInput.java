@@ -2,7 +2,6 @@ package io.graphoenix.introspection.dto.inputObjectType;
 
 import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.enumType.__TypeKind;
-import io.graphoenix.core.dto.inputObjectType.MetaExpression;
 import io.graphoenix.core.dto.inputObjectType.MetaInput;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
@@ -265,13 +264,11 @@ public class __TypeInput implements MetaInput {
     this.__typePossibleTypes = __typePossibleTypes;
   }
 
-  @Override
   public __TypeExpression getWhere() {
     return this.where;
   }
 
-  @Override
-  public void setWhere(MetaExpression where) {
-    this.where = (__TypeExpression)where;
+  public void setWhere(__TypeExpression where) {
+    this.where = where;
   }
 }

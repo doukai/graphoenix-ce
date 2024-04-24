@@ -46,6 +46,8 @@ public class MutationTranslator {
     private final PackageManager packageManager;
     private final ArgumentsTranslator argumentsTranslator;
     private final TypeTranslator typeTranslator;
+    private final String[] EXCLUDE_FIELDS = {"version", "realmId", "createUserId", "createTime", "updateUserId", "updateTime", "createGroupId", FIELD_TYPENAME_NAME, FIELD_DEPRECATED_NAME};
+    private final Set<String> excludeFieldNameSet = new HashSet<>(Arrays.asList(EXCLUDE_FIELDS));
 
     @Inject
     public MutationTranslator(DocumentManager documentManager, PackageManager packageManager, ArgumentsTranslator argumentsTranslator, TypeTranslator typeTranslator) {
@@ -147,6 +149,10 @@ public class MutationTranslator {
                                                                 ValueWithVariable valueWithVariable,
                                                                 int level,
                                                                 int index) {
+
+        if (valueWithVariable.isObject() && excludeFieldNameSet.containsAll(valueWithVariable.asObject().keySet())) {
+            return Stream.empty();
+        }
 
         Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
         Map<InputValue, ValueWithVariable> inputValueValueWithVariableMap = Stream.ofNullable(inputValueTypeDefinition.asInputObject().getInputValues())

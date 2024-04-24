@@ -100,7 +100,7 @@ public class OperationInterfaceImplementer {
         int methodIndex = operation.getInvokeMethodIndexOrError();
         String sqlFileName = "SQL" + simpleName + "Impl_" + methodName + "_" + methodIndex + ".sql";
         if (operation.getOperationType() == null || operation.getOperationType().equals(OPERATION_QUERY_NAME)) {
-            return new AbstractMap.SimpleEntry<>(sqlFileName, sqlFormatHandler.query(queryTranslator.operationToSelectSQL(operation)));
+            return new AbstractMap.SimpleEntry<>(sqlFileName, sqlFormatHandler.query(queryTranslator.operationToSelectSQL(operation).orElse("")));
         } else if (operation.getOperationType().equals(OPERATION_MUTATION_NAME)) {
             return new AbstractMap.SimpleEntry<>(sqlFileName, sqlFormatHandler.mutation(mutationTranslator.operationToStatementSQLStream(operation)));
         } else {

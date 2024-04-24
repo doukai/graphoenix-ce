@@ -23,8 +23,6 @@ public interface MetaInput {
 
   String createGroupId = null;
 
-  MetaExpression where = null;
-
   Integer getVersion();
 
   void setVersion(Integer version);
@@ -52,8 +50,4 @@ public interface MetaInput {
   String getCreateGroupId();
 
   void setCreateGroupId(String createGroupId);
-
-  MetaExpression getWhere();
-
-  void setWhere(MetaExpression where);
 }

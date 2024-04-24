@@ -53,37 +53,44 @@ public class QueryTranslator {
         this.argumentsTranslator = argumentsTranslator;
     }
 
-    public String operationToSelectSQL(Operation operation) {
-        return operationToSelect(operation).toString();
+    public Optional<String> operationToSelectSQL(Operation operation) {
+        return operationToSelect(operation).map(Select::toString);
     }
 
-    public Select operationToSelect(Operation operation) {
+    public Optional<Select> operationToSelect(Operation operation) {
         ObjectType operationType = documentManager.getOperationTypeOrError(operation);
-        return new PlainSelect()
-                .addSelectItem(
-                        jsonObjectFunction(
-                                operation.getFields().stream()
-                                        .filter(field -> {
-                                                    FieldDefinition fieldDefinition = operationType.getField(field.getName());
-                                                    return packageManager.isLocalPackage(fieldDefinition) &&
-                                                            !fieldDefinition.isFetchField() &&
-                                                            !fieldDefinition.isInvokeField() &&
-                                                            !fieldDefinition.isConnectionField();
-                                                }
-                                        )
-                                        .map(field ->
-                                                new JsonKeyValuePair(
-                                                        new StringValue(Optional.ofNullable(field.getAlias()).orElse(field.getName())).toString(),
-                                                        fieldToExpression(operationType, operationType.getField(field.getName()), field, 0),
-                                                        false,
-                                                        false
-                                                )
-                                        )
-                                        .collect(Collectors.toList())
-                        ),
-                        new Alias("`data`")
+
+        List<JsonKeyValuePair> jsonKeyValuePairList = operation.getFields().stream()
+                .filter(field -> {
+                            FieldDefinition fieldDefinition = operationType.getField(field.getName());
+                            return packageManager.isLocalPackage(fieldDefinition) &&
+                                    !fieldDefinition.isFetchField() &&
+                                    !fieldDefinition.isInvokeField() &&
+                                    !fieldDefinition.isConnectionField();
+                        }
                 )
-                .withFromItem(dualTable());
+                .map(field ->
+                        new JsonKeyValuePair(
+                                new StringValue(Optional.ofNullable(field.getAlias()).orElse(field.getName())).toString(),
+                                fieldToExpression(operationType, operationType.getField(field.getName()), field, 0),
+                                false,
+                                false
+                        )
+                )
+                .collect(Collectors.toList());
+
+        if ((jsonKeyValuePairList.isEmpty())) {
+            return Optional.empty();
+        }
+
+        return Optional.of(
+                new PlainSelect()
+                        .addSelectItem(
+                                jsonObjectFunction(jsonKeyValuePairList),
+                                new Alias("`data`")
+                        )
+                        .withFromItem(dualTable())
+        );
     }
 
     protected PlainSelect objectFieldToPlainSelect(ObjectType objectType, FieldDefinition fieldDefinition, Field field, int level) {

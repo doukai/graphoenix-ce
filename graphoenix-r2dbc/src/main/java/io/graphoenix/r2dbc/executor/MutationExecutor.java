@@ -24,22 +24,22 @@ public class MutationExecutor {
     }
 
     public Flux<Long> executeMutationsInBatch(Stream<String> mutationSqlStream) {
-        return Flux
-                .usingWhen(
-                        connectionProvider.get(),
-                        connection ->
-                                Flux.fromStream(mutationSqlStream)
-                                        .collectList()
-                                        .filter(sqlList -> !sqlList.isEmpty())
-                                        .flatMapMany(sqlList -> {
-                                                    Batch batch = connection.createBatch();
-                                                    Logger.info("execute statement count:\r\n{}", sqlList.size());
-                                                    sqlList.forEach(batch::add);
-                                                    return Flux.from(batch.execute())
-                                                            .flatMap(ResultUtil::getUpdateCountFromResult);
-                                                }
-                                        ),
-                        connectionProvider::close
+        return Flux.fromStream(mutationSqlStream)
+                .collectList()
+                .filter(sqlList -> !sqlList.isEmpty())
+                .flatMapMany(sqlList ->
+                        Flux
+                                .usingWhen(
+                                        connectionProvider.get(),
+                                        connection -> {
+                                            Batch batch = connection.createBatch();
+                                            Logger.info("execute statement count:\r\n{}", sqlList.size());
+                                            sqlList.forEach(batch::add);
+                                            return Flux.from(batch.execute())
+                                                    .flatMap(ResultUtil::getUpdateCountFromResult);
+                                        },
+                                        connectionProvider::close
+                                )
                 );
     }
 
@@ -71,13 +71,14 @@ public class MutationExecutor {
     }
 
     public Mono<Long> executeMutations(Stream<String> mutationSqlStream, Map<String, Object> parameters) {
-        return Mono
-                .usingWhen(
-                        connectionProvider.get(),
-                        connection -> Flux.fromStream(mutationSqlStream)
-                                .collectList()
-                                .filter(sqlList -> !sqlList.isEmpty())
-                                .flatMap(sqlList -> {
+        return Flux.fromStream(mutationSqlStream)
+                .collectList()
+                .filter(sqlList -> !sqlList.isEmpty())
+                .flatMap(sqlList ->
+                        Mono
+                                .usingWhen(
+                                        connectionProvider.get(),
+                                        connection -> {
                                             String mutation = String.join(";", sqlList);
                                             Logger.info("execute mutation:\r\n{}", mutation);
                                             Logger.info("sql parameters:\r\n{}", parameters);
@@ -87,9 +88,9 @@ public class MutationExecutor {
                                             }
                                             return Mono.from(mutationStatement.execute())
                                                     .flatMap(ResultUtil::getUpdateCountFromResult);
-                                        }
-                                ),
-                        connectionProvider::close
+                                        },
+                                        connectionProvider::close
+                                )
                 );
     }
 
@@ -122,6 +123,9 @@ public class MutationExecutor {
     }
 
     public Mono<Long> executeMutation(String sql, Map<String, Object> parameters) {
+        if (sql.isBlank()) {
+            return Mono.empty();
+        }
         return Mono
                 .usingWhen(
                         connectionProvider.get(),
