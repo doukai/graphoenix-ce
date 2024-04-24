@@ -4,6 +4,7 @@ import com.google.common.collect.Streams;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.spi.error.GraphQLErrors;
+import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.operation.Field;
@@ -46,7 +47,7 @@ public class MutationTranslator {
     private final PackageManager packageManager;
     private final ArgumentsTranslator argumentsTranslator;
     private final TypeTranslator typeTranslator;
-    private final String[] EXCLUDE_FIELDS = {"version", "realmId", "createUserId", "createTime", "updateUserId", "updateTime", "createGroupId", FIELD_TYPENAME_NAME, FIELD_DEPRECATED_NAME};
+    private final String[] EXCLUDE_FIELDS = {"version", "realmId", "createUserId", "createTime", "updateUserId", "updateTime", "createGroupId", FIELD_TYPENAME_NAME, FIELD_DEPRECATED_NAME, INPUT_VALUE_WHERE_NAME};
     private final Set<String> excludeFieldNameSet = new HashSet<>(Arrays.asList(EXCLUDE_FIELDS));
 
     @Inject
@@ -150,10 +151,6 @@ public class MutationTranslator {
                                                                 int level,
                                                                 int index) {
 
-        if (valueWithVariable.isObject() && excludeFieldNameSet.containsAll(valueWithVariable.asObject().keySet())) {
-            return Stream.empty();
-        }
-
         Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
         Map<InputValue, ValueWithVariable> inputValueValueWithVariableMap = Stream.ofNullable(inputValueTypeDefinition.asInputObject().getInputValues())
                 .flatMap(Collection::stream)
@@ -239,6 +236,43 @@ public class MutationTranslator {
                 .filter(entry -> entry.getValue().isObject())
                 .findFirst();
 
+        String idName = fieldTypeDefinition.asObject().getIDFieldOrError().getName();
+        Stream<Statement> createInsertIdSetStatementStream = Stream.empty();
+        if (inputValueValueWithVariableMap.entrySet().stream()
+                .noneMatch(entry -> entry.getKey().getName().equals(idName))) {
+            createInsertIdSetStatementStream = Stream.of(createInsertIdSetStatement(fieldTypeDefinition.asObject().getName(), idName, level, index));
+        }
+
+        Expression idExpression = inputValueValueWithVariableMap.entrySet().stream()
+                .filter(entry -> entry.getKey().getName().equals(idName))
+                .findFirst()
+                .map(Map.Entry::getValue)
+                .flatMap(DBValueUtil::idValueToDBValue)
+                .or(() ->
+                        whereInputValueEntry
+                                .flatMap(entry -> entry.getValue().asObject().getValueWithVariableOrEmpty(idName))
+                                .filter(ValueWithVariable::isObject)
+                                .flatMap(valueWithVariable -> valueWithVariable.asObject().getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
+                                .flatMap(DBValueUtil::idValueToDBValue)
+                )
+                .orElseGet(() -> createInsertIdUserVariable(fieldTypeDefinition.asObject().getName(), idName, level, index));
+
+        Stream<Statement> objectFieldMergeMapStatementStream = Stream.empty();
+        if (parentIdExpression != null) {
+            objectFieldMergeMapStatementStream = Stream.of(
+                    mergeObjectMapStatement(
+                            objectType,
+                            fieldDefinition,
+                            parentIdExpression,
+                            idExpression
+                    )
+            );
+        }
+
+        if (excludeFieldNameSet.containsAll(inputValueValueWithVariableMap.keySet().stream().map(AbstractDefinition::getName).collect(Collectors.toSet()))) {
+            return objectFieldMergeMapStatementStream;
+        }
+
         Map<String, ValueWithVariable> leafValueWithVariableMap = leafFieldDefinitionList.stream()
                 .flatMap(subField ->
                         inputValueValueWithVariableMap.entrySet().stream()
@@ -278,39 +312,6 @@ public class MutationTranslator {
                             );
                         }
                 );
-
-        String idName = fieldTypeDefinition.asObject().getIDFieldOrError().getName();
-        Stream<Statement> createInsertIdSetStatementStream = Stream.empty();
-        if (inputValueValueWithVariableMap.entrySet().stream()
-                .noneMatch(entry -> entry.getKey().getName().equals(idName))) {
-            createInsertIdSetStatementStream = Stream.of(createInsertIdSetStatement(fieldTypeDefinition.asObject().getName(), idName, level, index));
-        }
-
-        Expression idExpression = inputValueValueWithVariableMap.entrySet().stream()
-                .filter(entry -> entry.getKey().getName().equals(idName))
-                .findFirst()
-                .map(Map.Entry::getValue)
-                .flatMap(DBValueUtil::idValueToDBValue)
-                .or(() ->
-                        whereInputValueEntry
-                                .flatMap(entry -> entry.getValue().asObject().getValueWithVariableOrEmpty(idName))
-                                .filter(ValueWithVariable::isObject)
-                                .flatMap(valueWithVariable -> valueWithVariable.asObject().getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
-                                .flatMap(DBValueUtil::idValueToDBValue)
-                )
-                .orElseGet(() -> createInsertIdUserVariable(fieldTypeDefinition.asObject().getName(), idName, level, index));
-
-        Stream<Statement> objectFieldMergeMapStatementStream = Stream.empty();
-        if (parentIdExpression != null) {
-            objectFieldMergeMapStatementStream = Stream.of(
-                    mergeObjectMapStatement(
-                            objectType,
-                            fieldDefinition,
-                            parentIdExpression,
-                            idExpression
-                    )
-            );
-        }
 
         Stream<Statement> objectFieldMutationStatementStream = fieldTypeDefinition.asObject().getFields().stream()
                 .filter(subField -> !subField.isFetchField())

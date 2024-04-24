@@ -93,8 +93,11 @@ public class ArgumentsTranslator {
                                     ) ?
                                     Stream.empty() :
                                     Stream.of(
-                                            new IsNullExpression()
-                                                    .withLeftExpression(graphqlFieldToColumn(fieldTypeDefinition.asObject().getName(), FIELD_DEPRECATED_NAME, level))
+                                            new NotExpression(
+                                                    new EqualsTo()
+                                                            .withLeftExpression(graphqlFieldToColumn(fieldTypeDefinition.asObject().getName(), FIELD_DEPRECATED_NAME, level))
+                                                            .withRightExpression(new LongValue(1))
+                                            )
                                     )
                     )
                     .collect(Collectors.toList());
@@ -203,8 +206,11 @@ public class ArgumentsTranslator {
                                     ) ?
                                     Stream.empty() :
                                     Stream.of(
-                                            new IsNullExpression()
-                                                    .withLeftExpression(graphqlFieldToColumn(fieldTypeDefinition.asObject().getName(), FIELD_DEPRECATED_NAME, level))
+                                            new NotExpression(
+                                                    new EqualsTo()
+                                                            .withLeftExpression(graphqlFieldToColumn(fieldTypeDefinition.asObject().getName(), FIELD_DEPRECATED_NAME, level))
+                                                            .withRightExpression(new LongValue(1))
+                                            )
                                     )
                     )
                     .collect(Collectors.toList());
@@ -315,8 +321,11 @@ public class ArgumentsTranslator {
                                                                 new EqualsTo()
                                                                         .withLeftExpression(graphqlFieldToColumn(withTable, fieldDefinition.getMapWithToOrError()))
                                                                         .withRightExpression(graphqlFieldToColumn(table, fieldDefinition.getMapToOrError())),
-                                                                new IsNullExpression()
-                                                                        .withLeftExpression(graphqlFieldToColumn(withTable, FIELD_DEPRECATED_NAME))
+                                                                new NotExpression(
+                                                                        new EqualsTo()
+                                                                                .withLeftExpression(graphqlFieldToColumn(withTable, FIELD_DEPRECATED_NAME))
+                                                                                .withRightExpression(new LongValue(1))
+                                                                )
                                                         )
                                                 )
                                         )
