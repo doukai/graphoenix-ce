@@ -113,6 +113,7 @@ public class MutationTranslator {
                                                                                 fieldDefinition,
                                                                                 inputValue,
                                                                                 valueWithVariable.asArray().getValueWithVariable(index),
+                                                                                field.isMerge(),
                                                                                 0,
                                                                                 index
                                                                         )
@@ -136,7 +137,7 @@ public class MutationTranslator {
                                         )
                                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-                                return inputValueMapToMutationStatementStream(objectType, fieldDefinition, inputValueValueWithVariableMap);
+                                return inputValueMapToMutationStatementStream(objectType, fieldDefinition, inputValueValueWithVariableMap, field.isMerge());
                             }
                     );
         }
@@ -148,6 +149,7 @@ public class MutationTranslator {
                                                                 FieldDefinition fieldDefinition,
                                                                 InputValue inputValue,
                                                                 ValueWithVariable valueWithVariable,
+                                                                boolean merge,
                                                                 int level,
                                                                 int index) {
 
@@ -204,14 +206,16 @@ public class MutationTranslator {
                     )
             );
         } else {
-            return inputValueMapToMutationStatementStream(objectType, parentIdExpression, fieldDefinition, inputValueValueWithVariableMap, level, index);
+            return inputValueMapToMutationStatementStream(objectType, parentIdExpression, fieldDefinition, inputValueValueWithVariableMap, merge, level, index);
         }
     }
 
     protected Stream<Statement> inputValueMapToMutationStatementStream(ObjectType objectType,
                                                                        FieldDefinition fieldDefinition,
-                                                                       Map<InputValue, ValueWithVariable> inputValueValueWithVariableMap) {
-        return inputValueMapToMutationStatementStream(objectType, null, fieldDefinition, inputValueValueWithVariableMap, 0, 0);
+                                                                       Map<InputValue, ValueWithVariable> inputValueValueWithVariableMap,
+                                                                       boolean merge) {
+
+        return inputValueMapToMutationStatementStream(objectType, null, fieldDefinition, inputValueValueWithVariableMap, merge, 0, 0);
 
     }
 
@@ -219,6 +223,7 @@ public class MutationTranslator {
                                                                        Expression parentIdExpression,
                                                                        FieldDefinition fieldDefinition,
                                                                        Map<InputValue, ValueWithVariable> inputValueValueWithVariableMap,
+                                                                       boolean merge,
                                                                        int level,
                                                                        int index) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
@@ -299,12 +304,6 @@ public class MutationTranslator {
                     .noneMatch(entry -> entry.getKey().getName().equals(idName))) {
                 createInsertIdSetStatementStream = Stream.of(createInsertIdSetStatement(fieldTypeDefinition.asObject().getName(), idName, level, index));
             }
-        } else {
-            createInsertIdSetStatementStream = inputValueValueWithVariableMap.entrySet().stream()
-                    .filter(entry -> entry.getKey().getName().equals(INPUT_VALUE_WHERE_NAME))
-                    .filter(entry -> entry.getValue().isObject())
-                    .map(entry -> entry.getValue().asObject().getObjectValueWithVariable().get(idName).asObject().getObjectValueWithVariable().get(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
-                    .map(valueWithVariable -> createWhereIdSetStatement(fieldTypeDefinition.asObject().getName(), idName, level, index, leafValueToDBValue(valueWithVariable)));
         }
 
         Stream<Statement> objectFieldMergeMapStatementStream = Stream.empty();
@@ -333,6 +332,7 @@ public class MutationTranslator {
                                                 subField,
                                                 entry.getKey(),
                                                 entry.getValue(),
+                                                merge,
                                                 level + 1,
                                                 index
                                         )
@@ -353,7 +353,7 @@ public class MutationTranslator {
                                                 subField,
                                                 entry.getKey(),
                                                 entry.getValue(),
-                                                whereInputValueEntry.isPresent(),
+                                                merge,
                                                 level + 1
                                         )
                                 )
@@ -421,7 +421,7 @@ public class MutationTranslator {
                         .map(ValueWithVariable::asObject)
                         .filter(objectValueWithVariable ->
                                 !objectValueWithVariable.containsKey(FIELD_DEPRECATED_NAME) ||
-                                        objectValueWithVariable.getBoolean(FIELD_DEPRECATED_NAME) != true
+                                        !objectValueWithVariable.getBoolean(FIELD_DEPRECATED_NAME)
                         )
                         .collect(Collectors.toList());
 
@@ -434,6 +434,7 @@ public class MutationTranslator {
                                             fieldDefinition,
                                             inputValue,
                                             valueWithVariable.asArray().getValueWithVariables().get(index),
+                                            merge,
                                             level,
                                             index
                                     )
@@ -449,6 +450,7 @@ public class MutationTranslator {
                                         fieldDefinition,
                                         inputValue,
                                         valueWithVariable.asArray().getValueWithVariables().get(index),
+                                        merge,
                                         level,
                                         index
                                 )
@@ -503,7 +505,7 @@ public class MutationTranslator {
                         .map(ValueWithVariable::asObject)
                         .filter(objectValueWithVariable ->
                                 objectValueWithVariable.containsKey(FIELD_DEPRECATED_NAME) &&
-                                        objectValueWithVariable.getBoolean(FIELD_DEPRECATED_NAME) == true
+                                        objectValueWithVariable.getBoolean(FIELD_DEPRECATED_NAME)
                         )
                         .flatMap(objectValueWithVariable ->
                                 objectValueWithVariable.getValueWithVariableOrEmpty(idName)

@@ -212,6 +212,7 @@ directive @connection(field: String agg: String) on FIELD_DEFINITION
 directive @merge(arguments: [String]) on FIELD
 directive @format(value: String locale: String) on FIELD | FIELD_DEFINITION
 directive @hide on FIELD_DEFINITION
+directive @merge on FIELD_DEFINITION
 directive @permitAll on FIELD | OBJECT
 directive @denyAll on FIELD | OBJECT
 directive @rolesAllowed(roles: [String]) on FIELD | OBJECT

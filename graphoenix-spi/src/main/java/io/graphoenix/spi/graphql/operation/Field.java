@@ -337,6 +337,10 @@ public class Field extends AbstractDefinition implements Selection {
         return hasDirective(DIRECTIVE_HIDE_NAME);
     }
 
+    public boolean isMerge() {
+        return hasDirective(DIRECTIVE_MERGE_NAME);
+    }
+
     @Override
     public boolean isField() {
         return true;
