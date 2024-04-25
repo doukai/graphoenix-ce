@@ -29,6 +29,7 @@ public class __DirectiveMutationArguments implements MetaInput {
 
   private Boolean isRepeatable;
 
+  @DefaultValue("false")
   private Boolean isDeprecated;
 
   private Integer version;

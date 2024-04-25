@@ -26,6 +26,7 @@ public class __EnumValueListMutationArguments implements MetaInput {
 
   private String deprecationReason;
 
+  @DefaultValue("false")
   private Boolean isDeprecated;
 
   private Integer version;

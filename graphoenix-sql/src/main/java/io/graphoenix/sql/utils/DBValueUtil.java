@@ -73,6 +73,11 @@ public final class DBValueUtil {
         return new SetStatement(idVariableName, new ExpressionList<>(new Function().withName("LAST_INSERT_ID")));
     }
 
+    public static SetStatement createWhereIdSetStatement(String typeName, String idFieldName, int level, int index, Expression expression) {
+        String idVariableName = "@" + graphqlFieldNameToVariableName(typeName, idFieldName) + "_" + level + "_" + index;
+        return new SetStatement(idVariableName, new ExpressionList<>(expression));
+    }
+
     public static Expression createGreaterThanLastInsertIDExpression(String typeName, String idFieldName) {
         return new GreaterThanEquals()
                 .withLeftExpression(graphqlFieldToColumn(graphqlTypeToTable(typeName), idFieldName))

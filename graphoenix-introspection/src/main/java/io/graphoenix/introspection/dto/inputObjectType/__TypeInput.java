@@ -37,6 +37,7 @@ public class __TypeInput implements MetaInput {
 
   private __TypeInput ofType;
 
+  @DefaultValue("false")
   private Boolean isDeprecated;
 
   private Integer version;

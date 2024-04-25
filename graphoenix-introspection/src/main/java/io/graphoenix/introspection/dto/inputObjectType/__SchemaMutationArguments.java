@@ -28,6 +28,7 @@ public class __SchemaMutationArguments implements MetaInput {
 
   private Collection<__DirectiveInput> directives;
 
+  @DefaultValue("false")
   private Boolean isDeprecated;
 
   private Integer version;

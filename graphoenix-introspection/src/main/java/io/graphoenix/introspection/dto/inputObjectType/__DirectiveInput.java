@@ -29,6 +29,7 @@ public class __DirectiveInput implements MetaInput {
 
   private Boolean isRepeatable;
 
+  @DefaultValue("false")
   private Boolean isDeprecated;
 
   private Integer version;

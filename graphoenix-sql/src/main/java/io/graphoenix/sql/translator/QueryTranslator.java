@@ -14,10 +14,7 @@ import io.graphoenix.sql.utils.DBValueUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import net.sf.jsqlparser.expression.*;
-import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
-import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
-import net.sf.jsqlparser.expression.operators.relational.InExpression;
-import net.sf.jsqlparser.expression.operators.relational.IsNullExpression;
+import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
@@ -236,8 +233,9 @@ public class QueryTranslator {
                                                                 new EqualsTo()
                                                                         .withLeftExpression(graphqlFieldToColumn(withTable, fieldDefinition.getMapWithToOrError()))
                                                                         .withRightExpression(graphqlFieldToColumn(table, fieldDefinition.getMapToOrError())),
-                                                                new IsNullExpression()
+                                                                new NotEqualsTo()
                                                                         .withLeftExpression(graphqlFieldToColumn(withTable, FIELD_DEPRECATED_NAME))
+                                                                        .withRightExpression(new LongValue(1))
                                                         )
                                                 )
                                         )
@@ -320,8 +318,9 @@ public class QueryTranslator {
                             new EqualsTo()
                                     .withLeftExpression(graphqlFieldToColumn(withTable, fieldDefinition.getMapWithFromOrError()))
                                     .withRightExpression(graphqlFieldToColumn(table, fieldDefinition.getMapFromOrError())),
-                            new IsNullExpression()
+                            new NotEqualsTo()
                                     .withLeftExpression(graphqlFieldToColumn(withTable, FIELD_DEPRECATED_NAME))
+                                    .withRightExpression(new LongValue(1))
                     )
             );
 

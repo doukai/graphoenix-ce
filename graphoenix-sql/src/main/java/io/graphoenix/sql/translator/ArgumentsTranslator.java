@@ -93,11 +93,9 @@ public class ArgumentsTranslator {
                                     ) ?
                                     Stream.empty() :
                                     Stream.of(
-                                            new NotExpression(
-                                                    new EqualsTo()
-                                                            .withLeftExpression(graphqlFieldToColumn(fieldTypeDefinition.asObject().getName(), FIELD_DEPRECATED_NAME, level))
-                                                            .withRightExpression(new LongValue(1))
-                                            )
+                                            new NotEqualsTo()
+                                                    .withLeftExpression(graphqlFieldToColumn(fieldTypeDefinition.asObject().getName(), FIELD_DEPRECATED_NAME, level))
+                                                    .withRightExpression(new LongValue(1))
                                     )
                     )
                     .collect(Collectors.toList());
@@ -206,11 +204,9 @@ public class ArgumentsTranslator {
                                     ) ?
                                     Stream.empty() :
                                     Stream.of(
-                                            new NotExpression(
-                                                    new EqualsTo()
-                                                            .withLeftExpression(graphqlFieldToColumn(fieldTypeDefinition.asObject().getName(), FIELD_DEPRECATED_NAME, level))
-                                                            .withRightExpression(new LongValue(1))
-                                            )
+                                            new NotEqualsTo()
+                                                    .withLeftExpression(graphqlFieldToColumn(fieldTypeDefinition.asObject().getName(), FIELD_DEPRECATED_NAME, level))
+                                                    .withRightExpression(new LongValue(1))
                                     )
                     )
                     .collect(Collectors.toList());
@@ -321,11 +317,9 @@ public class ArgumentsTranslator {
                                                                 new EqualsTo()
                                                                         .withLeftExpression(graphqlFieldToColumn(withTable, fieldDefinition.getMapWithToOrError()))
                                                                         .withRightExpression(graphqlFieldToColumn(table, fieldDefinition.getMapToOrError())),
-                                                                new NotExpression(
-                                                                        new EqualsTo()
-                                                                                .withLeftExpression(graphqlFieldToColumn(withTable, FIELD_DEPRECATED_NAME))
-                                                                                .withRightExpression(new LongValue(1))
-                                                                )
+                                                                new NotEqualsTo()
+                                                                        .withLeftExpression(graphqlFieldToColumn(withTable, FIELD_DEPRECATED_NAME))
+                                                                        .withRightExpression(new LongValue(1))
                                                         )
                                                 )
                                         )
@@ -375,11 +369,9 @@ public class ArgumentsTranslator {
                         .withRightExpression(value);
                 break;
             case INPUT_OPERATOR_INPUT_VALUE_NEQ:
-                where = new NotExpression(
-                        new EqualsTo()
-                                .withLeftExpression(column)
-                                .withRightExpression(value)
-                );
+                where = new NotEqualsTo()
+                        .withLeftExpression(column)
+                        .withRightExpression(value);
                 break;
             case INPUT_OPERATOR_INPUT_VALUE_LK:
                 where = new LikeExpression()
@@ -387,11 +379,10 @@ public class ArgumentsTranslator {
                         .withRightExpression(value);
                 break;
             case INPUT_OPERATOR_INPUT_VALUE_NLK:
-                where = new NotExpression(
-                        new LikeExpression()
-                                .withLeftExpression(column)
-                                .withRightExpression(value)
-                );
+                where = new LikeExpression()
+                        .withNot(true)
+                        .withLeftExpression(column)
+                        .withRightExpression(value);
                 break;
             case INPUT_OPERATOR_INPUT_VALUE_GT:
                 where = new GreaterThan()

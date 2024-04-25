@@ -25,6 +25,7 @@ public class __TypePossibleTypesInput implements MetaInput {
 
   private __TypeInput possibleType;
 
+  @DefaultValue("false")
   private Boolean isDeprecated;
 
   private Integer version;

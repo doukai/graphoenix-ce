@@ -32,6 +32,7 @@ public class __InputValueListMutationArguments implements MetaInput {
 
   private String defaultValue;
 
+  @DefaultValue("false")
   private Boolean isDeprecated;
 
   private Integer version;

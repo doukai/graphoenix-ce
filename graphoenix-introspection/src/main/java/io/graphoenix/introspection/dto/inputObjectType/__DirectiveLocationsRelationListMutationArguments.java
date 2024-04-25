@@ -25,6 +25,7 @@ public class __DirectiveLocationsRelationListMutationArguments implements MetaIn
 
   private __DirectiveLocation locationsRef;
 
+  @DefaultValue("false")
   private Boolean isDeprecated;
 
   private Integer version;

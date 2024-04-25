@@ -27,6 +27,7 @@ public class __TypeInterfacesMutationArguments implements MetaInput {
   @Name("interface")
   private __TypeInput _interface;
 
+  @DefaultValue("false")
   private Boolean isDeprecated;
 
   private Integer version;

@@ -628,7 +628,9 @@ public class DocumentBuilder {
     public InputValue fieldToInputValue(FieldsType fieldsType, FieldDefinition fieldDefinition, InputType inputType) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (inputType.equals(InputType.INPUT) || inputType.equals(InputType.MUTATION_ARGUMENTS)) {
-            if (fieldDefinition.getName().equals(FIELD_TYPENAME_NAME)) {
+            if (fieldDefinition.getName().equals(FIELD_DEPRECATED_NAME)) {
+                return new InputValue(FIELD_DEPRECATED_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false);
+            } else if (fieldDefinition.getName().equals(FIELD_TYPENAME_NAME)) {
                 return new InputValue(FIELD_TYPENAME_NAME).setType(new TypeName(SCALA_STRING_NAME)).setDefaultValue(fieldsType.getName());
             }
             Type argumentType;

@@ -24,6 +24,7 @@ public class __DirectiveLocationsRelationInput implements MetaInput {
 
   private __DirectiveLocation locationsRef;
 
+  @DefaultValue("false")
   private Boolean isDeprecated;
 
   private Integer version;

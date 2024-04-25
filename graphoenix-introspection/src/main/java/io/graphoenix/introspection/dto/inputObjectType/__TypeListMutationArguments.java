@@ -37,6 +37,7 @@ public class __TypeListMutationArguments implements MetaInput {
 
   private __TypeInput ofType;
 
+  @DefaultValue("false")
   private Boolean isDeprecated;
 
   private Integer version;

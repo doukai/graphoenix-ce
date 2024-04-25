@@ -4,7 +4,6 @@ import com.google.common.collect.Streams;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.spi.error.GraphQLErrors;
-import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.operation.Field;
@@ -136,6 +135,7 @@ public class MutationTranslator {
                                                         .map(valueWithVariable -> new AbstractMap.SimpleEntry<>(argumentInput, valueWithVariable))
                                         )
                                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
                                 return inputValueMapToMutationStatementStream(objectType, fieldDefinition, inputValueValueWithVariableMap);
                             }
                     );
@@ -231,18 +231,20 @@ public class MutationTranslator {
                 .filter(subField -> !documentManager.getFieldTypeDefinition(subField).isObject())
                 .collect(Collectors.toList());
 
+        Map<String, ValueWithVariable> leafValueWithVariableMap = leafFieldDefinitionList.stream()
+                .flatMap(subField ->
+                        inputValueValueWithVariableMap.entrySet().stream()
+                                .filter(entry -> entry.getKey().getName().equals(subField.getName()))
+                )
+                .map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey().getName(), entry.getValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
         Optional<Map.Entry<InputValue, ValueWithVariable>> whereInputValueEntry = inputValueValueWithVariableMap.entrySet().stream()
                 .filter(entry -> entry.getKey().getName().equals(INPUT_VALUE_WHERE_NAME))
                 .filter(entry -> entry.getValue().isObject())
                 .findFirst();
 
         String idName = fieldTypeDefinition.asObject().getIDFieldOrError().getName();
-        Stream<Statement> createInsertIdSetStatementStream = Stream.empty();
-        if (inputValueValueWithVariableMap.entrySet().stream()
-                .noneMatch(entry -> entry.getKey().getName().equals(idName))) {
-            createInsertIdSetStatementStream = Stream.of(createInsertIdSetStatement(fieldTypeDefinition.asObject().getName(), idName, level, index));
-        }
-
         Expression idExpression = inputValueValueWithVariableMap.entrySet().stream()
                 .filter(entry -> entry.getKey().getName().equals(idName))
                 .findFirst()
@@ -257,6 +259,54 @@ public class MutationTranslator {
                 )
                 .orElseGet(() -> createInsertIdUserVariable(fieldTypeDefinition.asObject().getName(), idName, level, index));
 
+        Stream<Statement> leafFieldMutationStatement = Stream.empty();
+        Stream<Statement> createInsertIdSetStatementStream = Stream.empty();
+        if (!excludeFieldNameSet.containsAll(leafValueWithVariableMap.keySet())) {
+            leafFieldMutationStatement = Stream.of(
+                    whereInputValueEntry
+                            .flatMap(entry -> argumentsTranslator.inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), entry.getValue(), level))
+                            .map(whereExpression -> {
+                                        Table table = typeToTable(fieldTypeDefinition.asObject(), level);
+                                        return (Statement) updateExpression(
+                                                table,
+                                                leafValueWithVariableMap.entrySet().stream()
+                                                        .map(entry ->
+                                                                new UpdateSet(
+                                                                        graphqlFieldToColumn(table, entry.getKey()),
+                                                                        leafValueToDBValue(entry.getValue()))
+                                                        )
+                                                        .collect(Collectors.toList()),
+                                                whereExpression
+                                        );
+                                    }
+                            )
+                            .orElseGet(() -> {
+                                        Table table = typeToTable(fieldTypeDefinition.asObject());
+                                        return insertExpression(
+                                                table,
+                                                leafValueWithVariableMap.keySet().stream()
+                                                        .map(name -> graphqlFieldToColumn(table, name))
+                                                        .collect(Collectors.toList()),
+                                                leafValueWithVariableMap.values().stream()
+                                                        .map(DBValueUtil::leafValueToDBValue)
+                                                        .collect(Collectors.toList()),
+                                                true
+                                        );
+                                    }
+                            )
+            );
+            if (inputValueValueWithVariableMap.entrySet().stream()
+                    .noneMatch(entry -> entry.getKey().getName().equals(idName))) {
+                createInsertIdSetStatementStream = Stream.of(createInsertIdSetStatement(fieldTypeDefinition.asObject().getName(), idName, level, index));
+            }
+        } else {
+            createInsertIdSetStatementStream = inputValueValueWithVariableMap.entrySet().stream()
+                    .filter(entry -> entry.getKey().getName().equals(INPUT_VALUE_WHERE_NAME))
+                    .filter(entry -> entry.getValue().isObject())
+                    .map(entry -> entry.getValue().asObject().getObjectValueWithVariable().get(idName).asObject().getObjectValueWithVariable().get(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
+                    .map(valueWithVariable -> createWhereIdSetStatement(fieldTypeDefinition.asObject().getName(), idName, level, index, leafValueToDBValue(valueWithVariable)));
+        }
+
         Stream<Statement> objectFieldMergeMapStatementStream = Stream.empty();
         if (parentIdExpression != null) {
             objectFieldMergeMapStatementStream = Stream.of(
@@ -268,50 +318,6 @@ public class MutationTranslator {
                     )
             );
         }
-
-        if (excludeFieldNameSet.containsAll(inputValueValueWithVariableMap.keySet().stream().map(AbstractDefinition::getName).collect(Collectors.toSet()))) {
-            return objectFieldMergeMapStatementStream;
-        }
-
-        Map<String, ValueWithVariable> leafValueWithVariableMap = leafFieldDefinitionList.stream()
-                .flatMap(subField ->
-                        inputValueValueWithVariableMap.entrySet().stream()
-                                .filter(entry -> entry.getKey().getName().equals(subField.getName()))
-                )
-                .map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey().getName(), entry.getValue()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-        Statement leafFieldMutationStatement = whereInputValueEntry
-                .flatMap(entry -> argumentsTranslator.inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), entry.getValue(), level))
-                .map(whereExpression -> {
-                            Table table = typeToTable(fieldTypeDefinition.asObject(), level);
-                            return (Statement) updateExpression(
-                                    table,
-                                    leafValueWithVariableMap.entrySet().stream()
-                                            .map(entry ->
-                                                    new UpdateSet(
-                                                            graphqlFieldToColumn(table, entry.getKey()),
-                                                            leafValueToDBValue(entry.getValue()))
-                                            )
-                                            .collect(Collectors.toList()),
-                                    whereExpression
-                            );
-                        }
-                )
-                .orElseGet(() -> {
-                            Table table = typeToTable(fieldTypeDefinition.asObject());
-                            return insertExpression(
-                                    table,
-                                    leafValueWithVariableMap.keySet().stream()
-                                            .map(name -> graphqlFieldToColumn(table, name))
-                                            .collect(Collectors.toList()),
-                                    leafValueWithVariableMap.values().stream()
-                                            .map(DBValueUtil::leafValueToDBValue)
-                                            .collect(Collectors.toList()),
-                                    true
-                            );
-                        }
-                );
 
         Stream<Statement> objectFieldMutationStatementStream = fieldTypeDefinition.asObject().getFields().stream()
                 .filter(subField -> !subField.isFetchField())
@@ -371,7 +377,7 @@ public class MutationTranslator {
                 );
 
         return Streams.concat(
-                Stream.of(leafFieldMutationStatement),
+                leafFieldMutationStatement,
                 createInsertIdSetStatementStream,
                 objectFieldMergeMapStatementStream,
                 objectFieldMutationStatementStream,
@@ -413,11 +419,9 @@ public class MutationTranslator {
                 List<ValueWithVariable> mergeValueWithVariableList = valueWithVariable.asArray().getValueWithVariables().stream()
                         .filter(ValueWithVariable::isObject)
                         .map(ValueWithVariable::asObject)
-                        .filter(objectValueWithVariable -> !objectValueWithVariable.containsKey(FIELD_DEPRECATED_NAME))
                         .filter(objectValueWithVariable ->
-                                objectValueWithVariable.getValueWithVariableOrEmpty(FIELD_DEPRECATED_NAME)
-                                        .map(isDeprecated -> isDeprecated.asBoolean().getValue())
-                                        .orElse(false)
+                                !objectValueWithVariable.containsKey(FIELD_DEPRECATED_NAME) ||
+                                        objectValueWithVariable.getBoolean(FIELD_DEPRECATED_NAME) != true
                         )
                         .collect(Collectors.toList());
 
@@ -497,11 +501,9 @@ public class MutationTranslator {
                 List<ValueWithVariable> removeIdValueWithVariableList = valueWithVariable.asArray().getValueWithVariables().stream()
                         .filter(ValueWithVariable::isObject)
                         .map(ValueWithVariable::asObject)
-                        .filter(objectValueWithVariable -> objectValueWithVariable.containsKey(FIELD_DEPRECATED_NAME))
                         .filter(objectValueWithVariable ->
-                                objectValueWithVariable.getValueWithVariableOrEmpty(FIELD_DEPRECATED_NAME)
-                                        .map(isDeprecated -> isDeprecated.asBoolean().getValue())
-                                        .orElse(false)
+                                objectValueWithVariable.containsKey(FIELD_DEPRECATED_NAME) &&
+                                        objectValueWithVariable.getBoolean(FIELD_DEPRECATED_NAME) == true
                         )
                         .flatMap(objectValueWithVariable ->
                                 objectValueWithVariable.getValueWithVariableOrEmpty(idName)
@@ -741,7 +743,8 @@ public class MutationTranslator {
             Table withTable = graphqlTypeToTable(mapWithType);
             Column withParentColumn = graphqlFieldToColumn(withTable, fieldDefinition.getMapWithFromOrError());
             Column withColumn = graphqlFieldToColumn(withTable, fieldDefinition.getMapWithToOrError());
-            return insertExpression(withTable, Arrays.asList(withParentColumn, withColumn), Arrays.asList(parentColumnExpression, columnExpression));
+            Column isDeprecatedColumn = graphqlFieldToColumn(withTable, FIELD_DEPRECATED_NAME);
+            return insertExpression(withTable, Arrays.asList(withParentColumn, withColumn, isDeprecatedColumn), Arrays.asList(parentColumnExpression, columnExpression, new LongValue(0)));
         } else {
             if (documentManager.isMapAnchor(objectType, fieldDefinition)) {
                 EqualsTo parentIdEqualsTo = new EqualsTo()
@@ -776,11 +779,11 @@ public class MutationTranslator {
         Table withTable = graphqlTypeToTable(mapWithType);
         Column withParentColumn = graphqlFieldToColumn(withTable, fieldDefinition.getMapWithFromOrError());
         Column withColumn = graphqlFieldToColumn(withTable, fieldDefinition.getMapWithToOrError());
-
+        Column isDeprecatedColumn = graphqlFieldToColumn(withTable, FIELD_DEPRECATED_NAME);
         if (valueWithVariable.isVariable()) {
-            return insertSelectExpression(withTable, Arrays.asList(withParentColumn, withColumn), selectVariablesFromJsonArray(parentColumnExpression, fieldDefinition, valueWithVariable));
+            return insertSelectExpression(withTable, Arrays.asList(withParentColumn, withColumn, isDeprecatedColumn), selectVariablesFromJsonArray(parentColumnExpression, fieldDefinition, valueWithVariable));
         } else {
-            return insertExpression(withTable, Arrays.asList(withParentColumn, withColumn), Arrays.asList(parentColumnExpression, leafValueToDBValue(valueWithVariable)));
+            return insertExpression(withTable, Arrays.asList(withParentColumn, withColumn, isDeprecatedColumn), Arrays.asList(parentColumnExpression, leafValueToDBValue(valueWithVariable), new LongValue(0)));
         }
     }
 
@@ -893,7 +896,7 @@ public class MutationTranslator {
 
     protected Select selectVariablesFromJsonArray(Expression parentColumnExpression, FieldDefinition fieldDefinition, ValueWithVariable valueWithVariable) {
         return new PlainSelect()
-                .addSelectItems(parentColumnExpression, new Column(fieldDefinition.getName()))
+                .addSelectItems(parentColumnExpression, new Column(fieldDefinition.getName()), new LongValue(0))
                 .withFromItem(
                         new JsonTableFunction()
                                 .withJson(
