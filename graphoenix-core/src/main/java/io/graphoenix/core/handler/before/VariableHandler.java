@@ -56,7 +56,7 @@ public class VariableHandler implements OperationBeforeHandler {
                                         Stream.ofNullable(field.getArguments())
                                                 .map(Arguments::getArguments)
                                                 .flatMap(jsonValues -> jsonValues.entrySet().stream())
-                                                .filter(valueWithVariableEntry -> variables.containsKey(valueWithVariableEntry.getKey()))
+                                                .filter(valueWithVariableEntry -> !valueWithVariableEntry.getValue().isVariable() || variables.containsKey(valueWithVariableEntry.getKey()))
                                                 .peek(valueWithVariableEntry -> {
                                                             if (valueWithVariableEntry.getValue().isVariable()) {
                                                                 valueWithVariableEntry.setValue(ValueWithVariable.of(variables.get(valueWithVariableEntry.getKey())));
@@ -93,7 +93,7 @@ public class VariableHandler implements OperationBeforeHandler {
                                         Stream.ofNullable(directive.getArguments())
                                                 .map(Arguments::getArguments)
                                                 .flatMap(jsonValues -> jsonValues.entrySet().stream())
-                                                .filter(valueWithVariableEntry -> variables.containsKey(valueWithVariableEntry.getKey()))
+                                                .filter(valueWithVariableEntry -> !valueWithVariableEntry.getValue().isVariable() || variables.containsKey(valueWithVariableEntry.getKey()))
                                                 .peek(valueWithVariableEntry -> {
                                                             if (valueWithVariableEntry.getValue().isVariable()) {
                                                                 valueWithVariableEntry.setValue(ValueWithVariable.of(variables.get(valueWithVariableEntry.getKey())));
