@@ -1,8 +1,6 @@
 package io.graphoenix.core.handler.before;
 
-import io.graphoenix.spi.graphql.common.Arguments;
-import io.graphoenix.spi.graphql.common.Directive;
-import io.graphoenix.spi.graphql.common.ValueWithVariable;
+import io.graphoenix.spi.graphql.common.*;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Fragment;
 import io.graphoenix.spi.graphql.operation.Operation;
@@ -56,12 +54,9 @@ public class VariableHandler implements OperationBeforeHandler {
                                         Stream.ofNullable(field.getArguments())
                                                 .map(Arguments::getArguments)
                                                 .flatMap(jsonValues -> jsonValues.entrySet().stream())
-                                                .filter(valueWithVariableEntry -> !valueWithVariableEntry.getValue().isVariable() || variables.containsKey(valueWithVariableEntry.getKey()))
-                                                .peek(valueWithVariableEntry -> {
-                                                            if (valueWithVariableEntry.getValue().isVariable()) {
-                                                                valueWithVariableEntry.setValue(ValueWithVariable.of(variables.get(valueWithVariableEntry.getKey())));
-                                                            }
-                                                        }
+                                                .filter(valueWithVariableEntry -> !valueWithVariableEntry.getValue().isVariable() || variables.containsKey(valueWithVariableEntry.getValue().asVariable().getName()))
+                                                .map(valueWithVariableEntry ->
+                                                        new AbstractMap.SimpleEntry<>(valueWithVariableEntry.getKey(), replaceVariables(valueWithVariableEntry.getValue(), variables))
                                                 )
                                                 .collect(
                                                         Collectors.toMap(
@@ -93,12 +88,9 @@ public class VariableHandler implements OperationBeforeHandler {
                                         Stream.ofNullable(directive.getArguments())
                                                 .map(Arguments::getArguments)
                                                 .flatMap(jsonValues -> jsonValues.entrySet().stream())
-                                                .filter(valueWithVariableEntry -> !valueWithVariableEntry.getValue().isVariable() || variables.containsKey(valueWithVariableEntry.getKey()))
-                                                .peek(valueWithVariableEntry -> {
-                                                            if (valueWithVariableEntry.getValue().isVariable()) {
-                                                                valueWithVariableEntry.setValue(ValueWithVariable.of(variables.get(valueWithVariableEntry.getKey())));
-                                                            }
-                                                        }
+                                                .filter(valueWithVariableEntry -> !valueWithVariableEntry.getValue().isVariable() || variables.containsKey(valueWithVariableEntry.getValue().asVariable().getName()))
+                                                .map(valueWithVariableEntry ->
+                                                        new AbstractMap.SimpleEntry<>(valueWithVariableEntry.getKey(), replaceVariables(valueWithVariableEntry.getValue(), variables))
                                                 )
                                                 .collect(
                                                         Collectors.toMap(
@@ -107,6 +99,37 @@ public class VariableHandler implements OperationBeforeHandler {
                                                         )
                                                 )
                                 )
+                );
+    }
+
+    public ValueWithVariable replaceVariables(ValueWithVariable valueWithVariable, Map<String, JsonValue> variables) {
+        if (valueWithVariable.isVariable()) {
+            return ValueWithVariable.of(variables.get(valueWithVariable.asVariable().getName()));
+        } else if (valueWithVariable.isObject()) {
+            return new ObjectValueWithVariable(
+                    replaceObjectVariables(valueWithVariable.asObject(), variables)
+            );
+        } else if (valueWithVariable.isArray()) {
+            return new ArrayValueWithVariable(
+                    valueWithVariable.asArray().getValueWithVariables().stream()
+                            .map(item -> replaceVariables(item, variables))
+                            .collect(Collectors.toList())
+            );
+        }
+        return valueWithVariable;
+    }
+
+    public Map<String, ValueWithVariable> replaceObjectVariables(ObjectValueWithVariable objectValueWithVariable, Map<String, JsonValue> variables) {
+        return objectValueWithVariable.getObjectValueWithVariable().entrySet().stream()
+                .filter(valueWithVariableEntry -> !valueWithVariableEntry.getValue().isVariable() || variables.containsKey(valueWithVariableEntry.getValue().asVariable().getName()))
+                .map(valueWithVariableEntry ->
+                        new AbstractMap.SimpleEntry<>(valueWithVariableEntry.getKey(), replaceVariables(valueWithVariableEntry.getValue(), variables))
+                )
+                .collect(
+                        Collectors.toMap(
+                                Map.Entry::getKey,
+                                Map.Entry::getValue
+                        )
                 );
     }
 
