@@ -190,6 +190,8 @@ public class ObjectValueWithVariable extends AbstractMap<String, JsonValue> impl
         JsonValue value = get(name);
         if (value == null) {
             throw new NullPointerException();
+        } else if (value instanceof BooleanValue) {
+            return ((BooleanValue) value).getValue();
         } else if (value == JsonValue.TRUE) {
             return true;
         } else if (value == JsonValue.FALSE) {
@@ -202,7 +204,11 @@ public class ObjectValueWithVariable extends AbstractMap<String, JsonValue> impl
     @Override
     public boolean getBoolean(String name, boolean defaultValue) {
         JsonValue value = get(name);
-        if (value == JsonValue.TRUE) {
+        if (value == null) {
+            throw new NullPointerException();
+        } else if (value instanceof BooleanValue) {
+            return ((BooleanValue) value).getValue();
+        } else if (value == JsonValue.TRUE) {
             return true;
         } else if (value == JsonValue.FALSE) {
             return false;
