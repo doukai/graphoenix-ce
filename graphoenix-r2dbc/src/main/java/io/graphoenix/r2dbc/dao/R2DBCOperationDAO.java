@@ -81,17 +81,18 @@ public class R2DBCOperationDAO implements OperationDAO, Asyncable {
         String[] statements = sql.split(";");
         String[] mutations = Arrays.copyOfRange(statements, 0, statements.length - 1);
         String query = statements[statements.length - 1];
+        Map<String, Object> processedParameters = r2DBCParameterHandler.process(parameters);
         if (r2DBCConfig.getAllowMultiQueries()) {
-            return mutationExecutor.executeMutations(Stream.of(mutations))
+            return mutationExecutor.executeMutations(Stream.of(mutations), processedParameters)
                     .doOnSuccess(count -> Logger.info("mutation count: {}", count))
-                    .then(queryExecutor.executeQuery(query))
+                    .then(queryExecutor.executeQuery(query, processedParameters))
                     .mapNotNull(json -> jsonb.fromJson(json, beanClass));
         } else {
-            return mutationExecutor.executeMutationsFlux(Stream.of(mutations))
+            return mutationExecutor.executeMutationsFlux(Stream.of(mutations), processedParameters)
                     .doOnNext(count -> Logger.info("mutation count: {}", count))
                     .reduce(Long::sum)
                     .doOnSuccess(count -> Logger.info("mutation total count: {}", count))
-                    .then(queryExecutor.executeQuery(query))
+                    .then(queryExecutor.executeQuery(query, processedParameters))
                     .mapNotNull(json -> jsonb.fromJson(json, beanClass));
         }
     }
@@ -101,17 +102,18 @@ public class R2DBCOperationDAO implements OperationDAO, Asyncable {
         String[] statements = sql.split(";");
         String[] mutations = Arrays.copyOfRange(statements, 0, statements.length - 1);
         String query = statements[statements.length - 1];
+        Map<String, Object> processedParameters = r2DBCParameterHandler.process(parameters);
         if (r2DBCConfig.getAllowMultiQueries()) {
-            return mutationExecutor.executeMutations(Stream.of(mutations))
+            return mutationExecutor.executeMutations(Stream.of(mutations), processedParameters)
                     .doOnSuccess(count -> Logger.info("mutation count: {}", count))
-                    .then(queryExecutor.executeQuery(query))
+                    .then(queryExecutor.executeQuery(query, processedParameters))
                     .mapNotNull(json -> jsonb.fromJson(json, type));
         } else {
-            return mutationExecutor.executeMutationsFlux(Stream.of(mutations))
+            return mutationExecutor.executeMutationsFlux(Stream.of(mutations), processedParameters)
                     .doOnNext(count -> Logger.info("mutation count: {}", count))
                     .reduce(Long::sum)
                     .doOnSuccess(count -> Logger.info("mutation total count: {}", count))
-                    .then(queryExecutor.executeQuery(query))
+                    .then(queryExecutor.executeQuery(query, processedParameters))
                     .mapNotNull(json -> jsonb.fromJson(json, type));
         }
     }
