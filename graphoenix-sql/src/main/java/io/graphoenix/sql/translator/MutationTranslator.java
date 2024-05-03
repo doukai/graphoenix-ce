@@ -101,7 +101,7 @@ public class MutationTranslator {
                                                                         leafFieldDefinitionList.stream()
                                                                                 .map(subField -> graphqlFieldToColumn(table, subField.getName()))
                                                                                 .collect(Collectors.toList()),
-                                                                        selectVariablesFromJsonObjectArray(leafFieldDefinitionList, inputValue)
+                                                                        selectVariablesFromJsonObjectArray(leafFieldDefinitionList, inputValue, valueWithVariable.asVariable())
                                                                 )
                                                         );
                                                     } else {
@@ -411,7 +411,7 @@ public class MutationTranslator {
                             leafFieldDefinitionList.stream()
                                     .map(subField -> graphqlFieldToColumn(table, subField.getName()))
                                     .collect(Collectors.toList()),
-                            selectVariablesFromJsonObjectArray(leafFieldDefinitionList, inputValue)
+                            selectVariablesFromJsonObjectArray(leafFieldDefinitionList, inputValue, valueWithVariable.asVariable())
                     )
             );
         } else if (valueWithVariable.isArray()) {
@@ -811,7 +811,6 @@ public class MutationTranslator {
         return insert;
     }
 
-
     protected Insert insertSelectExpression(Table table, List<Column> columnList, Select select) {
         Insert insert = new Insert()
                 .withTable(table)
@@ -873,13 +872,13 @@ public class MutationTranslator {
                 );
     }
 
-    protected Select selectVariablesFromJsonObjectArray(List<FieldDefinition> fieldDefinitionList, InputValue inputValue) {
+    protected Select selectVariablesFromJsonObjectArray(List<FieldDefinition> fieldDefinitionList, InputValue inputValue, ValueWithVariable valueWithVariable) {
         return new PlainSelect()
                 .addSelectItems(new AllColumns())
                 .withFromItem(
                         new JsonTableFunction()
                                 .withJson(
-                                        new JdbcNamedParameter().withName(inputValue.getName())
+                                        new JdbcNamedParameter().withName(valueWithVariable.asVariable().getName())
                                 )
                                 .withPath(new StringValue("$[*]"))
                                 .withColumnDefinitions(

@@ -202,9 +202,8 @@ public class OperationInterfaceImplementer {
                     ClassName.get(Map.class),
                     CodeBlock
                             .join(
-                                    operation.getSelection(0).asField().getArguments().getArguments().entrySet().stream()
-                                            .filter(entry -> entry.getValue().isVariable())
-                                            .map(entry -> CodeBlock.of("$S, (Object)$L", entry.getKey(), entry.getValue().asVariable().getName()))
+                                    parameters.stream()
+                                            .map(entry -> CodeBlock.of("$S, (Object)$L", entry.getKey(), entry.getKey()))
                                             .collect(Collectors.toList()),
                                     ", "
                             )
