@@ -35,8 +35,7 @@ public class R2DBCParameterHandler {
     private Object processValue(Object value) {
         if (value == null) {
             return null;
-        }
-        if (value.getClass().isPrimitive() ||
+        } else if (value.getClass().isPrimitive() ||
                 value instanceof String ||
                 value instanceof Character ||
                 value instanceof Number ||
@@ -53,7 +52,8 @@ public class R2DBCParameterHandler {
             return jsonProvider.createObjectBuilder((Map<String, ?>) value).build().toString();
         } else if (value instanceof Collection) {
             return jsonProvider.createArrayBuilder((Collection<?>) value).build().toString();
+        } else {
+            return jsonb.toJson(value);
         }
-        return jsonb.toJson(value);
     }
 }

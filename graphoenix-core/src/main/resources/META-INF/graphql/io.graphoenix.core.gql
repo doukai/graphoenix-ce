@@ -81,7 +81,7 @@ enum __DirectiveLocation @package(name: "io.graphoenix.core") @class(name: "io.g
     INPUT_FIELD_DEFINITION
 }
 interface Meta @package(name: "io.graphoenix.core") @class(name: "io.graphoenix.core.dto.interfaceType.Meta") @grpc(name: "io.graphoenix.core.dto.interfaceType.grpc.Meta") {
-    isDeprecated: Boolean
+    isDeprecated: Boolean @options(default: "false")
     version: Int
     realmId: Int
     createUserId: String

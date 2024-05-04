@@ -81,7 +81,7 @@ enum __DirectiveLocation {
     INPUT_FIELD_DEFINITION
 }
 interface Meta {
-    isDeprecated: Boolean
+    isDeprecated: Boolean @options(default: "false")
     version: Int
     realmId: Int
     createUserId: String
