@@ -300,7 +300,14 @@ public class MutationTranslator {
                                     }
                             )
             );
-            if (inputValueValueWithVariableMap.entrySet().stream()
+            if (whereInputValueEntry.isPresent()) {
+                createInsertIdSetStatementStream = whereInputValueEntry
+                        .flatMap(entry -> entry.getValue().asObject().getValueWithVariableOrEmpty(idName))
+                        .filter(ValueWithVariable::isObject)
+                        .flatMap(valueWithVariable -> valueWithVariable.asObject().getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
+                        .flatMap(DBValueUtil::idValueToDBValue).stream()
+                        .map(expression -> createUpdateIdSetStatement(fieldTypeDefinition.asObject().getName(), idName, level, index, expression));
+            } else if (inputValueValueWithVariableMap.entrySet().stream()
                     .noneMatch(entry -> entry.getKey().getName().equals(idName))) {
                 createInsertIdSetStatementStream = Stream.of(createInsertIdSetStatement(fieldTypeDefinition.asObject().getName(), idName, level, index));
             }
