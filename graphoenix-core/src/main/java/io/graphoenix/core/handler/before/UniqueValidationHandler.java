@@ -154,6 +154,7 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
 
     public Stream<Tuple4<String, String, ValueWithVariable, String>> buildUniqueItems(FieldDefinition fieldDefinition, Field field) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+        FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
         if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             return Stream
                     .concat(
@@ -171,6 +172,9 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
                                                                             buildUniqueItems(
                                                                                     fieldTypeDefinition.asObject(),
                                                                                     "",
+                                                                                    field.getArguments().containsKey(idField.getName()) ||
+                                                                                            field.getArguments().containsKey(INPUT_VALUE_WHERE_NAME) &&
+                                                                                                    field.getArguments().getJsonObject(INPUT_VALUE_WHERE_NAME).containsKey(idField.getName()),
                                                                                     subFieldDefinition,
                                                                                     inputValue,
                                                                                     valueWithVariable
@@ -200,6 +204,9 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
                                                                                                                             buildUniqueItems(
                                                                                                                                     fieldTypeDefinition.asObject(),
                                                                                                                                     "/" + INPUT_VALUE_LIST_NAME + "/" + index,
+                                                                                                                                    arrayValueWithVariable.getValueWithVariable(index).asObject().containsKey(idField.getName()) ||
+                                                                                                                                            arrayValueWithVariable.getValueWithVariable(index).asObject().containsKey(INPUT_VALUE_WHERE_NAME) &&
+                                                                                                                                                    arrayValueWithVariable.getValueWithVariable(index).asObject().getJsonObject(INPUT_VALUE_WHERE_NAME).containsKey(idField.getName()),
                                                                                                                                     subFieldDefinition,
                                                                                                                                     subInputValue,
                                                                                                                                     subValueWithVariable
@@ -216,12 +223,13 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
         return Stream.empty();
     }
 
-    public Stream<Tuple4<String, String, ValueWithVariable, String>> buildUniqueItems(ObjectType objectType, String path, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable) {
+    public Stream<Tuple4<String, String, ValueWithVariable, String>> buildUniqueItems(ObjectType objectType, String path, boolean hasIDField, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable) {
         if (valueWithVariable.isNull()) {
             return Stream.empty();
         }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        if (fieldDefinition.isUnique()) {
+        FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
+        if (!hasIDField && fieldDefinition.isUnique()) {
             return Stream.of(Tuples.of(objectType.getName(), fieldDefinition.getName(), valueWithVariable, path + "/" + fieldDefinition.getName()));
         } else if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
@@ -241,6 +249,9 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
                                                                                     buildUniqueItems(
                                                                                             fieldTypeDefinition.asObject(),
                                                                                             path + "/" + fieldDefinition.getName() + "/" + index,
+                                                                                            valueWithVariable.asArray().getValueWithVariable(index).asObject().containsKey(idField.getName()) ||
+                                                                                                    valueWithVariable.asArray().getValueWithVariable(index).asObject().containsKey(INPUT_VALUE_WHERE_NAME) &&
+                                                                                                            valueWithVariable.asArray().getValueWithVariable(index).asObject().getJsonObject(INPUT_VALUE_WHERE_NAME).containsKey(idField.getName()),
                                                                                             subFieldDefinition,
                                                                                             subInputValue,
                                                                                             subValueWithVariable
@@ -258,6 +269,9 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
                                                                     buildUniqueItems(
                                                                             fieldTypeDefinition.asObject(),
                                                                             path + "/" + fieldDefinition.getName(),
+                                                                            valueWithVariable.asObject().containsKey(idField.getName()) ||
+                                                                                    valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME) &&
+                                                                                            valueWithVariable.asObject().getJsonObject(INPUT_VALUE_WHERE_NAME).containsKey(idField.getName()),
                                                                             subFieldDefinition,
                                                                             subInputValue,
                                                                             subValueWithVariable
