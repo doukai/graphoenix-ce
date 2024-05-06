@@ -266,7 +266,7 @@ public class MutationTranslator {
 
         Stream<Statement> leafFieldMutationStatement = Stream.empty();
         Stream<Statement> createInsertIdSetStatementStream = Stream.empty();
-        if (!excludeFieldNameSet.containsAll(leafValueWithVariableMap.keySet())) {
+        if (leafValueWithVariableMap.containsKey(FIELD_DEPRECATED_NAME) && leafValueWithVariableMap.get(FIELD_DEPRECATED_NAME).asBoolean().getValue() || !excludeFieldNameSet.containsAll(leafValueWithVariableMap.keySet())) {
             leafFieldMutationStatement = Stream.of(
                     whereInputValueEntry
                             .flatMap(entry -> argumentsTranslator.inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), entry.getValue(), level))

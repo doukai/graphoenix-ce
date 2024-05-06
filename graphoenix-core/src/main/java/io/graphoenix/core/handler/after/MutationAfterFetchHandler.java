@@ -360,28 +360,43 @@ public class MutationAfterFetchHandler implements OperationAfterHandler {
         } else if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
             JsonValue fieldJsonValue = jsonValue.asJsonObject().get(fieldDefinition.getName());
+            FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
             return inputValueTypeDefinition.asInputObject().getInputValues().stream()
                     .flatMap(subInputValue ->
                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                     .flatMap(subFieldDefinition -> {
                                                 if (fieldDefinition.getType().hasList()) {
-                                                    return IntStream.range(0, fieldJsonValue.asJsonArray().size())
+                                                    return IntStream.range(0, valueWithVariable.asArray().size())
                                                             .mapToObj(index ->
-                                                                    Stream.ofNullable(valueWithVariable.asArray().getValueWithVariable(index).asObject().getObjectValueWithVariable())
-                                                                            .flatMap(objectValue ->
-                                                                                    Optional.ofNullable(objectValue.get(subInputValue.getName()))
-                                                                                            .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
+                                                                    fieldJsonValue.asJsonArray().stream()
+                                                                            .filter(item -> item.getValueType().equals(JsonValue.ValueType.OBJECT))
+                                                                            .map(JsonValue::asJsonObject)
+                                                                            .filter(item ->
+                                                                                    valueWithVariable.asArray().getValueWithVariable(index).asJsonObject().containsKey(idField.getName()) &&
+                                                                                            valueWithVariable.asArray().getValueWithVariable(index).asJsonObject().get(idField.getName()).toString().equals(item.get(idField.getName()).toString()) ||
+                                                                                            valueWithVariable.asArray().getValueWithVariable(index).asJsonObject().containsKey(INPUT_VALUE_WHERE_NAME) &&
+                                                                                                    valueWithVariable.asArray().getValueWithVariable(index).asJsonObject().getJsonObject(INPUT_VALUE_WHERE_NAME)
+                                                                                                            .getJsonObject(idField.getName())
+                                                                                                            .get(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME).toString()
+                                                                                                            .equals(item.get(idField.getName()).toString())
                                                                             )
-                                                                            .flatMap(subValueWithVariable ->
-                                                                                    buildFetchItems(
-                                                                                            fieldTypeDefinition.asObject(),
-                                                                                            field,
-                                                                                            path + "/" + fieldDefinition.getName() + "/" + index,
-                                                                                            subFieldDefinition,
-                                                                                            subInputValue,
-                                                                                            subValueWithVariable,
-                                                                                            fieldJsonValue.asJsonArray().get(index)
-                                                                                    )
+                                                                            .flatMap(item ->
+                                                                                    Stream.ofNullable(valueWithVariable.asArray().getValueWithVariable(index).asObject().getObjectValueWithVariable())
+                                                                                            .flatMap(objectValue ->
+                                                                                                    Optional.ofNullable(objectValue.get(subInputValue.getName()))
+                                                                                                            .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
+                                                                                            )
+                                                                                            .flatMap(subValueWithVariable ->
+                                                                                                    buildFetchItems(
+                                                                                                            fieldTypeDefinition.asObject(),
+                                                                                                            field,
+                                                                                                            path + "/" + fieldDefinition.getName() + "/" + index,
+                                                                                                            subFieldDefinition,
+                                                                                                            subInputValue,
+                                                                                                            subValueWithVariable,
+                                                                                                            item
+                                                                                                    )
+                                                                                            )
                                                                             )
                                                             )
                                                             .flatMap(stream -> stream);
