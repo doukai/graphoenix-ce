@@ -84,23 +84,28 @@ public class ArgumentsTranslator {
                                                     .filter(ValueWithVariable::isArray)
                                                     .flatMap(valueWithVariable -> valueWithVariable.asArray().getValueWithVariables().stream())
                                                     .flatMap(valueWithVariable -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), valueWithVariable, level, true).stream())
-                                    ),
-                            inputValueValueWithVariableMap.entrySet().stream()
-                                    .anyMatch(entry ->
-                                            entry.getKey().getName().equals(INPUT_VALUE_INCLUDE_DEPRECATED_NAME) &&
-                                                    entry.getValue().isBoolean() &&
-                                                    entry.getValue().asBoolean().getValue()
-                                    ) ?
-                                    Stream.empty() :
-                                    Stream.of(
-                                            new NotEqualsTo()
-                                                    .withLeftExpression(graphqlFieldToColumn(fieldTypeDefinition.asObject().getName(), FIELD_DEPRECATED_NAME, level))
-                                                    .withRightExpression(new LongValue(1))
                                     )
                     )
                     .collect(Collectors.toList());
 
-            return expressionListToMultipleExpression(expressionList, isOr(field.getArguments()), isNot(field.getArguments()));
+            return inputValueValueWithVariableMap.entrySet().stream()
+                    .anyMatch(entry ->
+                            entry.getKey().getName().equals(INPUT_VALUE_INCLUDE_DEPRECATED_NAME) &&
+                                    entry.getValue().isBoolean() &&
+                                    entry.getValue().asBoolean().getValue()
+                    ) ?
+                    expressionListToMultipleExpression(expressionList, isOr(field.getArguments()), isNot(field.getArguments())) :
+                    expressionListToMultipleExpression(expressionList, isOr(field.getArguments()), isNot(field.getArguments()))
+                            .map(expression ->
+                                    new MultiAndExpression(
+                                            new ExpressionList<>(
+                                                    expression,
+                                                    new NotEqualsTo()
+                                                            .withLeftExpression(graphqlFieldToColumn(fieldTypeDefinition.asObject().getName(), FIELD_DEPRECATED_NAME, level))
+                                                            .withRightExpression(new LongValue(1))
+                                            )
+                                    )
+                            );
         } else {
             return fieldDefinition.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME)
                     .flatMap(inputValue ->
@@ -195,23 +200,28 @@ public class ArgumentsTranslator {
                                                     .filter(ValueWithVariable::isArray)
                                                     .flatMap(field -> field.asArray().getValueWithVariables().stream())
                                                     .flatMap(field -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), field, level, true).stream())
-                                    ),
-                            exs || inputValueValueWithVariableMap.entrySet().stream()
-                                    .anyMatch(entry ->
-                                            entry.getKey().getName().equals(INPUT_VALUE_INCLUDE_DEPRECATED_NAME) &&
-                                                    entry.getValue().isBoolean() &&
-                                                    entry.getValue().asBoolean().getValue()
-                                    ) ?
-                                    Stream.empty() :
-                                    Stream.of(
-                                            new NotEqualsTo()
-                                                    .withLeftExpression(graphqlFieldToColumn(fieldTypeDefinition.asObject().getName(), FIELD_DEPRECATED_NAME, level))
-                                                    .withRightExpression(new LongValue(1))
                                     )
                     )
                     .collect(Collectors.toList());
 
-            return expressionListToMultipleExpression(expressionList, isOr(valueWithVariable), isNot(valueWithVariable));
+            return exs || inputValueValueWithVariableMap.entrySet().stream()
+                    .anyMatch(entry ->
+                            entry.getKey().getName().equals(INPUT_VALUE_INCLUDE_DEPRECATED_NAME) &&
+                                    entry.getValue().isBoolean() &&
+                                    entry.getValue().asBoolean().getValue()
+                    ) ?
+                    expressionListToMultipleExpression(expressionList, isOr(valueWithVariable), isNot(valueWithVariable)) :
+                    expressionListToMultipleExpression(expressionList, isOr(valueWithVariable), isNot(valueWithVariable))
+                            .map(expression ->
+                                    new MultiAndExpression(
+                                            new ExpressionList<>(
+                                                    expression,
+                                                    new NotEqualsTo()
+                                                            .withLeftExpression(graphqlFieldToColumn(fieldTypeDefinition.asObject().getName(), FIELD_DEPRECATED_NAME, level))
+                                                            .withRightExpression(new LongValue(1))
+                                            )
+                                    )
+                            );
         } else {
             InputObjectType inputObject = documentManager.getInputValueTypeDefinition(inputValue).asInputObject();
             return inputObject.getInputValueOrEmpty(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME)
