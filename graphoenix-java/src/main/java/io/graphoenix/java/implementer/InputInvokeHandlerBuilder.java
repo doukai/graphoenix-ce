@@ -51,7 +51,7 @@ public class InputInvokeHandlerBuilder {
         this.invokeClassSet = documentManager.getDocument().getInputObjectTypes()
                 .filter(packageManager::isLocalPackage)
                 .filter(InputObjectType::isInvokesInput)
-                .flatMap(inputObjectType -> inputObjectType.getInputInvokes().stream())
+                .flatMap(this::getInvokes)
                 .map(Tuple3::getT1)
                 .collect(Collectors.toSet());
         this.buildClass().writeTo(filer);
@@ -158,8 +158,8 @@ public class InputInvokeHandlerBuilder {
         }
 
         CodeBlock.Builder codeBlockBuilder = CodeBlock.builder();
-        List<Tuple4<String, String, String, Boolean>> tuple4List = inputObjectType.getInputInvokes();
-        if (tuple4List != null && !tuple4List.isEmpty()) {
+        List<Tuple4<String, String, String, Boolean>> tuple4List = getInvokes(inputObjectType).collect(Collectors.toList());
+        if (!tuple4List.isEmpty()) {
             int index = 0;
             for (Tuple4<String, String, String, Boolean> tuple4 : tuple4List) {
                 String apiVariableName = typeNameToFieldName(toClassName(tuple4.getT1()).simpleName());
@@ -224,67 +224,67 @@ public class InputInvokeHandlerBuilder {
                 .add(CodeBlock.builder()
                         .beginControlFlow("switch (entry.getKey())")
                         .add(CodeBlock.join(
-                                Streams
-                                        .concat(
-                                                inputObjectType.getInputValues().stream()
-                                                        .filter(inputValue -> documentManager.getInputValueTypeDefinition(inputValue).isInputObject())
-                                                        .filter(inputValue -> {
-                                                                    InputObjectType inputValueType = documentManager.getInputValueTypeDefinition(inputValue).asInputObject();
-                                                                    return inputValueType.getName().endsWith(SUFFIX_INPUT) && documentManager.getDocument().getDefinition(inputValueType.getName().substring(0, inputValueType.getName().lastIndexOf(SUFFIX_INPUT))).isObject() ||
-                                                                            inputValueType.getName().endsWith(SUFFIX_EXPRESSION) && documentManager.getDocument().getDefinition(inputValueType.getName().substring(0, inputValueType.getName().lastIndexOf(SUFFIX_EXPRESSION))).isObject();
-                                                                }
-                                                        )
-                                                        .filter(inputValue -> !inputValue.getType().hasList())
-                                                        .map(inputValue -> {
-                                                                    InputObjectType inputValueType = documentManager.getInputValueTypeDefinition(inputValue).asInputObject();
-                                                                    CodeBlock caseCodeBlock = CodeBlock.of("case $S:\n", inputValue.getName());
-                                                                    CodeBlock invokeCodeBlock = CodeBlock.of("return $T.justOrEmpty($L.$L()).flatMap(field -> $L(field, entry.getValue().asObject())).doOnNext($L -> $L.$L($L));",
-                                                                            ClassName.get(Mono.class),
-                                                                            resultParameterName,
-                                                                            getFieldGetterMethodName(inputValue.getName()),
-                                                                            typeNameToFieldName(inputValueType.getName()),
-                                                                            getFieldName(inputValue.getName()),
-                                                                            resultParameterName,
-                                                                            getFieldSetterMethodName(inputValue.getName()),
-                                                                            getFieldName(inputValue.getName())
-                                                                    );
-                                                                    return CodeBlock.builder().add(caseCodeBlock).indent().add(invokeCodeBlock).unindent().build();
-                                                                }
-                                                        ),
-                                                inputObjectType.getInputValues().stream()
-                                                        .filter(inputValue -> documentManager.getInputValueTypeDefinition(inputValue).isInputObject())
-                                                        .filter(inputValue -> {
-                                                                    InputObjectType inputValueType = documentManager.getInputValueTypeDefinition(inputValue).asInputObject();
-                                                                    return inputValueType.getName().endsWith(SUFFIX_INPUT) && documentManager.getDocument().getDefinition(inputValueType.getName().substring(0, inputValueType.getName().lastIndexOf(SUFFIX_INPUT))).isObject() ||
-                                                                            inputValueType.getName().endsWith(SUFFIX_EXPRESSION) && documentManager.getDocument().getDefinition(inputValueType.getName().substring(0, inputValueType.getName().lastIndexOf(SUFFIX_EXPRESSION))).isObject();
-                                                                }
-                                                        )
-                                                        .filter(inputValue -> inputValue.getType().hasList())
-                                                        .map(inputValue -> {
-                                                                    InputObjectType inputValueType = documentManager.getInputValueTypeDefinition(inputValue).asInputObject();
-                                                                    CodeBlock caseCodeBlock = CodeBlock.of("case $S:\n", inputValue.getName());
-                                                                    CodeBlock invokeCodeBlock = CodeBlock.of("return $T.justOrEmpty($L.$L()).map($T::size).flatMapMany(size -> $T.range(0, size)).flatMap(index -> $L(new $T<>($L.$L()).get(index), entry.getValue().asArray().getValueWithVariables().get(index).asObject())).collectList().doOnNext($L -> $L.$L($L));",
-                                                                            ClassName.get(Mono.class),
-                                                                            resultParameterName,
-                                                                            getFieldGetterMethodName(inputValue.getName()),
-                                                                            ClassName.get(Collection.class),
-                                                                            ClassName.get(Flux.class),
-                                                                            typeNameToFieldName(inputValueType.getName()),
-                                                                            ClassName.get(ArrayList.class),
-                                                                            resultParameterName,
-                                                                            getFieldGetterMethodName(inputValue.getName()),
-                                                                            getFieldName(inputValue.getName()),
-                                                                            resultParameterName,
-                                                                            getFieldSetterMethodName(inputValue.getName()),
-                                                                            getFieldName(inputValue.getName())
-                                                                    );
-                                                                    return CodeBlock.builder().add(caseCodeBlock).indent().add(invokeCodeBlock).unindent().build();
-                                                                }
-                                                        ),
-                                                Stream.of(CodeBlock.builder().add(CodeBlock.of("default:\n")).indent().add(CodeBlock.of("return $T.empty();\n", ClassName.get(Flux.class))).unindent().build())
-                                        )
-                                        .collect(Collectors.toList()),
-                                System.lineSeparator()
+                                        Streams
+                                                .concat(
+                                                        inputObjectType.getInputValues().stream()
+                                                                .filter(inputValue -> documentManager.getInputValueTypeDefinition(inputValue).isInputObject())
+                                                                .filter(inputValue -> {
+                                                                            InputObjectType inputValueType = documentManager.getInputValueTypeDefinition(inputValue).asInputObject();
+                                                                            return inputValueType.getName().endsWith(SUFFIX_INPUT) && documentManager.getDocument().getDefinition(inputValueType.getName().substring(0, inputValueType.getName().lastIndexOf(SUFFIX_INPUT))).isObject() ||
+                                                                                    inputValueType.getName().endsWith(SUFFIX_EXPRESSION) && documentManager.getDocument().getDefinition(inputValueType.getName().substring(0, inputValueType.getName().lastIndexOf(SUFFIX_EXPRESSION))).isObject();
+                                                                        }
+                                                                )
+                                                                .filter(inputValue -> !inputValue.getType().hasList())
+                                                                .map(inputValue -> {
+                                                                            InputObjectType inputValueType = documentManager.getInputValueTypeDefinition(inputValue).asInputObject();
+                                                                            CodeBlock caseCodeBlock = CodeBlock.of("case $S:\n", inputValue.getName());
+                                                                            CodeBlock invokeCodeBlock = CodeBlock.of("return $T.justOrEmpty($L.$L()).flatMap(field -> $L(field, entry.getValue().asObject())).doOnNext($L -> $L.$L($L));",
+                                                                                    ClassName.get(Mono.class),
+                                                                                    resultParameterName,
+                                                                                    getFieldGetterMethodName(inputValue.getName()),
+                                                                                    typeNameToFieldName(inputValueType.getName()),
+                                                                                    getFieldName(inputValue.getName()),
+                                                                                    resultParameterName,
+                                                                                    getFieldSetterMethodName(inputValue.getName()),
+                                                                                    getFieldName(inputValue.getName())
+                                                                            );
+                                                                            return CodeBlock.builder().add(caseCodeBlock).indent().add(invokeCodeBlock).unindent().build();
+                                                                        }
+                                                                ),
+                                                        inputObjectType.getInputValues().stream()
+                                                                .filter(inputValue -> documentManager.getInputValueTypeDefinition(inputValue).isInputObject())
+                                                                .filter(inputValue -> {
+                                                                            InputObjectType inputValueType = documentManager.getInputValueTypeDefinition(inputValue).asInputObject();
+                                                                            return inputValueType.getName().endsWith(SUFFIX_INPUT) && documentManager.getDocument().getDefinition(inputValueType.getName().substring(0, inputValueType.getName().lastIndexOf(SUFFIX_INPUT))).isObject() ||
+                                                                                    inputValueType.getName().endsWith(SUFFIX_EXPRESSION) && documentManager.getDocument().getDefinition(inputValueType.getName().substring(0, inputValueType.getName().lastIndexOf(SUFFIX_EXPRESSION))).isObject();
+                                                                        }
+                                                                )
+                                                                .filter(inputValue -> inputValue.getType().hasList())
+                                                                .map(inputValue -> {
+                                                                            InputObjectType inputValueType = documentManager.getInputValueTypeDefinition(inputValue).asInputObject();
+                                                                            CodeBlock caseCodeBlock = CodeBlock.of("case $S:\n", inputValue.getName());
+                                                                            CodeBlock invokeCodeBlock = CodeBlock.of("return $T.justOrEmpty($L.$L()).map($T::size).flatMapMany(size -> $T.range(0, size)).flatMap(index -> $L(new $T<>($L.$L()).get(index), entry.getValue().asArray().getValueWithVariables().get(index).asObject())).collectList().doOnNext($L -> $L.$L($L));",
+                                                                                    ClassName.get(Mono.class),
+                                                                                    resultParameterName,
+                                                                                    getFieldGetterMethodName(inputValue.getName()),
+                                                                                    ClassName.get(Collection.class),
+                                                                                    ClassName.get(Flux.class),
+                                                                                    typeNameToFieldName(inputValueType.getName()),
+                                                                                    ClassName.get(ArrayList.class),
+                                                                                    resultParameterName,
+                                                                                    getFieldGetterMethodName(inputValue.getName()),
+                                                                                    getFieldName(inputValue.getName()),
+                                                                                    resultParameterName,
+                                                                                    getFieldSetterMethodName(inputValue.getName()),
+                                                                                    getFieldName(inputValue.getName())
+                                                                            );
+                                                                            return CodeBlock.builder().add(caseCodeBlock).indent().add(invokeCodeBlock).unindent().build();
+                                                                        }
+                                                                ),
+                                                        Stream.of(CodeBlock.builder().add(CodeBlock.of("default:\n")).indent().add(CodeBlock.of("return $T.empty();\n", ClassName.get(Flux.class))).unindent().build())
+                                                )
+                                                .collect(Collectors.toList()),
+                                        System.lineSeparator()
                                 )
                         )
                         .endControlFlow()
@@ -298,5 +298,15 @@ public class InputInvokeHandlerBuilder {
                 .add(")");
         builder.addStatement(codeBlockBuilder.build());
         return builder.build();
+    }
+
+    public Stream<Tuple4<String, String, String, Boolean>> getInvokes(InputObjectType inputObjectType) {
+        return Stream
+                .concat(
+                        inputObjectType.getInputInvokes().stream(),
+                        inputObjectType.getInterfaces().stream()
+                                .flatMap(interfaceObjectName -> documentManager.getDocument().getInputObjectType(interfaceObjectName).stream())
+                                .flatMap(this::getInvokes)
+                );
     }
 }
