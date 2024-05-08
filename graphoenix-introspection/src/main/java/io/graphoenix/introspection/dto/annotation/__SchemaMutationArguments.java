@@ -49,6 +49,8 @@ public @interface __SchemaMutationArguments {
 
   String subscriptionTypeName() default "";
 
+  __SchemaInput1 input() default @__SchemaInput1;
+
   __SchemaExpression1 where() default @__SchemaExpression1;
 
   String $id() default "";
@@ -86,6 +88,8 @@ public @interface __SchemaMutationArguments {
   String $mutationTypeName() default "";
 
   String $subscriptionTypeName() default "";
+
+  String $input() default "";
 
   String $where() default "";
 }

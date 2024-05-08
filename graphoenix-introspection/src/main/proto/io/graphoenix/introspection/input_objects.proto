@@ -1266,7 +1266,8 @@ message IntroSchemaMutationArguments {
     string query_type_name = 16;
     string mutation_type_name = 17;
     string subscription_type_name = 18;
-    IntroSchemaExpression where = 19;
+    IntroSchemaInput input = 19;
+    IntroSchemaExpression where = 20;
 }
 message IntroSchemaListMutationArguments {
     string id = 1;
@@ -1314,7 +1315,8 @@ message IntroTypeMutationArguments {
     string of_type_name = 21;
     repeated IntroTypeInterfacesInput intro_type_interfaces = 22;
     repeated IntroTypePossibleTypesInput intro_type_possible_types = 23;
-    IntroTypeExpression where = 24;
+    IntroTypeInput input = 24;
+    IntroTypeExpression where = 25;
 }
 message IntroTypeListMutationArguments {
     string name = 1;
@@ -1362,7 +1364,8 @@ message IntroFieldMutationArguments {
     string intro_typename = 16;
     string of_type_name = 17;
     string type_name = 18;
-    IntroFieldExpression where = 19;
+    IntroFieldInput input = 19;
+    IntroFieldExpression where = 20;
 }
 message IntroFieldListMutationArguments {
     string id = 1;
@@ -1406,7 +1409,8 @@ message IntroInputValueMutationArguments {
     string intro_typename = 17;
     string of_type_name = 18;
     string type_name = 19;
-    IntroInputValueExpression where = 20;
+    IntroInputValueInput input = 20;
+    IntroInputValueExpression where = 21;
 }
 message IntroInputValueListMutationArguments {
     string id = 1;
@@ -1447,7 +1451,8 @@ message IntroEnumValueMutationArguments {
     string create_group_id = 13;
     string intro_typename = 14;
     string of_type_name = 15;
-    IntroEnumValueExpression where = 16;
+    IntroEnumValueInput input = 16;
+    IntroEnumValueExpression where = 17;
 }
 message IntroEnumValueListMutationArguments {
     string id = 1;
@@ -1486,7 +1491,8 @@ message IntroDirectiveMutationArguments {
     string intro_typename = 15;
     int32 schema_id = 16;
     repeated IntroDirectiveLocationsRelationInput intro_directive_locations_relation = 17;
-    IntroDirectiveExpression where = 18;
+    IntroDirectiveInput input = 18;
+    IntroDirectiveExpression where = 19;
 }
 message IntroDirectiveListMutationArguments {
     string name = 1;
@@ -1524,7 +1530,8 @@ message IntroTypeInterfacesMutationArguments {
     google.protobuf.Timestamp update_time = 12;
     string create_group_id = 13;
     string intro_typename = 14;
-    IntroTypeInterfacesExpression where = 15;
+    IntroTypeInterfacesInput input = 15;
+    IntroTypeInterfacesExpression where = 16;
 }
 message IntroTypeInterfacesListMutationArguments {
     string id = 1;
@@ -1559,7 +1566,8 @@ message IntroTypePossibleTypesMutationArguments {
     google.protobuf.Timestamp update_time = 12;
     string create_group_id = 13;
     string intro_typename = 14;
-    IntroTypePossibleTypesExpression where = 15;
+    IntroTypePossibleTypesInput input = 15;
+    IntroTypePossibleTypesExpression where = 16;
 }
 message IntroTypePossibleTypesListMutationArguments {
     string id = 1;
@@ -1593,7 +1601,8 @@ message IntroDirectiveLocationsRelationMutationArguments {
     google.protobuf.Timestamp update_time = 11;
     string create_group_id = 12;
     string intro_typename = 13;
-    IntroDirectiveLocationsRelationExpression where = 14;
+    IntroDirectiveLocationsRelationInput input = 14;
+    IntroDirectiveLocationsRelationExpression where = 15;
 }
 message IntroDirectiveLocationsRelationListMutationArguments {
     string id = 1;

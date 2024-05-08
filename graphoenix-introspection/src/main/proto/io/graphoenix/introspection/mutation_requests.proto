@@ -33,7 +33,8 @@ message MutationIntroSchemaRequest {
     string query_type_name = 18;
     string mutation_type_name = 19;
     string subscription_type_name = 20;
-    IntroSchemaExpression where = 21;
+    IntroSchemaInput input = 21;
+    IntroSchemaExpression where = 22;
 }
 message MutationIntroSchemaListRequest {
     optional string selection_set = 1;
@@ -85,7 +86,8 @@ message MutationIntroTypeRequest {
     string of_type_name = 23;
     repeated IntroTypeInterfacesInput intro_type_interfaces = 24;
     repeated IntroTypePossibleTypesInput intro_type_possible_types = 25;
-    IntroTypeExpression where = 26;
+    IntroTypeInput input = 26;
+    IntroTypeExpression where = 27;
 }
 message MutationIntroTypeListRequest {
     optional string selection_set = 1;
@@ -137,7 +139,8 @@ message MutationIntroFieldRequest {
     string intro_typename = 18;
     string of_type_name = 19;
     string type_name = 20;
-    IntroFieldExpression where = 21;
+    IntroFieldInput input = 21;
+    IntroFieldExpression where = 22;
 }
 message MutationIntroFieldListRequest {
     optional string selection_set = 1;
@@ -185,7 +188,8 @@ message MutationIntroInputValueRequest {
     string intro_typename = 19;
     string of_type_name = 20;
     string type_name = 21;
-    IntroInputValueExpression where = 22;
+    IntroInputValueInput input = 22;
+    IntroInputValueExpression where = 23;
 }
 message MutationIntroInputValueListRequest {
     optional string selection_set = 1;
@@ -230,7 +234,8 @@ message MutationIntroEnumValueRequest {
     string create_group_id = 15;
     string intro_typename = 16;
     string of_type_name = 17;
-    IntroEnumValueExpression where = 18;
+    IntroEnumValueInput input = 18;
+    IntroEnumValueExpression where = 19;
 }
 message MutationIntroEnumValueListRequest {
     optional string selection_set = 1;
@@ -273,7 +278,8 @@ message MutationIntroDirectiveRequest {
     string intro_typename = 17;
     int32 schema_id = 18;
     repeated IntroDirectiveLocationsRelationInput intro_directive_locations_relation = 19;
-    IntroDirectiveExpression where = 20;
+    IntroDirectiveInput input = 20;
+    IntroDirectiveExpression where = 21;
 }
 message MutationIntroDirectiveListRequest {
     optional string selection_set = 1;
@@ -315,7 +321,8 @@ message MutationIntroTypeInterfacesRequest {
     google.protobuf.Timestamp update_time = 14;
     string create_group_id = 15;
     string intro_typename = 16;
-    IntroTypeInterfacesExpression where = 17;
+    IntroTypeInterfacesInput input = 17;
+    IntroTypeInterfacesExpression where = 18;
 }
 message MutationIntroTypeInterfacesListRequest {
     optional string selection_set = 1;
@@ -354,7 +361,8 @@ message MutationIntroTypePossibleTypesRequest {
     google.protobuf.Timestamp update_time = 14;
     string create_group_id = 15;
     string intro_typename = 16;
-    IntroTypePossibleTypesExpression where = 17;
+    IntroTypePossibleTypesInput input = 17;
+    IntroTypePossibleTypesExpression where = 18;
 }
 message MutationIntroTypePossibleTypesListRequest {
     optional string selection_set = 1;
@@ -392,7 +400,8 @@ message MutationIntroDirectiveLocationsRelationRequest {
     google.protobuf.Timestamp update_time = 13;
     string create_group_id = 14;
     string intro_typename = 15;
-    IntroDirectiveLocationsRelationExpression where = 16;
+    IntroDirectiveLocationsRelationInput input = 16;
+    IntroDirectiveLocationsRelationExpression where = 17;
 }
 message MutationIntroDirectiveLocationsRelationListRequest {
     optional string selection_set = 1;

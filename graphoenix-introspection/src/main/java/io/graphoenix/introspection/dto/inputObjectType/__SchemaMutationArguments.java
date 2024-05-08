@@ -54,6 +54,8 @@ public class __SchemaMutationArguments implements MetaInput {
 
   private String subscriptionTypeName;
 
+  private __SchemaInput input;
+
   private __SchemaExpression where;
 
   public String getId() {
@@ -212,6 +214,14 @@ public class __SchemaMutationArguments implements MetaInput {
 
   public void setSubscriptionTypeName(String subscriptionTypeName) {
     this.subscriptionTypeName = subscriptionTypeName;
+  }
+
+  public __SchemaInput getInput() {
+    return this.input;
+  }
+
+  public void setInput(__SchemaInput input) {
+    this.input = input;
   }
 
   public __SchemaExpression getWhere() {

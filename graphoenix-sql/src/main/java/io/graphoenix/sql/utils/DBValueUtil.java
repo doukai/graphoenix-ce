@@ -6,6 +6,7 @@ import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.common.Variable;
 import io.graphoenix.spi.graphql.type.InputValue;
 import net.sf.jsqlparser.expression.*;
+import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals;
 import net.sf.jsqlparser.statement.SetStatement;
@@ -80,6 +81,12 @@ public final class DBValueUtil {
 
     public static Expression createGreaterThanLastInsertIDExpression(String typeName, String idFieldName) {
         return new GreaterThanEquals()
+                .withLeftExpression(graphqlFieldToColumn(graphqlTypeToTable(typeName), idFieldName))
+                .withRightExpression(new Function().withName("LAST_INSERT_ID"));
+    }
+
+    public static Expression createEqualsToLastInsertIDExpression(String typeName, String idFieldName) {
+        return new EqualsTo()
                 .withLeftExpression(graphqlFieldToColumn(graphqlTypeToTable(typeName), idFieldName))
                 .withRightExpression(new Function().withName("LAST_INSERT_ID"));
     }

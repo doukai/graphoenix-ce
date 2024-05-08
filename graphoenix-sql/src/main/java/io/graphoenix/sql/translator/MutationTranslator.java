@@ -125,20 +125,63 @@ public class MutationTranslator {
                                         );
                             }
                     )
-                    .orElseGet(() -> {
-                                Map<InputValue, ValueWithVariable> inputValueValueWithVariableMap = Stream.ofNullable(fieldDefinition.getArguments())
-                                        .flatMap(Collection::stream)
-                                        .flatMap(argumentInput ->
-                                                Optional.ofNullable(field.getArguments())
-                                                        .flatMap(arguments -> arguments.getArgumentOrEmpty(argumentInput.getName()))
-                                                        .or(() -> Optional.ofNullable(argumentInput.getDefaultValue()))
-                                                        .stream()
-                                                        .map(valueWithVariable -> new AbstractMap.SimpleEntry<>(argumentInput, valueWithVariable))
-                                        )
-                                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                    .orElseGet(() ->
+                            fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_INPUT_NAME)
+                                    .flatMap(inputValue -> {
+                                                Table table = typeToTable(fieldTypeDefinition.asObject());
+                                                List<FieldDefinition> leafFieldDefinitionList = fieldTypeDefinition.asObject().getFields().stream()
+                                                        .filter(subField -> !subField.isInvokeField())
+                                                        .filter(subField -> !subField.isFetchField())
+                                                        .filter(subField -> !subField.isFunctionField())
+                                                        .filter(subField -> !subField.getType().hasList())
+                                                        .filter(subField -> !documentManager.getFieldTypeDefinition(subField).isObject())
+                                                        .collect(Collectors.toList());
 
-                                return inputValueMapToMutationStatementStream(objectType, fieldDefinition, inputValueValueWithVariableMap, field.isMerge());
-                            }
+                                                return Optional.ofNullable(field.getArguments())
+                                                        .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
+                                                        .filter(valueWithVariable -> !valueWithVariable.isNull())
+                                                        .map(valueWithVariable -> {
+                                                                    if (valueWithVariable.isVariable()) {
+                                                                        return Stream.of(
+                                                                                (Statement) insertSelectExpression(
+                                                                                        table,
+                                                                                        leafFieldDefinitionList.stream()
+                                                                                                .map(subField -> graphqlFieldToColumn(table, subField.getName()))
+                                                                                                .collect(Collectors.toList()),
+                                                                                        selectVariablesFromJsonObject(leafFieldDefinitionList, inputValue, valueWithVariable.asVariable())
+                                                                                )
+                                                                        );
+                                                                    } else {
+                                                                        return objectToMutationStatementStream(
+                                                                                objectType,
+                                                                                null,
+                                                                                fieldDefinition,
+                                                                                inputValue,
+                                                                                valueWithVariable,
+                                                                                field.isMerge(),
+                                                                                0,
+                                                                                0
+                                                                        );
+                                                                    }
+                                                                }
+                                                        );
+                                            }
+                                    )
+                                    .orElseGet(() -> {
+                                                Map<InputValue, ValueWithVariable> inputValueValueWithVariableMap = Stream.ofNullable(fieldDefinition.getArguments())
+                                                        .flatMap(Collection::stream)
+                                                        .flatMap(argumentInput ->
+                                                                Optional.ofNullable(field.getArguments())
+                                                                        .flatMap(arguments -> arguments.getArgumentOrEmpty(argumentInput.getName()))
+                                                                        .or(() -> Optional.ofNullable(argumentInput.getDefaultValue()))
+                                                                        .stream()
+                                                                        .map(valueWithVariable -> new AbstractMap.SimpleEntry<>(argumentInput, valueWithVariable))
+                                                        )
+                                                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+                                                return inputValueMapToMutationStatementStream(objectType, fieldDefinition, inputValueValueWithVariableMap, field.isMerge());
+                                            }
+                                    )
                     );
         }
         throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(field.toString()));
@@ -886,6 +929,35 @@ public class MutationTranslator {
                         new JsonTableFunction()
                                 .withJson(
                                         new JdbcNamedParameter().withName(valueWithVariable.asVariable().getName())
+                                )
+                                .withPath(new StringValue("$[*]"))
+                                .withColumnDefinitions(
+                                        fieldDefinitionList.stream()
+                                                .map(subField ->
+                                                        new ColumnDefinition()
+                                                                .withColumnName(graphqlFieldNameToColumnName(subField.getName()))
+                                                                .withColDataType(typeTranslator.createColDataType(subField))
+                                                                .addColumnSpecs("PATH", "'$." + subField.getName() + "'")
+                                                )
+                                                .collect(Collectors.toList())
+                                )
+                                .withAlias(new Alias(inputValue.getName()))
+                );
+    }
+
+    protected Select selectVariablesFromJsonObject(List<FieldDefinition> fieldDefinitionList, InputValue inputValue, ValueWithVariable valueWithVariable) {
+        return new PlainSelect()
+                .addSelectItems(new AllColumns())
+                .withFromItem(
+                        new JsonTableFunction()
+                                .withJson(
+                                        new Function()
+                                                .withName("JSON_ARRAY_APPEND")
+                                                .withParameters(
+                                                        new StringValue("[]"),
+                                                        new StringValue("$"),
+                                                        new JdbcNamedParameter().withName(valueWithVariable.asVariable().getName())
+                                                )
                                 )
                                 .withPath(new StringValue("$[*]"))
                                 .withColumnDefinitions(

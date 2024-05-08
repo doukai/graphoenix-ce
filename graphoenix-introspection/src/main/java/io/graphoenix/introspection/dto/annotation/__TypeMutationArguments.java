@@ -60,6 +60,8 @@ public @interface __TypeMutationArguments {
 
   __TypePossibleTypesInput1[] __typePossibleTypes() default {};
 
+  __TypeInput1 input() default @__TypeInput1;
+
   __TypeExpression1 where() default @__TypeExpression1;
 
   String $name() default "";
@@ -107,6 +109,8 @@ public @interface __TypeMutationArguments {
   String $__typeInterfaces() default "";
 
   String $__typePossibleTypes() default "";
+
+  String $input() default "";
 
   String $where() default "";
 }

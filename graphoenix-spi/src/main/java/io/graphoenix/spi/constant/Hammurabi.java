@@ -75,6 +75,7 @@ public class Hammurabi {
     public static final String INPUT_VALUE_INCLUDE_DEPRECATED_NAME = "includeDeprecated";
     public static final String INPUT_VALUE_NOT_NAME = "not";
     public static final String INPUT_VALUE_EXS_NAME = "exs";
+    public static final String INPUT_VALUE_INPUT_NAME = "input";
     public static final String INPUT_VALUE_LIST_NAME = "list";
     public static final String INPUT_VALUE_WHERE_NAME = "where";
     public static final String INPUT_VALUE_FIRST_NAME = "first";

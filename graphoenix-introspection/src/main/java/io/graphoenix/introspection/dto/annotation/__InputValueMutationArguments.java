@@ -51,6 +51,8 @@ public @interface __InputValueMutationArguments {
 
   String typeName() default "";
 
+  __InputValueInput1 input() default @__InputValueInput1;
+
   __InputValueExpression1 where() default @__InputValueExpression1;
 
   String $id() default "";
@@ -90,6 +92,8 @@ public @interface __InputValueMutationArguments {
   String $ofTypeName() default "";
 
   String $typeName() default "";
+
+  String $input() default "";
 
   String $where() default "";
 }

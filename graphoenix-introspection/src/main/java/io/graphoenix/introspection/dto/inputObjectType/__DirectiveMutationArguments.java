@@ -53,6 +53,8 @@ public class __DirectiveMutationArguments implements MetaInput {
 
   private Collection<__DirectiveLocationsRelationInput> __directiveLocationsRelation;
 
+  private __DirectiveInput input;
+
   private __DirectiveExpression where;
 
   public String getName() {
@@ -204,6 +206,14 @@ public class __DirectiveMutationArguments implements MetaInput {
   public void set__directiveLocationsRelation(
       Collection<__DirectiveLocationsRelationInput> __directiveLocationsRelation) {
     this.__directiveLocationsRelation = __directiveLocationsRelation;
+  }
+
+  public __DirectiveInput getInput() {
+    return this.input;
+  }
+
+  public void setInput(__DirectiveInput input) {
+    this.input = input;
   }
 
   public __DirectiveExpression getWhere() {

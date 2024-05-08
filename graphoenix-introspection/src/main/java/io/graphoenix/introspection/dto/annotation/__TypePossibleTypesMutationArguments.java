@@ -41,6 +41,8 @@ public @interface __TypePossibleTypesMutationArguments {
 
   String __typename() default "__TypePossibleTypes";
 
+  __TypePossibleTypesInput1 input() default @__TypePossibleTypesInput1;
+
   __TypePossibleTypesExpression1 where() default @__TypePossibleTypesExpression1;
 
   String $id() default "";
@@ -70,6 +72,8 @@ public @interface __TypePossibleTypesMutationArguments {
   String $createGroupId() default "";
 
   String $__typename() default "";
+
+  String $input() default "";
 
   String $where() default "";
 }

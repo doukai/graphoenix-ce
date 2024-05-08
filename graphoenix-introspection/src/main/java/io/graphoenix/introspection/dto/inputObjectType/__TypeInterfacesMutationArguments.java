@@ -47,6 +47,8 @@ public class __TypeInterfacesMutationArguments implements MetaInput {
   @DefaultValue("\"__TypeInterfaces\"")
   private String __typename;
 
+  private __TypeInterfacesInput input;
+
   private __TypeInterfacesExpression where;
 
   public String getId() {
@@ -173,6 +175,14 @@ public class __TypeInterfacesMutationArguments implements MetaInput {
 
   public void set__typename(String __typename) {
     this.__typename = __typename;
+  }
+
+  public __TypeInterfacesInput getInput() {
+    return this.input;
+  }
+
+  public void setInput(__TypeInterfacesInput input) {
+    this.input = input;
   }
 
   public __TypeInterfacesExpression getWhere() {

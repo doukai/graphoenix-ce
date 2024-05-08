@@ -40,6 +40,8 @@ public @interface __DirectiveLocationsRelationMutationArguments {
 
   String __typename() default "__DirectiveLocationsRelation";
 
+  __DirectiveLocationsRelationInput1 input() default @__DirectiveLocationsRelationInput1;
+
   __DirectiveLocationsRelationExpression1 where() default @__DirectiveLocationsRelationExpression1;
 
   String $id() default "";
@@ -67,6 +69,8 @@ public @interface __DirectiveLocationsRelationMutationArguments {
   String $createGroupId() default "";
 
   String $__typename() default "";
+
+  String $input() default "";
 
   String $where() default "";
 }

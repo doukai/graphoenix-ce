@@ -97,13 +97,13 @@ public class JsonSchemaTranslator {
                 JsonArrayBuilder jsonArrayBuilder = jsonProvider.createArrayBuilder()
                         .add(
                                 jsonProvider.createObjectBuilder()
-                                        .add("properties", inputObjectToUpdateProperties(inputObjectType, definition.asObject()))
-                                        .add("required", jsonProvider.createArrayBuilder().add(INPUT_VALUE_WHERE_NAME))
+                                        .add("properties", inputObjectToListProperties(inputObjectType))
+                                        .add("required", jsonProvider.createArrayBuilder().add(INPUT_VALUE_LIST_NAME))
                         )
                         .add(
                                 jsonProvider.createObjectBuilder()
-                                        .add("properties", inputObjectToListProperties(inputObjectType))
-                                        .add("required", jsonProvider.createArrayBuilder().add(INPUT_VALUE_LIST_NAME))
+                                        .add("properties", inputObjectToUpdateProperties(inputObjectType, definition.asObject()))
+                                        .add("required", jsonProvider.createArrayBuilder().add(INPUT_VALUE_WHERE_NAME))
                         );
 
                 JsonObjectBuilder builder = buildJsonSchemaBuilder(inputObjectType)
@@ -122,13 +122,18 @@ public class JsonSchemaTranslator {
                 JsonArrayBuilder jsonArrayBuilder = jsonProvider.createArrayBuilder()
                         .add(
                                 jsonProvider.createObjectBuilder()
-                                        .add("properties", inputObjectToUpdateProperties(inputObjectType, definition.asObject()))
-                                        .add("required", jsonProvider.createArrayBuilder().add(INPUT_VALUE_WHERE_NAME))
+                                        .add("properties", inputObjectToInsertProperties(inputObjectType, definition.asObject()))
+                                        .add("required", buildRequired(definition.asObject()))
                         )
                         .add(
                                 jsonProvider.createObjectBuilder()
-                                        .add("properties", inputObjectToInsertProperties(inputObjectType, definition.asObject()))
-                                        .add("required", buildRequired(definition.asObject()))
+                                        .add("properties", inputObjectToInputProperties(inputObjectType))
+                                        .add("required", jsonProvider.createArrayBuilder().add(INPUT_VALUE_INPUT_NAME))
+                        )
+                        .add(
+                                jsonProvider.createObjectBuilder()
+                                        .add("properties", inputObjectToUpdateProperties(inputObjectType, definition.asObject()))
+                                        .add("required", jsonProvider.createArrayBuilder().add(INPUT_VALUE_WHERE_NAME))
                         );
 
                 JsonObjectBuilder builder = buildJsonSchemaBuilder(inputObjectType)
@@ -231,6 +236,7 @@ public class JsonSchemaTranslator {
     protected JsonObject inputObjectToUpdateProperties(InputObjectType inputObjectType, ObjectType objectType) {
         return inputObjectType.getInputValues().stream()
                 .filter(inputValue -> !inputValue.getName().equals(INPUT_VALUE_LIST_NAME))
+                .filter(inputValue -> !inputValue.getName().equals(INPUT_VALUE_INPUT_NAME))
                 .map(inputValue -> {
                             if (INPUT_VALUE_WHERE_NAME.equals(inputValue.getName())) {
                                 return new AbstractMap.SimpleEntry<>(inputValue.getName(), (JsonValue) buildType(inputValue.getType(), buildJsonSchemaBuilder(inputValue)).build());
@@ -255,10 +261,20 @@ public class JsonSchemaTranslator {
                 .collect(JsonCollectors.toJsonObject());
     }
 
+    protected JsonObject inputObjectToInputProperties(InputObjectType inputObjectType) {
+        return inputObjectType.getInputValues().stream()
+                .filter(inputValue -> inputValue.getName().equals(INPUT_VALUE_INPUT_NAME))
+                .map(inputValue ->
+                        new AbstractMap.SimpleEntry<>(inputValue.getName(), (JsonValue) fieldToProperty(inputValue.getType(), getJsonSchemaDirective(inputValue).orElse(null)).build())
+                )
+                .collect(JsonCollectors.toJsonObject());
+    }
+
     protected JsonObject inputObjectToInsertProperties(InputObjectType inputObjectType, ObjectType objectType) {
         return inputObjectType.getInputValues().stream()
                 .filter(inputValue -> !inputValue.getName().equals(INPUT_VALUE_WHERE_NAME))
                 .filter(inputValue -> !inputValue.getName().equals(INPUT_VALUE_LIST_NAME))
+                .filter(inputValue -> !inputValue.getName().equals(INPUT_VALUE_INPUT_NAME))
                 .map(inputValue ->
                         Optional.ofNullable(objectType.getField(inputValue.getName()))
                                 .map(fieldDefinition -> new AbstractMap.SimpleEntry<>(fieldDefinition.getName(), (JsonValue) fieldToProperty(fieldDefinition.getType(), getJsonSchemaDirective(fieldDefinition).orElse(null)).build()))

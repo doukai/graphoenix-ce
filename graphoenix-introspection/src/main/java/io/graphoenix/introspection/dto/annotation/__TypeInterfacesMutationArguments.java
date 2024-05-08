@@ -43,6 +43,8 @@ public @interface __TypeInterfacesMutationArguments {
 
   String __typename() default "__TypeInterfaces";
 
+  __TypeInterfacesInput1 input() default @__TypeInterfacesInput1;
+
   __TypeInterfacesExpression1 where() default @__TypeInterfacesExpression1;
 
   String $id() default "";
@@ -72,6 +74,8 @@ public @interface __TypeInterfacesMutationArguments {
   String $createGroupId() default "";
 
   String $__typename() default "";
+
+  String $input() default "";
 
   String $where() default "";
 }

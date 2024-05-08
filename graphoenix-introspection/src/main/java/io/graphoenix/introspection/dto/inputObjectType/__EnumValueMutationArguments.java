@@ -47,6 +47,8 @@ public class __EnumValueMutationArguments implements MetaInput {
 
   private String ofTypeName;
 
+  private __EnumValueInput input;
+
   private __EnumValueExpression where;
 
   public String getId() {
@@ -181,6 +183,14 @@ public class __EnumValueMutationArguments implements MetaInput {
 
   public void setOfTypeName(String ofTypeName) {
     this.ofTypeName = ofTypeName;
+  }
+
+  public __EnumValueInput getInput() {
+    return this.input;
+  }
+
+  public void setInput(__EnumValueInput input) {
+    this.input = input;
   }
 
   public __EnumValueExpression getWhere() {

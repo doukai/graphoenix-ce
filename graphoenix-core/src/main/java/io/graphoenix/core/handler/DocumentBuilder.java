@@ -1016,7 +1016,9 @@ public class DocumentBuilder {
                     .addArgument(new InputValue(INPUT_VALUE_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(INPUT_CONDITIONAL_INPUT_VALUE_AND))
                     .addArgument(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))));
         } else if (inputType.equals(InputType.MUTATION_ARGUMENTS)) {
-            fieldDefinition.addArgument(new InputValue(INPUT_VALUE_WHERE_NAME).setType(new TypeName(objectType.getName() + InputType.EXPRESSION)));
+            fieldDefinition
+                    .addArgument(new InputValue(INPUT_VALUE_INPUT_NAME).setType(new TypeName(objectType.getName() + InputType.INPUT)))
+                    .addArgument(new InputValue(INPUT_VALUE_WHERE_NAME).setType(new TypeName(objectType.getName() + InputType.EXPRESSION)));
         }
         buildSecurity(objectType, fieldDefinition);
         return fieldDefinition;
@@ -1356,6 +1358,7 @@ public class DocumentBuilder {
         } else if (inputType.equals(InputType.MUTATION_ARGUMENTS)) {
             ObjectType mutationOperationType = documentManager.getDocument().getMutationOperationTypeOrError();
             inputObjectType
+                    .addInputValue(new InputValue(INPUT_VALUE_INPUT_NAME).setType(new TypeName(objectType.getName() + InputType.INPUT)))
                     .addInputValue(new InputValue(INPUT_VALUE_WHERE_NAME).setType(new TypeName(objectType.getName() + InputType.EXPRESSION)))
                     .setName(objectType.getName() + mutationOperationType.getName() + inputType)
                     .addDirective(

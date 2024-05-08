@@ -43,6 +43,8 @@ public @interface __EnumValueMutationArguments {
 
   String ofTypeName() default "";
 
+  __EnumValueInput1 input() default @__EnumValueInput1;
+
   __EnumValueExpression1 where() default @__EnumValueExpression1;
 
   String $id() default "";
@@ -74,6 +76,8 @@ public @interface __EnumValueMutationArguments {
   String $__typename() default "";
 
   String $ofTypeName() default "";
+
+  String $input() default "";
 
   String $where() default "";
 }

@@ -54,6 +54,8 @@ public class __FieldMutationArguments implements MetaInput {
 
   private String typeName;
 
+  private __FieldInput input;
+
   private __FieldExpression where;
 
   public String getId() {
@@ -212,6 +214,14 @@ public class __FieldMutationArguments implements MetaInput {
 
   public void setTypeName(String typeName) {
     this.typeName = typeName;
+  }
+
+  public __FieldInput getInput() {
+    return this.input;
+  }
+
+  public void setInput(__FieldInput input) {
+    this.input = input;
   }
 
   public __FieldExpression getWhere() {

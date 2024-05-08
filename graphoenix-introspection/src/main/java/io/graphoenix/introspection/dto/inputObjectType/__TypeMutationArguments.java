@@ -65,6 +65,8 @@ public class __TypeMutationArguments implements MetaInput {
 
   private Collection<__TypePossibleTypesInput> __typePossibleTypes;
 
+  private __TypeInput input;
+
   private __TypeExpression where;
 
   public String getName() {
@@ -263,6 +265,14 @@ public class __TypeMutationArguments implements MetaInput {
 
   public void set__typePossibleTypes(Collection<__TypePossibleTypesInput> __typePossibleTypes) {
     this.__typePossibleTypes = __typePossibleTypes;
+  }
+
+  public __TypeInput getInput() {
+    return this.input;
+  }
+
+  public void setInput(__TypeInput input) {
+    this.input = input;
   }
 
   public __TypeExpression getWhere() {

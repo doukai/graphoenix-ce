@@ -44,6 +44,8 @@ public class __DirectiveLocationsRelationMutationArguments implements MetaInput 
   @DefaultValue("\"__DirectiveLocationsRelation\"")
   private String __typename;
 
+  private __DirectiveLocationsRelationInput input;
+
   private __DirectiveLocationsRelationExpression where;
 
   public String getId() {
@@ -162,6 +164,14 @@ public class __DirectiveLocationsRelationMutationArguments implements MetaInput 
 
   public void set__typename(String __typename) {
     this.__typename = __typename;
+  }
+
+  public __DirectiveLocationsRelationInput getInput() {
+    return this.input;
+  }
+
+  public void setInput(__DirectiveLocationsRelationInput input) {
+    this.input = input;
   }
 
   public __DirectiveLocationsRelationExpression getWhere() {

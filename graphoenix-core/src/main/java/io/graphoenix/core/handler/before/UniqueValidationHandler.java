@@ -1,5 +1,6 @@
 package io.graphoenix.core.handler.before;
 
+import com.google.common.collect.Streams;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.spi.error.GraphQLError;
 import io.graphoenix.spi.error.GraphQLErrors;
@@ -157,7 +158,7 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
         if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
             ValueWithVariable idValueWithVariable = getIDValueWithVariable(idField.getName(), field.getArguments()).orElse(new NullValue());
-            return Stream
+            return Streams
                     .concat(
                             Stream.ofNullable(fieldDefinition.getArguments())
                                     .flatMap(Collection::stream)
@@ -179,6 +180,38 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
                                                                                     valueWithVariable
                                                                             )
                                                                     )
+                                                    )
+                                    ),
+                            fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_INPUT_NAME).stream()
+                                    .flatMap(inputValue ->
+                                            Stream.ofNullable(field.getArguments())
+                                                    .flatMap(arguments ->
+                                                            arguments.getArgumentOrEmpty(inputValue.getName())
+                                                                    .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
+                                                    )
+                                                    .filter(ValueWithVariable::isObject)
+                                                    .map(ValueWithVariable::asObject)
+                                                    .flatMap(objectValueWithVariable -> {
+                                                                ValueWithVariable itemIdValueWithVariable = getIDValueWithVariable(idField.getName(), objectValueWithVariable).orElse(new NullValue());
+                                                                return documentManager.getInputValueTypeDefinition(inputValue).asInputObject().getInputValues().stream()
+                                                                        .flatMap(subInputValue ->
+                                                                                Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
+                                                                                        .flatMap(subFieldDefinition ->
+                                                                                                objectValueWithVariable.getValueWithVariableOrEmpty(subInputValue.getName())
+                                                                                                        .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
+                                                                                                        .flatMap(subValueWithVariable ->
+                                                                                                                buildUniqueItems(
+                                                                                                                        fieldTypeDefinition.asObject(),
+                                                                                                                        "/" + INPUT_VALUE_INPUT_NAME,
+                                                                                                                        itemIdValueWithVariable,
+                                                                                                                        subFieldDefinition,
+                                                                                                                        subInputValue,
+                                                                                                                        subValueWithVariable
+                                                                                                                )
+                                                                                                        )
+                                                                                        )
+                                                                        );
+                                                            }
                                                     )
                                     ),
                             fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_LIST_NAME).stream()

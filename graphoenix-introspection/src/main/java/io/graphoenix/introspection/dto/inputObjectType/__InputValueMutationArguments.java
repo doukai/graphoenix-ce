@@ -55,6 +55,8 @@ public class __InputValueMutationArguments implements MetaInput {
 
   private String typeName;
 
+  private __InputValueInput input;
+
   private __InputValueExpression where;
 
   public String getId() {
@@ -221,6 +223,14 @@ public class __InputValueMutationArguments implements MetaInput {
 
   public void setTypeName(String typeName) {
     this.typeName = typeName;
+  }
+
+  public __InputValueInput getInput() {
+    return this.input;
+  }
+
+  public void setInput(__InputValueInput input) {
+    this.input = input;
   }
 
   public __InputValueExpression getWhere() {

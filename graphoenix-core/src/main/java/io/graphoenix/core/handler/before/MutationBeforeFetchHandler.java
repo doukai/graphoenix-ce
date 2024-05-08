@@ -1,5 +1,6 @@
 package io.graphoenix.core.handler.before;
 
+import com.google.common.collect.Streams;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.PackageManager;
@@ -142,7 +143,7 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler {
     public Stream<FetchItem> buildFetchItems(FieldDefinition fieldDefinition, Field field) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
-            return Stream
+            return Streams
                     .concat(
                             Stream.ofNullable(fieldDefinition.getArguments())
                                     .flatMap(Collection::stream)
@@ -163,6 +164,36 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler {
                                                                                     inputValue,
                                                                                     valueWithVariable
                                                                             )
+                                                                    )
+                                                    )
+                                    ),
+                            fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_INPUT_NAME).stream()
+                                    .flatMap(inputValue ->
+                                            Stream.ofNullable(field.getArguments())
+                                                    .flatMap(arguments ->
+                                                            arguments.getArgumentOrEmpty(inputValue.getName())
+                                                                    .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
+                                                    )
+                                                    .filter(ValueWithVariable::isObject)
+                                                    .map(ValueWithVariable::asObject)
+                                                    .flatMap(objectValueWithVariable ->
+                                                            documentManager.getInputValueTypeDefinition(inputValue).asInputObject().getInputValues().stream()
+                                                                    .flatMap(subInputValue ->
+                                                                            Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
+                                                                                    .flatMap(subFieldDefinition ->
+                                                                                            objectValueWithVariable.getValueWithVariableOrEmpty(subInputValue.getName())
+                                                                                                    .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
+                                                                                                    .flatMap(subValueWithVariable ->
+                                                                                                            buildFetchItems(
+                                                                                                                    fieldTypeDefinition.asObject(),
+                                                                                                                    field,
+                                                                                                                    "/" + INPUT_VALUE_INPUT_NAME,
+                                                                                                                    subFieldDefinition,
+                                                                                                                    subInputValue,
+                                                                                                                    subValueWithVariable
+                                                                                                            )
+                                                                                                    )
+                                                                                    )
                                                                     )
                                                     )
                                     ),

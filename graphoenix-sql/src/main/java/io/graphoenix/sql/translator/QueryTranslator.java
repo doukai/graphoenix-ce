@@ -198,15 +198,38 @@ public class QueryTranslator {
                                                     )
                                     )
                                     .or(() ->
-                                            fieldDefinition.getArgumentOrEmpty(idName)
-                                                    .map(inputValue ->
-                                                            new EqualsTo()
-                                                                    .withLeftExpression(graphqlFieldToColumn(table, idName))
-                                                                    .withRightExpression(
-                                                                            Optional.ofNullable(field.getArguments())
-                                                                                    .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
-                                                                                    .flatMap(DBValueUtil::idValueToDBValue)
-                                                                                    .orElseGet(() -> createInsertIdUserVariable(fieldTypeDefinition.getName(), idName, 0, 0))
+                                            fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_INPUT_NAME)
+                                                    .flatMap(inputValue ->
+                                                            Optional.ofNullable(field.getArguments())
+                                                                    .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
+                                                                    .filter(valueWithVariable -> !valueWithVariable.isNull())
+                                                                    .map(valueWithVariable -> {
+                                                                                if (valueWithVariable.isVariable()) {
+                                                                                    return createEqualsToLastInsertIDExpression(fieldTypeDefinition.getName(), idName);
+                                                                                } else {
+                                                                                    return new EqualsTo()
+                                                                                            .withLeftExpression(graphqlFieldToColumn(table, idName))
+                                                                                            .withRightExpression(
+                                                                                                    valueWithVariable.asObject()
+                                                                                                            .getValueWithVariableOrEmpty(idName)
+                                                                                                            .flatMap(DBValueUtil::idValueToDBValue)
+                                                                                                            .orElseGet(() -> createInsertIdUserVariable(fieldTypeDefinition.getName(), idName, 0, 0))
+                                                                                            );
+                                                                                }
+                                                                            }
+                                                                    )
+                                                    )
+                                                    .or(() ->
+                                                            fieldDefinition.getArgumentOrEmpty(idName)
+                                                                    .map(inputValue ->
+                                                                            new EqualsTo()
+                                                                                    .withLeftExpression(graphqlFieldToColumn(table, idName))
+                                                                                    .withRightExpression(
+                                                                                            Optional.ofNullable(field.getArguments())
+                                                                                                    .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
+                                                                                                    .flatMap(DBValueUtil::idValueToDBValue)
+                                                                                                    .orElseGet(() -> createInsertIdUserVariable(fieldTypeDefinition.getName(), idName, 0, 0))
+                                                                                    )
                                                                     )
                                                     )
                                     )

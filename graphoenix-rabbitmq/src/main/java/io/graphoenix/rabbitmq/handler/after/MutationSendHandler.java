@@ -61,9 +61,15 @@ public class MutationSendHandler implements OperationAfterHandler {
                                             .add(BODY_ARGUMENTS_KEY, jsonProvider.createArrayBuilder(arguments.get(INPUT_VALUE_LIST_NAME).asJsonArray()))
                                             .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder(fieldJsonValue.asJsonArray()));
                                 } else {
-                                    messageJsonObject
-                                            .add(BODY_ARGUMENTS_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(arguments.asJsonObject())))
-                                            .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(fieldJsonValue.asJsonObject())));
+                                    if (arguments.containsKey(INPUT_VALUE_INPUT_NAME)) {
+                                        messageJsonObject
+                                                .add(BODY_ARGUMENTS_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(arguments.get(INPUT_VALUE_INPUT_NAME).asJsonObject())))
+                                                .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(fieldJsonValue.asJsonObject())));
+                                    } else {
+                                        messageJsonObject
+                                                .add(BODY_ARGUMENTS_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(arguments.asJsonObject())))
+                                                .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(fieldJsonValue.asJsonObject())));
+                                    }
                                 }
                                 return Mono.just(
                                         new OutboundMessage(

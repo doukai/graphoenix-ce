@@ -45,6 +45,8 @@ public class __TypePossibleTypesMutationArguments implements MetaInput {
   @DefaultValue("\"__TypePossibleTypes\"")
   private String __typename;
 
+  private __TypePossibleTypesInput input;
+
   private __TypePossibleTypesExpression where;
 
   public String getId() {
@@ -171,6 +173,14 @@ public class __TypePossibleTypesMutationArguments implements MetaInput {
 
   public void set__typename(String __typename) {
     this.__typename = __typename;
+  }
+
+  public __TypePossibleTypesInput getInput() {
+    return this.input;
+  }
+
+  public void setInput(__TypePossibleTypesInput input) {
+    this.input = input;
   }
 
   public __TypePossibleTypesExpression getWhere() {

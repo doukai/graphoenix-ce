@@ -1,5 +1,6 @@
 package io.graphoenix.core.handler;
 
+import com.google.common.collect.Streams;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.common.Directive;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
@@ -20,8 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_HIDE_NAME;
-import static io.graphoenix.spi.constant.Hammurabi.INPUT_VALUE_LIST_NAME;
+import static io.graphoenix.spi.constant.Hammurabi.*;
 
 @ApplicationScoped
 public class OperationBuilder {
@@ -95,7 +95,7 @@ public class OperationBuilder {
 
     private List<Field> mutationArgumentsToFields(FieldDefinition fieldDefinition, Field field) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        return Stream
+        return Streams
                 .concat(
                         Stream.ofNullable(fieldDefinition.getArguments())
                                 .flatMap(Collection::stream)
@@ -115,6 +115,35 @@ public class OperationBuilder {
                                                                             }
                                                                             return argumentField;
                                                                         }
+                                                                )
+                                                )
+                                ),
+                        fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_INPUT_NAME).stream()
+                                .flatMap(inputValue ->
+                                        Stream.ofNullable(field.getArguments())
+                                                .flatMap(arguments ->
+                                                        arguments.getArgumentOrEmpty(inputValue.getName())
+                                                                .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
+                                                )
+                                                .filter(ValueWithVariable::isObject)
+                                                .map(ValueWithVariable::asObject)
+                                                .flatMap(objectValueWithVariable ->
+                                                        documentManager.getInputValueTypeDefinition(inputValue).asInputObject().getInputValues().stream()
+                                                                .flatMap(subInputValue ->
+                                                                        Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
+                                                                                .flatMap(subFieldDefinition ->
+                                                                                        objectValueWithVariable.getValueWithVariableOrEmpty(subInputValue.getName())
+                                                                                                .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
+                                                                                                .map(subValueWithVariable -> {
+                                                                                                            Field inputValueField = new Field(subFieldDefinition.getName()).addDirective(new Directive(DIRECTIVE_HIDE_NAME));
+                                                                                                            Definition subFieldTypeDefinition = documentManager.getFieldTypeDefinition(subFieldDefinition);
+                                                                                                            if (subFieldTypeDefinition.isObject() && subValueWithVariable.isObject()) {
+                                                                                                                inputValueField.setSelections(inputObjectValueToFields(subFieldDefinition, subInputValue, subValueWithVariable));
+                                                                                                            }
+                                                                                                            return inputValueField;
+                                                                                                        }
+                                                                                                )
+                                                                                )
                                                                 )
                                                 )
                                 ),

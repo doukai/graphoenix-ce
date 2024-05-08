@@ -49,6 +49,8 @@ public @interface __FieldMutationArguments {
 
   String typeName() default "";
 
+  __FieldInput1 input() default @__FieldInput1;
+
   __FieldExpression1 where() default @__FieldExpression1;
 
   String $id() default "";
@@ -86,6 +88,8 @@ public @interface __FieldMutationArguments {
   String $ofTypeName() default "";
 
   String $typeName() default "";
+
+  String $input() default "";
 
   String $where() default "";
 }
