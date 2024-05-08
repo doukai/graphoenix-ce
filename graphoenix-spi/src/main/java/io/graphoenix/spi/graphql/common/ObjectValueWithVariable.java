@@ -64,8 +64,13 @@ public class ObjectValueWithVariable extends AbstractMap<String, JsonValue> impl
     }
 
     public ObjectValueWithVariable(Object objectValueWithVariable) {
+        this(objectValueWithVariable, false);
+    }
+
+    public ObjectValueWithVariable(Object objectValueWithVariable, boolean skipNull) {
         Class<?> clazz = objectValueWithVariable.getClass();
         this.objectValueWithVariable = Arrays.stream(clazz.getDeclaredFields())
+                .filter(field -> !skipNull || getFieldValue(objectValueWithVariable, field) != null)
                 .collect(
                         Collectors
                                 .toMap(

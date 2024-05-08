@@ -8,13 +8,24 @@ import io.graphoenix.core.utils.FileUtil;
 import io.graphoenix.spi.dao.OperationDAO;
 import io.graphoenix.spi.error.GraphQLErrorType;
 import io.graphoenix.spi.error.GraphQLErrors;
+import io.graphoenix.spi.graphql.Definition;
+import io.graphoenix.spi.graphql.common.ArrayValueWithVariable;
+import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
+import io.graphoenix.spi.graphql.common.ValueWithVariable;
+import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Operation;
+import io.graphoenix.spi.graphql.type.FieldDefinition;
+import io.graphoenix.spi.graphql.type.InputObjectType;
+import io.graphoenix.spi.graphql.type.InputValue;
 import io.graphoenix.sql.handler.SQLFormatHandler;
 import io.graphoenix.sql.translator.MutationTranslator;
 import io.graphoenix.sql.translator.QueryTranslator;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.json.bind.Jsonb;
+import jakarta.json.spi.JsonProvider;
 import org.tinylog.Logger;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.processing.Filer;
@@ -25,12 +36,15 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.graphoenix.core.utils.TypeNameUtil.*;
 import static io.graphoenix.java.utils.NameUtil.getFieldGetterMethodName;
+import static io.graphoenix.java.utils.TypeNameUtil.toClassName;
 import static io.graphoenix.java.utils.TypeNameUtil.toTypeName;
 import static io.graphoenix.spi.constant.Hammurabi.OPERATION_MUTATION_NAME;
 import static io.graphoenix.spi.constant.Hammurabi.OPERATION_QUERY_NAME;
+import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 
 @ApplicationScoped
 public class OperationInterfaceImplementer {
@@ -109,6 +123,7 @@ public class OperationInterfaceImplementer {
     }
 
     public JavaFile buildImplementClass(String packageName, String simpleName, List<Operation> operationList) {
+
         TypeSpec.Builder builder = TypeSpec.classBuilder("SQL" + simpleName + "Impl")
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(ApplicationScoped.class)
@@ -122,6 +137,30 @@ public class OperationInterfaceImplementer {
                                         Modifier.FINAL
                                 )
                                 .build()
+                )
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(Jsonb.class),
+                                "jsonb",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(JsonProvider.class),
+                                "jsonProvider",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(packageConfig.getHandlerPackageName(), "InputInvokeHandler"),
+                                "inputInvokeHandler",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
                 )
                 .addFields(buildSQLFields(operationList))
                 .addStaticBlock(buildSQLFieldInitializeCodeBlock(packageName, simpleName, operationList))
@@ -172,20 +211,30 @@ public class OperationInterfaceImplementer {
     }
 
     private MethodSpec buildConstructor() {
-        return MethodSpec.constructorBuilder()
+        MethodSpec.Builder builder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Inject.class)
                 .addParameter(ParameterSpec.builder(ClassName.get(OperationDAO.class), "operationDAO").build())
+                .addParameter(ClassName.get(Jsonb.class), "jsonb")
+                .addParameter(ClassName.get(JsonProvider.class), "jsonProvider")
+                .addParameter(ClassName.get(packageConfig.getHandlerPackageName(), "InputInvokeHandler"), "inputInvokeHandler")
                 .addStatement("this.operationDAO = operationDAO")
-                .build();
+                .addStatement("this.jsonb = jsonb")
+                .addStatement("this.jsonProvider = jsonProvider")
+                .addStatement("this.inputInvokeHandler = inputInvokeHandler");
+
+        return builder.build();
     }
 
     private MethodSpec executableElementToMethodSpec(Operation operation) {
         TypeName typeName = toTypeName(operation.getInvokeReturnClassNameOrError());
         List<Map.Entry<String, String>> parameters = operation.getInvokeParametersList();
+        Field field = operation.getSelection(0).asField();
+        FieldDefinition fieldDefinition = documentManager.getOperationTypeOrError(operation).getField(field.getName());
 
         MethodSpec.Builder builder = MethodSpec.methodBuilder(operation.getInvokeMethodNameOrError())
                 .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
                 .addParameters(
                         parameters.stream()
                                 .map(entry -> ParameterSpec.builder(toTypeName(entry.getValue()), entry.getKey()).build())
@@ -203,21 +252,70 @@ public class OperationInterfaceImplementer {
                     CodeBlock
                             .join(
                                     parameters.stream()
-                                            .map(entry -> CodeBlock.of("$S, (Object)$L", entry.getKey(), entry.getKey()))
+                                            .map(entry -> {
+                                                        InputValue variableInputValue = getVariableInputValue(entry.getKey(), field, fieldDefinition).orElseThrow(() -> new RuntimeException("variable inputValue not found: " + entry.getKey()));
+                                                        Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(variableInputValue);
+                                                        if (inputValueTypeDefinition.isInputObject()) {
+                                                            return CodeBlock.of("$S, (Object)$L", entry.getKey(), entry.getKey() + "Invoked");
+                                                        } else {
+                                                            return CodeBlock.of("$S, (Object)$L", entry.getKey(), entry.getKey());
+                                                        }
+                                                    }
+                                            )
                                             .collect(Collectors.toList()),
                                     ", "
                             )
             );
         }
+
+        CodeBlock codeBlock = parameters.stream()
+                .map(entry ->
+                        new AbstractMap.SimpleEntry<>(entry.getKey(), getVariableInputValue(entry.getKey(), field, fieldDefinition).orElseThrow(() -> new RuntimeException("variable inputValue not found: " + entry.getKey())))
+
+
+                )
+                .filter(entry -> documentManager.getInputValueTypeDefinition(entry.getValue()).isInputObject())
+                .reduce(getCodeBlock(operation, parameterMapCodeBlock),
+                        (pre, cur) -> {
+                            InputValue variableInputValue = cur.getValue();
+                            Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(variableInputValue);
+                            String methodName = typeNameToFieldName(inputValueTypeDefinition.getName());
+                            CodeBlock invokeCodeBlock;
+                            if (variableInputValue.getType().hasList()) {
+                                invokeCodeBlock = CodeBlock.of("$T.fromIterable(new $T($L).getValueWithVariables()).flatMap(valueWithVariable -> inputInvokeHandler.$L(jsonb.fromJson(valueWithVariable.toString(), $T.class), valueWithVariable.asObject())).collectList().flatMap($LInvoked -> $L)",
+                                        ClassName.get(Flux.class),
+                                        ClassName.get(ArrayValueWithVariable.class),
+                                        cur.getKey(),
+                                        methodName,
+                                        toClassName(documentManager.getDocument().getInputObjectTypeOrError(inputValueTypeDefinition.getName()).getClassNameOrError()),
+                                        cur.getKey(),
+                                        pre
+                                );
+                            } else {
+                                invokeCodeBlock = CodeBlock.of("$T.just(new $T($L)).flatMap(objectValueWithVariable -> inputInvokeHandler.$L(jsonb.fromJson(objectValueWithVariable.toString(), $T.class), objectValueWithVariable)).flatMap($LInvoked -> $L)",
+                                        ClassName.get(Mono.class),
+                                        ClassName.get(ObjectValueWithVariable.class),
+                                        cur.getKey(),
+                                        methodName,
+                                        toClassName(documentManager.getDocument().getInputObjectTypeOrError(inputValueTypeDefinition.getName()).getClassNameOrError()),
+                                        cur.getKey(),
+                                        pre
+                                );
+                            }
+                            return invokeCodeBlock;
+                        },
+                        (x, y) -> y
+                );
+
         List<String> thrownTypes = operation.getInvokeThrownTypes().collect(Collectors.toList());
         if (thrownTypes.isEmpty()) {
             builder.beginControlFlow("try")
-                    .addStatement(getCodeBlock(operation, parameterMapCodeBlock))
+                    .addStatement("return $L", codeBlock)
                     .nextControlFlow("catch($T e)", Exception.class)
                     .addStatement("throw new $T(e)", GraphQLErrors.class)
                     .endControlFlow();
         } else {
-            builder.addStatement(getCodeBlock(operation, parameterMapCodeBlock));
+            builder.addStatement("return $L", codeBlock);
         }
         return builder.build();
     }
@@ -245,7 +343,7 @@ public class OperationInterfaceImplementer {
                         Optional<ClassName> collectionImplementationClassName = getCollectionImplementationClassName(argumentTypeName0);
                         if (collectionImplementationClassName.isPresent()) {
                             return CodeBlock.of(
-                                    "return operationDAO.findAsync($L, $L, $T.class).mapNotNull($T::$L).mapNotNull($T::new)",
+                                    "operationDAO.findAsync($L, $L, $T.class).mapNotNull($T::$L).mapNotNull($T::new)",
                                     sqlFieldName,
                                     parameterMapCodeBlock,
                                     queryClassName,
@@ -256,7 +354,7 @@ public class OperationInterfaceImplementer {
                         }
                     }
                     return CodeBlock.of(
-                            "return operationDAO.findAsync($L, $L, $T.class).mapNotNull($T::$L)",
+                            "operationDAO.findAsync($L, $L, $T.class).mapNotNull($T::$L)",
                             sqlFieldName,
                             parameterMapCodeBlock,
                             queryClassName,
@@ -268,7 +366,7 @@ public class OperationInterfaceImplementer {
                         Optional<ClassName> collectionImplementationClassName = getCollectionImplementationClassName(argumentTypeName0);
                         if (collectionImplementationClassName.isPresent()) {
                             return CodeBlock.of(
-                                    "return operationDAO.saveAsync($L, $L, $T.class).mapNotNull($T::$L).mapNotNull($T::new)",
+                                    "operationDAO.saveAsync($L, $L, $T.class).mapNotNull($T::$L).mapNotNull($T::new)",
                                     sqlFieldName,
                                     parameterMapCodeBlock,
                                     mutationClassName,
@@ -279,7 +377,7 @@ public class OperationInterfaceImplementer {
                         }
                     }
                     return CodeBlock.of(
-                            "return operationDAO.saveAsync($L, $L, $T.class).mapNotNull($T::$L)",
+                            "operationDAO.saveAsync($L, $L, $T.class).mapNotNull($T::$L)",
                             sqlFieldName,
                             parameterMapCodeBlock,
                             mutationClassName,
@@ -293,7 +391,7 @@ public class OperationInterfaceImplementer {
                     return collectionImplementationClassName
                             .map(collectionClassName ->
                                     CodeBlock.of(
-                                            "return new $T(operationDAO.find($L, $L, $T.class).$L())",
+                                            "new $T(operationDAO.find($L, $L, $T.class).$L())",
                                             collectionClassName,
                                             sqlFieldName,
                                             parameterMapCodeBlock,
@@ -303,7 +401,7 @@ public class OperationInterfaceImplementer {
                             )
                             .orElseGet(() ->
                                     CodeBlock.of(
-                                            "return operationDAO.find($L, $L, $T.class).$L()",
+                                            "operationDAO.find($L, $L, $T.class).$L()",
                                             sqlFieldName,
                                             parameterMapCodeBlock,
                                             queryClassName,
@@ -315,7 +413,7 @@ public class OperationInterfaceImplementer {
                     return collectionImplementationClassName
                             .map(collectionTypeName ->
                                     CodeBlock.of(
-                                            "return new $T(operationDAO.save($L, $L, $T.class).$L())",
+                                            "new $T(operationDAO.save($L, $L, $T.class).$L())",
                                             collectionTypeName,
                                             sqlFieldName,
                                             parameterMapCodeBlock,
@@ -325,7 +423,7 @@ public class OperationInterfaceImplementer {
                             )
                             .orElseGet(() ->
                                     CodeBlock.of(
-                                            "return operationDAO.save($L, $L, $T.class).$L()",
+                                            "operationDAO.save($L, $L, $T.class).$L()",
                                             sqlFieldName,
                                             parameterMapCodeBlock,
                                             mutationClassName,
@@ -337,7 +435,7 @@ public class OperationInterfaceImplementer {
         } else {
             if (operation.getOperationType() == null || operation.getOperationType().equals(OPERATION_QUERY_NAME)) {
                 return CodeBlock.of(
-                        "return operationDAO.find($L, $L, $T.class).$L()",
+                        "operationDAO.find($L, $L, $T.class).$L()",
                         sqlFieldName,
                         parameterMapCodeBlock,
                         queryClassName,
@@ -345,7 +443,7 @@ public class OperationInterfaceImplementer {
                 );
             } else if (operation.getOperationType().equals(OPERATION_MUTATION_NAME)) {
                 return CodeBlock.of(
-                        "return operationDAO.save($L, $L, $T.class).$L()",
+                        "operationDAO.save($L, $L, $T.class).$L()",
                         sqlFieldName,
                         parameterMapCodeBlock,
                         mutationClassName,
@@ -365,5 +463,105 @@ public class OperationInterfaceImplementer {
         } else {
             return Optional.empty();
         }
+    }
+
+    private Optional<InputValue> getVariableInputValue(String name, Field field, FieldDefinition fieldDefinition) {
+        return Stream.ofNullable(field.getArguments())
+                .flatMap(arguments -> arguments.getArguments().entrySet().stream())
+                .filter(entry -> entry.getValue().isVariable())
+                .filter(entry -> entry.getValue().asVariable().getName().equals(name))
+                .findFirst()
+                .map(entry -> fieldDefinition.getArgument(entry.getKey()))
+                .or(() ->
+                        Stream.ofNullable(field.getArguments())
+                                .flatMap(arguments -> arguments.getArguments().entrySet().stream())
+                                .filter(entry -> entry.getValue().isObject())
+                                .flatMap(entry ->
+                                        getVariableInputValue(
+                                                name,
+                                                entry.getValue().asObject(),
+                                                documentManager.getInputValueTypeDefinition(fieldDefinition.getArgument(entry.getKey())).asInputObject()
+                                        ).stream()
+                                )
+                                .findFirst()
+                                .or(() ->
+                                        Stream.ofNullable(field.getArguments())
+                                                .flatMap(arguments -> arguments.getArguments().entrySet().stream())
+                                                .filter(entry -> entry.getValue().isArray())
+                                                .filter(entry ->
+                                                        entry.getValue().asArray().getValueWithVariables().stream()
+                                                                .filter(ValueWithVariable::isVariable)
+                                                                .anyMatch(valueWithVariable -> valueWithVariable.asVariable().getName().equals(name))
+                                                )
+                                                .findFirst()
+                                                .map(entry -> fieldDefinition.getArgument(entry.getKey()))
+                                                .or(() ->
+                                                        Stream.ofNullable(field.getArguments())
+                                                                .flatMap(arguments -> arguments.getArguments().entrySet().stream())
+                                                                .filter(entry -> entry.getValue().isArray())
+                                                                .flatMap(entry ->
+                                                                        entry.getValue().asArray().getValueWithVariables().stream()
+                                                                                .flatMap(valueWithVariable ->
+                                                                                        getVariableInputValue(
+                                                                                                name,
+                                                                                                valueWithVariable.asObject(),
+                                                                                                documentManager.getInputValueTypeDefinition(fieldDefinition.getArgument(entry.getKey())).asInputObject()
+                                                                                        ).stream()
+                                                                                )
+                                                                )
+                                                                .findFirst()
+                                                )
+                                )
+                );
+    }
+
+    private Optional<InputValue> getVariableInputValue(String name, ObjectValueWithVariable objectValueWithVariable, InputObjectType inputObjectType) {
+        return Stream.ofNullable(objectValueWithVariable.getObjectValueWithVariable())
+                .flatMap(stringValueWithVariableMap -> stringValueWithVariableMap.entrySet().stream())
+                .filter(entry -> entry.getValue().isVariable())
+                .filter(entry -> entry.getValue().asVariable().getName().equals(name))
+                .findFirst()
+                .map(entry -> inputObjectType.getInputValue(entry.getKey()))
+                .or(() ->
+                        Stream.ofNullable(objectValueWithVariable.getObjectValueWithVariable())
+                                .flatMap(stringValueWithVariableMap -> stringValueWithVariableMap.entrySet().stream())
+                                .filter(entry -> entry.getValue().isObject())
+                                .flatMap(entry ->
+                                        getVariableInputValue(
+                                                name,
+                                                entry.getValue().asObject(),
+                                                documentManager.getInputValueTypeDefinition(inputObjectType.getInputValue(entry.getKey())).asInputObject()
+                                        ).stream()
+                                )
+                                .findFirst()
+                                .or(() ->
+                                        Stream.ofNullable(objectValueWithVariable.getObjectValueWithVariable())
+                                                .flatMap(stringValueWithVariableMap -> stringValueWithVariableMap.entrySet().stream())
+                                                .filter(entry -> entry.getValue().isArray())
+                                                .filter(entry ->
+                                                        entry.getValue().asArray().getValueWithVariables().stream()
+                                                                .filter(ValueWithVariable::isVariable)
+                                                                .anyMatch(valueWithVariable -> valueWithVariable.asVariable().getName().equals(name))
+                                                )
+                                                .findFirst()
+                                                .map(entry -> inputObjectType.getInputValue(entry.getKey()))
+                                                .or(() ->
+                                                        Stream.ofNullable(objectValueWithVariable.getObjectValueWithVariable())
+                                                                .flatMap(stringValueWithVariableMap -> stringValueWithVariableMap.entrySet().stream())
+                                                                .filter(entry -> entry.getValue().isArray())
+                                                                .flatMap(entry ->
+                                                                        entry.getValue().asArray().getValueWithVariables().stream()
+                                                                                .flatMap(valueWithVariable ->
+                                                                                        getVariableInputValue(
+                                                                                                name,
+                                                                                                valueWithVariable.asObject(),
+                                                                                                documentManager.getInputValueTypeDefinition(inputObjectType.getInputValue(entry.getKey())).asInputObject()
+                                                                                        ).stream()
+                                                                                )
+                                                                )
+                                                                .findFirst()
+                                                )
+                                )
+                );
     }
 }
