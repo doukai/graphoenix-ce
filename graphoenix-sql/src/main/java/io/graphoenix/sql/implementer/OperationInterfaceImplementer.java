@@ -23,7 +23,6 @@ import io.graphoenix.sql.translator.QueryTranslator;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.bind.Jsonb;
-import jakarta.json.spi.JsonProvider;
 import org.tinylog.Logger;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -148,14 +147,6 @@ public class OperationInterfaceImplementer {
                 )
                 .addField(
                         FieldSpec.builder(
-                                ClassName.get(JsonProvider.class),
-                                "jsonProvider",
-                                Modifier.PRIVATE,
-                                Modifier.FINAL
-                        ).build()
-                )
-                .addField(
-                        FieldSpec.builder(
                                 ClassName.get(packageConfig.getHandlerPackageName(), "InputInvokeHandler"),
                                 "inputInvokeHandler",
                                 Modifier.PRIVATE,
@@ -216,11 +207,9 @@ public class OperationInterfaceImplementer {
                 .addAnnotation(Inject.class)
                 .addParameter(ParameterSpec.builder(ClassName.get(OperationDAO.class), "operationDAO").build())
                 .addParameter(ClassName.get(Jsonb.class), "jsonb")
-                .addParameter(ClassName.get(JsonProvider.class), "jsonProvider")
                 .addParameter(ClassName.get(packageConfig.getHandlerPackageName(), "InputInvokeHandler"), "inputInvokeHandler")
                 .addStatement("this.operationDAO = operationDAO")
                 .addStatement("this.jsonb = jsonb")
-                .addStatement("this.jsonProvider = jsonProvider")
                 .addStatement("this.inputInvokeHandler = inputInvokeHandler");
 
         return builder.build();
