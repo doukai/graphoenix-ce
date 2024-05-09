@@ -38,7 +38,7 @@ public class __TypeMutationArguments implements MetaInput {
   private __TypeInput ofType;
 
   @DefaultValue("false")
-  private Boolean isDeprecated;
+  private Boolean isDeprecated = false;
 
   private Integer version;
 
@@ -55,7 +55,7 @@ public class __TypeMutationArguments implements MetaInput {
   private String createGroupId;
 
   @DefaultValue("\"__Type\"")
-  private String __typename;
+  private String __typename = "__Type";
 
   private Integer schemaId;
 

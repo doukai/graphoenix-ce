@@ -14,14 +14,14 @@ import org.eclipse.microprofile.graphql.Input;
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 public class FloatExpression {
   @DefaultValue("EQ")
-  private Operator opr;
+  private Operator opr = Operator.EQ;
 
   private Float val;
 
   private Collection<Float> arr;
 
   @DefaultValue("false")
-  private Boolean skipNull;
+  private Boolean skipNull = false;
 
   public Operator getOpr() {
     return this.opr;

@@ -29,7 +29,7 @@ public class __SchemaInput implements MetaInput {
   private Collection<__DirectiveInput> directives;
 
   @DefaultValue("false")
-  private Boolean isDeprecated;
+  private Boolean isDeprecated = false;
 
   private Integer version;
 
@@ -46,7 +46,7 @@ public class __SchemaInput implements MetaInput {
   private String createGroupId;
 
   @DefaultValue("\"__Schema\"")
-  private String __typename;
+  private String __typename = "__Schema";
 
   private String queryTypeName;
 

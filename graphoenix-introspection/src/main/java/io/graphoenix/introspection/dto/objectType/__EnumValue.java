@@ -26,7 +26,7 @@ public class __EnumValue implements Meta {
 
   private String deprecationReason;
 
-  private Boolean isDeprecated;
+  private Boolean isDeprecated = false;
 
   private Integer version;
 
@@ -42,7 +42,7 @@ public class __EnumValue implements Meta {
 
   private String createGroupId;
 
-  private String __typename;
+  private String __typename = "__EnumValue";
 
   private String ofTypeName;
 

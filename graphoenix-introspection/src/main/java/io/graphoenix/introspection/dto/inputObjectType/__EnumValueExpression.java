@@ -27,7 +27,7 @@ public class __EnumValueExpression implements MetaExpression {
   private StringExpression deprecationReason;
 
   @DefaultValue("false")
-  private Boolean includeDeprecated;
+  private Boolean includeDeprecated = false;
 
   private IntExpression version;
 
@@ -48,10 +48,10 @@ public class __EnumValueExpression implements MetaExpression {
   private StringExpression ofTypeName;
 
   @DefaultValue("false")
-  private Boolean not;
+  private Boolean not = false;
 
   @DefaultValue("AND")
-  private Conditional cond;
+  private Conditional cond = Conditional.AND;
 
   private Collection<__EnumValueExpression> exs;
 

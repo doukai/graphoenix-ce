@@ -25,7 +25,7 @@ public class __DirectiveLocationsRelationMutationArguments implements MetaInput 
   private __DirectiveLocation locationsRef;
 
   @DefaultValue("false")
-  private Boolean isDeprecated;
+  private Boolean isDeprecated = false;
 
   private Integer version;
 
@@ -42,7 +42,7 @@ public class __DirectiveLocationsRelationMutationArguments implements MetaInput 
   private String createGroupId;
 
   @DefaultValue("\"__DirectiveLocationsRelation\"")
-  private String __typename;
+  private String __typename = "__DirectiveLocationsRelation";
 
   private __DirectiveLocationsRelationInput input;
 

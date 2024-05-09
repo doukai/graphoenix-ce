@@ -15,7 +15,7 @@ public interface NamedStructExpression extends MetaExpression {
 
   StringExpression description = null;
 
-  Boolean includeDeprecated = null;
+  Boolean includeDeprecated = false;
 
   IntExpression version = null;
 
@@ -31,9 +31,9 @@ public interface NamedStructExpression extends MetaExpression {
 
   StringExpression createGroupId = null;
 
-  Boolean not = null;
+  Boolean not = false;
 
-  Conditional cond = null;
+  Conditional cond = Conditional.AND;
 
   StringExpression getName();
 

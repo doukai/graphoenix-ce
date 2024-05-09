@@ -28,7 +28,7 @@ public class __TypeInterfaces implements Meta {
   @Name("interface")
   private __Type _interface;
 
-  private Boolean isDeprecated;
+  private Boolean isDeprecated = false;
 
   private Integer version;
 
@@ -44,7 +44,7 @@ public class __TypeInterfaces implements Meta {
 
   private String createGroupId;
 
-  private String __typename;
+  private String __typename = "__TypeInterfaces";
 
   private Integer idCount;
 

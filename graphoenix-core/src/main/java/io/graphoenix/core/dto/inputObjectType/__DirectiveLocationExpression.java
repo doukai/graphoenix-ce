@@ -13,7 +13,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 public class __DirectiveLocationExpression {
   @DefaultValue("EQ")
-  private Operator opr;
+  private Operator opr = Operator.EQ;
 
   private __DirectiveLocation val;
 

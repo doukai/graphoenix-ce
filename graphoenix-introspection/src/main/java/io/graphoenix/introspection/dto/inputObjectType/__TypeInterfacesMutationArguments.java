@@ -28,7 +28,7 @@ public class __TypeInterfacesMutationArguments implements MetaInput {
   private __TypeInput _interface;
 
   @DefaultValue("false")
-  private Boolean isDeprecated;
+  private Boolean isDeprecated = false;
 
   private Integer version;
 
@@ -45,7 +45,7 @@ public class __TypeInterfacesMutationArguments implements MetaInput {
   private String createGroupId;
 
   @DefaultValue("\"__TypeInterfaces\"")
-  private String __typename;
+  private String __typename = "__TypeInterfaces";
 
   private __TypeInterfacesInput input;
 

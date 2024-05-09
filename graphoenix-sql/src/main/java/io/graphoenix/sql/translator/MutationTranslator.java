@@ -952,11 +952,11 @@ public class MutationTranslator {
                         new JsonTableFunction()
                                 .withJson(
                                         new Function()
-                                                .withName("JSON_ARRAY_APPEND")
+                                                .withName("CONCAT")
                                                 .withParameters(
-                                                        new StringValue("[]"),
-                                                        new StringValue("$"),
-                                                        new JdbcNamedParameter().withName(valueWithVariable.asVariable().getName())
+                                                        new StringValue("["),
+                                                        new JdbcNamedParameter().withName(valueWithVariable.asVariable().getName()),
+                                                        new StringValue("]")
                                                 )
                                 )
                                 .withPath(new StringValue("$[*]"))

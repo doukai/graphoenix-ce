@@ -271,7 +271,7 @@ public class OperationInterfaceImplementer {
                             String methodName = typeNameToFieldName(inputValueTypeDefinition.getName());
                             CodeBlock invokeCodeBlock;
                             if (variableInputValue.getType().hasList()) {
-                                invokeCodeBlock = CodeBlock.of("$T.fromIterable(new $T($L).getValueWithVariables()).flatMap(valueWithVariable -> inputInvokeHandler.$L(jsonb.fromJson(valueWithVariable.toString(), $T.class), valueWithVariable.asObject())).collectList().flatMap($LInvoked -> $L)",
+                                invokeCodeBlock = CodeBlock.of("$T.fromIterable(new $T($L).getValueWithVariables()).flatMap(valueWithVariable -> inputInvokeHandler.$L(jsonb.fromJson(valueWithVariable.asObject().toJson(), $T.class), valueWithVariable.asObject())).collectList().flatMap($LInvoked -> $L)",
                                         ClassName.get(Flux.class),
                                         ClassName.get(ArrayValueWithVariable.class),
                                         cur.getKey(),
@@ -281,7 +281,7 @@ public class OperationInterfaceImplementer {
                                         pre
                                 );
                             } else {
-                                invokeCodeBlock = CodeBlock.of("$T.just(new $T($L)).flatMap(objectValueWithVariable -> inputInvokeHandler.$L(jsonb.fromJson(objectValueWithVariable.toString(), $T.class), objectValueWithVariable)).flatMap($LInvoked -> $L)",
+                                invokeCodeBlock = CodeBlock.of("$T.just(new $T($L)).flatMap(objectValueWithVariable -> inputInvokeHandler.$L(jsonb.fromJson(objectValueWithVariable.toJson(), $T.class), objectValueWithVariable)).flatMap($LInvoked -> $L)",
                                         ClassName.get(Mono.class),
                                         ClassName.get(ObjectValueWithVariable.class),
                                         cur.getKey(),

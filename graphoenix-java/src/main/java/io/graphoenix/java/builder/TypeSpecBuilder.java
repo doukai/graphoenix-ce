@@ -462,6 +462,10 @@ public class TypeSpecBuilder {
                             .build()
             );
         }
+        fieldDefinition.getDefault()
+                .ifPresent(defaultValue ->
+                        builder.initializer("$L", buildDefaultValue(fieldDefinition, defaultValue))
+                );
         if (fieldDefinition.getType().getTypeName().getName().equals(SCALA_ID_NAME)) {
             builder.addAnnotation(Id.class);
         }
@@ -492,7 +496,11 @@ public class TypeSpecBuilder {
                             .build()
             );
         }
-        builder.initializer("$L", "null");
+        fieldDefinition.getDefault()
+                .ifPresentOrElse(
+                        defaultValue -> builder.initializer("$L", buildDefaultValue(fieldDefinition, defaultValue)),
+                        () -> builder.initializer("$L", "null")
+                );
         if (fieldDefinition.getType().isNonNull()) {
             builder.addAnnotation(NonNull.class);
         }
@@ -520,6 +528,7 @@ public class TypeSpecBuilder {
             );
         }
         if (inputValue.getDefaultValue() != null) {
+            builder.initializer("$L", buildDefaultValue(inputValue, inputValue.getDefaultValue().toString()));
             builder.addAnnotation(
                     AnnotationSpec.builder(DefaultValue.class)
                             .addMember("value", "$S", inputValue.getDefaultValue())
@@ -552,7 +561,11 @@ public class TypeSpecBuilder {
                             .build()
             );
         }
-        builder.initializer("$L", "null");
+        if (inputValue.getDefaultValue() != null) {
+            builder.initializer("$L", buildDefaultValue(inputValue, inputValue.getDefaultValue().toString()));
+        } else {
+            builder.initializer("$L", "null");
+        }
         if (inputValue.getType().isNonNull()) {
             builder.addAnnotation(NonNull.class);
         }
@@ -597,6 +610,25 @@ public class TypeSpecBuilder {
         }
         Logger.info("input annotation field {}.{} build success", inputValue.getName());
         return builder.build();
+    }
+
+    private CodeBlock buildDefaultValue(FieldDefinition fieldDefinition, String defaultValue) {
+        Definition inputValueTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+        if (inputValueTypeDefinition.isScalar()) {
+            if (inputValueTypeDefinition.getName().equals("String")) {
+                return CodeBlock.of("$S", defaultValue);
+            } else {
+                return CodeBlock.of("$L", defaultValue);
+            }
+        } else if (inputValueTypeDefinition.isEnum()) {
+            return CodeBlock.of(
+                    "$T.$L",
+                    toClassName(inputValueTypeDefinition.getClassNameOrError()),
+                    defaultValue
+            );
+        } else {
+            throw new GraphQLErrors(UNSUPPORTED_DEFAULT_VALUE.bind(defaultValue));
+        }
     }
 
     private CodeBlock buildDefaultValue(InputValue inputValue, String defaultValue) {

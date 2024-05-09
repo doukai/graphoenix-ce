@@ -33,7 +33,7 @@ public class __Schema implements Meta {
   @NonNull
   private Collection<__Directive> directives;
 
-  private Boolean isDeprecated;
+  private Boolean isDeprecated = false;
 
   private Integer version;
 
@@ -49,7 +49,7 @@ public class __Schema implements Meta {
 
   private String createGroupId;
 
-  private String __typename;
+  private String __typename = "__Schema";
 
   private String queryTypeName;
 

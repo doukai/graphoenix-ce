@@ -31,7 +31,7 @@ public class __FieldExpression implements MetaExpression {
   private StringExpression deprecationReason;
 
   @DefaultValue("false")
-  private Boolean includeDeprecated;
+  private Boolean includeDeprecated = false;
 
   private IntExpression version;
 
@@ -54,10 +54,10 @@ public class __FieldExpression implements MetaExpression {
   private StringExpression typeName;
 
   @DefaultValue("false")
-  private Boolean not;
+  private Boolean not = false;
 
   @DefaultValue("AND")
-  private Conditional cond;
+  private Conditional cond = Conditional.AND;
 
   private Collection<__FieldExpression> exs;
 

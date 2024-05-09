@@ -23,7 +23,7 @@ public class Invoke {
   private Collection<String> thrownTypes;
 
   @DefaultValue("false")
-  private Boolean async;
+  private Boolean async = false;
 
   public String getClassName() {
     return this.className;

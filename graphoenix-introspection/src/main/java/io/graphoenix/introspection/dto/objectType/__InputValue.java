@@ -34,7 +34,7 @@ public class __InputValue implements Meta {
 
   private String defaultValue;
 
-  private Boolean isDeprecated;
+  private Boolean isDeprecated = false;
 
   private Integer version;
 
@@ -50,7 +50,7 @@ public class __InputValue implements Meta {
 
   private String createGroupId;
 
-  private String __typename;
+  private String __typename = "__InputValue";
 
   private String ofTypeName;
 

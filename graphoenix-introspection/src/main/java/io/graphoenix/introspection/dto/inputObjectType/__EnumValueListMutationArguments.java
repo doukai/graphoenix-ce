@@ -27,7 +27,7 @@ public class __EnumValueListMutationArguments implements MetaInput {
   private String deprecationReason;
 
   @DefaultValue("false")
-  private Boolean isDeprecated;
+  private Boolean isDeprecated = false;
 
   private Integer version;
 
@@ -44,7 +44,7 @@ public class __EnumValueListMutationArguments implements MetaInput {
   private String createGroupId;
 
   @DefaultValue("\"__EnumValue\"")
-  private String __typename;
+  private String __typename = "__EnumValue";
 
   private String ofTypeName;
 

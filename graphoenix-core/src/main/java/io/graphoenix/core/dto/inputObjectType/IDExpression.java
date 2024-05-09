@@ -14,14 +14,14 @@ import org.eclipse.microprofile.graphql.Input;
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 public class IDExpression {
   @DefaultValue("EQ")
-  private Operator opr;
+  private Operator opr = Operator.EQ;
 
   private String val;
 
   private Collection<String> arr;
 
   @DefaultValue("false")
-  private Boolean skipNull;
+  private Boolean skipNull = false;
 
   public Operator getOpr() {
     return this.opr;

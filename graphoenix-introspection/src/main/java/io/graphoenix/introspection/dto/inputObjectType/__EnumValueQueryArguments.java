@@ -28,7 +28,7 @@ public class __EnumValueQueryArguments implements MetaExpression {
   private StringExpression deprecationReason;
 
   @DefaultValue("false")
-  private Boolean includeDeprecated;
+  private Boolean includeDeprecated = false;
 
   private IntExpression version;
 
@@ -51,10 +51,10 @@ public class __EnumValueQueryArguments implements MetaExpression {
   private Collection<String> groupBy;
 
   @DefaultValue("false")
-  private Boolean not;
+  private Boolean not = false;
 
   @DefaultValue("AND")
-  private Conditional cond;
+  private Conditional cond = Conditional.AND;
 
   private Collection<__EnumValueExpression> exs;
 

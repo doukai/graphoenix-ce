@@ -4,11 +4,13 @@ import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.error.GraphQLErrorType;
 import io.graphoenix.spi.error.GraphQLErrors;
 import jakarta.json.*;
+import jakarta.json.spi.JsonProvider;
 import jakarta.validation.constraints.NotNull;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
 import javax.lang.model.element.AnnotationMirror;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,6 +23,8 @@ public class ObjectValueWithVariable extends AbstractMap<String, JsonValue> impl
     private final STGroupFile stGroupFile = new STGroupFile("stg/common/ObjectValueWithVariable.stg");
 
     private final Map<String, ValueWithVariable> objectValueWithVariable;
+
+    private final JsonProvider jsonProvider = JsonProvider.provider();
 
     public ObjectValueWithVariable() {
         this.objectValueWithVariable = new LinkedHashMap<>();
@@ -308,5 +312,14 @@ public class ObjectValueWithVariable extends AbstractMap<String, JsonValue> impl
         ST st = stGroupFile.getInstanceOf("objectValueWithVariableDefinition");
         st.add("objectValueWithVariable", objectValueWithVariable);
         return st.render();
+    }
+
+    public String toJson() {
+        StringWriter sw = new StringWriter();
+        jsonProvider.createWriter(sw);
+        try (JsonWriter jw = jsonProvider.createWriter(sw)) {
+            jw.write(this);
+        }
+        return sw.toString();
     }
 }

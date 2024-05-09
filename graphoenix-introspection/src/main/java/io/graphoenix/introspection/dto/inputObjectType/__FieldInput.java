@@ -31,7 +31,7 @@ public class __FieldInput implements MetaInput {
   private String deprecationReason;
 
   @DefaultValue("false")
-  private Boolean isDeprecated;
+  private Boolean isDeprecated = false;
 
   private Integer version;
 
@@ -48,7 +48,7 @@ public class __FieldInput implements MetaInput {
   private String createGroupId;
 
   @DefaultValue("\"__Field\"")
-  private String __typename;
+  private String __typename = "__Field";
 
   private String ofTypeName;
 

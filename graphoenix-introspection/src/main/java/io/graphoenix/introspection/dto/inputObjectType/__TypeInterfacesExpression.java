@@ -29,7 +29,7 @@ public class __TypeInterfacesExpression implements MetaExpression {
   private __TypeExpression _interface;
 
   @DefaultValue("false")
-  private Boolean includeDeprecated;
+  private Boolean includeDeprecated = false;
 
   private IntExpression version;
 
@@ -48,10 +48,10 @@ public class __TypeInterfacesExpression implements MetaExpression {
   private StringExpression __typename;
 
   @DefaultValue("false")
-  private Boolean not;
+  private Boolean not = false;
 
   @DefaultValue("AND")
-  private Conditional cond;
+  private Conditional cond = Conditional.AND;
 
   private Collection<__TypeInterfacesExpression> exs;
 

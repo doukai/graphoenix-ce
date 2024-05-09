@@ -9,6 +9,7 @@ import io.graphoenix.java.utils.TypeNameUtil;
 import io.graphoenix.spi.graphql.common.Arguments;
 import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
 import io.graphoenix.spi.graphql.type.InputObjectType;
+import io.graphoenix.spi.utils.StreamUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
@@ -93,7 +94,6 @@ public class InputInvokeHandlerBuilder {
     }
 
     private MethodSpec buildConstructor() {
-
         MethodSpec.Builder builder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Inject.class)
@@ -307,6 +307,7 @@ public class InputInvokeHandlerBuilder {
                         inputObjectType.getInterfaces().stream()
                                 .flatMap(interfaceObjectName -> documentManager.getDocument().getInputObjectType(interfaceObjectName).stream())
                                 .flatMap(this::getInvokes)
-                );
+                )
+                .filter(StreamUtil.distinctByKey(tuple4 -> tuple4.getT1() + "." + tuple4.getT1()));
     }
 }

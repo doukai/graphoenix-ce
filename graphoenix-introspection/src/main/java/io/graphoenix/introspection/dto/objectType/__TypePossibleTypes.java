@@ -26,7 +26,7 @@ public class __TypePossibleTypes implements Meta {
 
   private __Type possibleType;
 
-  private Boolean isDeprecated;
+  private Boolean isDeprecated = false;
 
   private Integer version;
 
@@ -42,7 +42,7 @@ public class __TypePossibleTypes implements Meta {
 
   private String createGroupId;
 
-  private String __typename;
+  private String __typename = "__TypePossibleTypes";
 
   private Integer idCount;
 

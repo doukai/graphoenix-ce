@@ -35,7 +35,7 @@ public class __Directive implements Meta {
   @NonNull
   private Boolean isRepeatable;
 
-  private Boolean isDeprecated;
+  private Boolean isDeprecated = false;
 
   private Integer version;
 
@@ -51,7 +51,7 @@ public class __Directive implements Meta {
 
   private String createGroupId;
 
-  private String __typename;
+  private String __typename = "__Directive";
 
   private Integer schemaId;
 

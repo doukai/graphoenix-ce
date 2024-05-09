@@ -30,7 +30,7 @@ public class __DirectiveMutationArguments implements MetaInput {
   private Boolean isRepeatable;
 
   @DefaultValue("false")
-  private Boolean isDeprecated;
+  private Boolean isDeprecated = false;
 
   private Integer version;
 
@@ -47,7 +47,7 @@ public class __DirectiveMutationArguments implements MetaInput {
   private String createGroupId;
 
   @DefaultValue("\"__Directive\"")
-  private String __typename;
+  private String __typename = "__Directive";
 
   private Integer schemaId;
 

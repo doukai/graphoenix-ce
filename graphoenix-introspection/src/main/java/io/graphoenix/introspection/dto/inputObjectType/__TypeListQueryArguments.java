@@ -40,7 +40,7 @@ public class __TypeListQueryArguments implements MetaExpression {
   private __TypeExpression ofType;
 
   @DefaultValue("false")
-  private Boolean includeDeprecated;
+  private Boolean includeDeprecated = false;
 
   private IntExpression version;
 
@@ -71,10 +71,10 @@ public class __TypeListQueryArguments implements MetaExpression {
   private Collection<String> groupBy;
 
   @DefaultValue("false")
-  private Boolean not;
+  private Boolean not = false;
 
   @DefaultValue("AND")
-  private Conditional cond;
+  private Conditional cond = Conditional.AND;
 
   private Collection<__TypeExpression> exs;
 

@@ -15,7 +15,7 @@ public interface NamedStructInput extends MetaInput {
 
   String description = null;
 
-  Boolean isDeprecated = null;
+  Boolean isDeprecated = false;
 
   Integer version = null;
 

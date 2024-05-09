@@ -19,7 +19,7 @@ public interface TreeStructExpression extends MetaExpression {
 
   StringExpression parentId = null;
 
-  Boolean includeDeprecated = null;
+  Boolean includeDeprecated = false;
 
   IntExpression version = null;
 
@@ -35,9 +35,9 @@ public interface TreeStructExpression extends MetaExpression {
 
   StringExpression createGroupId = null;
 
-  Boolean not = null;
+  Boolean not = false;
 
-  Conditional cond = null;
+  Conditional cond = Conditional.AND;
 
   StringExpression getName();
 

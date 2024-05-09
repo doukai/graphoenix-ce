@@ -19,7 +19,7 @@ public interface TreeStructInput extends MetaInput {
 
   String parentId = null;
 
-  Boolean isDeprecated = null;
+  Boolean isDeprecated = false;
 
   Integer version = null;
 

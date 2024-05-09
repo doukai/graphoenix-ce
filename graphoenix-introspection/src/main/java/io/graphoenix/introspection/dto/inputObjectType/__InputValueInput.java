@@ -32,7 +32,7 @@ public class __InputValueInput implements MetaInput {
   private String defaultValue;
 
   @DefaultValue("false")
-  private Boolean isDeprecated;
+  private Boolean isDeprecated = false;
 
   private Integer version;
 
@@ -49,7 +49,7 @@ public class __InputValueInput implements MetaInput {
   private String createGroupId;
 
   @DefaultValue("\"__InputValue\"")
-  private String __typename;
+  private String __typename = "__InputValue";
 
   private String ofTypeName;
 

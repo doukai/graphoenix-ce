@@ -26,7 +26,7 @@ public class __TypePossibleTypesMutationArguments implements MetaInput {
   private __TypeInput possibleType;
 
   @DefaultValue("false")
-  private Boolean isDeprecated;
+  private Boolean isDeprecated = false;
 
   private Integer version;
 
@@ -43,7 +43,7 @@ public class __TypePossibleTypesMutationArguments implements MetaInput {
   private String createGroupId;
 
   @DefaultValue("\"__TypePossibleTypes\"")
-  private String __typename;
+  private String __typename = "__TypePossibleTypes";
 
   private __TypePossibleTypesInput input;
 

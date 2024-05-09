@@ -25,7 +25,7 @@ public class __DirectiveLocationsRelation implements Meta {
 
   private __DirectiveLocation locationsRef;
 
-  private Boolean isDeprecated;
+  private Boolean isDeprecated = false;
 
   private Integer version;
 
@@ -41,7 +41,7 @@ public class __DirectiveLocationsRelation implements Meta {
 
   private String createGroupId;
 
-  private String __typename;
+  private String __typename = "__DirectiveLocationsRelation";
 
   private Integer idCount;
 

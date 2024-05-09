@@ -41,7 +41,7 @@ public class __Type implements Meta {
 
   private __Type ofType;
 
-  private Boolean isDeprecated;
+  private Boolean isDeprecated = false;
 
   private Integer version;
 
@@ -57,7 +57,7 @@ public class __Type implements Meta {
 
   private String createGroupId;
 
-  private String __typename;
+  private String __typename = "__Type";
 
   private Integer schemaId;
 
