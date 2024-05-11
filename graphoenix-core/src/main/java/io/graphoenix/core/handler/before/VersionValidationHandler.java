@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 
 import static io.graphoenix.core.handler.before.UniqueValidationHandler.UNIQUE_VALIDATION_HANDLER_PRIORITY;
 import static io.graphoenix.spi.constant.Hammurabi.*;
-import static io.graphoenix.spi.error.GraphQLErrorType.EXISTED_UNIQUE_VALUES;
+import static io.graphoenix.spi.error.GraphQLErrorType.RESOURCE_HAS_BEEN_UPDATED;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 
 @ApplicationScoped
@@ -127,7 +127,7 @@ public class VersionValidationHandler implements OperationBeforeHandler {
                                                                                                                 !item.asJsonObject().get(tuple5.getT2()).toString().equals(tuple5.getT3().toString())
                                                                                                 )
                                                                                 )
-                                                                                .map(tuple5 -> new GraphQLError(EXISTED_UNIQUE_VALUES).setPath(tuple5.getT4()))
+                                                                                .map(tuple5 -> new GraphQLError(RESOURCE_HAS_BEEN_UPDATED).setPath(tuple5.getT4()))
                                                                 )
                                                 )
                                 )

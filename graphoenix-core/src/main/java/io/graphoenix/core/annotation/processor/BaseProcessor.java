@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
-import static io.graphoenix.spi.error.GraphQLErrorType.FIELD_NOT_EXIST;
+import static io.graphoenix.spi.error.GraphQLErrorType.FIELD_DEFINITION_NOT_EXIST;
 import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_OPERATION_TYPE;
 import static io.graphoenix.spi.utils.DocumentUtil.graphqlToSelectionSet;
 import static io.graphoenix.spi.utils.ElementUtil.*;
@@ -377,7 +377,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
         int index = typeElement.getEnclosedElements().indexOf(executableElement);
         Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> filedEntry = annotationMirror.getElementValues().entrySet().stream()
                 .findFirst()
-                .orElseThrow(() -> new GraphQLErrors(FIELD_NOT_EXIST.bind(annotationMirror.toString())));
+                .orElseThrow(() -> new GraphQLErrors(FIELD_DEFINITION_NOT_EXIST.bind(annotationMirror.toString())));
         Field field = new Field(executableElement, filedEntry.getKey(), (AnnotationMirror) filedEntry.getValue());
         Operation operation = new Operation(
                 typeElement.getQualifiedName().toString().replaceAll("\\.", "_") +

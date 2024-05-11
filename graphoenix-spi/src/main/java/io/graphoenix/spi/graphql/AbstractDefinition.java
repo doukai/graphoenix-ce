@@ -255,7 +255,7 @@ public abstract class AbstractDefinition implements Definition {
 
     @Override
     public String getClassNameOrError() {
-        return getClassName().orElseThrow(() -> new GraphQLErrors(CLASS_NAME_ARGUMENT_NOT_EXIST));
+        return getClassName().orElseThrow(() -> new GraphQLErrors(CLASS_NAME_DIRECTIVE_NOT_EXIST));
     }
 
     @Override

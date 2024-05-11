@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_CURSOR_NAME;
 import static io.graphoenix.spi.constant.Hammurabi.SCALA_ID_NAME;
-import static io.graphoenix.spi.error.GraphQLErrorType.TYPE_ID_FIELD_NOT_EXIST;
+import static io.graphoenix.spi.error.GraphQLErrorType.ID_FIELD_DEFINITION_NOT_EXIST;
 import static io.graphoenix.spi.utils.DocumentUtil.getImplementsInterfaces;
 import static io.graphoenix.spi.utils.ElementUtil.getNameFromElement;
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
@@ -177,7 +177,7 @@ public class ObjectType extends AbstractDefinition implements Definition, Fields
     }
 
     public FieldDefinition getIDFieldOrError() {
-        return getIDField().orElseThrow(() -> new GraphQLErrors(TYPE_ID_FIELD_NOT_EXIST.bind(this.getName())));
+        return getIDField().orElseThrow(() -> new GraphQLErrors(ID_FIELD_DEFINITION_NOT_EXIST.bind(this.getName())));
     }
 
     public Optional<FieldDefinition> getCursorField() {

@@ -220,7 +220,7 @@ public class Operation extends AbstractDefinition implements Definition {
     }
 
     public String getInvokeClassNameOrError() {
-        return getInvokeClassName().orElseThrow(() -> new GraphQLErrors(CLASS_NAME_ARGUMENT_NOT_EXIST.bind(toString())));
+        return getInvokeClassName().orElseThrow(() -> new GraphQLErrors(CLASS_NAME_DIRECTIVE_NOT_EXIST.bind(toString())));
     }
 
     public Optional<String> getInvokeMethodName() {

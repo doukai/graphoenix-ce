@@ -253,7 +253,7 @@ public class Document {
     }
 
     public ObjectType getObjectTypeOrError(String name) {
-        return getObjectType(name).orElseThrow(() -> new GraphQLErrors(TYPE_NOT_EXIST.bind(name)));
+        return getObjectType(name).orElseThrow(() -> new GraphQLErrors(TYPE_DEFINITION_NOT_EXIST.bind(name)));
     }
 
     public Optional<InterfaceType> getInterfaceType(String name) {
@@ -262,7 +262,7 @@ public class Document {
     }
 
     public InterfaceType getInterfaceTypeOrError(String name) {
-        return getInterfaceType(name).orElseThrow(() -> new GraphQLErrors(TYPE_NOT_EXIST.bind(name)));
+        return getInterfaceType(name).orElseThrow(() -> new GraphQLErrors(TYPE_DEFINITION_NOT_EXIST.bind(name)));
     }
 
     public Stream<ObjectType> getObjectTypes() {
@@ -317,7 +317,7 @@ public class Document {
     }
 
     public InputObjectType getInputObjectTypeOrError(String name) {
-        return getInputObjectType(name).orElseThrow(() -> new GraphQLErrors(INPUT_OBJECT_NOT_EXIST.bind(name)));
+        return getInputObjectType(name).orElseThrow(() -> new GraphQLErrors(INPUT_OBJECT_DEFINITION_NOT_EXIST.bind(name)));
     }
 
     public Optional<EnumType> getEnumType(String name) {
@@ -326,7 +326,7 @@ public class Document {
     }
 
     public EnumType getEnumTypeOrError(String name) {
-        return getEnumType(name).orElseThrow(() -> new GraphQLErrors(INPUT_OBJECT_NOT_EXIST.bind(name)));
+        return getEnumType(name).orElseThrow(() -> new GraphQLErrors(INPUT_OBJECT_DEFINITION_NOT_EXIST.bind(name)));
     }
 
     public Optional<FragmentDefinition> getFragmentDefinition(String name) {
@@ -381,15 +381,15 @@ public class Document {
     }
 
     public ObjectType getQueryOperationTypeOrError() {
-        return getQueryOperationType().orElseThrow(() -> new GraphQLErrors(QUERY_TYPE_NOT_EXIST));
+        return getQueryOperationType().orElseThrow(() -> new GraphQLErrors(QUERY_TYPE_DEFINITION_NOT_EXIST));
     }
 
     public ObjectType getMutationOperationTypeOrError() {
-        return getMutationOperationType().orElseThrow(() -> new GraphQLErrors(MUTATION_TYPE_NOT_EXIST));
+        return getMutationOperationType().orElseThrow(() -> new GraphQLErrors(MUTATION_TYPE_DEFINITION_NOT_EXIST));
     }
 
     public ObjectType getSubscriptionOperationTypeOrError() {
-        return getSubscriptionOperationType().orElseThrow(() -> new GraphQLErrors(SUBSCRIBE_TYPE_NOT_EXIST));
+        return getSubscriptionOperationType().orElseThrow(() -> new GraphQLErrors(SUBSCRIBE_TYPE_DEFINITION_NOT_EXIST));
     }
 
     public Optional<InterfaceType> getMetaInterface() {

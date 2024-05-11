@@ -424,7 +424,7 @@ public class ArgumentsTranslator {
                         .withLeftExpression(column);
                 break;
             default:
-                throw new GraphQLErrors(GraphQLErrorType.UNSUPPORTED_OPERATOR.bind(opr));
+                throw new GraphQLErrors(GraphQLErrorType.UNSUPPORTED_OPERATOR_VALUE.bind(opr));
         }
         if (skipNull) {
             return Optional.of(skipNullExpression(value, where));
@@ -475,7 +475,7 @@ public class ArgumentsTranslator {
                     );
                     break;
                 default:
-                    throw new GraphQLErrors(GraphQLErrorType.UNSUPPORTED_OPERATOR.bind(opr));
+                    throw new GraphQLErrors(GraphQLErrorType.UNSUPPORTED_OPERATOR_VALUE.bind(opr));
             }
             if (skipNull) {
                 return Optional.of(skipNullExpression(leafValueToDBValue(arr), where));
@@ -551,7 +551,7 @@ public class ArgumentsTranslator {
                     );
                     break;
                 default:
-                    throw new GraphQLErrors(GraphQLErrorType.UNSUPPORTED_OPERATOR.bind(opr));
+                    throw new GraphQLErrors(GraphQLErrorType.UNSUPPORTED_OPERATOR_VALUE.bind(opr));
             }
             return Optional.of(where);
         }
