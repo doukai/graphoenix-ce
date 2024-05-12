@@ -135,7 +135,8 @@ public class VersionValidationHandler implements OperationBeforeHandler {
                 .collectList()
                 .flatMap(graphQLErrors -> {
                             if (!graphQLErrors.isEmpty()) {
-                                return Mono.error(new GraphQLErrors().addAll(graphQLErrors));
+//                                return Mono.error(new GraphQLErrors().addAll(graphQLErrors));
+                                return Mono.error(new GraphQLErrors(RESOURCE_HAS_BEEN_UPDATED));
                             }
                             return Mono.just(operation);
                         }

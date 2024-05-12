@@ -9,6 +9,7 @@ public class MutationConfig {
     @Optional
     private Boolean occ = false;
 
+    @Optional
     private Boolean compensatingTransaction = false;
 
     public Boolean getOcc() {

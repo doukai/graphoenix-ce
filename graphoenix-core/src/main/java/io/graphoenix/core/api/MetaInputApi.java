@@ -30,7 +30,11 @@ public class MetaInputApi {
         } else {
             metaInput.setUpdateTime(now);
             if (mutationConfig.getOcc()) {
-                metaInput.setVersion(metaInput.getVersion() + 1);
+                if (metaInput.getVersion() != null) {
+                    metaInput.setVersion(metaInput.getVersion() + 1);
+                } else {
+                    metaInput.setVersion(0);
+                }
             }
         }
         return metaInput;
