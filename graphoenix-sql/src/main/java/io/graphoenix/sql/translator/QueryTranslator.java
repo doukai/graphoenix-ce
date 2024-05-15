@@ -105,7 +105,12 @@ public class QueryTranslator {
         Table table = typeToTable(fieldTypeDefinition, level);
 
         if (!groupBy && field.hasGroupBy() && fieldDefinition.getType().hasList()) {
-            selectExpression = jsonExtractFunction(graphqlFieldToColumn(fieldTypeDefinition.getName(), INPUT_VALUE_GROUP_BY_NAME, level));
+            Column groupByColumn = graphqlFieldToColumn(fieldTypeDefinition.getName(), INPUT_VALUE_GROUP_BY_NAME, level);
+            if (fieldDefinition.getType().hasList()) {
+                selectExpression = jsonExtractFunction(jsonAggregateFunction(groupByColumn, null, null));
+            } else {
+                selectExpression = jsonExtractFunction(groupByColumn);
+            }
             fromItem = new ParenthesedSelect()
                     .withSelect(objectFieldToPlainSelect(objectType, fieldDefinition, field, true, level))
                     .withAlias(new Alias(graphqlTypeNameToTableAliaName(fieldTypeDefinition.getName(), level)));
@@ -135,7 +140,7 @@ public class QueryTranslator {
                                     )
                                     .collect(Collectors.toList())
                     );
-            if (fieldDefinition.getType().hasList()) {
+            if (fieldDefinition.getType().hasList() && !groupBy) {
                 selectExpression = jsonExtractFunction(
                         jsonAggregateFunction(
                                 jsonObjectFunction,
@@ -151,9 +156,12 @@ public class QueryTranslator {
 
         if (groupBy) {
             plainSelect.addSelectItem(selectExpression, new Alias(graphqlFieldNameToColumnName(INPUT_VALUE_GROUP_BY_NAME)));
+            plainSelect.setOrderByElements(argumentsToOrderByList(fieldDefinition, field, level));
+            plainSelect.setLimit(argumentsToLimit(fieldDefinition, field));
         } else {
             plainSelect.addSelectItem(selectExpression);
         }
+
         plainSelect
                 .withFromItem(fromItem)
                 .setGroupByElement(argumentsToGroupBy(fieldDefinition, field, level));
