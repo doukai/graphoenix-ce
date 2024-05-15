@@ -57,9 +57,15 @@ public class MutationSendHandler implements OperationAfterHandler {
                                 Arguments arguments = field.getArguments();
                                 JsonObjectBuilder messageJsonObject = jsonProvider.createObjectBuilder().add(BODY_TYPE_KEY, typeName);
                                 if (fieldDefinition.getType().hasList()) {
-                                    messageJsonObject
-                                            .add(BODY_ARGUMENTS_KEY, jsonProvider.createArrayBuilder(arguments.get(INPUT_VALUE_LIST_NAME).asJsonArray()))
-                                            .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder(fieldJsonValue.asJsonArray()));
+                                    if (arguments.containsKey(INPUT_VALUE_LIST_NAME)) {
+                                        messageJsonObject
+                                                .add(BODY_ARGUMENTS_KEY, jsonProvider.createArrayBuilder(arguments.get(INPUT_VALUE_LIST_NAME).asJsonArray()))
+                                                .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder(fieldJsonValue.asJsonArray()));
+                                    } else {
+                                        messageJsonObject
+                                                .add(BODY_ARGUMENTS_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(arguments.asJsonObject())))
+                                                .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder(fieldJsonValue.asJsonArray()));
+                                    }
                                 } else {
                                     if (arguments.containsKey(INPUT_VALUE_INPUT_NAME)) {
                                         messageJsonObject

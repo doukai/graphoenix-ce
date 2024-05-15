@@ -486,6 +486,10 @@ public class ArgumentsTranslator {
                     Collections.singletonList(arr) :
                     arr.asArray().getValueWithVariables();
 
+            if (valList.isEmpty()) {
+                return Optional.empty();
+            }
+
             Expression value = new Parenthesis(new ExpressionList<>(valList.stream().map(DBValueUtil::leafValueToDBValue).collect(Collectors.toList())));
             Expression where;
             switch (opr) {
