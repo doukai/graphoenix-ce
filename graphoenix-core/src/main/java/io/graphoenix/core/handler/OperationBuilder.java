@@ -76,6 +76,9 @@ public class OperationBuilder {
     }
 
     public JsonValue updateJsonValue(Field field, FieldDefinition fieldDefinition, JsonValue jsonValue) {
+        if (jsonValue == null) {
+            return JsonValue.NULL;
+        }
         if (jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
             return jsonValue;
         }

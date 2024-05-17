@@ -61,8 +61,8 @@ public class ConnectionSplitter implements OperationBeforeHandler {
 
     private Stream<Field> buildConnection(ObjectType objectType, FieldDefinition fieldDefinition, Field field) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        if (packageManager.isLocalPackage(objectType.getField(field.getName())) &&
-                !objectType.getField(field.getName()).isInvokeField() &&
+        if (packageManager.isLocalPackage(fieldDefinition) &&
+                !fieldDefinition.isInvokeField() &&
                 fieldTypeDefinition.isObject()) {
             if (fieldDefinition.isConnectionField()) {
                 return splitConnections(objectType, fieldDefinition, field);

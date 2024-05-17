@@ -287,47 +287,71 @@ public class JsonSchemaTranslator {
 
     protected JsonObjectBuilder fieldToProperty(Type type, Directive directive) {
         JsonObjectBuilder propertyBuilder = buildJsonSchemaBuilder(directive);
-        if (type.isList()) {
-            return propertyBuilder
-                    .add("type", jsonProvider.createValue("array"))
-                    .add(
-                            "items",
-                            fieldToProperty(
-                                    type.asListType().getType(),
-                                    getJsonSchemaObjectArgument(directive, "items").orElse(null)
-                            )
-                    );
-        } else if (type.isNonNull()) {
+        if (type.isNonNull()) {
             if (type.asNonNullType().getType().isList()) {
-                return fieldToProperty(type.asNonNullType().getType(), directive);
+                return propertyBuilder
+                        .add("type", jsonProvider.createValue("array"))
+                        .add(
+                                "items",
+                                fieldToProperty(
+                                        type.asNonNullType().getType().asListType().getType(),
+                                        getJsonSchemaObjectArgument(directive, "items").orElse(null)
+                                )
+                        );
             } else {
                 return buildType(type.asNonNullType().getType().asTypeName(), propertyBuilder);
             }
         } else {
-            return buildNullableType(buildType(type.asTypeName(), propertyBuilder));
+            if (type.isList()) {
+                return buildNullableType(
+                        propertyBuilder
+                                .add("type", jsonProvider.createValue("array"))
+                                .add(
+                                        "items",
+                                        fieldToProperty(
+                                                type.asListType().getType(),
+                                                getJsonSchemaObjectArgument(directive, "items").orElse(null)
+                                        )
+                                )
+                );
+            } else {
+                return buildNullableType(buildType(type.asTypeName(), propertyBuilder));
+            }
         }
     }
 
     protected JsonObjectBuilder fieldToProperty(Type type, ObjectValueWithVariable objectValueWithVariable) {
         JsonObjectBuilder propertyBuilder = buildJsonSchemaBuilder(objectValueWithVariable);
-        if (type.isList()) {
-            return propertyBuilder
-                    .add("type", jsonProvider.createValue("array"))
-                    .add(
-                            "items",
-                            fieldToProperty(
-                                    type.asListType().getType(),
-                                    getJsonSchemaObjectArgument(objectValueWithVariable, "items").orElse(null)
-                            )
-                    );
-        } else if (type.isNonNull()) {
+        if (type.isNonNull()) {
             if (type.asNonNullType().getType().isList()) {
-                return fieldToProperty(type.asNonNullType().getType(), objectValueWithVariable);
+                return propertyBuilder
+                        .add("type", jsonProvider.createValue("array"))
+                        .add(
+                                "items",
+                                fieldToProperty(
+                                        type.asNonNullType().getType().asListType().getType(),
+                                        getJsonSchemaObjectArgument(objectValueWithVariable, "items").orElse(null)
+                                )
+                        );
             } else {
                 return buildType(type.asNonNullType().getType().asTypeName(), propertyBuilder);
             }
         } else {
-            return buildNullableType(buildType(type.asTypeName(), propertyBuilder));
+            if (type.isList()) {
+                return buildNullableType(
+                        propertyBuilder
+                                .add("type", jsonProvider.createValue("array"))
+                                .add(
+                                        "items",
+                                        fieldToProperty(
+                                                type.asListType().getType(),
+                                                getJsonSchemaObjectArgument(objectValueWithVariable, "items").orElse(null)
+                                        )
+                                )
+                );
+            } else {
+                return buildNullableType(buildType(type.asTypeName(), propertyBuilder));
+            }
         }
     }
 

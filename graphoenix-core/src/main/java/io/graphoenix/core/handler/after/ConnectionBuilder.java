@@ -1,6 +1,7 @@
 package io.graphoenix.core.handler.after;
 
 import io.graphoenix.core.handler.DocumentManager;
+import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.operation.Field;
@@ -36,11 +37,13 @@ public class ConnectionBuilder implements OperationAfterHandler {
     public static final int CONNECTION_BUILDER_PRIORITY = SELECTION_HANDLER_PRIORITY - 200;
 
     private final DocumentManager documentManager;
+    private final PackageManager packageManager;
     private final JsonProvider jsonProvider;
 
     @Inject
-    public ConnectionBuilder(DocumentManager documentManager, JsonProvider jsonProvider) {
+    public ConnectionBuilder(DocumentManager documentManager, PackageManager packageManager, JsonProvider jsonProvider) {
         this.documentManager = documentManager;
+        this.packageManager = packageManager;
         this.jsonProvider = jsonProvider;
     }
 
@@ -65,7 +68,9 @@ public class ConnectionBuilder implements OperationAfterHandler {
 
     public Stream<JsonValue> buildConnections(String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        if (fieldTypeDefinition.isObject()) {
+        if (packageManager.isLocalPackage(fieldDefinition) &&
+                !fieldDefinition.isInvokeField() &&
+                fieldTypeDefinition.isObject()) {
             if (jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
                 return Stream.empty();
             }
