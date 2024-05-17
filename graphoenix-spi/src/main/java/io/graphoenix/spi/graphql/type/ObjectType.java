@@ -18,8 +18,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_CURSOR_NAME;
-import static io.graphoenix.spi.constant.Hammurabi.SCALA_ID_NAME;
+import static io.graphoenix.spi.constant.Hammurabi.*;
+import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_DENY_ALL;
 import static io.graphoenix.spi.error.GraphQLErrorType.ID_FIELD_DEFINITION_NOT_EXIST;
 import static io.graphoenix.spi.utils.DocumentUtil.getImplementsInterfaces;
 import static io.graphoenix.spi.utils.ElementUtil.getNameFromElement;
@@ -187,6 +187,14 @@ public class ObjectType extends AbstractDefinition implements Definition, Fields
                                 .filter(fieldDefinition -> fieldDefinition.hasDirective(DIRECTIVE_CURSOR_NAME))
                                 .findFirst()
                 );
+    }
+
+    public boolean isPermitAll() {
+        return hasDirective(DIRECTIVE_PERMIT_ALL);
+    }
+
+    public boolean isDenyAll() {
+        return hasDirective(DIRECTIVE_DENY_ALL);
     }
 
     @Override
