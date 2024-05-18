@@ -785,7 +785,8 @@ public class BaseTask extends DefaultTask {
             return new ListType(getInvokeFieldArgumentTypeName(type.asListType().getType()));
         } else if (type.isNonNull()) {
             return new ListType(getInvokeFieldArgumentTypeName(type.asNonNullType().getType()));
-        } else if (documentManager.getDocument().getDefinition(type.asTypeName().getName()).isLeaf()) {
+        } else if (documentManager.getDocument().getDefinition(type.asTypeName().getName()).isLeaf() ||
+                documentManager.getDocument().getDefinition(type.asTypeName().getName()).isInputObject()) {
             return new TypeName(type.asTypeName().getName());
         } else {
             return new TypeName(type.asTypeName().getName() + SUFFIX_INPUT);
