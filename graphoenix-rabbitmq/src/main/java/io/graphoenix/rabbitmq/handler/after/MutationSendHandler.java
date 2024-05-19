@@ -47,6 +47,7 @@ public class MutationSendHandler implements OperationAfterHandler {
     public Mono<JsonValue> mutation(Operation operation, JsonValue jsonValue) {
         ObjectType operationType = documentManager.getOperationTypeOrError(operation);
         Flux<OutboundMessage> messageFlux = Flux.fromIterable(operation.getFields())
+                .filter(field -> !operationType.getField(field.getName()).isInvokeField())
                 .flatMap(field -> {
                             FieldDefinition fieldDefinition = operationType.getField(field.getName());
                             String packageName = fieldDefinition.getPackageNameOrError();

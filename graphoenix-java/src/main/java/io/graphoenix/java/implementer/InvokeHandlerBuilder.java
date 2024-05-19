@@ -12,6 +12,7 @@ import io.graphoenix.java.utils.TypeNameUtil;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
+import io.graphoenix.spi.graphql.type.InputValue;
 import io.graphoenix.spi.graphql.type.ObjectType;
 import io.graphoenix.spi.handler.OperationAfterHandler;
 import jakarta.annotation.Priority;
@@ -378,18 +379,34 @@ public class InvokeHandlerBuilder {
                                                                                                                     .map(parameter -> {
                                                                                                                                 String className = getClassName(parameter.getValue());
                                                                                                                                 String[] argumentTypeNames = getArgumentTypeNames(parameter.getValue());
-                                                                                                                                if (argumentTypeNames.length == 1) {
-                                                                                                                                    return CodeBlock.of("jsonb.fromJson(field.getArguments().get($S).toString(), new $T<$T<$T>>() {}.type)",
+                                                                                                                                InputValue inputValue = fieldDefinition.getArgument(parameter.getKey());
+                                                                                                                                if (documentManager.getInputValueTypeDefinition(inputValue).isLeaf()) {
+                                                                                                                                    if (argumentTypeNames.length == 1) {
+                                                                                                                                        return CodeBlock.of("jsonb.fromJson(field.getArguments().get($S).toString(), new $T<$T<$T>>() {}.type)",
+                                                                                                                                                parameter.getKey(),
+                                                                                                                                                ClassName.get(TypeDefinition.class),
+                                                                                                                                                toClassName(className),
+                                                                                                                                                toClassName(argumentTypeNames[0])
+                                                                                                                                        );
+                                                                                                                                    }
+                                                                                                                                    return CodeBlock.of("jsonb.fromJson(field.getArguments().get($S).toString(), $T.class)",
                                                                                                                                             parameter.getKey(),
-                                                                                                                                            ClassName.get(TypeDefinition.class),
-                                                                                                                                            toClassName(className),
-                                                                                                                                            toClassName(argumentTypeNames[0])
+                                                                                                                                            toClassName(className)
+                                                                                                                                    );
+                                                                                                                                } else {
+                                                                                                                                    if (argumentTypeNames.length == 1) {
+                                                                                                                                        return CodeBlock.of("jsonb.fromJson(field.getArguments().getArgument($S).asObject().toJson(), new $T<$T<$T>>() {}.type)",
+                                                                                                                                                parameter.getKey(),
+                                                                                                                                                ClassName.get(TypeDefinition.class),
+                                                                                                                                                toClassName(className),
+                                                                                                                                                toClassName(argumentTypeNames[0])
+                                                                                                                                        );
+                                                                                                                                    }
+                                                                                                                                    return CodeBlock.of("jsonb.fromJson(field.getArguments().getArgument($S).asObject().toJson(), $T.class)",
+                                                                                                                                            parameter.getKey(),
+                                                                                                                                            toClassName(className)
                                                                                                                                     );
                                                                                                                                 }
-                                                                                                                                return CodeBlock.of("jsonb.fromJson(field.getArguments().get($S).toString(), $T.class)",
-                                                                                                                                        parameter.getKey(),
-                                                                                                                                        toClassName(className)
-                                                                                                                                );
                                                                                                                             }
                                                                                                                     )
                                                                                                                     .collect(Collectors.toList()), ", ");
