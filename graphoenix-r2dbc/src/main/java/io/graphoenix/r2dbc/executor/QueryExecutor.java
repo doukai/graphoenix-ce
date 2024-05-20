@@ -1,6 +1,7 @@
 package io.graphoenix.r2dbc.executor;
 
 import io.graphoenix.r2dbc.connection.ConnectionProvider;
+import io.graphoenix.r2dbc.handler.ParameterBinder;
 import io.graphoenix.r2dbc.utils.ResultUtil;
 import io.r2dbc.spi.Statement;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -14,10 +15,12 @@ import java.util.Map;
 public class QueryExecutor {
 
     private final ConnectionProvider connectionProvider;
+    private final ParameterBinder parameterBinder;
 
     @Inject
-    public QueryExecutor(ConnectionProvider connectionProvider) {
+    public QueryExecutor(ConnectionProvider connectionProvider, ParameterBinder parameterBinder) {
         this.connectionProvider = connectionProvider;
+        this.parameterBinder = parameterBinder;
     }
 
     public Mono<String> executeQuery(String sql) {
@@ -32,9 +35,7 @@ public class QueryExecutor {
                             Logger.info("execute select:\r\n{}", sql);
                             Logger.info("sql parameters:\r\n{}", parameters);
                             Statement statement = connection.createStatement(sql);
-                            if (parameters != null) {
-                                parameters.forEach(statement::bind);
-                            }
+                            parameterBinder.bindParameters(sql, statement, parameters);
                             return Mono.from(statement.execute())
                                     .flatMap(ResultUtil::getJsonStringFromResult);
                         },

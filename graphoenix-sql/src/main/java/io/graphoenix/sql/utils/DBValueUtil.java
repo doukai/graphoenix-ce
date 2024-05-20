@@ -9,6 +9,7 @@ import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals;
+import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.SetStatement;
 
 import java.util.Optional;
@@ -80,14 +81,22 @@ public final class DBValueUtil {
     }
 
     public static Expression createGreaterThanLastInsertIDExpression(String typeName, String idFieldName) {
+        return createGreaterThanLastInsertIDExpression(graphqlTypeToTable(typeName), idFieldName);
+    }
+
+    public static Expression createGreaterThanLastInsertIDExpression(Table table, String idFieldName) {
         return new GreaterThanEquals()
-                .withLeftExpression(graphqlFieldToColumn(graphqlTypeToTable(typeName), idFieldName))
+                .withLeftExpression(graphqlFieldToColumn(table, idFieldName))
                 .withRightExpression(new Function().withName("LAST_INSERT_ID"));
     }
 
     public static Expression createEqualsToLastInsertIDExpression(String typeName, String idFieldName) {
+        return createEqualsToLastInsertIDExpression(graphqlTypeToTable(typeName), idFieldName);
+    }
+
+    public static Expression createEqualsToLastInsertIDExpression(Table table, String idFieldName) {
         return new EqualsTo()
-                .withLeftExpression(graphqlFieldToColumn(graphqlTypeToTable(typeName), idFieldName))
+                .withLeftExpression(graphqlFieldToColumn(table, idFieldName))
                 .withRightExpression(new Function().withName("LAST_INSERT_ID"));
     }
 

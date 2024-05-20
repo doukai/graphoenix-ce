@@ -183,7 +183,7 @@ public class QueryTranslator {
                                                     .filter(valueWithVariable -> !valueWithVariable.isNull())
                                                     .map(valueWithVariable -> {
                                                                 if (valueWithVariable.isVariable()) {
-                                                                    return createGreaterThanLastInsertIDExpression(fieldTypeDefinition.getName(), idName);
+                                                                    return createGreaterThanLastInsertIDExpression(table, idName);
                                                                 } else {
                                                                     return new InExpression()
                                                                             .withLeftExpression(graphqlFieldToColumn(table, idName))
@@ -213,7 +213,7 @@ public class QueryTranslator {
                                                                     .filter(valueWithVariable -> !valueWithVariable.isNull())
                                                                     .map(valueWithVariable -> {
                                                                                 if (valueWithVariable.isVariable()) {
-                                                                                    return createEqualsToLastInsertIDExpression(fieldTypeDefinition.getName(), idName);
+                                                                                    return createEqualsToLastInsertIDExpression(table, idName);
                                                                                 } else {
                                                                                     return new EqualsTo()
                                                                                             .withLeftExpression(graphqlFieldToColumn(table, idName))

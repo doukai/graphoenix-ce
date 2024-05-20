@@ -1,6 +1,7 @@
 package io.graphoenix.r2dbc.executor;
 
 import io.graphoenix.r2dbc.connection.ConnectionProvider;
+import io.graphoenix.r2dbc.handler.ParameterBinder;
 import io.graphoenix.r2dbc.utils.ResultUtil;
 import io.r2dbc.spi.Batch;
 import io.r2dbc.spi.Statement;
@@ -17,10 +18,12 @@ import java.util.stream.Stream;
 public class MutationExecutor {
 
     private final ConnectionProvider connectionProvider;
+    private final ParameterBinder parameterBinder;
 
     @Inject
-    public MutationExecutor(ConnectionProvider connectionProvider) {
+    public MutationExecutor(ConnectionProvider connectionProvider, ParameterBinder parameterBinder) {
         this.connectionProvider = connectionProvider;
+        this.parameterBinder = parameterBinder;
     }
 
     public Flux<Long> executeMutationsInBatch(Stream<String> mutationSqlStream) {
@@ -83,9 +86,7 @@ public class MutationExecutor {
                                             Logger.info("execute mutation:\r\n{}", mutation);
                                             Logger.info("sql parameters:\r\n{}", parameters);
                                             Statement mutationStatement = connection.createStatement(mutation);
-                                            if (parameters != null) {
-                                                parameters.forEach(mutationStatement::bind);
-                                            }
+                                            parameterBinder.bindParameters(mutation, mutationStatement, parameters);
                                             return Mono.from(mutationStatement.execute())
                                                     .flatMap(ResultUtil::getUpdateCountFromResult);
                                         },
@@ -107,9 +108,7 @@ public class MutationExecutor {
                                             Logger.info("execute mutation:\r\n{}", sql);
                                             Logger.info("sql parameters:\r\n{}", parameters);
                                             Statement mutationStatement = connection.createStatement(sql);
-                                            if (parameters != null) {
-                                                parameters.forEach(mutationStatement::bind);
-                                            }
+                                            parameterBinder.bindParameters(sql, mutationStatement, parameters);
                                             return Flux.from(mutationStatement.execute())
                                                     .flatMap(ResultUtil::getUpdateCountFromResult);
                                         }
@@ -133,9 +132,7 @@ public class MutationExecutor {
                             Logger.info("execute mutation:\r\n{}", sql);
                             Logger.info("sql parameters:\r\n{}", parameters);
                             Statement mutationStatement = connection.createStatement(sql);
-                            if (parameters != null) {
-                                parameters.forEach(mutationStatement::bind);
-                            }
+                            parameterBinder.bindParameters(sql, mutationStatement, parameters);
                             return Mono.from(mutationStatement.execute())
                                     .flatMap(ResultUtil::getUpdateCountFromResult);
                         },
