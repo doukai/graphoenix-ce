@@ -1,8 +1,8 @@
 plugins {
     id 'java'
     id "com.github.node-gradle.node" version "7.0.2"
+    id 'maven-publish'
 }
-apply plugin: 'maven'
 
 group 'io.graphoenix'
 version '0.0.1-SNAPSHOT'
