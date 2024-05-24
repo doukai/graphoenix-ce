@@ -39,6 +39,14 @@ test {
     useJUnitPlatform()
 }
 
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
 generateGrammarSource {
     includes = ['Graphql.g4']
     maxHeapSize = "64m"

@@ -31,10 +31,10 @@ test {
     useJUnitPlatform()
 }
 
-jar {
-    manifest {
-        attributes(
-                "GP-Protocol": "GOSSIP"
-        )
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
     }
 }

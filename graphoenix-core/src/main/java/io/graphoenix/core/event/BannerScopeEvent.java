@@ -12,12 +12,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
 import java.util.Map;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 
 import static io.graphoenix.core.event.DocumentInitializedEvent.DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY;
 
@@ -29,9 +24,6 @@ public class BannerScopeEvent implements ScopeEvent {
     public static final int BANNER_SCOPE_EVENT_PRIORITY = DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY - 1;
 
     public static final String BANNER_FILE_NAME = "banner.txt";
-    public static final String VERSION_KEY = "GP-Version";
-    public static final String DATABASE_KEY = "GP-Database";
-    public static final String PROTOCOL_KEY = "GP-Protocol";
 
     @Override
     public void fire(Map<String, Object> context) {
@@ -39,32 +31,7 @@ public class BannerScopeEvent implements ScopeEvent {
             URL resource = this.getClass().getClassLoader().getResource(BANNER_FILE_NAME);
             if (resource != null) {
                 String banner = Files.readString(Path.of(resource.toURI()), StandardCharsets.US_ASCII);
-                Enumeration<URL> resources = getClass().getClassLoader().getResources("META-INF/MANIFEST.MF");
-                List<String> version = new ArrayList<>();
-                List<String> database = new ArrayList<>();
-                List<String> protocol = new ArrayList<>();
-                while (resources.hasMoreElements()) {
-                    Manifest manifest = new Manifest(resources.nextElement().openStream());
-                    Attributes mainAttributes = manifest.getMainAttributes();
-                    if (mainAttributes.containsKey(VERSION_KEY)) {
-                        version.add(mainAttributes.getValue(VERSION_KEY));
-                    }
-
-                    if (mainAttributes.containsKey(DATABASE_KEY)) {
-                        database.add(mainAttributes.getValue(DATABASE_KEY));
-                    }
-
-                    if (mainAttributes.containsKey(PROTOCOL_KEY)) {
-                        protocol.add(mainAttributes.getValue(PROTOCOL_KEY));
-                    }
-                }
-
-                Logger.info(
-                        banner
-                                .replace("${" + VERSION_KEY + "}", String.join(", ", version))
-                                .replace("${" + DATABASE_KEY + "}", String.join(", ", database))
-                                .replace("${" + PROTOCOL_KEY + "}", String.join(", ", protocol))
-                );
+                Logger.info(banner);
             }
         } catch (IOException | URISyntaxException ignored) {
         }

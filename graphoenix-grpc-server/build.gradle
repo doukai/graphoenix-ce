@@ -34,10 +34,10 @@ test {
     useJUnitPlatform()
 }
 
-jar {
-    manifest {
-        attributes(
-                "GP-Protocol": "GRPC"
-        )
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
     }
 }

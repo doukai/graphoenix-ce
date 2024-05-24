@@ -39,10 +39,10 @@ test {
     useJUnitPlatform()
 }
 
-jar {
-    manifest {
-        attributes(
-                "GP-Protocol": "HTTP"
-        )
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
     }
 }

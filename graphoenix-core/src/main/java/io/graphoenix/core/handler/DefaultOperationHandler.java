@@ -42,9 +42,9 @@ public class DefaultOperationHandler implements OperationHandler {
 
     private final Provider<SubscriptionHandler> subscriptionHandlerProvider = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
             .map(name -> BeanContext.getProvider(SubscriptionHandler.class, name))
-            .orElseGet(() -> BeanContext.getProvider(SubscriptionHandler.class));
+            .orElseGet(() -> BeanContext.getProviderOrNull(SubscriptionHandler.class));
 
-    private final Provider<SubscriptionDataListener> subscriptionDataListenerProvider = BeanContext.getProvider(SubscriptionDataListener.class);
+    private final Provider<SubscriptionDataListener> subscriptionDataListenerProvider = BeanContext.getProviderOrNull(SubscriptionDataListener.class);
 
     @Override
     public Publisher<JsonValue> handle(Operation operation, Map<String, JsonValue> variables, String token, String operationId) {
