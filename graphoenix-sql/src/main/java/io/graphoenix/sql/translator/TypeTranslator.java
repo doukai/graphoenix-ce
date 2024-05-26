@@ -215,8 +215,8 @@ public class TypeTranslator {
                     break;
                 case SCALA_FLOAT_NAME:
                     colDataType.setDataType("FLOAT");
-                    fieldDefinition.getLength().ifPresent(length -> argumentsStringList.add(String.valueOf(length)));
-                    fieldDefinition.getDecimals().ifPresent(decimals -> argumentsStringList.add(String.valueOf(decimals)));
+                    argumentsStringList.add(String.valueOf(fieldDefinition.getLength().orElse(11)));
+                    argumentsStringList.add(String.valueOf(fieldDefinition.getDecimals().orElse(2)));
                     break;
                 case SCALA_BIG_INTEGER_NAME:
                     colDataType.setDataType("BIGINT");
@@ -224,8 +224,8 @@ public class TypeTranslator {
                     break;
                 case SCALA_BIG_DECIMAL_NAME:
                     colDataType.setDataType("DECIMAL");
-                    fieldDefinition.getLength().ifPresent(length -> argumentsStringList.add(String.valueOf(length)));
-                    fieldDefinition.getDecimals().ifPresent(decimals -> argumentsStringList.add(String.valueOf(decimals)));
+                    argumentsStringList.add(String.valueOf(fieldDefinition.getLength().orElse(11)));
+                    argumentsStringList.add(String.valueOf(fieldDefinition.getDecimals().orElse(2)));
                     break;
                 case SCALA_DATE_NAME:
                     colDataType.setDataType("DATE");
@@ -277,20 +277,28 @@ public class TypeTranslator {
                 );
     }
 
-    public Stream<String> truncateIntrospectionObjectTablesSQL() {
-        return truncateIntrospectionObjectTables().map(Truncate::toString);
+    public String selectTablesSQL() {
+        return selectTables().toString();
     }
 
-    public Stream<Truncate> truncateIntrospectionObjectTables() {
-        return documentManager.getDocument().getObjectTypes()
-                .filter(packageManager::isLocalPackage)
-                .filter(objectType -> !documentManager.isOperationType(objectType))
-                .filter(objectType -> !objectType.isContainer())
-                .filter(objectType -> objectType.getName().startsWith(PREFIX_INTROSPECTION))
-                .map(this::truncateObjectTable);
+    public Select selectTables() {
+        return new PlainSelect()
+                .addSelectItems(
+                        new Column("table_name")
+                )
+                .withFromItem(new Table("TABLES").withSchemaName("information_schema"))
+                .withWhere(
+                        new EqualsTo()
+                                .withLeftExpression(new Column("table_schema"))
+                                .withRightExpression(new Function().withName("DATABASE"))
+                );
     }
 
-    public Truncate truncateObjectTable(ObjectType objectType) {
-        return new Truncate().withTable(graphqlTypeToTable(objectType.getName()));
+    public String truncateTableSQL(String tableName) {
+        return truncateTable(tableName).toString();
+    }
+
+    public Truncate truncateTable(String tableName) {
+        return new Truncate().withTable(new Table(tableName));
     }
 }

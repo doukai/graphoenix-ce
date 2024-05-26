@@ -44,9 +44,9 @@ public final class DBValueUtil {
         if (valueWithVariable.isString()) {
             return new StringValue(valueWithVariable.asString().getValue());
         } else if (valueWithVariable.isInt()) {
-            return new LongValue().withValue(valueWithVariable.asInt().longValue());
+            return new LongValue(valueWithVariable.toString());
         } else if (valueWithVariable.isFloat()) {
-            return new DoubleValue().withValue(valueWithVariable.asFloat().doubleValue());
+            return new DoubleValue(valueWithVariable.toString());
         } else if (valueWithVariable.isBoolean()) {
             return valueWithVariable.asBoolean().getValue() ? new LongValue(1) : new LongValue(0);
         } else if (valueWithVariable.isEnum()) {

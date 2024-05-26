@@ -1,8 +1,7 @@
 package io.graphoenix.r2dbc.executor;
 
-import io.graphoenix.r2dbc.connection.ConnectionCreator;
+import io.graphoenix.r2dbc.connection.ConnectionProvider;
 import io.r2dbc.spi.Batch;
-import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.Statement;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -19,22 +18,25 @@ import java.util.stream.Stream;
 @ApplicationScoped
 public class TableCreator {
 
-    private final ConnectionCreator connectionCreator;
+    private final ConnectionProvider connectionProvider;
 
     @Inject
-    public TableCreator(ConnectionCreator connectionCreator) {
-        this.connectionCreator = connectionCreator;
+    public TableCreator(ConnectionProvider connectionProvider) {
+        this.connectionProvider = connectionProvider;
     }
 
     public Mono<Void> mergeTable(String sql) {
+        if (sql.isBlank()) {
+            return Mono.empty();
+        }
         return Mono
                 .usingWhen(
-                        connectionCreator.createConnection(),
+                        connectionProvider.get(),
                         connection -> {
                             Logger.info("create table:\r\n{}", sql);
                             return Mono.from(connection.createStatement(sql).execute());
                         },
-                        Connection::close
+                        connectionProvider::close
                 )
                 .then();
     }
@@ -42,7 +44,7 @@ public class TableCreator {
     public Mono<Void> mergeTable(Stream<String> sqlStream) {
         return Flux
                 .usingWhen(
-                        connectionCreator.createConnection(),
+                        connectionProvider.get(),
                         connection -> {
                             Batch batch = connection.createBatch();
                             sqlStream.forEach(sql -> {
@@ -52,7 +54,7 @@ public class TableCreator {
                             );
                             return Flux.from(batch.execute());
                         },
-                        Connection::close
+                        connectionProvider::close
                 )
                 .then();
     }
@@ -60,14 +62,14 @@ public class TableCreator {
     public Mono<List<Tuple2<String, String>>> selectColumns(String sql) {
         return Flux
                 .usingWhen(
-                        connectionCreator.createConnection(),
+                        connectionProvider.get(),
                         connection -> {
                             Logger.info("execute select:\r\n{}", sql);
                             Logger.info("sql parameters:\r\n{}");
                             Statement statement = connection.createStatement(sql);
                             return Flux.from(statement.execute());
                         },
-                        Connection::close
+                        connectionProvider::close
                 )
                 .flatMap(result ->
                         Flux.from(
@@ -76,6 +78,28 @@ public class TableCreator {
                                                 Objects.requireNonNull(row.get(0, String.class)),
                                                 Objects.requireNonNull(row.get(1, String.class))
                                         )
+                                )
+                        )
+                )
+                .collectList();
+    }
+
+    public Mono<List<String>> selectTables(String sql) {
+        return Flux
+                .usingWhen(
+                        connectionProvider.get(),
+                        connection -> {
+                            Logger.info("execute select:\r\n{}", sql);
+                            Logger.info("sql parameters:\r\n{}");
+                            Statement statement = connection.createStatement(sql);
+                            return Flux.from(statement.execute());
+                        },
+                        connectionProvider::close
+                )
+                .flatMap(result ->
+                        Flux.from(
+                                result.map((row, rowMetadata) ->
+                                        row.get(0, String.class)
                                 )
                         )
                 )

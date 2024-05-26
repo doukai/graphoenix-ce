@@ -1,7 +1,7 @@
 package io.graphoenix.r2dbc.event;
 
 import io.graphoenix.core.config.GraphQLConfig;
-import io.graphoenix.r2dbc.executor.MutationExecutor;
+import io.graphoenix.r2dbc.executor.TableCreator;
 import io.graphoenix.sql.translator.TypeTranslator;
 import io.nozdormu.spi.event.ScopeEvent;
 import jakarta.annotation.Priority;
@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static io.graphoenix.core.event.DocumentInitializedEvent.DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY;
+import static io.graphoenix.spi.constant.Hammurabi.PREFIX_INTROSPECTION;
 
 @ApplicationScoped
 @Initialized(ApplicationScoped.class)
@@ -25,20 +26,28 @@ public class IntrospectionCleanEvent implements ScopeEvent {
 
     private final GraphQLConfig graphQLConfig;
     private final TypeTranslator typeTranslator;
-    private final MutationExecutor mutationExecutor;
+    private final TableCreator tableCreator;
 
     @Inject
-    public IntrospectionCleanEvent(GraphQLConfig graphQLConfig, TypeTranslator typeTranslator, MutationExecutor mutationExecutor) {
+    public IntrospectionCleanEvent(GraphQLConfig graphQLConfig, TypeTranslator typeTranslator, TableCreator tableCreator) {
         this.graphQLConfig = graphQLConfig;
         this.typeTranslator = typeTranslator;
-        this.mutationExecutor = mutationExecutor;
+        this.tableCreator = tableCreator;
     }
 
     @Override
     public Mono<Void> fireAsync(Map<String, Object> context) {
         if (graphQLConfig.getBuildIntrospection()) {
             Logger.info("introspection clean started");
-            return mutationExecutor.executeMutation(typeTranslator.truncateIntrospectionObjectTablesSQL().collect(Collectors.joining(";")))
+            return tableCreator.selectTables(typeTranslator.selectTablesSQL())
+                    .flatMap(existsTableNameList ->
+                            tableCreator.mergeTable(
+                                    existsTableNameList.stream()
+                                            .filter(tableName -> tableName.startsWith(PREFIX_INTROSPECTION))
+                                            .map(typeTranslator::truncateTableSQL)
+                                            .collect(Collectors.joining(";"))
+                            )
+                    )
                     .doOnSuccess((jsonValue) -> Logger.info("introspection clean success"))
                     .then();
         }
