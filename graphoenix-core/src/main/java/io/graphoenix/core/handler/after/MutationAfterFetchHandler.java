@@ -391,11 +391,11 @@ public class MutationAfterFetchHandler implements OperationAfterHandler {
                 }
             }
         } else if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
-            Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
             JsonValue fieldJsonValue = jsonValue.asJsonObject().get(fieldDefinition.getName());
             if (fieldJsonValue == null) {
                 return Stream.empty();
             }
+            Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
             FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
             return inputValueTypeDefinition.asInputObject().getInputValues().stream()
                     .flatMap(subInputValue ->
