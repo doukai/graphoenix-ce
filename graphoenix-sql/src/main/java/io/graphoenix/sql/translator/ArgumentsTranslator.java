@@ -84,7 +84,8 @@ public class ArgumentsTranslator {
                                                     .filter(ValueWithVariable::isArray)
                                                     .flatMap(valueWithVariable -> valueWithVariable.asArray().getValueWithVariables().stream())
                                                     .flatMap(valueWithVariable -> inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), valueWithVariable, level, true).stream())
-                                    )
+                                    ),
+                            cursorArgumentsToExpression(fieldDefinition, field, level).stream()
                     )
                     .collect(Collectors.toList());
 
@@ -154,6 +155,11 @@ public class ArgumentsTranslator {
                                                             );
                                                 }
                                             }
+                                    )
+                                    .map(expression ->
+                                            cursorArgumentsToExpression(fieldDefinition, field, level)
+                                                    .map(cursorExpression -> (Expression) new MultiAndExpression(new ExpressionList<>(expression, cursorExpression)))
+                                                    .orElse(expression)
                                     )
                     );
         }
@@ -279,6 +285,40 @@ public class ArgumentsTranslator {
                                     )
                     );
         }
+    }
+
+    protected Optional<Expression> cursorArgumentsToExpression(FieldDefinition fieldDefinition, Field field, int level) {
+        if (fieldDefinition.getArguments() != null) {
+            ObjectType fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition).asObject();
+            Column cursorColumn = graphqlFieldToColumn(fieldTypeDefinition.getName(), fieldTypeDefinition.getCursorField().orElseGet(fieldTypeDefinition::getIDFieldOrError).getName(), level);
+            return Optional.ofNullable(fieldDefinition.getArgument(INPUT_VALUE_AFTER_NAME))
+                    .flatMap(inputValue ->
+                            Optional.ofNullable(field.getArguments())
+                                    .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
+                                    .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
+                    )
+                    .map(valueWithVariable ->
+                            (Expression) new GreaterThan()
+                                    .withLeftExpression(cursorColumn)
+                                    .withRightExpression(leafValueToDBValue(valueWithVariable))
+
+                    )
+                    .or(() ->
+                            Optional.ofNullable(fieldDefinition.getArgument(INPUT_VALUE_BEFORE_NAME))
+                                    .flatMap(inputValue ->
+                                            Optional.ofNullable(field.getArguments())
+                                                    .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
+                                                    .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
+                                    )
+                                    .map(valueWithVariable ->
+                                            new MinorThan()
+                                                    .withLeftExpression(cursorColumn)
+                                                    .withRightExpression(leafValueToDBValue(valueWithVariable))
+
+                                    )
+                    );
+        }
+        return Optional.empty();
     }
 
     protected Optional<Expression> expressionListToMultipleExpression(List<Expression> expressionList, boolean isOr, boolean isNot) {

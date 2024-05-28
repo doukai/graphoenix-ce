@@ -32,7 +32,6 @@ import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.OBJECT_SELECTION_NOT_EXIST;
 import static io.graphoenix.sql.utils.DBNameUtil.*;
 import static io.graphoenix.sql.utils.DBValueUtil.*;
-import static net.sf.jsqlparser.expression.AnalyticType.OVER;
 import static net.sf.jsqlparser.expression.JsonFunctionType.ARRAY;
 import static net.sf.jsqlparser.expression.JsonFunctionType.MYSQL_OBJECT;
 
@@ -131,7 +130,6 @@ public class QueryTranslator {
                                                             fieldTypeDefinition.asObject(),
                                                             fieldTypeDefinition.asObject().getField(subField.getName()),
                                                             subField,
-                                                            !field.hasGroupBy(),
                                                             level
                                                     ),
                                                     false,
@@ -302,20 +300,16 @@ public class QueryTranslator {
     }
 
     protected Expression fieldToExpression(ObjectType objectType, FieldDefinition fieldDefinition, Field field, int level) {
-        return fieldToExpression(objectType, fieldDefinition, field, false, level);
-    }
-
-    protected Expression fieldToExpression(ObjectType objectType, FieldDefinition fieldDefinition, Field field, boolean over, int level) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject()) {
             return new ParenthesedSelect()
                     .withSelect(objectFieldToPlainSelect(objectType, fieldDefinition, field, level + 1));
         } else {
-            return leafFieldToExpression(objectType, fieldDefinition, field, over, level);
+            return leafFieldToExpression(objectType, fieldDefinition, field, level);
         }
     }
 
-    protected Expression leafFieldToExpression(ObjectType objectType, FieldDefinition fieldDefinition, Field field, boolean over, int level) {
+    protected Expression leafFieldToExpression(ObjectType objectType, FieldDefinition fieldDefinition, Field field, int level) {
         if (fieldDefinition.getType().hasList()) {
             Table table = typeToTable(objectType, level);
             ObjectType withType = documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getMapWithTypeOrError());
@@ -335,11 +329,7 @@ public class QueryTranslator {
                                     new HexValue("INT")
                             );
                 }
-                if (over) {
-                    selectExpression = new AnalyticExpression(function).withType(OVER);
-                } else {
-                    selectExpression = function;
-                }
+                selectExpression = function;
             } else {
                 Expression column = fieldToColumn(withType, withToFieldDefinition, level);
                 selectExpression = jsonExtractFunction(
@@ -388,9 +378,6 @@ public class QueryTranslator {
                                     function,
                                     new HexValue("INT")
                             );
-                }
-                if (over) {
-                    return new AnalyticExpression(function).withType(OVER);
                 }
                 return function;
             } else {
