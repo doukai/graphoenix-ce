@@ -131,7 +131,7 @@ public class QueryTranslator {
                                                             fieldTypeDefinition.asObject(),
                                                             fieldTypeDefinition.asObject().getField(subField.getName()),
                                                             subField,
-                                                            field.hasGroupBy(),
+                                                            !field.hasGroupBy(),
                                                             level
                                                     ),
                                                     false,
@@ -321,19 +321,27 @@ public class QueryTranslator {
             ObjectType withType = documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getMapWithTypeOrError());
             FieldDefinition withToFieldDefinition = withType.getField(fieldDefinition.getMapWithToOrError());
             Table withTable = typeToTable(withType, level);
-            Expression column = fieldToColumn(withType, withToFieldDefinition, level);
             Expression selectExpression;
 
             if (fieldDefinition.isFunctionField()) {
                 Function function = new Function()
                         .withName(fieldDefinition.getFunctionNameOrError())
-                        .withParameters(column);
+                        .withParameters(graphqlFieldToColumn(withType.getName(), withToFieldDefinition.getName(), level));
+                if (fieldDefinition.getFunctionNameOrError().equals("COUNT")) {
+                    function = new Function()
+                            .withName("CONVERT")
+                            .withParameters(
+                                    function,
+                                    new HexValue("INT")
+                            );
+                }
                 if (over) {
                     selectExpression = new AnalyticExpression(function).withType(OVER);
                 } else {
                     selectExpression = function;
                 }
             } else {
+                Expression column = fieldToColumn(withType, withToFieldDefinition, level);
                 selectExpression = jsonExtractFunction(
                         jsonAggregateFunction(
                                 column,
@@ -372,7 +380,15 @@ public class QueryTranslator {
             if (fieldDefinition.isFunctionField()) {
                 Function function = new Function()
                         .withName(fieldDefinition.getFunctionNameOrError())
-                        .withParameters(fieldToColumn(objectType, objectType.getField(fieldDefinition.getFunctionFieldOrError()), level));
+                        .withParameters(graphqlFieldToColumn(objectType.getName(), objectType.getField(fieldDefinition.getFunctionFieldOrError()).getName(), level));
+                if (fieldDefinition.getFunctionNameOrError().equals("COUNT")) {
+                    function = new Function()
+                            .withName("CONVERT")
+                            .withParameters(
+                                    function,
+                                    new HexValue("INT")
+                            );
+                }
                 if (over) {
                     return new AnalyticExpression(function).withType(OVER);
                 }

@@ -46,8 +46,6 @@ public class MutationTranslator {
     private final PackageManager packageManager;
     private final ArgumentsTranslator argumentsTranslator;
     private final TypeTranslator typeTranslator;
-    private final String[] EXCLUDE_FIELDS = {"version", "realmId", "createUserId", "createTime", "updateUserId", "updateTime", "createGroupId", FIELD_TYPENAME_NAME, FIELD_DEPRECATED_NAME, INPUT_VALUE_WHERE_NAME};
-    private final Set<String> excludeFieldNameSet = new HashSet<>(Arrays.asList(EXCLUDE_FIELDS));
 
     @Inject
     public MutationTranslator(DocumentManager documentManager, PackageManager packageManager, ArgumentsTranslator argumentsTranslator, TypeTranslator typeTranslator) {
@@ -307,53 +305,50 @@ public class MutationTranslator {
                 )
                 .orElseGet(() -> createInsertIdUserVariable(fieldTypeDefinition.asObject().getName(), idName, level, index));
 
-        Stream<Statement> leafFieldMutationStatement = Stream.empty();
+        Stream<Statement> leafFieldMutationStatement = Stream.of(
+                whereInputValueEntry
+                        .flatMap(entry -> argumentsTranslator.inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), entry.getValue(), level))
+                        .map(whereExpression -> {
+                                    Table table = typeToTable(fieldTypeDefinition.asObject(), level);
+                                    return (Statement) updateExpression(
+                                            table,
+                                            leafValueWithVariableMap.entrySet().stream()
+                                                    .map(entry ->
+                                                            new UpdateSet(
+                                                                    graphqlFieldToColumn(table, entry.getKey()),
+                                                                    leafValueToDBValue(entry.getValue()))
+                                                    )
+                                                    .collect(Collectors.toList()),
+                                            whereExpression
+                                    );
+                                }
+                        )
+                        .orElseGet(() -> {
+                                    Table table = typeToTable(fieldTypeDefinition.asObject());
+                                    return insertExpression(
+                                            table,
+                                            leafValueWithVariableMap.keySet().stream()
+                                                    .map(name -> graphqlFieldToColumn(table, name))
+                                                    .collect(Collectors.toList()),
+                                            leafValueWithVariableMap.values().stream()
+                                                    .map(DBValueUtil::leafValueToDBValue)
+                                                    .collect(Collectors.toList()),
+                                            true
+                                    );
+                                }
+                        )
+        );
         Stream<Statement> createInsertIdSetStatementStream = Stream.empty();
-        if (leafValueWithVariableMap.containsKey(FIELD_DEPRECATED_NAME) && leafValueWithVariableMap.get(FIELD_DEPRECATED_NAME).asBoolean().getValue() || !excludeFieldNameSet.containsAll(leafValueWithVariableMap.keySet())) {
-            leafFieldMutationStatement = Stream.of(
-                    whereInputValueEntry
-                            .flatMap(entry -> argumentsTranslator.inputValueToWhereExpression(objectType, fieldDefinition, entry.getKey(), entry.getValue(), level))
-                            .map(whereExpression -> {
-                                        Table table = typeToTable(fieldTypeDefinition.asObject(), level);
-                                        return (Statement) updateExpression(
-                                                table,
-                                                leafValueWithVariableMap.entrySet().stream()
-                                                        .map(entry ->
-                                                                new UpdateSet(
-                                                                        graphqlFieldToColumn(table, entry.getKey()),
-                                                                        leafValueToDBValue(entry.getValue()))
-                                                        )
-                                                        .collect(Collectors.toList()),
-                                                whereExpression
-                                        );
-                                    }
-                            )
-                            .orElseGet(() -> {
-                                        Table table = typeToTable(fieldTypeDefinition.asObject());
-                                        return insertExpression(
-                                                table,
-                                                leafValueWithVariableMap.keySet().stream()
-                                                        .map(name -> graphqlFieldToColumn(table, name))
-                                                        .collect(Collectors.toList()),
-                                                leafValueWithVariableMap.values().stream()
-                                                        .map(DBValueUtil::leafValueToDBValue)
-                                                        .collect(Collectors.toList()),
-                                                true
-                                        );
-                                    }
-                            )
-            );
-            if (whereInputValueEntry.isPresent()) {
-                createInsertIdSetStatementStream = whereInputValueEntry
-                        .flatMap(entry -> entry.getValue().asObject().getValueWithVariableOrEmpty(idName))
-                        .filter(ValueWithVariable::isObject)
-                        .flatMap(valueWithVariable -> valueWithVariable.asObject().getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
-                        .flatMap(DBValueUtil::idValueToDBValue).stream()
-                        .map(expression -> createUpdateIdSetStatement(fieldTypeDefinition.asObject().getName(), idName, level, index, expression));
-            } else if (inputValueValueWithVariableMap.entrySet().stream()
-                    .noneMatch(entry -> entry.getKey().getName().equals(idName))) {
-                createInsertIdSetStatementStream = Stream.of(createInsertIdSetStatement(fieldTypeDefinition.asObject().getName(), idName, level, index));
-            }
+        if (whereInputValueEntry.isPresent()) {
+            createInsertIdSetStatementStream = whereInputValueEntry
+                    .flatMap(entry -> entry.getValue().asObject().getValueWithVariableOrEmpty(idName))
+                    .filter(ValueWithVariable::isObject)
+                    .flatMap(valueWithVariable -> valueWithVariable.asObject().getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
+                    .flatMap(DBValueUtil::idValueToDBValue).stream()
+                    .map(expression -> createUpdateIdSetStatement(fieldTypeDefinition.asObject().getName(), idName, level, index, expression));
+        } else if (inputValueValueWithVariableMap.entrySet().stream()
+                .noneMatch(entry -> entry.getKey().getName().equals(idName))) {
+            createInsertIdSetStatementStream = Stream.of(createInsertIdSetStatement(fieldTypeDefinition.asObject().getName(), idName, level, index));
         }
 
         Stream<Statement> objectFieldMergeMapStatementStream = Stream.empty();
