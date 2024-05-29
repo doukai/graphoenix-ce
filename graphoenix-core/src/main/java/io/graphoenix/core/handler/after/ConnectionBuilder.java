@@ -19,6 +19,7 @@ import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonCollectors;
 import reactor.core.publisher.Mono;
 
+import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -197,7 +198,13 @@ public class ConnectionBuilder implements OperationAfterHandler {
                                                     if (edgeField.getName().equals(FIELD_CURSOR_NAME)) {
                                                         edge.add(FIELD_CURSOR_NAME, node.asJsonObject().get(cursorFieldDefinition.getName()));
                                                     } else if (edgeField.getName().equals(FIELD_NODE_NAME)) {
-                                                        edge.add(FIELD_NODE_NAME, node);
+                                                        edge.add(
+                                                                FIELD_NODE_NAME,
+                                                                edgeField.getFields().stream()
+                                                                        .map(nodeField -> Optional.ofNullable(nodeField.getAlias()).orElseGet(nodeField::getName))
+                                                                        .map(key -> new AbstractMap.SimpleEntry<>(key, node.asJsonObject().get(key)))
+                                                                        .collect(JsonCollectors.toJsonObject())
+                                                        );
                                                     }
                                                 }
                                                 return edge.build();

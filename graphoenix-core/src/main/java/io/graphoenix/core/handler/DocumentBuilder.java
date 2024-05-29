@@ -585,18 +585,9 @@ public class DocumentBuilder {
                         .addArgument(new InputValue(INPUT_VALUE_FIRST_NAME).setType(new TypeName(SCALA_INT_NAME)))
                         .addArgument(new InputValue(INPUT_VALUE_LAST_NAME).setType(new TypeName(SCALA_INT_NAME)))
                         .addArgument(new InputValue(INPUT_VALUE_OFFSET_NAME).setType(new TypeName(SCALA_INT_NAME)))
-                        .addArgument(new InputValue(INPUT_VALUE_SORT_NAME).setType(new TypeName(INPUT_SORT_NAME)));
-
-                if (fieldDefinition.hasMapWith()) {
-                    ObjectType fieldMapWithTypeDefinition = documentManager.getFieldMapWithTypeDefinition(fieldDefinition);
-                    fieldMapWithTypeDefinition.getCursorField()
-                            .or(fieldMapWithTypeDefinition::getIDField)
-                            .ifPresent(cursorField ->
-                                    fieldDefinition
-                                            .addArgument(new InputValue(INPUT_VALUE_AFTER_NAME).setType(cursorField.getType().getTypeName()))
-                                            .addArgument(new InputValue(INPUT_VALUE_BEFORE_NAME).setType(cursorField.getType().getTypeName()))
-                            );
-                }
+                        .addArgument(new InputValue(INPUT_VALUE_SORT_NAME).setType(new TypeName(INPUT_SORT_NAME)))
+                        .addArgument(new InputValue(INPUT_VALUE_AFTER_NAME).setType(fieldDefinition.getType().getTypeName()))
+                        .addArgument(new InputValue(INPUT_VALUE_BEFORE_NAME).setType(fieldDefinition.getType().getTypeName()));
             }
         } else {
             if (documentManager.isMutationOperationType(objectType)) {

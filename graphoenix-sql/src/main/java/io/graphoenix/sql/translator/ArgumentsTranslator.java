@@ -108,60 +108,65 @@ public class ArgumentsTranslator {
                                     )
                             );
         } else {
-            return fieldDefinition.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME)
-                    .flatMap(inputValue ->
-                            Optional.ofNullable(field.getArguments())
-                                    .map(arguments ->
-                                            arguments.getArgumentOrEmpty(inputValue.getName())
-                                                    .filter(ValueWithVariable::isEnum)
-                                                    .map(opr -> opr.asEnum().getValue())
-                                                    .orElseGet(() ->
-                                                            arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
-                                                                    .map(val -> INPUT_OPERATOR_INPUT_VALUE_EQ)
-                                                                    .orElseGet(() ->
-                                                                            arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
-                                                                                    .map(val -> INPUT_OPERATOR_INPUT_VALUE_EQ)
-                                                                                    .orElseGet(() ->
-                                                                                            arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
-                                                                                                    .map(val -> INPUT_OPERATOR_INPUT_VALUE_IN)
-                                                                                                    .orElseGet(() -> inputValue.getDefaultValue().asEnum().getValue())
+            return expressionListToMultipleExpression(
+                    Stream
+                            .concat(
+                                    fieldDefinition.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_OPR_NAME)
+                                            .flatMap(inputValue ->
+                                                    Optional.ofNullable(field.getArguments())
+                                                            .map(arguments ->
+                                                                    arguments.getArgumentOrEmpty(inputValue.getName())
+                                                                            .filter(ValueWithVariable::isEnum)
+                                                                            .map(opr -> opr.asEnum().getValue())
+                                                                            .orElseGet(() ->
+                                                                                    arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                                                            .map(val -> INPUT_OPERATOR_INPUT_VALUE_EQ)
+                                                                                            .orElseGet(() ->
+                                                                                                    arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                                                                            .map(val -> INPUT_OPERATOR_INPUT_VALUE_EQ)
+                                                                                                            .orElseGet(() ->
+                                                                                                                    arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
+                                                                                                                            .map(val -> INPUT_OPERATOR_INPUT_VALUE_IN)
+                                                                                                                            .orElseGet(() -> inputValue.getDefaultValue().asEnum().getValue())
+                                                                                                            )
+                                                                                            )
+                                                                            )
+                                                            )
+                                            )
+                                            .flatMap(opr ->
+                                                    Optional.of(field.getArguments())
+                                                            .flatMap(arguments -> {
+                                                                        if (fieldDefinition.getType().hasList()) {
+                                                                            Column column = graphqlFieldToColumn(fieldDefinition.getMapWithTypeOrError(), fieldDefinition.getMapWithToOrError(), level);
+                                                                            return arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                                                    .flatMap(val ->
+                                                                                            valToExpression(column, opr, val, skipNull(arguments))
                                                                                     )
-                                                                    )
-                                                    )
-                                    )
-                    )
-                    .flatMap(opr ->
-                            Optional.of(field.getArguments())
-                                    .flatMap(arguments -> {
-                                                if (fieldDefinition.getType().hasList()) {
-                                                    Column column = graphqlFieldToColumn(fieldDefinition.getMapWithTypeOrError(), fieldDefinition.getMapWithToOrError(), level);
-                                                    return arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
-                                                            .flatMap(val ->
-                                                                    valToExpression(column, opr, val, skipNull(arguments))
+                                                                                    .or(() ->
+                                                                                            arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
+                                                                                                    .flatMap(arr -> arrToExpression(column, opr, fieldDefinition.getArgument(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(arguments)))
+                                                                                    );
+                                                                        } else {
+                                                                            Column column = graphqlFieldToColumn(objectType.getName(), fieldDefinition.getName(), level);
+                                                                            return arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                                                                                    .flatMap(val ->
+                                                                                            valToExpression(column, opr, val, skipNull(arguments))
+                                                                                    )
+                                                                                    .or(() ->
+                                                                                            arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
+                                                                                                    .flatMap(arr -> arrToExpression(column, opr, fieldDefinition.getArgument(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(arguments)))
+                                                                                    );
+                                                                        }
+                                                                    }
                                                             )
-                                                            .or(() ->
-                                                                    arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
-                                                                            .flatMap(arr -> arrToExpression(column, opr, fieldDefinition.getArgument(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(arguments)))
-                                                            );
-                                                } else {
-                                                    Column column = graphqlFieldToColumn(objectType.getName(), fieldDefinition.getName(), level);
-                                                    return arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
-                                                            .flatMap(val ->
-                                                                    valToExpression(column, opr, val, skipNull(arguments))
-                                                            )
-                                                            .or(() ->
-                                                                    arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
-                                                                            .flatMap(arr -> arrToExpression(column, opr, fieldDefinition.getArgument(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(arguments)))
-                                                            );
-                                                }
-                                            }
-                                    )
-                                    .map(expression ->
-                                            cursorArgumentsToExpression(fieldDefinition, field, level)
-                                                    .map(cursorExpression -> (Expression) new MultiAndExpression(new ExpressionList<>(expression, cursorExpression)))
-                                                    .orElse(expression)
-                                    )
-                    );
+                                            )
+                                            .stream(),
+                                    cursorArgumentsToExpression(fieldDefinition, field, level).stream()
+                            )
+                            .collect(Collectors.toList()),
+                    false,
+                    false
+            );
         }
     }
 
@@ -289,34 +294,66 @@ public class ArgumentsTranslator {
 
     protected Optional<Expression> cursorArgumentsToExpression(FieldDefinition fieldDefinition, Field field, int level) {
         if (fieldDefinition.getArguments() != null) {
-            ObjectType fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition).asObject();
-            Column cursorColumn = graphqlFieldToColumn(fieldTypeDefinition.getName(), fieldTypeDefinition.getCursorField().orElseGet(fieldTypeDefinition::getIDFieldOrError).getName(), level);
-            return Optional.ofNullable(fieldDefinition.getArgument(INPUT_VALUE_AFTER_NAME))
-                    .flatMap(inputValue ->
-                            Optional.ofNullable(field.getArguments())
-                                    .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
-                                    .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
-                    )
-                    .map(valueWithVariable ->
-                            (Expression) new GreaterThan()
-                                    .withLeftExpression(cursorColumn)
-                                    .withRightExpression(leafValueToDBValue(valueWithVariable))
+            Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+            if (fieldTypeDefinition.isObject()) {
+                Column cursorColumn = graphqlFieldToColumn(fieldTypeDefinition.getName(), fieldTypeDefinition.asObject().getCursorField().orElseGet(() -> fieldTypeDefinition.asObject().getIDFieldOrError()).getName(), level);
+                return Optional.ofNullable(fieldDefinition.getArgument(INPUT_VALUE_AFTER_NAME))
+                        .flatMap(inputValue ->
+                                Optional.ofNullable(field.getArguments())
+                                        .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
+                                        .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
+                        )
+                        .map(valueWithVariable ->
+                                (Expression) new GreaterThan()
+                                        .withLeftExpression(cursorColumn)
+                                        .withRightExpression(leafValueToDBValue(valueWithVariable))
 
-                    )
-                    .or(() ->
-                            Optional.ofNullable(fieldDefinition.getArgument(INPUT_VALUE_BEFORE_NAME))
-                                    .flatMap(inputValue ->
-                                            Optional.ofNullable(field.getArguments())
-                                                    .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
-                                                    .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
-                                    )
-                                    .map(valueWithVariable ->
-                                            new MinorThan()
-                                                    .withLeftExpression(cursorColumn)
-                                                    .withRightExpression(leafValueToDBValue(valueWithVariable))
+                        )
+                        .or(() ->
+                                Optional.ofNullable(fieldDefinition.getArgument(INPUT_VALUE_BEFORE_NAME))
+                                        .flatMap(inputValue ->
+                                                Optional.ofNullable(field.getArguments())
+                                                        .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
+                                                        .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
+                                        )
+                                        .map(valueWithVariable ->
+                                                new MinorThan()
+                                                        .withLeftExpression(cursorColumn)
+                                                        .withRightExpression(leafValueToDBValue(valueWithVariable))
 
-                                    )
-                    );
+                                        )
+                        );
+            } else {
+                ObjectType withType = documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getMapWithTypeOrError());
+                FieldDefinition withToFieldDefinition = withType.getField(fieldDefinition.getMapWithToOrError());
+                Column column = graphqlFieldToColumn(withType.getName(), withToFieldDefinition.getName(), level);
+                return Optional.ofNullable(fieldDefinition.getArgument(INPUT_VALUE_AFTER_NAME))
+                        .flatMap(inputValue ->
+                                Optional.ofNullable(field.getArguments())
+                                        .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
+                                        .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
+                        )
+                        .map(valueWithVariable ->
+                                (Expression) new GreaterThan()
+                                        .withLeftExpression(column)
+                                        .withRightExpression(leafValueToDBValue(valueWithVariable))
+
+                        )
+                        .or(() ->
+                                Optional.ofNullable(fieldDefinition.getArgument(INPUT_VALUE_BEFORE_NAME))
+                                        .flatMap(inputValue ->
+                                                Optional.ofNullable(field.getArguments())
+                                                        .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
+                                                        .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
+                                        )
+                                        .map(valueWithVariable ->
+                                                new MinorThan()
+                                                        .withLeftExpression(column)
+                                                        .withRightExpression(leafValueToDBValue(valueWithVariable))
+
+                                        )
+                        );
+            }
         }
         return Optional.empty();
     }
