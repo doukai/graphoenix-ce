@@ -5,6 +5,7 @@ import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.FieldsType;
+import io.graphoenix.spi.graphql.common.Directive;
 import org.eclipse.microprofile.graphql.Ignore;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
@@ -20,6 +21,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_CONTAINER_NAME;
 import static io.graphoenix.spi.utils.DocumentUtil.getImplementsInterfaces;
 import static io.graphoenix.spi.utils.ElementUtil.getNameFromElement;
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
@@ -57,6 +59,7 @@ public class InterfaceType extends AbstractDefinition implements Definition, Fie
 
     public InterfaceType(TypeElement typeElement, Types types) {
         super(typeElement);
+        addDirective(new Directive(DIRECTIVE_CONTAINER_NAME));
         setInterfaces(
                 typeElement.getInterfaces().stream()
                         .map(typeMirror -> getNameFromElement(types.asElement(typeMirror)))

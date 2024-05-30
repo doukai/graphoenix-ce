@@ -75,7 +75,6 @@ public abstract class AbstractDefinition implements Definition {
                         .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, typeElement.getQualifiedName().toString())
                         .addArgument(DIRECTIVE_CLASS_ARGUMENT_EXISTS_NAME, true)
         );
-        this.addDirective(new Directive(DIRECTIVE_CONTAINER_NAME));
     }
 
     public AbstractDefinition(VariableElement variableElement) {

@@ -2,6 +2,7 @@ package io.graphoenix.gradle.task;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MemberValuePair;
@@ -164,27 +165,32 @@ public class BaseTask extends DefaultTask {
 
     protected void registerInvoke(List<CompilationUnit> compilations) {
         List<ResolvedReferenceTypeDeclaration> objectTypeList = compilations.stream()
-                .flatMap(compilationUnit -> compilationUnit.getTypes().stream().filter(typeDeclaration -> typeDeclaration.isAnnotationPresent(GraphQLApi.class)))
-                .flatMap(typeDeclaration -> typeDeclaration.getMethods().stream())
-                .flatMap(methodDeclaration -> resolve(methodDeclaration.getType()).stream())
+                .flatMap(compilationUnit -> compilationUnit.getTypes().stream())
+                .map(TypeDeclaration::resolve)
                 .filter(resolvedReferenceTypeDeclaration -> resolvedReferenceTypeDeclaration.hasAnnotation(org.eclipse.microprofile.graphql.Type.class.getCanonicalName()))
                 .filter(resolvedReferenceTypeDeclaration -> !resolvedReferenceTypeDeclaration.hasAnnotation(Generated.class.getCanonicalName()))
                 .filter(resolvedReferenceTypeDeclaration -> !documentManager.getDocument().hasDefinition(findTypeName(resolvedReferenceTypeDeclaration)))
                 .collect(Collectors.toList());
 
         List<ResolvedReferenceTypeDeclaration> interfaceTypeList = compilations.stream()
-                .flatMap(compilationUnit -> compilationUnit.getTypes().stream().filter(typeDeclaration -> typeDeclaration.isAnnotationPresent(GraphQLApi.class)))
-                .flatMap(typeDeclaration -> typeDeclaration.getMethods().stream())
-                .flatMap(methodDeclaration -> resolve(methodDeclaration.getType()).stream())
+                .flatMap(compilationUnit -> compilationUnit.getTypes().stream())
+                .map(TypeDeclaration::resolve)
                 .filter(resolvedReferenceTypeDeclaration -> resolvedReferenceTypeDeclaration.hasAnnotation(Interface.class.getCanonicalName()))
                 .filter(resolvedReferenceTypeDeclaration -> !resolvedReferenceTypeDeclaration.hasAnnotation(Generated.class.getCanonicalName()))
                 .filter(resolvedReferenceTypeDeclaration -> !documentManager.getDocument().hasDefinition(findTypeName(resolvedReferenceTypeDeclaration)))
                 .collect(Collectors.toList());
 
+        List<ResolvedReferenceTypeDeclaration> inputTypeList = compilations.stream()
+                .flatMap(compilationUnit -> compilationUnit.getTypes().stream())
+                .map(TypeDeclaration::resolve)
+                .filter(resolvedReferenceTypeDeclaration -> resolvedReferenceTypeDeclaration.hasAnnotation(Input.class.getCanonicalName()))
+                .filter(resolvedReferenceTypeDeclaration -> !resolvedReferenceTypeDeclaration.hasAnnotation(Generated.class.getCanonicalName()))
+                .filter(resolvedReferenceTypeDeclaration -> !documentManager.getDocument().hasDefinition(findTypeName(resolvedReferenceTypeDeclaration)))
+                .collect(Collectors.toList());
+
         List<ResolvedReferenceTypeDeclaration> enumTypeList = compilations.stream()
-                .flatMap(compilationUnit -> compilationUnit.getTypes().stream().filter(typeDeclaration -> typeDeclaration.isAnnotationPresent(GraphQLApi.class)))
-                .flatMap(typeDeclaration -> typeDeclaration.getMethods().stream())
-                .flatMap(methodDeclaration -> resolve(methodDeclaration.getType()).stream())
+                .flatMap(compilationUnit -> compilationUnit.getTypes().stream())
+                .map(TypeDeclaration::resolve)
                 .filter(resolvedReferenceTypeDeclaration -> resolvedReferenceTypeDeclaration.hasAnnotation(Enum.class.getCanonicalName()))
                 .filter(resolvedReferenceTypeDeclaration -> !resolvedReferenceTypeDeclaration.hasAnnotation(Generated.class.getCanonicalName()))
                 .filter(resolvedReferenceTypeDeclaration -> !documentManager.getDocument().hasDefinition(findTypeName(resolvedReferenceTypeDeclaration)))
@@ -198,12 +204,13 @@ public class BaseTask extends DefaultTask {
                 .map(this::buildInterface)
                 .forEach(interfaceType -> documentManager.getDocument().merge(interfaceType));
 
+        inputTypeList.stream()
+                .map(this::buildInputObject)
+                .forEach(interfaceType -> documentManager.getDocument().merge(interfaceType));
+
         enumTypeList.stream()
                 .map(this::buildEnum)
                 .forEach(enumType -> documentManager.getDocument().merge(enumType));
-
-        objectTypeList.forEach(this::registerFields);
-        interfaceTypeList.forEach(this::registerFields);
 
         compilations.forEach(compilationUnit ->
                 compilationUnit.getTypes().stream()
@@ -471,47 +478,6 @@ public class BaseTask extends DefaultTask {
         );
     }
 
-    protected void registerFields(ResolvedReferenceTypeDeclaration parentResolvedReferenceTypeDeclaration) {
-        List<ResolvedReferenceTypeDeclaration> objectTypeList = parentResolvedReferenceTypeDeclaration.getDeclaredMethods().stream()
-                .filter(resolvedMethodDeclaration -> resolvedMethodDeclaration.getReturnType().isReferenceType())
-                .flatMap(resolvedMethodDeclaration -> resolve(resolvedMethodDeclaration.getReturnType().asReferenceType()).stream())
-                .filter(resolvedReferenceTypeDeclaration -> resolvedReferenceTypeDeclaration.hasAnnotation(org.eclipse.microprofile.graphql.Type.class.getCanonicalName()))
-                .filter(resolvedReferenceTypeDeclaration -> !resolvedReferenceTypeDeclaration.hasAnnotation(Generated.class.getCanonicalName()))
-                .filter(resolvedReferenceTypeDeclaration -> !documentManager.getDocument().hasDefinition(findTypeName(resolvedReferenceTypeDeclaration)))
-                .collect(Collectors.toList());
-
-        List<ResolvedReferenceTypeDeclaration> interfaceTypeList = parentResolvedReferenceTypeDeclaration.getDeclaredMethods().stream()
-                .filter(resolvedMethodDeclaration -> resolvedMethodDeclaration.getReturnType().isReferenceType())
-                .flatMap(resolvedMethodDeclaration -> resolve(resolvedMethodDeclaration.getReturnType().asReferenceType()).stream())
-                .filter(resolvedReferenceTypeDeclaration -> resolvedReferenceTypeDeclaration.hasAnnotation(org.eclipse.microprofile.graphql.Interface.class.getCanonicalName()))
-                .filter(resolvedReferenceTypeDeclaration -> !resolvedReferenceTypeDeclaration.hasAnnotation(Generated.class.getCanonicalName()))
-                .filter(resolvedReferenceTypeDeclaration -> !documentManager.getDocument().hasDefinition(findTypeName(resolvedReferenceTypeDeclaration)))
-                .collect(Collectors.toList());
-
-        List<ResolvedReferenceTypeDeclaration> enumTypeList = parentResolvedReferenceTypeDeclaration.getDeclaredMethods().stream()
-                .filter(resolvedMethodDeclaration -> resolvedMethodDeclaration.getReturnType().isReferenceType())
-                .flatMap(resolvedMethodDeclaration -> resolve(resolvedMethodDeclaration.getReturnType().asReferenceType()).stream())
-                .filter(resolvedReferenceTypeDeclaration -> resolvedReferenceTypeDeclaration.hasAnnotation(org.eclipse.microprofile.graphql.Enum.class.getCanonicalName()))
-                .filter(resolvedReferenceTypeDeclaration -> !resolvedReferenceTypeDeclaration.hasAnnotation(Generated.class.getCanonicalName()))
-                .filter(resolvedReferenceTypeDeclaration -> !documentManager.getDocument().hasDefinition(findTypeName(resolvedReferenceTypeDeclaration)))
-                .collect(Collectors.toList());
-
-        objectTypeList.stream()
-                .map(this::buildObject)
-                .forEach(objectType -> documentManager.getDocument().merge(objectType));
-
-        interfaceTypeList.stream()
-                .map(this::buildInterface)
-                .forEach(interfaceType -> documentManager.getDocument().merge(interfaceType));
-
-        enumTypeList.stream()
-                .map(this::buildEnum)
-                .forEach(enumType -> documentManager.getDocument().merge(enumType));
-
-        objectTypeList.forEach(this::registerFields);
-        interfaceTypeList.forEach(this::registerFields);
-    }
-
     protected Optional<ResolvedReferenceTypeDeclaration> resolve(Type type) {
         if (type.isArrayType()) {
             return resolve(type.asArrayType().getElementType());
@@ -596,6 +562,26 @@ public class BaseTask extends DefaultTask {
                 .addDirective(new Directive(DIRECTIVE_CONTAINER_NAME));
     }
 
+    protected InputObjectType buildInputObject(ResolvedReferenceTypeDeclaration resolvedReferenceTypeDeclaration) {
+        return new InputObjectType(findTypeName(resolvedReferenceTypeDeclaration))
+                .setInputValues(
+                        resolvedReferenceTypeDeclaration.getDeclaredMethods().stream()
+                                .filter(resolvedMethodDeclaration -> !resolvedMethodDeclaration.getReturnType().isVoid())
+                                .filter(resolvedMethodDeclaration -> resolvedMethodDeclaration.getName().startsWith("get"))
+                                .map(this::buildInputValue)
+                                .collect(Collectors.toSet())
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_CLASS_NAME)
+                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, resolvedReferenceTypeDeclaration.getQualifiedName())
+                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_EXISTS_NAME, true)
+                )
+                .addDirective(
+                        new Directive(DIRECTIVE_PACKAGE_NAME)
+                                .addArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME, packageConfig.getPackageName())
+                );
+    }
+
     protected EnumType buildEnum(ResolvedReferenceTypeDeclaration resolvedReferenceTypeDeclaration) {
         return new EnumType(findTypeName(resolvedReferenceTypeDeclaration))
                 .setEnumValues(
@@ -611,8 +597,7 @@ public class BaseTask extends DefaultTask {
                 .addDirective(
                         new Directive(DIRECTIVE_PACKAGE_NAME)
                                 .addArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME, packageConfig.getPackageName())
-                )
-                .addDirective(new Directive(DIRECTIVE_CONTAINER_NAME));
+                );
     }
 
     protected String findTypeName(ResolvedReferenceTypeDeclaration resolvedReferenceTypeDeclaration) {
@@ -658,6 +643,11 @@ public class BaseTask extends DefaultTask {
 
     protected FieldDefinition buildField(ResolvedMethodDeclaration resolvedMethodDeclaration) {
         return new FieldDefinition(getInvokeFieldName(resolvedMethodDeclaration.getName()))
+                .setType(getInvokeFieldTypeName(resolvedMethodDeclaration.getReturnType()));
+    }
+
+    protected InputValue buildInputValue(ResolvedMethodDeclaration resolvedMethodDeclaration) {
+        return new InputValue(getInvokeFieldName(resolvedMethodDeclaration.getName()))
                 .setType(getInvokeFieldTypeName(resolvedMethodDeclaration.getReturnType()));
     }
 

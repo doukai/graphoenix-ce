@@ -6,6 +6,7 @@ import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.FieldsType;
+import io.graphoenix.spi.graphql.common.Directive;
 import org.eclipse.microprofile.graphql.Ignore;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
@@ -58,6 +59,7 @@ public class ObjectType extends AbstractDefinition implements Definition, Fields
 
     public ObjectType(TypeElement typeElement, Types types) {
         super(typeElement);
+        addDirective(new Directive(DIRECTIVE_CONTAINER_NAME));
         setInterfaces(
                 typeElement.getInterfaces().stream()
                         .map(typeMirror -> getNameFromElement(types.asElement(typeMirror)))
