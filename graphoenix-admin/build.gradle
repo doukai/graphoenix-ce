@@ -44,7 +44,7 @@ def pnpmInstall = tasks.named("pnpmInstall")
 def buildTask = tasks.register("buildWebapp", NpxTask) {
     command = "react-scripts"
     args = ["build"]
-    dependsOn(pnpmInstall)
+//    dependsOn(pnpmInstall)
     inputs.dir(fileTree("webapp").exclude("**/*.test.js").exclude("**/*.spec.js").exclude("**/__tests__/**/*.js"))
     inputs.dir("webapp/node_modules")
     inputs.dir("webapp/public")

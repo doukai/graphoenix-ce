@@ -184,9 +184,15 @@ public class ArgumentsInvokeHandlerBuilder {
                                                                                                             .indent()
                                                                                                             .add("return $T.justOrEmpty(field.getArguments())\n", ClassName.get(Mono.class))
                                                                                                             .indent()
-                                                                                                            .add(".flatMap(arguments -> inputInvokeHandler.$L(jsonb.fromJson(arguments.toJson(), $T.class), field.getArguments()))\n",
-                                                                                                                    methodName,
+                                                                                                            .add(".map(arguments -> jsonb.fromJson(arguments.toJson(), $T.class))\n",
                                                                                                                     toClassName(documentManager.getDocument().getInputObjectTypeOrError(argumentInputName).getClassNameOrError())
+                                                                                                            )
+                                                                                                            .add(".flatMap(arguments -> inputInvokeHandler.$L(arguments, field.getArguments()))\n",
+                                                                                                                    methodName
+                                                                                                            )
+                                                                                                            .add(".switchIfEmpty($T.defer(() -> inputInvokeHandler.$L(null, field.getArguments())))\n",
+                                                                                                                    ClassName.get(Mono.class),
+                                                                                                                    methodName
                                                                                                             )
                                                                                                             .add(".doOnNext($L -> field.setArguments(operationBuilder.updateJsonObject(field.getArguments(), jsonProvider.createReader(new $T(jsonb.toJson($L))).readObject())))\n",
                                                                                                                     methodName,
@@ -216,9 +222,15 @@ public class ArgumentsInvokeHandlerBuilder {
                                                                                                             .indent()
                                                                                                             .add("return $T.justOrEmpty(field.getArguments())\n", ClassName.get(Mono.class))
                                                                                                             .indent()
-                                                                                                            .add(".flatMap(arguments -> inputInvokeHandler.$L(jsonb.fromJson(arguments.toJson(), $T.class), field.getArguments()))\n",
-                                                                                                                    methodName,
+                                                                                                            .add(".map(arguments -> jsonb.fromJson(arguments.toJson(), $T.class))\n",
                                                                                                                     toClassName(documentManager.getDocument().getInputObjectTypeOrError(argumentInputName).getClassNameOrError())
+                                                                                                            )
+                                                                                                            .add(".flatMap(arguments -> inputInvokeHandler.$L(arguments, field.getArguments()))\n",
+                                                                                                                    methodName
+                                                                                                            )
+                                                                                                            .add(".switchIfEmpty($T.defer(() -> inputInvokeHandler.$L(null, field.getArguments())))\n",
+                                                                                                                    ClassName.get(Mono.class),
+                                                                                                                    methodName
                                                                                                             )
                                                                                                             .add(".doOnNext($L -> field.setArguments(operationBuilder.updateJsonObject(field.getArguments(), jsonProvider.createReader(new $T(jsonb.toJson($L))).readObject())))\n",
                                                                                                                     methodName,

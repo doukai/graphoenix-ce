@@ -6,6 +6,7 @@ import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.java.utils.TypeNameUtil;
+import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.common.Arguments;
 import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
 import io.graphoenix.spi.graphql.type.InputObjectType;
@@ -51,7 +52,7 @@ public class InputInvokeHandlerBuilder {
     public void writeToFiler(Filer filer) throws IOException {
         this.invokeClassSet = documentManager.getDocument().getInputObjectTypes()
                 .filter(packageManager::isLocalPackage)
-                .filter(InputObjectType::isInvokesInput)
+//                .filter(InputObjectType::isInvokesInput)
                 .flatMap(this::getInvokes)
                 .map(Tuple3::getT1)
                 .collect(Collectors.toSet());
@@ -132,9 +133,18 @@ public class InputInvokeHandlerBuilder {
                                 .filter(inputObjectType -> inputObjectType.getName().endsWith(SUFFIX_ARGUMENTS))
                                 .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, true)),
                         documentManager.getDocument().getInputObjectTypes()
-                                .filter(inputObjectType ->
-                                        inputObjectType.getName().endsWith(SUFFIX_INPUT) && documentManager.getDocument().getDefinition(inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_INPUT))).isObject() ||
-                                                inputObjectType.getName().endsWith(SUFFIX_EXPRESSION) && documentManager.getDocument().getDefinition(inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_EXPRESSION))).isObject()
+                                .filter(inputObjectType -> {
+                                            if (inputObjectType.getName().endsWith(SUFFIX_INPUT)) {
+                                                String typeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_INPUT));
+                                                Definition definition = documentManager.getDocument().getDefinition(typeName);
+                                                return definition == null || !definition.isLeaf();
+                                            } else if (inputObjectType.getName().endsWith(SUFFIX_EXPRESSION)) {
+                                                String typeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_EXPRESSION));
+                                                Definition definition = documentManager.getDocument().getDefinition(typeName);
+                                                return definition == null || !definition.isLeaf();
+                                            }
+                                            return true;
+                                        }
                                 )
                                 .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, false))
                 )
@@ -230,8 +240,16 @@ public class InputInvokeHandlerBuilder {
                                                                 .filter(inputValue -> documentManager.getInputValueTypeDefinition(inputValue).isInputObject())
                                                                 .filter(inputValue -> {
                                                                             InputObjectType inputValueType = documentManager.getInputValueTypeDefinition(inputValue).asInputObject();
-                                                                            return inputValueType.getName().endsWith(SUFFIX_INPUT) && documentManager.getDocument().getDefinition(inputValueType.getName().substring(0, inputValueType.getName().lastIndexOf(SUFFIX_INPUT))).isObject() ||
-                                                                                    inputValueType.getName().endsWith(SUFFIX_EXPRESSION) && documentManager.getDocument().getDefinition(inputValueType.getName().substring(0, inputValueType.getName().lastIndexOf(SUFFIX_EXPRESSION))).isObject();
+                                                                            if (inputValueType.getName().endsWith(SUFFIX_INPUT)) {
+                                                                                String typeName = inputValueType.getName().substring(0, inputValueType.getName().lastIndexOf(SUFFIX_INPUT));
+                                                                                Definition definition = documentManager.getDocument().getDefinition(typeName);
+                                                                                return definition == null || !definition.isLeaf();
+                                                                            } else if (inputValueType.getName().endsWith(SUFFIX_EXPRESSION)) {
+                                                                                String typeName = inputValueType.getName().substring(0, inputValueType.getName().lastIndexOf(SUFFIX_EXPRESSION));
+                                                                                Definition definition = documentManager.getDocument().getDefinition(typeName);
+                                                                                return definition == null || !definition.isLeaf();
+                                                                            }
+                                                                            return true;
                                                                         }
                                                                 )
                                                                 .filter(inputValue -> !inputValue.getType().hasList())
@@ -255,8 +273,16 @@ public class InputInvokeHandlerBuilder {
                                                                 .filter(inputValue -> documentManager.getInputValueTypeDefinition(inputValue).isInputObject())
                                                                 .filter(inputValue -> {
                                                                             InputObjectType inputValueType = documentManager.getInputValueTypeDefinition(inputValue).asInputObject();
-                                                                            return inputValueType.getName().endsWith(SUFFIX_INPUT) && documentManager.getDocument().getDefinition(inputValueType.getName().substring(0, inputValueType.getName().lastIndexOf(SUFFIX_INPUT))).isObject() ||
-                                                                                    inputValueType.getName().endsWith(SUFFIX_EXPRESSION) && documentManager.getDocument().getDefinition(inputValueType.getName().substring(0, inputValueType.getName().lastIndexOf(SUFFIX_EXPRESSION))).isObject();
+                                                                            if (inputValueType.getName().endsWith(SUFFIX_INPUT)) {
+                                                                                String typeName = inputValueType.getName().substring(0, inputValueType.getName().lastIndexOf(SUFFIX_INPUT));
+                                                                                Definition definition = documentManager.getDocument().getDefinition(typeName);
+                                                                                return definition == null || !definition.isLeaf();
+                                                                            } else if (inputValueType.getName().endsWith(SUFFIX_EXPRESSION)) {
+                                                                                String typeName = inputValueType.getName().substring(0, inputValueType.getName().lastIndexOf(SUFFIX_EXPRESSION));
+                                                                                Definition definition = documentManager.getDocument().getDefinition(typeName);
+                                                                                return definition == null || !definition.isLeaf();
+                                                                            }
+                                                                            return true;
                                                                         }
                                                                 )
                                                                 .filter(inputValue -> inputValue.getType().hasList())
@@ -293,7 +319,7 @@ public class InputInvokeHandlerBuilder {
                 .unindent()
                 .add("})\n")
                 .add(".then()\n")
-                .add(".thenReturn($L)\n", typeParameterName)
+                .add(".thenReturn($L)\n", resultParameterName)
                 .unindent()
                 .add(")");
         builder.addStatement(codeBlockBuilder.build());
