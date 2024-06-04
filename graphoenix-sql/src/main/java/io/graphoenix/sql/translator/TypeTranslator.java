@@ -24,6 +24,7 @@ import net.sf.jsqlparser.statement.truncate.Truncate;
 import reactor.util.function.Tuple2;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -186,16 +187,25 @@ public class TypeTranslator {
     }
 
     protected ColDataType createColDataType(FieldDefinition fieldDefinition) {
+        return createColDataType(fieldDefinition, false);
+    }
+
+    protected ColDataType createColDataType(FieldDefinition fieldDefinition, boolean enumToString) {
         ColDataType colDataType = new ColDataType();
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isEnum()) {
-            return colDataType
-                    .withDataType("ENUM")
-                    .withArgumentsStringList(
-                            fieldTypeDefinition.asEnum().getEnumValues().stream()
-                                    .map(enumValueDefinition -> stringValueToDBVarchar(enumValueDefinition.getName()))
-                                    .collect(Collectors.toList())
-                    );
+            if (enumToString) {
+                return colDataType.withDataType("VARCHAR")
+                        .withArgumentsStringList(Collections.singletonList(String.valueOf(fieldDefinition.getLength().orElse(255))));
+            } else {
+                return colDataType
+                        .withDataType("ENUM")
+                        .withArgumentsStringList(
+                                fieldTypeDefinition.asEnum().getEnumValues().stream()
+                                        .map(enumValueDefinition -> stringValueToDBVarchar(enumValueDefinition.getName()))
+                                        .collect(Collectors.toList())
+                        );
+            }
         } else if (fieldTypeDefinition.isScalar()) {
             List<String> argumentsStringList = new ArrayList<>();
             String fieldTypeName = fieldDefinition.getTypeName().orElseGet(() -> fieldDefinition.getType().getTypeName().getName());

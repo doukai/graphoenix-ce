@@ -10,6 +10,7 @@ import io.nozdormu.spi.async.Asyncable;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.bind.Jsonb;
+import jakarta.transaction.Transactional;
 import org.tinylog.Logger;
 import reactor.core.publisher.Mono;
 
@@ -77,6 +78,7 @@ public class R2DBCOperationDAO implements OperationDAO, Asyncable {
     }
 
     @Override
+    @Transactional
     public <T> Mono<T> saveAsync(String sql, Map<String, Object> parameters, Class<T> beanClass) {
         String[] statements = sql.split(";");
         String[] mutations = Arrays.copyOfRange(statements, 0, statements.length - 1);
@@ -98,6 +100,7 @@ public class R2DBCOperationDAO implements OperationDAO, Asyncable {
     }
 
     @Override
+    @Transactional
     public <T> Mono<T> saveAsync(String sql, Map<String, Object> parameters, Type type) {
         String[] statements = sql.split(";");
         String[] mutations = Arrays.copyOfRange(statements, 0, statements.length - 1);

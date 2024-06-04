@@ -931,7 +931,7 @@ public class MutationTranslator {
                                                 .map(subField ->
                                                         new ColumnDefinition()
                                                                 .withColumnName(graphqlFieldNameToColumnName(subField.getName()))
-                                                                .withColDataType(typeTranslator.createColDataType(subField))
+                                                                .withColDataType(typeTranslator.createColDataType(subField, true))
                                                                 .addColumnSpecs("PATH", "'$." + subField.getName() + "'")
                                                 )
                                                 .collect(Collectors.toList())
@@ -960,7 +960,7 @@ public class MutationTranslator {
                                                 .map(subField ->
                                                         new ColumnDefinition()
                                                                 .withColumnName(graphqlFieldNameToColumnName(subField.getName()))
-                                                                .withColDataType(typeTranslator.createColDataType(subField))
+                                                                .withColDataType(typeTranslator.createColDataType(subField, true))
                                                                 .addColumnSpecs("PATH", "'$." + subField.getName() + "'")
                                                 )
                                                 .collect(Collectors.toList())
@@ -981,7 +981,7 @@ public class MutationTranslator {
                                 .withColumnDefinitions(
                                         new ColumnDefinition()
                                                 .withColumnName(fieldDefinition.getName())
-                                                .withColDataType(typeTranslator.createColDataType(fieldDefinition))
+                                                .withColDataType(typeTranslator.createColDataType(fieldDefinition, true))
                                                 .addColumnSpecs("PATH", "'$'")
                                 )
                                 .withAlias(new Alias(valueWithVariable.asVariable().getName()))
