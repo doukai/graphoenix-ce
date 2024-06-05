@@ -5,9 +5,9 @@ import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.spi.bootstrap.Launcher;
 import io.graphoenix.spi.bootstrap.Runner;
-import io.nozdormu.spi.context.BeanContext;
 import io.nozdormu.spi.event.ScopeEventResolver;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import org.tinylog.Logger;
 import reactor.core.publisher.Flux;
@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ApplicationLauncher implements Launcher {
@@ -46,7 +47,7 @@ public class ApplicationLauncher implements Launcher {
 
     @SafeVarargs
     public final ApplicationLauncher with(Class<? extends Runner>... classes) {
-        return addServers(Arrays.stream(classes).map(BeanContext::get).toArray(Runner[]::new));
+        return addServers(Arrays.stream(classes).map(beanClass -> CDI.current().select(beanClass).get()).toArray(Runner[]::new));
     }
 
     public void run(String... args) {
@@ -55,7 +56,7 @@ public class ApplicationLauncher implements Launcher {
         }
 
         if (runnerList.isEmpty()) {
-            runnerList.addAll(BeanContext.getList(Runner.class));
+            runnerList.addAll(CDI.current().select(Runner.class).stream().collect(Collectors.toList()));
         }
 
         if (!runnerList.isEmpty()) {

@@ -17,6 +17,7 @@ import io.graphoenix.spi.handler.OperationHandler;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonCollectors;
@@ -46,14 +47,14 @@ public class VersionValidationHandler implements OperationBeforeHandler {
 
     private final DocumentManager documentManager;
     private final JsonProvider jsonProvider;
-    private final OperationHandler operationHandler;
+    private final Provider<OperationHandler> operationHandlerProvider;
     private final MutationConfig mutationConfig;
 
     @Inject
-    public VersionValidationHandler(DocumentManager documentManager, JsonProvider jsonProvider, OperationHandler operationHandler, MutationConfig mutationConfig) {
+    public VersionValidationHandler(DocumentManager documentManager, JsonProvider jsonProvider, Provider<OperationHandler> operationHandlerProvider, MutationConfig mutationConfig) {
         this.documentManager = documentManager;
         this.jsonProvider = jsonProvider;
-        this.operationHandler = operationHandler;
+        this.operationHandlerProvider = operationHandlerProvider;
         this.mutationConfig = mutationConfig;
     }
 
@@ -102,7 +103,7 @@ public class VersionValidationHandler implements OperationBeforeHandler {
                 .flatMapMany(typeEntryList ->
                         Mono
                                 .from(
-                                        operationHandler.handle(
+                                        operationHandlerProvider.get().handle(
                                                 new Operation()
                                                         .setOperationType(OPERATION_QUERY_NAME)
                                                         .setSelections(

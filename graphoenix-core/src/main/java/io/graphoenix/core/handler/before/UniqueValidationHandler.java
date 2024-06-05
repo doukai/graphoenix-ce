@@ -16,6 +16,7 @@ import io.graphoenix.spi.handler.OperationHandler;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonCollectors;
@@ -41,13 +42,13 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
 
     private final DocumentManager documentManager;
     private final JsonProvider jsonProvider;
-    private final OperationHandler operationHandler;
+    private final Provider<OperationHandler> operationHandlerProvider;
 
     @Inject
-    public UniqueValidationHandler(DocumentManager documentManager, JsonProvider jsonProvider, OperationHandler operationHandler) {
+    public UniqueValidationHandler(DocumentManager documentManager, JsonProvider jsonProvider, Provider<OperationHandler> operationHandlerProvider) {
         this.documentManager = documentManager;
         this.jsonProvider = jsonProvider;
-        this.operationHandler = operationHandler;
+        this.operationHandlerProvider = operationHandlerProvider;
     }
 
     @Override
@@ -102,7 +103,7 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
                 .flatMapMany(fieldEntryList ->
                         Mono
                                 .from(
-                                        operationHandler.handle(
+                                        operationHandlerProvider.get().handle(
                                                 new Operation()
                                                         .setOperationType(OPERATION_QUERY_NAME)
                                                         .setSelections(

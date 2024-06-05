@@ -2,12 +2,12 @@ package io.graphoenix.core.bootstrap;
 
 import io.graphoenix.spi.bootstrap.Launcher;
 import io.graphoenix.spi.bootstrap.Runner;
-import io.nozdormu.spi.context.BeanContext;
+import jakarta.enterprise.inject.spi.CDI;
 
 public enum App {
     APP;
 
-    private final Launcher launcher = BeanContext.get(Launcher.class);
+    private final Launcher launcher = CDI.current().select(Launcher.class).get();
 
     public Launcher addServers(Runner... servers) {
         return launcher.addServers(servers);

@@ -6,6 +6,7 @@ import io.graphoenix.spi.handler.OperationHandler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import jakarta.inject.Provider;
 import jakarta.json.JsonValue;
 import reactor.core.publisher.Mono;
 
@@ -15,15 +16,15 @@ public class LocalFetchHandler implements FetchHandler {
 
     public static final String LOCAL_FETCH_NAME = "local";
 
-    private final OperationHandler operationHandler;
+    private final Provider<OperationHandler> operationHandlerProvider;
 
     @Inject
-    public LocalFetchHandler(OperationHandler operationHandler) {
-        this.operationHandler = operationHandler;
+    public LocalFetchHandler(Provider<OperationHandler> operationHandlerProvider) {
+        this.operationHandlerProvider = operationHandlerProvider;
     }
 
     @Override
     public Mono<JsonValue> request(String packageName, Operation operation) {
-        return Mono.from(operationHandler.handle(operation));
+        return Mono.from(operationHandlerProvider.get().handle(operation));
     }
 }
