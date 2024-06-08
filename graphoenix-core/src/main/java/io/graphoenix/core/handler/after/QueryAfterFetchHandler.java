@@ -13,9 +13,9 @@ import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.ObjectType;
 import io.graphoenix.spi.handler.FetchHandler;
 import io.graphoenix.spi.handler.OperationAfterHandler;
-import io.nozdormu.spi.context.BeanContext;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
@@ -35,6 +35,7 @@ import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST;
 import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
+import static io.nozdormu.spi.utils.CDIUtil.getNamedInstanceMap;
 import static jakarta.json.JsonValue.NULL;
 
 @ApplicationScoped
@@ -46,13 +47,14 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
     private final DocumentManager documentManager;
     private final PackageManager packageManager;
     private final JsonProvider jsonProvider;
-    private final Map<String, FetchHandler> fetchHandlerMap = BeanContext.getMap(FetchHandler.class);
+    private final Map<String, FetchHandler> fetchHandlerMap;
 
     @Inject
-    public QueryAfterFetchHandler(DocumentManager documentManager, PackageManager packageManager, JsonProvider jsonProvider) {
+    public QueryAfterFetchHandler(DocumentManager documentManager, PackageManager packageManager, JsonProvider jsonProvider, Instance<FetchHandler> fetchHandlerInstance) {
         this.documentManager = documentManager;
         this.packageManager = packageManager;
         this.jsonProvider = jsonProvider;
+        this.fetchHandlerMap = getNamedInstanceMap(fetchHandlerInstance);
     }
 
     @Override

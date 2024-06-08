@@ -8,11 +8,11 @@ import io.graphoenix.spi.graphql.type.ObjectType;
 import io.graphoenix.spi.handler.QueryHandler;
 import io.graphoenix.spi.handler.SubscriptionDataListener;
 import io.graphoenix.spi.handler.SubscriptionHandler;
-import io.nozdormu.spi.context.BeanContext;
 import io.nozdormu.spi.context.PublisherBeanContext;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
-import jakarta.inject.Provider;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
@@ -37,11 +37,7 @@ public class RabbitMQSubscriptionHandler implements SubscriptionHandler {
     public static final String BODY_MUTATION_KEY = "mutation";
     public static final String REQUEST_ID = "requestId";
 
-    private final GraphQLConfig graphQLConfig = BeanContext.get(GraphQLConfig.class);
-
-    private final Provider<QueryHandler> queryHandlerProvider = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
-            .map(name -> BeanContext.getProvider(QueryHandler.class, name))
-            .orElseGet(() -> BeanContext.getProvider(QueryHandler.class));
+    private final QueryHandler queryHandler;
 
     private final DocumentManager documentManager;
 
@@ -52,11 +48,14 @@ public class RabbitMQSubscriptionHandler implements SubscriptionHandler {
     private final Receiver receiver;
 
     @Inject
-    public RabbitMQSubscriptionHandler(DocumentManager documentManager, JsonProvider jsonProvider, Sender sender, Receiver receiver) {
+    public RabbitMQSubscriptionHandler(GraphQLConfig graphQLConfig, DocumentManager documentManager, JsonProvider jsonProvider, Sender sender, Receiver receiver) {
         this.documentManager = documentManager;
         this.jsonProvider = jsonProvider;
         this.sender = sender;
         this.receiver = receiver;
+        this.queryHandler = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
+                .map(name -> CDI.current().select(QueryHandler.class, NamedLiteral.of(name)).get())
+                .orElseGet(() -> CDI.current().select(QueryHandler.class).get());
     }
 
     @Override
@@ -83,7 +82,7 @@ public class RabbitMQSubscriptionHandler implements SubscriptionHandler {
                                                 .flatMapMany(subscriptionDataListener ->
                                                         Flux
                                                                 .concat(
-                                                                        queryHandlerProvider.get().query(operation),
+                                                                        queryHandler.query(operation),
                                                                         receiver.consumeAutoAck(requestId)
                                                                                 .filter(delivery -> {
                                                                                             JsonObject messageJsonObject = jsonProvider.createReader(new StringReader(new String(delivery.getBody()))).readObject();
@@ -93,7 +92,7 @@ public class RabbitMQSubscriptionHandler implements SubscriptionHandler {
                                                                                             return subscriptionDataListener.changed(typeName, arguments, mutation);
                                                                                         }
                                                                                 )
-                                                                                .flatMap(delivery -> queryHandlerProvider.get().query(operation))
+                                                                                .flatMap(delivery -> queryHandler.query(operation))
                                                                 )
                                                 )
                                 )

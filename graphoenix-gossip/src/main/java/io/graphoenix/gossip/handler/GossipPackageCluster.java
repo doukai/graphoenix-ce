@@ -10,6 +10,7 @@ import io.scalecube.cluster.membership.MembershipEvent;
 import io.scalecube.net.Address;
 import io.scalecube.transport.netty.tcp.TcpTransportFactory;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import org.tinylog.Logger;
 
@@ -85,7 +86,7 @@ public class GossipPackageCluster implements Runner {
     }
 
     private List<Map<String, Object>> getURLs() {
-        return BeanContext.getList(Runner.class).stream()
+        return CDI.current().select(Runner.class).stream()
                 .flatMap(runner ->
                         packageManager.getLocalPackages()
                                 .map(packageName ->

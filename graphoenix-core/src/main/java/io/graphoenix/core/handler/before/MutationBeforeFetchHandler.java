@@ -15,9 +15,9 @@ import io.graphoenix.spi.graphql.type.InputValue;
 import io.graphoenix.spi.graphql.type.ObjectType;
 import io.graphoenix.spi.handler.FetchHandler;
 import io.graphoenix.spi.handler.OperationBeforeHandler;
-import io.nozdormu.spi.context.BeanContext;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
@@ -40,6 +40,7 @@ import static io.graphoenix.core.handler.fetch.LocalFetchHandler.LOCAL_FETCH_NAM
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
+import static io.nozdormu.spi.utils.CDIUtil.getNamedInstanceMap;
 
 @ApplicationScoped
 @Priority(MutationBeforeFetchHandler.MUTATION_BEFORE_FETCH_HANDLER_PRIORITY)
@@ -51,14 +52,15 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler {
     private final PackageManager packageManager;
     private final PackageConfig packageConfig;
     private final JsonProvider jsonProvider;
-    private final Map<String, FetchHandler> fetchHandlerMap = BeanContext.getMap(FetchHandler.class);
+    private final Map<String, FetchHandler> fetchHandlerMap;
 
     @Inject
-    public MutationBeforeFetchHandler(DocumentManager documentManager, PackageManager packageManager, PackageConfig packageConfig, JsonProvider jsonProvider) {
+    public MutationBeforeFetchHandler(DocumentManager documentManager, PackageManager packageManager, PackageConfig packageConfig, JsonProvider jsonProvider, Instance<FetchHandler> fetchHandlerInstance) {
         this.documentManager = documentManager;
         this.packageManager = packageManager;
         this.packageConfig = packageConfig;
         this.jsonProvider = jsonProvider;
+        this.fetchHandlerMap = getNamedInstanceMap(fetchHandlerInstance);
     }
 
     @Override

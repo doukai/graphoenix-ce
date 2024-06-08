@@ -8,6 +8,9 @@ import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.handler.PackageProvider;
 import io.nozdormu.spi.context.BeanContext;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Default;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import org.tinylog.Logger;
 
@@ -41,9 +44,9 @@ public class PackageManager {
                 .collect(Collectors.toSet());
 
         if (!getSeedMembers().isEmpty()) {
-            this.packageProvider = BeanContext.getName(PackageProvider.class, PACKAGE_PROVIDER_GOSSIP_NAME);
+            this.packageProvider = CDI.current().select(PackageProvider.class, NamedLiteral.of(PACKAGE_PROVIDER_GOSSIP_NAME)).get();
         } else {
-            this.packageProvider = BeanContext.getDefault(PackageProvider.class);
+            this.packageProvider = CDI.current().select(PackageProvider.class, Default.Literal.INSTANCE).get();
         }
     }
 

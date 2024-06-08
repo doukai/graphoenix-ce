@@ -12,8 +12,8 @@ import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.handler.OperationHandler;
-import io.nozdormu.spi.context.BeanContext;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import jakarta.json.spi.JsonProvider;
 import org.tinylog.Logger;
@@ -172,10 +172,10 @@ public class ReactorGrpcServiceImplementer {
     private MethodSpec buildConstructor() {
         return MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
-                .addStatement("this.documentManager = $T.get($T.class)", ClassName.get(BeanContext.class), ClassName.get(DocumentManager.class))
-                .addStatement("this.operationHandler = $T.get($T.class)", ClassName.get(BeanContext.class), ClassName.get(OperationHandler.class))
-                .addStatement("this.jsonProvider = $T.get($T.class)", ClassName.get(BeanContext.class), ClassName.get(JsonProvider.class))
-                .addStatement("this.protobufConverter = $T.get($T.class)", ClassName.get(BeanContext.class), ClassName.get(ProtobufConverter.class))
+                .addStatement("this.documentManager = $T.current().select($T.class).get()", ClassName.get(CDI.class), ClassName.get(DocumentManager.class))
+                .addStatement("this.operationHandler = $T.current().select($T.class).get()", ClassName.get(CDI.class), ClassName.get(OperationHandler.class))
+                .addStatement("this.jsonProvider = $T.current().select($T.class).get()", ClassName.get(CDI.class), ClassName.get(JsonProvider.class))
+                .addStatement("this.protobufConverter = $T.current().select($T.class).get()", ClassName.get(CDI.class), ClassName.get(ProtobufConverter.class))
                 .build();
     }
 
@@ -295,7 +295,7 @@ public class ReactorGrpcServiceImplementer {
                 .addMethod(
                         MethodSpec.constructorBuilder()
                                 .addModifiers(Modifier.PUBLIC)
-                                .addStatement("this.operationHandler = $T.get($T.class)", ClassName.get(BeanContext.class), ClassName.get(OperationHandler.class))
+                                .addStatement("this.operationHandler = $T.current().select($T.class).get()", ClassName.get(CDI.class), ClassName.get(OperationHandler.class))
                                 .build()
                 )
                 .addMethod(buildOperationMethod(packageName))
