@@ -927,7 +927,7 @@ public class DocumentBuilder {
 
         return new ObjectType(objectType.getName() + InputType.EDGE)
                 .addField(new FieldDefinition(FIELD_NODE_NAME).setType(new TypeName(objectType.getName())))
-                .addField(new FieldDefinition(FIELD_CURSOR_NAME).setType(cursorFieldDefinition.getType().getTypeName()))
+                .addField(new FieldDefinition(FIELD_CURSOR_NAME).setType(cursorFieldDefinition.getCursorTypeNameWithoutID()))
                 .addDirective(
                         new Directive(DIRECTIVE_PACKAGE_NAME)
                                 .addArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME, packageConfig.getPackageName())
@@ -1004,7 +1004,7 @@ public class DocumentBuilder {
         if (inputType.equals(InputType.QUERY_ARGUMENTS) || inputType.equals(InputType.SUBSCRIPTION_ARGUMENTS)) {
             fieldDefinition.addArgument(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
                     .addArgument(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
-                    .addArgument(new InputValue(INPUT_VALUE_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(INPUT_CONDITIONAL_INPUT_VALUE_AND))
+                    .addArgument(new InputValue(INPUT_VALUE_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_CONDITIONAL_INPUT_VALUE_AND)))
                     .addArgument(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))));
         } else if (inputType.equals(InputType.MUTATION_ARGUMENTS)) {
             fieldDefinition
@@ -1029,7 +1029,7 @@ public class DocumentBuilder {
                     .addArgument(new InputValue(INPUT_VALUE_ORDER_BY_NAME).setType(new TypeName(objectType.getName() + InputType.ORDER_BY)))
                     .addArgument(new InputValue(INPUT_VALUE_GROUP_BY_NAME).setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME)))))
                     .addArgument(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
-                    .addArgument(new InputValue(INPUT_VALUE_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(INPUT_CONDITIONAL_INPUT_VALUE_AND))
+                    .addArgument(new InputValue(INPUT_VALUE_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_CONDITIONAL_INPUT_VALUE_AND)))
                     .addArgument(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
                     .addArgument(new InputValue(INPUT_VALUE_FIRST_NAME).setType(new TypeName(SCALA_INT_NAME)))
                     .addArgument(new InputValue(INPUT_VALUE_LAST_NAME).setType(new TypeName(SCALA_INT_NAME)))
@@ -1072,7 +1072,7 @@ public class DocumentBuilder {
         if (inputType.equals(InputType.QUERY_ARGUMENTS) || inputType.equals(InputType.SUBSCRIPTION_ARGUMENTS)) {
             fieldDefinition
                     .addArgument(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false))
-                    .addArgument(new InputValue(INPUT_VALUE_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(INPUT_CONDITIONAL_INPUT_VALUE_AND))
+                    .addArgument(new InputValue(INPUT_VALUE_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_CONDITIONAL_INPUT_VALUE_AND)))
                     .addArgument(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(objectType.getName() + InputType.EXPRESSION))))
                     .addArgument(new InputValue(INPUT_VALUE_FIRST_NAME).setType(new TypeName(SCALA_INT_NAME)))
                     .addArgument(new InputValue(INPUT_VALUE_LAST_NAME).setType(new TypeName(SCALA_INT_NAME)))

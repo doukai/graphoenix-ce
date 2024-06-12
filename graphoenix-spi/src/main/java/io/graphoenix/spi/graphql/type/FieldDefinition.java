@@ -234,6 +234,14 @@ public class FieldDefinition extends AbstractDefinition {
         return fieldTypeName;
     }
 
+    public String getCursorTypeNameWithoutID() {
+        String fieldTypeName = getType().getTypeName().getName();
+        if (SCALA_ID_NAME.equals(fieldTypeName)) {
+            return SCALA_STRING_NAME;
+        }
+        return fieldTypeName;
+    }
+
     public boolean isInvokeField() {
         return hasDirective(DIRECTIVE_INVOKE_NAME);
     }
