@@ -2,8 +2,7 @@ package io.graphoenix.core.handler;
 
 import com.google.common.collect.Streams;
 import io.graphoenix.spi.graphql.Definition;
-import io.graphoenix.spi.graphql.common.Directive;
-import io.graphoenix.spi.graphql.common.ValueWithVariable;
+import io.graphoenix.spi.graphql.common.*;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.InputValue;
@@ -13,10 +12,7 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.json.stream.JsonCollectors;
 
-import java.util.AbstractMap;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -96,7 +92,129 @@ public class OperationBuilder {
         }
     }
 
-    private List<Field> mutationArgumentsToFields(FieldDefinition fieldDefinition, Field field) {
+    private Optional<Field> toBackupField(FieldDefinition fieldDefinition, Field field) {
+        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+        if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
+            FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
+            return Stream.ofNullable(fieldDefinition.getArguments())
+                    .flatMap(Collection::stream)
+                    .filter(inputValue -> inputValue.getName().equals(INPUT_VALUE_WHERE_NAME))
+                    .findFirst()
+                    .flatMap(inputValue ->
+                            Stream.ofNullable(field.getArguments())
+                                    .flatMap(arguments ->
+                                            arguments.getArgumentOrEmpty(inputValue.getName())
+                                                    .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
+                                    )
+                                    .filter(ValueWithVariable::isObject)
+                                    .map(valueWithVariable ->
+                                            new Field(field.getName())
+                                                    .setArguments(new Arguments(valueWithVariable.asObject()))
+                                                    .addSelections(argumentsToFields(fieldDefinition, field))
+                                    )
+                                    .findFirst()
+                    )
+                    .or(() ->
+                            Stream.ofNullable(fieldDefinition.getArguments())
+                                    .flatMap(Collection::stream)
+                                    .filter(inputValue -> inputValue.getName().equals(idField.getName()))
+                                    .findFirst()
+                                    .flatMap(inputValue ->
+                                            Stream.ofNullable(field.getArguments())
+                                                    .flatMap(arguments ->
+                                                            arguments.getArgumentOrEmpty(inputValue.getName())
+                                                                    .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
+                                                    )
+                                                    .filter(ValueWithVariable::isObject)
+                                                    .map(valueWithVariable ->
+                                                            new Field(field.getName())
+                                                                    .setAlias(field.getAlias())
+                                                                    .setArguments(
+                                                                            Arguments.of(
+                                                                                    idField.getName(),
+                                                                                    Map.of(
+                                                                                            INPUT_OPERATOR_INPUT_VALUE_OPR_NAME,
+                                                                                            new EnumValue(INPUT_OPERATOR_INPUT_VALUE_EQ),
+                                                                                            INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
+                                                                                            valueWithVariable
+                                                                                    )
+                                                                            )
+                                                                    )
+                                                                    .addSelections(argumentsToFields(fieldDefinition, field))
+                                                    )
+                                                    .findFirst()
+                                    )
+                    )
+                    .or(() ->
+                            fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_INPUT_NAME)
+                                    .flatMap(inputValue ->
+                                            Stream.ofNullable(field.getArguments())
+                                                    .flatMap(arguments ->
+                                                            arguments.getArgumentOrEmpty(inputValue.getName())
+                                                                    .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
+                                                    )
+                                                    .filter(ValueWithVariable::isObject)
+                                                    .map(ValueWithVariable::asObject)
+                                                    .flatMap(objectValueWithVariable -> objectValueWithVariable.getObjectValueWithVariable().entrySet().stream())
+                                                    .filter(entry -> entry.getKey().equals(idField.getName()))
+                                                    .map(entry ->
+                                                            new Field(field.getName())
+                                                                    .setAlias(field.getAlias())
+                                                                    .setArguments(
+                                                                            Arguments.of(
+                                                                                    idField.getName(),
+                                                                                    Map.of(
+                                                                                            INPUT_OPERATOR_INPUT_VALUE_OPR_NAME,
+                                                                                            new EnumValue(INPUT_OPERATOR_INPUT_VALUE_EQ),
+                                                                                            INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
+                                                                                            entry.getValue()
+                                                                                    )
+                                                                            )
+                                                                    )
+                                                                    .addSelections(argumentsToFields(fieldDefinition, field))
+                                                    )
+                                                    .findFirst()
+                                    )
+                    )
+                    .or(() ->
+                            fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_LIST_NAME)
+                                    .map(inputValue ->
+                                            new Field(field.getName())
+                                                    .setAlias(field.getAlias())
+                                                    .setArguments(
+                                                            Arguments.of(
+                                                                    idField.getName(),
+                                                                    Map.of(
+                                                                            INPUT_OPERATOR_INPUT_VALUE_OPR_NAME,
+                                                                            new EnumValue(INPUT_OPERATOR_INPUT_VALUE_IN),
+                                                                            INPUT_OPERATOR_INPUT_VALUE_ARR_NAME,
+                                                                            new ArrayValueWithVariable(
+                                                                                    Stream.ofNullable(field.getArguments())
+                                                                                            .flatMap(arguments ->
+                                                                                                    arguments.getArgumentOrEmpty(inputValue.getName())
+                                                                                                            .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
+                                                                                            )
+                                                                                            .filter(ValueWithVariable::isArray)
+                                                                                            .map(ValueWithVariable::asArray)
+                                                                                            .flatMap(arrayValueWithVariable -> arrayValueWithVariable.getValueWithVariables().stream())
+                                                                                            .filter(ValueWithVariable::isObject)
+                                                                                            .map(ValueWithVariable::asObject)
+                                                                                            .flatMap(objectValueWithVariable -> objectValueWithVariable.getObjectValueWithVariable().entrySet().stream())
+                                                                                            .filter(entry -> entry.getKey().equals(idField.getName()))
+                                                                                            .map(Map.Entry::getValue)
+                                                                                            .collect(Collectors.toList())
+                                                                            )
+                                                                    )
+                                                            )
+                                                    )
+                                                    .addSelections(argumentsToFields(fieldDefinition, field))
+                                    )
+                    );
+        }
+        return Optional.empty();
+    }
+
+    private List<Field> argumentsToFields(FieldDefinition fieldDefinition, Field field) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         return Streams
                 .concat(
@@ -111,7 +229,7 @@ public class OperationBuilder {
                                                                                 .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
                                                                 )
                                                                 .map(valueWithVariable -> {
-                                                                            Field argumentField = new Field(subFieldDefinition.getName()).addDirective(new Directive(DIRECTIVE_HIDE_NAME));
+                                                                            Field argumentField = new Field(subFieldDefinition.getName());
                                                                             Definition subFieldTypeDefinition = documentManager.getFieldTypeDefinition(subFieldDefinition);
                                                                             if (subFieldTypeDefinition.isObject() && valueWithVariable.isObject()) {
                                                                                 argumentField.setSelections(inputObjectValueToFields(subFieldDefinition, inputValue, valueWithVariable));
@@ -138,7 +256,7 @@ public class OperationBuilder {
                                                                                         objectValueWithVariable.getValueWithVariableOrEmpty(subInputValue.getName())
                                                                                                 .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
                                                                                                 .map(subValueWithVariable -> {
-                                                                                                            Field inputValueField = new Field(subFieldDefinition.getName()).addDirective(new Directive(DIRECTIVE_HIDE_NAME));
+                                                                                                            Field inputValueField = new Field(subFieldDefinition.getName());
                                                                                                             Definition subFieldTypeDefinition = documentManager.getFieldTypeDefinition(subFieldDefinition);
                                                                                                             if (subFieldTypeDefinition.isObject() && subValueWithVariable.isObject()) {
                                                                                                                 inputValueField.setSelections(inputObjectValueToFields(subFieldDefinition, subInputValue, subValueWithVariable));
@@ -169,7 +287,7 @@ public class OperationBuilder {
                                                                                                         arrayValueWithVariable.getValueWithVariable(index).asObject().getValueWithVariableOrEmpty(subInputValue.getName())
                                                                                                                 .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
                                                                                                                 .map(subValueWithVariable -> {
-                                                                                                                            Field inputValueField = new Field(subFieldDefinition.getName()).addDirective(new Directive(DIRECTIVE_HIDE_NAME));
+                                                                                                                            Field inputValueField = new Field(subFieldDefinition.getName());
                                                                                                                             Definition subFieldTypeDefinition = documentManager.getFieldTypeDefinition(subFieldDefinition);
                                                                                                                             if (subFieldTypeDefinition.isObject() && subValueWithVariable.isObject()) {
                                                                                                                                 inputValueField.setSelections(inputObjectValueToFields(subFieldDefinition, subInputValue, subValueWithVariable));
@@ -213,7 +331,7 @@ public class OperationBuilder {
                                                                                         .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
                                                                         )
                                                                         .map(subValueWithVariable -> {
-                                                                                    Field inputValueField = new Field(subFieldDefinition.getName()).addDirective(new Directive(DIRECTIVE_HIDE_NAME));
+                                                                                    Field inputValueField = new Field(subFieldDefinition.getName());
                                                                                     Definition subFieldTypeDefinition = documentManager.getFieldTypeDefinition(subFieldDefinition);
                                                                                     if (subFieldTypeDefinition.isObject() && subValueWithVariable.isObject()) {
                                                                                         inputValueField.setSelections(inputObjectValueToFields(subFieldDefinition, subInputValue, subValueWithVariable));
@@ -240,7 +358,7 @@ public class OperationBuilder {
                                                                         .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
                                                         )
                                                         .map(subValueWithVariable -> {
-                                                                    Field inputValueField = new Field(subFieldDefinition.getName()).addDirective(new Directive(DIRECTIVE_HIDE_NAME));
+                                                                    Field inputValueField = new Field(subFieldDefinition.getName());
                                                                     Definition subFieldTypeDefinition = documentManager.getFieldTypeDefinition(subFieldDefinition);
                                                                     if (subFieldTypeDefinition.isObject() && subValueWithVariable.isObject()) {
                                                                         inputValueField.setSelections(inputObjectValueToFields(subFieldDefinition, subInputValue, subValueWithVariable));

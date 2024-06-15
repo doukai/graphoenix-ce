@@ -266,7 +266,7 @@ public class Field extends AbstractDefinition implements Selection {
         return this;
     }
 
-    public Field addSelections(Collection<Selection> selections) {
+    public Field addSelections(Collection<? extends Selection> selections) {
         if (this.selections == null) {
             this.selections = new LinkedHashSet<>();
         }
