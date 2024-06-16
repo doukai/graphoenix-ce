@@ -63,6 +63,10 @@ public class Field extends AbstractDefinition implements Selection {
         this.setArguments(new Arguments(executableElement, fieldAnnotationMirror));
     }
 
+    public Field mergeSelection(Field... fields) {
+        return mergeSelection(Arrays.asList(fields));
+    }
+
     public Field mergeSelection(Collection<Field> fields) {
         setSelections(
                 Stream.ofNullable(fields)
