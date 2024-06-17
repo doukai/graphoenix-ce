@@ -94,128 +94,112 @@ public class OperationBuilder {
         }
     }
 
-    public Operation toBackupOperation(Operation operation) {
+    public Operation toBackupOperation(Operation operation, TransactionCompensator transactionCompensator) {
         ObjectType operationType = documentManager.getOperationTypeOrError(operation);
         return new Operation(OPERATION_QUERY_NAME)
                 .setSelections(
                         operation.getFields().stream()
-                                .flatMap(field -> toBackupField(operationType.getField(field.getName()), field).stream())
+                                .flatMap(field -> toBackupField(operationType.getField(field.getName()), field, transactionCompensator))
                                 .collect(Collectors.toList())
                 );
     }
 
-    public Optional<Field> toBackupField(FieldDefinition fieldDefinition, Field field) {
+    public Stream<Field> toBackupField(FieldDefinition fieldDefinition, Field field, TransactionCompensator transactionCompensator) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
-            return Stream.ofNullable(fieldDefinition.getArguments())
-                    .flatMap(Collection::stream)
-                    .filter(inputValue -> inputValue.getName().equals(INPUT_VALUE_WHERE_NAME))
-                    .findFirst()
-                    .flatMap(inputValue ->
-                            Stream.ofNullable(field.getArguments())
-                                    .flatMap(arguments ->
-                                            arguments.getArgumentOrEmpty(inputValue.getName())
-                                                    .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
-                                    )
-                                    .filter(ValueWithVariable::isObject)
-                                    .map(valueWithVariable ->
-                                            new Field(field.getName())
-                                                    .setArguments(valueWithVariable.asObject())
-                                                    .addSelections(argumentsToFields(fieldDefinition, field))
-                                    )
-                                    .findFirst()
-                    )
-                    .or(() ->
-                            Stream.ofNullable(fieldDefinition.getArguments())
-                                    .flatMap(Collection::stream)
-                                    .filter(inputValue -> inputValue.getName().equals(idField.getName()))
-                                    .findFirst()
-                                    .flatMap(inputValue ->
-                                            Stream.ofNullable(field.getArguments())
-                                                    .flatMap(arguments ->
-                                                            arguments.getArgumentOrEmpty(inputValue.getName())
-                                                                    .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
-                                                    )
-                                                    .filter(ValueWithVariable::isObject)
-                                                    .map(valueWithVariable ->
-                                                            new Field(field.getName())
-                                                                    .setAlias(field.getAlias())
-                                                                    .setArguments(
-                                                                            Arguments.of(
-                                                                                    idField.getName(),
-                                                                                    Map.of(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME, valueWithVariable)
-                                                                            )
-                                                                    )
-                                                                    .addSelections(argumentsToFields(fieldDefinition, field))
-                                                    )
-                                                    .findFirst()
-                                    )
-                    )
-                    .or(() ->
-                            fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_INPUT_NAME)
-                                    .flatMap(inputValue ->
-                                            Stream.ofNullable(field.getArguments())
-                                                    .flatMap(arguments ->
-                                                            arguments.getArgumentOrEmpty(inputValue.getName())
-                                                                    .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
-                                                    )
-                                                    .filter(ValueWithVariable::isObject)
-                                                    .map(ValueWithVariable::asObject)
-                                                    .flatMap(objectValueWithVariable -> objectValueWithVariable.getObjectValueWithVariable().entrySet().stream())
-                                                    .filter(entry -> entry.getKey().equals(idField.getName()))
-                                                    .map(entry ->
-                                                            new Field(field.getName())
-                                                                    .setAlias(field.getAlias())
-                                                                    .setArguments(
-                                                                            Arguments.of(
-                                                                                    idField.getName(),
-                                                                                    Map.of(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME, entry.getValue())
-                                                                            )
-                                                                    )
-                                                                    .addSelections(argumentsToFields(fieldDefinition, field))
-                                                    )
-                                                    .findFirst()
-                                    )
-                    )
-                    .or(() ->
-                            fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_LIST_NAME)
-                                    .map(inputValue ->
-                                            new Field(field.getName())
-                                                    .setAlias(field.getAlias())
-                                                    .setArguments(
-                                                            Arguments.of(
-                                                                    idField.getName(),
-                                                                    Map.of(
-                                                                            INPUT_OPERATOR_INPUT_VALUE_OPR_NAME,
-                                                                            new EnumValue(INPUT_OPERATOR_INPUT_VALUE_IN),
-                                                                            INPUT_OPERATOR_INPUT_VALUE_ARR_NAME,
-                                                                            Stream.ofNullable(field.getArguments())
-                                                                                    .flatMap(arguments ->
-                                                                                            arguments.getArgumentOrEmpty(inputValue.getName())
-                                                                                                    .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
-                                                                                    )
-                                                                                    .filter(ValueWithVariable::isArray)
-                                                                                    .map(ValueWithVariable::asArray)
-                                                                                    .flatMap(arrayValueWithVariable -> arrayValueWithVariable.getValueWithVariables().stream())
-                                                                                    .filter(ValueWithVariable::isObject)
-                                                                                    .map(ValueWithVariable::asObject)
-                                                                                    .flatMap(objectValueWithVariable -> objectValueWithVariable.getObjectValueWithVariable().entrySet().stream())
-                                                                                    .filter(entry -> entry.getKey().equals(idField.getName()))
-                                                                                    .map(Map.Entry::getValue)
-                                                                                    .collect(Collectors.toList())
-                                                                    )
-                                                            )
-                                                    )
-                                                    .addSelections(argumentsToFields(fieldDefinition, field))
-                                    )
-                    );
+            if (field.hasArgument(INPUT_VALUE_WHERE_NAME)) {
+                return Stream.ofNullable(fieldDefinition.getArguments())
+                        .flatMap(Collection::stream)
+                        .filter(inputValue -> inputValue.getName().equals(INPUT_VALUE_WHERE_NAME))
+                        .findFirst()
+                        .flatMap(inputValue ->
+                                Stream.ofNullable(field.getArguments())
+                                        .flatMap(arguments ->
+                                                arguments.getArgumentOrEmpty(inputValue.getName())
+                                                        .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
+                                        )
+                                        .filter(ValueWithVariable::isObject)
+                                        .map(valueWithVariable ->
+                                                new Field(field.getName())
+                                                        .setAlias(field.getAlias())
+                                                        .setArguments(valueWithVariable.asObject())
+                                                        .addSelections(argumentsToFields(fieldDefinition, field, transactionCompensator).collect(Collectors.toList()))
+                                        )
+                                        .findFirst()
+                        )
+                        .stream();
+            } else if (field.hasArgument(idField.getName())) {
+                return Stream.ofNullable(fieldDefinition.getArguments())
+                        .flatMap(Collection::stream)
+                        .filter(inputValue -> inputValue.getName().equals(idField.getName()))
+                        .findFirst()
+                        .flatMap(inputValue ->
+                                Stream.ofNullable(field.getArguments())
+                                        .flatMap(arguments ->
+                                                arguments.getArgumentOrEmpty(inputValue.getName())
+                                                        .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
+                                        )
+                                        .filter(ValueWithVariable::isObject)
+                                        .map(valueWithVariable ->
+                                                new Field(field.getName())
+                                                        .setAlias(field.getAlias())
+                                                        .setArguments(
+                                                                Map.of(
+                                                                        idField.getName(),
+                                                                        Map.of(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME, valueWithVariable)
+                                                                )
+                                                        )
+                                                        .addSelections(argumentsToFields(fieldDefinition, field, transactionCompensator).collect(Collectors.toList()))
+                                        )
+                                        .findFirst()
+                        )
+                        .stream();
+            } else if (field.hasArgument(INPUT_VALUE_INPUT_NAME)) {
+                return fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_INPUT_NAME).stream()
+                        .flatMap(inputValue ->
+                                Stream.ofNullable(field.getArguments())
+                                        .flatMap(arguments ->
+                                                arguments.getArgumentOrEmpty(inputValue.getName())
+                                                        .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
+                                        )
+                                        .filter(ValueWithVariable::isObject)
+                                        .map(ValueWithVariable::asObject)
+                                        .flatMap(objectValueWithVariable ->
+                                                inputObjectValueToFields(fieldDefinition.getName(), "/" + INPUT_VALUE_INPUT_NAME, fieldDefinition, inputValue, objectValueWithVariable, transactionCompensator)
+                                        )
+                        );
+            } else if (field.hasArgument(INPUT_VALUE_LIST_NAME)) {
+                return fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_LIST_NAME).stream()
+                        .flatMap(listInputValue ->
+                                Stream.ofNullable(field.getArguments())
+                                        .flatMap(arguments ->
+                                                arguments.getArgumentOrEmpty(listInputValue.getName())
+                                                        .or(() -> Optional.ofNullable(listInputValue.getDefaultValue())).stream()
+                                        )
+                                        .filter(ValueWithVariable::isArray)
+                                        .map(ValueWithVariable::asArray)
+                                        .flatMap(arrayValueWithVariable ->
+                                                IntStream.range(0, arrayValueWithVariable.size())
+                                                        .filter(index -> arrayValueWithVariable.getValueWithVariable(index).isObject())
+                                                        .mapToObj(index ->
+                                                                inputObjectValueToFields(fieldDefinition.getName(), "/" + INPUT_VALUE_LIST_NAME + "/" + index, fieldDefinition, listInputValue, arrayValueWithVariable.getValueWithVariable(index), transactionCompensator)
+                                                        )
+                                                        .flatMap(fieldStream -> fieldStream)
+                                        )
+                        );
+            } else {
+                transactionCompensator.addNewTypePath(fieldTypeDefinition.getName(), fieldDefinition.getName(), "/" + idField.getName());
+                return argumentsToFields(fieldDefinition, field, transactionCompensator);
+            }
         }
-        return Optional.empty();
+        return Stream.empty();
     }
 
-    private List<Field> argumentsToFields(FieldDefinition fieldDefinition, Field field) {
+    private Stream<Field> argumentsToFields(FieldDefinition fieldDefinition, Field field, TransactionCompensator transactionCompensator) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+        FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
+        String alias = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
         return Streams
                 .concat(
                         Stream.ofNullable(fieldDefinition.getArguments())
@@ -229,17 +213,19 @@ public class OperationBuilder {
                                                                                 .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
                                                                 )
                                                                 .map(valueWithVariable -> {
-                                                                            Field argumentField = new Field(subFieldDefinition.getName());
                                                                             Definition subFieldTypeDefinition = documentManager.getFieldTypeDefinition(subFieldDefinition);
                                                                             if (subFieldTypeDefinition.isObject() && valueWithVariable.isObject()) {
-                                                                                if (valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME)) {
-                                                                                    argumentField.setArguments(valueWithVariable.asObject().getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject());
+                                                                                if (valueWithVariable.asObject().containsKey(idField.getName()) || valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME)) {
+                                                                                    Field argumentField = new Field(subFieldDefinition.getName())
+                                                                                            .setAlias(alias + "_" + subFieldDefinition.getName())
+                                                                                            .setSelections(inputObjectValueToFields(fieldDefinition.getName(), "", subFieldDefinition, inputValue, valueWithVariable, transactionCompensator).collect(Collectors.toList()))
+                                                                                            .mergeSelection(new Field(fieldTypeDefinition.asObject().getIDFieldOrError().getName()));
+                                                                                    return Stream.of(argumentField);
+                                                                                } else {
+                                                                                    return inputObjectValueToFields(fieldDefinition.getName(), "", subFieldDefinition, inputValue, valueWithVariable, transactionCompensator);
                                                                                 }
-                                                                                argumentField
-                                                                                        .setSelections(inputObjectValueToFields(subFieldDefinition, inputValue, valueWithVariable))
-                                                                                        .mergeSelection(new Field(fieldTypeDefinition.asObject().getIDFieldOrError().getName()));
                                                                             }
-                                                                            return argumentField;
+                                                                            return Stream.empty();
                                                                         }
                                                                 )
                                                 )
@@ -260,18 +246,20 @@ public class OperationBuilder {
                                                                                 .flatMap(subFieldDefinition ->
                                                                                         objectValueWithVariable.getValueWithVariableOrEmpty(subInputValue.getName())
                                                                                                 .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
-                                                                                                .map(subValueWithVariable -> {
-                                                                                                            Field inputValueField = new Field(subFieldDefinition.getName());
+                                                                                                .flatMap(subValueWithVariable -> {
                                                                                                             Definition subFieldTypeDefinition = documentManager.getFieldTypeDefinition(subFieldDefinition);
                                                                                                             if (subFieldTypeDefinition.isObject() && subValueWithVariable.isObject()) {
-                                                                                                                if (subValueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME)) {
-                                                                                                                    inputValueField.setArguments(subValueWithVariable.asObject().getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject());
+                                                                                                                if (subValueWithVariable.asObject().containsKey(idField.getName()) || subValueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME)) {
+                                                                                                                    Field inputValueField = new Field(subFieldDefinition.getName())
+                                                                                                                            .setAlias(alias + "_" + INPUT_VALUE_INPUT_NAME + "_" + subFieldDefinition.getName())
+                                                                                                                            .setSelections(inputObjectValueToFields(fieldDefinition.getName(), "", subFieldDefinition, subInputValue, subValueWithVariable, transactionCompensator).collect(Collectors.toList()))
+                                                                                                                            .mergeSelection(new Field(fieldTypeDefinition.asObject().getIDFieldOrError().getName()));
+                                                                                                                    return Stream.of(inputValueField);
+                                                                                                                } else {
+                                                                                                                    return inputObjectValueToFields(fieldDefinition.getName(), "", subFieldDefinition, subInputValue, subValueWithVariable, transactionCompensator);
                                                                                                                 }
-                                                                                                                inputValueField
-                                                                                                                        .setSelections(inputObjectValueToFields(subFieldDefinition, subInputValue, subValueWithVariable))
-                                                                                                                        .mergeSelection(new Field(fieldTypeDefinition.asObject().getIDFieldOrError().getName()));
                                                                                                             }
-                                                                                                            return inputValueField;
+                                                                                                            return Stream.empty();
                                                                                                         }
                                                                                                 )
                                                                                 )
@@ -296,18 +284,21 @@ public class OperationBuilder {
                                                                                                 .flatMap(subFieldDefinition ->
                                                                                                         arrayValueWithVariable.getValueWithVariable(index).asObject().getValueWithVariableOrEmpty(subInputValue.getName())
                                                                                                                 .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
-                                                                                                                .map(subValueWithVariable -> {
-                                                                                                                            Field inputValueField = new Field(subFieldDefinition.getName());
+                                                                                                                .flatMap(subValueWithVariable -> {
                                                                                                                             Definition subFieldTypeDefinition = documentManager.getFieldTypeDefinition(subFieldDefinition);
                                                                                                                             if (subFieldTypeDefinition.isObject() && subValueWithVariable.isObject()) {
-                                                                                                                                if (subValueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME)) {
-                                                                                                                                    inputValueField.setArguments(subValueWithVariable.asObject().getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject());
+                                                                                                                                if (subValueWithVariable.asObject().containsKey(idField.getName()) || subValueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME)) {
+                                                                                                                                    Field inputValueField = new Field(subFieldDefinition.getName())
+                                                                                                                                            .setAlias(alias + "_" + INPUT_VALUE_LIST_NAME + "_" + index + "_" + subFieldDefinition.getName())
+                                                                                                                                            .setSelections(inputObjectValueToFields(alias, "/" + INPUT_VALUE_LIST_NAME + "/" + index, subFieldDefinition, subInputValue, subValueWithVariable, transactionCompensator).collect(Collectors.toList()))
+                                                                                                                                            .mergeSelection(new Field(fieldTypeDefinition.asObject().getIDFieldOrError().getName()));
+                                                                                                                                    return Stream.of(inputValueField);
+                                                                                                                                } else {
+                                                                                                                                    return inputObjectValueToFields(alias, "/" + INPUT_VALUE_LIST_NAME + "/" + index, subFieldDefinition, subInputValue, subValueWithVariable, transactionCompensator);
+
                                                                                                                                 }
-                                                                                                                                inputValueField
-                                                                                                                                        .setSelections(inputObjectValueToFields(subFieldDefinition, subInputValue, subValueWithVariable))
-                                                                                                                                        .mergeSelection(new Field(fieldTypeDefinition.asObject().getIDFieldOrError().getName()));
                                                                                                                             }
-                                                                                                                            return inputValueField;
+                                                                                                                            return Stream.empty();
                                                                                                                         }
                                                                                                                 )
                                                                                                 )
@@ -326,13 +317,13 @@ public class OperationBuilder {
                                                                 )
                                                 )
                                 )
-                )
-                .collect(Collectors.toList());
+                );
     }
 
-    private List<Field> inputObjectValueToFields(FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable) {
+    private Stream<Field> inputObjectValueToFields(String fieldName, String path, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable, TransactionCompensator transactionCompensator) {
         Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+        FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
         return inputValueTypeDefinition.asInputObject().getInputValues().stream()
                 .flatMap(subInputValue ->
                         Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
@@ -345,18 +336,22 @@ public class OperationBuilder {
                                                                                 Optional.ofNullable(objectValue.get(subInputValue.getName()))
                                                                                         .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
                                                                         )
-                                                                        .map(subValueWithVariable -> {
-                                                                                    Field inputValueField = new Field(subFieldDefinition.getName());
+                                                                        .flatMap(subValueWithVariable -> {
                                                                                     Definition subFieldTypeDefinition = documentManager.getFieldTypeDefinition(subFieldDefinition);
                                                                                     if (subFieldTypeDefinition.isObject() && subValueWithVariable.isObject()) {
-                                                                                        if (subValueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME)) {
-                                                                                            inputValueField.setArguments(subValueWithVariable.asObject().getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject());
+                                                                                        Stream<Field> fieldStream = inputObjectValueToFields(fieldName, path + "/" + index + "/" + subFieldDefinition.getName(), subFieldDefinition, subInputValue, subValueWithVariable, transactionCompensator);
+                                                                                        if (subValueWithVariable.asObject().containsKey(idField.getName()) || subValueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME)) {
+                                                                                            Field inputValueField = new Field(subFieldDefinition.getName())
+                                                                                                    .setAlias(fieldName + "_" + path.replaceAll("/", "_") + "_" + index + "_" + subFieldDefinition.getName())
+                                                                                                    .setSelections(fieldStream.collect(Collectors.toList()))
+                                                                                                    .mergeSelection(new Field(fieldTypeDefinition.asObject().getIDFieldOrError().getName()));
+                                                                                            return Stream.of(inputValueField);
+                                                                                        } else {
+                                                                                            transactionCompensator.addNewTypePath(fieldTypeDefinition.getName(), fieldName, path + "/" + index + "/" + subFieldTypeDefinition.getName());
+                                                                                            return fieldStream;
                                                                                         }
-                                                                                        inputValueField
-                                                                                                .setSelections(inputObjectValueToFields(subFieldDefinition, subInputValue, subValueWithVariable))
-                                                                                                .mergeSelection(new Field(fieldTypeDefinition.asObject().getIDFieldOrError().getName()));
                                                                                     }
-                                                                                    return inputValueField;
+                                                                                    return Stream.empty();
                                                                                 }
                                                                         )
                                                         )
@@ -364,6 +359,7 @@ public class OperationBuilder {
                                                                 fieldStream
                                                                         .reduce((pre, cur) -> {
                                                                                     if (pre.getFields() != null && cur.getFields() != null) {
+                                                                                        //TODO merge arguments
                                                                                         pre.mergeSelection(cur.getFields());
                                                                                     }
                                                                                     return pre;
@@ -377,25 +373,28 @@ public class OperationBuilder {
                                                                 Optional.ofNullable(objectValue.get(subInputValue.getName()))
                                                                         .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
                                                         )
-                                                        .map(subValueWithVariable -> {
-                                                                    Field inputValueField = new Field(subFieldDefinition.getName());
+                                                        .flatMap(subValueWithVariable -> {
                                                                     Definition subFieldTypeDefinition = documentManager.getFieldTypeDefinition(subFieldDefinition);
                                                                     if (subFieldTypeDefinition.isObject() && subValueWithVariable.isObject()) {
-                                                                        if (subValueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME)) {
-                                                                            inputValueField.setArguments(subValueWithVariable.asObject().getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject());
+                                                                        Stream<Field> fieldStream = inputObjectValueToFields(fieldName, path + "/" + subFieldDefinition.getName(), subFieldDefinition, subInputValue, subValueWithVariable, transactionCompensator);
+                                                                        if (subValueWithVariable.asObject().containsKey(idField.getName()) || subValueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME)) {
+                                                                            Field inputValueField = new Field(subFieldDefinition.getName())
+                                                                                    .setAlias(fieldName + "_" + path.replaceAll("/", "_") + "_" + subFieldDefinition.getName())
+                                                                                    .setSelections(fieldStream.collect(Collectors.toList()))
+                                                                                    .mergeSelection(new Field(fieldTypeDefinition.asObject().getIDFieldOrError().getName()));
+                                                                            return Stream.of(inputValueField);
+                                                                        } else {
+                                                                            transactionCompensator.addNewTypePath(fieldTypeDefinition.getName(), fieldName, path + "/" + subFieldTypeDefinition.getName());
+                                                                            return fieldStream;
                                                                         }
-                                                                        inputValueField
-                                                                                .setSelections(inputObjectValueToFields(subFieldDefinition, subInputValue, subValueWithVariable))
-                                                                                .mergeSelection(new Field(fieldTypeDefinition.asObject().getIDFieldOrError().getName()));
                                                                     }
-                                                                    return inputValueField;
+                                                                    return Stream.empty();
                                                                 }
                                                         );
                                             }
                                         }
                                 )
-                )
-                .collect(Collectors.toList());
+                );
     }
 
     public boolean hasFetchArguments(Operation operation) {
