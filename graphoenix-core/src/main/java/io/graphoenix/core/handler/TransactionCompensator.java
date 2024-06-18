@@ -1,10 +1,9 @@
 package io.graphoenix.core.handler;
 
+import io.graphoenix.core.handler.fetch.FetchItem;
 import io.graphoenix.spi.graphql.operation.Operation;
 import jakarta.enterprise.context.Dependent;
 import jakarta.json.JsonValue;
-import reactor.util.function.Tuple2;
-import reactor.util.function.Tuples;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,7 +17,9 @@ public class TransactionCompensator {
 
     private JsonValue backup;
 
-    private final Map<String, List<Tuple2<String, String>>> newTypePathListMap = new HashMap<>();
+    private final Map<String, List<JsonValue>> typeValueListMap = new HashMap<>();
+
+    private final Map<String, List<FetchItem>> newTypeFetchItemListMap = new HashMap<>();
 
     public Operation getBackupOperation() {
         return backupOperation;
@@ -38,8 +39,23 @@ public class TransactionCompensator {
         return this;
     }
 
-    public void addNewTypePath(String typeName, String fieldName, String path) {
-        List<Tuple2<String, String>> pathList = newTypePathListMap.computeIfAbsent(typeName, k -> new ArrayList<>());
-        pathList.add(Tuples.of(fieldName, path));
+    public void addNewTypePath(String typeName, FetchItem fetchItem) {
+        List<FetchItem> fetchItemList = newTypeFetchItemListMap.computeIfAbsent(typeName, k -> new ArrayList<>());
+        fetchItemList.add(fetchItem);
+    }
+
+    public void addTypeValue(String typeName, JsonValue jsonValue) {
+        List<JsonValue> valueList = typeValueListMap.computeIfAbsent(typeName, k -> new ArrayList<>());
+        valueList.add(jsonValue);
+    }
+
+    public TransactionCompensator addTypeFetchItemListMap(Map<String, List<FetchItem>> newTypeFetchItemListMap) {
+        this.newTypeFetchItemListMap.putAll(newTypeFetchItemListMap);
+        return this;
+    }
+
+    public TransactionCompensator addTypeValueListMap(Map<String, List<JsonValue>> typeValueListMap) {
+        this.typeValueListMap.putAll(typeValueListMap);
+        return this;
     }
 }
