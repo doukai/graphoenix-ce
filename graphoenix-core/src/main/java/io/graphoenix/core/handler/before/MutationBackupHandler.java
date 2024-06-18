@@ -6,6 +6,8 @@ import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.TransactionCompensator;
 import io.graphoenix.core.handler.fetch.FetchItem;
 import io.graphoenix.spi.graphql.Definition;
+import io.graphoenix.spi.graphql.common.ArrayValueWithVariable;
+import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Operation;
@@ -36,10 +38,10 @@ import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 import static io.nozdormu.spi.utils.CDIUtil.getNamedInstanceMap;
 
 @ApplicationScoped
-@Priority(MutationBeforeBackupHandler.MUTATION_BEFORE_BACKUP_HANDLER_PRIORITY)
-public class MutationBeforeBackupHandler implements OperationBeforeHandler {
+@Priority(MutationBackupHandler.MUTATION_BACKUP_HANDLER_PRIORITY)
+public class MutationBackupHandler implements OperationBeforeHandler {
 
-    public static final int MUTATION_BEFORE_BACKUP_HANDLER_PRIORITY = MUTATION_BEFORE_FETCH_HANDLER_PRIORITY - 1;
+    public static final int MUTATION_BACKUP_HANDLER_PRIORITY = MUTATION_BEFORE_FETCH_HANDLER_PRIORITY - 1;
 
     private final DocumentManager documentManager;
     private final MutationConfig mutationConfig;
@@ -47,7 +49,7 @@ public class MutationBeforeBackupHandler implements OperationBeforeHandler {
     private final Map<String, FetchHandler> fetchHandlerMap;
 
     @Inject
-    public MutationBeforeBackupHandler(DocumentManager documentManager, MutationConfig mutationConfig, Provider<TransactionCompensator> transactionCompensatorProvider, Instance<FetchHandler> fetchHandlerInstance) {
+    public MutationBackupHandler(DocumentManager documentManager, MutationConfig mutationConfig, Provider<TransactionCompensator> transactionCompensatorProvider, Instance<FetchHandler> fetchHandlerInstance) {
         this.documentManager = documentManager;
         this.mutationConfig = mutationConfig;
         this.transactionCompensatorProvider = transactionCompensatorProvider;
@@ -140,7 +142,138 @@ public class MutationBeforeBackupHandler implements OperationBeforeHandler {
     public Stream<FetchItem> buildFetchItems(FieldDefinition fieldDefinition, Field field) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
-            return Streams
+            String alias = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
+            FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
+            String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
+            String packageName = fieldDefinition.getPackageNameOrError();
+            Stream<FetchItem> fetchItemStream = Stream.empty();
+
+            if (field.getArguments().hasArgument(idField.getName()) || field.getArguments().hasArgument(INPUT_VALUE_WHERE_NAME)) {
+                Field fetchField = new Field(field.getName())
+                        .setAlias(alias)
+                        .setSelections(
+                                field.getArguments().getArguments().keySet().stream()
+                                        .filter(key -> documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(key)).isLeaf())
+                                        .map(Field::new)
+                                        .collect(Collectors.toList())
+                        )
+                        .mergeSelection(new Field(idField.getName()));
+                if (field.getArguments().hasArgument(idField.getName())) {
+                    fetchField
+                            .setArguments(
+                                    Map.of(
+                                            idField.getName(),
+                                            Map.of(
+                                                    INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
+                                                    field.getArguments().getArgument(idField.getName())
+                                            )
+                                    )
+                            );
+                } else if (field.getArguments().hasArgument(INPUT_VALUE_WHERE_NAME)) {
+                    fetchField.setArguments(field.getArguments().getArgument(INPUT_VALUE_WHERE_NAME).asObject());
+                }
+                fetchItemStream = Stream.of(
+                        new FetchItem(
+                                packageName,
+                                protocol,
+                                fieldTypeDefinition.getName(),
+                                fetchField
+                        )
+                );
+            } else if (field.getArguments().hasArgument(INPUT_VALUE_INPUT_NAME)) {
+                ObjectValueWithVariable input = field.getArguments().getArgument(INPUT_VALUE_INPUT_NAME).asObject();
+                if (input.containsKey(idField.getName()) || input.containsKey(INPUT_VALUE_WHERE_NAME)) {
+                    Field fetchField = new Field(field.getName())
+                            .setAlias(alias + "__" + INPUT_VALUE_INPUT_NAME)
+                            .setSelections(
+                                    input.getObjectValueWithVariable().keySet().stream()
+                                            .filter(key -> documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(key)).isLeaf())
+                                            .map(Field::new)
+                                            .collect(Collectors.toList())
+                            )
+                            .mergeSelection(new Field(idField.getName()));
+                    if (input.containsKey(idField.getName())) {
+                        fetchField
+                                .setArguments(
+                                        Map.of(
+                                                idField.getName(),
+                                                Map.of(
+                                                        INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
+                                                        input.getValueWithVariable(idField.getName())
+                                                )
+                                        )
+                                );
+                    } else if (input.containsKey(INPUT_VALUE_WHERE_NAME)) {
+                        fetchField.setArguments(input.getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject());
+                    }
+                    fetchItemStream = Stream.of(
+                            new FetchItem(
+                                    packageName,
+                                    protocol,
+                                    fieldTypeDefinition.getName(),
+                                    fetchField
+                            )
+                    );
+                } else {
+                    fetchItemStream = Stream.of(
+                            new FetchItem(
+                                    packageName,
+                                    protocol,
+                                    field,
+                                    "/" + INPUT_VALUE_INPUT_NAME + "/" + idField.getName(),
+                                    fieldTypeDefinition.getName()
+                            )
+                    );
+                }
+            } else if (field.getArguments().hasArgument(INPUT_VALUE_LIST_NAME)) {
+                ArrayValueWithVariable list = field.getArguments().getArgument(INPUT_VALUE_LIST_NAME).asArray();
+                fetchItemStream = IntStream.range(0, list.size())
+                        .mapToObj(index -> {
+                                    ObjectValueWithVariable item = list.getValueWithVariable(index).asObject();
+                                    if (item.containsKey(idField.getName()) || item.containsKey(INPUT_VALUE_WHERE_NAME)) {
+                                        Field fetchField = new Field(field.getName())
+                                                .setAlias(alias + "__" + INPUT_VALUE_LIST_NAME + "_" + index)
+                                                .setSelections(
+                                                        item.getObjectValueWithVariable().keySet().stream()
+                                                                .filter(key -> documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(key)).isLeaf())
+                                                                .map(Field::new)
+                                                                .collect(Collectors.toList())
+                                                )
+                                                .mergeSelection(new Field(idField.getName()));
+                                        if (item.containsKey(idField.getName())) {
+                                            fetchField
+                                                    .setArguments(
+                                                            Map.of(
+                                                                    idField.getName(),
+                                                                    Map.of(
+                                                                            INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
+                                                                            item.getValueWithVariable(idField.getName())
+                                                                    )
+                                                            )
+                                                    );
+                                        } else if (item.containsKey(INPUT_VALUE_WHERE_NAME)) {
+                                            fetchField.setArguments(item.getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject());
+                                        }
+                                        return new FetchItem(
+                                                packageName,
+                                                protocol,
+                                                fieldTypeDefinition.getName(),
+                                                fetchField
+                                        );
+                                    } else {
+                                        return new FetchItem(
+                                                packageName,
+                                                protocol,
+                                                field,
+                                                "/" + INPUT_VALUE_LIST_NAME + "/" + index + "/" + idField.getName(),
+                                                fieldTypeDefinition.getName()
+                                        );
+                                    }
+                                }
+                        );
+            }
+
+            Stream<FetchItem> subFetchItemStream = Streams
                     .concat(
                             Stream.ofNullable(fieldDefinition.getArguments())
                                     .flatMap(Collection::stream)
@@ -229,6 +362,7 @@ public class MutationBeforeBackupHandler implements OperationBeforeHandler {
                                                     )
                                     )
                     );
+            return Stream.concat(fetchItemStream, subFetchItemStream);
         }
         return Stream.empty();
     }
@@ -240,60 +374,64 @@ public class MutationBeforeBackupHandler implements OperationBeforeHandler {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
         if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
-            FetchItem fetchItem = null;
-            if (fieldDefinition.isFetchField()) {
-                if (!fieldDefinition.getType().hasList() && documentManager.isFetchAnchor(objectType, fieldDefinition)) {
-                    String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
-                    String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
-                    FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
-                    if (valueWithVariable.asObject().containsKey(idField.getName()) || valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME)) {
-                        String alias = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
-                        Field fetchField = new Field(typeNameToFieldName(fieldTypeDefinition.getName()))
-                                .setAlias(alias + "__" + getAliasFromPath(path) + "_" + fieldDefinition.getName());
-                        String fetchTo = fieldDefinition.getFetchToOrError();
-                        if (valueWithVariable.asObject().containsKey(idField.getName())) {
-                            fetchField
-                                    .setArguments(
-                                            Map.of(
-                                                    idField.getName(),
-                                                    Map.of(
-                                                            INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
-                                                            valueWithVariable.asObject().getValueWithVariable(idField.getName())
-                                                    )
-                                            )
-                                    );
-                        } else {
-                            fetchField.setArguments(valueWithVariable.asObject().getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject());
-                        }
-                        fetchField
-                                .setSelections(
-                                        valueWithVariable.asObject().getObjectValueWithVariable().keySet().stream()
-                                                .filter(key -> documentManager.getInputValueTypeDefinition(inputValueTypeDefinition.asInputObject().getInputValue(key)).isLeaf())
-                                                .map(Field::new)
-                                                .collect(Collectors.toList())
-                                )
-                                .mergeSelection(new Field(fetchTo))
-                                .mergeSelection(new Field(idField.getName()));
+            String alias = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
+            FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
+            String fetchTo = fieldDefinition.getFetchToOrError();
+            Stream<FetchItem> fetchItemStream = Stream.empty();
 
-                        fetchItem = new FetchItem(
-                                packageName,
-                                protocol,
-                                fieldTypeDefinition.getName(),
-                                fetchField
-                        );
-                    } else {
-                        fetchItem = new FetchItem(
-                                packageName,
-                                protocol,
-                                field,
-                                path + "/" + idField.getName(),
-                                fieldTypeDefinition.getName()
-                        );
+            if (fieldDefinition.getType().hasList()) {
+
+            } else {
+                String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
+                String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
+                if (valueWithVariable.asObject().containsKey(idField.getName()) || valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME)) {
+                    Field fetchField = new Field(typeNameToFieldName(fieldTypeDefinition.getName()))
+                            .setAlias(alias + "__" + getAliasFromPath(path) + "_" + fieldDefinition.getName())
+                            .setSelections(
+                                    valueWithVariable.asObject().getObjectValueWithVariable().keySet().stream()
+                                            .filter(key -> documentManager.getInputValueTypeDefinition(inputValueTypeDefinition.asInputObject().getInputValue(key)).isLeaf())
+                                            .map(Field::new)
+                                            .collect(Collectors.toList())
+                            )
+                            .mergeSelection(new Field(fetchTo))
+                            .mergeSelection(new Field(idField.getName()));
+                    if (valueWithVariable.asObject().containsKey(idField.getName())) {
+                        fetchField
+                                .setArguments(
+                                        Map.of(
+                                                idField.getName(),
+                                                Map.of(
+                                                        INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
+                                                        valueWithVariable.asObject().getValueWithVariable(idField.getName())
+                                                )
+                                        )
+                                );
+
+                    } else if (valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME)) {
+                        fetchField.setArguments(valueWithVariable.asObject().getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject());
                     }
+                    fetchItemStream = Stream.of(
+                            new FetchItem(
+                                    packageName,
+                                    protocol,
+                                    fieldTypeDefinition.getName(),
+                                    fetchField
+                            )
+                    );
+                } else {
+                    fetchItemStream = Stream.of(
+                            new FetchItem(
+                                    packageName,
+                                    protocol,
+                                    field,
+                                    path + "/" + idField.getName(),
+                                    fieldTypeDefinition.getName()
+                            )
+                    );
                 }
             }
 
-            Stream<FetchItem> fetchItemStream = inputValueTypeDefinition.asInputObject().getInputValues().stream()
+            Stream<FetchItem> subFetchItemStream = inputValueTypeDefinition.asInputObject().getInputValues().stream()
                     .flatMap(subInputValue ->
                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                     .flatMap(subFieldDefinition -> {
@@ -337,7 +475,7 @@ public class MutationBeforeBackupHandler implements OperationBeforeHandler {
                                             }
                                     )
                     );
-            return Stream.concat(Stream.ofNullable(fetchItem), fetchItemStream);
+            return Stream.concat(fetchItemStream, subFetchItemStream);
         }
         return Stream.empty();
     }
