@@ -9,6 +9,7 @@ import io.graphoenix.grpc.client.resolver.PackageNameResolverProvider;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.handler.FetchHandler;
+import io.graphoenix.spi.handler.PackageFetchHandler;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.NameResolverRegistry;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -54,9 +55,9 @@ public class GrpcFetchHandlerBuilder {
     }
 
     private TypeSpec buildGrpcFetchHandler() {
-        TypeSpec.Builder builder = TypeSpec.classBuilder("GrpcFetchHandler")
+        TypeSpec.Builder builder = TypeSpec.classBuilder("GrpcPackageFetchHandler")
                 .addModifiers(Modifier.PUBLIC)
-                .addSuperinterface(ClassName.get(FetchHandler.class))
+                .addSuperinterface(ClassName.get(PackageFetchHandler.class))
                 .addAnnotation(ApplicationScoped.class)
                 .addAnnotation(AnnotationSpec.builder(Named.class).addMember("value", "$S", "grpc").build())
                 .addField(

@@ -11,6 +11,7 @@ import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
+import io.graphoenix.spi.handler.FetchHandler;
 import io.graphoenix.spi.handler.OperationHandler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.spi.CDI;
@@ -285,8 +286,8 @@ public class ReactorGrpcServiceImplementer {
                 .addField(
                         FieldSpec
                                 .builder(
-                                        ClassName.get(OperationHandler.class),
-                                        "operationHandler",
+                                        ClassName.get(FetchHandler.class),
+                                        "fetchHandler",
                                         Modifier.PRIVATE,
                                         Modifier.FINAL
                                 )
@@ -295,7 +296,7 @@ public class ReactorGrpcServiceImplementer {
                 .addMethod(
                         MethodSpec.constructorBuilder()
                                 .addModifiers(Modifier.PUBLIC)
-                                .addStatement("this.operationHandler = $T.current().select($T.class).get()", ClassName.get(CDI.class), ClassName.get(OperationHandler.class))
+                                .addStatement("this.fetchHandler = $T.current().select($T.class).get()", ClassName.get(CDI.class), ClassName.get(FetchHandler.class))
                                 .build()
                 )
                 .addMethod(buildOperationMethod(packageName))
@@ -318,7 +319,7 @@ public class ReactorGrpcServiceImplementer {
                                         ClassName.get(grpcPackageName, "GraphQLRequest")
                                 )
                                 .indent()
-                                .add(".flatMap(operation -> $T.from(operationHandler.handle($T.fromString(operation))))\n",
+                                .add(".flatMap(operation -> $T.from(fetchHandler.request($T.fromString(operation))))\n",
                                         ClassName.get(Mono.class),
                                         ClassName.get(Operation.class)
                                 )

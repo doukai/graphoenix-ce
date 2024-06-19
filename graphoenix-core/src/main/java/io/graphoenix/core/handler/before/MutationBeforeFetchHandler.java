@@ -13,8 +13,9 @@ import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.InputValue;
 import io.graphoenix.spi.graphql.type.ObjectType;
-import io.graphoenix.spi.handler.FetchHandler;
+import io.graphoenix.spi.handler.FetchBeforeHandler;
 import io.graphoenix.spi.handler.OperationBeforeHandler;
+import io.graphoenix.spi.handler.PackageFetchHandler;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
@@ -36,7 +37,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static io.graphoenix.core.handler.before.ConnectionSplitter.CONNECTION_SPLITTER_PRIORITY;
-import static io.graphoenix.core.handler.fetch.LocalFetchHandler.LOCAL_FETCH_NAME;
+import static io.graphoenix.core.handler.fetch.LocalPackageFetchHandler.LOCAL_FETCH_NAME;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
@@ -44,7 +45,7 @@ import static io.nozdormu.spi.utils.CDIUtil.getNamedInstanceMap;
 
 @ApplicationScoped
 @Priority(MutationBeforeFetchHandler.MUTATION_BEFORE_FETCH_HANDLER_PRIORITY)
-public class MutationBeforeFetchHandler implements OperationBeforeHandler {
+public class MutationBeforeFetchHandler implements OperationBeforeHandler, FetchBeforeHandler {
 
     public static final int MUTATION_BEFORE_FETCH_HANDLER_PRIORITY = CONNECTION_SPLITTER_PRIORITY + 450;
 
@@ -52,15 +53,15 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler {
     private final PackageManager packageManager;
     private final PackageConfig packageConfig;
     private final JsonProvider jsonProvider;
-    private final Map<String, FetchHandler> fetchHandlerMap;
+    private final Map<String, PackageFetchHandler> packageFetchHandlerMap;
 
     @Inject
-    public MutationBeforeFetchHandler(DocumentManager documentManager, PackageManager packageManager, PackageConfig packageConfig, JsonProvider jsonProvider, Instance<FetchHandler> fetchHandlerInstance) {
+    public MutationBeforeFetchHandler(DocumentManager documentManager, PackageManager packageManager, PackageConfig packageConfig, JsonProvider jsonProvider, Instance<PackageFetchHandler> fetchHandlerInstance) {
         this.documentManager = documentManager;
         this.packageManager = packageManager;
         this.packageConfig = packageConfig;
         this.jsonProvider = jsonProvider;
-        this.fetchHandlerMap = getNamedInstanceMap(fetchHandlerInstance);
+        this.packageFetchHandlerMap = getNamedInstanceMap(fetchHandlerInstance);
     }
 
     @Override
@@ -91,7 +92,7 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler {
                         Flux
                                 .fromIterable(packageEntries.getValue().entrySet())
                                 .flatMap(protocolEntries ->
-                                        fetchHandlerMap.get(protocolEntries.getKey())
+                                        packageFetchHandlerMap.get(protocolEntries.getKey())
                                                 .request(
                                                         packageEntries.getKey(),
                                                         new Operation()

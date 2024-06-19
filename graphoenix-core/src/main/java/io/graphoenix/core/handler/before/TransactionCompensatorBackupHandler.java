@@ -15,8 +15,8 @@ import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.InputValue;
 import io.graphoenix.spi.graphql.type.ObjectType;
-import io.graphoenix.spi.handler.FetchHandler;
 import io.graphoenix.spi.handler.OperationBeforeHandler;
+import io.graphoenix.spi.handler.PackageFetchHandler;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
@@ -48,15 +48,15 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
     private final PackageManager packageManager;
     private final MutationConfig mutationConfig;
     private final Provider<Mono<TransactionCompensator>> transactionCompensatorProvider;
-    private final Map<String, FetchHandler> fetchHandlerMap;
+    private final Map<String, PackageFetchHandler> packageFetchHandlerMap;
 
     @Inject
-    public TransactionCompensatorBackupHandler(DocumentManager documentManager, PackageManager packageManager, MutationConfig mutationConfig, Provider<Mono<TransactionCompensator>> transactionCompensatorProvider, Instance<FetchHandler> fetchHandlerInstance) {
+    public TransactionCompensatorBackupHandler(DocumentManager documentManager, PackageManager packageManager, MutationConfig mutationConfig, Provider<Mono<TransactionCompensator>> transactionCompensatorProvider, Instance<PackageFetchHandler> fetchHandlerInstance) {
         this.documentManager = documentManager;
         this.packageManager = packageManager;
         this.mutationConfig = mutationConfig;
         this.transactionCompensatorProvider = transactionCompensatorProvider;
-        this.fetchHandlerMap = getNamedInstanceMap(fetchHandlerInstance);
+        this.packageFetchHandlerMap = getNamedInstanceMap(fetchHandlerInstance);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                                             Flux
                                                     .fromIterable(packageEntries.getValue().entrySet())
                                                     .flatMap(protocolEntries ->
-                                                            fetchHandlerMap.get(protocolEntries.getKey())
+                                                            packageFetchHandlerMap.get(protocolEntries.getKey())
                                                                     .request(
                                                                             packageEntries.getKey(),
                                                                             new Operation()

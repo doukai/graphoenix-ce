@@ -13,8 +13,9 @@ import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.InputValue;
 import io.graphoenix.spi.graphql.type.ObjectType;
-import io.graphoenix.spi.handler.FetchHandler;
+import io.graphoenix.spi.handler.FetchBeforeHandler;
 import io.graphoenix.spi.handler.OperationBeforeHandler;
+import io.graphoenix.spi.handler.PackageFetchHandler;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
@@ -40,19 +41,19 @@ import static io.nozdormu.spi.utils.CDIUtil.getNamedInstanceMap;
 
 @ApplicationScoped
 @Priority(QueryBeforeFetchHandler.QUERY_BEFORE_FETCH_HANDLER_PRIORITY)
-public class QueryBeforeFetchHandler implements OperationBeforeHandler {
+public class QueryBeforeFetchHandler implements OperationBeforeHandler, FetchBeforeHandler {
 
     public static final int QUERY_BEFORE_FETCH_HANDLER_PRIORITY = CONNECTION_SPLITTER_PRIORITY + 400;
 
     private final DocumentManager documentManager;
     private final JsonProvider jsonProvider;
-    private final Map<String, FetchHandler> fetchHandlerMap;
+    private final Map<String, PackageFetchHandler> packageFetchHandlerMap;
 
     @Inject
-    public QueryBeforeFetchHandler(DocumentManager documentManager, JsonProvider jsonProvider, Instance<FetchHandler> fetchHandlerInstance) {
+    public QueryBeforeFetchHandler(DocumentManager documentManager, JsonProvider jsonProvider, Instance<PackageFetchHandler> fetchHandlerInstance) {
         this.documentManager = documentManager;
         this.jsonProvider = jsonProvider;
-        this.fetchHandlerMap = getNamedInstanceMap(fetchHandlerInstance);
+        this.packageFetchHandlerMap = getNamedInstanceMap(fetchHandlerInstance);
     }
 
     @Override
@@ -87,7 +88,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler {
                         Flux
                                 .fromIterable(packageEntries.getValue().entrySet())
                                 .flatMap(protocolEntries ->
-                                        fetchHandlerMap.get(protocolEntries.getKey())
+                                        packageFetchHandlerMap.get(protocolEntries.getKey())
                                                 .request(
                                                         packageEntries.getKey(),
                                                         new Operation()

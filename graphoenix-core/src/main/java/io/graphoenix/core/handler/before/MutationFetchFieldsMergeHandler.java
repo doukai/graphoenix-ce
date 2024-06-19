@@ -9,6 +9,7 @@ import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.InputValue;
 import io.graphoenix.spi.graphql.type.ObjectType;
+import io.graphoenix.spi.handler.FetchBeforeHandler;
 import io.graphoenix.spi.handler.OperationBeforeHandler;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -29,7 +30,7 @@ import static io.graphoenix.spi.constant.Hammurabi.SUFFIX_INPUT;
 
 @ApplicationScoped
 @Priority(MutationFetchFieldsMergeHandler.MUTATION_FETCH_FIELDS_MERGE_HANDLER_PRIORITY)
-public class MutationFetchFieldsMergeHandler implements OperationBeforeHandler {
+public class MutationFetchFieldsMergeHandler implements OperationBeforeHandler, FetchBeforeHandler {
 
     public static final int MUTATION_FETCH_FIELDS_MERGE_HANDLER_PRIORITY = CONNECTION_SPLITTER_PRIORITY + 150;
 

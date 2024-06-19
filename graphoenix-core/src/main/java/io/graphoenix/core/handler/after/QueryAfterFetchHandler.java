@@ -11,8 +11,9 @@ import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.ObjectType;
-import io.graphoenix.spi.handler.FetchHandler;
+import io.graphoenix.spi.handler.FetchBeforeHandler;
 import io.graphoenix.spi.handler.OperationAfterHandler;
+import io.graphoenix.spi.handler.PackageFetchHandler;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
@@ -30,7 +31,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static io.graphoenix.core.handler.after.ConnectionBuilder.CONNECTION_BUILDER_PRIORITY;
-import static io.graphoenix.core.handler.fetch.LocalFetchHandler.LOCAL_FETCH_NAME;
+import static io.graphoenix.core.handler.fetch.LocalPackageFetchHandler.LOCAL_FETCH_NAME;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST;
 import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
@@ -40,21 +41,21 @@ import static jakarta.json.JsonValue.NULL;
 
 @ApplicationScoped
 @Priority(QueryAfterFetchHandler.QUERY_AFTER_FETCH_HANDLER_PRIORITY)
-public class QueryAfterFetchHandler implements OperationAfterHandler {
+public class QueryAfterFetchHandler implements OperationAfterHandler, FetchBeforeHandler {
 
     public static final int QUERY_AFTER_FETCH_HANDLER_PRIORITY = CONNECTION_BUILDER_PRIORITY - 100;
 
     private final DocumentManager documentManager;
     private final PackageManager packageManager;
     private final JsonProvider jsonProvider;
-    private final Map<String, FetchHandler> fetchHandlerMap;
+    private final Map<String, PackageFetchHandler> packageFetchHandlerMap;
 
     @Inject
-    public QueryAfterFetchHandler(DocumentManager documentManager, PackageManager packageManager, JsonProvider jsonProvider, Instance<FetchHandler> fetchHandlerInstance) {
+    public QueryAfterFetchHandler(DocumentManager documentManager, PackageManager packageManager, JsonProvider jsonProvider, Instance<PackageFetchHandler> fetchHandlerInstance) {
         this.documentManager = documentManager;
         this.packageManager = packageManager;
         this.jsonProvider = jsonProvider;
-        this.fetchHandlerMap = getNamedInstanceMap(fetchHandlerInstance);
+        this.packageFetchHandlerMap = getNamedInstanceMap(fetchHandlerInstance);
     }
 
     @Override
@@ -88,7 +89,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
                 .flatMap(packageEntries ->
                         Flux.fromIterable(packageEntries.getValue().entrySet())
                                 .flatMap(protocolEntries ->
-                                        fetchHandlerMap.get(protocolEntries.getKey())
+                                        packageFetchHandlerMap.get(protocolEntries.getKey())
                                                 .request(
                                                         packageEntries.getKey(),
                                                         new Operation()

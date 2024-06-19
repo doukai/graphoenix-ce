@@ -111,15 +111,16 @@ public class DefaultOperationHandler implements OperationHandler {
                                                 .reduce(
                                                         Mono.just(jsonValue),
                                                         (pre, cur) ->
-                                                                pre.flatMap(result -> cur.mutation(operationAfterHandler, result)
-                                                                        .onErrorResume(throwable ->
-                                                                                transactionCompensatorProvider.get()
-                                                                                        .flatMap(transactionCompensator ->
-                                                                                                Mono.justOrEmpty(transactionCompensator.compensating(result.asJsonObject()))
-                                                                                                        .flatMap(mutationHandler::mutation)
-                                                                                        )
-                                                                                        .then(Mono.error(throwable))
-                                                                        )
+                                                                pre.flatMap(result ->
+                                                                        cur.mutation(operationAfterHandler, result)
+                                                                                .onErrorResume(throwable ->
+                                                                                        transactionCompensatorProvider.get()
+                                                                                                .flatMap(transactionCompensator ->
+                                                                                                        Mono.justOrEmpty(transactionCompensator.compensating(result.asJsonObject()))
+                                                                                                                .flatMap(mutationHandler::mutation)
+                                                                                                )
+                                                                                                .then(Mono.error(throwable))
+                                                                                )
                                                                 )
                                                 )
                                                 .flatMap(operationMono -> operationMono)
