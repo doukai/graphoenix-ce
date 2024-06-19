@@ -163,7 +163,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler {
     public Stream<FetchItem> buildFetchItems(ObjectType objectType, String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (documentManager.isQueryOperationType(objectType) && !packageManager.isLocalPackage(fieldDefinition)) {
-            String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
+            String protocol = fieldDefinition.getFetchProtocol().orElse(new EnumValue(ENUM_PROTOCOL_ENUM_VALUE_GRPC)).getValue().toLowerCase();
             String packageName = fieldDefinition.getPackageNameOrError();
             return Stream.of(new FetchItem(packageName, protocol, path, field, null));
         } else if (fieldDefinition.isFetchField()) {

@@ -11,6 +11,7 @@ import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.literal.NamedLiteral;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import jakarta.json.JsonValue;
 import jakarta.transaction.Transactional;
 import org.reactivestreams.Publisher;
@@ -41,8 +42,10 @@ public class DefaultOperationHandler implements OperationHandler {
 
     private final SubscriptionDataListener subscriptionDataListener;
 
+    private final Provider<Mono<TransactionCompensator>> transactionCompensatorProvider;
+
     @Inject
-    public DefaultOperationHandler(GraphQLConfig graphQLConfig, Instance<OperationBeforeHandler> operationBeforeHandlerInstance, Instance<OperationAfterHandler> operationAfterHandlerInstance, SubscriptionDataListener subscriptionDataListener) {
+    public DefaultOperationHandler(GraphQLConfig graphQLConfig, Instance<OperationBeforeHandler> operationBeforeHandlerInstance, Instance<OperationAfterHandler> operationAfterHandlerInstance, SubscriptionDataListener subscriptionDataListener, Provider<Mono<TransactionCompensator>> transactionCompensatorProvider) {
         this.operationBeforeHandlerList = operationBeforeHandlerInstance.stream().collect(Collectors.toList());
         this.operationAfterHandlerList = operationAfterHandlerInstance.stream().collect(Collectors.toList());
         this.queryHandler = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
@@ -55,6 +58,7 @@ public class DefaultOperationHandler implements OperationHandler {
                 .map(name -> CDI.current().select(SubscriptionHandler.class, NamedLiteral.of(name)).get())
                 .orElseGet(() -> CDI.current().select(SubscriptionHandler.class).get());
         this.subscriptionDataListener = subscriptionDataListener;
+        this.transactionCompensatorProvider = transactionCompensatorProvider;
     }
 
     @Override
@@ -106,7 +110,17 @@ public class DefaultOperationHandler implements OperationHandler {
                                         Flux.fromIterable(operationAfterHandlerList)
                                                 .reduce(
                                                         Mono.just(jsonValue),
-                                                        (pre, cur) -> pre.flatMap(result -> cur.mutation(operationAfterHandler, result))
+                                                        (pre, cur) ->
+                                                                pre.flatMap(result -> cur.mutation(operationAfterHandler, result)
+                                                                        .onErrorResume(throwable ->
+                                                                                transactionCompensatorProvider.get()
+                                                                                        .flatMap(transactionCompensator ->
+                                                                                                Mono.justOrEmpty(transactionCompensator.compensating(result.asJsonObject()))
+                                                                                                        .flatMap(mutationHandler::mutation)
+                                                                                        )
+                                                                                        .then(Mono.error(throwable))
+                                                                        )
+                                                                )
                                                 )
                                                 .flatMap(operationMono -> operationMono)
                                 )

@@ -429,14 +429,17 @@ public class DocumentBuilder {
                                 .filter(FieldDefinition::isFetchField)
                                 .filter(FieldDefinition::hasFetchWith)
                                 .map(fieldDefinition ->
-                                        (FieldDefinition) new FieldDefinition(typeNameToFieldName(fieldDefinition.getFetchWithTypeOrError()))
-                                                .setType(new ListType(new TypeName(fieldDefinition.getFetchWithTypeOrError())))
-                                                .addDirective(
-                                                        new Directive(DIRECTIVE_FETCH_NAME)
-                                                                .addArgument(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME, fieldDefinition.getFetchFromOrError())
-                                                                .addArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME, fieldDefinition.getFetchWithFromOrError())
-                                                                .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, new EnumValue(ENUM_PROTOCOL_ENUM_VALUE_LOCAL))
-                                                )
+                                        buildField(
+                                                documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getFetchWithTypeOrError()),
+                                                new FieldDefinition(typeNameToFieldName(fieldDefinition.getFetchWithTypeOrError()))
+                                                        .setType(new ListType(new TypeName(fieldDefinition.getFetchWithTypeOrError())))
+                                                        .addDirective(
+                                                                new Directive(DIRECTIVE_FETCH_NAME)
+                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME, fieldDefinition.getFetchFromOrError())
+                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME, fieldDefinition.getFetchWithFromOrError())
+                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, new EnumValue(ENUM_PROTOCOL_ENUM_VALUE_LOCAL))
+                                                        )
+                                        )
                                 )
                                 .collect(Collectors.toList())
                 )
@@ -461,13 +464,16 @@ public class DocumentBuilder {
                                 .filter(FieldDefinition::isMapField)
                                 .filter(FieldDefinition::hasMapWith)
                                 .map(fieldDefinition ->
-                                        (FieldDefinition) new FieldDefinition(typeNameToFieldName(fieldDefinition.getMapWithTypeOrError()))
-                                                .setType(new ListType(new TypeName(fieldDefinition.getMapWithTypeOrError())))
-                                                .addDirective(
-                                                        new Directive(DIRECTIVE_MAP_NAME)
-                                                                .addArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME, fieldDefinition.getMapFromOrError())
-                                                                .addArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME, fieldDefinition.getMapWithFromOrError())
-                                                )
+                                        buildField(
+                                                documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getMapWithTypeOrError()),
+                                                new FieldDefinition(typeNameToFieldName(fieldDefinition.getMapWithTypeOrError()))
+                                                        .setType(new ListType(new TypeName(fieldDefinition.getMapWithTypeOrError())))
+                                                        .addDirective(
+                                                                new Directive(DIRECTIVE_MAP_NAME)
+                                                                        .addArgument(DIRECTIVE_MAP_ARGUMENT_FROM_NAME, fieldDefinition.getMapFromOrError())
+                                                                        .addArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME, fieldDefinition.getMapWithFromOrError())
+                                                        )
+                                        )
                                 )
                                 .collect(Collectors.toList())
                 )

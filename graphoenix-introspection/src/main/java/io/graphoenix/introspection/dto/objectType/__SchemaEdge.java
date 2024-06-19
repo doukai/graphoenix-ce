@@ -3,7 +3,6 @@ package io.graphoenix.introspection.dto.objectType;
 import com.dslplatform.json.CompiledJson;
 import jakarta.annotation.Generated;
 import java.lang.String;
-import org.eclipse.microprofile.graphql.Id;
 import org.eclipse.microprofile.graphql.Type;
 
 @Type
@@ -12,7 +11,6 @@ import org.eclipse.microprofile.graphql.Type;
 public class __SchemaEdge {
   private __Schema node;
 
-  @Id
   private String cursor;
 
   public __Schema getNode() {
