@@ -24,8 +24,6 @@ public class TransactionCompensator {
 
     private final JsonProvider jsonProvider;
 
-    private JsonValue jsonValue;
-
     private final Map<String, List<JsonValue>> typeValueListMap = new HashMap<>();
 
     private final Map<String, List<FetchItem>> newTypeFetchItemListMap = new HashMap<>();
@@ -56,12 +54,7 @@ public class TransactionCompensator {
         return this;
     }
 
-    public JsonValue setJsonValue(JsonValue jsonValue) {
-        this.jsonValue = jsonValue;
-        return jsonValue;
-    }
-
-    public Optional<Operation> compensating() {
+    public Optional<Operation> compensating(JsonObject jsonObject) {
         if (typeValueListMap.isEmpty() && newTypeFetchItemListMap.isEmpty()) {
             return Optional.empty();
         }
@@ -119,7 +112,7 @@ public class TransactionCompensator {
                                                                     return entry.getValue().stream()
                                                                             .map(fetchItem -> {
                                                                                         String path = fetchItem.getPath();
-                                                                                        JsonObject fieldJsonValue = jsonValue.asJsonObject().get(Optional.ofNullable(fetchItem.getField().getAlias()).orElseGet(fetchItem.getField()::getName)).asJsonObject();
+                                                                                        JsonObject fieldJsonValue = jsonObject.get(Optional.ofNullable(fetchItem.getField().getAlias()).orElseGet(fetchItem.getField()::getName)).asJsonObject();
                                                                                         JsonValue idValue = fieldJsonValue.getValue(path);
                                                                                         Field field = new Field(typeNameToFieldName(entry.getKey()) + SUFFIX_LIST)
                                                                                                 .addSelection(new Field(id));

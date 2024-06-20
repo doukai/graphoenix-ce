@@ -115,21 +115,19 @@ public class DefaultOperationHandler implements OperationHandler {
                                                         Mono.just(jsonValue),
                                                         (pre, cur) ->
                                                                 pre.flatMap(result ->
-                                                                        transactionCompensatorProvider.get()
-                                                                                .map(transactionCompensator -> transactionCompensator.setJsonValue(result))
-                                                                                .then(cur.mutation(operationAfterHandler, result))
+                                                                        cur.mutation(operationAfterHandler, result)
+                                                                                .onErrorResume(throwable ->
+                                                                                        transactionCompensatorProvider.get()
+                                                                                                .flatMap(transactionCompensator ->
+                                                                                                        Mono.justOrEmpty(transactionCompensator.compensating(result.asJsonObject()))
+                                                                                                                .flatMap(fetchHandlerProvider.get()::request)
+                                                                                                )
+                                                                                                .then(Mono.error(throwable))
+                                                                                )
                                                                 )
                                                 )
                                                 .flatMap(operationMono -> operationMono)
                                 )
-                )
-                .onErrorResume(throwable ->
-                        transactionCompensatorProvider.get()
-                                .flatMap(transactionCompensator ->
-                                        Mono.justOrEmpty(transactionCompensator.compensating())
-                                                .flatMap(fetchHandlerProvider.get()::request)
-                                )
-                                .then(Mono.error(throwable))
                 )
                 .defaultIfEmpty(JsonValue.EMPTY_JSON_OBJECT);
     }
