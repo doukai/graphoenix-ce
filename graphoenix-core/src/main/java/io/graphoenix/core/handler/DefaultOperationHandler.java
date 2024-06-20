@@ -44,8 +44,10 @@ public class DefaultOperationHandler implements OperationHandler {
 
     private final Provider<Mono<TransactionCompensator>> transactionCompensatorProvider;
 
+    private final Provider<FetchHandler> fetchHandlerProvider;
+
     @Inject
-    public DefaultOperationHandler(GraphQLConfig graphQLConfig, Instance<OperationBeforeHandler> operationBeforeHandlerInstance, Instance<OperationAfterHandler> operationAfterHandlerInstance, SubscriptionDataListener subscriptionDataListener, Provider<Mono<TransactionCompensator>> transactionCompensatorProvider) {
+    public DefaultOperationHandler(GraphQLConfig graphQLConfig, Instance<OperationBeforeHandler> operationBeforeHandlerInstance, Instance<OperationAfterHandler> operationAfterHandlerInstance, SubscriptionDataListener subscriptionDataListener, Provider<Mono<TransactionCompensator>> transactionCompensatorProvider, Provider<FetchHandler> fetchHandlerProvider) {
         this.operationBeforeHandlerList = operationBeforeHandlerInstance.stream().collect(Collectors.toList());
         this.operationAfterHandlerList = operationAfterHandlerInstance.stream().collect(Collectors.toList());
         this.queryHandler = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
@@ -59,6 +61,7 @@ public class DefaultOperationHandler implements OperationHandler {
                 .orElseGet(() -> CDI.current().select(SubscriptionHandler.class).get());
         this.subscriptionDataListener = subscriptionDataListener;
         this.transactionCompensatorProvider = transactionCompensatorProvider;
+        this.fetchHandlerProvider = fetchHandlerProvider;
     }
 
     @Override
@@ -112,19 +115,21 @@ public class DefaultOperationHandler implements OperationHandler {
                                                         Mono.just(jsonValue),
                                                         (pre, cur) ->
                                                                 pre.flatMap(result ->
-                                                                        cur.mutation(operationAfterHandler, result)
-                                                                                .onErrorResume(throwable ->
-                                                                                        transactionCompensatorProvider.get()
-                                                                                                .flatMap(transactionCompensator ->
-                                                                                                        Mono.justOrEmpty(transactionCompensator.compensating(result.asJsonObject()))
-                                                                                                                .flatMap(mutationHandler::mutation)
-                                                                                                )
-                                                                                                .then(Mono.error(throwable))
-                                                                                )
+                                                                        transactionCompensatorProvider.get()
+                                                                                .map(transactionCompensator -> transactionCompensator.setJsonValue(result))
+                                                                                .then(cur.mutation(operationAfterHandler, result))
                                                                 )
                                                 )
                                                 .flatMap(operationMono -> operationMono)
                                 )
+                )
+                .onErrorResume(throwable ->
+                        transactionCompensatorProvider.get()
+                                .flatMap(transactionCompensator ->
+                                        Mono.justOrEmpty(transactionCompensator.compensating())
+                                                .flatMap(fetchHandlerProvider.get()::request)
+                                )
+                                .then(Mono.error(throwable))
                 )
                 .defaultIfEmpty(JsonValue.EMPTY_JSON_OBJECT);
     }

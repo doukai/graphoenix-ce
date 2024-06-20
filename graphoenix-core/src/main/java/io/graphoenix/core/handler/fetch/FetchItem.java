@@ -103,6 +103,12 @@ public class FetchItem {
         this.path = path;
     }
 
+    public FetchItem(String packageName, String protocol, Field fetchField) {
+        this.packageName = packageName;
+        this.protocol = protocol;
+        this.fetchField = fetchField;
+    }
+
     public FetchItem(String packageName, String protocol, String typeName, Field fetchField) {
         this.packageName = packageName;
         this.protocol = protocol;

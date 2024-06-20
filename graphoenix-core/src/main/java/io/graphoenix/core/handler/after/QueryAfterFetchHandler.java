@@ -11,7 +11,7 @@ import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.ObjectType;
-import io.graphoenix.spi.handler.FetchBeforeHandler;
+import io.graphoenix.spi.handler.FetchAfterHandler;
 import io.graphoenix.spi.handler.OperationAfterHandler;
 import io.graphoenix.spi.handler.PackageFetchHandler;
 import jakarta.annotation.Priority;
@@ -41,7 +41,7 @@ import static jakarta.json.JsonValue.NULL;
 
 @ApplicationScoped
 @Priority(QueryAfterFetchHandler.QUERY_AFTER_FETCH_HANDLER_PRIORITY)
-public class QueryAfterFetchHandler implements OperationAfterHandler, FetchBeforeHandler {
+public class QueryAfterFetchHandler implements OperationAfterHandler, FetchAfterHandler {
 
     public static final int QUERY_AFTER_FETCH_HANDLER_PRIORITY = CONNECTION_BUILDER_PRIORITY - 100;
 

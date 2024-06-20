@@ -14,7 +14,7 @@ import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.InputValue;
 import io.graphoenix.spi.graphql.type.ObjectType;
-import io.graphoenix.spi.handler.FetchBeforeHandler;
+import io.graphoenix.spi.handler.FetchAfterHandler;
 import io.graphoenix.spi.handler.OperationAfterHandler;
 import io.graphoenix.spi.handler.PackageFetchHandler;
 import jakarta.annotation.Priority;
@@ -44,7 +44,7 @@ import static io.nozdormu.spi.utils.CDIUtil.getNamedInstanceMap;
 
 @ApplicationScoped
 @Priority(MutationAfterFetchHandler.MUTATION_AFTER_FETCH_HANDLER_PRIORITY)
-public class MutationAfterFetchHandler implements OperationAfterHandler, FetchBeforeHandler {
+public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAfterHandler {
 
     public static final int MUTATION_AFTER_FETCH_HANDLER_PRIORITY = CONNECTION_BUILDER_PRIORITY - 150;
 
@@ -69,7 +69,12 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchBe
                         operation.getFields().stream()
                                 .flatMap(field -> {
                                             String selectionName = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
-                                            return buildFetchItems(operationType, operationType.getField(field.getName()), field, jsonValue.asJsonObject().get(selectionName));
+                                            return buildFetchItems(
+                                                    operationType,
+                                                    operationType.getField(field.getName()),
+                                                    field,
+                                                    jsonValue.asJsonObject().get(selectionName)
+                                            );
                                         }
                                 )
                                 .collect(
@@ -106,11 +111,11 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchBe
                                                                 protocolEntries.getValue().stream()
                                                                         .filter(fetchItem -> fetchItem.getFetchField() != null)
                                                                         .map(fetchItem -> {
-                                                                                    String path = fetchItem.getPath();
-                                                                                    JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(fetchItem.getFetchField().getAlias());
+                                                                                    String alias = Optional.ofNullable(fetchItem.getFetchField().getAlias()).orElseGet(fetchItem.getFetchField()::getName);
+                                                                                    JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(alias);
                                                                                     return jsonProvider.createObjectBuilder()
                                                                                             .add("op", "add")
-                                                                                            .add("path", path)
+                                                                                            .add("path", "/" + alias)
                                                                                             .add("value", fieldJsonValue)
                                                                                             .build();
                                                                                 }
@@ -129,11 +134,12 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchBe
     }
 
     public Stream<FetchItem> buildFetchItems(ObjectType objectType, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
-        if (jsonValue == null || jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
-            return Stream.empty();
-        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
+        if (documentManager.isMutationOperationType(objectType) && !packageManager.isLocalPackage(fieldDefinition)) {
+            String protocol = fieldDefinition.getFetchProtocol().orElse(new EnumValue(ENUM_PROTOCOL_ENUM_VALUE_GRPC)).getValue().toLowerCase();
+            String packageName = fieldDefinition.getPackageNameOrError();
+            return Stream.of(new FetchItem(packageName, protocol, field));
+        } else if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             if (fieldDefinition.getType().hasList()) {
                 return Streams
                         .concat(
@@ -265,11 +271,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchBe
             return Stream.empty();
         }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        if (documentManager.isMutationOperationType(objectType) && !packageManager.isLocalPackage(fieldDefinition)) {
-            String protocol = fieldDefinition.getFetchProtocol().orElse(new EnumValue(ENUM_PROTOCOL_ENUM_VALUE_GRPC)).getValue().toLowerCase();
-            String packageName = fieldDefinition.getPackageNameOrError();
-            return Stream.of(new FetchItem(packageName, protocol, path, field, null));
-        } else if (fieldDefinition.isFetchField()) {
+        if (fieldDefinition.isFetchField()) {
             String fetchFrom = fieldDefinition.getFetchFromOrError();
             if (fieldTypeDefinition.isObject()) {
                 FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();

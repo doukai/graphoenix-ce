@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
+import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 
 @TransactionScoped
 public class TransactionCompensator {
@@ -22,6 +23,8 @@ public class TransactionCompensator {
     private final DocumentManager documentManager;
 
     private final JsonProvider jsonProvider;
+
+    private JsonValue jsonValue;
 
     private final Map<String, List<JsonValue>> typeValueListMap = new HashMap<>();
 
@@ -53,21 +56,27 @@ public class TransactionCompensator {
         return this;
     }
 
-    public Optional<Operation> compensating(JsonObject jsonObject) {
+    public JsonValue setJsonValue(JsonValue jsonValue) {
+        this.jsonValue = jsonValue;
+        return jsonValue;
+    }
+
+    public Optional<Operation> compensating() {
         if (typeValueListMap.isEmpty() && newTypeFetchItemListMap.isEmpty()) {
             return Optional.empty();
         }
 
         return Optional.of(
-                new Operation(OPERATION_MUTATION_NAME)
+                new Operation()
+                        .setOperationType(OPERATION_MUTATION_NAME)
                         .setSelections(
                                 Stream
                                         .concat(
                                                 typeValueListMap.entrySet().stream()
                                                         .map(entry -> {
                                                                     String id = documentManager.getDocument().getObjectTypeOrError(entry.getKey()).getIDFieldOrError().getName();
-                                                                    return new Field(entry.getKey() + SUFFIX_LIST)
-                                                                            .setSelections(id)
+                                                                    return new Field(typeNameToFieldName(entry.getKey()) + SUFFIX_LIST)
+                                                                            .addSelection(new Field(id))
                                                                             .addArgument(
                                                                                     INPUT_VALUE_LIST_NAME,
                                                                                     entry.getValue().stream()
@@ -78,9 +87,10 @@ public class TransactionCompensator {
                                                                                                             Stream.of(jsonValue.asJsonObject())
                                                                                             )
                                                                                             .map(item ->
-                                                                                                    Stream.concat(
+                                                                                                    Stream
+                                                                                                            .concat(
                                                                                                                     item.entrySet().stream()
-                                                                                                                            .filter(fieldEntry -> fieldEntry.getKey().equals(id)),
+                                                                                                                            .filter(fieldEntry -> !fieldEntry.getKey().equals(id)),
                                                                                                                     Stream.of(
                                                                                                                             new AbstractMap.SimpleEntry<>(
                                                                                                                                     INPUT_VALUE_WHERE_NAME,
@@ -109,10 +119,10 @@ public class TransactionCompensator {
                                                                     return entry.getValue().stream()
                                                                             .map(fetchItem -> {
                                                                                         String path = fetchItem.getPath();
-                                                                                        JsonObject fieldJsonValue = jsonObject.get(Optional.ofNullable(fetchItem.getField().getAlias()).orElseGet(fetchItem.getField()::getName)).asJsonObject();
+                                                                                        JsonObject fieldJsonValue = jsonValue.asJsonObject().get(Optional.ofNullable(fetchItem.getField().getAlias()).orElseGet(fetchItem.getField()::getName)).asJsonObject();
                                                                                         JsonValue idValue = fieldJsonValue.getValue(path);
-                                                                                        Field field = new Field(entry.getKey() + SUFFIX_LIST)
-                                                                                                .setSelections(id);
+                                                                                        Field field = new Field(typeNameToFieldName(entry.getKey()) + SUFFIX_LIST)
+                                                                                                .addSelection(new Field(id));
                                                                                         if (fetchItem.getTarget() != null) {
                                                                                             return field.setArguments(
                                                                                                     jsonProvider.createObjectBuilder()

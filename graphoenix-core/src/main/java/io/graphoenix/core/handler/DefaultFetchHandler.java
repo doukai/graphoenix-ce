@@ -62,7 +62,7 @@ public class DefaultFetchHandler implements FetchHandler {
         return Flux.fromIterable(fetchBeforeHandlerList)
                 .reduce(
                         Mono.just(operation),
-                        (pre, cur) -> pre.flatMap(result -> cur.query(result, null))
+                        (pre, cur) -> pre.flatMap(cur::query)
                 )
                 .flatMap(operationMono -> operationMono)
                 .flatMap(operationAfterHandler ->
@@ -84,7 +84,7 @@ public class DefaultFetchHandler implements FetchHandler {
         return Flux.fromIterable(fetchBeforeHandlerList)
                 .reduce(
                         Mono.just(operation),
-                        (pre, cur) -> pre.flatMap(result -> cur.mutation(result, null))
+                        (pre, cur) -> pre.flatMap(cur::mutation)
                 )
                 .flatMap(operationMono -> operationMono)
                 .flatMap(operationAfterHandler ->
