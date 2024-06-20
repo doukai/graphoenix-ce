@@ -37,6 +37,7 @@ import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIEL
 import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 import static io.nozdormu.spi.utils.CDIUtil.getNamedInstanceMap;
+import static jakarta.json.JsonValue.EMPTY_JSON_OBJECT;
 import static jakarta.json.JsonValue.NULL;
 
 @ApplicationScoped
@@ -89,18 +90,24 @@ public class QueryAfterFetchHandler implements OperationAfterHandler, FetchAfter
                 .flatMap(packageEntries ->
                         Flux.fromIterable(packageEntries.getValue().entrySet())
                                 .flatMap(protocolEntries ->
-                                        packageFetchHandlerMap.get(protocolEntries.getKey())
-                                                .request(
-                                                        packageEntries.getKey(),
-                                                        new Operation()
-                                                                .setOperationType(OPERATION_QUERY_NAME)
-                                                                .setSelections(
-                                                                        protocolEntries.getValue().stream()
-                                                                                .map(FetchItem::getFetchField)
-                                                                                .filter(Objects::nonNull)
-                                                                                .collect(Collectors.toList())
+                                        Mono
+                                                .just(
+                                                        protocolEntries.getValue().stream()
+                                                                .map(FetchItem::getFetchField)
+                                                                .filter(Objects::nonNull)
+                                                                .collect(Collectors.toList())
+                                                )
+                                                .filter(fieldList -> !fieldList.isEmpty())
+                                                .flatMap(fieldList ->
+                                                        packageFetchHandlerMap.get(protocolEntries.getKey())
+                                                                .request(
+                                                                        packageEntries.getKey(),
+                                                                        new Operation()
+                                                                                .setOperationType(OPERATION_QUERY_NAME)
+                                                                                .setSelections(fieldList)
                                                                 )
                                                 )
+                                                .defaultIfEmpty(EMPTY_JSON_OBJECT)
                                                 .flatMapMany(fetchJsonValue ->
                                                         Flux.fromStream(
                                                                 protocolEntries.getValue().stream()

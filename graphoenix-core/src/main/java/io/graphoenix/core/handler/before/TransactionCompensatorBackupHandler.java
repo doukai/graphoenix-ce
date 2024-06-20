@@ -240,7 +240,7 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                                         packageName,
                                         protocol,
                                         field,
-                                        "/" + INPUT_VALUE_INPUT_NAME + "/" + idField.getName(),
+                                        "/" + idField.getName(),
                                         fieldTypeDefinition.getName()
                                 )
                         );
@@ -286,7 +286,7 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                                                     packageName,
                                                     protocol,
                                                     field,
-                                                    "/" + INPUT_VALUE_LIST_NAME + "/" + index + "/" + idField.getName(),
+                                                    "/" + index + "/" + idField.getName(),
                                                     fieldTypeDefinition.getName()
                                             );
                                         }
@@ -351,7 +351,7 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                                                                                                                     fieldTypeDefinition.asObject(),
                                                                                                                     idValueWithVariable,
                                                                                                                     field,
-                                                                                                                    "/" + INPUT_VALUE_INPUT_NAME,
+                                                                                                                    "",
                                                                                                                     subFieldDefinition,
                                                                                                                     subInputValue,
                                                                                                                     subValueWithVariable
@@ -384,7 +384,7 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                                                                                                                                     fieldTypeDefinition.asObject(),
                                                                                                                                     idValueWithVariable,
                                                                                                                                     field,
-                                                                                                                                    "/" + INPUT_VALUE_LIST_NAME + "/" + index,
+                                                                                                                                    "/" + index,
                                                                                                                                     subFieldDefinition,
                                                                                                                                     subInputValue,
                                                                                                                                     subValueWithVariable
@@ -415,7 +415,6 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
             String fetchTo = fieldDefinition.getFetchToOrError();
             String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
             String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
-            ValueWithVariable idValueWithVariable = valueWithVariable.asObject().getValueWithVariable(idField.getName());
 
             Stream<FetchItem> fetchItemStream = Stream.empty();
             if (!packageManager.isLocalPackage(packageName)) {
@@ -599,7 +598,7 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                                                                             .flatMap(subValueWithVariable ->
                                                                                     buildFetchItems(
                                                                                             fieldTypeDefinition.asObject(),
-                                                                                            idValueWithVariable,
+                                                                                            valueWithVariable.asArray().getValueWithVariable(index).asObject().getValueWithVariable(idField.getName()),
                                                                                             field,
                                                                                             path + "/" + fieldDefinition.getName() + "/" + index,
                                                                                             subFieldDefinition,
@@ -618,7 +617,7 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                                                             .flatMap(subValueWithVariable ->
                                                                     buildFetchItems(
                                                                             fieldTypeDefinition.asObject(),
-                                                                            idValueWithVariable,
+                                                                            valueWithVariable.asObject().getValueWithVariable(idField.getName()),
                                                                             field,
                                                                             path + "/" + fieldDefinition.getName(),
                                                                             subFieldDefinition,

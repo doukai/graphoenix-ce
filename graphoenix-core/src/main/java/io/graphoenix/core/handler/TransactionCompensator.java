@@ -6,6 +6,7 @@ import io.graphoenix.spi.graphql.operation.Operation;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonPointer;
+import jakarta.json.JsonStructure;
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonCollectors;
@@ -114,9 +115,9 @@ public class TransactionCompensator {
                                                                     return entry.getValue().stream()
                                                                             .flatMap(fetchItem -> {
                                                                                         JsonPointer pointer = jsonProvider.createPointer(fetchItem.getPath());
-                                                                                        JsonObject fieldJsonValue = jsonObject.get(Optional.ofNullable(fetchItem.getField().getAlias()).orElseGet(fetchItem.getField()::getName)).asJsonObject();
-                                                                                        if (pointer.containsValue(fieldJsonValue)) {
-                                                                                            JsonValue idValue = pointer.getValue(fieldJsonValue);
+                                                                                        JsonValue fieldJsonValue = jsonObject.get(Optional.ofNullable(fetchItem.getField().getAlias()).orElseGet(fetchItem.getField()::getName));
+                                                                                        if (pointer.containsValue((JsonStructure) fieldJsonValue)) {
+                                                                                            JsonValue idValue = pointer.getValue((JsonStructure) fieldJsonValue);
                                                                                             Field field = new Field(typeNameToFieldName(entry.getKey()) + SUFFIX_LIST)
                                                                                                     .addSelection(new Field(id));
                                                                                             if (fetchItem.getTarget() != null) {
