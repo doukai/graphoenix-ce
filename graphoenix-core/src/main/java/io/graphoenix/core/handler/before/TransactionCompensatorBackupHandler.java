@@ -424,7 +424,7 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                             .mapToObj(index -> {
                                         ObjectValueWithVariable item = valueWithVariable.asArray().getValueWithVariable(index).asObject();
                                         if (item.containsKey(idField.getName()) || item.containsKey(INPUT_VALUE_WHERE_NAME)) {
-                                            Field fetchField = new Field(field.getName())
+                                            Field fetchField = new Field()
                                                     .setAlias(alias + "__" + getAliasFromPath(path) + "_" + fieldDefinition.getName() + "_" + index)
                                                     .setSelections(
                                                             item.getObjectValueWithVariable().keySet().stream()
@@ -445,9 +445,12 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                                                                                 item.getValueWithVariable(idField.getName())
                                                                         )
                                                                 )
-                                                        );
+                                                        )
+                                                        .setName(typeNameToFieldName(fieldTypeDefinition.getName()));
                                             } else if (item.containsKey(INPUT_VALUE_WHERE_NAME)) {
-                                                fetchField.setArguments(item.getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject());
+                                                fetchField
+                                                        .setArguments(item.getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject())
+                                                        .setName(typeNameToFieldName(fieldTypeDefinition.getName()) + SUFFIX_LIST);
                                             }
                                             return new FetchItem(
                                                     packageName,
@@ -468,7 +471,7 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                             );
                 } else {
                     if (valueWithVariable.asObject().containsKey(idField.getName()) || valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME)) {
-                        Field fetchField = new Field(typeNameToFieldName(fieldTypeDefinition.getName()))
+                        Field fetchField = new Field()
                                 .setAlias(alias + "__" + getAliasFromPath(path) + "_" + fieldDefinition.getName())
                                 .setSelections(
                                         valueWithVariable.asObject().getObjectValueWithVariable().keySet().stream()
@@ -489,10 +492,13 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                                                             valueWithVariable.asObject().getValueWithVariable(idField.getName())
                                                     )
                                             )
-                                    );
+                                    )
+                                    .setName(typeNameToFieldName(fieldTypeDefinition.getName()));
 
                         } else if (valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME)) {
-                            fetchField.setArguments(valueWithVariable.asObject().getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject());
+                            fetchField
+                                    .setArguments(valueWithVariable.asObject().getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject())
+                                    .setName(typeNameToFieldName(fieldTypeDefinition.getName()) + SUFFIX_LIST);
                         }
                         fetchItemStream = Stream.of(
                                 new FetchItem(
@@ -538,7 +544,7 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                             .orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST.bind(fetchWithFrom)));
 
                     if (parentIDValueWithVariable != null) {
-                        Field fetchField = new Field(refFieldDefinition.getName())
+                        Field fetchField = new Field(typeNameToFieldName(fetchWithType.getName()) + SUFFIX_LIST)
                                 .setAlias(alias + "__" + getAliasFromPath(path) + "_" + refFieldDefinition.getName())
                                 .addSelection(new Field(withTypeIdField.getName()))
                                 .addSelection(new Field(FIELD_DEPRECATED_NAME))
@@ -552,7 +558,6 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                                                                 parentIDValueWithVariable
                                                         )
                                                 )
-
                                         )
                                 );
                         fetchWithItemStream = Stream.of(

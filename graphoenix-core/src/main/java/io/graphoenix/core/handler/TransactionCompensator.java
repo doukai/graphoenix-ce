@@ -5,6 +5,7 @@ import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Operation;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonPointer;
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonCollectors;
@@ -73,6 +74,7 @@ public class TransactionCompensator {
                                                                             .addArgument(
                                                                                     INPUT_VALUE_LIST_NAME,
                                                                                     entry.getValue().stream()
+                                                                                            .filter(jsonValue -> !jsonValue.getValueType().equals(JsonValue.ValueType.NULL))
                                                                                             .flatMap(jsonValue ->
                                                                                                     jsonValue.getValueType().equals(JsonValue.ValueType.ARRAY) ?
                                                                                                             jsonValue.asJsonArray().stream()
@@ -110,59 +112,63 @@ public class TransactionCompensator {
                                                         .flatMap(entry -> {
                                                                     String id = documentManager.getDocument().getObjectTypeOrError(entry.getKey()).getIDFieldOrError().getName();
                                                                     return entry.getValue().stream()
-                                                                            .map(fetchItem -> {
-                                                                                        String path = fetchItem.getPath();
+                                                                            .flatMap(fetchItem -> {
+                                                                                        JsonPointer pointer = jsonProvider.createPointer(fetchItem.getPath());
                                                                                         JsonObject fieldJsonValue = jsonObject.get(Optional.ofNullable(fetchItem.getField().getAlias()).orElseGet(fetchItem.getField()::getName)).asJsonObject();
-                                                                                        JsonValue idValue = fieldJsonValue.getValue(path);
-                                                                                        Field field = new Field(typeNameToFieldName(entry.getKey()) + SUFFIX_LIST)
-                                                                                                .addSelection(new Field(id));
-                                                                                        if (fetchItem.getTarget() != null) {
-                                                                                            return field.setArguments(
-                                                                                                    jsonProvider.createObjectBuilder()
-                                                                                                            .add(
-                                                                                                                    INPUT_VALUE_WHERE_NAME,
-                                                                                                                    jsonProvider.createObjectBuilder()
-                                                                                                                            .add(
-                                                                                                                                    fetchItem.getTarget(),
-                                                                                                                                    jsonProvider.createObjectBuilder()
-                                                                                                                                            .add(
-                                                                                                                                                    id,
-                                                                                                                                                    jsonProvider.createObjectBuilder()
-                                                                                                                                                            .add(
-                                                                                                                                                                    INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
-                                                                                                                                                                    idValue
-                                                                                                                                                            )
-                                                                                                                                            )
-                                                                                                                            )
-                                                                                                            )
-                                                                                                            .add(
-                                                                                                                    FIELD_DEPRECATED_NAME,
-                                                                                                                    true
-                                                                                                            )
-                                                                                                            .build()
-                                                                                            );
-                                                                                        } else {
-                                                                                            return field.setArguments(
-                                                                                                    jsonProvider.createObjectBuilder()
-                                                                                                            .add(
-                                                                                                                    INPUT_VALUE_WHERE_NAME,
-                                                                                                                    jsonProvider.createObjectBuilder()
-                                                                                                                            .add(
-                                                                                                                                    id,
-                                                                                                                                    jsonProvider.createObjectBuilder()
-                                                                                                                                            .add(
-                                                                                                                                                    INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
-                                                                                                                                                    idValue
-                                                                                                                                            )
-                                                                                                                            )
-                                                                                                            )
-                                                                                                            .add(
-                                                                                                                    FIELD_DEPRECATED_NAME,
-                                                                                                                    true
-                                                                                                            )
-                                                                                                            .build()
-                                                                                            );
+                                                                                        if (pointer.containsValue(fieldJsonValue)) {
+                                                                                            JsonValue idValue = pointer.getValue(fieldJsonValue);
+                                                                                            Field field = new Field(typeNameToFieldName(entry.getKey()) + SUFFIX_LIST)
+                                                                                                    .addSelection(new Field(id));
+                                                                                            if (fetchItem.getTarget() != null) {
+                                                                                                field.setArguments(
+                                                                                                        jsonProvider.createObjectBuilder()
+                                                                                                                .add(
+                                                                                                                        INPUT_VALUE_WHERE_NAME,
+                                                                                                                        jsonProvider.createObjectBuilder()
+                                                                                                                                .add(
+                                                                                                                                        fetchItem.getTarget(),
+                                                                                                                                        jsonProvider.createObjectBuilder()
+                                                                                                                                                .add(
+                                                                                                                                                        id,
+                                                                                                                                                        jsonProvider.createObjectBuilder()
+                                                                                                                                                                .add(
+                                                                                                                                                                        INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
+                                                                                                                                                                        idValue
+                                                                                                                                                                )
+                                                                                                                                                )
+                                                                                                                                )
+                                                                                                                )
+                                                                                                                .add(
+                                                                                                                        FIELD_DEPRECATED_NAME,
+                                                                                                                        true
+                                                                                                                )
+                                                                                                                .build()
+                                                                                                );
+                                                                                            } else {
+                                                                                                field.setArguments(
+                                                                                                        jsonProvider.createObjectBuilder()
+                                                                                                                .add(
+                                                                                                                        INPUT_VALUE_WHERE_NAME,
+                                                                                                                        jsonProvider.createObjectBuilder()
+                                                                                                                                .add(
+                                                                                                                                        id,
+                                                                                                                                        jsonProvider.createObjectBuilder()
+                                                                                                                                                .add(
+                                                                                                                                                        INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
+                                                                                                                                                        idValue
+                                                                                                                                                )
+                                                                                                                                )
+                                                                                                                )
+                                                                                                                .add(
+                                                                                                                        FIELD_DEPRECATED_NAME,
+                                                                                                                        true
+                                                                                                                )
+                                                                                                                .build()
+                                                                                                );
+                                                                                            }
+                                                                                            return Stream.of(field);
                                                                                         }
+                                                                                        return Stream.empty();
                                                                                     }
                                                                             );
                                                                 }
