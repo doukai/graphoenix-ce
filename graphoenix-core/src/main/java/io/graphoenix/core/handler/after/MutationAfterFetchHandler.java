@@ -161,7 +161,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                                                                         .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
                                                                                                         .flatMap(subValueWithVariable ->
                                                                                                                 buildFetchItems(
-                                                                                                                        objectType,
+                                                                                                                        fieldTypeDefinition.asObject(),
                                                                                                                         field,
                                                                                                                         "/" + INPUT_VALUE_INPUT_NAME,
                                                                                                                         subFieldDefinition,
@@ -194,7 +194,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                                                                                         .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
                                                                                                                         .flatMap(subValueWithVariable ->
                                                                                                                                 buildFetchItems(
-                                                                                                                                        objectType,
+                                                                                                                                        fieldTypeDefinition.asObject(),
                                                                                                                                         field,
                                                                                                                                         "/" + INPUT_VALUE_LIST_NAME + "/" + index,
                                                                                                                                         subFieldDefinition,
@@ -223,7 +223,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                                                         )
                                                                                         .flatMap(valueWithVariable ->
                                                                                                 buildFetchItems(
-                                                                                                        objectType,
+                                                                                                        fieldTypeDefinition.asObject(),
                                                                                                         field,
                                                                                                         "",
                                                                                                         subFieldDefinition,
@@ -250,7 +250,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                         )
                                                         .flatMap(valueWithVariable ->
                                                                 buildFetchItems(
-                                                                        objectType,
+                                                                        fieldTypeDefinition.asObject(),
                                                                         field,
                                                                         "",
                                                                         subFieldDefinition,

@@ -259,7 +259,7 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
                 return Stream.of(new FetchItem(packageName, protocol, path, mutationBeforeField.setAlias(getAliasFromPath(path + "/" + fieldDefinition.getName())), target));
             }
         } else if (fieldDefinition.isFetchField()) {
-            if (!fieldDefinition.getType().hasList() && documentManager.isFetchAnchor(objectType, fieldDefinition)) {
+            if (!fieldDefinition.getType().hasList() && !fieldDefinition.hasFetchWith() && documentManager.isFetchAnchor(objectType, fieldDefinition)) {
                 String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
                 String fetchFrom = fieldDefinition.getFetchFromOrError();
                 String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();

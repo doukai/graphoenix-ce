@@ -7,15 +7,15 @@ public interface FetchBeforeHandler extends OperationBeforeHandler {
 
 
     default Mono<Operation> query(Operation operation) {
-        return handle(operation, null);
+        return query(operation, null);
     }
 
     default Mono<Operation> mutation(Operation operation) {
-        return handle(operation, null);
+        return mutation(operation, null);
     }
 
     default Mono<Operation> subscription(Operation operation) {
-        return handle(operation, null);
+        return subscription(operation, null);
     }
 
     default Mono<Operation> handle(Operation operation) {
