@@ -111,12 +111,30 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
                                                                                                 FetchItem::getField,
                                                                                                 Collectors.mapping(
                                                                                                         fetchItem -> {
-                                                                                                            JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(typeNameToFieldName(fetchItem.getTypeName()) + SUFFIX_LIST).asJsonArray().get(fetchItem.getIndex());
-                                                                                                            return jsonProvider.createObjectBuilder()
-                                                                                                                    .add("op", "add")
-                                                                                                                    .add("path", fetchItem.getPath() + "/" + fetchItem.getFetchFrom())
-                                                                                                                    .add("value", fieldJsonValue.asJsonObject().get(fetchItem.getTarget()))
-                                                                                                                    .build();
+                                                                                                            if (fetchItem.getTypeName() == null) {
+                                                                                                                JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(fetchItem.getFetchField().getAlias());
+                                                                                                                if (fetchItem.getTarget() != null) {
+                                                                                                                    return jsonProvider.createObjectBuilder()
+                                                                                                                            .add("op", "add")
+                                                                                                                            .add("path", fetchItem.getPath())
+                                                                                                                            .add("value", fieldJsonValue.asJsonObject().get(fetchItem.getTarget()))
+                                                                                                                            .build();
+                                                                                                                } else {
+                                                                                                                    return jsonProvider.createObjectBuilder()
+                                                                                                                            .add("op", "add")
+                                                                                                                            .add("path", fetchItem.getPath())
+                                                                                                                            .add("value", fieldJsonValue)
+                                                                                                                            .build();
+                                                                                                                }
+
+                                                                                                            } else {
+                                                                                                                JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(typeNameToFieldName(fetchItem.getTypeName()) + SUFFIX_LIST).asJsonArray().get(fetchItem.getIndex());
+                                                                                                                return jsonProvider.createObjectBuilder()
+                                                                                                                        .add("op", "add")
+                                                                                                                        .add("path", fetchItem.getPath() + "/" + fetchItem.getFetchFrom())
+                                                                                                                        .add("value", fieldJsonValue.asJsonObject().get(fetchItem.getTarget()))
+                                                                                                                        .build();
+                                                                                                            }
                                                                                                         },
                                                                                                         Collectors.toList()
                                                                                                 )

@@ -1,5 +1,6 @@
 package io.graphoenix.core.handler.after;
 
+import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.core.handler.fetch.FetchItem;
@@ -48,13 +49,15 @@ public class QueryAfterFetchHandler implements OperationAfterHandler, FetchAfter
 
     private final DocumentManager documentManager;
     private final PackageManager packageManager;
+    private final PackageConfig packageConfig;
     private final JsonProvider jsonProvider;
     private final Map<String, PackageFetchHandler> packageFetchHandlerMap;
 
     @Inject
-    public QueryAfterFetchHandler(DocumentManager documentManager, PackageManager packageManager, JsonProvider jsonProvider, Instance<PackageFetchHandler> fetchHandlerInstance) {
+    public QueryAfterFetchHandler(DocumentManager documentManager, PackageManager packageManager, PackageConfig packageConfig, JsonProvider jsonProvider, Instance<PackageFetchHandler> fetchHandlerInstance) {
         this.documentManager = documentManager;
         this.packageManager = packageManager;
+        this.packageConfig = packageConfig;
         this.jsonProvider = jsonProvider;
         this.packageFetchHandlerMap = getNamedInstanceMap(fetchHandlerInstance);
     }
@@ -171,7 +174,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler, FetchAfter
     public Stream<FetchItem> buildFetchItems(ObjectType objectType, String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (documentManager.isQueryOperationType(objectType) && !packageManager.isLocalPackage(fieldDefinition)) {
-            String protocol = fieldDefinition.getFetchProtocol().orElse(new EnumValue(ENUM_PROTOCOL_ENUM_VALUE_GRPC)).getValue().toLowerCase();
+            String protocol = fieldDefinition.getFetchProtocol().map(EnumValue::getValue).orElse(packageConfig.getDefaultFetchProtocol()).toLowerCase();
             String packageName = fieldDefinition.getPackageNameOrError();
             return Stream.of(new FetchItem(packageName, protocol, path, field, null));
         } else if (fieldDefinition.isFetchField()) {

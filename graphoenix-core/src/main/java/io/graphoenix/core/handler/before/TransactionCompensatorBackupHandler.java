@@ -2,6 +2,7 @@ package io.graphoenix.core.handler.before;
 
 import com.google.common.collect.Streams;
 import io.graphoenix.core.config.MutationConfig;
+import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.core.handler.TransactionCompensator;
@@ -46,14 +47,16 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
 
     private final DocumentManager documentManager;
     private final PackageManager packageManager;
+    private final PackageConfig packageConfig;
     private final MutationConfig mutationConfig;
     private final Provider<Mono<TransactionCompensator>> transactionCompensatorProvider;
     private final Map<String, PackageFetchHandler> packageFetchHandlerMap;
 
     @Inject
-    public TransactionCompensatorBackupHandler(DocumentManager documentManager, PackageManager packageManager, MutationConfig mutationConfig, Provider<Mono<TransactionCompensator>> transactionCompensatorProvider, Instance<PackageFetchHandler> fetchHandlerInstance) {
+    public TransactionCompensatorBackupHandler(DocumentManager documentManager, PackageManager packageManager, MutationConfig mutationConfig, PackageConfig packageConfig, Provider<Mono<TransactionCompensator>> transactionCompensatorProvider, Instance<PackageFetchHandler> fetchHandlerInstance) {
         this.documentManager = documentManager;
         this.packageManager = packageManager;
+        this.packageConfig = packageConfig;
         this.mutationConfig = mutationConfig;
         this.transactionCompensatorProvider = transactionCompensatorProvider;
         this.packageFetchHandlerMap = getNamedInstanceMap(fetchHandlerInstance);
@@ -159,7 +162,7 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
             FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
             String protocol = packageManager.isLocalPackage(fieldDefinition) ?
                     ENUM_PROTOCOL_ENUM_VALUE_LOCAL.toLowerCase() :
-                    fieldDefinition.getFetchProtocol().orElse(new EnumValue(ENUM_PROTOCOL_ENUM_VALUE_GRPC)).getValue().toLowerCase();
+                    fieldDefinition.getFetchProtocol().map(EnumValue::getValue).orElse(packageConfig.getDefaultFetchProtocol()).toLowerCase();
 
             String packageName = fieldDefinition.getPackageNameOrError();
             ValueWithVariable idValueWithVariable = field.getArguments().getArgument(idField.getName());
@@ -412,9 +415,11 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
             FieldDefinition parentIdField = objectType.getIDFieldOrError();
             String alias = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
             FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
-            String fetchTo = fieldDefinition.getFetchToOrError();
-            String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
+            String fetchTo = fieldDefinition.getFetchTo().orElseGet(fieldDefinition::getMapToOrError);
             String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
+            String protocol = packageManager.isLocalPackage(packageName) ?
+                    ENUM_PROTOCOL_ENUM_VALUE_LOCAL.toLowerCase() :
+                    fieldDefinition.getFetchProtocol().map(EnumValue::getValue).orElse(packageConfig.getDefaultFetchProtocol()).toLowerCase();
 
             Stream<FetchItem> fetchItemStream = Stream.empty();
             if (!packageManager.isLocalPackage(packageName)) {
@@ -527,15 +532,19 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                 String withTypePackageName = fetchWithType.getPackageNameOrError();
                 if (!packageManager.isLocalPackage(withTypePackageName)) {
                     FieldDefinition withTypeIdField = fetchWithType.getIDFieldOrError();
-                    String fetchWithFrom = fieldDefinition.getFetchWithFromOrError();
+                    String fetchWithFrom = fieldDefinition.getFetchWithFrom().orElseGet(fieldDefinition::getMapWithFromOrError);
 
                     FieldDefinition refFieldDefinition = objectType.getField(typeNameToFieldName(fetchWithType.getName()));
                     String withTypeProtocol = packageManager.isLocalPackage(withTypePackageName) ?
                             ENUM_PROTOCOL_ENUM_VALUE_LOCAL.toLowerCase() :
-                            ENUM_PROTOCOL_ENUM_VALUE_GRPC.toLowerCase();
+                            packageConfig.getDefaultFetchProtocol();
                     String target = fetchWithType.getFields().stream()
                             .filter(withTypeFieldDefinition ->
-                                    withTypeFieldDefinition.getFetchFrom().stream()
+                                    Stream
+                                            .concat(
+                                                    withTypeFieldDefinition.getFetchFrom().stream(),
+                                                    withTypeFieldDefinition.getMapFrom().stream()
+                                            )
                                             .anyMatch(name -> name.equals(fetchWithFrom))
                             )
                             .findFirst()
