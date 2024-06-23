@@ -6,9 +6,9 @@ import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.grpc.client.resolver.PackageNameResolverProvider;
+import io.graphoenix.spi.constant.Hammurabi;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.operation.Operation;
-import io.graphoenix.spi.handler.FetchHandler;
 import io.graphoenix.spi.handler.PackageFetchHandler;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.NameResolverRegistry;
@@ -59,7 +59,7 @@ public class GrpcFetchHandlerBuilder {
                 .addModifiers(Modifier.PUBLIC)
                 .addSuperinterface(ClassName.get(PackageFetchHandler.class))
                 .addAnnotation(ApplicationScoped.class)
-                .addAnnotation(AnnotationSpec.builder(Named.class).addMember("value", "$S", "grpc").build())
+                .addAnnotation(AnnotationSpec.builder(Named.class).addMember("value", "$T.ENUM_PROTOCOL_ENUM_VALUE_GRPC", ClassName.get(Hammurabi.class)).build())
                 .addField(
                         FieldSpec
                                 .builder(

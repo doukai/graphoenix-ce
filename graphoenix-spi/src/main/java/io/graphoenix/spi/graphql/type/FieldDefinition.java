@@ -518,42 +518,6 @@ public class FieldDefinition extends AbstractDefinition {
         return getFetchProtocol().orElseThrow(() -> new GraphQLErrors(FETCH_PROTOCOL_ARGUMENT_NOT_EXIST.bind(toString())));
     }
 
-    public boolean isMutationBeforeField() {
-        return hasDirective(DIRECTIVE_MUTATION_BEFORE_NAME);
-    }
-
-    public Optional<String> getMutationBeforeField() {
-        return Optional.ofNullable(getDirective(DIRECTIVE_MUTATION_BEFORE_NAME))
-                .flatMap(directive -> directive.getArgumentOrEmpty(DIRECTIVE_MUTATION_BEFORE_ARGUMENT_FIELD_NAME))
-                .filter(ValueWithVariable::isString)
-                .map(valueWithVariable -> valueWithVariable.asString().getValue());
-    }
-
-    public String getMutationBeforeFieldOrError() {
-        return getMutationBeforeField().orElseThrow(() -> new GraphQLErrors(MUTATION_BEFORE_FIELD_ARGUMENT_NOT_EXIST.bind(toString())));
-    }
-
-    public Optional<EnumValue> getMutationBeforeProtocol() {
-        return Optional.ofNullable(getDirective(DIRECTIVE_MUTATION_BEFORE_NAME))
-                .flatMap(directive -> directive.getArgumentOrEmpty(DIRECTIVE_MUTATION_BEFORE_ARGUMENT_PROTOCOL_NAME))
-                .map(ValueWithVariable::asEnum);
-    }
-
-    public EnumValue getMutationBeforeProtocolOrError() {
-        return getMutationBeforeProtocol().orElseThrow(() -> new GraphQLErrors(MUTATION_BEFORE_PROTOCOL_ARGUMENT_NOT_EXIST.bind(toString())));
-    }
-
-    public Optional<String> getMutationBeforeTarget() {
-        return Optional.ofNullable(getDirective(DIRECTIVE_MUTATION_BEFORE_NAME))
-                .flatMap(directive -> directive.getArgumentOrEmpty(DIRECTIVE_MUTATION_BEFORE_ARGUMENT_TARGET_NAME))
-                .filter(ValueWithVariable::isString)
-                .map(valueWithVariable -> valueWithVariable.asString().getValue());
-    }
-
-    public String getMutationBeforeTargetOrNull() {
-        return getMutationBeforeTarget().orElse(null);
-    }
-
     public boolean hasFormat() {
         return hasDirective(DIRECTIVE_FORMAT_NAME);
     }

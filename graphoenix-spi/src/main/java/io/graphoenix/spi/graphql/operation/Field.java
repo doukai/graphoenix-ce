@@ -33,10 +33,6 @@ public class Field extends AbstractDefinition implements Selection {
         super(name);
     }
 
-    public static Field fromString(String graphQL) {
-        return new Field(graphqlToSelection(graphQL.replaceAll("\\\\", "")));
-    }
-
     public Field(GraphqlParser.SelectionContext selectionContext) {
         this(selectionContext.field());
     }

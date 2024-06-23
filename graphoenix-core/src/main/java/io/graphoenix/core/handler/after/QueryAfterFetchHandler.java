@@ -32,7 +32,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static io.graphoenix.core.handler.after.ConnectionBuilder.CONNECTION_BUILDER_PRIORITY;
-import static io.graphoenix.core.handler.fetch.LocalPackageFetchHandler.LOCAL_FETCH_NAME;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST;
 import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
@@ -174,7 +173,8 @@ public class QueryAfterFetchHandler implements OperationAfterHandler, FetchAfter
     public Stream<FetchItem> buildFetchItems(ObjectType objectType, String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (documentManager.isQueryOperationType(objectType) && !packageManager.isLocalPackage(fieldDefinition)) {
-            String protocol = fieldDefinition.getFetchProtocol().map(EnumValue::getValue).orElse(packageConfig.getDefaultFetchProtocol()).toLowerCase();
+            String protocol = fieldDefinition.getFetchProtocol().map(EnumValue::getValue)
+                    .orElse(packageConfig.getDefaultFetchProtocol());
             String packageName = fieldDefinition.getPackageNameOrError();
             return Stream.of(new FetchItem(packageName, protocol, path, field, null));
         } else if (fieldDefinition.isFetchField()) {
@@ -184,7 +184,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler, FetchAfter
                 ObjectType fetchWithType = documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getFetchWithTypeOrError());
                 String packageName = fetchWithType.getPackageNameOrError();
                 if (jsonValue.asJsonObject().isNull(fetchFrom)) {
-                    return Stream.of(new FetchItem(packageName, LOCAL_FETCH_NAME, path));
+                    return Stream.of(new FetchItem(packageName, ENUM_PROTOCOL_ENUM_VALUE_LOCAL, path));
                 }
                 String fetchWithFrom = fieldDefinition.getFetchWithFromOrError();
                 String fetchWithTo = fieldDefinition.getFetchWithToOrError();
@@ -253,9 +253,9 @@ public class QueryAfterFetchHandler implements OperationAfterHandler, FetchAfter
                         )
                         .orElse(fetchWithTo);
 
-                return Stream.of(new FetchItem(packageName, LOCAL_FETCH_NAME, path, fetchField, target));
+                return Stream.of(new FetchItem(packageName, ENUM_PROTOCOL_ENUM_VALUE_LOCAL, path, fetchField, target));
             } else {
-                String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
+                String protocol = fieldDefinition.getFetchProtocolOrError().getValue();
                 String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
                 if (jsonValue.asJsonObject().isNull(fetchFrom)) {
                     return Stream.of(new FetchItem(packageName, protocol, path));

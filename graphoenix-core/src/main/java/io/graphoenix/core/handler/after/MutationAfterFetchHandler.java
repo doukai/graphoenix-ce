@@ -38,7 +38,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static io.graphoenix.core.handler.after.ConnectionBuilder.CONNECTION_BUILDER_PRIORITY;
-import static io.graphoenix.core.handler.fetch.LocalPackageFetchHandler.LOCAL_FETCH_NAME;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST;
 import static io.nozdormu.spi.utils.CDIUtil.getNamedInstanceMap;
@@ -139,7 +138,8 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
     public Stream<FetchItem> buildFetchItems(ObjectType objectType, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (documentManager.isMutationOperationType(objectType) && !packageManager.isLocalPackage(fieldDefinition)) {
-            String protocol = fieldDefinition.getFetchProtocol().map(EnumValue::getValue).orElse(packageConfig.getDefaultFetchProtocol()).toLowerCase();
+            String protocol = fieldDefinition.getFetchProtocol().map(EnumValue::getValue)
+                    .orElse(packageConfig.getDefaultFetchProtocol());
             String packageName = fieldDefinition.getPackageNameOrError();
             return Stream.of(new FetchItem(packageName, protocol, field));
         } else if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
@@ -188,6 +188,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                         .map(ValueWithVariable::asArray)
                                                         .flatMap(arrayValueWithVariable ->
                                                                 IntStream.range(0, arrayValueWithVariable.size())
+                                                                        .filter(index -> jsonValue.asJsonArray().size() > index)
                                                                         .mapToObj(index ->
                                                                                 documentManager.getInputValueTypeDefinition(listInputValue).asInputObject().getInputValues().stream()
                                                                                         .flatMap(subInputValue ->
@@ -312,7 +313,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                             } else {
                                                 id = UUID.randomUUID().toString();
                                             }
-                                            return new FetchItem(packageName, LOCAL_FETCH_NAME, path, fetchWithType.getName(), item, id, fetchWithType.getIDFieldOrError().getName());
+                                            return new FetchItem(packageName, ENUM_PROTOCOL_ENUM_VALUE_LOCAL, path, fetchWithType.getName(), item, id, fetchWithType.getIDFieldOrError().getName());
                                         }
                                 );
                     } else {
@@ -340,10 +341,10 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                         valueWithVariable
                                 )
                                 .build();
-                        return Stream.of(new FetchItem(packageName, LOCAL_FETCH_NAME, path, fetchWithType.getName(), mutationJsonValue, id, fetchWithType.getIDFieldOrError().getName()));
+                        return Stream.of(new FetchItem(packageName, ENUM_PROTOCOL_ENUM_VALUE_LOCAL, path, fetchWithType.getName(), mutationJsonValue, id, fetchWithType.getIDFieldOrError().getName()));
                     }
                 } else {
-                    String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
+                    String protocol = fieldDefinition.getFetchProtocolOrError().getValue();
                     String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
                     String fetchTo = fieldDefinition.getFetchToOrError();
                     if (fieldDefinition.getType().hasList()) {
@@ -393,7 +394,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                 )
                                 .map(item -> {
                                             String id = UUID.randomUUID().toString();
-                                            return new FetchItem(packageName, LOCAL_FETCH_NAME, path, fetchWithType.getName(), item, id, fetchWithType.getIDFieldOrError().getName());
+                                            return new FetchItem(packageName, ENUM_PROTOCOL_ENUM_VALUE_LOCAL, path, fetchWithType.getName(), item, id, fetchWithType.getIDFieldOrError().getName());
                                         }
                                 );
                     }

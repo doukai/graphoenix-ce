@@ -1,6 +1,7 @@
 package io.graphoenix.core.config;
 
 import com.typesafe.config.Optional;
+import io.graphoenix.spi.constant.Hammurabi;
 import org.eclipse.microprofile.config.inject.ConfigProperties;
 
 import java.util.Map;
@@ -18,7 +19,7 @@ public class PackageConfig {
     private String packageLoadBalance = LOAD_BALANCE_ROUND_ROBIN;
 
     @Optional
-    private String defaultFetchProtocol = "GRPC";
+    private String defaultFetchProtocol = Hammurabi.ENUM_PROTOCOL_ENUM_VALUE_GRPC;
 
     @Optional
     private Map<String, Object> members;

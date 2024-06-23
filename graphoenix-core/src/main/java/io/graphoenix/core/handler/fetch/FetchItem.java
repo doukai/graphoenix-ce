@@ -78,28 +78,22 @@ public class FetchItem {
     }
 
     public static Stream<FetchItem> buildMutationItems(Collection<FetchItem> fetchItems) {
-        return Stream
-                .concat(
-                        fetchItems.stream()
-                                .filter(fetchItem -> fetchItem.getTypeName() == null),
-                        fetchItems.stream()
-                                .filter(fetchItem -> fetchItem.getTypeName() != null)
-                                .collect(
-                                        Collectors.groupingBy(
-                                                FetchItem::getTypeName,
-                                                Collectors.toList()
-                                        )
-                                )
-                                .entrySet().stream()
-                                .flatMap(entry -> {
-                                            List<String> idList = entry.getValue().stream()
-                                                    .filter(distinctByKey(FetchItem::getId))
-                                                    .map(FetchItem::getId)
-                                                    .collect(Collectors.toList());
-                                            return entry.getValue().stream()
-                                                    .map(fetchItem -> fetchItem.setIndex(idList.indexOf(fetchItem.getId())));
-                                        }
-                                )
+        return fetchItems.stream()
+                .collect(
+                        Collectors.groupingBy(
+                                FetchItem::getTypeName,
+                                Collectors.toList()
+                        )
+                )
+                .entrySet().stream()
+                .flatMap(entry -> {
+                            List<String> idList = entry.getValue().stream()
+                                    .filter(distinctByKey(FetchItem::getId))
+                                    .map(FetchItem::getId)
+                                    .collect(Collectors.toList());
+                            return entry.getValue().stream()
+                                    .map(fetchItem -> fetchItem.setIndex(idList.indexOf(fetchItem.getId())));
+                        }
                 );
     }
 

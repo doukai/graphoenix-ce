@@ -1,5 +1,6 @@
 package io.graphoenix.core.handler.fetch;
 
+import io.graphoenix.spi.constant.Hammurabi;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.handler.FetchHandler;
 import io.graphoenix.spi.handler.PackageFetchHandler;
@@ -11,10 +12,8 @@ import jakarta.json.JsonValue;
 import reactor.core.publisher.Mono;
 
 @ApplicationScoped
-@Named(LocalPackageFetchHandler.LOCAL_FETCH_NAME)
+@Named(Hammurabi.ENUM_PROTOCOL_ENUM_VALUE_LOCAL)
 public class LocalPackageFetchHandler implements PackageFetchHandler {
-
-    public static final String LOCAL_FETCH_NAME = "local";
 
     private final Provider<FetchHandler> fetchHandlerProvider;
 

@@ -1,12 +1,9 @@
 package io.graphoenix.core.handler.before;
 
 import com.google.common.collect.Streams;
-import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
-import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.core.handler.fetch.FetchItem;
 import io.graphoenix.spi.graphql.Definition;
-import io.graphoenix.spi.graphql.common.EnumValue;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Operation;
@@ -37,9 +34,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static io.graphoenix.core.handler.before.ConnectionSplitter.CONNECTION_SPLITTER_PRIORITY;
-import static io.graphoenix.core.handler.fetch.LocalPackageFetchHandler.LOCAL_FETCH_NAME;
 import static io.graphoenix.spi.constant.Hammurabi.*;
-import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 import static io.nozdormu.spi.utils.CDIUtil.getNamedInstanceMap;
 
@@ -50,16 +45,12 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
     public static final int MUTATION_BEFORE_FETCH_HANDLER_PRIORITY = CONNECTION_SPLITTER_PRIORITY + 450;
 
     private final DocumentManager documentManager;
-    private final PackageManager packageManager;
-    private final PackageConfig packageConfig;
     private final JsonProvider jsonProvider;
     private final Map<String, PackageFetchHandler> packageFetchHandlerMap;
 
     @Inject
-    public MutationBeforeFetchHandler(DocumentManager documentManager, PackageManager packageManager, PackageConfig packageConfig, JsonProvider jsonProvider, Instance<PackageFetchHandler> fetchHandlerInstance) {
+    public MutationBeforeFetchHandler(DocumentManager documentManager, JsonProvider jsonProvider, Instance<PackageFetchHandler> fetchHandlerInstance) {
         this.documentManager = documentManager;
-        this.packageManager = packageManager;
-        this.packageConfig = packageConfig;
         this.jsonProvider = jsonProvider;
         this.packageFetchHandlerMap = getNamedInstanceMap(fetchHandlerInstance);
     }
@@ -111,30 +102,12 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
                                                                                                 FetchItem::getField,
                                                                                                 Collectors.mapping(
                                                                                                         fetchItem -> {
-                                                                                                            if (fetchItem.getTypeName() == null) {
-                                                                                                                JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(fetchItem.getFetchField().getAlias());
-                                                                                                                if (fetchItem.getTarget() != null) {
-                                                                                                                    return jsonProvider.createObjectBuilder()
-                                                                                                                            .add("op", "add")
-                                                                                                                            .add("path", fetchItem.getPath())
-                                                                                                                            .add("value", fieldJsonValue.asJsonObject().get(fetchItem.getTarget()))
-                                                                                                                            .build();
-                                                                                                                } else {
-                                                                                                                    return jsonProvider.createObjectBuilder()
-                                                                                                                            .add("op", "add")
-                                                                                                                            .add("path", fetchItem.getPath())
-                                                                                                                            .add("value", fieldJsonValue)
-                                                                                                                            .build();
-                                                                                                                }
-
-                                                                                                            } else {
-                                                                                                                JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(typeNameToFieldName(fetchItem.getTypeName()) + SUFFIX_LIST).asJsonArray().get(fetchItem.getIndex());
-                                                                                                                return jsonProvider.createObjectBuilder()
-                                                                                                                        .add("op", "add")
-                                                                                                                        .add("path", fetchItem.getPath() + "/" + fetchItem.getFetchFrom())
-                                                                                                                        .add("value", fieldJsonValue.asJsonObject().get(fetchItem.getTarget()))
-                                                                                                                        .build();
-                                                                                                            }
+                                                                                                            JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(typeNameToFieldName(fetchItem.getTypeName()) + SUFFIX_LIST).asJsonArray().get(fetchItem.getIndex());
+                                                                                                            return jsonProvider.createObjectBuilder()
+                                                                                                                    .add("op", "add")
+                                                                                                                    .add("path", fetchItem.getPath() + "/" + fetchItem.getFetchFrom())
+                                                                                                                    .add("value", fieldJsonValue.asJsonObject().get(fetchItem.getTarget()))
+                                                                                                                    .build();
                                                                                                         },
                                                                                                         Collectors.toList()
                                                                                                 )
@@ -262,23 +235,9 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
             return Stream.empty();
         }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        if (fieldDefinition.isMutationBeforeField()) {
-            Field mutationBeforeField = Field.fromString(fieldDefinition.getMutationBeforeFieldOrError());
-            FieldDefinition mutationBeforeFieldDefinition = documentManager.getDocument().getMutationOperationTypeOrError().getField(mutationBeforeField.getName());
-            String target = fieldDefinition.getMutationBeforeTargetOrNull();
-            String packageName = mutationBeforeFieldDefinition.getPackageName().orElseGet(packageConfig::getPackageName);
-            if (packageManager.isLocalPackage(mutationBeforeFieldDefinition)) {
-                return Stream.of(new FetchItem(packageName, LOCAL_FETCH_NAME, path, mutationBeforeField.setAlias(getAliasFromPath(path + "/" + fieldDefinition.getName())), target));
-            } else {
-                String protocol = fieldDefinition.getMutationBeforeProtocol()
-                        .orElseGet(() -> new EnumValue(packageConfig.getDefaultFetchProtocol()))
-                        .getValue()
-                        .toLowerCase();
-                return Stream.of(new FetchItem(packageName, protocol, path, mutationBeforeField.setAlias(getAliasFromPath(path + "/" + fieldDefinition.getName())), target));
-            }
-        } else if (fieldDefinition.isFetchField()) {
+        if (fieldDefinition.isFetchField()) {
             if (!fieldDefinition.getType().hasList() && !fieldDefinition.hasFetchWith() && documentManager.isFetchAnchor(objectType, fieldDefinition)) {
-                String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
+                String protocol = fieldDefinition.getFetchProtocolOrError().getValue();
                 String fetchFrom = fieldDefinition.getFetchFromOrError();
                 String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
                 String fetchTo = fieldDefinition.getFetchToOrError();

@@ -134,6 +134,17 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                                                     )
                                                     .addTypeFetchItemListMap(fetchItemList.stream()
                                                             .filter(fetchItem -> fetchItem.getFetchField() == null)
+                                                            .filter(fetchItem -> fetchItem.getTarget() == null)
+                                                            .collect(
+                                                                    Collectors.groupingBy(
+                                                                            FetchItem::getTypeName,
+                                                                            Collectors.toList()
+                                                                    )
+                                                            )
+                                                    )
+                                                    .addRelationTypeValueListMap(fetchItemList.stream()
+                                                            .filter(fetchItem -> fetchItem.getFetchField() == null)
+                                                            .filter(fetchItem -> fetchItem.getTarget() != null)
                                                             .collect(
                                                                     Collectors.groupingBy(
                                                                             FetchItem::getTypeName,
@@ -161,8 +172,8 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
             String alias = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
             FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
             String protocol = packageManager.isLocalPackage(fieldDefinition) ?
-                    ENUM_PROTOCOL_ENUM_VALUE_LOCAL.toLowerCase() :
-                    fieldDefinition.getFetchProtocol().map(EnumValue::getValue).orElse(packageConfig.getDefaultFetchProtocol()).toLowerCase();
+                    ENUM_PROTOCOL_ENUM_VALUE_LOCAL :
+                    fieldDefinition.getFetchProtocol().map(EnumValue::getValue).orElse(packageConfig.getDefaultFetchProtocol());
 
             String packageName = fieldDefinition.getPackageNameOrError();
             ValueWithVariable idValueWithVariable = field.getArguments().getArgument(idField.getName());
@@ -418,8 +429,8 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
             String fetchTo = fieldDefinition.getFetchTo().orElseGet(fieldDefinition::getMapToOrError);
             String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
             String protocol = packageManager.isLocalPackage(packageName) ?
-                    ENUM_PROTOCOL_ENUM_VALUE_LOCAL.toLowerCase() :
-                    fieldDefinition.getFetchProtocol().map(EnumValue::getValue).orElse(packageConfig.getDefaultFetchProtocol()).toLowerCase();
+                    ENUM_PROTOCOL_ENUM_VALUE_LOCAL :
+                    fieldDefinition.getFetchProtocol().map(EnumValue::getValue).orElse(packageConfig.getDefaultFetchProtocol());
 
             Stream<FetchItem> fetchItemStream = Stream.empty();
             if (!packageManager.isLocalPackage(packageName)) {
@@ -527,8 +538,9 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
             }
 
             Stream<FetchItem> fetchWithItemStream = Stream.empty();
-            if (fieldDefinition.hasFetchWith()) {
-                ObjectType fetchWithType = documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getFetchWithTypeOrError());
+            if (fieldDefinition.hasFetchWith() || fieldDefinition.hasMapWith()) {
+                ObjectType fetchWithType = documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getFetchWithType()
+                        .orElseGet(fieldDefinition::getMapWithTypeOrError));
                 String withTypePackageName = fetchWithType.getPackageNameOrError();
                 if (!packageManager.isLocalPackage(withTypePackageName)) {
                     FieldDefinition withTypeIdField = fetchWithType.getIDFieldOrError();
@@ -536,7 +548,7 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
 
                     FieldDefinition refFieldDefinition = objectType.getField(typeNameToFieldName(fetchWithType.getName()));
                     String withTypeProtocol = packageManager.isLocalPackage(withTypePackageName) ?
-                            ENUM_PROTOCOL_ENUM_VALUE_LOCAL.toLowerCase() :
+                            ENUM_PROTOCOL_ENUM_VALUE_LOCAL :
                             packageConfig.getDefaultFetchProtocol();
                     String target = fetchWithType.getFields().stream()
                             .filter(withTypeFieldDefinition ->

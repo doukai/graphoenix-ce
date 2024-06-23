@@ -281,7 +281,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler, FetchBef
     public Stream<FetchItem> buildFetchItems(String fieldPath, Field field, String path, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldDefinition.isFetchField()) {
-            String protocol = fieldDefinition.getFetchProtocolOrError().getValue().toLowerCase();
+            String protocol = fieldDefinition.getFetchProtocolOrError().getValue();
             String fetchFrom = fieldDefinition.getFetchFromOrError();
             Field fetchField = new Field();
             if (fieldDefinition.hasFetchWith()) {
