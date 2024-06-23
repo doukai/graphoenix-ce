@@ -122,14 +122,14 @@ public class QueryAfterFetchHandler implements OperationAfterHandler, FetchAfter
                                                                                                 .add("value", NULL)
                                                                                                 .build();
                                                                                     } else if (fetchItem.getTarget() == null) {
-                                                                                        JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(fetchItem.getFetchField().getAlias());
+                                                                                        JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(Optional.ofNullable(fetchItem.getFetchField().getAlias()).orElseGet(fetchItem.getFetchField()::getName));
                                                                                         return jsonProvider.createObjectBuilder()
                                                                                                 .add("op", "add")
                                                                                                 .add("path", path)
                                                                                                 .add("value", fieldJsonValue)
                                                                                                 .build();
                                                                                     } else {
-                                                                                        JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(fetchItem.getFetchField().getAlias());
+                                                                                        JsonValue fieldJsonValue = fetchJsonValue.asJsonObject().get(Optional.ofNullable(fetchItem.getFetchField().getAlias()).orElseGet(fetchItem.getFetchField()::getName));
                                                                                         if (fieldJsonValue.getValueType().equals(JsonValue.ValueType.ARRAY)) {
                                                                                             return jsonProvider.createObjectBuilder()
                                                                                                     .add("op", "add")
