@@ -186,15 +186,28 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                         )
                                                         .filter(ValueWithVariable::isArray)
                                                         .map(ValueWithVariable::asArray)
-                                                        .flatMap(arrayValueWithVariable ->
-                                                                IntStream.range(0, arrayValueWithVariable.size())
-                                                                        .filter(index -> jsonValue.asJsonArray().size() > index)
+                                                        .map(arrayValueWithVariable ->
+                                                                arrayValueWithVariable.getValueWithVariables().stream()
+                                                                        .filter(valueWithVariable -> !valueWithVariable.isNull())
+                                                                        .filter(valueWithVariable ->
+                                                                                !valueWithVariable.asObject().containsKey(FIELD_DEPRECATED_NAME) ||
+                                                                                        valueWithVariable.asObject().asJsonObject().getBoolean(FIELD_DEPRECATED_NAME)
+                                                                        )
+                                                                        .collect(Collectors.toList())
+                                                        )
+                                                        .flatMap(valueWithVariableList ->
+                                                                IntStream.range(0, valueWithVariableList.size())
+                                                                        .filter(index -> !jsonValue.asJsonArray().get(index).getValueType().equals(JsonValue.ValueType.NULL))
+                                                                        .filter(index ->
+                                                                                !jsonValue.asJsonArray().get(index).asJsonObject().containsKey(FIELD_DEPRECATED_NAME) ||
+                                                                                        jsonValue.asJsonArray().get(index).asJsonObject().getBoolean(FIELD_DEPRECATED_NAME)
+                                                                        )
                                                                         .mapToObj(index ->
                                                                                 documentManager.getInputValueTypeDefinition(listInputValue).asInputObject().getInputValues().stream()
                                                                                         .flatMap(subInputValue ->
                                                                                                 Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                                                                                         .flatMap(subFieldDefinition ->
-                                                                                                                arrayValueWithVariable.getValueWithVariable(index).asObject().getValueWithVariableOrEmpty(subInputValue.getName())
+                                                                                                                valueWithVariableList.get(index).asObject().getValueWithVariableOrEmpty(subInputValue.getName())
                                                                                                                         .or(() -> Optional.ofNullable(subInputValue.getDefaultValue())).stream()
                                                                                                                         .flatMap(subValueWithVariable ->
                                                                                                                                 buildFetchItems(
