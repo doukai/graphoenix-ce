@@ -17,6 +17,7 @@ import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.InputObjectType;
 import io.graphoenix.spi.graphql.type.InputValue;
+import io.graphoenix.spi.graphql.type.ObjectType;
 import io.graphoenix.sql.handler.SQLFormatHandler;
 import io.graphoenix.sql.translator.MutationTranslator;
 import io.graphoenix.sql.translator.QueryTranslator;
@@ -319,18 +320,20 @@ public class OperationInterfaceImplementer {
     }
 
     private CodeBlock getCodeBlock(Operation operation, CodeBlock parameterMapCodeBlock) {
-        String fieldName = operation.getSelection(0).asField().getName();
-        String fieldGetterMethodName = getFieldGetterMethodName(fieldName);
-        String methodName = operation.getInvokeMethodNameOrError();
-        int methodIndex = operation.getInvokeMethodIndexOrError();
-        String sqlFieldName = methodName + "_" + methodIndex;
+        ObjectType operationType = documentManager.getOperationTypeOrError(operation);
+        Field field = operation.getSelection(0).asField();
+        FieldDefinition fieldDefinition = operationType.getField(field.getName());
+        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+
+        ClassName operationTypeClassName = ClassName.get(fieldTypeDefinition.getPackageNameOrError() + ".dto.objectType", operationType.getName());
+        String fieldGetterMethodName = getFieldGetterMethodName(field.getName());
         String returnTypeName = operation.getInvokeReturnClassNameOrError();
         String returnClassName = getClassName(returnTypeName);
         String[] returnTypeArgumentTypeNames = getArgumentTypeNames(returnTypeName);
-        String queryTypeName = documentManager.getDocument().getQueryOperationTypeOrError().getName();
-        String mutationTypeName = documentManager.getDocument().getMutationOperationTypeOrError().getName();
-        ClassName queryClassName = ClassName.get(packageConfig.getObjectTypePackageName(), queryTypeName);
-        ClassName mutationClassName = ClassName.get(packageConfig.getObjectTypePackageName(), mutationTypeName);
+
+        String methodName = operation.getInvokeMethodNameOrError();
+        int methodIndex = operation.getInvokeMethodIndexOrError();
+        String sqlFieldName = methodName + "_" + methodIndex;
 
         if (returnTypeArgumentTypeNames.length > 0) {
             String argumentTypeName0 = getArgumentTypeName0(returnTypeName);
@@ -344,8 +347,8 @@ public class OperationInterfaceImplementer {
                                     "operationDAO.findAsync($L, $L, $T.class).mapNotNull($T::$L).mapNotNull($T::new)",
                                     sqlFieldName,
                                     parameterMapCodeBlock,
-                                    queryClassName,
-                                    queryClassName,
+                                    operationTypeClassName,
+                                    operationTypeClassName,
                                     fieldGetterMethodName,
                                     collectionImplementationClassName.get()
                             );
@@ -355,8 +358,8 @@ public class OperationInterfaceImplementer {
                             "operationDAO.findAsync($L, $L, $T.class).mapNotNull($T::$L)",
                             sqlFieldName,
                             parameterMapCodeBlock,
-                            queryClassName,
-                            queryClassName,
+                            operationTypeClassName,
+                            operationTypeClassName,
                             fieldGetterMethodName
                     );
                 } else if (operation.getOperationType().equals(OPERATION_MUTATION_NAME)) {
@@ -367,8 +370,8 @@ public class OperationInterfaceImplementer {
                                     "operationDAO.saveAsync($L, $L, $T.class).mapNotNull($T::$L).mapNotNull($T::new)",
                                     sqlFieldName,
                                     parameterMapCodeBlock,
-                                    mutationClassName,
-                                    mutationClassName,
+                                    operationTypeClassName,
+                                    operationTypeClassName,
                                     fieldGetterMethodName,
                                     collectionImplementationClassName.get()
                             );
@@ -378,8 +381,8 @@ public class OperationInterfaceImplementer {
                             "operationDAO.saveAsync($L, $L, $T.class).mapNotNull($T::$L)",
                             sqlFieldName,
                             parameterMapCodeBlock,
-                            mutationClassName,
-                            mutationClassName,
+                            operationTypeClassName,
+                            operationTypeClassName,
                             fieldGetterMethodName
                     );
                 }
@@ -393,7 +396,7 @@ public class OperationInterfaceImplementer {
                                             collectionClassName,
                                             sqlFieldName,
                                             parameterMapCodeBlock,
-                                            queryClassName,
+                                            operationTypeClassName,
                                             fieldGetterMethodName
                                     )
                             )
@@ -402,7 +405,7 @@ public class OperationInterfaceImplementer {
                                             "operationDAO.find($L, $L, $T.class).$L()",
                                             sqlFieldName,
                                             parameterMapCodeBlock,
-                                            queryClassName,
+                                            operationTypeClassName,
                                             fieldGetterMethodName
                                     )
                             );
@@ -415,7 +418,7 @@ public class OperationInterfaceImplementer {
                                             collectionTypeName,
                                             sqlFieldName,
                                             parameterMapCodeBlock,
-                                            mutationClassName,
+                                            operationTypeClassName,
                                             fieldGetterMethodName
                                     )
                             )
@@ -424,7 +427,7 @@ public class OperationInterfaceImplementer {
                                             "operationDAO.save($L, $L, $T.class).$L()",
                                             sqlFieldName,
                                             parameterMapCodeBlock,
-                                            mutationClassName,
+                                            operationTypeClassName,
                                             fieldGetterMethodName
                                     )
                             );
@@ -436,7 +439,7 @@ public class OperationInterfaceImplementer {
                         "operationDAO.find($L, $L, $T.class).$L()",
                         sqlFieldName,
                         parameterMapCodeBlock,
-                        queryClassName,
+                        operationTypeClassName,
                         fieldGetterMethodName
                 );
             } else if (operation.getOperationType().equals(OPERATION_MUTATION_NAME)) {
@@ -444,7 +447,7 @@ public class OperationInterfaceImplementer {
                         "operationDAO.save($L, $L, $T.class).$L()",
                         sqlFieldName,
                         parameterMapCodeBlock,
-                        mutationClassName,
+                        operationTypeClassName,
                         fieldGetterMethodName
                 );
             }

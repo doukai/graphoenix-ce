@@ -180,19 +180,21 @@ public class ArgumentsInvokeHandlerBuilder {
                                                                                                     String fieldTypeName = documentManager.getFieldTypeDefinition(fieldDefinition).getName();
                                                                                                     String methodName = typeNameToFieldName(fieldTypeName) + operationTypeName + SUFFIX_ARGUMENTS;
                                                                                                     String argumentInputName = fieldTypeName + operationTypeName + SUFFIX_ARGUMENTS;
+                                                                                                    ClassName className = toClassName(documentManager.getDocument().getInputObjectTypeOrError(argumentInputName).getClassNameOrError());
                                                                                                     return CodeBlock.builder().add("case $S:\n", fieldDefinition.getName())
                                                                                                             .indent()
                                                                                                             .add("return $T.justOrEmpty(field.getArguments())\n", ClassName.get(Mono.class))
                                                                                                             .indent()
                                                                                                             .add(".map(arguments -> jsonb.fromJson(arguments.toJson(), $T.class))\n",
-                                                                                                                    toClassName(documentManager.getDocument().getInputObjectTypeOrError(argumentInputName).getClassNameOrError())
+                                                                                                                    className
                                                                                                             )
                                                                                                             .add(".flatMap(arguments -> inputInvokeHandler.$L(arguments, field.getArguments()))\n",
                                                                                                                     methodName
                                                                                                             )
-                                                                                                            .add(".switchIfEmpty($T.defer(() -> inputInvokeHandler.$L(null, field.getArguments())))\n",
+                                                                                                            .add(".switchIfEmpty($T.defer(() -> inputInvokeHandler.$L(new $T(), field.getArguments())))\n",
                                                                                                                     ClassName.get(Mono.class),
-                                                                                                                    methodName
+                                                                                                                    methodName,
+                                                                                                                    className
                                                                                                             )
                                                                                                             .add(".doOnNext($L -> field.setArguments(operationBuilder.updateJsonObject(field.getArguments(), jsonProvider.createReader(new $T(jsonb.toJson($L))).readObject())))\n",
                                                                                                                     methodName,
@@ -218,19 +220,21 @@ public class ArgumentsInvokeHandlerBuilder {
                                                                                                     String fieldTypeName = documentManager.getFieldTypeDefinition(fieldDefinition).getName();
                                                                                                     String methodName = typeNameToFieldName(fieldTypeName) + SUFFIX_LIST + operationTypeName + SUFFIX_ARGUMENTS;
                                                                                                     String argumentInputName = fieldTypeName + SUFFIX_LIST + operationTypeName + SUFFIX_ARGUMENTS;
+                                                                                                    ClassName className = toClassName(documentManager.getDocument().getInputObjectTypeOrError(argumentInputName).getClassNameOrError());
                                                                                                     return CodeBlock.builder().add("case $S:\n", fieldDefinition.getName())
                                                                                                             .indent()
                                                                                                             .add("return $T.justOrEmpty(field.getArguments())\n", ClassName.get(Mono.class))
                                                                                                             .indent()
                                                                                                             .add(".map(arguments -> jsonb.fromJson(arguments.toJson(), $T.class))\n",
-                                                                                                                    toClassName(documentManager.getDocument().getInputObjectTypeOrError(argumentInputName).getClassNameOrError())
+                                                                                                                    className
                                                                                                             )
                                                                                                             .add(".flatMap(arguments -> inputInvokeHandler.$L(arguments, field.getArguments()))\n",
                                                                                                                     methodName
                                                                                                             )
-                                                                                                            .add(".switchIfEmpty($T.defer(() -> inputInvokeHandler.$L(null, field.getArguments())))\n",
+                                                                                                            .add(".switchIfEmpty($T.defer(() -> inputInvokeHandler.$L(new $T(), field.getArguments())))\n",
                                                                                                                     ClassName.get(Mono.class),
-                                                                                                                    methodName
+                                                                                                                    methodName,
+                                                                                                                    className
                                                                                                             )
                                                                                                             .add(".doOnNext($L -> field.setArguments(operationBuilder.updateJsonObject(field.getArguments(), jsonProvider.createReader(new $T(jsonb.toJson($L))).readObject())))\n",
                                                                                                                     methodName,
