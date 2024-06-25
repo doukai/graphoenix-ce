@@ -143,6 +143,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
             String packageName = fieldDefinition.getPackageNameOrError();
             return Stream.of(new FetchItem(packageName, protocol, field));
         } else if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
+            String idName = fieldTypeDefinition.asObject().getIDFieldOrError().getName();
             if (fieldDefinition.getType().hasList()) {
                 return Streams
                         .concat(
@@ -189,6 +190,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                         .map(arrayValueWithVariable ->
                                                                 arrayValueWithVariable.getValueWithVariables().stream()
                                                                         .filter(valueWithVariable -> !valueWithVariable.isNull())
+                                                                        .filter(item -> !item.asObject().containsKey(INPUT_VALUE_WHERE_NAME) || item.asObject().getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject().containsKey(idName))
                                                                         .filter(valueWithVariable ->
                                                                                 !valueWithVariable.asObject().containsKey(FIELD_DEPRECATED_NAME) ||
                                                                                         valueWithVariable.asObject().asJsonObject().getBoolean(FIELD_DEPRECATED_NAME)
