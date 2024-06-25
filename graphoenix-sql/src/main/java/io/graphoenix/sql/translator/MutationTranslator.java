@@ -338,7 +338,7 @@ public class MutationTranslator {
                                 }
                         )
         );
-        Stream<Statement> createInsertIdSetStatementStream = Stream.empty();
+        Stream<Statement> createInsertIdSetStatementStream;
         if (whereInputValueEntry.isPresent()) {
             createInsertIdSetStatementStream = whereInputValueEntry
                     .flatMap(entry -> entry.getValue().asObject().getValueWithVariableOrEmpty(idName))
@@ -347,7 +347,15 @@ public class MutationTranslator {
                     .flatMap(DBValueUtil::idValueToDBValue).stream()
                     .map(expression -> createUpdateIdSetStatement(fieldTypeDefinition.asObject().getName(), idName, level, index, expression));
         } else if (inputValueValueWithVariableMap.entrySet().stream()
-                .noneMatch(entry -> entry.getKey().getName().equals(idName))) {
+                .anyMatch(entry -> entry.getKey().getName().equals(idName))) {
+            createInsertIdSetStatementStream = inputValueValueWithVariableMap.entrySet().stream()
+                    .filter(entry -> entry.getKey().getName().equals(idName))
+                    .findFirst()
+                    .map(Map.Entry::getValue)
+                    .flatMap(DBValueUtil::idValueToDBValue)
+                    .map(expression -> (Statement) createUpdateIdSetStatement(fieldTypeDefinition.asObject().getName(), idName, level, index, expression))
+                    .stream();
+        } else {
             createInsertIdSetStatementStream = Stream.of(createInsertIdSetStatement(fieldTypeDefinition.asObject().getName(), idName, level, index));
         }
 

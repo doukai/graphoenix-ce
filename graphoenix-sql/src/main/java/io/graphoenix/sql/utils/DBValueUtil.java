@@ -9,9 +9,13 @@ import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals;
+import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.SetStatement;
+import net.sf.jsqlparser.statement.select.OrderByElement;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static io.graphoenix.sql.utils.DBNameUtil.*;
@@ -103,5 +107,17 @@ public final class DBValueUtil {
     public static UserVariable createInsertIdUserVariable(String typeName, String idFieldName, int level, int index) {
         String idVariableName = graphqlFieldNameToVariableName(typeName, idFieldName) + "_" + level + "_" + index;
         return new UserVariable(idVariableName);
+    }
+
+    public static OrderByElement createIDOrderField(Column idColumn, List<Expression> userVariableList) {
+        List<Expression> parameters = new ArrayList<>();
+        parameters.add(idColumn);
+        parameters.addAll(userVariableList);
+        return new OrderByElement()
+                .withExpression(
+                        new Function()
+                                .withName("FIELD")
+                                .withParameters(new ExpressionList<>(parameters))
+                );
     }
 }
