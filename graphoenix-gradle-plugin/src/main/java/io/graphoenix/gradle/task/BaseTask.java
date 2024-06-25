@@ -31,6 +31,7 @@ import com.google.common.base.Strings;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.GraphQLConfigRegister;
+import io.graphoenix.spi.annotation.Application;
 import io.graphoenix.spi.annotation.Package;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.common.ArrayValueWithVariable;
@@ -156,7 +157,17 @@ public class BaseTask extends DefaultTask {
                 .flatMap(compilationUnit -> compilationUnit.getPackageDeclaration().stream())
                 .filter(packageDeclaration -> packageDeclaration.getAnnotationByClass(Package.class).isPresent())
                 .findFirst()
-                .map(NodeWithName::getNameAsString);
+                .map(NodeWithName::getNameAsString)
+                .or(() ->
+                        sourceRoot.getCompilationUnits().stream()
+                                .filter(compilationUnit ->
+                                        compilationUnit.getTypes().stream()
+                                                .anyMatch(typeDeclaration -> typeDeclaration.getAnnotationByClass(Application.class).isPresent())
+                                )
+                                .findFirst()
+                                .flatMap(CompilationUnit::getPackageDeclaration)
+                                .map(NodeWithName::getNameAsString)
+                );
     }
 
     protected void registerInvoke() throws IOException {

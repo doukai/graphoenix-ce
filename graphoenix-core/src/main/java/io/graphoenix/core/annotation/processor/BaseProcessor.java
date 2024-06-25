@@ -3,6 +3,7 @@ package io.graphoenix.core.annotation.processor;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.GraphQLConfigRegister;
+import io.graphoenix.spi.annotation.Application;
 import io.graphoenix.spi.annotation.GraphQLOperation;
 import io.graphoenix.spi.annotation.Package;
 import io.graphoenix.spi.annotation.SelectionSet;
@@ -81,7 +82,14 @@ public abstract class BaseProcessor extends AbstractProcessor {
                 .filter(element -> element.getKind().equals(ElementKind.PACKAGE))
                 .findFirst()
                 .map(element -> (PackageElement) element)
-                .map(packageElement -> packageElement.getQualifiedName().toString());
+                .map(packageElement -> packageElement.getQualifiedName().toString())
+                .or(() ->
+                        roundEnv.getElementsAnnotatedWith(Application.class).stream()
+                                .filter(element -> element.getKind().equals(ElementKind.CLASS))
+                                .findFirst()
+                                .map(element -> (TypeElement) element)
+                                .map(typeElement -> processingEnv.getElementUtils().getPackageOf(typeElement).getQualifiedName().toString())
+                );
     }
 
     public void roundInit(RoundEnvironment roundEnv) {

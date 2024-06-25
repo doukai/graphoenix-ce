@@ -2,11 +2,11 @@ package io.graphoenix.core.handler;
 
 import com.google.common.reflect.ClassPath;
 import io.graphoenix.core.config.PackageConfig;
+import io.graphoenix.spi.annotation.Application;
 import io.graphoenix.spi.annotation.Package;
 import io.graphoenix.spi.dto.PackageURL;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.handler.PackageProvider;
-import io.nozdormu.spi.context.BeanContext;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.inject.literal.NamedLiteral;
@@ -67,11 +67,15 @@ public class PackageManager {
     public Optional<String> getDefaultPackageName() {
         try {
             ClassPath classPath = ClassPath.from(Thread.currentThread().getContextClassLoader());
-            return classPath.getTopLevelClasses()
-                    .stream()
+            return classPath.getTopLevelClasses().stream()
                     .filter(classInfo -> classInfo.getSimpleName().equals("package-info"))
                     .filter(classInfo -> classInfo.load().getPackage().isAnnotationPresent(Package.class))
                     .findFirst()
+                    .or(() ->
+                            classPath.getTopLevelClasses().stream()
+                                    .filter(classInfo -> classInfo.load().getPackage().isAnnotationPresent(Application.class))
+                                    .findFirst()
+                    )
                     .map(ClassPath.ClassInfo::getPackageName);
         } catch (IOException e) {
             Logger.error(e);
