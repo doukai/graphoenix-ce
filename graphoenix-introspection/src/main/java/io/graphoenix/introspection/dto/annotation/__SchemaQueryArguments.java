@@ -1,7 +1,7 @@
 package io.graphoenix.introspection.dto.annotation;
 
-import io.graphoenix.core.dto.annotation.IntExpression1;
-import io.graphoenix.core.dto.annotation.StringExpression1;
+import io.graphoenix.core.dto.annotation.IntExpression;
+import io.graphoenix.core.dto.annotation.StringExpression;
 import io.graphoenix.core.dto.enumType.Conditional;
 import jakarta.annotation.Generated;
 import java.lang.String;
@@ -16,41 +16,41 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface __SchemaQueryArguments {
-  StringExpression1 id() default @StringExpression1;
+  StringExpression id() default @StringExpression;
 
-  __TypeExpression1 types() default @__TypeExpression1;
+  __TypeExpression types() default @__TypeExpression;
 
-  __TypeExpression1 queryType() default @__TypeExpression1;
+  __TypeExpression queryType() default @__TypeExpression;
 
-  __TypeExpression1 mutationType() default @__TypeExpression1;
+  __TypeExpression mutationType() default @__TypeExpression;
 
-  __TypeExpression1 subscriptionType() default @__TypeExpression1;
+  __TypeExpression subscriptionType() default @__TypeExpression;
 
-  __DirectiveExpression1 directives() default @__DirectiveExpression1;
+  __DirectiveExpression directives() default @__DirectiveExpression;
 
   boolean includeDeprecated() default false;
 
-  IntExpression1 version() default @IntExpression1;
+  IntExpression version() default @IntExpression;
 
-  IntExpression1 realmId() default @IntExpression1;
+  IntExpression realmId() default @IntExpression;
 
-  StringExpression1 createUserId() default @StringExpression1;
+  StringExpression createUserId() default @StringExpression;
 
-  StringExpression1 createTime() default @StringExpression1;
+  StringExpression createTime() default @StringExpression;
 
-  StringExpression1 updateUserId() default @StringExpression1;
+  StringExpression updateUserId() default @StringExpression;
 
-  StringExpression1 updateTime() default @StringExpression1;
+  StringExpression updateTime() default @StringExpression;
 
-  StringExpression1 createGroupId() default @StringExpression1;
+  StringExpression createGroupId() default @StringExpression;
 
-  StringExpression1 __typename() default @StringExpression1;
+  StringExpression __typename() default @StringExpression;
 
-  StringExpression1 queryTypeName() default @StringExpression1;
+  StringExpression queryTypeName() default @StringExpression;
 
-  StringExpression1 mutationTypeName() default @StringExpression1;
+  StringExpression mutationTypeName() default @StringExpression;
 
-  StringExpression1 subscriptionTypeName() default @StringExpression1;
+  StringExpression subscriptionTypeName() default @StringExpression;
 
   String[] groupBy() default {};
 
@@ -58,7 +58,7 @@ public @interface __SchemaQueryArguments {
 
   Conditional cond() default Conditional.AND;
 
-  __SchemaExpression1[] exs() default {};
+  __SchemaExpression[] exs() default {};
 
   String $id() default "";
 

@@ -1,7 +1,7 @@
 package io.graphoenix.introspection.dto.annotation;
 
-import io.graphoenix.core.dto.annotation.IntExpression1;
-import io.graphoenix.core.dto.annotation.StringExpression1;
+import io.graphoenix.core.dto.annotation.IntExpression;
+import io.graphoenix.core.dto.annotation.StringExpression;
 import io.graphoenix.core.dto.enumType.Conditional;
 import jakarta.annotation.Generated;
 import java.lang.String;
@@ -16,37 +16,37 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface __EnumValueListQueryArguments {
-  StringExpression1 id() default @StringExpression1;
+  StringExpression id() default @StringExpression;
 
-  StringExpression1 name() default @StringExpression1;
+  StringExpression name() default @StringExpression;
 
-  __TypeExpression1 ofType() default @__TypeExpression1;
+  __TypeExpression ofType() default @__TypeExpression;
 
-  StringExpression1 description() default @StringExpression1;
+  StringExpression description() default @StringExpression;
 
-  StringExpression1 deprecationReason() default @StringExpression1;
+  StringExpression deprecationReason() default @StringExpression;
 
   boolean includeDeprecated() default false;
 
-  IntExpression1 version() default @IntExpression1;
+  IntExpression version() default @IntExpression;
 
-  IntExpression1 realmId() default @IntExpression1;
+  IntExpression realmId() default @IntExpression;
 
-  StringExpression1 createUserId() default @StringExpression1;
+  StringExpression createUserId() default @StringExpression;
 
-  StringExpression1 createTime() default @StringExpression1;
+  StringExpression createTime() default @StringExpression;
 
-  StringExpression1 updateUserId() default @StringExpression1;
+  StringExpression updateUserId() default @StringExpression;
 
-  StringExpression1 updateTime() default @StringExpression1;
+  StringExpression updateTime() default @StringExpression;
 
-  StringExpression1 createGroupId() default @StringExpression1;
+  StringExpression createGroupId() default @StringExpression;
 
-  StringExpression1 __typename() default @StringExpression1;
+  StringExpression __typename() default @StringExpression;
 
-  StringExpression1 ofTypeName() default @StringExpression1;
+  StringExpression ofTypeName() default @StringExpression;
 
-  __EnumValueOrderBy1 orderBy() default @__EnumValueOrderBy1;
+  __EnumValueOrderBy orderBy() default @__EnumValueOrderBy;
 
   String[] groupBy() default {};
 
@@ -54,7 +54,7 @@ public @interface __EnumValueListQueryArguments {
 
   Conditional cond() default Conditional.AND;
 
-  __EnumValueExpression1[] exs() default {};
+  __EnumValueExpression[] exs() default {};
 
   int first() default 0;
 

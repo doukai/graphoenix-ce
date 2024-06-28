@@ -17,7 +17,7 @@ public @interface Invoke {
 
   String methodName() default "";
 
-  InvokeParameter1[] parameters() default {};
+  InvokeParameter[] parameters() default {};
 
   String returnClassName() default "";
 

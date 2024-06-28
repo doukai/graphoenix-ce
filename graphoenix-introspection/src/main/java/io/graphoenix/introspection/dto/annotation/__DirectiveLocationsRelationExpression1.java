@@ -1,8 +1,8 @@
 package io.graphoenix.introspection.dto.annotation;
 
-import io.graphoenix.core.dto.annotation.IntExpression2;
-import io.graphoenix.core.dto.annotation.StringExpression2;
-import io.graphoenix.core.dto.annotation.__DirectiveLocationExpression2;
+import io.graphoenix.core.dto.annotation.IntExpression;
+import io.graphoenix.core.dto.annotation.StringExpression;
+import io.graphoenix.core.dto.annotation.__DirectiveLocationExpression;
 import io.graphoenix.core.dto.enumType.Conditional;
 import jakarta.annotation.Generated;
 import java.lang.String;
@@ -17,31 +17,31 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface __DirectiveLocationsRelationExpression1 {
-  StringExpression2 id() default @StringExpression2;
+  StringExpression id() default @StringExpression;
 
-  StringExpression2 __directiveRef() default @StringExpression2;
+  StringExpression __directiveRef() default @StringExpression;
 
   __DirectiveExpression2 __directive() default @__DirectiveExpression2;
 
-  __DirectiveLocationExpression2 locationsRef() default @__DirectiveLocationExpression2;
+  __DirectiveLocationExpression locationsRef() default @__DirectiveLocationExpression;
 
   boolean includeDeprecated() default false;
 
-  IntExpression2 version() default @IntExpression2;
+  IntExpression version() default @IntExpression;
 
-  IntExpression2 realmId() default @IntExpression2;
+  IntExpression realmId() default @IntExpression;
 
-  StringExpression2 createUserId() default @StringExpression2;
+  StringExpression createUserId() default @StringExpression;
 
-  StringExpression2 createTime() default @StringExpression2;
+  StringExpression createTime() default @StringExpression;
 
-  StringExpression2 updateUserId() default @StringExpression2;
+  StringExpression updateUserId() default @StringExpression;
 
-  StringExpression2 updateTime() default @StringExpression2;
+  StringExpression updateTime() default @StringExpression;
 
-  StringExpression2 createGroupId() default @StringExpression2;
+  StringExpression createGroupId() default @StringExpression;
 
-  StringExpression2 __typename() default @StringExpression2;
+  StringExpression __typename() default @StringExpression;
 
   boolean not() default false;
 

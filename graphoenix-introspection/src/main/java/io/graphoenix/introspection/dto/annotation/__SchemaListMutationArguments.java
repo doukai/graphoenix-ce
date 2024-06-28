@@ -15,15 +15,15 @@ import java.lang.annotation.Target;
 public @interface __SchemaListMutationArguments {
   String id() default "";
 
-  __TypeInput1[] types() default {};
+  __TypeInput[] types() default {};
 
-  __TypeInput1 queryType() default @__TypeInput1;
+  __TypeInput queryType() default @__TypeInput;
 
-  __TypeInput1 mutationType() default @__TypeInput1;
+  __TypeInput mutationType() default @__TypeInput;
 
-  __TypeInput1 subscriptionType() default @__TypeInput1;
+  __TypeInput subscriptionType() default @__TypeInput;
 
-  __DirectiveInput1[] directives() default {};
+  __DirectiveInput[] directives() default {};
 
   boolean isDeprecated() default false;
 
@@ -49,9 +49,9 @@ public @interface __SchemaListMutationArguments {
 
   String subscriptionTypeName() default "";
 
-  __SchemaInput1[] list() default {};
+  __SchemaInput[] list() default {};
 
-  __SchemaExpression1 where() default @__SchemaExpression1;
+  __SchemaExpression where() default @__SchemaExpression;
 
   String $id() default "";
 

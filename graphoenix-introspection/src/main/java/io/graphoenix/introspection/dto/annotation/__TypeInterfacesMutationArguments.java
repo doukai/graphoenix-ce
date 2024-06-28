@@ -18,12 +18,12 @@ public @interface __TypeInterfacesMutationArguments {
 
   String typeRef() default "";
 
-  __TypeInput1 type() default @__TypeInput1;
+  __TypeInput type() default @__TypeInput;
 
   String interfaceRef() default "";
 
   @Name("interface")
-  __TypeInput1 _interface() default @__TypeInput1;
+  __TypeInput _interface() default @__TypeInput;
 
   boolean isDeprecated() default false;
 
@@ -43,9 +43,9 @@ public @interface __TypeInterfacesMutationArguments {
 
   String __typename() default "__TypeInterfaces";
 
-  __TypeInterfacesInput1 input() default @__TypeInterfacesInput1;
+  __TypeInterfacesInput input() default @__TypeInterfacesInput;
 
-  __TypeInterfacesExpression1 where() default @__TypeInterfacesExpression1;
+  __TypeInterfacesExpression where() default @__TypeInterfacesExpression;
 
   String $id() default "";
 

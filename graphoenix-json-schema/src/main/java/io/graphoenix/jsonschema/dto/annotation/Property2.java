@@ -16,4 +16,8 @@ public @interface Property2 {
   String name() default "";
 
   String[] required() default {};
+
+  String $name() default "";
+
+  String $required() default "";
 }

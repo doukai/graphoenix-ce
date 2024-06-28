@@ -1,9 +1,9 @@
 package io.graphoenix.introspection.dto.annotation;
 
-import io.graphoenix.core.dto.annotation.BooleanExpression1;
-import io.graphoenix.core.dto.annotation.IntExpression1;
-import io.graphoenix.core.dto.annotation.StringExpression1;
-import io.graphoenix.core.dto.annotation.__DirectiveLocationExpression1;
+import io.graphoenix.core.dto.annotation.BooleanExpression;
+import io.graphoenix.core.dto.annotation.IntExpression;
+import io.graphoenix.core.dto.annotation.StringExpression;
+import io.graphoenix.core.dto.annotation.__DirectiveLocationExpression;
 import io.graphoenix.core.dto.enumType.Conditional;
 import jakarta.annotation.Generated;
 import java.lang.String;
@@ -18,42 +18,42 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface __DirectiveConnectionQueryArguments {
-  StringExpression1 name() default @StringExpression1;
+  StringExpression name() default @StringExpression;
 
-  __SchemaExpression1 ofSchema() default @__SchemaExpression1;
+  __SchemaExpression ofSchema() default @__SchemaExpression;
 
-  StringExpression1 description() default @StringExpression1;
+  StringExpression description() default @StringExpression;
 
-  __DirectiveLocationExpression1 locations() default @__DirectiveLocationExpression1;
+  __DirectiveLocationExpression locations() default @__DirectiveLocationExpression;
 
-  __InputValueExpression1 args() default @__InputValueExpression1;
+  __InputValueExpression args() default @__InputValueExpression;
 
-  BooleanExpression1 isRepeatable() default @BooleanExpression1;
+  BooleanExpression isRepeatable() default @BooleanExpression;
 
   boolean includeDeprecated() default false;
 
-  IntExpression1 version() default @IntExpression1;
+  IntExpression version() default @IntExpression;
 
-  IntExpression1 realmId() default @IntExpression1;
+  IntExpression realmId() default @IntExpression;
 
-  StringExpression1 createUserId() default @StringExpression1;
+  StringExpression createUserId() default @StringExpression;
 
-  StringExpression1 createTime() default @StringExpression1;
+  StringExpression createTime() default @StringExpression;
 
-  StringExpression1 updateUserId() default @StringExpression1;
+  StringExpression updateUserId() default @StringExpression;
 
-  StringExpression1 updateTime() default @StringExpression1;
+  StringExpression updateTime() default @StringExpression;
 
-  StringExpression1 createGroupId() default @StringExpression1;
+  StringExpression createGroupId() default @StringExpression;
 
-  StringExpression1 __typename() default @StringExpression1;
+  StringExpression __typename() default @StringExpression;
 
-  IntExpression1 schemaId() default @IntExpression1;
+  IntExpression schemaId() default @IntExpression;
 
-  __DirectiveLocationsRelationExpression1 __directiveLocationsRelation(
-      ) default @__DirectiveLocationsRelationExpression1;
+  __DirectiveLocationsRelationExpression __directiveLocationsRelation(
+      ) default @__DirectiveLocationsRelationExpression;
 
-  __DirectiveOrderBy1 orderBy() default @__DirectiveOrderBy1;
+  __DirectiveOrderBy orderBy() default @__DirectiveOrderBy;
 
   String[] groupBy() default {};
 
@@ -61,7 +61,7 @@ public @interface __DirectiveConnectionQueryArguments {
 
   Conditional cond() default Conditional.AND;
 
-  __DirectiveExpression1[] exs() default {};
+  __DirectiveExpression[] exs() default {};
 
   int first() default 0;
 

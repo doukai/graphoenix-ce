@@ -1,6 +1,7 @@
 package io.graphoenix.core.dto.annotation;
 
 import jakarta.annotation.Generated;
+
 import java.lang.String;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -13,27 +14,27 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface MetaExpression {
-  IntExpression1 realmId() default @IntExpression1;
+    IntExpression realmId() default @IntExpression;
 
-  StringExpression1 createUserId() default @StringExpression1;
+    StringExpression createUserId() default @StringExpression;
 
-  StringExpression1 createTime() default @StringExpression1;
+    StringExpression createTime() default @StringExpression;
 
-  StringExpression1 updateUserId() default @StringExpression1;
+    StringExpression updateUserId() default @StringExpression;
 
-  StringExpression1 updateTime() default @StringExpression1;
+    StringExpression updateTime() default @StringExpression;
 
-  StringExpression1 createGroupId() default @StringExpression1;
+    StringExpression createGroupId() default @StringExpression;
 
-  String $realmId() default "";
+    String $realmId() default "";
 
-  String $createUserId() default "";
+    String $createUserId() default "";
 
-  String $createTime() default "";
+    String $createTime() default "";
 
-  String $updateUserId() default "";
+    String $updateUserId() default "";
 
-  String $updateTime() default "";
+    String $updateTime() default "";
 
-  String $createGroupId() default "";
+    String $createGroupId() default "";
 }

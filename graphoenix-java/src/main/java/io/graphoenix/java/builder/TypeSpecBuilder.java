@@ -243,6 +243,10 @@ public class TypeSpecBuilder {
         if (inputObjectType.getName().endsWith(SUFFIX_ARGUMENTS)) {
             return Stream.of(buildAnnotation(inputObjectType, 0));
         } else {
+            if (inputObjectType.getInputValues().stream()
+                    .allMatch(inputValue -> documentManager.getInputValueTypeDefinition(inputValue).isLeaf())) {
+                return Stream.of(buildAnnotation(inputObjectType, 0));
+            }
             return IntStream.range(0, generatorConfig.getAnnotationLevel())
                     .mapToObj(level -> buildAnnotation(inputObjectType, level));
         }
@@ -266,7 +270,7 @@ public class TypeSpecBuilder {
 
         List<MethodSpec> methodSpecs = inputObjectType.getInputValues().stream()
                 .filter(inputValue -> documentManager.getInputValueTypeDefinition(inputValue).isLeaf() || level < generatorConfig.getAnnotationLevel() - 1)
-                .map(inputValue -> buildAnnotationMethod(inputValue, level))
+                .map(inputValue -> buildAnnotationMethod(inputValue, level, inputObjectType.getName().endsWith(SUFFIX_ARGUMENTS)))
                 .collect(Collectors.toList());
 
         builder.addMethods(methodSpecs);
@@ -583,10 +587,14 @@ public class TypeSpecBuilder {
     }
 
     public MethodSpec buildAnnotationMethod(InputValue inputValue, int level) {
+        return buildAnnotationMethod(inputValue, level, false);
+    }
+
+    public MethodSpec buildAnnotationMethod(InputValue inputValue, int level, boolean fromArguments) {
         boolean isKeyword = SourceVersion.isKeyword(inputValue.getName());
         MethodSpec.Builder builder = MethodSpec.methodBuilder(isKeyword ? "_" + inputValue.getName() : inputValue.getName())
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                .returns(buildAnnotationType(inputValue.getType(), level));
+                .returns(buildAnnotationType(inputValue.getType(), level, fromArguments));
         if (isKeyword) {
             builder.addAnnotation(
                     AnnotationSpec.builder(Name.class)
@@ -597,7 +605,7 @@ public class TypeSpecBuilder {
         if (inputValue.getDefaultValue() != null) {
             builder.defaultValue(buildDefaultValue(inputValue, inputValue.getDefaultValue().toString()));
         } else {
-            builder.defaultValue(buildAnnotationDefaultValue(inputValue, level));
+            builder.defaultValue(buildAnnotationDefaultValue(inputValue, level, fromArguments));
         }
         if (inputValue.getDescription() != null) {
             builder
@@ -646,7 +654,7 @@ public class TypeSpecBuilder {
         }
     }
 
-    public CodeBlock buildAnnotationDefaultValue(InputValue inputValue, int level) {
+    public CodeBlock buildAnnotationDefaultValue(InputValue inputValue, int level, boolean fromArguments) {
         if (inputValue.getType().hasList()) {
             return CodeBlock.of("$L", "{}");
         }
@@ -661,6 +669,19 @@ public class TypeSpecBuilder {
                     new ArrayList<>(enumType.getEnumValues()).get(0).getName()
             );
         } else if (inputValueTypeDefinition.isInputObject()) {
+            if (inputValueTypeDefinition.asInputObject().getInputValues().stream()
+                    .allMatch(subInputValue -> documentManager.getInputValueTypeDefinition(subInputValue).isLeaf())) {
+                return CodeBlock.of(
+                        "@$T",
+                        toClassName(inputValueTypeDefinition.asInputObject().getAnnotationNameOrError())
+                );
+            }
+            if (fromArguments) {
+                return CodeBlock.of(
+                        "@$T",
+                        toClassName(inputValueTypeDefinition.asInputObject().getAnnotationNameOrError() + (level == 0 ? "" : "" + level))
+                );
+            }
             return CodeBlock.of(
                     "@$T",
                     toClassName(inputValueTypeDefinition.asInputObject().getAnnotationNameOrError() + ((level + 1) == 0 ? "" : "" + (level + 1)))
@@ -703,13 +724,13 @@ public class TypeSpecBuilder {
         }
     }
 
-    public TypeName buildAnnotationType(io.graphoenix.spi.graphql.type.Type type, int level) {
+    public TypeName buildAnnotationType(io.graphoenix.spi.graphql.type.Type type, int level, boolean fromArguments) {
         if (type.isList()) {
-            return ArrayTypeName.of(buildAnnotationType(type.asListType().getType(), level));
+            return ArrayTypeName.of(buildAnnotationType(type.asListType().getType(), level, fromArguments));
         } else if (type.isNonNull()) {
-            return buildAnnotationType(type.asNonNullType().getType(), level);
+            return buildAnnotationType(type.asNonNullType().getType(), level, fromArguments);
         } else {
-            return buildAnnotationType(type.asTypeName(), level);
+            return buildAnnotationType(type.asTypeName(), level, fromArguments);
         }
     }
 
@@ -722,15 +743,23 @@ public class TypeSpecBuilder {
         }
     }
 
-    public TypeName buildAnnotationType(io.graphoenix.spi.graphql.type.TypeName typeName, int level) {
+    public TypeName buildAnnotationType(io.graphoenix.spi.graphql.type.TypeName typeName, int level, boolean fromArguments) {
         Definition typeDefinition = documentManager.getDocument().getDefinition(typeName.getName());
         if (typeDefinition.isScalar()) {
             return buildAnnotationType(typeDefinition.asScalar());
         } else if (typeDefinition.isEnum()) {
             return toClassName(typeDefinition.getClassNameOrError());
-        } else {
+        } else if (typeDefinition.isInputObject()) {
+            if (typeDefinition.asInputObject().getInputValues().stream()
+                    .allMatch(inputValue -> documentManager.getInputValueTypeDefinition(inputValue).isLeaf())) {
+                return toClassName(typeDefinition.getAnnotationNameOrError());
+            }
+            if (fromArguments) {
+                return toClassName(typeDefinition.getAnnotationNameOrError() + (level == 0 ? "" : "" + level));
+            }
             return toClassName(typeDefinition.getAnnotationNameOrError() + ((level + 1) == 0 ? "" : "" + (level + 1)));
         }
+        throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(typeName));
     }
 
     public TypeName buildType(ScalarType scalarType) {

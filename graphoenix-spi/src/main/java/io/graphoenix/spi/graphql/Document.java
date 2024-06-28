@@ -295,6 +295,11 @@ public class Document {
                 .map(Definition::asScalar);
     }
 
+    public Optional<ScalarType> getScalarType(String name) {
+        return Optional.ofNullable(getDefinition(name))
+                .map(Definition::asScalar);
+    }
+
     public Stream<DirectiveDefinition> getDirectives() {
         return getDefinitions().stream()
                 .filter(Definition::isDirective)

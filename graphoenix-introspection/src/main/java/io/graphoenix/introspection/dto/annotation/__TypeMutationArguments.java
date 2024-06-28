@@ -16,23 +16,23 @@ import java.lang.annotation.Target;
 public @interface __TypeMutationArguments {
   String name() default "";
 
-  __SchemaInput1 ofSchema() default @__SchemaInput1;
+  __SchemaInput ofSchema() default @__SchemaInput;
 
   __TypeKind kind() default __TypeKind.SCALAR;
 
   String description() default "";
 
-  __FieldInput1[] fields() default {};
+  __FieldInput[] fields() default {};
 
-  __TypeInput1[] interfaces() default {};
+  __TypeInput[] interfaces() default {};
 
-  __TypeInput1[] possibleTypes() default {};
+  __TypeInput[] possibleTypes() default {};
 
-  __EnumValueInput1[] enumValues() default {};
+  __EnumValueInput[] enumValues() default {};
 
-  __InputValueInput1[] inputFields() default {};
+  __InputValueInput[] inputFields() default {};
 
-  __TypeInput1 ofType() default @__TypeInput1;
+  __TypeInput ofType() default @__TypeInput;
 
   boolean isDeprecated() default false;
 
@@ -56,13 +56,13 @@ public @interface __TypeMutationArguments {
 
   String ofTypeName() default "";
 
-  __TypeInterfacesInput1[] __typeInterfaces() default {};
+  __TypeInterfacesInput[] __typeInterfaces() default {};
 
-  __TypePossibleTypesInput1[] __typePossibleTypes() default {};
+  __TypePossibleTypesInput[] __typePossibleTypes() default {};
 
-  __TypeInput1 input() default @__TypeInput1;
+  __TypeInput input() default @__TypeInput;
 
-  __TypeExpression1 where() default @__TypeExpression1;
+  __TypeExpression where() default @__TypeExpression;
 
   String $name() default "";
 

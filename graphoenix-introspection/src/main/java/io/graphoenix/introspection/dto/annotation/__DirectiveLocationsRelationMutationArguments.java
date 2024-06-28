@@ -18,7 +18,7 @@ public @interface __DirectiveLocationsRelationMutationArguments {
 
   String __directiveRef() default "";
 
-  __DirectiveInput1 __directive() default @__DirectiveInput1;
+  __DirectiveInput __directive() default @__DirectiveInput;
 
   __DirectiveLocation locationsRef() default __DirectiveLocation.QUERY;
 
@@ -40,9 +40,9 @@ public @interface __DirectiveLocationsRelationMutationArguments {
 
   String __typename() default "__DirectiveLocationsRelation";
 
-  __DirectiveLocationsRelationInput1 input() default @__DirectiveLocationsRelationInput1;
+  __DirectiveLocationsRelationInput input() default @__DirectiveLocationsRelationInput;
 
-  __DirectiveLocationsRelationExpression1 where() default @__DirectiveLocationsRelationExpression1;
+  __DirectiveLocationsRelationExpression where() default @__DirectiveLocationsRelationExpression;
 
   String $id() default "";
 

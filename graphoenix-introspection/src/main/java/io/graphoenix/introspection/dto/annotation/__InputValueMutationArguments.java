@@ -17,7 +17,7 @@ public @interface __InputValueMutationArguments {
 
   String name() default "";
 
-  __TypeInput1 ofType() default @__TypeInput1;
+  __TypeInput ofType() default @__TypeInput;
 
   int fieldId() default 0;
 
@@ -25,7 +25,7 @@ public @interface __InputValueMutationArguments {
 
   String description() default "";
 
-  __TypeInput1 type() default @__TypeInput1;
+  __TypeInput type() default @__TypeInput;
 
   String defaultValue() default "";
 
@@ -51,9 +51,9 @@ public @interface __InputValueMutationArguments {
 
   String typeName() default "";
 
-  __InputValueInput1 input() default @__InputValueInput1;
+  __InputValueInput input() default @__InputValueInput;
 
-  __InputValueExpression1 where() default @__InputValueExpression1;
+  __InputValueExpression where() default @__InputValueExpression;
 
   String $id() default "";
 

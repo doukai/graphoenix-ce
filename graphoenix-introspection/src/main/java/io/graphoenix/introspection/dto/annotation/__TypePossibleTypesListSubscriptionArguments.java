@@ -1,7 +1,7 @@
 package io.graphoenix.introspection.dto.annotation;
 
-import io.graphoenix.core.dto.annotation.IntExpression1;
-import io.graphoenix.core.dto.annotation.StringExpression1;
+import io.graphoenix.core.dto.annotation.IntExpression;
+import io.graphoenix.core.dto.annotation.StringExpression;
 import io.graphoenix.core.dto.enumType.Conditional;
 import jakarta.annotation.Generated;
 import java.lang.String;
@@ -16,35 +16,35 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface __TypePossibleTypesListSubscriptionArguments {
-  StringExpression1 id() default @StringExpression1;
+  StringExpression id() default @StringExpression;
 
-  StringExpression1 typeRef() default @StringExpression1;
+  StringExpression typeRef() default @StringExpression;
 
-  __TypeExpression1 type() default @__TypeExpression1;
+  __TypeExpression type() default @__TypeExpression;
 
-  StringExpression1 possibleTypeRef() default @StringExpression1;
+  StringExpression possibleTypeRef() default @StringExpression;
 
-  __TypeExpression1 possibleType() default @__TypeExpression1;
+  __TypeExpression possibleType() default @__TypeExpression;
 
   boolean includeDeprecated() default false;
 
-  IntExpression1 version() default @IntExpression1;
+  IntExpression version() default @IntExpression;
 
-  IntExpression1 realmId() default @IntExpression1;
+  IntExpression realmId() default @IntExpression;
 
-  StringExpression1 createUserId() default @StringExpression1;
+  StringExpression createUserId() default @StringExpression;
 
-  StringExpression1 createTime() default @StringExpression1;
+  StringExpression createTime() default @StringExpression;
 
-  StringExpression1 updateUserId() default @StringExpression1;
+  StringExpression updateUserId() default @StringExpression;
 
-  StringExpression1 updateTime() default @StringExpression1;
+  StringExpression updateTime() default @StringExpression;
 
-  StringExpression1 createGroupId() default @StringExpression1;
+  StringExpression createGroupId() default @StringExpression;
 
-  StringExpression1 __typename() default @StringExpression1;
+  StringExpression __typename() default @StringExpression;
 
-  __TypePossibleTypesOrderBy1 orderBy() default @__TypePossibleTypesOrderBy1;
+  __TypePossibleTypesOrderBy orderBy() default @__TypePossibleTypesOrderBy;
 
   String[] groupBy() default {};
 
@@ -52,7 +52,7 @@ public @interface __TypePossibleTypesListSubscriptionArguments {
 
   Conditional cond() default Conditional.AND;
 
-  __TypePossibleTypesExpression1[] exs() default {};
+  __TypePossibleTypesExpression[] exs() default {};
 
   int first() default 0;
 

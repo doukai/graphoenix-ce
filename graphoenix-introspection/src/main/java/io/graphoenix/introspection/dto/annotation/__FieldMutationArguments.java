@@ -17,13 +17,13 @@ public @interface __FieldMutationArguments {
 
   String name() default "";
 
-  __TypeInput1 ofType() default @__TypeInput1;
+  __TypeInput ofType() default @__TypeInput;
 
   String description() default "";
 
-  __InputValueInput1[] args() default {};
+  __InputValueInput[] args() default {};
 
-  __TypeInput1 type() default @__TypeInput1;
+  __TypeInput type() default @__TypeInput;
 
   String deprecationReason() default "";
 
@@ -49,9 +49,9 @@ public @interface __FieldMutationArguments {
 
   String typeName() default "";
 
-  __FieldInput1 input() default @__FieldInput1;
+  __FieldInput input() default @__FieldInput;
 
-  __FieldExpression1 where() default @__FieldExpression1;
+  __FieldExpression where() default @__FieldExpression;
 
   String $id() default "";
 

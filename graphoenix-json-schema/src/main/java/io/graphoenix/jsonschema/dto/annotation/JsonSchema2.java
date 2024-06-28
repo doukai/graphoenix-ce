@@ -47,4 +47,36 @@ public @interface JsonSchema2 {
   int maxItems() default 0;
 
   boolean uniqueItems() default false;
+
+  String $minLength() default "";
+
+  String $maxLength() default "";
+
+  String $pattern() default "";
+
+  String $format() default "";
+
+  String $contentMediaType() default "";
+
+  String $contentEncoding() default "";
+
+  String $minimum() default "";
+
+  String $exclusiveMinimum() default "";
+
+  String $maximum() default "";
+
+  String $exclusiveMaximum() default "";
+
+  String $multipleOf() default "";
+
+  String $const() default "";
+
+  String $enum() default "";
+
+  String $minItems() default "";
+
+  String $maxItems() default "";
+
+  String $uniqueItems() default "";
 }

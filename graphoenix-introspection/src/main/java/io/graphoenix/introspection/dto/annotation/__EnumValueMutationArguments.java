@@ -17,7 +17,7 @@ public @interface __EnumValueMutationArguments {
 
   String name() default "";
 
-  __TypeInput1 ofType() default @__TypeInput1;
+  __TypeInput ofType() default @__TypeInput;
 
   String description() default "";
 
@@ -43,9 +43,9 @@ public @interface __EnumValueMutationArguments {
 
   String ofTypeName() default "";
 
-  __EnumValueInput1 input() default @__EnumValueInput1;
+  __EnumValueInput input() default @__EnumValueInput;
 
-  __EnumValueExpression1 where() default @__EnumValueExpression1;
+  __EnumValueExpression where() default @__EnumValueExpression;
 
   String $id() default "";
 

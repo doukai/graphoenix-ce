@@ -1,7 +1,7 @@
 package io.graphoenix.introspection.dto.annotation;
 
-import io.graphoenix.core.dto.annotation.IntExpression2;
-import io.graphoenix.core.dto.annotation.StringExpression2;
+import io.graphoenix.core.dto.annotation.IntExpression;
+import io.graphoenix.core.dto.annotation.StringExpression;
 import io.graphoenix.core.dto.enumType.Conditional;
 import jakarta.annotation.Generated;
 import java.lang.String;
@@ -17,34 +17,34 @@ import org.eclipse.microprofile.graphql.Name;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface __TypeInterfacesExpression1 {
-  StringExpression2 id() default @StringExpression2;
+  StringExpression id() default @StringExpression;
 
-  StringExpression2 typeRef() default @StringExpression2;
+  StringExpression typeRef() default @StringExpression;
 
   __TypeExpression2 type() default @__TypeExpression2;
 
-  StringExpression2 interfaceRef() default @StringExpression2;
+  StringExpression interfaceRef() default @StringExpression;
 
   @Name("interface")
   __TypeExpression2 _interface() default @__TypeExpression2;
 
   boolean includeDeprecated() default false;
 
-  IntExpression2 version() default @IntExpression2;
+  IntExpression version() default @IntExpression;
 
-  IntExpression2 realmId() default @IntExpression2;
+  IntExpression realmId() default @IntExpression;
 
-  StringExpression2 createUserId() default @StringExpression2;
+  StringExpression createUserId() default @StringExpression;
 
-  StringExpression2 createTime() default @StringExpression2;
+  StringExpression createTime() default @StringExpression;
 
-  StringExpression2 updateUserId() default @StringExpression2;
+  StringExpression updateUserId() default @StringExpression;
 
-  StringExpression2 updateTime() default @StringExpression2;
+  StringExpression updateTime() default @StringExpression;
 
-  StringExpression2 createGroupId() default @StringExpression2;
+  StringExpression createGroupId() default @StringExpression;
 
-  StringExpression2 __typename() default @StringExpression2;
+  StringExpression __typename() default @StringExpression;
 
   boolean not() default false;
 

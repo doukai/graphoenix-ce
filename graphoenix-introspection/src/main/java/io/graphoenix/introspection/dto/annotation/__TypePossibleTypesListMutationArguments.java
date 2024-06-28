@@ -17,11 +17,11 @@ public @interface __TypePossibleTypesListMutationArguments {
 
   String typeRef() default "";
 
-  __TypeInput1 type() default @__TypeInput1;
+  __TypeInput type() default @__TypeInput;
 
   String possibleTypeRef() default "";
 
-  __TypeInput1 possibleType() default @__TypeInput1;
+  __TypeInput possibleType() default @__TypeInput;
 
   boolean isDeprecated() default false;
 
@@ -41,9 +41,9 @@ public @interface __TypePossibleTypesListMutationArguments {
 
   String __typename() default "__TypePossibleTypes";
 
-  __TypePossibleTypesInput1[] list() default {};
+  __TypePossibleTypesInput[] list() default {};
 
-  __TypePossibleTypesExpression1 where() default @__TypePossibleTypesExpression1;
+  __TypePossibleTypesExpression where() default @__TypePossibleTypesExpression;
 
   String $id() default "";
 

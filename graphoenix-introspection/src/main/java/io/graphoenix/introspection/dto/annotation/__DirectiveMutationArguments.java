@@ -16,13 +16,13 @@ import java.lang.annotation.Target;
 public @interface __DirectiveMutationArguments {
   String name() default "";
 
-  __SchemaInput1 ofSchema() default @__SchemaInput1;
+  __SchemaInput ofSchema() default @__SchemaInput;
 
   String description() default "";
 
   __DirectiveLocation[] locations() default {};
 
-  __InputValueInput1[] args() default {};
+  __InputValueInput[] args() default {};
 
   boolean isRepeatable() default false;
 
@@ -46,11 +46,11 @@ public @interface __DirectiveMutationArguments {
 
   int schemaId() default 0;
 
-  __DirectiveLocationsRelationInput1[] __directiveLocationsRelation() default {};
+  __DirectiveLocationsRelationInput[] __directiveLocationsRelation() default {};
 
-  __DirectiveInput1 input() default @__DirectiveInput1;
+  __DirectiveInput input() default @__DirectiveInput;
 
-  __DirectiveExpression1 where() default @__DirectiveExpression1;
+  __DirectiveExpression where() default @__DirectiveExpression;
 
   String $name() default "";
 

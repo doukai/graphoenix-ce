@@ -1,8 +1,8 @@
 package io.graphoenix.introspection.dto.annotation;
 
-import io.graphoenix.core.dto.annotation.IntExpression1;
-import io.graphoenix.core.dto.annotation.StringExpression1;
-import io.graphoenix.core.dto.annotation.__TypeKindExpression1;
+import io.graphoenix.core.dto.annotation.IntExpression;
+import io.graphoenix.core.dto.annotation.StringExpression;
+import io.graphoenix.core.dto.annotation.__TypeKindExpression;
 import io.graphoenix.core.dto.enumType.Conditional;
 import jakarta.annotation.Generated;
 import java.lang.String;
@@ -17,53 +17,53 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface __TypeConnectionSubscriptionArguments {
-  StringExpression1 name() default @StringExpression1;
+  StringExpression name() default @StringExpression;
 
-  __SchemaExpression1 ofSchema() default @__SchemaExpression1;
+  __SchemaExpression ofSchema() default @__SchemaExpression;
 
-  __TypeKindExpression1 kind() default @__TypeKindExpression1;
+  __TypeKindExpression kind() default @__TypeKindExpression;
 
-  StringExpression1 description() default @StringExpression1;
+  StringExpression description() default @StringExpression;
 
-  __FieldExpression1 fields() default @__FieldExpression1;
+  __FieldExpression fields() default @__FieldExpression;
 
-  __TypeExpression1 interfaces() default @__TypeExpression1;
+  __TypeExpression interfaces() default @__TypeExpression;
 
-  __TypeExpression1 possibleTypes() default @__TypeExpression1;
+  __TypeExpression possibleTypes() default @__TypeExpression;
 
-  __EnumValueExpression1 enumValues() default @__EnumValueExpression1;
+  __EnumValueExpression enumValues() default @__EnumValueExpression;
 
-  __InputValueExpression1 inputFields() default @__InputValueExpression1;
+  __InputValueExpression inputFields() default @__InputValueExpression;
 
-  __TypeExpression1 ofType() default @__TypeExpression1;
+  __TypeExpression ofType() default @__TypeExpression;
 
   boolean includeDeprecated() default false;
 
-  IntExpression1 version() default @IntExpression1;
+  IntExpression version() default @IntExpression;
 
-  IntExpression1 realmId() default @IntExpression1;
+  IntExpression realmId() default @IntExpression;
 
-  StringExpression1 createUserId() default @StringExpression1;
+  StringExpression createUserId() default @StringExpression;
 
-  StringExpression1 createTime() default @StringExpression1;
+  StringExpression createTime() default @StringExpression;
 
-  StringExpression1 updateUserId() default @StringExpression1;
+  StringExpression updateUserId() default @StringExpression;
 
-  StringExpression1 updateTime() default @StringExpression1;
+  StringExpression updateTime() default @StringExpression;
 
-  StringExpression1 createGroupId() default @StringExpression1;
+  StringExpression createGroupId() default @StringExpression;
 
-  StringExpression1 __typename() default @StringExpression1;
+  StringExpression __typename() default @StringExpression;
 
-  IntExpression1 schemaId() default @IntExpression1;
+  IntExpression schemaId() default @IntExpression;
 
-  StringExpression1 ofTypeName() default @StringExpression1;
+  StringExpression ofTypeName() default @StringExpression;
 
-  __TypeInterfacesExpression1 __typeInterfaces() default @__TypeInterfacesExpression1;
+  __TypeInterfacesExpression __typeInterfaces() default @__TypeInterfacesExpression;
 
-  __TypePossibleTypesExpression1 __typePossibleTypes() default @__TypePossibleTypesExpression1;
+  __TypePossibleTypesExpression __typePossibleTypes() default @__TypePossibleTypesExpression;
 
-  __TypeOrderBy1 orderBy() default @__TypeOrderBy1;
+  __TypeOrderBy orderBy() default @__TypeOrderBy;
 
   String[] groupBy() default {};
 
@@ -71,7 +71,7 @@ public @interface __TypeConnectionSubscriptionArguments {
 
   Conditional cond() default Conditional.AND;
 
-  __TypeExpression1[] exs() default {};
+  __TypeExpression[] exs() default {};
 
   int first() default 0;
 
