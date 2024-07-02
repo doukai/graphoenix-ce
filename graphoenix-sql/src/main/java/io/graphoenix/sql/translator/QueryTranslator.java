@@ -462,9 +462,12 @@ public class QueryTranslator {
             );
         } else {
             if (fieldDefinition.isFunctionField()) {
-                Function function = new Function()
+                Expression function = new Function()
                         .withName(fieldDefinition.getFunctionNameOrError())
                         .withParameters(graphqlFieldToColumn(objectType.getName(), objectType.getField(fieldDefinition.getFunctionFieldOrError()).getName(), level));
+                if (over) {
+                    function = new AnalyticExpression((Function) function).withType(OVER);
+                }
                 if (fieldDefinition.getFunctionNameOrError().equals("COUNT")) {
                     function = new Function()
                             .withName("CONVERT")
@@ -472,9 +475,6 @@ public class QueryTranslator {
                                     function,
                                     new HexValue("INT")
                             );
-                }
-                if (over) {
-                    return new AnalyticExpression(function).withType(OVER);
                 }
                 return function;
             } else {
