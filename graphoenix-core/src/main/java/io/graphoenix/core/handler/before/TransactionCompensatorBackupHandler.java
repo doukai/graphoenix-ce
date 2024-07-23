@@ -20,7 +20,8 @@ import io.graphoenix.spi.handler.OperationBeforeHandler;
 import io.graphoenix.spi.handler.PackageFetchHandler;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 import jakarta.json.JsonValue;
@@ -37,7 +38,6 @@ import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST;
 import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
-import static io.nozdormu.spi.utils.CDIUtil.getNamedInstanceMap;
 
 @ApplicationScoped
 @Priority(TransactionCompensatorBackupHandler.TRANSACTION_COMPENSATOR_BACKUP_HANDLER_PRIORITY)
@@ -50,16 +50,14 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
     private final PackageConfig packageConfig;
     private final MutationConfig mutationConfig;
     private final Provider<Mono<TransactionCompensator>> transactionCompensatorProvider;
-    private final Map<String, PackageFetchHandler> packageFetchHandlerMap;
 
     @Inject
-    public TransactionCompensatorBackupHandler(DocumentManager documentManager, PackageManager packageManager, MutationConfig mutationConfig, PackageConfig packageConfig, Provider<Mono<TransactionCompensator>> transactionCompensatorProvider, Instance<PackageFetchHandler> fetchHandlerInstance) {
+    public TransactionCompensatorBackupHandler(DocumentManager documentManager, PackageManager packageManager, MutationConfig mutationConfig, PackageConfig packageConfig, Provider<Mono<TransactionCompensator>> transactionCompensatorProvider) {
         this.documentManager = documentManager;
         this.packageManager = packageManager;
         this.packageConfig = packageConfig;
         this.mutationConfig = mutationConfig;
         this.transactionCompensatorProvider = transactionCompensatorProvider;
-        this.packageFetchHandlerMap = getNamedInstanceMap(fetchHandlerInstance);
     }
 
     @Override
@@ -96,7 +94,7 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                                             Flux
                                                     .fromIterable(packageEntries.getValue().entrySet())
                                                     .flatMap(protocolEntries ->
-                                                            packageFetchHandlerMap.get(protocolEntries.getKey())
+                                                            CDI.current().select(PackageFetchHandler.class, NamedLiteral.of(protocolEntries.getKey())).get()
                                                                     .request(
                                                                             packageEntries.getKey(),
                                                                             new Operation()

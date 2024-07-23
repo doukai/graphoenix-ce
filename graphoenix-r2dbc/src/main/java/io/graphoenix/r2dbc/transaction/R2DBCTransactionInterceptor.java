@@ -1,12 +1,14 @@
 package io.graphoenix.r2dbc.transaction;
 
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
-import io.graphoenix.core.transaction.TransactionInterceptorProcessor;
 import io.graphoenix.r2dbc.connection.ConnectionProvider;
 import io.r2dbc.spi.Connection;
+import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
 import jakarta.transaction.InvalidTransactionException;
 import jakarta.transaction.NotSupportedException;
@@ -25,7 +27,10 @@ import static io.graphoenix.r2dbc.context.TransactionScopeInstanceFactory.TRANSA
 
 @ApplicationScoped
 @Named("r2dbc")
-public class R2DBCTransactionInterceptor implements TransactionInterceptorProcessor {
+@Transactional
+@Priority(0)
+@Interceptor
+public class R2DBCTransactionInterceptor {
 
     private final ConnectionProvider connectionProvider;
 
@@ -34,7 +39,7 @@ public class R2DBCTransactionInterceptor implements TransactionInterceptorProces
         this.connectionProvider = connectionProvider;
     }
 
-    @Override
+    @AroundInvoke
     @SuppressWarnings({"unchecked"})
     public Object aroundInvoke(InvocationContext invocationContext) {
         Transactional.TxType txType;

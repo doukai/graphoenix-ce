@@ -15,7 +15,8 @@ import io.graphoenix.spi.handler.OperationBeforeHandler;
 import io.graphoenix.spi.handler.PackageFetchHandler;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
@@ -36,7 +37,6 @@ import java.util.stream.Stream;
 import static io.graphoenix.core.handler.before.ConnectionSplitter.CONNECTION_SPLITTER_PRIORITY;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
-import static io.nozdormu.spi.utils.CDIUtil.getNamedInstanceMap;
 
 @ApplicationScoped
 @Priority(MutationBeforeFetchHandler.MUTATION_BEFORE_FETCH_HANDLER_PRIORITY)
@@ -46,13 +46,12 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
 
     private final DocumentManager documentManager;
     private final JsonProvider jsonProvider;
-    private final Map<String, PackageFetchHandler> packageFetchHandlerMap;
+    ;
 
     @Inject
-    public MutationBeforeFetchHandler(DocumentManager documentManager, JsonProvider jsonProvider, Instance<PackageFetchHandler> fetchHandlerInstance) {
+    public MutationBeforeFetchHandler(DocumentManager documentManager, JsonProvider jsonProvider) {
         this.documentManager = documentManager;
         this.jsonProvider = jsonProvider;
-        this.packageFetchHandlerMap = getNamedInstanceMap(fetchHandlerInstance);
     }
 
     @Override
@@ -83,7 +82,7 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
                         Flux
                                 .fromIterable(packageEntries.getValue().entrySet())
                                 .flatMap(protocolEntries ->
-                                        packageFetchHandlerMap.get(protocolEntries.getKey())
+                                        CDI.current().select(PackageFetchHandler.class, NamedLiteral.of(protocolEntries.getKey())).get()
                                                 .request(
                                                         packageEntries.getKey(),
                                                         new Operation()

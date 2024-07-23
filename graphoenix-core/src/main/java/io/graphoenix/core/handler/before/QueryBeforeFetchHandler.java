@@ -19,6 +19,8 @@ import io.graphoenix.spi.handler.PackageFetchHandler;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
@@ -37,7 +39,6 @@ import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST;
 import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
-import static io.nozdormu.spi.utils.CDIUtil.getNamedInstanceMap;
 
 @ApplicationScoped
 @Priority(QueryBeforeFetchHandler.QUERY_BEFORE_FETCH_HANDLER_PRIORITY)
@@ -47,13 +48,11 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler, FetchBef
 
     private final DocumentManager documentManager;
     private final JsonProvider jsonProvider;
-    private final Map<String, PackageFetchHandler> packageFetchHandlerMap;
 
     @Inject
-    public QueryBeforeFetchHandler(DocumentManager documentManager, JsonProvider jsonProvider, Instance<PackageFetchHandler> fetchHandlerInstance) {
+    public QueryBeforeFetchHandler(DocumentManager documentManager, JsonProvider jsonProvider) {
         this.documentManager = documentManager;
         this.jsonProvider = jsonProvider;
-        this.packageFetchHandlerMap = getNamedInstanceMap(fetchHandlerInstance);
     }
 
     @Override
@@ -88,7 +87,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler, FetchBef
                         Flux
                                 .fromIterable(packageEntries.getValue().entrySet())
                                 .flatMap(protocolEntries ->
-                                        packageFetchHandlerMap.get(protocolEntries.getKey())
+                                        CDI.current().select(PackageFetchHandler.class, NamedLiteral.of(protocolEntries.getKey())).get()
                                                 .request(
                                                         packageEntries.getKey(),
                                                         new Operation()

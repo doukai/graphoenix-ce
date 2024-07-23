@@ -17,7 +17,8 @@ import io.graphoenix.spi.handler.OperationAfterHandler;
 import io.graphoenix.spi.handler.PackageFetchHandler;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
@@ -36,7 +37,6 @@ import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST;
 import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
-import static io.nozdormu.spi.utils.CDIUtil.getNamedInstanceMap;
 import static jakarta.json.JsonValue.EMPTY_JSON_OBJECT;
 import static jakarta.json.JsonValue.NULL;
 
@@ -50,15 +50,13 @@ public class QueryAfterFetchHandler implements OperationAfterHandler, FetchAfter
     private final PackageManager packageManager;
     private final PackageConfig packageConfig;
     private final JsonProvider jsonProvider;
-    private final Map<String, PackageFetchHandler> packageFetchHandlerMap;
 
     @Inject
-    public QueryAfterFetchHandler(DocumentManager documentManager, PackageManager packageManager, PackageConfig packageConfig, JsonProvider jsonProvider, Instance<PackageFetchHandler> fetchHandlerInstance) {
+    public QueryAfterFetchHandler(DocumentManager documentManager, PackageManager packageManager, PackageConfig packageConfig, JsonProvider jsonProvider) {
         this.documentManager = documentManager;
         this.packageManager = packageManager;
         this.packageConfig = packageConfig;
         this.jsonProvider = jsonProvider;
-        this.packageFetchHandlerMap = getNamedInstanceMap(fetchHandlerInstance);
     }
 
     @Override
@@ -101,7 +99,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler, FetchAfter
                                                 )
                                                 .filter(fieldList -> !fieldList.isEmpty())
                                                 .flatMap(fieldList ->
-                                                        packageFetchHandlerMap.get(protocolEntries.getKey())
+                                                        CDI.current().select(PackageFetchHandler.class, NamedLiteral.of(protocolEntries.getKey())).get()
                                                                 .request(
                                                                         packageEntries.getKey(),
                                                                         new Operation()

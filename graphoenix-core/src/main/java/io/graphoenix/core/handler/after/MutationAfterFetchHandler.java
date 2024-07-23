@@ -20,7 +20,8 @@ import io.graphoenix.spi.handler.OperationAfterHandler;
 import io.graphoenix.spi.handler.PackageFetchHandler;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
@@ -30,7 +31,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -40,7 +40,6 @@ import java.util.stream.Stream;
 import static io.graphoenix.core.handler.after.ConnectionBuilder.CONNECTION_BUILDER_PRIORITY;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST;
-import static io.nozdormu.spi.utils.CDIUtil.getNamedInstanceMap;
 
 @ApplicationScoped
 @Priority(MutationAfterFetchHandler.MUTATION_AFTER_FETCH_HANDLER_PRIORITY)
@@ -52,15 +51,13 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
     private final PackageManager packageManager;
     private final PackageConfig packageConfig;
     private final JsonProvider jsonProvider;
-    private final Map<String, PackageFetchHandler> packageFetchHandlerMap;
 
     @Inject
-    public MutationAfterFetchHandler(DocumentManager documentManager, PackageManager packageManager, PackageConfig packageConfig, JsonProvider jsonProvider, Instance<PackageFetchHandler> fetchHandlerInstance) {
+    public MutationAfterFetchHandler(DocumentManager documentManager, PackageManager packageManager, PackageConfig packageConfig, JsonProvider jsonProvider) {
         this.documentManager = documentManager;
         this.packageManager = packageManager;
         this.packageConfig = packageConfig;
         this.jsonProvider = jsonProvider;
-        this.packageFetchHandlerMap = getNamedInstanceMap(fetchHandlerInstance);
     }
 
     @Override
@@ -99,7 +96,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                 .flatMap(packageEntries ->
                         Flux.fromIterable(packageEntries.getValue().entrySet())
                                 .flatMap(protocolEntries ->
-                                        packageFetchHandlerMap.get(protocolEntries.getKey())
+                                        CDI.current().select(PackageFetchHandler.class, NamedLiteral.of(protocolEntries.getKey())).get()
                                                 .request(
                                                         packageEntries.getKey(),
                                                         new Operation()
