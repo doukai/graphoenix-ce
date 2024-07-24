@@ -5,6 +5,7 @@ import io.graphoenix.http.server.context.RequestScopeInstanceFactory;
 import io.graphoenix.http.server.handler.GetRequestHandler;
 import io.graphoenix.http.server.handler.PostRequestHandler;
 import io.graphoenix.spi.bootstrap.Runner;
+import io.graphoenix.spi.constant.Hammurabi;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpMethod;
@@ -20,10 +21,8 @@ import reactor.netty.http.HttpOperations;
 import reactor.netty.http.server.HttpServer;
 
 @ApplicationScoped
-@Named(GraphQLHttpServer.PROTOCOL)
+@Named(Hammurabi.ENUM_PROTOCOL_ENUM_VALUE_HTTP)
 public class GraphQLHttpServer implements Runner {
-
-    public static final String PROTOCOL = "http";
 
     private final HttpServerConfig httpServerConfig;
     private final GetRequestHandler getRequestHandler;
@@ -40,7 +39,7 @@ public class GraphQLHttpServer implements Runner {
 
     @Override
     public String protocol() {
-        return PROTOCOL;
+        return Hammurabi.ENUM_PROTOCOL_ENUM_VALUE_HTTP;
     }
 
     @Override

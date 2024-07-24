@@ -2,6 +2,7 @@ package io.graphoenix.grpc.server;
 
 import io.graphoenix.grpc.server.config.GrpcServerConfig;
 import io.graphoenix.spi.bootstrap.Runner;
+import io.graphoenix.spi.constant.Hammurabi;
 import io.grpc.Server;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -12,10 +13,8 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 @ApplicationScoped
-@Named(GraphQLGrpcServer.PROTOCOL)
+@Named(Hammurabi.ENUM_PROTOCOL_ENUM_VALUE_GRPC)
 public class GraphQLGrpcServer implements Runner {
-
-    public static final String PROTOCOL = "grpc";
 
     private final Server server;
 
@@ -50,7 +49,7 @@ public class GraphQLGrpcServer implements Runner {
 
     @Override
     public String protocol() {
-        return "grpc";
+        return Hammurabi.ENUM_PROTOCOL_ENUM_VALUE_GRPC;
     }
 
     @Override

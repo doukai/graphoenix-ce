@@ -32,7 +32,7 @@ public class PackageManager {
     private final Set<String> seedMembers;
 
     @Inject
-    public PackageManager(PackageConfig packageConfig, PackageProvider packageProvider) {
+    public PackageManager(PackageConfig packageConfig) {
         this.packageConfig = packageConfig;
         //noinspection unchecked
         this.seedMembers = Stream.ofNullable(packageConfig.getMembers())

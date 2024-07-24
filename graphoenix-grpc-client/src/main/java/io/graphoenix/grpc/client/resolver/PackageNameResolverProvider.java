@@ -1,6 +1,7 @@
 package io.graphoenix.grpc.client.resolver;
 
 import io.graphoenix.core.handler.PackageManager;
+import io.graphoenix.spi.constant.Hammurabi;
 import io.grpc.EquivalentAddressGroup;
 import io.grpc.NameResolver;
 import io.grpc.NameResolverProvider;
@@ -52,7 +53,7 @@ public class PackageNameResolverProvider extends NameResolverProvider {
 
             private void resolve() {
                 try {
-                    List<EquivalentAddressGroup> addresses = packageManager.getURLList(targetUri.getHost(), "grpc").stream()
+                    List<EquivalentAddressGroup> addresses = packageManager.getURLList(targetUri.getHost(), Hammurabi.ENUM_PROTOCOL_ENUM_VALUE_GRPC).stream()
                             .map(packageURL -> new InetSocketAddress(packageURL.getHost(), packageURL.getPort()))
                             .map(EquivalentAddressGroup::new)
                             .collect(Collectors.toList());

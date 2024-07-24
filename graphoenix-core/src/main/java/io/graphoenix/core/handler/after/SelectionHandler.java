@@ -187,24 +187,58 @@ public class SelectionHandler implements OperationAfterHandler {
             Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
             if (fieldTypeDefinition.isObject()) {
                 if (fieldDefinition.getType().hasList()) {
-                    return IntStream.range(0, jsonValue.asJsonArray().size())
-                            .mapToObj(index ->
+                    return Stream
+                            .concat(
+                                    IntStream.range(0, jsonValue.asJsonArray().size())
+                                            .mapToObj(index ->
+                                                    jsonValue.asJsonArray().getJsonObject(index).keySet().stream()
+                                                            .filter(key ->
+                                                                    field.getFields().stream()
+                                                                            .map(item -> Optional.ofNullable(item.getAlias()).orElseGet(item::getName))
+                                                                            .noneMatch(alias -> alias.equals(key))
+                                                            )
+                                                            .map(key ->
+                                                                    jsonProvider.createObjectBuilder()
+                                                                            .add("op", "remove")
+                                                                            .add("path", path + "/" + index + "/" + key)
+                                                                            .build()
+                                                            )
+                                            )
+                                            .flatMap(stream -> stream),
+                                    IntStream.range(0, jsonValue.asJsonArray().size())
+                                            .mapToObj(index ->
+                                                    Stream.ofNullable(field.getFields())
+                                                            .flatMap(Collection::stream)
+                                                            .flatMap(subField -> {
+                                                                        String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
+                                                                        return hideField(path + "/" + index + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonArray().get(index).asJsonObject().get(subSelectionName));
+                                                                    }
+                                                            )
+                                            )
+                                            .flatMap(stream -> stream)
+                            );
+                } else {
+                    return Stream
+                            .concat(
+                                    jsonValue.asJsonObject().keySet().stream()
+                                            .filter(key ->
+                                                    field.getFields().stream()
+                                                            .map(item -> Optional.ofNullable(item.getAlias()).orElseGet(item::getName))
+                                                            .noneMatch(alias -> alias.equals(key))
+                                            )
+                                            .map(key ->
+                                                    jsonProvider.createObjectBuilder()
+                                                            .add("op", "remove")
+                                                            .add("path", path + "/" + key)
+                                                            .build()
+                                            ),
                                     Stream.ofNullable(field.getFields())
                                             .flatMap(Collection::stream)
                                             .flatMap(subField -> {
                                                         String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
-                                                        return hideField(path + "/" + index + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonArray().get(index).asJsonObject().get(subSelectionName));
+                                                        return hideField(path + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonObject().get(subSelectionName));
                                                     }
                                             )
-                            )
-                            .flatMap(stream -> stream);
-                } else {
-                    return Stream.ofNullable(field.getFields())
-                            .flatMap(Collection::stream)
-                            .flatMap(subField -> {
-                                        String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
-                                        return hideField(path + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonObject().get(subSelectionName));
-                                    }
                             );
                 }
             } else {
