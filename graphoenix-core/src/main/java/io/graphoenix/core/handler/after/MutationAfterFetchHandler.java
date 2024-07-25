@@ -297,7 +297,8 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                     String fetchWithFrom = fieldDefinition.getFetchWithFromOrError();
                     String fetchWithTo = fieldDefinition.getFetchWithToOrError();
                     if (fieldDefinition.getType().hasList()) {
-                        return valueWithVariable.asArray().stream()
+                        return valueWithVariable.asArray().getValueWithVariables().stream()
+                                .filter(item -> !item.asObject().containsKey(INPUT_VALUE_WHERE_NAME) || item.asObject().keySet().size() > 1)
                                 .map(item ->
                                         jsonProvider.createObjectBuilder()
                                                 .add(fetchWithFrom, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fetchWithType.getField(fetchWithFrom)))
@@ -329,6 +330,9 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                         }
                                 );
                     } else {
+                        if (valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME) && valueWithVariable.asObject().keySet().size() == 1) {
+                            return Stream.empty();
+                        }
                         String id;
                         if (valueWithVariable.asJsonObject().containsKey(idField.getName())) {
                             id = getId(valueWithVariable.asJsonObject().get(idField.getName()));
@@ -360,7 +364,8 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                     String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
                     String fetchTo = fieldDefinition.getFetchToOrError();
                     if (fieldDefinition.getType().hasList()) {
-                        return valueWithVariable.asArray().stream()
+                        return valueWithVariable.asArray().getValueWithVariables().stream()
+                                .filter(item -> !item.asObject().containsKey(INPUT_VALUE_WHERE_NAME) || item.asObject().keySet().size() > 1)
                                 .map(item ->
                                         jsonProvider.createObjectBuilder(item.asJsonObject())
                                                 .add(fetchTo, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fieldTypeDefinition.asObject().getField(fetchTo)))
@@ -377,6 +382,9 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                         }
                                 );
                     } else if (!documentManager.isFetchAnchor(objectType, fieldDefinition)) {
+                        if (valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME) && valueWithVariable.asObject().keySet().size() == 1) {
+                            return Stream.empty();
+                        }
                         String id;
                         if (valueWithVariable.asJsonObject().containsKey(idField.getName())) {
                             id = getId(valueWithVariable.asJsonObject().get(idField.getName()));

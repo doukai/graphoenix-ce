@@ -236,6 +236,9 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldDefinition.isFetchField()) {
             if (!fieldDefinition.getType().hasList() && !fieldDefinition.hasFetchWith() && documentManager.isFetchAnchor(objectType, fieldDefinition)) {
+                if (valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME) && valueWithVariable.asObject().keySet().size() == 1) {
+                    return Stream.empty();
+                }
                 String protocol = fieldDefinition.getFetchProtocolOrError().getValue();
                 String fetchFrom = fieldDefinition.getFetchFromOrError();
                 String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
