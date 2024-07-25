@@ -2,6 +2,7 @@ package io.graphoenix.core.handler.before;
 
 import com.google.common.collect.Streams;
 import io.graphoenix.core.handler.DocumentManager;
+import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.core.handler.fetch.FetchItem;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.AbstractDefinition;
@@ -18,7 +19,6 @@ import io.graphoenix.spi.handler.OperationBeforeHandler;
 import io.graphoenix.spi.handler.PackageFetchHandler;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.literal.NamedLiteral;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
@@ -47,11 +47,13 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler, FetchBef
     public static final int QUERY_BEFORE_FETCH_HANDLER_PRIORITY = CONNECTION_SPLITTER_PRIORITY + 400;
 
     private final DocumentManager documentManager;
+    private final PackageManager packageManager;
     private final JsonProvider jsonProvider;
 
     @Inject
-    public QueryBeforeFetchHandler(DocumentManager documentManager, JsonProvider jsonProvider) {
+    public QueryBeforeFetchHandler(DocumentManager documentManager, PackageManager packageManager, JsonProvider jsonProvider) {
         this.documentManager = documentManager;
+        this.packageManager = packageManager;
         this.jsonProvider = jsonProvider;
     }
 
@@ -312,7 +314,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler, FetchBef
                         .addSelection(new Field(fetchWithFrom))
                         .setName(typeNameToFieldName(fetchWithType.getName()) + SUFFIX_LIST);
 
-                return Stream.of(new FetchItem(packageName, protocol, path, fetchField, fetchWithFrom, field, fetchFrom));
+                return Stream.of(new FetchItem(packageName, packageManager.isLocalPackage(fetchWithType) ? ENUM_PROTOCOL_ENUM_VALUE_LOCAL : protocol, path, fetchField, fetchWithFrom, field, fetchFrom));
             } else {
                 String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
                 String fetchTo = fieldDefinition.getFetchToOrError();

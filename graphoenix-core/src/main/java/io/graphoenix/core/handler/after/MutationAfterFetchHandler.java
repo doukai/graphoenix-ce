@@ -298,8 +298,54 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                     String fetchWithTo = fieldDefinition.getFetchWithToOrError();
                     if (fieldDefinition.getType().hasList()) {
                         return valueWithVariable.asArray().getValueWithVariables().stream()
-                                .filter(item -> !item.asObject().containsKey(INPUT_VALUE_WHERE_NAME) || item.asObject().keySet().size() > 1)
                                 .map(item ->
+                                        item.asObject().containsKey(INPUT_VALUE_WHERE_NAME) && item.asObject().keySet().size() == 1 ?
+                                                jsonProvider.createObjectBuilder()
+                                                        .add(fetchWithFrom, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fetchWithType.getField(fetchWithFrom)))
+                                                        .add(fetchWithTo, item.asObject().getJsonObject(INPUT_VALUE_WHERE_NAME).getJsonObject(idField.getName()).get(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
+                                                        .build() :
+                                                jsonProvider.createObjectBuilder()
+                                                        .add(fetchWithFrom, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fetchWithType.getField(fetchWithFrom)))
+                                                        .add(
+                                                                fetchWithType.getFields().stream()
+                                                                        .filter(withTypeFieldDefinition ->
+                                                                                Stream
+                                                                                        .concat(
+                                                                                                withTypeFieldDefinition.getMapFrom().stream(),
+                                                                                                withTypeFieldDefinition.getFetchFrom().stream()
+                                                                                        )
+                                                                                        .anyMatch(name -> name.equals(fetchWithTo))
+                                                                        )
+                                                                        .findFirst()
+                                                                        .map(AbstractDefinition::getName)
+                                                                        .orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST.bind(fetchWithTo))),
+                                                                item
+                                                        )
+                                                        .build()
+                                )
+                                .map(item -> {
+                                            String id;
+                                            if (item.asJsonObject().containsKey(idField.getName())) {
+                                                id = getId(item.asJsonObject().get(idField.getName()));
+                                            } else {
+                                                id = UUID.randomUUID().toString();
+                                            }
+                                            return new FetchItem(packageName, ENUM_PROTOCOL_ENUM_VALUE_LOCAL, path, fetchWithType.getName(), item, id, fetchWithType.getIDFieldOrError().getName());
+                                        }
+                                );
+                    } else {
+                        String id;
+                        if (valueWithVariable.asJsonObject().containsKey(idField.getName())) {
+                            id = getId(valueWithVariable.asJsonObject().get(idField.getName()));
+                        } else {
+                            id = UUID.randomUUID().toString();
+                        }
+                        JsonValue mutationJsonValue =
+                                valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME) && valueWithVariable.asObject().keySet().size() == 1 ?
+                                        jsonProvider.createObjectBuilder()
+                                                .add(fetchWithFrom, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fetchWithType.getField(fetchWithFrom)))
+                                                .add(fetchWithTo, valueWithVariable.asObject().getJsonObject(INPUT_VALUE_WHERE_NAME).getJsonObject(idField.getName()).get(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
+                                                .build() :
                                         jsonProvider.createObjectBuilder()
                                                 .add(fetchWithFrom, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fetchWithType.getField(fetchWithFrom)))
                                                 .add(
@@ -315,48 +361,9 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                                 .findFirst()
                                                                 .map(AbstractDefinition::getName)
                                                                 .orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST.bind(fetchWithTo))),
-                                                        item
+                                                        valueWithVariable
                                                 )
-                                                .build()
-                                )
-                                .map(item -> {
-                                            String id;
-                                            if (item.asJsonObject().containsKey(idField.getName())) {
-                                                id = getId(item.asJsonObject().get(idField.getName()));
-                                            } else {
-                                                id = UUID.randomUUID().toString();
-                                            }
-                                            return new FetchItem(packageName, ENUM_PROTOCOL_ENUM_VALUE_LOCAL, path, fetchWithType.getName(), item, id, fetchWithType.getIDFieldOrError().getName());
-                                        }
-                                );
-                    } else {
-                        if (valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME) && valueWithVariable.asObject().keySet().size() == 1) {
-                            return Stream.empty();
-                        }
-                        String id;
-                        if (valueWithVariable.asJsonObject().containsKey(idField.getName())) {
-                            id = getId(valueWithVariable.asJsonObject().get(idField.getName()));
-                        } else {
-                            id = UUID.randomUUID().toString();
-                        }
-                        JsonValue mutationJsonValue = jsonProvider.createObjectBuilder()
-                                .add(fetchWithFrom, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fetchWithType.getField(fetchWithFrom)))
-                                .add(
-                                        fetchWithType.getFields().stream()
-                                                .filter(withTypeFieldDefinition ->
-                                                        Stream
-                                                                .concat(
-                                                                        withTypeFieldDefinition.getMapFrom().stream(),
-                                                                        withTypeFieldDefinition.getFetchFrom().stream()
-                                                                )
-                                                                .anyMatch(name -> name.equals(fetchWithTo))
-                                                )
-                                                .findFirst()
-                                                .map(AbstractDefinition::getName)
-                                                .orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST.bind(fetchWithTo))),
-                                        valueWithVariable
-                                )
-                                .build();
+                                                .build();
                         return Stream.of(new FetchItem(packageName, ENUM_PROTOCOL_ENUM_VALUE_LOCAL, path, fetchWithType.getName(), mutationJsonValue, id, fetchWithType.getIDFieldOrError().getName()));
                     }
                 } else {
