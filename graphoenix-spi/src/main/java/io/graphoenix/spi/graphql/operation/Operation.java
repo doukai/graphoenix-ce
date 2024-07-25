@@ -34,7 +34,7 @@ public class Operation extends AbstractDefinition implements Definition {
     }
 
     public static Operation fromString(String graphQL) {
-        return new Operation(graphqlToOperation(graphQL.replaceAll("\\\\", "")));
+        return new Operation(graphqlToOperation(graphQL));
     }
 
     public Operation(GraphqlParser.OperationDefinitionContext operationDefinitionContext) {
