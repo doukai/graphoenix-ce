@@ -1,5 +1,6 @@
 package io.graphoenix.core.handler.after;
 
+import com.google.common.collect.Streams;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.PackageManager;
@@ -186,18 +187,74 @@ public class QueryAfterFetchHandler implements OperationAfterHandler, FetchAfter
                 }
                 String fetchWithFrom = fieldDefinition.getFetchWithFromOrError();
                 String fetchWithTo = fieldDefinition.getFetchWithToOrError();
+
                 fetchField
                         .setAlias(getAliasFromPath(path))
                         .setArguments(
-                                Map.of(
-                                        fetchWithFrom,
-                                        Map.of(
-                                                INPUT_OPERATOR_INPUT_VALUE_OPR_NAME,
-                                                new EnumValue(INPUT_OPERATOR_INPUT_VALUE_EQ),
-                                                INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
-                                                getId(jsonValue.asJsonObject().get(fetchFrom))
+                                Streams
+                                        .concat(
+                                                Stream.of(
+                                                        new AbstractMap.SimpleEntry<>(
+                                                                fetchWithFrom,
+                                                                Map.of(
+                                                                        INPUT_OPERATOR_INPUT_VALUE_OPR_NAME,
+                                                                        new EnumValue(INPUT_OPERATOR_INPUT_VALUE_EQ),
+                                                                        INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
+                                                                        getId(jsonValue.asJsonObject().get(fetchFrom))
+                                                                )
+                                                        )
+                                                ),
+                                                fieldDefinition.getArguments().stream()
+                                                        .filter(inputValue ->
+                                                                Stream.of(INPUT_VALUE_FIRST_NAME, INPUT_VALUE_LAST_NAME, INPUT_VALUE_OFFSET_NAME, INPUT_VALUE_BEFORE_NAME, INPUT_VALUE_AFTER_NAME)
+                                                                        .anyMatch(name -> name.equals(inputValue.getName()))
+                                                        )
+                                                        .flatMap(inputValue ->
+                                                                Stream.ofNullable(field.getArguments())
+                                                                        .flatMap(arguments ->
+                                                                                arguments.getArgumentOrEmpty(inputValue.getName())
+                                                                                        .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
+                                                                        )
+                                                                        .map(valueWithVariable -> new AbstractMap.SimpleEntry<>(inputValue.getName(), valueWithVariable))
+                                                        ),
+                                                Optional
+                                                        .of(
+                                                                fieldDefinition.getArguments().stream()
+                                                                        .filter(inputValue ->
+                                                                                Stream.of(INPUT_VALUE_FIRST_NAME, INPUT_VALUE_LAST_NAME, INPUT_VALUE_OFFSET_NAME, INPUT_VALUE_BEFORE_NAME, INPUT_VALUE_AFTER_NAME)
+                                                                                        .noneMatch(name -> name.equals(inputValue.getName()))
+                                                                        )
+                                                                        .flatMap(inputValue ->
+                                                                                Stream.ofNullable(field.getArguments())
+                                                                                        .flatMap(arguments ->
+                                                                                                arguments.getArgumentOrEmpty(inputValue.getName())
+                                                                                                        .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
+                                                                                        )
+                                                                                        .map(valueWithVariable -> new AbstractMap.SimpleEntry<>(inputValue.getName(), valueWithVariable))
+                                                                        )
+                                                                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y))
+                                                        )
+                                                        .filter(map -> !map.isEmpty())
+                                                        .map(map ->
+                                                                new AbstractMap.SimpleEntry<>(
+                                                                        fetchWithType.getFields().stream()
+                                                                                .filter(withTypeFieldDefinition ->
+                                                                                        Stream
+                                                                                                .concat(
+                                                                                                        withTypeFieldDefinition.getMapFrom().stream(),
+                                                                                                        withTypeFieldDefinition.getFetchFrom().stream()
+                                                                                                )
+                                                                                                .anyMatch(name -> name.equals(fetchWithTo))
+                                                                                )
+                                                                                .findFirst()
+                                                                                .map(AbstractDefinition::getName)
+                                                                                .orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST.bind(fetchWithTo))),
+                                                                        map
+                                                                )
+                                                        )
+                                                        .stream()
                                         )
-                                )
+                                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y))
                         )
                         .addSelection(
                                 fieldDefinition.getFetchTo()
@@ -219,18 +276,6 @@ public class QueryAfterFetchHandler implements OperationAfterHandler, FetchAfter
                                                         .orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST.bind(fetchWithTo)))
                                         )
                                         .orElseGet(() -> new Field(fetchWithTo))
-                                        .setArguments(
-                                                fieldDefinition.getArguments().stream()
-                                                        .flatMap(inputValue ->
-                                                                Stream.ofNullable(field.getArguments())
-                                                                        .flatMap(arguments ->
-                                                                                arguments.getArgumentOrEmpty(inputValue.getName())
-                                                                                        .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
-                                                                        )
-                                                                        .map(valueWithVariable -> new AbstractMap.SimpleEntry<>(inputValue.getName(), valueWithVariable))
-                                                        )
-                                                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y))
-                                        )
                         )
                         .setName(typeNameToFieldName(fetchWithType.getName()) + (fieldDefinition.getType().hasList() ? SUFFIX_LIST : ""));
 
@@ -251,7 +296,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler, FetchAfter
                         )
                         .orElse(fetchWithTo);
 
-                return Stream.of(new FetchItem(packageName, ENUM_PROTOCOL_ENUM_VALUE_LOCAL, path, fetchField, target));
+                return Stream.of(new FetchItem(packageName, packageManager.isLocalPackage(fetchWithType) ? ENUM_PROTOCOL_ENUM_VALUE_LOCAL : packageConfig.getDefaultFetchProtocol(), path, fetchField, target));
             } else {
                 String protocol = fieldDefinition.getFetchProtocolOrError().getValue();
                 String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();

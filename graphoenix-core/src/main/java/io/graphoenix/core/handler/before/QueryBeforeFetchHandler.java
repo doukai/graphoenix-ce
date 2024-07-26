@@ -1,6 +1,7 @@
 package io.graphoenix.core.handler.before;
 
 import com.google.common.collect.Streams;
+import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.core.handler.fetch.FetchItem;
@@ -48,12 +49,14 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler, FetchBef
 
     private final DocumentManager documentManager;
     private final PackageManager packageManager;
+    private final PackageConfig packageConfig;
     private final JsonProvider jsonProvider;
 
     @Inject
-    public QueryBeforeFetchHandler(DocumentManager documentManager, PackageManager packageManager, JsonProvider jsonProvider) {
+    public QueryBeforeFetchHandler(DocumentManager documentManager, PackageManager packageManager, PackageConfig packageConfig, JsonProvider jsonProvider) {
         this.documentManager = documentManager;
         this.packageManager = packageManager;
+        this.packageConfig = packageConfig;
         this.jsonProvider = jsonProvider;
     }
 
@@ -314,7 +317,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler, FetchBef
                         .addSelection(new Field(fetchWithFrom))
                         .setName(typeNameToFieldName(fetchWithType.getName()) + SUFFIX_LIST);
 
-                return Stream.of(new FetchItem(packageName, packageManager.isLocalPackage(fetchWithType) ? ENUM_PROTOCOL_ENUM_VALUE_LOCAL : protocol, path, fetchField, fetchWithFrom, field, fetchFrom));
+                return Stream.of(new FetchItem(packageName, packageManager.isLocalPackage(fetchWithType) ? ENUM_PROTOCOL_ENUM_VALUE_LOCAL : packageConfig.getDefaultFetchProtocol(), path, fetchField, fetchWithFrom, field, fetchFrom));
             } else {
                 String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
                 String fetchTo = fieldDefinition.getFetchToOrError();

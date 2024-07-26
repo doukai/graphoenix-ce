@@ -330,7 +330,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                             } else {
                                                 id = UUID.randomUUID().toString();
                                             }
-                                            return new FetchItem(packageName, ENUM_PROTOCOL_ENUM_VALUE_LOCAL, path, fetchWithType.getName(), item, id, fetchWithType.getIDFieldOrError().getName());
+                                            return new FetchItem(packageName, packageManager.isLocalPackage(fetchWithType) ? ENUM_PROTOCOL_ENUM_VALUE_LOCAL : packageConfig.getDefaultFetchProtocol(), path, fetchWithType.getName(), item, id, fetchWithType.getIDFieldOrError().getName());
                                         }
                                 );
                     } else {
@@ -364,7 +364,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                         valueWithVariable
                                                 )
                                                 .build();
-                        return Stream.of(new FetchItem(packageName, ENUM_PROTOCOL_ENUM_VALUE_LOCAL, path, fetchWithType.getName(), mutationJsonValue, id, fetchWithType.getIDFieldOrError().getName()));
+                        return Stream.of(new FetchItem(packageName, packageManager.isLocalPackage(fetchWithType) ? ENUM_PROTOCOL_ENUM_VALUE_LOCAL : packageConfig.getDefaultFetchProtocol(), path, fetchWithType.getName(), mutationJsonValue, id, fetchWithType.getIDFieldOrError().getName()));
                     }
                 } else {
                     String protocol = fieldDefinition.getFetchProtocolOrError().getValue();
@@ -372,7 +372,6 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                     String fetchTo = fieldDefinition.getFetchToOrError();
                     if (fieldDefinition.getType().hasList()) {
                         return valueWithVariable.asArray().getValueWithVariables().stream()
-                                .filter(item -> !item.asObject().containsKey(INPUT_VALUE_WHERE_NAME) || item.asObject().keySet().size() > 1)
                                 .map(item ->
                                         jsonProvider.createObjectBuilder(item.asJsonObject())
                                                 .add(fetchTo, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fieldTypeDefinition.asObject().getField(fetchTo)))
@@ -389,9 +388,6 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                         }
                                 );
                     } else if (!documentManager.isFetchAnchor(objectType, fieldDefinition)) {
-                        if (valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME) && valueWithVariable.asObject().keySet().size() == 1) {
-                            return Stream.empty();
-                        }
                         String id;
                         if (valueWithVariable.asJsonObject().containsKey(idField.getName())) {
                             id = getId(valueWithVariable.asJsonObject().get(idField.getName()));
@@ -421,7 +417,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                 )
                                 .map(item -> {
                                             String id = UUID.randomUUID().toString();
-                                            return new FetchItem(packageName, ENUM_PROTOCOL_ENUM_VALUE_LOCAL, path, fetchWithType.getName(), item, id, fetchWithType.getIDFieldOrError().getName());
+                                            return new FetchItem(packageName, packageManager.isLocalPackage(fetchWithType) ? ENUM_PROTOCOL_ENUM_VALUE_LOCAL : packageConfig.getDefaultFetchProtocol(), path, fetchWithType.getName(), item, id, fetchWithType.getIDFieldOrError().getName());
                                         }
                                 );
                     }
