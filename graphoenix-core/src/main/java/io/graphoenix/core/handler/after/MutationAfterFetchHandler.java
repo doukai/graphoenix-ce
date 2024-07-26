@@ -226,7 +226,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                         )
                                         ),
                                 jsonValue.asJsonArray().stream()
-                                        .map(item ->
+                                        .flatMap(item ->
                                                 Stream.ofNullable(fieldDefinition.getArguments())
                                                         .flatMap(Collection::stream)
                                                         .flatMap(inputValue ->
@@ -251,7 +251,6 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                                         )
                                                         )
                                         )
-                                        .flatMap(stream -> stream)
                         );
             } else {
                 return Stream.ofNullable(fieldDefinition.getArguments())

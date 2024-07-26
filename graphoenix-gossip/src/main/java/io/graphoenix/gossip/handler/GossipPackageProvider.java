@@ -43,6 +43,16 @@ public class GossipPackageProvider implements PackageProvider {
     }
 
     public void mergeMemberURLs(Member member, List<Map<String, Object>> urls) {
+        List<PackageURL> packageURLList = urls.stream()
+                .map(PackageURL::new)
+                .peek(packageURL -> {
+                            if (packageURL.getHost() == null) {
+                                packageURL.setHost(member.address().host());
+                            }
+                        }
+                )
+                .collect(Collectors.toList());
+
         mergeURLs(
                 Stream
                         .concat(
@@ -50,30 +60,37 @@ public class GossipPackageProvider implements PackageProvider {
                                         .flatMap(protocolMap -> protocolMap.values().stream())
                                         .flatMap(Collection::stream)
                                         .filter(packageURL ->
-                                                !packageURL.getHost().equals(member.address().host()) &&
-                                                        packageURL.getPort() != member.address().port()
+                                                packageURLList.stream()
+                                                        .noneMatch(url ->
+                                                                url.getAuthority().equals(packageURL.getAuthority())
+                                                        )
                                         ),
-                                urls.stream()
-                                        .map(PackageURL::new)
-                                        .peek(packageURL -> {
-                                                    if (packageURL.getHost() == null) {
-                                                        packageURL.setHost(member.address().host());
-                                                    }
-                                                }
-                                        )
+                                packageURLList.stream()
                         )
                         .collect(Collectors.toList())
         );
     }
 
-    public void removeMemberURLs(Member member) {
+    public void removeMemberURLs(Member member, List<Map<String, Object>> urls) {
+        List<PackageURL> packageURLList = urls.stream()
+                .map(PackageURL::new)
+                .peek(packageURL -> {
+                            if (packageURL.getHost() == null) {
+                                packageURL.setHost(member.address().host());
+                            }
+                        }
+                )
+                .collect(Collectors.toList());
+
         mergeURLs(
                 packageProtocolURLListMap.values().stream()
                         .flatMap(protocolMap -> protocolMap.values().stream())
                         .flatMap(Collection::stream)
                         .filter(packageURL ->
-                                !packageURL.getHost().equals(member.address().host()) &&
-                                        packageURL.getPort() != member.address().port()
+                                packageURLList.stream()
+                                        .noneMatch(url ->
+                                                url.getAuthority().equals(packageURL.getAuthority())
+                                        )
                         )
                         .collect(Collectors.toList())
         );

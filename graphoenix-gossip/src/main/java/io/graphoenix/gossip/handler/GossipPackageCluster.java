@@ -3,7 +3,6 @@ package io.graphoenix.gossip.handler;
 import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.gossip.config.GossipConfig;
 import io.graphoenix.spi.bootstrap.Runner;
-import io.nozdormu.spi.context.BeanContext;
 import io.scalecube.cluster.ClusterImpl;
 import io.scalecube.cluster.ClusterMessageHandler;
 import io.scalecube.cluster.membership.MembershipEvent;
@@ -72,7 +71,10 @@ public class GossipPackageCluster implements Runner {
                                         Logger.debug(event.member().toString() + " merged");
                                         break;
                                     case LEAVING:
-                                        gossipPackageProvider.removeMemberURLs(event.member());
+                                        cluster.metadata(event.member())
+                                                .ifPresent(metadata ->
+                                                        gossipPackageProvider.removeMemberURLs(event.member(), (List<Map<String, Object>>) ((Map<String, ?>) metadata).get(URLS_NAME))
+                                                );
                                         Logger.debug(event.member().toString() + " leaving");
                                         break;
                                     case REMOVED:
