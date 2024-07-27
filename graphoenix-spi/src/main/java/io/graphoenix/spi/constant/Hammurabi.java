@@ -151,8 +151,6 @@ public class Hammurabi {
     public static final String DIRECTIVE_OPTIONS_ARGUMENT_PROTOCOL_NAME = "protocol";
 
 
-
-
     public static final String DIRECTIVE_FETCH_NAME = "fetch";
     public static final String DIRECTIVE_FETCH_ARGUMENT_ANCHOR_NAME = "anchor";
     public static final String DIRECTIVE_FETCH_ARGUMENT_WITH_NAME = "with";

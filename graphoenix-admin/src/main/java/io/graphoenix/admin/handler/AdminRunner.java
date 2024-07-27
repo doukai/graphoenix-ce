@@ -20,16 +20,6 @@ public class AdminRunner implements Runner {
     }
 
     @Override
-    public String protocol() {
-        return "admin";
-    }
-
-    @Override
-    public int port() {
-        return adminConfig.getPort();
-    }
-
-    @Override
     public void run() {
         Javalin app = Javalin.create(
                 config -> {
@@ -46,5 +36,10 @@ public class AdminRunner implements Runner {
         );
 
         app.start(port());
+    }
+
+    @Override
+    public int port() {
+        return adminConfig.getPort();
     }
 }

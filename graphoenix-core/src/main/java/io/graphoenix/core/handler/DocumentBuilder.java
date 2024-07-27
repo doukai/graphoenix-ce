@@ -172,7 +172,7 @@ public class DocumentBuilder {
                 .filter(fieldDefinition -> !documentManager.getFieldTypeDefinition(fieldDefinition).isContainer())
                 .filter(fieldDefinition -> !fieldDefinition.isMapField())
                 .filter(fieldDefinition -> !fieldDefinition.isFetchField())
-                .filter(fieldDefinition -> packageManager.isLocalPackage(documentManager.getFieldTypeDefinition(fieldDefinition)))
+                .filter(fieldDefinition -> packageManager.isOwnPackage(documentManager.getFieldTypeDefinition(fieldDefinition)))
                 .filter(fieldDefinition -> !objectType.getName().equals(fieldDefinition.getType().getTypeName().getName()))
                 .forEach(fieldDefinition ->
                         fieldDefinition
@@ -225,7 +225,7 @@ public class DocumentBuilder {
                 .filter(fieldDefinition -> !documentManager.getFieldTypeDefinition(fieldDefinition).isContainer())
                 .filter(fieldDefinition -> !fieldDefinition.isMapField())
                 .filter(fieldDefinition -> !fieldDefinition.isFetchField())
-                .filter(fieldDefinition -> !packageManager.isLocalPackage(documentManager.getFieldTypeDefinition(fieldDefinition)))
+                .filter(fieldDefinition -> !packageManager.isOwnPackage(documentManager.getFieldTypeDefinition(fieldDefinition)))
                 .filter(fieldDefinition -> !objectType.getName().equals(fieldDefinition.getType().getTypeName().getName()))
                 .forEach(fieldDefinition ->
                         fieldDefinition
@@ -244,10 +244,25 @@ public class DocumentBuilder {
                                                         )
                                                 )
                                                 .addArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME, documentManager.getFieldTypeDefinition(fieldDefinition).asObject().getIDFieldOrError().getName())
-                                                .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, fieldDefinition.getProtocol().orElseGet(() -> new EnumValue(packageConfig.getDefaultFetchProtocol())))
                                 )
                 );
         return objectType;
+    }
+
+    public void buildFetchFieldsProtocol() {
+        documentManager.getDocument().getObjectTypes()
+                .flatMap(objectType -> objectType.getFields().stream())
+                .filter(FieldDefinition::isFetchField)
+                .forEach(fieldDefinition ->
+                        fieldDefinition
+                                .getDirective(DIRECTIVE_FETCH_NAME)
+                                .addArgument(
+                                        DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME,
+                                        packageManager.isLocalPackage(documentManager.getFieldTypeDefinition(fieldDefinition)) ?
+                                                new EnumValue(ENUM_PROTOCOL_ENUM_VALUE_LOCAL) :
+                                                fieldDefinition.getProtocol().orElseGet(() -> new EnumValue(packageConfig.getDefaultFetchProtocol()))
+                                )
+                );
     }
 
     public ObjectType buildMapWithObject(ObjectType objectType, FieldDefinition fieldDefinition) {
@@ -350,7 +365,6 @@ public class DocumentBuilder {
                                                                         .addArgument(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME, fieldDefinition.getFetchWithToOrError())
                                                                         .addArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME, fieldDefinition.getFetchToOrError())
                                                                         .addArgument(DIRECTIVE_FETCH_ARGUMENT_ANCHOR_NAME, true)
-                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, fieldDefinition.getFetchProtocolOrError())
                                                         )
                                         ),
                         () -> relationObjectType
@@ -437,7 +451,6 @@ public class DocumentBuilder {
                                                                 new Directive(DIRECTIVE_FETCH_NAME)
                                                                         .addArgument(DIRECTIVE_FETCH_ARGUMENT_FROM_NAME, fieldDefinition.getFetchFromOrError())
                                                                         .addArgument(DIRECTIVE_FETCH_ARGUMENT_TO_NAME, fieldDefinition.getFetchWithFromOrError())
-                                                                        .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, new EnumValue(ENUM_PROTOCOL_ENUM_VALUE_LOCAL))
                                                         )
                                         )
                                 )
@@ -1753,7 +1766,6 @@ public class DocumentBuilder {
                 .forEach(fieldDefinition ->
                         fieldDefinition.getDirective(DIRECTIVE_MAP_NAME)
                                 .setName(DIRECTIVE_FETCH_NAME)
-                                .addArgument(DIRECTIVE_FETCH_ARGUMENT_PROTOCOL_NAME, new EnumValue(ENUM_PROTOCOL_ENUM_VALUE_LOCAL))
                 );
         return document;
     }

@@ -56,6 +56,7 @@ public class ApplicationProcessor extends BaseProcessor {
             configRegister.registerPackage(ApplicationProcessor.class.getClassLoader(), true);
             registerElements(roundEnv);
             registerOperations(roundEnv);
+            documentBuilder.buildFetchFieldsProtocol();
             if (graphQLConfig.getMapToLocalFetch()) {
                 documentBuilder.mapToLocalFetch();
             }

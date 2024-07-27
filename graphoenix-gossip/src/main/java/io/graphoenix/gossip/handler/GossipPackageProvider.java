@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 
 import static io.graphoenix.core.handler.PackageManager.LOAD_BALANCE_ROUND_ROBIN;
 import static io.graphoenix.core.handler.PackageManager.PACKAGE_PROVIDER_GOSSIP_NAME;
+import static io.graphoenix.spi.dto.PackageURL.PORT_NAME;
 
 @ApplicationScoped
 @Named(PACKAGE_PROVIDER_GOSSIP_NAME)
@@ -43,16 +44,6 @@ public class GossipPackageProvider implements PackageProvider {
     }
 
     public void mergeMemberURLs(Member member, List<Map<String, Object>> urls) {
-        List<PackageURL> packageURLList = urls.stream()
-                .map(PackageURL::new)
-                .peek(packageURL -> {
-                            if (packageURL.getHost() == null) {
-                                packageURL.setHost(member.address().host());
-                            }
-                        }
-                )
-                .collect(Collectors.toList());
-
         mergeURLs(
                 Stream
                         .concat(
@@ -60,36 +51,35 @@ public class GossipPackageProvider implements PackageProvider {
                                         .flatMap(protocolMap -> protocolMap.values().stream())
                                         .flatMap(Collection::stream)
                                         .filter(packageURL ->
-                                                packageURLList.stream()
+                                                urls.stream()
                                                         .noneMatch(url ->
-                                                                url.getAuthority().equals(packageURL.getAuthority())
+                                                                member.address().host().equals(packageURL.getHost()) &&
+                                                                        Objects.equals(url.getOrDefault(PORT_NAME, null), packageURL.getPort())
                                                         )
                                         ),
-                                packageURLList.stream()
+                                urls.stream()
+                                        .map(PackageURL::new)
+                                        .peek(packageURL -> {
+                                                    if (packageURL.getHost() == null) {
+                                                        packageURL.setHost(member.address().host());
+                                                    }
+                                                }
+                                        )
                         )
                         .collect(Collectors.toList())
         );
     }
 
     public void removeMemberURLs(Member member, List<Map<String, Object>> urls) {
-        List<PackageURL> packageURLList = urls.stream()
-                .map(PackageURL::new)
-                .peek(packageURL -> {
-                            if (packageURL.getHost() == null) {
-                                packageURL.setHost(member.address().host());
-                            }
-                        }
-                )
-                .collect(Collectors.toList());
-
         mergeURLs(
                 packageProtocolURLListMap.values().stream()
                         .flatMap(protocolMap -> protocolMap.values().stream())
                         .flatMap(Collection::stream)
                         .filter(packageURL ->
-                                packageURLList.stream()
+                                urls.stream()
                                         .noneMatch(url ->
-                                                url.getAuthority().equals(packageURL.getAuthority())
+                                                member.address().host().equals(packageURL.getHost()) &&
+                                                        Objects.equals(url.getOrDefault(PORT_NAME, null), packageURL.getPort())
                                         )
                         )
                         .collect(Collectors.toList())

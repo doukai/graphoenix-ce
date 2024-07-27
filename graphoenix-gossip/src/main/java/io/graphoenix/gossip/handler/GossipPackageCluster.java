@@ -89,6 +89,7 @@ public class GossipPackageCluster implements Runner {
 
     private List<Map<String, Object>> getURLs() {
         return CDI.current().select(Runner.class).stream()
+                .filter(runner -> runner.protocol() != null)
                 .flatMap(runner ->
                         packageManager.getLocalPackages()
                                 .map(packageName ->
@@ -100,11 +101,6 @@ public class GossipPackageCluster implements Runner {
                                 )
                 )
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public String protocol() {
-        return "gossip";
     }
 
     @Override
