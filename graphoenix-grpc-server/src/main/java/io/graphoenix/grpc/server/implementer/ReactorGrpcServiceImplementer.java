@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
@@ -220,18 +221,16 @@ public class ReactorGrpcServiceImplementer {
                 )
                 .addStatement(
                         CodeBlock.builder()
-                                .add("return $L.map(messageOrBuilder -> protobufConverter.toJsonValue(messageOrBuilder, fieldDefinition).asJsonObject())\n",
-                                        requestParameterName
-                                )
-                                .indent()
                                 .add(
                                         fieldTypeDefinition.isObject() ?
                                                 CodeBlock.of(
-                                                        ".map(jsonObject -> new $T().setOperationType($S).addSelection(new $T($S).setArguments(jsonObject).setSelections(jsonObject.getString(\"selectionSet\", $S))))\n",
+                                                        "return $L.map(messageOrBuilder -> new $T().setOperationType($S).addSelection(new $T($S).setArguments(protobufConverter.toJsonValue(messageOrBuilder, fieldDefinition).asJsonObject()).setSelections($T.ofNullable(messageOrBuilder.getSelectionSet()).orElse($S))))\n",
+                                                        requestParameterName,
                                                         ClassName.get(Operation.class),
                                                         operationType,
                                                         ClassName.get(Field.class),
                                                         fieldDefinition.getName(),
+                                                        ClassName.get(Optional.class),
                                                         fieldDefinition.isConnectionField() ?
                                                                 documentManager
                                                                         .getFieldTypeDefinition(
@@ -253,13 +252,14 @@ public class ReactorGrpcServiceImplementer {
                                                                         .collect(Collectors.joining(" ", "{", "}"))
                                                 ) :
                                                 CodeBlock.of(
-                                                        ".map(jsonObject -> new $T().setOperationType($S).addSelection(new $T($S).setArguments(jsonObject)))\n",
+                                                        "return $L.map(messageOrBuilder -> new $T().setOperationType($S).addSelection(new $T($S).setArguments(protobufConverter.toJsonValue(messageOrBuilder, fieldDefinition).asJsonObject())))\n",
                                                         ClassName.get(Operation.class),
                                                         operationType,
                                                         ClassName.get(Field.class),
                                                         fieldDefinition.getName()
                                                 )
                                 )
+                                .indent()
                                 .add(".flatMap(operation -> $T.from(operationHandler.handle(operation)))\n",
                                         ClassName.get(Mono.class)
                                 )

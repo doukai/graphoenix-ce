@@ -72,12 +72,11 @@ public class ProtobufConverter {
             return JsonValue.EMPTY_JSON_OBJECT;
         }
         return jsonValue.asJsonObject().entrySet().stream()
+                .filter(entry -> !entry.getKey().equals("selectionSet"))
                 .map(entry ->
                         new AbstractMap.SimpleEntry<>(
                                 entry.getKey(),
-                                entry.getKey().equals("selectionSet") ?
-                                        entry.getValue() :
-                                        toGraphQLJsonValue(entry.getValue(), fieldDefinition.getArgument(entry.getKey()))
+                                toGraphQLJsonValue(entry.getValue(), fieldDefinition.getArgument(entry.getKey()))
                         )
                 )
                 .collect(JsonCollectors.toJsonObject());
