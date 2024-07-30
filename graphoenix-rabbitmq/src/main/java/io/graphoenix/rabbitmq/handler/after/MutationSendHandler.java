@@ -2,7 +2,6 @@ package io.graphoenix.rabbitmq.handler.after;
 
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.spi.graphql.Definition;
-import io.graphoenix.spi.graphql.common.Arguments;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.ObjectType;
@@ -10,15 +9,17 @@ import io.graphoenix.spi.handler.OperationAfterHandler;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
-import jakarta.json.spi.JsonProvider;
+import jakarta.json.stream.JsonCollectors;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.rabbitmq.OutboundMessage;
 import reactor.rabbitmq.Sender;
 
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.graphoenix.core.handler.after.SelectionHandler.SELECTION_HANDLER_PRIORITY;
 import static io.graphoenix.rabbitmq.handler.RabbitMQSubscriptionHandler.*;
@@ -32,63 +33,116 @@ public class MutationSendHandler implements OperationAfterHandler {
 
     private final DocumentManager documentManager;
 
-    private final JsonProvider jsonProvider;
-
     private final Sender sender;
 
     @Inject
-    public MutationSendHandler(DocumentManager documentManager, JsonProvider jsonProvider, Sender sender) {
+    public MutationSendHandler(DocumentManager documentManager, Sender sender) {
         this.documentManager = documentManager;
-        this.jsonProvider = jsonProvider;
         this.sender = sender;
     }
 
     @Override
     public Mono<JsonValue> mutation(Operation operation, JsonValue jsonValue) {
         ObjectType operationType = documentManager.getOperationTypeOrError(operation);
-        Flux<OutboundMessage> messageFlux = Flux.fromIterable(operation.getFields())
-                .filter(field -> !operationType.getField(field.getName()).isInvokeField())
-                .flatMap(field -> {
-                            FieldDefinition fieldDefinition = operationType.getField(field.getName());
-                            String packageName = fieldDefinition.getPackageNameOrError();
-                            Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-                            JsonValue fieldJsonValue = jsonValue.asJsonObject().get(Optional.ofNullable(field.getAlias()).orElseGet(field::getName));
-                            if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer() && !fieldJsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
-                                String typeName = fieldTypeDefinition.getName();
-                                Arguments arguments = field.getArguments();
-                                JsonObjectBuilder messageJsonObject = jsonProvider.createObjectBuilder().add(BODY_TYPE_KEY, typeName);
-                                if (fieldDefinition.getType().hasList()) {
-                                    if (arguments.containsKey(INPUT_VALUE_LIST_NAME)) {
-                                        messageJsonObject
-                                                .add(BODY_ARGUMENTS_KEY, jsonProvider.createArrayBuilder(arguments.get(INPUT_VALUE_LIST_NAME).asJsonArray()))
-                                                .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder(fieldJsonValue.asJsonArray()));
-                                    } else {
-                                        messageJsonObject
-                                                .add(BODY_ARGUMENTS_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(arguments.asJsonObject())))
-                                                .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder(fieldJsonValue.asJsonArray()));
-                                    }
-                                } else {
-                                    if (arguments.containsKey(INPUT_VALUE_INPUT_NAME)) {
-                                        messageJsonObject
-                                                .add(BODY_ARGUMENTS_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(arguments.get(INPUT_VALUE_INPUT_NAME).asJsonObject())))
-                                                .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(fieldJsonValue.asJsonObject())));
-                                    } else {
-                                        messageJsonObject
-                                                .add(BODY_ARGUMENTS_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(arguments.asJsonObject())))
-                                                .add(BODY_MUTATION_KEY, jsonProvider.createArrayBuilder().add(jsonProvider.createObjectBuilder(fieldJsonValue.asJsonObject())));
-                                    }
-                                }
-                                return Mono.just(
+        Map<String, List<JsonObject>> typeJsonObjectListMap = Stream
+                .concat(
+                        operation.getFields().stream()
+                                .filter(field -> !operationType.getField(field.getName()).isInvokeField())
+                                .flatMap(field -> {
+                                            JsonValue fieldJsonValue = jsonValue.asJsonObject().get(Optional.ofNullable(field.getAlias()).orElseGet(field::getName));
+                                            if (fieldJsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
+                                                return Stream.empty();
+                                            }
+                                            FieldDefinition fieldDefinition = operationType.getField(field.getName());
+                                            Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+                                            String packageName = fieldTypeDefinition.getPackageNameOrError();
+                                            String typeName = fieldTypeDefinition.getName();
+                                            if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
+                                                if (fieldDefinition.getType().hasList()) {
+                                                    return fieldJsonValue.asJsonArray().stream()
+                                                            .map(item -> new AbstractMap.SimpleEntry<>(packageName + "." + typeName, item.asJsonObject()));
+                                                } else {
+                                                    return Stream.of(new AbstractMap.SimpleEntry<>(packageName + "." + typeName, fieldJsonValue.asJsonObject()));
+                                                }
+                                            }
+                                            return Stream.empty();
+                                        }
+                                ),
+                        operation.getFields().stream()
+                                .filter(field -> !operationType.getField(field.getName()).isInvokeField())
+                                .flatMap(field -> buildTypeJsonObjectEntryStream(operationType.getField(field.getName()), field.getArguments()))
+                )
+                .collect(
+                        Collectors.groupingBy(
+                                Map.Entry::getKey,
+                                Collectors.mapping(
+                                        Map.Entry::getValue,
+                                        Collectors.toList()
+                                )
+                        )
+                );
+        return sender
+                .send(
+                        Flux.fromIterable(typeJsonObjectListMap.entrySet())
+                                .map(entry ->
                                         new OutboundMessage(
                                                 SUBSCRIPTION_EXCHANGE_NAME,
-                                                packageName + "." + typeName,
-                                                messageJsonObject.build().toString().getBytes()
+                                                entry.getKey(),
+                                                entry.getValue().stream()
+                                                        .collect(JsonCollectors.toJsonArray())
+                                                        .toString()
+                                                        .getBytes()
                                         )
-                                );
-                            }
-                            return Mono.empty();
-                        }
-                );
-        return sender.send(messageFlux).thenReturn(jsonValue);
+                                )
+                )
+                .thenReturn(jsonValue);
+    }
+
+    private Stream<Map.Entry<String, JsonObject>> buildTypeJsonObjectEntryStream(FieldDefinition fieldDefinition, JsonValue jsonValue) {
+        if (jsonValue == null || jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
+            return Stream.empty();
+        }
+        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+        if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
+            String packageName = fieldTypeDefinition.getPackageNameOrError();
+            String typeName = fieldTypeDefinition.getName();
+            if (fieldDefinition.getType().hasList() && jsonValue.asJsonObject().containsKey(INPUT_VALUE_LIST_NAME)) {
+                return jsonValue.asJsonObject().getJsonArray(INPUT_VALUE_LIST_NAME).stream()
+                        .flatMap(item -> buildTypeJsonObjectEntryStream(fieldDefinition, item));
+            } else if (jsonValue.asJsonObject().containsKey(INPUT_VALUE_INPUT_NAME)) {
+                return Stream
+                        .concat(
+                                Stream.of(
+                                        new AbstractMap.SimpleEntry<>(
+                                                packageName + "." + typeName,
+                                                jsonValue.asJsonObject().getJsonObject(INPUT_VALUE_INPUT_NAME).entrySet().stream()
+                                                        .filter(entry -> documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(entry.getKey())).isLeaf())
+                                                        .map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue()))
+                                                        .collect(JsonCollectors.toJsonObject())
+                                        )
+                                ),
+                                jsonValue.asJsonObject().getJsonObject(INPUT_VALUE_INPUT_NAME).entrySet().stream()
+                                        .filter(entry -> !documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(entry.getKey())).isLeaf())
+                                        .flatMap(entry -> buildTypeJsonObjectEntryStream(fieldTypeDefinition.asObject().getField(entry.getKey()), entry.getValue()))
+                        );
+            } else {
+                return Stream
+                        .concat(
+                                Stream.of(
+                                        new AbstractMap.SimpleEntry<>(
+                                                packageName + "." + typeName,
+                                                jsonValue.asJsonObject().entrySet().stream()
+                                                        .filter(entry -> documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(entry.getKey())).isLeaf())
+                                                        .map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue()))
+                                                        .collect(JsonCollectors.toJsonObject())
+                                        )
+                                ),
+                                jsonValue.asJsonObject().entrySet().stream()
+                                        .filter(entry -> !documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(entry.getKey())).isLeaf())
+                                        .flatMap(entry -> buildTypeJsonObjectEntryStream(fieldTypeDefinition.asObject().getField(entry.getKey()), entry.getValue()))
+                        );
+            }
+        }
+        return Stream.empty();
     }
 }
