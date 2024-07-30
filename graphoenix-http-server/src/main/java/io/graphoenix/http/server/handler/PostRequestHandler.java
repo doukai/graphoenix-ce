@@ -54,7 +54,7 @@ public class PostRequestHandler extends BaseHandler {
         String contentType = request.requestHeaders().get(CONTENT_TYPE);
         QueryStringDecoder decoder = new QueryStringDecoder(request.uri());
 
-        if (contentType.startsWith(MimeType.Application.JSON)) {
+        if (contentType.startsWith(MimeType.Application.JSON) && accept.startsWith(MimeType.Application.JSON)) {
             return response
                     .addHeader(CONTENT_TYPE, MimeType.Application.JSON)
                     .sendString(
@@ -76,7 +76,7 @@ public class PostRequestHandler extends BaseHandler {
                                     .onErrorResume(throwable -> this.errorHandler(throwable, response))
                                     .contextWrite(Context.of(REQUEST_ID, requestId))
                     );
-        } else if (contentType.startsWith(MimeType.Application.GRAPHQL)) {
+        } else if (contentType.startsWith(MimeType.Application.GRAPHQL) && accept.startsWith(MimeType.Application.JSON)) {
             return response
                     .addHeader(CONTENT_TYPE, MimeType.Application.JSON)
                     .sendString(
@@ -98,7 +98,7 @@ public class PostRequestHandler extends BaseHandler {
                                     .onErrorResume(throwable -> this.errorHandler(throwable, response))
                                     .contextWrite(Context.of(REQUEST_ID, requestId))
                     );
-        } else if (contentType.startsWith(MimeType.Text.PLAIN) && accept.startsWith(MimeType.Text.EVENT_STREAM)) {
+        } else if (accept.startsWith(MimeType.Text.EVENT_STREAM)) {
             String token = Optional.ofNullable(request.requestHeaders().get("X-GraphQL-Event-Stream-Token")).orElseGet(() -> decoder.parameters().containsKey("token") ? decoder.parameters().get("token").get(0) : null);
             String operationId = decoder.parameters().containsKey("operationId") ? decoder.parameters().get("operationId").get(0) : null;
             return response.sse()
