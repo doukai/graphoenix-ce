@@ -95,9 +95,10 @@ public class MutationSendHandler implements OperationAfterHandler {
                                         new AbstractMap.SimpleEntry<>(
                                                 packageName + "." + typeName,
                                                 jsonValue.asJsonObject().getJsonObject(INPUT_VALUE_INPUT_NAME).entrySet().stream()
-                                                        .filter(entry -> !entry.getKey().equals(INPUT_VALUE_WHERE_NAME))
-                                                        .filter(entry -> documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(entry.getKey())).isLeaf())
-                                                        .map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue()))
+                                                        .filter(entry ->
+                                                                entry.getKey().equals(INPUT_VALUE_WHERE_NAME) ||
+                                                                        documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(entry.getKey())).isLeaf()
+                                                        ).map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue()))
                                                         .collect(JsonCollectors.toJsonObject())
                                         )
                                 ),
@@ -113,8 +114,10 @@ public class MutationSendHandler implements OperationAfterHandler {
                                         new AbstractMap.SimpleEntry<>(
                                                 packageName + "." + typeName,
                                                 jsonValue.asJsonObject().entrySet().stream()
-                                                        .filter(entry -> !entry.getKey().equals(INPUT_VALUE_WHERE_NAME))
-                                                        .filter(entry -> documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(entry.getKey())).isLeaf())
+                                                        .filter(entry ->
+                                                                entry.getKey().equals(INPUT_VALUE_WHERE_NAME) ||
+                                                                        documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(entry.getKey())).isLeaf()
+                                                        )
                                                         .map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue()))
                                                         .collect(JsonCollectors.toJsonObject())
                                         )
