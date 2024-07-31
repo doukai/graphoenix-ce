@@ -138,31 +138,33 @@ public class DefaultSubscriptionDataListener implements SubscriptionDataListener
     }
 
     @Override
-    public boolean changed(String typeName, JsonArray arguments, JsonArray mutation) {
-        return idChanged(typeName, arguments) || mutationChanged(typeName, mutation);
+    public boolean changed(String typeName, JsonArray mutations) {
+        return idChanged(typeName, mutations) || mutationChanged(typeName, mutations);
     }
 
-    public boolean idChanged(String typeName, JsonArray arguments) {
-        return arguments.asJsonArray().stream().anyMatch(argument -> idChanged(typeName, argument));
+    public boolean idChanged(String typeName, JsonArray mutations) {
+        return mutations.stream().anyMatch(mutation -> idChanged(typeName, mutation));
     }
 
-    private boolean idChanged(String typeName, JsonValue argument) {
+    private boolean idChanged(String typeName, JsonValue mutation) {
         ObjectType objectType = documentManager.getDocument().getObjectTypeOrError(typeName);
         return objectType.getIDField()
                 .map(idFieldDefinition ->
                         typeIDMap.containsKey(typeName) &&
-                                (argument.asJsonObject().containsKey(idFieldDefinition.getName()) &&
-                                        !argument.asJsonObject().isNull(idFieldDefinition.getName()) &&
-                                        typeIDMap.get(typeName).contains(argument.asJsonObject().getString(idFieldDefinition.getName())) ||
-                                        argument.asJsonObject().containsKey(INPUT_VALUE_WHERE_NAME) &&
-                                                !argument.asJsonObject().isNull(INPUT_VALUE_WHERE_NAME) &&
-                                                argument.asJsonObject().getJsonObject(INPUT_VALUE_WHERE_NAME).containsKey(idFieldDefinition.getName()) &&
-                                                !argument.asJsonObject().getJsonObject(INPUT_VALUE_WHERE_NAME).isNull(idFieldDefinition.getName()) &&
-                                                typeIDMap.get(typeName).contains(argument.asJsonObject().getJsonObject(INPUT_VALUE_WHERE_NAME).getJsonObject(idFieldDefinition.getName()).getString(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
+                                (mutation.asJsonObject().containsKey(idFieldDefinition.getName()) &&
+                                        !mutation.asJsonObject().isNull(idFieldDefinition.getName()) &&
+                                        typeIDMap.get(typeName).contains(mutation.asJsonObject().getString(idFieldDefinition.getName())) ||
+                                        mutation.asJsonObject().containsKey(INPUT_VALUE_WHERE_NAME) &&
+                                                !mutation.asJsonObject().isNull(INPUT_VALUE_WHERE_NAME) &&
+                                                mutation.asJsonObject().getJsonObject(INPUT_VALUE_WHERE_NAME).containsKey(idFieldDefinition.getName()) &&
+                                                !mutation.asJsonObject().getJsonObject(INPUT_VALUE_WHERE_NAME).isNull(idFieldDefinition.getName()) &&
+                                                mutation.asJsonObject().getJsonObject(INPUT_VALUE_WHERE_NAME).getJsonObject(idFieldDefinition.getName()).containsKey(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME) &&
+                                                !mutation.asJsonObject().getJsonObject(INPUT_VALUE_WHERE_NAME).getJsonObject(idFieldDefinition.getName()).isNull(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME) &&
+                                                typeIDMap.get(typeName).contains(mutation.asJsonObject().getJsonObject(INPUT_VALUE_WHERE_NAME).getJsonObject(idFieldDefinition.getName()).getString(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
                                 )
                 )
                 .orElseGet(() ->
-                        argument.asJsonObject().entrySet().stream()
+                        mutation.asJsonObject().entrySet().stream()
                                 .filter(entry -> !entry.getKey().equals(INPUT_VALUE_WHERE_NAME))
                                 .anyMatch(entry -> {
                                             FieldDefinition fieldDefinition = objectType.getField(entry.getKey());
@@ -181,10 +183,10 @@ public class DefaultSubscriptionDataListener implements SubscriptionDataListener
     }
 
     @SuppressWarnings("unchecked")
-    private boolean mutationChanged(String typeName, JsonArray mutation) {
+    private boolean mutationChanged(String typeName, JsonArray mutations) {
         return Stream.ofNullable(typeFilterMap.get(typeName))
                 .flatMap(Collection::stream)
-                .map(filter -> parseContext.parse(mutation).read(filter))
+                .map(filter -> parseContext.parse(mutations).read(filter))
                 .map(jsonValues -> (List<JsonValue>) jsonValues)
                 .anyMatch(jsonValues -> !jsonValues.isEmpty());
     }

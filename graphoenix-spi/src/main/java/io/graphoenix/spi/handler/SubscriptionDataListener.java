@@ -10,5 +10,5 @@ public interface SubscriptionDataListener {
 
     SubscriptionDataListener afterSubscription(Operation operation, JsonValue jsonValue);
 
-    boolean changed(String typeName, JsonArray arguments, JsonArray mutation);
+    boolean changed(String typeName, JsonArray mutations);
 }

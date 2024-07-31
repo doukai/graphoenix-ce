@@ -44,43 +44,19 @@ public class MutationSendHandler implements OperationAfterHandler {
     @Override
     public Mono<JsonValue> mutation(Operation operation, JsonValue jsonValue) {
         ObjectType operationType = documentManager.getOperationTypeOrError(operation);
-        Map<String, List<JsonObject>> typeJsonObjectListMap = Stream
-                .concat(
-                        operation.getFields().stream()
-                                .filter(field -> !operationType.getField(field.getName()).isInvokeField())
-                                .flatMap(field -> {
-                                            JsonValue fieldJsonValue = jsonValue.asJsonObject().get(Optional.ofNullable(field.getAlias()).orElseGet(field::getName));
-                                            if (fieldJsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
-                                                return Stream.empty();
-                                            }
-                                            FieldDefinition fieldDefinition = operationType.getField(field.getName());
-                                            Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-                                            String packageName = fieldTypeDefinition.getPackageNameOrError();
-                                            String typeName = fieldTypeDefinition.getName();
-                                            if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
-                                                if (fieldDefinition.getType().hasList()) {
-                                                    return fieldJsonValue.asJsonArray().stream()
-                                                            .map(item -> new AbstractMap.SimpleEntry<>(packageName + "." + typeName, item.asJsonObject()));
-                                                } else {
-                                                    return Stream.of(new AbstractMap.SimpleEntry<>(packageName + "." + typeName, fieldJsonValue.asJsonObject()));
-                                                }
-                                            }
-                                            return Stream.empty();
-                                        }
-                                ),
-                        operation.getFields().stream()
-                                .filter(field -> !operationType.getField(field.getName()).isInvokeField())
-                                .flatMap(field -> buildTypeJsonObjectEntryStream(operationType.getField(field.getName()), field.getArguments()))
-                )
-                .collect(
-                        Collectors.groupingBy(
-                                Map.Entry::getKey,
-                                Collectors.mapping(
-                                        Map.Entry::getValue,
-                                        Collectors.toList()
+        Map<String, List<JsonObject>> typeJsonObjectListMap =
+                operation.getFields().stream()
+                        .filter(field -> !operationType.getField(field.getName()).isInvokeField())
+                        .flatMap(field -> buildTypeJsonObjectEntryStream(operationType.getField(field.getName()), field.getArguments()))
+                        .collect(
+                                Collectors.groupingBy(
+                                        Map.Entry::getKey,
+                                        Collectors.mapping(
+                                                Map.Entry::getValue,
+                                                Collectors.toList()
+                                        )
                                 )
-                        )
-                );
+                        );
         return sender
                 .send(
                         Flux.fromIterable(typeJsonObjectListMap.entrySet())
@@ -106,22 +82,27 @@ public class MutationSendHandler implements OperationAfterHandler {
         if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             String packageName = fieldTypeDefinition.getPackageNameOrError();
             String typeName = fieldTypeDefinition.getName();
-            if (fieldDefinition.getType().hasList() && jsonValue.asJsonObject().containsKey(INPUT_VALUE_LIST_NAME)) {
+            if (jsonValue.getValueType().equals(JsonValue.ValueType.ARRAY)) {
+                return jsonValue.asJsonArray().stream()
+                        .flatMap(item -> buildTypeJsonObjectEntryStream(fieldDefinition, item));
+            } else if (jsonValue.getValueType().equals(JsonValue.ValueType.OBJECT) && jsonValue.asJsonObject().containsKey(INPUT_VALUE_LIST_NAME)) {
                 return jsonValue.asJsonObject().getJsonArray(INPUT_VALUE_LIST_NAME).stream()
                         .flatMap(item -> buildTypeJsonObjectEntryStream(fieldDefinition, item));
-            } else if (jsonValue.asJsonObject().containsKey(INPUT_VALUE_INPUT_NAME)) {
+            } else if (jsonValue.getValueType().equals(JsonValue.ValueType.OBJECT) && jsonValue.asJsonObject().containsKey(INPUT_VALUE_INPUT_NAME)) {
                 return Stream
                         .concat(
                                 Stream.of(
                                         new AbstractMap.SimpleEntry<>(
                                                 packageName + "." + typeName,
                                                 jsonValue.asJsonObject().getJsonObject(INPUT_VALUE_INPUT_NAME).entrySet().stream()
+                                                        .filter(entry -> !entry.getKey().equals(INPUT_VALUE_WHERE_NAME))
                                                         .filter(entry -> documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(entry.getKey())).isLeaf())
                                                         .map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue()))
                                                         .collect(JsonCollectors.toJsonObject())
                                         )
                                 ),
                                 jsonValue.asJsonObject().getJsonObject(INPUT_VALUE_INPUT_NAME).entrySet().stream()
+                                        .filter(entry -> !entry.getKey().equals(INPUT_VALUE_WHERE_NAME))
                                         .filter(entry -> !documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(entry.getKey())).isLeaf())
                                         .flatMap(entry -> buildTypeJsonObjectEntryStream(fieldTypeDefinition.asObject().getField(entry.getKey()), entry.getValue()))
                         );
@@ -132,12 +113,14 @@ public class MutationSendHandler implements OperationAfterHandler {
                                         new AbstractMap.SimpleEntry<>(
                                                 packageName + "." + typeName,
                                                 jsonValue.asJsonObject().entrySet().stream()
+                                                        .filter(entry -> !entry.getKey().equals(INPUT_VALUE_WHERE_NAME))
                                                         .filter(entry -> documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(entry.getKey())).isLeaf())
                                                         .map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue()))
                                                         .collect(JsonCollectors.toJsonObject())
                                         )
                                 ),
                                 jsonValue.asJsonObject().entrySet().stream()
+                                        .filter(entry -> !entry.getKey().equals(INPUT_VALUE_WHERE_NAME))
                                         .filter(entry -> !documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(entry.getKey())).isLeaf())
                                         .flatMap(entry -> buildTypeJsonObjectEntryStream(fieldTypeDefinition.asObject().getField(entry.getKey()), entry.getValue()))
                         );

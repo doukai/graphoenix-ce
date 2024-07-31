@@ -14,7 +14,6 @@ import jakarta.enterprise.inject.literal.NamedLiteral;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
 import reactor.core.publisher.Flux;
@@ -32,9 +31,7 @@ import static reactor.rabbitmq.QueueSpecification.queue;
 public class RabbitMQSubscriptionHandler implements SubscriptionHandler {
 
     public static final String SUBSCRIPTION_EXCHANGE_NAME = "graphoenix.subscription";
-    public static final String BODY_TYPE_KEY = "type";
-    public static final String BODY_ARGUMENTS_KEY = "arguments";
-    public static final String BODY_MUTATION_KEY = "mutation";
+
     public static final String REQUEST_ID = "requestId";
 
     private final QueryHandler queryHandler;
@@ -85,11 +82,10 @@ public class RabbitMQSubscriptionHandler implements SubscriptionHandler {
                                                                         queryHandler.query(operation),
                                                                         receiver.consumeAutoAck(requestId)
                                                                                 .filter(delivery -> {
-                                                                                            JsonObject messageJsonObject = jsonProvider.createReader(new StringReader(new String(delivery.getBody()))).readObject();
-                                                                                            String typeName = messageJsonObject.getString(BODY_TYPE_KEY);
-                                                                                            JsonArray arguments = messageJsonObject.getJsonArray(BODY_ARGUMENTS_KEY);
-                                                                                            JsonArray mutation = messageJsonObject.getJsonArray(BODY_MUTATION_KEY);
-                                                                                            return subscriptionDataListener.changed(typeName, arguments, mutation);
+                                                                                            String routingKey = delivery.getEnvelope().getRoutingKey();
+                                                                                            String typeName = delivery.getEnvelope().getRoutingKey().substring(routingKey.lastIndexOf(".") + 1);
+                                                                                            JsonArray mutations = jsonProvider.createReader(new StringReader(new String(delivery.getBody()))).readArray();
+                                                                                            return subscriptionDataListener.changed(typeName, mutations);
                                                                                         }
                                                                                 )
                                                                                 .flatMap(delivery -> queryHandler.query(operation))
