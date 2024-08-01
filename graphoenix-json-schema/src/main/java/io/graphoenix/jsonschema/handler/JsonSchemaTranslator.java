@@ -68,7 +68,7 @@ public class JsonSchemaTranslator {
         if (inputObjectType.getName().endsWith(SUFFIX_INPUT)) {
             String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_INPUT));
             Definition definition = documentManager.getDocument().getDefinition(objectTypeName);
-            if (definition.isObject()) {
+            if (definition != null && definition.isObject()) {
                 JsonArrayBuilder jsonArrayBuilder = jsonProvider.createArrayBuilder()
                         .add(
                                 jsonProvider.createObjectBuilder()
@@ -92,7 +92,7 @@ public class JsonSchemaTranslator {
         } else if (inputObjectType.getName().endsWith(SUFFIX_LIST + mutationTypeName + SUFFIX_ARGUMENTS)) {
             String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_LIST + mutationTypeName + SUFFIX_ARGUMENTS));
             Definition definition = documentManager.getDocument().getDefinition(objectTypeName);
-            if (definition.isObject()) {
+            if (definition != null && definition.isObject()) {
                 String operationFieldName = mutationTypeName + "_" + typeNameToFieldName(objectTypeName) + SUFFIX_LIST + "_" + SUFFIX_ARGUMENTS;
                 JsonArrayBuilder jsonArrayBuilder = jsonProvider.createArrayBuilder()
                         .add(
@@ -117,7 +117,7 @@ public class JsonSchemaTranslator {
         } else if (inputObjectType.getName().endsWith(mutationTypeName + SUFFIX_ARGUMENTS)) {
             String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(mutationTypeName + SUFFIX_ARGUMENTS));
             Definition definition = documentManager.getDocument().getDefinition(objectTypeName);
-            if (definition.isObject()) {
+            if (definition != null && definition.isObject()) {
                 String operationFieldName = mutationTypeName + "_" + typeNameToFieldName(objectTypeName) + "_" + SUFFIX_ARGUMENTS;
                 JsonArrayBuilder jsonArrayBuilder = jsonProvider.createArrayBuilder()
                         .add(
@@ -147,7 +147,7 @@ public class JsonSchemaTranslator {
         } else if (inputObjectType.getName().endsWith(SUFFIX_LIST + queryTypeName + SUFFIX_ARGUMENTS)) {
             String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_LIST + queryTypeName + SUFFIX_ARGUMENTS));
             Definition definition = documentManager.getDocument().getDefinition(objectTypeName);
-            if (definition.isObject()) {
+            if (definition != null && definition.isObject()) {
                 String operationFieldName = queryTypeName + "_" + typeNameToFieldName(objectTypeName) + SUFFIX_LIST + "_" + SUFFIX_ARGUMENTS;
                 JsonObjectBuilder builder = buildJsonSchemaBuilder(inputObjectType)
                         .add("$id", jsonProvider.createValue("#" + operationFieldName))
@@ -161,7 +161,7 @@ public class JsonSchemaTranslator {
         } else if (inputObjectType.getName().endsWith(queryTypeName + SUFFIX_ARGUMENTS)) {
             String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(queryTypeName + SUFFIX_ARGUMENTS));
             Definition definition = documentManager.getDocument().getDefinition(objectTypeName);
-            if (definition.isObject()) {
+            if (definition != null && definition.isObject()) {
                 String operationFieldName = queryTypeName + "_" + typeNameToFieldName(objectTypeName) + "_" + SUFFIX_ARGUMENTS;
                 JsonObjectBuilder builder = buildJsonSchemaBuilder(inputObjectType)
                         .add("$id", jsonProvider.createValue("#" + operationFieldName))
@@ -175,7 +175,7 @@ public class JsonSchemaTranslator {
         } else if (inputObjectType.getName().endsWith(SUFFIX_LIST + subscriptionTypeName + SUFFIX_ARGUMENTS)) {
             String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_LIST + subscriptionTypeName + SUFFIX_ARGUMENTS));
             Definition definition = documentManager.getDocument().getDefinition(objectTypeName);
-            if (definition.isObject()) {
+            if (definition != null && definition.isObject()) {
                 String operationFieldName = subscriptionTypeName + "_" + typeNameToFieldName(objectTypeName) + SUFFIX_LIST + "_" + SUFFIX_ARGUMENTS;
                 JsonObjectBuilder builder = buildJsonSchemaBuilder(inputObjectType)
                         .add("$id", jsonProvider.createValue("#" + operationFieldName))
@@ -189,7 +189,7 @@ public class JsonSchemaTranslator {
         } else if (inputObjectType.getName().endsWith(subscriptionTypeName + SUFFIX_ARGUMENTS)) {
             String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(subscriptionTypeName + SUFFIX_ARGUMENTS));
             Definition definition = documentManager.getDocument().getDefinition(objectTypeName);
-            if (definition.isObject()) {
+            if (definition != null && definition.isObject()) {
                 String operationFieldName = subscriptionTypeName + "_" + typeNameToFieldName(objectTypeName) + "_" + SUFFIX_ARGUMENTS;
                 JsonObjectBuilder builder = buildJsonSchemaBuilder(inputObjectType)
                         .add("$id", jsonProvider.createValue("#" + operationFieldName))

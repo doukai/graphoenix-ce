@@ -24,17 +24,15 @@ public class MetaInputApi {
         LocalDateTime now = LocalDateTime.now();
         if (metaInput.getCreateTime() == null) {
             metaInput.setCreateTime(now);
-            if (mutationConfig.getOcc()) {
-                metaInput.setVersion(0);
-            }
         } else {
             metaInput.setUpdateTime(now);
-            if (mutationConfig.getOcc()) {
-                if (metaInput.getVersion() != null) {
-                    metaInput.setVersion(metaInput.getVersion() + 1);
-                } else {
-                    metaInput.setVersion(0);
-                }
+        }
+
+        if (mutationConfig.getOcc()) {
+            if (metaInput.getVersion() != null) {
+                metaInput.setVersion(metaInput.getVersion() + 1);
+            } else {
+                metaInput.setVersion(0);
             }
         }
         return metaInput;
