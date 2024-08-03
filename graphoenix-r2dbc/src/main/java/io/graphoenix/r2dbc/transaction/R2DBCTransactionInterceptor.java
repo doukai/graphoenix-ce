@@ -22,8 +22,8 @@ import reactor.util.context.Context;
 
 import java.util.Arrays;
 
-import static io.graphoenix.r2dbc.connection.ConnectionProvider.IN_TRANSACTION;
 import static io.graphoenix.r2dbc.context.TransactionScopeInstanceFactory.TRANSACTION_ID;
+import static io.graphoenix.spi.constant.Hammurabi.*;
 
 @ApplicationScoped
 @Named("r2dbc")
@@ -85,7 +85,7 @@ public class R2DBCTransactionInterceptor {
                                                                 connection -> Mono.from(connection.rollbackTransaction())
                                                                         .thenEmpty(connection.close())
                                                         )
-                                                        .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, true))
+                                                        .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, true, ROLLBACK_ON, rollbackOn, DONT_ROLLBACK_ON, dontRollbackOn))
                                         )
                                 );
                     case REQUIRES_NEW:
@@ -103,7 +103,7 @@ public class R2DBCTransactionInterceptor {
                                         connection -> Mono.from(connection.rollbackTransaction())
                                                 .thenEmpty(connection.close())
                                 )
-                                .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, true));
+                                .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, true, ROLLBACK_ON, rollbackOn, DONT_ROLLBACK_ON, dontRollbackOn));
                     case MANDATORY:
                         return connectionProvider.inTransaction()
                                 .filter(inTransaction -> inTransaction)
@@ -175,7 +175,7 @@ public class R2DBCTransactionInterceptor {
                                                                 connection -> Flux.from(connection.rollbackTransaction())
                                                                         .thenEmpty(connection.close())
                                                         )
-                                                        .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, true))
+                                                        .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, true, ROLLBACK_ON, rollbackOn, DONT_ROLLBACK_ON, dontRollbackOn))
                                         )
                                 );
                     case REQUIRES_NEW:
@@ -193,7 +193,7 @@ public class R2DBCTransactionInterceptor {
                                         connection -> Flux.from(connection.rollbackTransaction())
                                                 .thenEmpty(connection.close())
                                 )
-                                .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, true));
+                                .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, true, ROLLBACK_ON, rollbackOn, DONT_ROLLBACK_ON, dontRollbackOn));
                     case MANDATORY:
                         return connectionProvider.inTransaction()
                                 .filter(inTransaction -> inTransaction)

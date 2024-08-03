@@ -430,6 +430,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
             Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
             FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
             return inputValueTypeDefinition.asInputObject().getInputValues().stream()
+                    .filter(subInputValue -> !documentManager.getInputValueTypeDefinition(subInputValue).isLeaf())
                     .flatMap(subInputValue ->
                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                     .flatMap(subFieldDefinition -> {
@@ -439,15 +440,6 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                                     fieldJsonValue.asJsonArray().stream()
                                                                             .filter(item -> item.getValueType().equals(JsonValue.ValueType.OBJECT))
                                                                             .map(JsonValue::asJsonObject)
-                                                                            .filter(item ->
-                                                                                    valueWithVariable.asArray().getValueWithVariable(index).asJsonObject().containsKey(idField.getName()) &&
-                                                                                            valueWithVariable.asArray().getValueWithVariable(index).asJsonObject().get(idField.getName()).toString().equals(item.get(idField.getName()).toString()) ||
-                                                                                            valueWithVariable.asArray().getValueWithVariable(index).asJsonObject().containsKey(INPUT_VALUE_WHERE_NAME) &&
-                                                                                                    valueWithVariable.asArray().getValueWithVariable(index).asJsonObject().getJsonObject(INPUT_VALUE_WHERE_NAME)
-                                                                                                            .getJsonObject(idField.getName())
-                                                                                                            .get(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME).toString()
-                                                                                                            .equals(item.get(idField.getName()).toString())
-                                                                            )
                                                                             .flatMap(item ->
                                                                                     Stream.ofNullable(valueWithVariable.asArray().getValueWithVariable(index).asObject().getObjectValueWithVariable())
                                                                                             .flatMap(objectValue ->

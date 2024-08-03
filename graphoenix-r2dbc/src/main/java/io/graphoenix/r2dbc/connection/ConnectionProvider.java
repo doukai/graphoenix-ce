@@ -6,9 +6,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import reactor.core.publisher.Mono;
 
+import static io.graphoenix.spi.constant.Hammurabi.IN_TRANSACTION;
+
 @ApplicationScoped
 public class ConnectionProvider {
-    public static final String IN_TRANSACTION = "inTransaction";
 
     private final ConnectionCreator connectionCreator;
 

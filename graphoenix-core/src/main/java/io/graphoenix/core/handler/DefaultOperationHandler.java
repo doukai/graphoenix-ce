@@ -119,7 +119,7 @@ public class DefaultOperationHandler implements OperationHandler {
                                                                                 .onErrorResume(throwable ->
                                                                                         transactionCompensatorProvider.get()
                                                                                                 .flatMap(transactionCompensator ->
-                                                                                                        Mono.justOrEmpty(transactionCompensator.compensating(result.asJsonObject()))
+                                                                                                        transactionCompensator.compensating(result.asJsonObject(), throwable)
                                                                                                                 .flatMap(fetchHandlerProvider.get()::request)
                                                                                                 )
                                                                                                 .then(Mono.error(throwable))

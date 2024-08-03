@@ -224,4 +224,8 @@ public class Hammurabi {
     public static final String SUFFIX_REF = "Ref";
     public static final String SUFFIX_TYPE = "Type";
     public static final String SUFFIX_RELATION = "Relation";
+
+    public static final String IN_TRANSACTION = "inTransaction";
+    public static final String ROLLBACK_ON = "rollbackOn";
+    public static final String DONT_ROLLBACK_ON = "dontRollbackOn";
 }

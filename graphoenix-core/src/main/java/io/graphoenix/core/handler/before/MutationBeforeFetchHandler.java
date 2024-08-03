@@ -268,6 +268,7 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
         } else if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
             return inputValueTypeDefinition.asInputObject().getInputValues().stream()
+                    .filter(subInputValue -> !documentManager.getInputValueTypeDefinition(subInputValue).isLeaf())
                     .flatMap(subInputValue ->
                             Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
                                     .flatMap(subFieldDefinition -> {
