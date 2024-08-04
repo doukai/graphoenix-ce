@@ -73,12 +73,12 @@ public class TransactionCompensator {
                     if (Boolean.TRUE.equals(inTransaction)) {
                         Class<? extends Exception>[] rollbackOn = contextView.getOrDefault(ROLLBACK_ON, null);
                         Class<? extends Exception>[] dontRollbackOn = contextView.getOrDefault(DONT_ROLLBACK_ON, null);
-                        if (rollbackOn != null && rollbackOn.length > 0) {
-                            if (Arrays.stream(rollbackOn).noneMatch(exception -> exception.equals(throwable.getClass()))) {
+                        if (dontRollbackOn != null && dontRollbackOn.length > 0) {
+                            if (Arrays.stream(dontRollbackOn).anyMatch(exception -> exception.equals(throwable.getClass()))) {
                                 return Mono.empty();
                             }
-                        } else if (dontRollbackOn != null && dontRollbackOn.length > 0) {
-                            if (Arrays.stream(dontRollbackOn).anyMatch(exception -> exception.equals(throwable.getClass()))) {
+                        } else if (rollbackOn != null && rollbackOn.length > 0) {
+                            if (Arrays.stream(rollbackOn).noneMatch(exception -> exception.equals(throwable.getClass()))) {
                                 return Mono.empty();
                             }
                         }

@@ -267,17 +267,17 @@ public class R2DBCTransactionInterceptor {
 
     private Publisher<Void> errorProcess(Connection connection, Throwable throwable, Class<? extends Exception>[] rollbackOn, Class<? extends Exception>[] dontRollbackOn) {
         Logger.error(throwable);
-        if (rollbackOn != null && rollbackOn.length > 0) {
-            if (Arrays.stream(rollbackOn).anyMatch(exception -> exception.equals(throwable.getClass()))) {
-                return connection.rollbackTransaction();
-            } else {
-                return connection.commitTransaction();
-            }
-        } else if (dontRollbackOn != null && dontRollbackOn.length > 0) {
+        if (dontRollbackOn != null && dontRollbackOn.length > 0) {
             if (Arrays.stream(dontRollbackOn).anyMatch(exception -> exception.equals(throwable.getClass()))) {
                 return connection.commitTransaction();
             } else {
                 return connection.rollbackTransaction();
+            }
+        } else if (rollbackOn != null && rollbackOn.length > 0) {
+            if (Arrays.stream(rollbackOn).anyMatch(exception -> exception.equals(throwable.getClass()))) {
+                return connection.rollbackTransaction();
+            } else {
+                return connection.commitTransaction();
             }
         }
         return connection.rollbackTransaction();
