@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'org.graphoenix'
-version '0.1.0-SNAPSHOT'
+version '0.1.0'
 
 repositories {
     mavenCentral()
@@ -16,18 +16,18 @@ dependencies {
     implementation project(':graphoenix-core')
     implementation project(':graphoenix-subscription')
     implementation project(':graphoenix-json')
-    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-interceptor:0.1.0-SNAPSHOT'
+    implementation 'org.graphoenix:nozdormu-inject:0.1.0'
+    implementation 'org.graphoenix:nozdormu-config:0.1.0'
+    implementation 'org.graphoenix:nozdormu-interceptor:0.1.0'
 
     api "io.projectreactor.rabbitmq:reactor-rabbitmq:1.5.6"
 
     annotationProcessor project(':graphoenix-core')
     annotationProcessor project(':graphoenix-subscription')
     annotationProcessor project(':graphoenix-json')
-    annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    annotationProcessor 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
-    annotationProcessor 'org.graphoenix:nozdormu-interceptor:0.1.0-SNAPSHOT'
+    annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0'
+    annotationProcessor 'org.graphoenix:nozdormu-config:0.1.0'
+    annotationProcessor 'org.graphoenix:nozdormu-interceptor:0.1.0'
     annotationProcessor "io.projectreactor.rabbitmq:reactor-rabbitmq:1.5.6"
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
@@ -36,12 +36,4 @@ dependencies {
 
 test {
     useJUnitPlatform()
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from components.java
-        }
-    }
 }

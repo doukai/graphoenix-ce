@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'org.graphoenix'
-version '0.1.0-SNAPSHOT'
+version '0.1.0'
 
 repositories {
     mavenCentral()
@@ -17,8 +17,8 @@ dependencies {
     implementation project(':graphoenix-core')
     implementation project(':graphoenix-java')
     implementation project(':graphoenix-protobuf')
-    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
+    implementation 'org.graphoenix:nozdormu-inject:0.1.0'
+    implementation 'org.graphoenix:nozdormu-config:0.1.0'
     implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.25.3'
     implementation('org.antlr:antlr4:4.9.3') {
         exclude group: 'org.glassfish', module: 'javax.json'
@@ -30,12 +30,4 @@ dependencies {
 
 test {
     useJUnitPlatform()
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from components.java
-        }
-    }
 }

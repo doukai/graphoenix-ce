@@ -5,7 +5,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.graphoenix:graphoenix-gradle-plugin:0.1.0-SNAPSHOT'
+        classpath 'org.graphoenix:graphoenix-gradle-plugin:0.1.0'
     }
 }
 
@@ -63,7 +63,7 @@ sourceSets {
 }
 
 group 'org.graphoenix'
-version '0.1.0-SNAPSHOT'
+version '0.1.0'
 
 repositories {
     mavenCentral()
@@ -73,8 +73,8 @@ repositories {
 
 dependencies {
     implementation project(':graphoenix-core')
-    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
+    implementation 'org.graphoenix:nozdormu-inject:0.1.0'
+    implementation 'org.graphoenix:nozdormu-config:0.1.0'
     implementation 'com.networknt:json-schema-validator:1.0.70'
 
     runtimeOnly 'io.grpc:grpc-netty-shaded:1.52.1'
@@ -85,22 +85,14 @@ dependencies {
     compileOnly 'org.apache.tomcat:annotations-api:6.0.53' // necessary for Java 9+
 
     annotationProcessor project(':graphoenix-annotation-processor')
-    annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    annotationProcessor 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
+    annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0'
+    annotationProcessor 'org.graphoenix:nozdormu-config:0.1.0'
     annotationProcessor 'com.networknt:json-schema-validator:1.0.70'
 
-    testImplementation platform('org.junit:junit-bom:5.9.1')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
 
 test {
     useJUnitPlatform()
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from components.java
-        }
-    }
 }
