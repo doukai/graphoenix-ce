@@ -1,0 +1,8 @@
+plugins {
+    id 'java-library'
+    id 'org.jreleaser' version '1.13.1'
+}
+
+subprojects {
+    apply plugin: 'org.jreleaser'
+}

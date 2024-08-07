@@ -12,6 +12,11 @@ repositories {
     mavenLocal()
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 dependencies {
     implementation project(':graphoenix-core')
     implementation project(':graphoenix-java')
@@ -32,4 +37,68 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'org.graphoenix'
+            artifactId = 'graphoenix-grpc-server'
+
+            from components.java
+
+            pom {
+                name = 'graphoenix-grpc-server'
+                description = 'graphoenix-grpc-server'
+                url = 'https://github.com/doukai/graphoenix-ce'
+                inceptionYear = '2023'
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = 'https://spdx.org/licenses/MIT.html'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'doukai'
+                        name = 'Dou Kai'
+                    }
+                }
+                scm {
+                    url = 'https://github.com/doukai/graphoenix-ce'
+                    connection = 'scm:git://github.com:doukai/graphoenix-ce.git'
+                    developerConnection = 'scm:git://github.com:doukai/graphoenix-ce.git'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            url = layout.buildDirectory.dir('staging-deploy')
+        }
+    }
+}
+
+tasks.build.doFirst {
+    mkdir "$buildDir/jreleaser"
+}
+
+jreleaser {
+    gitRootSearch = true
+    signing {
+        active = 'ALWAYS'
+        armored = true
+    }
+    deploy {
+        maven {
+            mavenCentral {
+                sonatype {
+                    active = 'ALWAYS'
+                    url = 'https://central.sonatype.com/api/v1/publisher'
+                    stagingRepository('build/staging-deploy')
+                }
+            }
+        }
+    }
 }

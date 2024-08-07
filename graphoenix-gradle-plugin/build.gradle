@@ -2,6 +2,7 @@ plugins {
     id 'java-gradle-plugin'
     id 'groovy'
     id 'maven-publish'
+    id 'com.gradle.plugin-publish' version '1.2.1'
 }
 
 group 'org.graphoenix'
@@ -10,7 +11,6 @@ version '0.1.0'
 repositories {
     mavenCentral()
     jcenter()
-    mavenLocal()
 }
 
 dependencies {
@@ -30,4 +30,18 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+gradlePlugin {
+    website = 'https://github.com/doukai/graphoenix-ce'
+    vcsUrl = 'https://github.com/doukai/graphoenix-ce.git'
+    plugins {
+        graphoenixPlugin {
+            id = 'org.graphoenix'
+            displayName = 'Gradle plugin for Graphoenix'
+            description = 'Generate Java DTO and protobuf based on GraphQL definition'
+            tags.addAll('graphoenix', 'graphql', 'protobuf')
+            implementationClass = 'io.graphoenix.gradle.GraphoenixPlugin'
+        }
+    }
 }

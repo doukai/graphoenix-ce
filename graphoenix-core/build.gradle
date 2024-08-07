@@ -5,7 +5,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.graphoenix:graphoenix-gradle-plugin:0.1.0-SNAPSHOT'
+        classpath 'org.graphoenix:graphoenix-gradle-plugin:0.1.0'
     }
 }
 
@@ -13,7 +13,6 @@ plugins {
     id 'java-library'
     id 'com.google.protobuf' version '0.9.1'
     id 'maven-publish'
-//    id 'org.jreleaser' version '1.13.1'
 }
 
 apply plugin: 'io.graphoenix'
@@ -76,6 +75,14 @@ java {
     withSourcesJar()
 }
 
+javadoc {
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+sourcesJar {
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+}
+
 dependencies {
     api project(':graphoenix-spi')
     api project(':graphoenix-json')
@@ -113,66 +120,66 @@ test {
     useJUnitPlatform()
 }
 
-//publishing {
-//    publications {
-//        maven(MavenPublication) {
-//            groupId = 'org.graphoenix'
-//            artifactId = 'graphoenix-core'
-//
-//            from components.java
-//
-//            pom {
-//                name = 'graphoenix-core'
-//                description = 'graphoenix-core'
-//                url = 'https://github.com/doukai/graphoenix-ce'
-//                inceptionYear = '2023'
-//                licenses {
-//                    license {
-//                        name = 'MIT'
-//                        url = 'https://spdx.org/licenses/MIT.html'
-//                    }
-//                }
-//                developers {
-//                    developer {
-//                        id = 'doukai'
-//                        name = 'Dou Kai'
-//                    }
-//                }
-//                scm {
-//                    url = 'https://github.com/doukai/graphoenix-ce'
-//                    connection = 'scm:git://github.com:doukai/graphoenix-ce.git'
-//                    developerConnection = 'scm:git://github.com:doukai/graphoenix-ce.git'
-//                }
-//            }
-//        }
-//    }
-//
-//    repositories {
-//        maven {
-//            url = layout.buildDirectory.dir('staging-deploy')
-//        }
-//    }
-//}
-//
-//tasks.build.doFirst {
-//    mkdir "$buildDir/jreleaser"
-//}
-//
-//jreleaser {
-//    gitRootSearch = true
-//    signing {
-//        active = 'ALWAYS'
-//        armored = true
-//    }
-//    deploy {
-//        maven {
-//            mavenCentral {
-//                sonatype {
-//                    active = 'ALWAYS'
-//                    url = 'https://central.sonatype.com/api/v1/publisher'
-//                    stagingRepository('build/staging-deploy')
-//                }
-//            }
-//        }
-//    }
-//}
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'org.graphoenix'
+            artifactId = 'graphoenix-core'
+
+            from components.java
+
+            pom {
+                name = 'graphoenix-core'
+                description = 'graphoenix-core'
+                url = 'https://github.com/doukai/graphoenix-ce'
+                inceptionYear = '2023'
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = 'https://spdx.org/licenses/MIT.html'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'doukai'
+                        name = 'Dou Kai'
+                    }
+                }
+                scm {
+                    url = 'https://github.com/doukai/graphoenix-ce'
+                    connection = 'scm:git://github.com:doukai/graphoenix-ce.git'
+                    developerConnection = 'scm:git://github.com:doukai/graphoenix-ce.git'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            url = layout.buildDirectory.dir('staging-deploy')
+        }
+    }
+}
+
+tasks.build.doFirst {
+    mkdir "$buildDir/jreleaser"
+}
+
+jreleaser {
+    gitRootSearch = true
+    signing {
+        active = 'ALWAYS'
+        armored = true
+    }
+    deploy {
+        maven {
+            mavenCentral {
+                sonatype {
+                    active = 'ALWAYS'
+                    url = 'https://central.sonatype.com/api/v1/publisher'
+                    stagingRepository('build/staging-deploy')
+                }
+            }
+        }
+    }
+}
