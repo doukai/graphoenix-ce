@@ -1,11 +1,11 @@
 plugins {
-    id 'java'
+    id 'java-library'
     id 'antlr'
     id 'maven-publish'
 }
 
-group 'io.graphoenix'
-version '0.0.1-SNAPSHOT'
+group 'org.graphoenix'
+version '0.1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -18,16 +18,16 @@ dependencies {
         exclude group: 'org.glassfish', module: 'javax.json'
     }
 
-    compile 'io.projectreactor:reactor-core:3.4.16'
-    compile 'com.dslplatform:dsl-json:1.10.0'
-    compile 'org.eclipse.microprofile.graphql:microprofile-graphql-api:1.1.0'
-    compile 'jakarta.json:jakarta.json-api:2.1.1'
-    compile 'jakarta.json.bind:jakarta.json.bind-api:3.0.0'
-    compile 'jakarta.validation:jakarta.validation-api:3.0.1'
-    compile 'org.tinylog:tinylog-api:2.4.1'
-    compile 'org.antlr:antlr4-runtime:4.9.3'
+    api 'io.projectreactor:reactor-core:3.4.16'
+    api 'com.dslplatform:dsl-json:1.10.0'
+    api 'org.eclipse.microprofile.graphql:microprofile-graphql-api:1.1.0'
+    api 'jakarta.json:jakarta.json-api:2.1.1'
+    api 'jakarta.json.bind:jakarta.json.bind-api:3.0.0'
+    api 'jakarta.validation:jakarta.validation-api:3.0.1'
+    api 'org.tinylog:tinylog-api:2.4.1'
+    api 'org.antlr:antlr4-runtime:4.9.3'
 
-    implementation 'io.nozdormu:nozdormu-spi:0.0.1-SNAPSHOT'
+    implementation 'org.graphoenix:nozdormu-spi:0.1.0-SNAPSHOT'
     implementation 'org.antlr:ST4:4.3.2'
     implementation 'com.google.guava:guava:31.1-jre'
 

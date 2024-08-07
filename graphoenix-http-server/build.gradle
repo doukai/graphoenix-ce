@@ -1,10 +1,10 @@
 plugins {
-    id 'java'
+    id 'java-library'
     id 'maven-publish'
 }
 
-group = 'io.graphoenix'
-version = '0.0.1-SNAPSHOT'
+group 'org.graphoenix'
+version '0.1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -13,21 +13,21 @@ repositories {
 }
 
 dependencies {
-    compile 'io.projectreactor.netty:reactor-netty-http:1.1.13'
+    api 'io.projectreactor.netty:reactor-netty-http:1.1.13'
 
     implementation project(':graphoenix-core')
     implementation project(':graphoenix-json')
-    implementation 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
-    implementation 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
-    implementation 'io.nozdormu:nozdormu-interceptor:0.0.1-SNAPSHOT'
+    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
+    implementation 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
+    implementation 'org.graphoenix:nozdormu-interceptor:0.1.0-SNAPSHOT'
     implementation 'io.projectreactor.netty:reactor-netty-core:1.0.24'
     implementation 'com.aventrix.jnanoid:jnanoid:2.0.0'
 
     annotationProcessor project(':graphoenix-core')
     annotationProcessor project(':graphoenix-json')
-    annotationProcessor 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
-    annotationProcessor 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
-    annotationProcessor 'io.nozdormu:nozdormu-interceptor:0.0.1-SNAPSHOT'
+    annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
+    annotationProcessor 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
+    annotationProcessor 'org.graphoenix:nozdormu-interceptor:0.1.0-SNAPSHOT'
     annotationProcessor 'io.projectreactor.netty:reactor-netty-core:1.0.24'
     annotationProcessor 'io.projectreactor.netty:reactor-netty-http:1.1.13'
 

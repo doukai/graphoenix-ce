@@ -806,11 +806,11 @@ public class BaseTask extends DefaultTask {
     }
 
     private io.graphoenix.spi.graphql.type.Type getInvokeFieldTypeName(ResolvedPrimitiveType resolvedPrimitiveType) {
-        if (resolvedPrimitiveType.in(SHORT, INT, LONG)) {
+        if (resolvedPrimitiveType.in(new ResolvedPrimitiveType[]{SHORT, INT, LONG})) {
             return new TypeName(SCALA_INT_NAME);
-        } else if (resolvedPrimitiveType.in(FLOAT, DOUBLE)) {
+        } else if (resolvedPrimitiveType.in(new ResolvedPrimitiveType[]{FLOAT, DOUBLE})) {
             return new TypeName(SCALA_FLOAT_NAME);
-        } else if (resolvedPrimitiveType.in(BYTE, CHAR)) {
+        } else if (resolvedPrimitiveType.in(new ResolvedPrimitiveType[]{BYTE, CHAR})) {
             return new TypeName(SCALA_STRING_NAME);
         } else if (resolvedPrimitiveType.isBoolean()) {
             return new TypeName(SCALA_BOOLEAN_NAME);

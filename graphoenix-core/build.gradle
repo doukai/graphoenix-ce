@@ -1,21 +1,21 @@
-//buildscript {
-//    repositories {
-//        mavenLocal()
-//        jcenter()
-//        gradlePluginPortal()
-//    }
-//    dependencies {
-//        classpath 'io.graphoenix:graphoenix-gradle-plugin:0.0.1-SNAPSHOT'
-//    }
-//}
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'org.graphoenix:graphoenix-gradle-plugin:0.1.0-SNAPSHOT'
+    }
+}
 
 plugins {
-    id 'java'
+    id 'java-library'
     id 'com.google.protobuf' version '0.9.1'
     id 'maven-publish'
 }
 
-//apply plugin: 'io.graphoenix'
+apply plugin: 'io.graphoenix'
 
 protobuf {
     protoc {
@@ -63,22 +63,23 @@ sourceSets {
 }
 
 group 'io.graphoenix'
-version '0.0.1-SNAPSHOT'
+version '0.1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
     jcenter()
     mavenLocal()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    compile project(':graphoenix-spi')
-    compile project(':graphoenix-json')
-    compile 'com.google.auto.service:auto-service:1.0.1'
+    api project(':graphoenix-spi')
+    api project(':graphoenix-json')
+    api 'com.google.auto.service:auto-service:1.0.1'
 
-    implementation 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
-    implementation 'io.nozdormu:nozdormu-interceptor:0.0.1-SNAPSHOT'
-    implementation 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
+    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
+    implementation 'org.graphoenix:nozdormu-interceptor:0.1.0-SNAPSHOT'
+    implementation 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
     implementation 'com.google.guava:guava:31.1-jre'
     implementation 'com.aventrix.jnanoid:jnanoid:2.0.0'
     implementation 'com.github.ben-manes.caffeine:caffeine:3.1.1'
@@ -95,9 +96,9 @@ dependencies {
 
     annotationProcessor project(':graphoenix-spi')
     annotationProcessor project(':graphoenix-json')
-    annotationProcessor 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
-    annotationProcessor 'io.nozdormu:nozdormu-interceptor:0.0.1-SNAPSHOT'
-    annotationProcessor 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
+    annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
+    annotationProcessor 'org.graphoenix:nozdormu-interceptor:0.1.0-SNAPSHOT'
+    annotationProcessor 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
     annotationProcessor 'com.google.auto.service:auto-service:1.0.1'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'

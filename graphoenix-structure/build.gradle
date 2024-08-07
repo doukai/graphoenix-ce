@@ -5,15 +5,16 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'io.graphoenix:graphoenix-gradle-plugin:0.0.1-SNAPSHOT'
+        classpath 'org.graphoenix:graphoenix-gradle-plugin:0.1.0-SNAPSHOT'
     }
 }
 
 plugins {
-    id 'java'
+    id 'java-library'
     id 'com.google.protobuf' version '0.9.1'
     id 'maven-publish'
 }
+
 apply plugin: 'io.graphoenix'
 
 protobuf {
@@ -61,8 +62,8 @@ sourceSets {
     }
 }
 
-group 'io.graphoenix'
-version '0.0.1-SNAPSHOT'
+group 'org.graphoenix'
+version '0.1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -72,7 +73,7 @@ repositories {
 
 dependencies {
     implementation project(':graphoenix-core')
-    implementation 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
+    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
     runtimeOnly 'io.grpc:grpc-netty-shaded:1.52.1'
     implementation 'io.grpc:grpc-protobuf:1.52.1'
     implementation 'io.grpc:grpc-stub:1.52.1'
@@ -81,7 +82,7 @@ dependencies {
     compileOnly 'org.apache.tomcat:annotations-api:6.0.53' // necessary for Java 9+
 
     annotationProcessor project(':graphoenix-annotation-processor')
-    annotationProcessor 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
+    annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'

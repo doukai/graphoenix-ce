@@ -5,12 +5,12 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'io.graphoenix:graphoenix-gradle-plugin:0.0.1-SNAPSHOT'
+        classpath 'org.graphoenix:graphoenix-gradle-plugin:0.1.0-SNAPSHOT'
     }
 }
 
 plugins {
-    id 'java'
+    id 'java-library'
     id 'com.google.protobuf' version '0.9.1'
     id 'maven-publish'
 }
@@ -62,8 +62,8 @@ sourceSets {
     }
 }
 
-group = 'io.graphoenix'
-version = '0.0.1-SNAPSHOT'
+group 'org.graphoenix'
+version '0.1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -73,8 +73,8 @@ repositories {
 
 dependencies {
     implementation project(':graphoenix-core')
-    implementation 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
-    implementation 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
+    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
+    implementation 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
     implementation 'com.networknt:json-schema-validator:1.0.70'
 
     runtimeOnly 'io.grpc:grpc-netty-shaded:1.52.1'
@@ -85,8 +85,8 @@ dependencies {
     compileOnly 'org.apache.tomcat:annotations-api:6.0.53' // necessary for Java 9+
 
     annotationProcessor project(':graphoenix-annotation-processor')
-    annotationProcessor 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
-    annotationProcessor 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
+    annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
+    annotationProcessor 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
     annotationProcessor 'com.networknt:json-schema-validator:1.0.70'
 
     testImplementation platform('org.junit:junit-bom:5.9.1')

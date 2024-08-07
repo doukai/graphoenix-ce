@@ -1,10 +1,10 @@
 plugins {
-    id 'java'
+    id 'java-library'
     id 'maven-publish'
 }
 
-group 'io.graphoenix'
-version '0.0.1-SNAPSHOT'
+group 'org.graphoenix'
+version '0.1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -14,14 +14,14 @@ repositories {
 
 dependencies {
     implementation project(':graphoenix-core')
-    implementation 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
-    implementation 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
+    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
+    implementation 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
     implementation 'io.scalecube:scalecube-cluster:2.6.14'
     implementation 'io.scalecube:scalecube-transport-netty:2.6.14'
 
     annotationProcessor project(':graphoenix-core')
-    annotationProcessor 'io.nozdormu:nozdormu-inject:0.0.1-SNAPSHOT'
-    annotationProcessor 'io.nozdormu:nozdormu-config:0.0.1-SNAPSHOT'
+    annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
+    annotationProcessor 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
