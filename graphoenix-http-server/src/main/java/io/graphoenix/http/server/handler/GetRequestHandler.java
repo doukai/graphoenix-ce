@@ -64,7 +64,7 @@ public class GetRequestHandler extends BaseHandler {
         Document document = new Document(graphQLRequest.getQuery());
         Operation operation = document.getOperationOrError();
 
-        if (accept.startsWith(MimeType.Text.EVENT_STREAM)) {
+        if (accept.contains(MimeType.Text.EVENT_STREAM)) {
             String token = Optional.ofNullable(request.requestHeaders().get("X-GraphQL-Event-Stream-Token"))
                     .orElseGet(() -> decoder.parameters().containsKey("token") ? decoder.parameters().get("token").get(0) : null);
             String operationId = decoder.parameters().containsKey("operationId") ? decoder.parameters().get("operationId").get(0) : null;

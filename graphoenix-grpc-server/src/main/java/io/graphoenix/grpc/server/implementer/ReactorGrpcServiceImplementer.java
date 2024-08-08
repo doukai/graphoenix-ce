@@ -253,6 +253,7 @@ public class ReactorGrpcServiceImplementer {
                                                 ) :
                                                 CodeBlock.of(
                                                         "return $L.map(messageOrBuilder -> new $T().setOperationType($S).addSelection(new $T($S).setArguments(protobufConverter.toJsonValue(messageOrBuilder, fieldDefinition).asJsonObject())))\n",
+                                                        requestParameterName,
                                                         ClassName.get(Operation.class),
                                                         operationType,
                                                         ClassName.get(Field.class),
