@@ -2,7 +2,6 @@ plugins {
     id 'java-library'
     id 'antlr'
     id 'maven-publish'
-//    id 'org.jreleaser' version '1.13.1'
 }
 
 group 'org.graphoenix'
@@ -53,66 +52,66 @@ generateGrammarSource {
 }
 generateGrammarSource.inputs.dir('src/main/antlr')
 
-//publishing {
-//    publications {
-//        maven(MavenPublication) {
-//            groupId = 'org.graphoenix'
-//            artifactId = 'graphoenix-spi'
-//
-//            from components.java
-//
-//            pom {
-//                name = 'graphoenix-spi'
-//                description = 'graphoenix-spi'
-//                url = 'https://github.com/doukai/graphoenix-ce'
-//                inceptionYear = '2023'
-//                licenses {
-//                    license {
-//                        name = 'MIT'
-//                        url = 'https://spdx.org/licenses/MIT.html'
-//                    }
-//                }
-//                developers {
-//                    developer {
-//                        id = 'doukai'
-//                        name = 'Dou Kai'
-//                    }
-//                }
-//                scm {
-//                    url = 'https://github.com/doukai/graphoenix-ce'
-//                    connection = 'scm:git://github.com:doukai/graphoenix-ce.git'
-//                    developerConnection = 'scm:git://github.com:doukai/graphoenix-ce.git'
-//                }
-//            }
-//        }
-//    }
-//
-//    repositories {
-//        maven {
-//            url = layout.buildDirectory.dir('staging-deploy')
-//        }
-//    }
-//}
-//
-//tasks.build.doFirst {
-//    mkdir "$buildDir/jreleaser"
-//}
-//
-//jreleaser {
-//    gitRootSearch = true
-//    signing {
-//        active = 'ALWAYS'
-//        armored = true
-//    }
-//    deploy {
-//        maven {
-//            mavenCentral {
-//                sonatype {
-//                    active = 'ALWAYS'
-//                    url = 'https://central.sonatype.com/api/v1/publisher'
-//                    stagingRepository('build/staging-deploy')
-//                }
-//            }
-//        }
-//    }
-//}
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'org.graphoenix'
+            artifactId = 'graphoenix-spi'
+
+            from components.java
+
+            pom {
+                name = 'graphoenix-spi'
+                description = 'graphoenix-spi'
+                url = 'https://github.com/doukai/graphoenix-ce'
+                inceptionYear = '2023'
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = 'https://spdx.org/licenses/MIT.html'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'doukai'
+                        name = 'Dou Kai'
+                    }
+                }
+                scm {
+                    url = 'https://github.com/doukai/graphoenix-ce'
+                    connection = 'scm:git://github.com:doukai/graphoenix-ce.git'
+                    developerConnection = 'scm:git://github.com:doukai/graphoenix-ce.git'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            url = layout.buildDirectory.dir('staging-deploy')
+        }
+    }
+}
+
+tasks.build.doFirst {
+    mkdir "$buildDir/jreleaser"
+}
+
+jreleaser {
+    gitRootSearch = true
+    signing {
+        active = 'ALWAYS'
+        armored = true
+    }
+    deploy {
+        maven {
+            mavenCentral {
+                sonatype {
+                    active = 'ALWAYS'
+                    url = 'https://central.sonatype.com/api/v1/publisher'
+                    stagingRepository('build/staging-deploy')
+                }
+            }
+        }
+    }
+}
