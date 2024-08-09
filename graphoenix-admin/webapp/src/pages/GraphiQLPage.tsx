@@ -4,14 +4,15 @@ import { ToolbarButton, MagnifyingGlassIcon } from '@graphiql/react';
 import { useNavigate } from 'react-router-dom';
 import 'graphiql/graphiql.min.css';
 
-const fetcher: Fetcher = async graphQLParams => {
+const fetcher: Fetcher = async (graphQLParams, options) => {
   const data = await fetch(
     '/graphql',
     {
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        ...options?.headers
       },
       body: JSON.stringify(graphQLParams)
     },
