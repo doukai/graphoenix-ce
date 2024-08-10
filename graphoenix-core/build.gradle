@@ -1,11 +1,6 @@
 buildscript {
     repositories {
-        mavenLocal()
         jcenter()
-        gradlePluginPortal()
-    }
-    dependencies {
-        classpath 'org.graphoenix:graphoenix-gradle-plugin:0.1.0-SNAPSHOT'
     }
 }
 
@@ -13,9 +8,8 @@ plugins {
     id 'java-library'
     id 'com.google.protobuf' version '0.9.1'
     id 'maven-publish'
+    id "org.graphoenix" version "0.1.1"
 }
-
-apply plugin: 'io.graphoenix'
 
 protobuf {
     protoc {
@@ -34,17 +28,11 @@ protobuf {
         reactor {
             artifact = "com.salesforce.servicelibs:reactor-grpc:1.2.3"
         }
-        doc {
-            artifact = "io.github.pseudomuto:protoc-gen-doc:1.5.1"
-        }
     }
     generateProtoTasks {
         all()*.plugins {
             grpc {}
             reactor {}
-            doc {
-                option 'markdown,grpc-docs.md'
-            }
         }
     }
 }
@@ -56,20 +44,28 @@ sourceSets {
             srcDirs 'build/generated/source/proto/main/grpc'
             srcDirs 'build/generated/source/proto/main/reactor'
         }
-//        resources {
-//            srcDirs 'build/generated/source/proto/main/doc'
-//        }
     }
 }
 
 group 'org.graphoenix'
-version '0.1.0-SNAPSHOT'
+version '0.1.0'
 
 repositories {
     mavenCentral()
     jcenter()
-    mavenLocal()
-    maven { url 'https://jitpack.io' }
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+javadoc {
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+sourcesJar {
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
 }
 
 dependencies {
@@ -77,9 +73,9 @@ dependencies {
     api project(':graphoenix-json')
     api 'com.google.auto.service:auto-service:1.0.1'
 
-    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-interceptor:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
+    implementation 'org.graphoenix:nozdormu-inject:0.1.0'
+    implementation 'org.graphoenix:nozdormu-interceptor:0.1.0'
+    implementation 'org.graphoenix:nozdormu-config:0.1.0'
     implementation 'com.google.guava:guava:31.1-jre'
     implementation 'com.aventrix.jnanoid:jnanoid:2.0.0'
     implementation 'com.github.ben-manes.caffeine:caffeine:3.1.1'
@@ -96,9 +92,9 @@ dependencies {
 
     annotationProcessor project(':graphoenix-spi')
     annotationProcessor project(':graphoenix-json')
-    annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    annotationProcessor 'org.graphoenix:nozdormu-interceptor:0.1.0-SNAPSHOT'
-    annotationProcessor 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
+    annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0'
+    annotationProcessor 'org.graphoenix:nozdormu-interceptor:0.1.0'
+    annotationProcessor 'org.graphoenix:nozdormu-config:0.1.0'
     annotationProcessor 'com.google.auto.service:auto-service:1.0.1'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
@@ -112,7 +108,63 @@ test {
 publishing {
     publications {
         maven(MavenPublication) {
+            groupId = 'org.graphoenix'
+            artifactId = 'graphoenix-core'
+
             from components.java
+
+            pom {
+                name = 'graphoenix-core'
+                description = 'graphoenix-core'
+                url = 'https://github.com/doukai/graphoenix-ce'
+                inceptionYear = '2023'
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = 'https://spdx.org/licenses/MIT.html'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'doukai'
+                        name = 'Dou Kai'
+                    }
+                }
+                scm {
+                    url = 'https://github.com/doukai/graphoenix-ce'
+                    connection = 'scm:git://github.com:doukai/graphoenix-ce.git'
+                    developerConnection = 'scm:git://github.com:doukai/graphoenix-ce.git'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            url = layout.buildDirectory.dir('staging-deploy')
+        }
+    }
+}
+
+tasks.build.doFirst {
+    mkdir "$buildDir/jreleaser"
+}
+
+jreleaser {
+    gitRootSearch = true
+    signing {
+        active = 'ALWAYS'
+        armored = true
+    }
+    deploy {
+        maven {
+            mavenCentral {
+                sonatype {
+                    active = 'ALWAYS'
+                    url = 'https://central.sonatype.com/api/v1/publisher'
+                    stagingRepository('build/staging-deploy')
+                }
+            }
         }
     }
 }

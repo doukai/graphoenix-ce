@@ -1,11 +1,6 @@
 buildscript {
     repositories {
-        mavenLocal()
         jcenter()
-        gradlePluginPortal()
-    }
-    dependencies {
-        classpath 'org.graphoenix:graphoenix-gradle-plugin:0.1.0'
     }
 }
 
@@ -13,9 +8,8 @@ plugins {
     id 'java-library'
     id 'com.google.protobuf' version '0.9.1'
     id 'maven-publish'
+    id "org.graphoenix" version "0.1.1"
 }
-
-apply plugin: 'io.graphoenix'
 
 protobuf {
     protoc {
@@ -34,17 +28,11 @@ protobuf {
         reactor {
             artifact = "com.salesforce.servicelibs:reactor-grpc:1.2.3"
         }
-        doc {
-            artifact = "io.github.pseudomuto:protoc-gen-doc:1.5.1"
-        }
     }
     generateProtoTasks {
         all()*.plugins {
             grpc {}
             reactor {}
-            doc {
-                option 'markdown,grpc-docs.md'
-            }
         }
     }
 }
@@ -56,9 +44,6 @@ sourceSets {
             srcDirs 'build/generated/source/proto/main/grpc'
             srcDirs 'build/generated/source/proto/main/reactor'
         }
-//        resources {
-//            srcDirs 'build/generated/source/proto/main/doc'
-//        }
     }
 }
 
