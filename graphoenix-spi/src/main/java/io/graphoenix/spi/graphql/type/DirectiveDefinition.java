@@ -96,8 +96,12 @@ public class DirectiveDefinition extends AbstractDefinition implements Definitio
     }
 
     public DirectiveDefinition setDirectiveLocations(Collection<String> directiveLocations) {
-        if (directiveLocations != null && !directiveLocations.isEmpty()) {
-            this.directiveLocations = new LinkedHashSet<>(directiveLocations);
+        if (directiveLocations != null) {
+            if (directiveLocations.isEmpty()) {
+                this.directiveLocations = null;
+            } else {
+                this.directiveLocations = new LinkedHashSet<>(directiveLocations);
+            }
         }
         return this;
     }
