@@ -190,7 +190,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                                         .filter(item -> !item.asObject().containsKey(INPUT_VALUE_WHERE_NAME) || item.asObject().getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject().containsKey(idName))
                                                                         .filter(valueWithVariable ->
                                                                                 !valueWithVariable.asObject().containsKey(FIELD_DEPRECATED_NAME) ||
-                                                                                        valueWithVariable.asObject().asJsonObject().getBoolean(FIELD_DEPRECATED_NAME)
+                                                                                        !valueWithVariable.asObject().asJsonObject().getBoolean(FIELD_DEPRECATED_NAME)
                                                                         )
                                                                         .collect(Collectors.toList())
                                                         )
@@ -199,7 +199,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                                         .filter(index -> !jsonValue.asJsonArray().get(index).getValueType().equals(JsonValue.ValueType.NULL))
                                                                         .filter(index ->
                                                                                 !jsonValue.asJsonArray().get(index).asJsonObject().containsKey(FIELD_DEPRECATED_NAME) ||
-                                                                                        jsonValue.asJsonArray().get(index).asJsonObject().getBoolean(FIELD_DEPRECATED_NAME)
+                                                                                        !jsonValue.asJsonArray().get(index).asJsonObject().getBoolean(FIELD_DEPRECATED_NAME)
                                                                         )
                                                                         .mapToObj(index ->
                                                                                 documentManager.getInputValueTypeDefinition(listInputValue).asInputObject().getInputValues().stream()
