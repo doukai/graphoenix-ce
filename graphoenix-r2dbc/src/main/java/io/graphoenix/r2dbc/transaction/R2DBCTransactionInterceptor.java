@@ -1,7 +1,9 @@
 package io.graphoenix.r2dbc.transaction;
 
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
+import io.graphoenix.r2dbc.connection.ConnectionCreator;
 import io.graphoenix.r2dbc.connection.ConnectionProvider;
+import io.graphoenix.r2dbc.context.TransactionScopeInstanceFactory;
 import io.r2dbc.spi.Connection;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -32,11 +34,17 @@ import static io.graphoenix.spi.constant.Hammurabi.*;
 @Interceptor
 public class R2DBCTransactionInterceptor {
 
+    private final ConnectionCreator connectionCreator;
+
     private final ConnectionProvider connectionProvider;
 
+    private final TransactionScopeInstanceFactory transactionScopeInstanceFactory;
+
     @Inject
-    public R2DBCTransactionInterceptor(ConnectionProvider connectionProvider) {
+    public R2DBCTransactionInterceptor(ConnectionCreator connectionCreator, ConnectionProvider connectionProvider, TransactionScopeInstanceFactory transactionScopeInstanceFactory) {
+        this.connectionCreator = connectionCreator;
         this.connectionProvider = connectionProvider;
+        this.transactionScopeInstanceFactory = transactionScopeInstanceFactory;
     }
 
     @AroundInvoke
@@ -63,17 +71,18 @@ public class R2DBCTransactionInterceptor {
                 dontRollbackOn = (Class<? extends Exception>[]) Transactional.class.getDeclaredMethod("dontRollbackOn").getDefaultValue();
             }
 
+            String transactionId = NanoIdUtils.randomNanoId();
             if (invocationContext.getMethod().getReturnType().isAssignableFrom(Mono.class)) {
                 switch (txType) {
                     case REQUIRED:
                         return connectionProvider.inTransaction()
-                                .filter(inTransaction -> inTransaction)
-                                .flatMap(ignore -> Mono.from(proceed(invocationContext)))
-                                .switchIfEmpty(
-                                        Mono.defer(() ->
+                                .flatMap(inTransaction ->
+                                        inTransaction ?
+                                                Mono.from(proceed(invocationContext)) :
                                                 Mono
                                                         .usingWhen(
-                                                                connectionProvider.get(),
+                                                                connectionCreator.createConnection()
+                                                                        .flatMap(connection -> transactionScopeInstanceFactory.compute(transactionId, Connection.class, connection)),
                                                                 connection -> Mono.from(connection.setAutoCommit(false))
                                                                         .then(Mono.from(connection.beginTransaction()))
                                                                         .then(Mono.from(proceed(invocationContext))),
@@ -85,13 +94,13 @@ public class R2DBCTransactionInterceptor {
                                                                 connection -> Mono.from(connection.rollbackTransaction())
                                                                         .thenEmpty(connection.close())
                                                         )
-                                                        .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, true, ROLLBACK_ON, rollbackOn, DONT_ROLLBACK_ON, dontRollbackOn))
-                                        )
+                                                        .contextWrite(Context.of(TRANSACTION_ID, transactionId, IN_TRANSACTION, true, ROLLBACK_ON, rollbackOn, DONT_ROLLBACK_ON, dontRollbackOn))
                                 );
                     case REQUIRES_NEW:
                         return Mono
                                 .usingWhen(
-                                        connectionProvider.get(),
+                                        connectionCreator.createConnection()
+                                                .flatMap(connection -> transactionScopeInstanceFactory.compute(transactionId, Connection.class, connection)),
                                         connection -> Mono.from(connection.setAutoCommit(false))
                                                 .then(Mono.from(connection.beginTransaction()))
                                                 .then(Mono.from(proceed(invocationContext))),
@@ -103,52 +112,54 @@ public class R2DBCTransactionInterceptor {
                                         connection -> Mono.from(connection.rollbackTransaction())
                                                 .thenEmpty(connection.close())
                                 )
-                                .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, true, ROLLBACK_ON, rollbackOn, DONT_ROLLBACK_ON, dontRollbackOn));
+                                .contextWrite(Context.of(TRANSACTION_ID, transactionId, IN_TRANSACTION, true, ROLLBACK_ON, rollbackOn, DONT_ROLLBACK_ON, dontRollbackOn));
                     case MANDATORY:
                         return connectionProvider.inTransaction()
-                                .filter(inTransaction -> inTransaction)
-                                .flatMap(ignore -> Mono.from(proceed(invocationContext)))
-                                .switchIfEmpty(Mono.error(new TransactionRequiredException()));
+                                .flatMap(inTransaction ->
+                                        inTransaction ?
+                                                Mono.from(proceed(invocationContext)) :
+                                                Mono.error(new TransactionRequiredException())
+                                );
                     case SUPPORTS:
                         return Mono
                                 .usingWhen(
-                                        connectionProvider.get(),
+                                        connectionCreator.createConnection()
+                                                .flatMap(connection -> transactionScopeInstanceFactory.compute(transactionId, Connection.class, connection)),
                                         connection -> Mono.from(connection.setAutoCommit(true))
                                                 .then(Mono.from(proceed(invocationContext))),
                                         Connection::close
                                 )
-                                .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, false));
+                                .contextWrite(Context.of(TRANSACTION_ID, transactionId, IN_TRANSACTION, false));
                     case NOT_SUPPORTED:
                         return connectionProvider.inTransaction()
-                                .filter(inTransaction -> inTransaction)
-                                .flatMap(ignore -> Mono.from(proceed(invocationContext)))
-                                .switchIfEmpty(
-                                        Mono.defer(() ->
+                                .flatMap(inTransaction ->
+                                        inTransaction ?
+                                                Mono.from(proceed(invocationContext)) :
                                                 Mono
                                                         .usingWhen(
-                                                                connectionProvider.get(),
+                                                                connectionCreator.createConnection()
+                                                                        .flatMap(connection -> transactionScopeInstanceFactory.compute(transactionId, Connection.class, connection)),
                                                                 connection -> Mono.from(connection.setAutoCommit(true))
                                                                         .then(Mono.from(proceed(invocationContext))),
                                                                 Connection::close
                                                         )
-                                                        .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, false))
-                                        )
+                                                        .contextWrite(Context.of(TRANSACTION_ID, transactionId, IN_TRANSACTION, false))
+
                                 );
                     case NEVER:
                         return connectionProvider.inTransaction()
-                                .filter(inTransaction -> inTransaction)
-                                .flatMap(ignore -> Mono.error(new InvalidTransactionException()))
-                                .switchIfEmpty(
-                                        Mono.defer(() ->
+                                .flatMap(inTransaction ->
+                                        inTransaction ?
+                                                Mono.error(new InvalidTransactionException()) :
                                                 Mono
                                                         .usingWhen(
-                                                                connectionProvider.get(),
+                                                                connectionCreator.createConnection()
+                                                                        .flatMap(connection -> transactionScopeInstanceFactory.compute(transactionId, Connection.class, connection)),
                                                                 connection -> Mono.from(connection.setAutoCommit(true))
                                                                         .then(Mono.from(proceed(invocationContext))),
                                                                 Connection::close
                                                         )
-                                                        .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, false))
-                                        )
+                                                        .contextWrite(Context.of(TRANSACTION_ID, transactionId, IN_TRANSACTION, false))
                                 );
                     default:
                         throw new NotSupportedException();
@@ -157,13 +168,13 @@ public class R2DBCTransactionInterceptor {
                 switch (txType) {
                     case REQUIRED:
                         return connectionProvider.inTransaction()
-                                .filter(inTransaction -> inTransaction)
-                                .thenMany(ignore -> Flux.from(proceed(invocationContext)))
-                                .switchIfEmpty(
-                                        Flux.defer(() ->
+                                .flatMapMany(inTransaction ->
+                                        inTransaction ?
+                                                Flux.from(proceed(invocationContext)) :
                                                 Flux
                                                         .usingWhen(
-                                                                connectionProvider.get(),
+                                                                connectionCreator.createConnection()
+                                                                        .flatMap(connection -> transactionScopeInstanceFactory.compute(transactionId, Connection.class, connection)),
                                                                 connection -> Flux.from(connection.setAutoCommit(false))
                                                                         .thenMany(Flux.from(connection.beginTransaction()))
                                                                         .thenMany(Flux.from(proceed(invocationContext))),
@@ -175,13 +186,13 @@ public class R2DBCTransactionInterceptor {
                                                                 connection -> Flux.from(connection.rollbackTransaction())
                                                                         .thenEmpty(connection.close())
                                                         )
-                                                        .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, true, ROLLBACK_ON, rollbackOn, DONT_ROLLBACK_ON, dontRollbackOn))
-                                        )
+                                                        .contextWrite(Context.of(TRANSACTION_ID, transactionId, IN_TRANSACTION, true, ROLLBACK_ON, rollbackOn, DONT_ROLLBACK_ON, dontRollbackOn))
                                 );
                     case REQUIRES_NEW:
                         return Flux
                                 .usingWhen(
-                                        connectionProvider.get(),
+                                        connectionCreator.createConnection()
+                                                .flatMap(connection -> transactionScopeInstanceFactory.compute(transactionId, Connection.class, connection)),
                                         connection -> Flux.from(connection.setAutoCommit(false))
                                                 .thenMany(Flux.from(connection.beginTransaction()))
                                                 .thenMany(Flux.from(proceed(invocationContext))),
@@ -193,52 +204,53 @@ public class R2DBCTransactionInterceptor {
                                         connection -> Flux.from(connection.rollbackTransaction())
                                                 .thenEmpty(connection.close())
                                 )
-                                .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, true, ROLLBACK_ON, rollbackOn, DONT_ROLLBACK_ON, dontRollbackOn));
+                                .contextWrite(Context.of(TRANSACTION_ID, transactionId, IN_TRANSACTION, true, ROLLBACK_ON, rollbackOn, DONT_ROLLBACK_ON, dontRollbackOn));
                     case MANDATORY:
                         return connectionProvider.inTransaction()
-                                .filter(inTransaction -> inTransaction)
-                                .thenMany(ignore -> Flux.from(proceed(invocationContext)))
-                                .switchIfEmpty(Flux.error(new TransactionRequiredException()));
+                                .flatMapMany(inTransaction ->
+                                        inTransaction ?
+                                                Flux.from(proceed(invocationContext)) :
+                                                Flux.error(new TransactionRequiredException())
+                                );
                     case SUPPORTS:
                         return Flux
                                 .usingWhen(
-                                        connectionProvider.get(),
+                                        connectionCreator.createConnection()
+                                                .flatMap(connection -> transactionScopeInstanceFactory.compute(transactionId, Connection.class, connection)),
                                         connection -> Flux.from(connection.setAutoCommit(true))
                                                 .thenMany(Flux.from(proceed(invocationContext))),
                                         Connection::close
                                 )
-                                .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, false));
+                                .contextWrite(Context.of(TRANSACTION_ID, transactionId, IN_TRANSACTION, false));
                     case NOT_SUPPORTED:
                         return connectionProvider.inTransaction()
-                                .filter(inTransaction -> inTransaction)
-                                .flatMapMany(ignore -> Flux.from(proceed(invocationContext)))
-                                .switchIfEmpty(
-                                        Flux.defer(() ->
+                                .flatMapMany(inTransaction ->
+                                        inTransaction ?
+                                                Flux.from(proceed(invocationContext)) :
                                                 Flux
                                                         .usingWhen(
-                                                                connectionProvider.get(),
+                                                                connectionCreator.createConnection()
+                                                                        .flatMap(connection -> transactionScopeInstanceFactory.compute(transactionId, Connection.class, connection)),
                                                                 connection -> Flux.from(connection.setAutoCommit(true))
                                                                         .thenMany(Flux.from(proceed(invocationContext))),
                                                                 Connection::close
                                                         )
-                                                        .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, false))
-                                        )
+                                                        .contextWrite(Context.of(TRANSACTION_ID, transactionId, IN_TRANSACTION, false))
                                 );
                     case NEVER:
                         return connectionProvider.inTransaction()
-                                .filter(inTransaction -> inTransaction)
-                                .flatMapMany(ignore -> Flux.error(new InvalidTransactionException()))
-                                .switchIfEmpty(
-                                        Flux.defer(() ->
+                                .flatMapMany(inTransaction ->
+                                        inTransaction ?
+                                                Flux.error(new InvalidTransactionException()) :
                                                 Flux
                                                         .usingWhen(
-                                                                connectionProvider.get(),
+                                                                connectionCreator.createConnection()
+                                                                        .flatMap(connection -> transactionScopeInstanceFactory.compute(transactionId, Connection.class, connection)),
                                                                 connection -> Flux.from(connection.setAutoCommit(true))
                                                                         .thenMany(Flux.from(proceed(invocationContext))),
                                                                 Connection::close
                                                         )
-                                                        .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, false))
-                                        )
+                                                        .contextWrite(Context.of(TRANSACTION_ID, transactionId, IN_TRANSACTION, false))
                                 );
                     default:
                         throw new NotSupportedException();
