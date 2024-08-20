@@ -8,15 +8,13 @@ import org.tinylog.Logger;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class CacheScopeInstanceFactory extends ScopeInstanceFactory {
 
-    private final Map<String, ScopeInstances> CACHE = new ConcurrentHashMap<>();
+    private final AsyncLoadingCache<String, ScopeInstances> CACHE;
 
     public CacheScopeInstanceFactory(Duration timeout) {
-//        CACHE = buildCache(timeout);
+        CACHE = buildCache(timeout);
     }
 
     private AsyncLoadingCache<String, ScopeInstances> buildCache(Duration timeout) {
@@ -52,19 +50,18 @@ public abstract class CacheScopeInstanceFactory extends ScopeInstanceFactory {
     public Mono<ScopeInstances> getScopeInstances() {
         return Mono.deferContextual(contextView ->
                 Mono.justOrEmpty(contextView.getOrEmpty(getCacheId()))
-                        .map(id -> CACHE.computeIfAbsent((String) id, (k) -> new ScopeInstances()))
+                        .map(id -> CACHE.synchronous().get((String) id))
         );
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T, E extends T> Mono<T> compute(String id, Class<T> beanClass, String name, E instance) {
-//        return Mono.fromFuture(CACHE.get(id))
-//                .map(scopeInstances -> (T) scopeInstances.get(beanClass).compute(name, (k, v) -> instance));
-        return Mono.just((T) CACHE.computeIfAbsent(id, (k) -> new ScopeInstances()).get(beanClass).compute(name, (k, v) -> instance));
+        return Mono.fromFuture(CACHE.get(id))
+                .map(scopeInstances -> (T) scopeInstances.get(beanClass).compute(name, (k, v) -> instance));
     }
 
     public void invalidate(String id) {
-        CACHE.remove(id);
+        CACHE.synchronous().invalidate(id);
     }
 }
