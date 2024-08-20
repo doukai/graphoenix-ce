@@ -1,9 +1,7 @@
 package io.graphoenix.r2dbc.transaction;
 
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
-import io.graphoenix.r2dbc.connection.ConnectionCreator;
 import io.graphoenix.r2dbc.connection.ConnectionProvider;
-import io.graphoenix.r2dbc.context.TransactionScopeInstanceFactory;
 import io.r2dbc.spi.Connection;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -34,17 +32,11 @@ import static io.graphoenix.spi.constant.Hammurabi.*;
 @Interceptor
 public class R2DBCTransactionInterceptor {
 
-    private final ConnectionCreator connectionCreator;
-
     private final ConnectionProvider connectionProvider;
 
-    private final TransactionScopeInstanceFactory transactionScopeInstanceFactory;
-
     @Inject
-    public R2DBCTransactionInterceptor(ConnectionCreator connectionCreator, ConnectionProvider connectionProvider, TransactionScopeInstanceFactory transactionScopeInstanceFactory) {
-        this.connectionCreator = connectionCreator;
+    public R2DBCTransactionInterceptor(ConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
-        this.transactionScopeInstanceFactory = transactionScopeInstanceFactory;
     }
 
     @AroundInvoke
@@ -81,8 +73,7 @@ public class R2DBCTransactionInterceptor {
                                                 Mono.from(proceed(invocationContext)) :
                                                 Mono
                                                         .usingWhen(
-                                                                connectionCreator.createConnection()
-                                                                        .flatMap(connection -> transactionScopeInstanceFactory.compute(transactionId, Connection.class, connection)),
+                                                                connectionProvider.get(),
                                                                 connection -> Mono.from(connection.setAutoCommit(false))
                                                                         .then(Mono.from(connection.beginTransaction()))
                                                                         .then(Mono.from(proceed(invocationContext))),
@@ -99,8 +90,7 @@ public class R2DBCTransactionInterceptor {
                     case REQUIRES_NEW:
                         return Mono
                                 .usingWhen(
-                                        connectionCreator.createConnection()
-                                                .flatMap(connection -> transactionScopeInstanceFactory.compute(transactionId, Connection.class, connection)),
+                                        connectionProvider.get(),
                                         connection -> Mono.from(connection.setAutoCommit(false))
                                                 .then(Mono.from(connection.beginTransaction()))
                                                 .then(Mono.from(proceed(invocationContext))),
@@ -123,8 +113,7 @@ public class R2DBCTransactionInterceptor {
                     case SUPPORTS:
                         return Mono
                                 .usingWhen(
-                                        connectionCreator.createConnection()
-                                                .flatMap(connection -> transactionScopeInstanceFactory.compute(transactionId, Connection.class, connection)),
+                                        connectionProvider.get(),
                                         connection -> Mono.from(connection.setAutoCommit(true))
                                                 .then(Mono.from(proceed(invocationContext))),
                                         Connection::close
@@ -137,8 +126,7 @@ public class R2DBCTransactionInterceptor {
                                                 Mono.from(proceed(invocationContext)) :
                                                 Mono
                                                         .usingWhen(
-                                                                connectionCreator.createConnection()
-                                                                        .flatMap(connection -> transactionScopeInstanceFactory.compute(transactionId, Connection.class, connection)),
+                                                                connectionProvider.get(),
                                                                 connection -> Mono.from(connection.setAutoCommit(true))
                                                                         .then(Mono.from(proceed(invocationContext))),
                                                                 Connection::close
@@ -153,8 +141,7 @@ public class R2DBCTransactionInterceptor {
                                                 Mono.error(new InvalidTransactionException()) :
                                                 Mono
                                                         .usingWhen(
-                                                                connectionCreator.createConnection()
-                                                                        .flatMap(connection -> transactionScopeInstanceFactory.compute(transactionId, Connection.class, connection)),
+                                                                connectionProvider.get(),
                                                                 connection -> Mono.from(connection.setAutoCommit(true))
                                                                         .then(Mono.from(proceed(invocationContext))),
                                                                 Connection::close
@@ -173,8 +160,7 @@ public class R2DBCTransactionInterceptor {
                                                 Flux.from(proceed(invocationContext)) :
                                                 Flux
                                                         .usingWhen(
-                                                                connectionCreator.createConnection()
-                                                                        .flatMap(connection -> transactionScopeInstanceFactory.compute(transactionId, Connection.class, connection)),
+                                                                connectionProvider.get(),
                                                                 connection -> Flux.from(connection.setAutoCommit(false))
                                                                         .thenMany(Flux.from(connection.beginTransaction()))
                                                                         .thenMany(Flux.from(proceed(invocationContext))),
@@ -191,8 +177,7 @@ public class R2DBCTransactionInterceptor {
                     case REQUIRES_NEW:
                         return Flux
                                 .usingWhen(
-                                        connectionCreator.createConnection()
-                                                .flatMap(connection -> transactionScopeInstanceFactory.compute(transactionId, Connection.class, connection)),
+                                        connectionProvider.get(),
                                         connection -> Flux.from(connection.setAutoCommit(false))
                                                 .thenMany(Flux.from(connection.beginTransaction()))
                                                 .thenMany(Flux.from(proceed(invocationContext))),
@@ -215,8 +200,7 @@ public class R2DBCTransactionInterceptor {
                     case SUPPORTS:
                         return Flux
                                 .usingWhen(
-                                        connectionCreator.createConnection()
-                                                .flatMap(connection -> transactionScopeInstanceFactory.compute(transactionId, Connection.class, connection)),
+                                        connectionProvider.get(),
                                         connection -> Flux.from(connection.setAutoCommit(true))
                                                 .thenMany(Flux.from(proceed(invocationContext))),
                                         Connection::close
@@ -229,8 +213,7 @@ public class R2DBCTransactionInterceptor {
                                                 Flux.from(proceed(invocationContext)) :
                                                 Flux
                                                         .usingWhen(
-                                                                connectionCreator.createConnection()
-                                                                        .flatMap(connection -> transactionScopeInstanceFactory.compute(transactionId, Connection.class, connection)),
+                                                                connectionProvider.get(),
                                                                 connection -> Flux.from(connection.setAutoCommit(true))
                                                                         .thenMany(Flux.from(proceed(invocationContext))),
                                                                 Connection::close
@@ -244,8 +227,7 @@ public class R2DBCTransactionInterceptor {
                                                 Flux.error(new InvalidTransactionException()) :
                                                 Flux
                                                         .usingWhen(
-                                                                connectionCreator.createConnection()
-                                                                        .flatMap(connection -> transactionScopeInstanceFactory.compute(transactionId, Connection.class, connection)),
+                                                                connectionProvider.get(),
                                                                 connection -> Flux.from(connection.setAutoCommit(true))
                                                                         .thenMany(Flux.from(proceed(invocationContext))),
                                                                 Connection::close

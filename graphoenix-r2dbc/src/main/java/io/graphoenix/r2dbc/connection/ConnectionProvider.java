@@ -25,7 +25,7 @@ public class ConnectionProvider {
         return inTransaction()
                 .flatMap(inTransaction ->
                         inTransaction ?
-                                transactionScopeInstanceFactory.get(Connection.class) :
+                                transactionScopeInstanceFactory.get(Connection.class, connectionCreator::createConnection) :
                                 connectionCreator.createConnection()
                 );
     }
@@ -33,12 +33,8 @@ public class ConnectionProvider {
     public Mono<Boolean> inTransaction() {
         return Mono
                 .deferContextual(contextView ->
-                        Mono
-                                .just(
-                                        contextView.getOrEmpty(IN_TRANSACTION)
-                                                .map(inTransaction -> (Boolean) inTransaction)
-                                                .orElse(false)
-                                )
+                        Mono.justOrEmpty(contextView.getOrDefault(IN_TRANSACTION, false))
+                                .defaultIfEmpty(false)
                 );
     }
 
