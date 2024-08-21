@@ -66,13 +66,13 @@ dependencies {
     api project(':graphoenix-spi')
     api project(':graphoenix-json')
     api 'com.google.auto.service:auto-service:1.0.1'
+    api 'com.github.ben-manes.caffeine:caffeine:3.1.1'
 
     implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
     implementation 'org.graphoenix:nozdormu-interceptor:0.1.0-SNAPSHOT'
     implementation 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
     implementation 'com.google.guava:guava:31.1-jre'
     implementation 'com.aventrix.jnanoid:jnanoid:2.0.0'
-    implementation 'com.github.ben-manes.caffeine:caffeine:3.1.1'
     implementation 'org.tinylog:tinylog-impl:2.4.1'
     implementation 'org.tinylog:slf4j-tinylog:2.4.1'
     implementation 'org.tinylog:jcl-tinylog:2.4.1'
