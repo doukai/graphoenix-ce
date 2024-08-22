@@ -1,7 +1,9 @@
 package io.graphoenix.http.server.context;
 
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import io.graphoenix.core.context.CacheScopeInstanceFactory;
 import io.graphoenix.http.server.config.HttpServerConfig;
+import io.nozdormu.spi.context.ScopeInstances;
 import io.nozdormu.spi.event.ScopeEventResolver;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
@@ -17,14 +19,21 @@ import java.util.Map;
 public class RequestScopeInstanceFactory extends CacheScopeInstanceFactory {
     public static final String REQUEST_ID = "requestId";
 
+    private final LoadingCache<String, ScopeInstances> CACHE;
+
     @Inject
     public RequestScopeInstanceFactory(HttpServerConfig httpServerConfig) {
-        super(Duration.ofMillis(httpServerConfig.getConnectTimeOutMillis()));
+        CACHE = buildCache(Duration.ofMillis(httpServerConfig.getConnectTimeOutMillis()));
     }
 
     @Override
     protected String getCacheId() {
         return REQUEST_ID;
+    }
+
+    @Override
+    public LoadingCache<String, ScopeInstances> getCache() {
+        return CACHE;
     }
 
     @Override

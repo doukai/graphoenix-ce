@@ -1,7 +1,7 @@
 package io.graphoenix.core.context;
 
-import com.github.benmanes.caffeine.cache.AsyncLoadingCache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import io.nozdormu.spi.context.ScopeInstanceFactory;
 import io.nozdormu.spi.context.ScopeInstances;
 import org.tinylog.Logger;
@@ -11,13 +11,7 @@ import java.time.Duration;
 
 public abstract class CacheScopeInstanceFactory extends ScopeInstanceFactory {
 
-    private final AsyncLoadingCache<String, ScopeInstances> CACHE;
-
-    public CacheScopeInstanceFactory(Duration timeout) {
-        CACHE = buildCache(timeout);
-    }
-
-    private AsyncLoadingCache<String, ScopeInstances> buildCache(Duration timeout) {
+    protected LoadingCache<String, ScopeInstances> buildCache(Duration timeout) {
         return Caffeine.newBuilder()
                 .expireAfterAccess(timeout)
                 .evictionListener((key, value, cause) -> {
@@ -30,7 +24,7 @@ public abstract class CacheScopeInstanceFactory extends ScopeInstanceFactory {
                             onRemoval(key, value);
                         }
                 )
-                .buildAsync(key -> {
+                .build(key -> {
                             Logger.info("{} key: {} build", getCacheId(), key);
                             onBuild(key);
                             return new ScopeInstances();
@@ -39,6 +33,8 @@ public abstract class CacheScopeInstanceFactory extends ScopeInstanceFactory {
     }
 
     protected abstract String getCacheId();
+
+    protected abstract LoadingCache<String, ScopeInstances> getCache();
 
     protected abstract void onBuild(String key);
 
@@ -50,18 +46,18 @@ public abstract class CacheScopeInstanceFactory extends ScopeInstanceFactory {
     public Mono<ScopeInstances> getScopeInstances() {
         return Mono.deferContextual(contextView ->
                 Mono.justOrEmpty(contextView.getOrEmpty(getCacheId()))
-                        .flatMap(id -> Mono.fromFuture(CACHE.get((String) id)))
+                        .map(id -> getCache().get((String) id))
         );
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T, E extends T> Mono<T> compute(String id, Class<T> beanClass, String name, E instance) {
-        return Mono.fromFuture(CACHE.get(id))
+        return Mono.just(getCache().get(id))
                 .map(scopeInstances -> (T) scopeInstances.get(beanClass).compute(name, (k, v) -> instance));
     }
 
     public void invalidate(String id) {
-        CACHE.synchronous().invalidate(id);
+        getCache().invalidate(id);
     }
 }

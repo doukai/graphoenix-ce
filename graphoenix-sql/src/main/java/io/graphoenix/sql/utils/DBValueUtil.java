@@ -5,6 +5,7 @@ import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.common.Variable;
 import io.graphoenix.spi.graphql.type.InputValue;
+import io.graphoenix.sql.expression.JsonTableFunction;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
@@ -12,9 +13,12 @@ import net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.SetStatement;
-import net.sf.jsqlparser.statement.select.OrderByElement;
+import net.sf.jsqlparser.statement.create.table.ColDataType;
+import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
+import net.sf.jsqlparser.statement.select.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -84,24 +88,86 @@ public final class DBValueUtil {
         return new SetStatement(idVariableName, new ExpressionList<>(expression));
     }
 
-    public static Expression createGreaterThanLastInsertIDExpression(String typeName, String idFieldName) {
-        return createGreaterThanLastInsertIDExpression(graphqlTypeToTable(typeName), idFieldName);
-    }
-
-    public static Expression createGreaterThanLastInsertIDExpression(Table table, String idFieldName) {
+    public static Expression createGreaterThanLastInsertIDExpression(Table table, String idFieldName, ValueWithVariable valueWithVariable) {
         return new GreaterThanEquals()
                 .withLeftExpression(graphqlFieldToColumn(table, idFieldName))
-                .withRightExpression(new Function().withName("LAST_INSERT_ID"));
+                .withRightExpression(
+                        new Function()
+                                .withName("IFNULL")
+                                .withParameters(
+                                        new ExpressionList<>(
+                                                new ParenthesedSelect()
+                                                        .withSelect(
+                                                                new PlainSelect()
+                                                                        .addSelectItem(new Column(graphqlFieldNameToColumnName(idFieldName)))
+                                                                        .withFromItem(
+                                                                                new JsonTableFunction()
+                                                                                        .withJson(
+                                                                                                new JdbcNamedParameter().withName(valueWithVariable.asVariable().getName())
+                                                                                        )
+                                                                                        .withPath(new StringValue("$[*]"))
+                                                                                        .withColumnDefinitions(
+                                                                                                new ColumnDefinition()
+                                                                                                        .withColumnName(graphqlFieldNameToColumnName(idFieldName))
+                                                                                                        .withColDataType(
+                                                                                                                new ColDataType()
+                                                                                                                        .withDataType("VARCHAR")
+                                                                                                                        .withArgumentsStringList(Collections.singletonList("255"))
+                                                                                                        )
+                                                                                                        .addColumnSpecs("PATH", "'$." + idFieldName + "'")
+                                                                                        )
+                                                                                        .withAlias(new Alias(valueWithVariable.asVariable().getName()))
+                                                                        )
+                                                                        .withLimit(new Limit().withRowCount(new LongValue(1)))
+                                                        ),
+                                                new Function().withName("LAST_INSERT_ID")
+                                        )
+                                )
+                );
     }
 
-    public static Expression createEqualsToLastInsertIDExpression(String typeName, String idFieldName) {
-        return createEqualsToLastInsertIDExpression(graphqlTypeToTable(typeName), idFieldName);
-    }
-
-    public static Expression createEqualsToLastInsertIDExpression(Table table, String idFieldName) {
+    public static Expression createEqualsToLastInsertIDExpression(Table table, String idFieldName, ValueWithVariable valueWithVariable) {
         return new EqualsTo()
                 .withLeftExpression(graphqlFieldToColumn(table, idFieldName))
-                .withRightExpression(new Function().withName("LAST_INSERT_ID"));
+                .withRightExpression(
+                        new Function()
+                                .withName("IFNULL")
+                                .withParameters(
+                                        new ExpressionList<>(
+                                                new ParenthesedSelect()
+                                                        .withSelect(
+                                                                new PlainSelect()
+                                                                        .addSelectItem(new Column(graphqlFieldNameToColumnName(idFieldName)))
+                                                                        .withFromItem(
+                                                                                new JsonTableFunction()
+                                                                                        .withJson(
+                                                                                                new Function()
+                                                                                                        .withName("CONCAT")
+                                                                                                        .withParameters(
+                                                                                                                new StringValue("["),
+                                                                                                                new JdbcNamedParameter().withName(valueWithVariable.asVariable().getName()),
+                                                                                                                new StringValue("]")
+                                                                                                        )
+                                                                                        )
+                                                                                        .withPath(new StringValue("$[*]"))
+                                                                                        .withColumnDefinitions(
+                                                                                                new ColumnDefinition()
+                                                                                                        .withColumnName(graphqlFieldNameToColumnName(idFieldName))
+                                                                                                        .withColDataType(
+                                                                                                                new ColDataType()
+                                                                                                                        .withDataType("VARCHAR")
+                                                                                                                        .withArgumentsStringList(Collections.singletonList("255"))
+                                                                                                        )
+                                                                                                        .addColumnSpecs("PATH", "'$." + idFieldName + "'")
+                                                                                        )
+                                                                                        .withAlias(new Alias(valueWithVariable.asVariable().getName()))
+                                                                        )
+                                                                        .withLimit(new Limit().withRowCount(new LongValue(1)))
+                                                        ),
+                                                new Function().withName("LAST_INSERT_ID")
+                                        )
+                                )
+                );
     }
 
     public static UserVariable createInsertIdUserVariable(String typeName, String idFieldName, int level, int index) {

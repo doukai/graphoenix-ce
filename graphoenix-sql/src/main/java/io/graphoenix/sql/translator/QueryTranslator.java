@@ -184,7 +184,7 @@ public class QueryTranslator {
                                                     .filter(valueWithVariable -> !valueWithVariable.isNull())
                                                     .map(valueWithVariable -> {
                                                                 if (valueWithVariable.isVariable()) {
-                                                                    return createGreaterThanLastInsertIDExpression(table, idName);
+                                                                    return createGreaterThanLastInsertIDExpression(table, idName, valueWithVariable);
                                                                 } else {
                                                                     List<ValueWithVariable> valueWithVariableList = valueWithVariable.asArray().getValueWithVariables().stream()
                                                                             .filter(item -> !item.isNull())
@@ -256,7 +256,7 @@ public class QueryTranslator {
                                                                     .filter(valueWithVariable -> !valueWithVariable.isNull())
                                                                     .map(valueWithVariable -> {
                                                                                 if (valueWithVariable.isVariable()) {
-                                                                                    return createEqualsToLastInsertIDExpression(table, idName);
+                                                                                    return createEqualsToLastInsertIDExpression(table, idName, valueWithVariable);
                                                                                 } else {
                                                                                     return new EqualsTo()
                                                                                             .withLeftExpression(graphqlFieldToColumn(table, idName))

@@ -63,14 +63,14 @@ public class R2DBCTransactionInterceptor {
                 dontRollbackOn = (Class<? extends Exception>[]) Transactional.class.getDeclaredMethod("dontRollbackOn").getDefaultValue();
             }
 
+            String transactionId = NanoIdUtils.randomNanoId();
             if (invocationContext.getMethod().getReturnType().isAssignableFrom(Mono.class)) {
                 switch (txType) {
                     case REQUIRED:
                         return connectionProvider.inTransaction()
-                                .filter(inTransaction -> inTransaction)
-                                .flatMap(ignore -> Mono.from(proceed(invocationContext)))
-                                .switchIfEmpty(
-                                        Mono.defer(() ->
+                                .flatMap(inTransaction ->
+                                        inTransaction ?
+                                                Mono.from(proceed(invocationContext)) :
                                                 Mono
                                                         .usingWhen(
                                                                 connectionProvider.get(),
@@ -85,8 +85,7 @@ public class R2DBCTransactionInterceptor {
                                                                 connection -> Mono.from(connection.rollbackTransaction())
                                                                         .thenEmpty(connection.close())
                                                         )
-                                                        .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, true, ROLLBACK_ON, rollbackOn, DONT_ROLLBACK_ON, dontRollbackOn))
-                                        )
+                                                        .contextWrite(Context.of(TRANSACTION_ID, transactionId, IN_TRANSACTION, true, ROLLBACK_ON, rollbackOn, DONT_ROLLBACK_ON, dontRollbackOn))
                                 );
                     case REQUIRES_NEW:
                         return Mono
@@ -103,12 +102,14 @@ public class R2DBCTransactionInterceptor {
                                         connection -> Mono.from(connection.rollbackTransaction())
                                                 .thenEmpty(connection.close())
                                 )
-                                .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, true, ROLLBACK_ON, rollbackOn, DONT_ROLLBACK_ON, dontRollbackOn));
+                                .contextWrite(Context.of(TRANSACTION_ID, transactionId, IN_TRANSACTION, true, ROLLBACK_ON, rollbackOn, DONT_ROLLBACK_ON, dontRollbackOn));
                     case MANDATORY:
                         return connectionProvider.inTransaction()
-                                .filter(inTransaction -> inTransaction)
-                                .flatMap(ignore -> Mono.from(proceed(invocationContext)))
-                                .switchIfEmpty(Mono.error(new TransactionRequiredException()));
+                                .flatMap(inTransaction ->
+                                        inTransaction ?
+                                                Mono.from(proceed(invocationContext)) :
+                                                Mono.error(new TransactionRequiredException())
+                                );
                     case SUPPORTS:
                         return Mono
                                 .usingWhen(
@@ -117,13 +118,12 @@ public class R2DBCTransactionInterceptor {
                                                 .then(Mono.from(proceed(invocationContext))),
                                         Connection::close
                                 )
-                                .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, false));
+                                .contextWrite(Context.of(TRANSACTION_ID, transactionId, IN_TRANSACTION, false));
                     case NOT_SUPPORTED:
                         return connectionProvider.inTransaction()
-                                .filter(inTransaction -> inTransaction)
-                                .flatMap(ignore -> Mono.from(proceed(invocationContext)))
-                                .switchIfEmpty(
-                                        Mono.defer(() ->
+                                .flatMap(inTransaction ->
+                                        inTransaction ?
+                                                Mono.from(proceed(invocationContext)) :
                                                 Mono
                                                         .usingWhen(
                                                                 connectionProvider.get(),
@@ -131,15 +131,14 @@ public class R2DBCTransactionInterceptor {
                                                                         .then(Mono.from(proceed(invocationContext))),
                                                                 Connection::close
                                                         )
-                                                        .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, false))
-                                        )
+                                                        .contextWrite(Context.of(TRANSACTION_ID, transactionId, IN_TRANSACTION, false))
+
                                 );
                     case NEVER:
                         return connectionProvider.inTransaction()
-                                .filter(inTransaction -> inTransaction)
-                                .flatMap(ignore -> Mono.error(new InvalidTransactionException()))
-                                .switchIfEmpty(
-                                        Mono.defer(() ->
+                                .flatMap(inTransaction ->
+                                        inTransaction ?
+                                                Mono.error(new InvalidTransactionException()) :
                                                 Mono
                                                         .usingWhen(
                                                                 connectionProvider.get(),
@@ -147,8 +146,7 @@ public class R2DBCTransactionInterceptor {
                                                                         .then(Mono.from(proceed(invocationContext))),
                                                                 Connection::close
                                                         )
-                                                        .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, false))
-                                        )
+                                                        .contextWrite(Context.of(TRANSACTION_ID, transactionId, IN_TRANSACTION, false))
                                 );
                     default:
                         throw new NotSupportedException();
@@ -157,10 +155,9 @@ public class R2DBCTransactionInterceptor {
                 switch (txType) {
                     case REQUIRED:
                         return connectionProvider.inTransaction()
-                                .filter(inTransaction -> inTransaction)
-                                .thenMany(ignore -> Flux.from(proceed(invocationContext)))
-                                .switchIfEmpty(
-                                        Flux.defer(() ->
+                                .flatMapMany(inTransaction ->
+                                        inTransaction ?
+                                                Flux.from(proceed(invocationContext)) :
                                                 Flux
                                                         .usingWhen(
                                                                 connectionProvider.get(),
@@ -175,8 +172,7 @@ public class R2DBCTransactionInterceptor {
                                                                 connection -> Flux.from(connection.rollbackTransaction())
                                                                         .thenEmpty(connection.close())
                                                         )
-                                                        .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, true, ROLLBACK_ON, rollbackOn, DONT_ROLLBACK_ON, dontRollbackOn))
-                                        )
+                                                        .contextWrite(Context.of(TRANSACTION_ID, transactionId, IN_TRANSACTION, true, ROLLBACK_ON, rollbackOn, DONT_ROLLBACK_ON, dontRollbackOn))
                                 );
                     case REQUIRES_NEW:
                         return Flux
@@ -193,12 +189,14 @@ public class R2DBCTransactionInterceptor {
                                         connection -> Flux.from(connection.rollbackTransaction())
                                                 .thenEmpty(connection.close())
                                 )
-                                .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, true, ROLLBACK_ON, rollbackOn, DONT_ROLLBACK_ON, dontRollbackOn));
+                                .contextWrite(Context.of(TRANSACTION_ID, transactionId, IN_TRANSACTION, true, ROLLBACK_ON, rollbackOn, DONT_ROLLBACK_ON, dontRollbackOn));
                     case MANDATORY:
                         return connectionProvider.inTransaction()
-                                .filter(inTransaction -> inTransaction)
-                                .thenMany(ignore -> Flux.from(proceed(invocationContext)))
-                                .switchIfEmpty(Flux.error(new TransactionRequiredException()));
+                                .flatMapMany(inTransaction ->
+                                        inTransaction ?
+                                                Flux.from(proceed(invocationContext)) :
+                                                Flux.error(new TransactionRequiredException())
+                                );
                     case SUPPORTS:
                         return Flux
                                 .usingWhen(
@@ -207,13 +205,12 @@ public class R2DBCTransactionInterceptor {
                                                 .thenMany(Flux.from(proceed(invocationContext))),
                                         Connection::close
                                 )
-                                .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, false));
+                                .contextWrite(Context.of(TRANSACTION_ID, transactionId, IN_TRANSACTION, false));
                     case NOT_SUPPORTED:
                         return connectionProvider.inTransaction()
-                                .filter(inTransaction -> inTransaction)
-                                .flatMapMany(ignore -> Flux.from(proceed(invocationContext)))
-                                .switchIfEmpty(
-                                        Flux.defer(() ->
+                                .flatMapMany(inTransaction ->
+                                        inTransaction ?
+                                                Flux.from(proceed(invocationContext)) :
                                                 Flux
                                                         .usingWhen(
                                                                 connectionProvider.get(),
@@ -221,15 +218,13 @@ public class R2DBCTransactionInterceptor {
                                                                         .thenMany(Flux.from(proceed(invocationContext))),
                                                                 Connection::close
                                                         )
-                                                        .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, false))
-                                        )
+                                                        .contextWrite(Context.of(TRANSACTION_ID, transactionId, IN_TRANSACTION, false))
                                 );
                     case NEVER:
                         return connectionProvider.inTransaction()
-                                .filter(inTransaction -> inTransaction)
-                                .flatMapMany(ignore -> Flux.error(new InvalidTransactionException()))
-                                .switchIfEmpty(
-                                        Flux.defer(() ->
+                                .flatMapMany(inTransaction ->
+                                        inTransaction ?
+                                                Flux.error(new InvalidTransactionException()) :
                                                 Flux
                                                         .usingWhen(
                                                                 connectionProvider.get(),
@@ -237,8 +232,7 @@ public class R2DBCTransactionInterceptor {
                                                                         .thenMany(Flux.from(proceed(invocationContext))),
                                                                 Connection::close
                                                         )
-                                                        .contextWrite(Context.of(TRANSACTION_ID, NanoIdUtils.randomNanoId(), IN_TRANSACTION, false))
-                                        )
+                                                        .contextWrite(Context.of(TRANSACTION_ID, transactionId, IN_TRANSACTION, false))
                                 );
                     default:
                         throw new NotSupportedException();
