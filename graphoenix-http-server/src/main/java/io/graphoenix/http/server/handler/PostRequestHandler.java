@@ -80,6 +80,16 @@ public class PostRequestHandler extends BaseHandler {
                             byteBuf -> true
                     );
         } else {
+            if (contentType.contains(MimeType.Multipart.FORM_DATA)) {
+                return response
+                        .addHeader(CONTENT_TYPE, MimeType.Application.JSON)
+                        .sendString(
+                                request.receiveForm()
+                                        .flatMap(data ->
+                                                Mono.just('[' + data.getName() + ']')
+                                        )
+                        );
+            }
             return response
                     .addHeader(CONTENT_TYPE, MimeType.Application.JSON)
                     .sendString(

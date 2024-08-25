@@ -183,6 +183,10 @@ public class ReactorGrpcServiceImplementer {
 
     private List<MethodSpec> buildTypeMethods(String packageName, String operationTypeName, List<FieldDefinition> fieldDefinitionList) {
         return fieldDefinitionList.stream()
+                .filter(fieldDefinition -> !fieldDefinition.getName().equals("singleFile"))
+                .filter(fieldDefinition -> !fieldDefinition.getName().equals("multipleFile"))
+                .filter(fieldDefinition -> !fieldDefinition.getName().equals("singleUpload"))
+                .filter(fieldDefinition -> !fieldDefinition.getName().equals("multipleUpload"))
                 .map(fieldDefinition -> buildTypeMethod(packageName, operationTypeName, fieldDefinition))
                 .collect(Collectors.toList());
     }

@@ -154,7 +154,9 @@ public class TypeTranslator {
                                     fieldTypeName.equals(SCALA_DATE_NAME) ||
                                     fieldTypeName.equals(SCALA_TIME_NAME) ||
                                     fieldTypeName.equals(SCALA_DATE_TIME_NAME) ||
-                                    fieldTypeName.equals(SCALA_TIMESTAMP_NAME)) {
+                                    fieldTypeName.equals(SCALA_TIMESTAMP_NAME)||
+                                    fieldTypeName.equals(SCALA_FILE_NAME) ||
+                                    fieldTypeName.equals(SCALA_UPLOAD_NAME)) {
                                 columnSpecs.add("DEFAULT  " + stringValueToDBVarchar(defaultValue));
                             } else {
                                 columnSpecs.add("DEFAULT  " + defaultValue);
@@ -212,6 +214,8 @@ public class TypeTranslator {
             switch (fieldTypeName) {
                 case SCALA_ID_NAME:
                 case SCALA_STRING_NAME:
+                case SCALA_FILE_NAME:
+                case SCALA_UPLOAD_NAME:
                     colDataType.setDataType("VARCHAR");
                     argumentsStringList.add(String.valueOf(fieldDefinition.getLength().orElse(255)));
                     break;

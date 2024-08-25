@@ -454,6 +454,10 @@ public class ProtobufFileBuilder {
                                 .setRpcs(
                                         objectType.getFields().stream()
                                                 .filter(packageManager::isOwnPackage)
+                                                .filter(fieldDefinition -> !fieldDefinition.getName().equals("singleFile"))
+                                                .filter(fieldDefinition -> !fieldDefinition.getName().equals("multipleFile"))
+                                                .filter(fieldDefinition -> !fieldDefinition.getName().equals("singleUpload"))
+                                                .filter(fieldDefinition -> !fieldDefinition.getName().equals("multipleUpload"))
                                                 .map(fieldDefinition ->
                                                         new Rpc()
                                                                 .setName(getGrpcServiceRpcName(fieldDefinition.getName()))
@@ -687,6 +691,8 @@ public class ProtobufFileBuilder {
             switch (definition.getName()) {
                 case SCALA_ID_NAME:
                 case SCALA_STRING_NAME:
+                case SCALA_FILE_NAME:
+                case SCALA_UPLOAD_NAME:
                     return "string";
                 case SCALA_DATE_NAME:
                     return "google.type.Date";

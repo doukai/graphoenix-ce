@@ -698,6 +698,8 @@ public class TypeSpecBuilder {
             case SCALA_TIME_NAME:
             case SCALA_DATE_TIME_NAME:
             case SCALA_TIMESTAMP_NAME:
+            case SCALA_FILE_NAME:
+            case SCALA_UPLOAD_NAME:
                 return CodeBlock.of("$S", "");
             case SCALA_BOOLEAN_NAME:
                 return CodeBlock.of("$L", false);
@@ -766,6 +768,8 @@ public class TypeSpecBuilder {
         switch (scalarType.getName()) {
             case SCALA_ID_NAME:
             case SCALA_STRING_NAME:
+            case SCALA_FILE_NAME:
+            case SCALA_UPLOAD_NAME:
                 return TypeName.get(String.class);
             case SCALA_BOOLEAN_NAME:
                 return TypeName.get(Boolean.class);
@@ -797,6 +801,8 @@ public class TypeSpecBuilder {
             case SCALA_TIME_NAME:
             case SCALA_DATE_TIME_NAME:
             case SCALA_TIMESTAMP_NAME:
+            case SCALA_FILE_NAME:
+            case SCALA_UPLOAD_NAME:
                 return TypeName.get(String.class);
             case SCALA_BOOLEAN_NAME:
                 return BOOLEAN;

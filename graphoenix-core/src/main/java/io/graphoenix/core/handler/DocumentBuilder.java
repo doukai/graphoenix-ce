@@ -668,6 +668,8 @@ public class DocumentBuilder {
                 case SCALA_TIME_NAME:
                 case SCALA_DATE_TIME_NAME:
                 case SCALA_TIMESTAMP_NAME:
+                case SCALA_FILE_NAME:
+                case SCALA_UPLOAD_NAME:
                     argumentType = new TypeName(SCALA_STRING_NAME + InputType.EXPRESSION);
                     break;
                 case SCALA_INT_NAME:
@@ -1141,7 +1143,9 @@ public class DocumentBuilder {
                                         fieldDefinition.getType().getTypeName().getName().equals(SCALA_DATE_NAME) ||
                                         fieldDefinition.getType().getTypeName().getName().equals(SCALA_TIME_NAME) ||
                                         fieldDefinition.getType().getTypeName().getName().equals(SCALA_DATE_TIME_NAME) ||
-                                        fieldDefinition.getType().getTypeName().getName().equals(SCALA_TIMESTAMP_NAME)
+                                        fieldDefinition.getType().getTypeName().getName().equals(SCALA_TIMESTAMP_NAME)||
+                                        fieldDefinition.getType().getTypeName().getName().equals(SCALA_FILE_NAME) ||
+                                        fieldDefinition.getType().getTypeName().getName().equals(SCALA_UPLOAD_NAME)
                         )
                         .flatMap(fieldDefinition ->
                                 Stream.of(

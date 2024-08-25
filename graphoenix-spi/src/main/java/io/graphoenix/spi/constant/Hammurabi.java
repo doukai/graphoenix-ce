@@ -16,6 +16,8 @@ public class Hammurabi {
     public static final String SCALA_TIME_NAME = "Time";
     public static final String SCALA_DATE_TIME_NAME = "DateTime";
     public static final String SCALA_TIMESTAMP_NAME = "Timestamp";
+    public static final String SCALA_FILE_NAME = "File";
+    public static final String SCALA_UPLOAD_NAME = "Upload";
 
 
     public static final String INTERFACE_META_NAME = "Meta";

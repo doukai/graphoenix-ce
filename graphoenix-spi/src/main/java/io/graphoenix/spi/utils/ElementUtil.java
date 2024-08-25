@@ -22,6 +22,8 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -172,6 +174,10 @@ public final class ElementUtil {
             elementType = new TypeName(SCALA_TIME_NAME);
         } else if (typeName.equals(LocalDateTime.class.getCanonicalName())) {
             elementType = new TypeName(SCALA_DATE_TIME_NAME);
+        } else if (typeName.equals(FileInputStream.class.getCanonicalName())) {
+            elementType = new TypeName(SCALA_FILE_NAME);
+        } else if (typeName.equals(InputStream.class.getCanonicalName())) {
+            elementType = new TypeName(SCALA_UPLOAD_NAME);
         } else if (typeName.equals(Collection.class.getCanonicalName()) ||
                 typeName.equals(List.class.getCanonicalName()) ||
                 typeName.equals(Set.class.getCanonicalName())) {
