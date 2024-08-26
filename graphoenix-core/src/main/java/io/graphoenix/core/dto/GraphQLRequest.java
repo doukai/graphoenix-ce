@@ -2,6 +2,7 @@ package io.graphoenix.core.dto;
 
 import com.dslplatform.json.CompiledJson;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
 
@@ -16,6 +17,8 @@ public class GraphQLRequest {
     private String operationName;
 
     private JsonObject variables;
+
+    private JsonObject map;
 
     private static final JsonProvider jsonProvider = JsonProvider.provider();
 
@@ -58,6 +61,33 @@ public class GraphQLRequest {
 
     public static GraphQLRequest fromJson(String json) {
         return fromJson(jsonProvider.createReader(new StringReader(json)).readObject());
+    }
+
+    public void setOperations(String operations) {
+        JsonObject jsonObject = jsonProvider.createReader(new StringReader(operations)).readObject();
+        this.query = jsonObject.containsKey("query") && !jsonObject.isNull("query") ? jsonObject.getString("query") : null;
+        this.operationName = jsonObject.containsKey("operationName") && !jsonObject.isNull("operationName") ? jsonObject.getString("operationName") : null;
+        this.variables = jsonObject.containsKey("variables") && !jsonObject.isNull("variables") ? jsonObject.getJsonObject("variables") : null;
+    }
+
+    public void setMap(String map) {
+        this.map = jsonProvider.createReader(new StringReader(map)).readObject();
+    }
+
+    public void setFileID(String name, String id) {
+        this.variables = this.map.getJsonArray(name).stream()
+                .map(jsonValue -> (JsonString) jsonValue)
+                .reduce(this.variables,
+                        (variables, jsonString) ->
+                                jsonProvider
+                                        .createPointer(
+                                                jsonString.getString()
+                                                        .replaceFirst("variables", "")
+                                                        .replaceAll("\\.", "/")
+                                        )
+                                        .replace(this.variables, jsonProvider.createValue(id)),
+                        (x, y) -> y
+                );
     }
 
     public Map<String, JsonValue> getVariables() {

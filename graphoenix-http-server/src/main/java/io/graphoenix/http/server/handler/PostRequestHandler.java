@@ -24,6 +24,7 @@ import reactor.netty.http.server.HttpServerRequest;
 import reactor.netty.http.server.HttpServerResponse;
 import reactor.util.context.Context;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
@@ -80,21 +81,33 @@ public class PostRequestHandler extends BaseHandler {
                             byteBuf -> true
                     );
         } else {
-            if (contentType.contains(MimeType.Multipart.FORM_DATA)) {
-                return response
-                        .addHeader(CONTENT_TYPE, MimeType.Application.JSON)
-                        .sendString(
-                                request.receiveForm()
-                                        .flatMap(data ->
-                                                Mono.just('[' + data.getName() + ']')
-                                        )
-                        );
-            }
             return response
                     .addHeader(CONTENT_TYPE, MimeType.Application.JSON)
                     .sendString(
-                            request.receive().aggregate().asString()
-                                    .map(requestString -> contentType.contains(MimeType.Application.GRAPHQL) ? new GraphQLRequest(requestString) : GraphQLRequest.fromJson(requestString))
+                            (contentType.contains(MimeType.Multipart.FORM_DATA) ?
+                                    request.receiveForm()
+                                            .reduce(new GraphQLRequest(), (graphQLRequest, data) -> {
+                                                        try {
+                                                            if ("operations".equals(data.getName())) {
+                                                                graphQLRequest.setOperations(data.getString());
+                                                            } else if ("map".equals(data.getName())) {
+                                                                graphQLRequest.setMap(data.getString());
+                                                            } else if (data.getFile() != null) {
+                                                                graphQLRequest.setFileID(data.getName(), "123456");
+                                                            }
+                                                            return graphQLRequest;
+                                                        } catch (IOException e) {
+                                                            throw new RuntimeException(e);
+                                                        }
+                                                    }
+                                            ) :
+                                    request.receive().aggregate().asString()
+                                            .map(requestString ->
+                                                    contentType.contains(MimeType.Application.GRAPHQL) ?
+                                                            new GraphQLRequest(requestString) :
+                                                            GraphQLRequest.fromJson(requestString)
+                                            )
+                            )
                                     .flatMap(graphQLRequest ->
                                             Mono.just(new Document(graphQLRequest.getQuery()))
                                                     .flatMap(document ->
