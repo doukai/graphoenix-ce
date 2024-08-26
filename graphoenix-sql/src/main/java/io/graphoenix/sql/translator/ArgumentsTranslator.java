@@ -651,7 +651,6 @@ public class ArgumentsTranslator {
             switch (inputValueTypeDefinition.getName()) {
                 case SCALA_ID_NAME:
                 case SCALA_STRING_NAME:
-                case SCALA_FILE_NAME:
                 case SCALA_UPLOAD_NAME:
                     colDataType
                             .withDataType("VARCHAR")

@@ -18,4 +18,5 @@ include 'graphoenix-grpc-client'
 include 'graphoenix-introspection'
 include 'graphoenix-structure'
 include 'graphoenix-admin'
+include 'graphoenix-file'
 

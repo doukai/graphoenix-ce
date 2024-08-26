@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.graphoenix.file.grpc";
+
+package io.graphoenix.file;
+
+import "io/graphoenix/file/enums.proto";
+import "io/graphoenix/file/objects.proto";
+import "io/graphoenix/file/interfaces.proto";
+import "io/graphoenix/file/input_objects.proto";
+import "io/graphoenix/file/mutation_requests.proto";
+import "io/graphoenix/file/mutation_responses.proto";
+
+service MutationService {
+}

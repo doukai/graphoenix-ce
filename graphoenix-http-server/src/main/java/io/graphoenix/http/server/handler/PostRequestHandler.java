@@ -7,11 +7,13 @@ import io.graphoenix.http.server.context.RequestScopeInstanceFactory;
 import io.graphoenix.http.server.utils.ResponseUtil;
 import io.graphoenix.spi.graphql.Document;
 import io.graphoenix.spi.graphql.operation.Operation;
+import io.graphoenix.spi.handler.FileSaveHandler;
 import io.graphoenix.spi.handler.OperationHandler;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.QueryStringDecoder;
+import io.netty.handler.codec.http.multipart.FileUpload;
 import io.nozdormu.spi.context.PublisherBeanContext;
 import io.nozdormu.spi.event.ScopeEventResolver;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -38,11 +40,13 @@ import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 public class PostRequestHandler extends BaseHandler {
 
     private final OperationHandler operationHandler;
+    private final FileSaveHandler fileSaveHandler;
     private final RequestScopeInstanceFactory requestScopeInstanceFactory;
 
     @Inject
-    public PostRequestHandler(OperationHandler operationHandler, RequestScopeInstanceFactory requestScopeInstanceFactory) {
+    public PostRequestHandler(OperationHandler operationHandler, FileSaveHandler fileSaveHandler, RequestScopeInstanceFactory requestScopeInstanceFactory) {
         this.operationHandler = operationHandler;
+        this.fileSaveHandler = fileSaveHandler;
         this.requestScopeInstanceFactory = requestScopeInstanceFactory;
     }
 
@@ -86,21 +90,50 @@ public class PostRequestHandler extends BaseHandler {
                     .sendString(
                             (contentType.contains(MimeType.Multipart.FORM_DATA) ?
                                     request.receiveForm()
-                                            .reduce(new GraphQLRequest(), (graphQLRequest, data) -> {
-                                                        try {
-                                                            if ("operations".equals(data.getName())) {
-                                                                graphQLRequest.setOperations(data.getString());
-                                                            } else if ("map".equals(data.getName())) {
-                                                                graphQLRequest.setMap(data.getString());
-                                                            } else if (data.getFile() != null) {
-                                                                graphQLRequest.setFileID(data.getName(), "123456");
+                                            .reduce(Mono.just(new GraphQLRequest()),
+                                                    (graphQLRequestMono, data) -> {
+                                                        if ("operations".equals(data.getName())) {
+                                                            return graphQLRequestMono
+                                                                    .map(graphQLRequest -> {
+                                                                                try {
+                                                                                    graphQLRequest.setOperations(data.getString());
+                                                                                    return graphQLRequest;
+                                                                                } catch (IOException e) {
+                                                                                    throw new RuntimeException(e);
+                                                                                }
+                                                                            }
+                                                                    );
+                                                        } else if ("map".equals(data.getName())) {
+                                                            return graphQLRequestMono
+                                                                    .map(graphQLRequest -> {
+                                                                                try {
+                                                                                    graphQLRequest.setMap(data.getString());
+                                                                                    return graphQLRequest;
+                                                                                } catch (IOException e) {
+                                                                                    throw new RuntimeException(e);
+                                                                                }
+                                                                            }
+                                                                    );
+                                                        } else if (data instanceof FileUpload && ((FileUpload) data).getFilename() != null) {
+                                                            FileUpload fileUpload = (FileUpload) data;
+                                                            try {
+                                                                return fileSaveHandler.save(fileUpload.get(), fileUpload.getFilename(), fileUpload.getContentType())
+                                                                        .flatMap(id ->
+                                                                                graphQLRequestMono
+                                                                                        .map(graphQLRequest -> {
+                                                                                                    graphQLRequest.setFileID(data.getName(), id);
+                                                                                                    return graphQLRequest;
+                                                                                                }
+                                                                                        )
+                                                                        );
+                                                            } catch (IOException e) {
+                                                                throw new RuntimeException(e);
                                                             }
-                                                            return graphQLRequest;
-                                                        } catch (IOException e) {
-                                                            throw new RuntimeException(e);
                                                         }
+                                                        return graphQLRequestMono;
                                                     }
-                                            ) :
+                                            )
+                                            .flatMap(mono -> mono) :
                                     request.receive().aggregate().asString()
                                             .map(requestString ->
                                                     contentType.contains(MimeType.Application.GRAPHQL) ?

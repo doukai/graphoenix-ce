@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.graphoenix.file.dto.inputObjectType.grpc";
+
+package io.graphoenix.file;
+
+import "io/graphoenix/file/enums.proto";
+
+message Mutation_singleUpload_Arguments {
+    string file = 1;
+}
+message Mutation_multipleUpload_Arguments {
+    repeated string files = 1;
+}

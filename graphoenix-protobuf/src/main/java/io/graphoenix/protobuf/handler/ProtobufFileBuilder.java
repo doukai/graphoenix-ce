@@ -691,7 +691,6 @@ public class ProtobufFileBuilder {
             switch (definition.getName()) {
                 case SCALA_ID_NAME:
                 case SCALA_STRING_NAME:
-                case SCALA_FILE_NAME:
                 case SCALA_UPLOAD_NAME:
                     return "string";
                 case SCALA_DATE_NAME:

@@ -22,8 +22,6 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -141,6 +139,8 @@ public final class ElementUtil {
         String typeName = getTypeName(typeMirror, types);
         if (element.getAnnotation(Id.class) != null) {
             elementType = new TypeName(SCALA_ID_NAME);
+        } else if (element.getAnnotation(io.graphoenix.spi.annotation.TypeName.class) != null) {
+            elementType = new TypeName(element.getAnnotation(io.graphoenix.spi.annotation.TypeName.class).value());
         } else if (typeMirror.getKind().equals(ARRAY)) {
             elementType = new ListType(elementToTypeName(element, ((ArrayType) typeMirror).getComponentType(), types));
         } else if (typeName.equals(int.class.getCanonicalName()) ||
@@ -174,14 +174,21 @@ public final class ElementUtil {
             elementType = new TypeName(SCALA_TIME_NAME);
         } else if (typeName.equals(LocalDateTime.class.getCanonicalName())) {
             elementType = new TypeName(SCALA_DATE_TIME_NAME);
-        } else if (typeName.equals(FileInputStream.class.getCanonicalName())) {
-            elementType = new TypeName(SCALA_FILE_NAME);
-        } else if (typeName.equals(InputStream.class.getCanonicalName())) {
-            elementType = new TypeName(SCALA_UPLOAD_NAME);
         } else if (typeName.equals(Collection.class.getCanonicalName()) ||
                 typeName.equals(List.class.getCanonicalName()) ||
                 typeName.equals(Set.class.getCanonicalName())) {
-            elementType = new ListType(elementToTypeName(element, ((DeclaredType) typeMirror).getTypeArguments().get(0), types));
+            TypeMirror typeMirror0 = ((DeclaredType) typeMirror).getTypeArguments().get(0);
+            String annotationTypeName = typeMirror0.getAnnotationMirrors().stream()
+                    .filter(annotationMirror -> annotationMirror.getAnnotationType().toString().equals(io.graphoenix.spi.annotation.TypeName.class.getCanonicalName()))
+                    .flatMap(annotationMirror -> annotationMirror.getElementValues().values().stream())
+                    .map(annotationValue -> (String) annotationValue.getValue())
+                    .findFirst()
+                    .orElse(null);
+            if (annotationTypeName != null) {
+                elementType = new ListType(new TypeName(annotationTypeName));
+            } else {
+                elementType = new ListType(elementToTypeName(element, typeMirror0, types));
+            }
         } else {
             Element typeElement = types.asElement(typeMirror);
             String elementName = getNameFromElement(typeElement);

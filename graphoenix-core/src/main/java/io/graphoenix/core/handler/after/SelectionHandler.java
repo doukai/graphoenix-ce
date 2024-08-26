@@ -151,7 +151,6 @@ public class SelectionHandler implements OperationAfterHandler {
                 return scalarFormatter.format(value, locale, jsonb.fromJson(jsonValue.toString(), Boolean.class));
             case SCALA_ID_NAME:
             case SCALA_STRING_NAME:
-            case SCALA_FILE_NAME:
             case SCALA_UPLOAD_NAME:
                 return scalarFormatter.format(value, locale, jsonb.fromJson(jsonValue.toString(), String.class));
             case SCALA_DATE_NAME:
