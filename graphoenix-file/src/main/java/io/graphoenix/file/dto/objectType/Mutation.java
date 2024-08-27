@@ -2,7 +2,6 @@ package io.graphoenix.file.dto.objectType;
 
 import com.dslplatform.json.CompiledJson;
 import jakarta.annotation.Generated;
-import java.lang.String;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.Type;
 
@@ -14,9 +13,9 @@ public class Mutation {
 
   private Collection<File> fileList;
 
-  private String singleUpload;
+  private File singleUpload;
 
-  private Collection<String> multipleUpload;
+  private Collection<File> multipleUpload;
 
   public File getFile() {
     return this.file;
@@ -34,19 +33,19 @@ public class Mutation {
     this.fileList = fileList;
   }
 
-  public String getSingleUpload() {
+  public File getSingleUpload() {
     return this.singleUpload;
   }
 
-  public void setSingleUpload(String singleUpload) {
+  public void setSingleUpload(File singleUpload) {
     this.singleUpload = singleUpload;
   }
 
-  public Collection<String> getMultipleUpload() {
+  public Collection<File> getMultipleUpload() {
     return this.multipleUpload;
   }
 
-  public void setMultipleUpload(Collection<String> multipleUpload) {
+  public void setMultipleUpload(Collection<File> multipleUpload) {
     this.multipleUpload = multipleUpload;
   }
 }

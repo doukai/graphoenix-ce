@@ -4,6 +4,7 @@ import io.graphoenix.file.config.FileConfig;
 import io.graphoenix.file.dto.inputObjectType.FileInput;
 import io.graphoenix.file.dto.objectType.File;
 import io.graphoenix.file.repository.FileRepository;
+import io.graphoenix.spi.dto.UploadInfo;
 import io.graphoenix.spi.handler.FileSaveHandler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -29,21 +30,20 @@ public class LocalFileSaveHandler implements FileSaveHandler {
     }
 
     @Override
-    public Mono<String> save(byte[] data, String filename, String contentType) {
+    public Mono<String> save(UploadInfo uploadInfo) {
         String id = UUID.randomUUID().toString();
+        Path path = Paths.get(fileConfig.getPath());
         try {
-            Path path = Paths.get(fileConfig.getPath());
             if (!Files.exists(path)) {
                 Files.createDirectories(path);
             }
             Path filePath = Files.createFile(path.resolve(id));
             try (FileOutputStream outputStream = new FileOutputStream(filePath.toFile())) {
-                outputStream.write(data);
-                outputStream.close();
+                outputStream.write(uploadInfo.getData());
                 FileInput fileInput = new FileInput();
                 fileInput.setId(id);
-                fileInput.setName(filename);
-                fileInput.setContentType(contentType);
+                fileInput.setName(uploadInfo.getFilename());
+                fileInput.setContentType(uploadInfo.getContentType());
                 return fileRepository.insertFile(fileInput)
                         .map(File::getId);
             }

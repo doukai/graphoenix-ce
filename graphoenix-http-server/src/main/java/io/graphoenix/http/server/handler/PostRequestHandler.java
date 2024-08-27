@@ -5,6 +5,7 @@ import io.graphoenix.core.dto.GraphQLRequest;
 import io.graphoenix.http.server.codec.MimeType;
 import io.graphoenix.http.server.context.RequestScopeInstanceFactory;
 import io.graphoenix.http.server.utils.ResponseUtil;
+import io.graphoenix.spi.dto.UploadInfo;
 import io.graphoenix.spi.graphql.Document;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.handler.FileSaveHandler;
@@ -117,7 +118,8 @@ public class PostRequestHandler extends BaseHandler {
                                                         } else if (data instanceof FileUpload && ((FileUpload) data).getFilename() != null) {
                                                             FileUpload fileUpload = (FileUpload) data;
                                                             try {
-                                                                return fileSaveHandler.save(fileUpload.get(), fileUpload.getFilename(), fileUpload.getContentType())
+                                                                UploadInfo uploadInfo = new UploadInfo(fileUpload.getFilename(), fileUpload.getContentType(), fileUpload.get());
+                                                                return fileSaveHandler.save(uploadInfo)
                                                                         .flatMap(id ->
                                                                                 graphQLRequestMono
                                                                                         .map(graphQLRequest -> {

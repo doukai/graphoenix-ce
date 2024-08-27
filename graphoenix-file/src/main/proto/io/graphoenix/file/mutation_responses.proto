@@ -18,8 +18,8 @@ message MutationFileListResponse {
     repeated File file_list = 1;
 }
 message MutationSingleUploadResponse {
-    string single_upload = 1;
+    File single_upload = 1;
 }
 message MutationMultipleUploadResponse {
-    repeated string multiple_upload = 1;
+    repeated File multiple_upload = 1;
 }
