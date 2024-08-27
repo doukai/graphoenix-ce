@@ -13,4 +13,7 @@ import "io/graphoenix/file/query_requests.proto";
 import "io/graphoenix/file/query_responses.proto";
 
 service QueryService {
+    rpc File (QueryFileRequest) returns (QueryFileResponse);
+    rpc FileList (QueryFileListRequest) returns (QueryFileListResponse);
+    rpc FileConnection (QueryFileConnectionRequest) returns (QueryFileConnectionResponse);
 }

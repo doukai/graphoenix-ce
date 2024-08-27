@@ -9,7 +9,6 @@ scalar Date
 scalar Time
 scalar DateTime
 scalar Timestamp
-scalar File
 scalar Upload
 enum Operator @package(name: "io.graphoenix.core") @class(name: "io.graphoenix.core.dto.enumType.Operator") @grpc(name: "io.graphoenix.core.dto.enumType.grpc.Operator") {
     EQ
@@ -218,9 +217,3 @@ directive @denyAll on FIELD | OBJECT
 directive @rolesAllowed(roles: [String]) on FIELD | OBJECT
 directive @implements(interfaces: [String]) on OBJECT | INPUT_OBJECT
 directive @interface on OBJECT | INPUT_OBJECT
-type Mutation {
-    singleFile(file: File): String
-    multipleFile(files: [File]): [String]
-    singleUpload(upload: Upload): String
-    multipleUpload(uploads: [Upload]): [String]
-}

@@ -12,4 +12,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface Query {
+  FileQueryArguments file() default @FileQueryArguments;
+
+  FileListQueryArguments fileList() default @FileListQueryArguments;
+
+  FileConnectionQueryArguments fileConnection() default @FileConnectionQueryArguments;
 }

@@ -9,7 +9,6 @@ scalar Date
 scalar Time
 scalar DateTime
 scalar Timestamp
-scalar File
 scalar Upload
 enum Operator {
     EQ

@@ -12,4 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface Mutation {
+  FileMutationArguments file() default @FileMutationArguments;
+
+  FileListMutationArguments fileList() default @FileListMutationArguments;
 }

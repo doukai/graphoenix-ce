@@ -9,7 +9,14 @@ import "io/graphoenix/file/enums.proto";
 import "io/graphoenix/file/objects.proto";
 import "io/graphoenix/file/interfaces.proto";
 import "io/graphoenix/file/input_objects.proto";
+import "google/protobuf/timestamp.proto";
 
+message MutationFileResponse {
+    File file = 1;
+}
+message MutationFileListResponse {
+    repeated File file_list = 1;
+}
 message MutationSingleUploadResponse {
     string single_upload = 1;
 }

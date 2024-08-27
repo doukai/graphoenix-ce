@@ -9,4 +9,15 @@ import "io/graphoenix/file/enums.proto";
 import "io/graphoenix/file/objects.proto";
 import "io/graphoenix/file/interfaces.proto";
 import "io/graphoenix/file/input_objects.proto";
+import "io/graphoenix/core/enums.proto";
+import "io/graphoenix/core/input_objects.proto";
 
+message QueryFileResponse {
+    File file = 1;
+}
+message QueryFileListResponse {
+    repeated File file_list = 1;
+}
+message QueryFileConnectionResponse {
+    FileConnection file_connection = 1;
+}

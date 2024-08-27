@@ -1,0 +1,39 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+}
+
+group 'org.graphoenix'
+version '0.1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    jcenter()
+    mavenLocal()
+}
+
+dependencies {
+    api project(':graphoenix-file')
+
+    implementation project(':graphoenix-core')
+    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
+
+    annotationProcessor project(':graphoenix-annotation-processor')
+    annotationProcessor project(':graphoenix-file')
+    annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}

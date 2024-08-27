@@ -9,7 +9,48 @@ import "io/graphoenix/file/enums.proto";
 import "io/graphoenix/file/objects.proto";
 import "io/graphoenix/file/interfaces.proto";
 import "io/graphoenix/file/input_objects.proto";
+import "google/protobuf/timestamp.proto";
 
+message MutationFileRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string name = 4;
+    string content_type = 5;
+    string content = 6;
+    string url = 7;
+    bool is_deprecated = 8;
+    int32 version = 9;
+    int32 realm_id = 10;
+    string create_user_id = 11;
+    google.protobuf.Timestamp create_time = 12;
+    string update_user_id = 13;
+    google.protobuf.Timestamp update_time = 14;
+    string create_group_id = 15;
+    string intro_typename = 16;
+    FileInput input = 17;
+    FileExpression where = 18;
+}
+message MutationFileListRequest {
+    optional string selection_set = 1;
+    optional string arguments = 2;
+    string id = 3;
+    string name = 4;
+    string content_type = 5;
+    string content = 6;
+    string url = 7;
+    bool is_deprecated = 8;
+    int32 version = 9;
+    int32 realm_id = 10;
+    string create_user_id = 11;
+    google.protobuf.Timestamp create_time = 12;
+    string update_user_id = 13;
+    google.protobuf.Timestamp update_time = 14;
+    string create_group_id = 15;
+    string intro_typename = 16;
+    repeated FileInput list = 17;
+    FileExpression where = 18;
+}
 message MutationSingleUploadRequest {
     optional string selection_set = 1;
     optional string arguments = 2;

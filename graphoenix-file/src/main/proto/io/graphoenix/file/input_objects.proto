@@ -6,7 +6,242 @@ option java_package = "io.graphoenix.file.dto.inputObjectType.grpc";
 package io.graphoenix.file;
 
 import "io/graphoenix/file/enums.proto";
+import "io/graphoenix/core/enums.proto";
+import "io/graphoenix/core/input_objects.proto";
+import "google/protobuf/timestamp.proto";
 
+message FileExpression {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression name = 2;
+    io.graphoenix.core.StringExpression content_type = 3;
+    io.graphoenix.core.StringExpression content = 4;
+    io.graphoenix.core.StringExpression url = 5;
+    bool include_deprecated = 6;
+    io.graphoenix.core.IntExpression version = 7;
+    io.graphoenix.core.IntExpression realm_id = 8;
+    io.graphoenix.core.StringExpression create_user_id = 9;
+    io.graphoenix.core.StringExpression create_time = 10;
+    io.graphoenix.core.StringExpression update_user_id = 11;
+    io.graphoenix.core.StringExpression update_time = 12;
+    io.graphoenix.core.StringExpression create_group_id = 13;
+    io.graphoenix.core.StringExpression intro_typename = 14;
+    bool not = 15;
+    io.graphoenix.core.Conditional cond = 16;
+    repeated FileExpression exs = 17;
+}
+message FileInput {
+    string id = 1;
+    string name = 2;
+    string content_type = 3;
+    string content = 4;
+    string url = 5;
+    bool is_deprecated = 6;
+    int32 version = 7;
+    int32 realm_id = 8;
+    string create_user_id = 9;
+    google.protobuf.Timestamp create_time = 10;
+    string update_user_id = 11;
+    google.protobuf.Timestamp update_time = 12;
+    string create_group_id = 13;
+    string intro_typename = 14;
+    FileExpression where = 15;
+}
+message FileOrderBy {
+    io.graphoenix.core.Sort id = 1;
+    io.graphoenix.core.Sort name = 2;
+    io.graphoenix.core.Sort content_type = 3;
+    io.graphoenix.core.Sort content = 4;
+    io.graphoenix.core.Sort url = 5;
+    io.graphoenix.core.Sort is_deprecated = 6;
+    io.graphoenix.core.Sort version = 7;
+    io.graphoenix.core.Sort realm_id = 8;
+    io.graphoenix.core.Sort create_user_id = 9;
+    io.graphoenix.core.Sort create_time = 10;
+    io.graphoenix.core.Sort update_user_id = 11;
+    io.graphoenix.core.Sort update_time = 12;
+    io.graphoenix.core.Sort create_group_id = 13;
+    io.graphoenix.core.Sort intro_typename = 14;
+}
+message FileQueryArguments {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression name = 2;
+    io.graphoenix.core.StringExpression content_type = 3;
+    io.graphoenix.core.StringExpression content = 4;
+    io.graphoenix.core.StringExpression url = 5;
+    bool include_deprecated = 6;
+    io.graphoenix.core.IntExpression version = 7;
+    io.graphoenix.core.IntExpression realm_id = 8;
+    io.graphoenix.core.StringExpression create_user_id = 9;
+    io.graphoenix.core.StringExpression create_time = 10;
+    io.graphoenix.core.StringExpression update_user_id = 11;
+    io.graphoenix.core.StringExpression update_time = 12;
+    io.graphoenix.core.StringExpression create_group_id = 13;
+    io.graphoenix.core.StringExpression intro_typename = 14;
+    repeated string group_by = 15;
+    bool not = 16;
+    io.graphoenix.core.Conditional cond = 17;
+    repeated FileExpression exs = 18;
+}
+message FileListQueryArguments {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression name = 2;
+    io.graphoenix.core.StringExpression content_type = 3;
+    io.graphoenix.core.StringExpression content = 4;
+    io.graphoenix.core.StringExpression url = 5;
+    bool include_deprecated = 6;
+    io.graphoenix.core.IntExpression version = 7;
+    io.graphoenix.core.IntExpression realm_id = 8;
+    io.graphoenix.core.StringExpression create_user_id = 9;
+    io.graphoenix.core.StringExpression create_time = 10;
+    io.graphoenix.core.StringExpression update_user_id = 11;
+    io.graphoenix.core.StringExpression update_time = 12;
+    io.graphoenix.core.StringExpression create_group_id = 13;
+    io.graphoenix.core.StringExpression intro_typename = 14;
+    FileOrderBy order_by = 15;
+    repeated string group_by = 16;
+    bool not = 17;
+    io.graphoenix.core.Conditional cond = 18;
+    repeated FileExpression exs = 19;
+    int32 first = 20;
+    int32 last = 21;
+    int32 offset = 22;
+    string after = 23;
+    string before = 24;
+}
+message FileConnectionQueryArguments {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression name = 2;
+    io.graphoenix.core.StringExpression content_type = 3;
+    io.graphoenix.core.StringExpression content = 4;
+    io.graphoenix.core.StringExpression url = 5;
+    bool include_deprecated = 6;
+    io.graphoenix.core.IntExpression version = 7;
+    io.graphoenix.core.IntExpression realm_id = 8;
+    io.graphoenix.core.StringExpression create_user_id = 9;
+    io.graphoenix.core.StringExpression create_time = 10;
+    io.graphoenix.core.StringExpression update_user_id = 11;
+    io.graphoenix.core.StringExpression update_time = 12;
+    io.graphoenix.core.StringExpression create_group_id = 13;
+    io.graphoenix.core.StringExpression intro_typename = 14;
+    FileOrderBy order_by = 15;
+    repeated string group_by = 16;
+    bool not = 17;
+    io.graphoenix.core.Conditional cond = 18;
+    repeated FileExpression exs = 19;
+    int32 first = 20;
+    int32 last = 21;
+    int32 offset = 22;
+    string after = 23;
+    string before = 24;
+}
+message FileMutationArguments {
+    string id = 1;
+    string name = 2;
+    string content_type = 3;
+    string content = 4;
+    string url = 5;
+    bool is_deprecated = 6;
+    int32 version = 7;
+    int32 realm_id = 8;
+    string create_user_id = 9;
+    google.protobuf.Timestamp create_time = 10;
+    string update_user_id = 11;
+    google.protobuf.Timestamp update_time = 12;
+    string create_group_id = 13;
+    string intro_typename = 14;
+    FileInput input = 15;
+    FileExpression where = 16;
+}
+message FileListMutationArguments {
+    string id = 1;
+    string name = 2;
+    string content_type = 3;
+    string content = 4;
+    string url = 5;
+    bool is_deprecated = 6;
+    int32 version = 7;
+    int32 realm_id = 8;
+    string create_user_id = 9;
+    google.protobuf.Timestamp create_time = 10;
+    string update_user_id = 11;
+    google.protobuf.Timestamp update_time = 12;
+    string create_group_id = 13;
+    string intro_typename = 14;
+    repeated FileInput list = 15;
+    FileExpression where = 16;
+}
+message FileSubscriptionArguments {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression name = 2;
+    io.graphoenix.core.StringExpression content_type = 3;
+    io.graphoenix.core.StringExpression content = 4;
+    io.graphoenix.core.StringExpression url = 5;
+    bool include_deprecated = 6;
+    io.graphoenix.core.IntExpression version = 7;
+    io.graphoenix.core.IntExpression realm_id = 8;
+    io.graphoenix.core.StringExpression create_user_id = 9;
+    io.graphoenix.core.StringExpression create_time = 10;
+    io.graphoenix.core.StringExpression update_user_id = 11;
+    io.graphoenix.core.StringExpression update_time = 12;
+    io.graphoenix.core.StringExpression create_group_id = 13;
+    io.graphoenix.core.StringExpression intro_typename = 14;
+    repeated string group_by = 15;
+    bool not = 16;
+    io.graphoenix.core.Conditional cond = 17;
+    repeated FileExpression exs = 18;
+}
+message FileListSubscriptionArguments {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression name = 2;
+    io.graphoenix.core.StringExpression content_type = 3;
+    io.graphoenix.core.StringExpression content = 4;
+    io.graphoenix.core.StringExpression url = 5;
+    bool include_deprecated = 6;
+    io.graphoenix.core.IntExpression version = 7;
+    io.graphoenix.core.IntExpression realm_id = 8;
+    io.graphoenix.core.StringExpression create_user_id = 9;
+    io.graphoenix.core.StringExpression create_time = 10;
+    io.graphoenix.core.StringExpression update_user_id = 11;
+    io.graphoenix.core.StringExpression update_time = 12;
+    io.graphoenix.core.StringExpression create_group_id = 13;
+    io.graphoenix.core.StringExpression intro_typename = 14;
+    FileOrderBy order_by = 15;
+    repeated string group_by = 16;
+    bool not = 17;
+    io.graphoenix.core.Conditional cond = 18;
+    repeated FileExpression exs = 19;
+    int32 first = 20;
+    int32 last = 21;
+    int32 offset = 22;
+    string after = 23;
+    string before = 24;
+}
+message FileConnectionSubscriptionArguments {
+    io.graphoenix.core.StringExpression id = 1;
+    io.graphoenix.core.StringExpression name = 2;
+    io.graphoenix.core.StringExpression content_type = 3;
+    io.graphoenix.core.StringExpression content = 4;
+    io.graphoenix.core.StringExpression url = 5;
+    bool include_deprecated = 6;
+    io.graphoenix.core.IntExpression version = 7;
+    io.graphoenix.core.IntExpression realm_id = 8;
+    io.graphoenix.core.StringExpression create_user_id = 9;
+    io.graphoenix.core.StringExpression create_time = 10;
+    io.graphoenix.core.StringExpression update_user_id = 11;
+    io.graphoenix.core.StringExpression update_time = 12;
+    io.graphoenix.core.StringExpression create_group_id = 13;
+    io.graphoenix.core.StringExpression intro_typename = 14;
+    FileOrderBy order_by = 15;
+    repeated string group_by = 16;
+    bool not = 17;
+    io.graphoenix.core.Conditional cond = 18;
+    repeated FileExpression exs = 19;
+    int32 first = 20;
+    int32 last = 21;
+    int32 offset = 22;
+    string after = 23;
+    string before = 24;
+}
 message Mutation_singleUpload_Arguments {
     string file = 1;
 }

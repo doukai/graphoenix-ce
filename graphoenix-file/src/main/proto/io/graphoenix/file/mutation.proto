@@ -13,4 +13,8 @@ import "io/graphoenix/file/mutation_requests.proto";
 import "io/graphoenix/file/mutation_responses.proto";
 
 service MutationService {
+    rpc File (MutationFileRequest) returns (MutationFileResponse);
+    rpc FileList (MutationFileListRequest) returns (MutationFileListResponse);
+    rpc SingleUpload (MutationSingleUploadRequest) returns (MutationSingleUploadResponse);
+    rpc MultipleUpload (MutationMultipleUploadRequest) returns (MutationMultipleUploadResponse);
 }

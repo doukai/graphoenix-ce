@@ -1,6 +1,8 @@
 package io.graphoenix.file.dto.annotation;
 
+import io.graphoenix.core.dto.enumType.Conditional;
 import jakarta.annotation.Generated;
+import java.lang.String;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,10 +13,16 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-public @interface Subscription {
-  FileSubscriptionArguments file() default @FileSubscriptionArguments;
+public @interface FileExpression2 {
+  boolean includeDeprecated() default false;
 
-  FileListSubscriptionArguments fileList() default @FileListSubscriptionArguments;
+  boolean not() default false;
 
-  FileConnectionSubscriptionArguments fileConnection() default @FileConnectionSubscriptionArguments;
+  Conditional cond() default Conditional.AND;
+
+  String $includeDeprecated() default "";
+
+  String $not() default "";
+
+  String $cond() default "";
 }

@@ -454,10 +454,6 @@ public class ProtobufFileBuilder {
                                 .setRpcs(
                                         objectType.getFields().stream()
                                                 .filter(packageManager::isOwnPackage)
-                                                .filter(fieldDefinition -> !fieldDefinition.getName().equals("singleFile"))
-                                                .filter(fieldDefinition -> !fieldDefinition.getName().equals("multipleFile"))
-                                                .filter(fieldDefinition -> !fieldDefinition.getName().equals("singleUpload"))
-                                                .filter(fieldDefinition -> !fieldDefinition.getName().equals("multipleUpload"))
                                                 .map(fieldDefinition ->
                                                         new Rpc()
                                                                 .setName(getGrpcServiceRpcName(fieldDefinition.getName()))
