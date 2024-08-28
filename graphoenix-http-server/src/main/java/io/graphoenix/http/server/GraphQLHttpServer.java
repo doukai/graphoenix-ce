@@ -2,6 +2,7 @@ package io.graphoenix.http.server;
 
 import io.graphoenix.http.server.config.HttpServerConfig;
 import io.graphoenix.http.server.context.RequestScopeInstanceFactory;
+import io.graphoenix.http.server.handler.DownloadRequestHandler;
 import io.graphoenix.http.server.handler.GetRequestHandler;
 import io.graphoenix.http.server.handler.PostRequestHandler;
 import io.graphoenix.spi.bootstrap.Runner;
@@ -20,6 +21,8 @@ import reactor.netty.DisposableServer;
 import reactor.netty.http.HttpOperations;
 import reactor.netty.http.server.HttpServer;
 
+import static io.graphoenix.http.server.handler.DownloadRequestHandler.FILE_PARAM_ID;
+
 @ApplicationScoped
 @Named(Hammurabi.ENUM_PROTOCOL_ENUM_VALUE_HTTP)
 public class GraphQLHttpServer implements Runner {
@@ -27,13 +30,15 @@ public class GraphQLHttpServer implements Runner {
     private final HttpServerConfig httpServerConfig;
     private final GetRequestHandler getRequestHandler;
     private final PostRequestHandler postRequestHandler;
+    private final DownloadRequestHandler downloadRequestHandler;
     private final RequestScopeInstanceFactory requestScopeInstanceFactory;
 
     @Inject
-    public GraphQLHttpServer(HttpServerConfig httpServerConfig, GetRequestHandler getRequestHandler, PostRequestHandler postRequestHandler, RequestScopeInstanceFactory requestScopeInstanceFactory) {
+    public GraphQLHttpServer(HttpServerConfig httpServerConfig, GetRequestHandler getRequestHandler, PostRequestHandler postRequestHandler, DownloadRequestHandler downloadRequestHandler, RequestScopeInstanceFactory requestScopeInstanceFactory) {
         this.httpServerConfig = httpServerConfig;
         this.getRequestHandler = getRequestHandler;
         this.postRequestHandler = postRequestHandler;
+        this.downloadRequestHandler = downloadRequestHandler;
         this.requestScopeInstanceFactory = requestScopeInstanceFactory;
     }
 
@@ -66,6 +71,7 @@ public class GraphQLHttpServer implements Runner {
                         httpServerRoutes
                                 .get(httpServerConfig.getGraphqlContextPath(), getRequestHandler::handle)
                                 .post(httpServerConfig.getGraphqlContextPath(), postRequestHandler::handle)
+                                .get(httpServerConfig.getDownloadContextPath() + "/{" + FILE_PARAM_ID + "}", downloadRequestHandler::handle)
                 )
                 .childObserve((connection, newState) -> {
                             if (connection instanceof HttpOperations<?, ?> && newState.equals(ConnectionObserver.State.DISCONNECTING)) {

@@ -5,10 +5,10 @@ import io.graphoenix.core.dto.GraphQLRequest;
 import io.graphoenix.http.server.codec.MimeType;
 import io.graphoenix.http.server.context.RequestScopeInstanceFactory;
 import io.graphoenix.http.server.utils.ResponseUtil;
-import io.graphoenix.spi.dto.UploadInfo;
+import io.graphoenix.spi.dto.FileInfo;
 import io.graphoenix.spi.graphql.Document;
 import io.graphoenix.spi.graphql.operation.Operation;
-import io.graphoenix.spi.handler.FileSaveHandler;
+import io.graphoenix.spi.handler.FileHandler;
 import io.graphoenix.spi.handler.OperationHandler;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -41,13 +41,13 @@ import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 public class PostRequestHandler extends BaseHandler {
 
     private final OperationHandler operationHandler;
-    private final FileSaveHandler fileSaveHandler;
+    private final FileHandler fileHandler;
     private final RequestScopeInstanceFactory requestScopeInstanceFactory;
 
     @Inject
-    public PostRequestHandler(OperationHandler operationHandler, FileSaveHandler fileSaveHandler, RequestScopeInstanceFactory requestScopeInstanceFactory) {
+    public PostRequestHandler(OperationHandler operationHandler, FileHandler fileHandler, RequestScopeInstanceFactory requestScopeInstanceFactory) {
         this.operationHandler = operationHandler;
-        this.fileSaveHandler = fileSaveHandler;
+        this.fileHandler = fileHandler;
         this.requestScopeInstanceFactory = requestScopeInstanceFactory;
     }
 
@@ -118,8 +118,8 @@ public class PostRequestHandler extends BaseHandler {
                                                         } else if (data instanceof FileUpload && ((FileUpload) data).getFilename() != null) {
                                                             FileUpload fileUpload = (FileUpload) data;
                                                             try {
-                                                                UploadInfo uploadInfo = new UploadInfo(fileUpload.getFilename(), fileUpload.getContentType(), fileUpload.get());
-                                                                return fileSaveHandler.save(uploadInfo)
+                                                                FileInfo fileInfo = new FileInfo(fileUpload.getFilename(), fileUpload.getContentType(), fileUpload.get());
+                                                                return fileHandler.save(fileInfo)
                                                                         .flatMap(id ->
                                                                                 graphQLRequestMono
                                                                                         .map(graphQLRequest -> {

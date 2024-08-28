@@ -25,8 +25,8 @@ message File {
     string create_group_id = 13;
     string intro_typename = 14;
     int32 id_count = 15;
-    int32 id_max = 16;
-    int32 id_min = 17;
+    string id_max = 16;
+    string id_min = 17;
     int32 name_count = 18;
     string name_max = 19;
     string name_min = 20;

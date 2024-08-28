@@ -1,5 +1,5 @@
 type File {
-    id: ID
+    id: ID @options(type: "String")
     name: String
     contentType: String
     content: String

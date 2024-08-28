@@ -46,9 +46,9 @@ public class File implements Meta {
 
   private Integer idCount;
 
-  private Integer idMax;
+  private String idMax;
 
-  private Integer idMin;
+  private String idMin;
 
   private Integer nameCount;
 
@@ -210,19 +210,19 @@ public class File implements Meta {
     this.idCount = idCount;
   }
 
-  public Integer getIdMax() {
+  public String getIdMax() {
     return this.idMax;
   }
 
-  public void setIdMax(Integer idMax) {
+  public void setIdMax(String idMax) {
     this.idMax = idMax;
   }
 
-  public Integer getIdMin() {
+  public String getIdMin() {
     return this.idMin;
   }
 
-  public void setIdMin(Integer idMin) {
+  public void setIdMin(String idMin) {
     this.idMin = idMin;
   }
 

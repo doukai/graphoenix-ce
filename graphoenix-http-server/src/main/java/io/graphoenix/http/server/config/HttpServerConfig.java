@@ -16,6 +16,9 @@ public class HttpServerConfig {
     private String schemaContextPath = "schema";
 
     @Optional
+    private String downloadContextPath = "download";
+
+    @Optional
     private Integer port = 8080;
 
     @Optional
@@ -67,6 +70,18 @@ public class HttpServerConfig {
 
     public void setSchemaContextPath(String schemaContextPath) {
         this.schemaContextPath = schemaContextPath;
+    }
+
+    public String getDownloadContextPath() {
+        if (downloadContextPath.startsWith("/")) {
+            return downloadContextPath;
+        } else {
+            return "/" + downloadContextPath;
+        }
+    }
+
+    public void setDownloadContextPath(String downloadContextPath) {
+        this.downloadContextPath = downloadContextPath;
     }
 
     public Integer getPort() {

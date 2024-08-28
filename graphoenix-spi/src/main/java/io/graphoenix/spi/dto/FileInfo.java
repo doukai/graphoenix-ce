@@ -1,6 +1,6 @@
 package io.graphoenix.spi.dto;
 
-public class UploadInfo {
+public class FileInfo {
 
     private String filename;
 
@@ -8,7 +8,10 @@ public class UploadInfo {
 
     private byte[] data;
 
-    public UploadInfo(String filename, String contentType, byte[] data) {
+    public FileInfo() {
+    }
+
+    public FileInfo(String filename, String contentType, byte[] data) {
         this.filename = filename;
         this.contentType = contentType;
         this.data = data;
