@@ -3,6 +3,7 @@ package io.graphoenix.file.api;
 import io.graphoenix.file.dto.objectType.File;
 import io.graphoenix.file.repository.FileRepository;
 import io.graphoenix.spi.annotation.TypeName;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.graphql.GraphQLApi;
 import org.eclipse.microprofile.graphql.Mutation;
@@ -10,6 +11,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+@ApplicationScoped
 @GraphQLApi
 public class UploadApi {
 

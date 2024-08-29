@@ -15,11 +15,9 @@ import java.util.List;
 public interface FileRepository {
 
     @Query(file = @FileQueryArguments(id = @StringExpression($val = "id")))
-    @SelectionSet("{ id name contentType content url }")
     Mono<File> getFileById(String id);
 
     @Query(fileList = @FileListQueryArguments(id = @StringExpression(opr = Operator.IN, $arr = "idList")))
-    @SelectionSet("{ id name contentType content url }")
     Mono<List<File>> selectFileListByIdList(List<String> idList);
 
     @Mutation(file = @FileMutationArguments($input = "fileInput"))

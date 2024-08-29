@@ -94,27 +94,33 @@ public class PostRequestHandler extends BaseHandler {
                                             .reduce(Mono.just(new GraphQLRequest()),
                                                     (graphQLRequestMono, data) -> {
                                                         if ("operations".equals(data.getName())) {
-                                                            return graphQLRequestMono
-                                                                    .map(graphQLRequest -> {
-                                                                                try {
-                                                                                    graphQLRequest.setOperations(data.getString());
-                                                                                    return graphQLRequest;
-                                                                                } catch (IOException e) {
-                                                                                    throw new RuntimeException(e);
-                                                                                }
-                                                                            }
-                                                                    );
+                                                            try {
+                                                                return Mono.just(new String(data.get()))
+                                                                        .flatMap(operstionsString ->
+                                                                                graphQLRequestMono
+                                                                                        .map(graphQLRequest -> {
+                                                                                                    graphQLRequest.setOperations(operstionsString);
+                                                                                                    return graphQLRequest;
+                                                                                                }
+                                                                                        )
+                                                                        );
+                                                            } catch (IOException e) {
+                                                                throw new RuntimeException(e);
+                                                            }
                                                         } else if ("map".equals(data.getName())) {
-                                                            return graphQLRequestMono
-                                                                    .map(graphQLRequest -> {
-                                                                                try {
-                                                                                    graphQLRequest.setMap(data.getString());
-                                                                                    return graphQLRequest;
-                                                                                } catch (IOException e) {
-                                                                                    throw new RuntimeException(e);
-                                                                                }
-                                                                            }
-                                                                    );
+                                                            try {
+                                                                return Mono.just(new String(data.get()))
+                                                                        .flatMap(mapString ->
+                                                                                graphQLRequestMono
+                                                                                        .map(graphQLRequest -> {
+                                                                                                    graphQLRequest.setMap(mapString);
+                                                                                                    return graphQLRequest;
+                                                                                                }
+                                                                                        )
+                                                                        );
+                                                            } catch (IOException e) {
+                                                                throw new RuntimeException(e);
+                                                            }
                                                         } else if (data instanceof FileUpload && ((FileUpload) data).getFilename() != null) {
                                                             FileUpload fileUpload = (FileUpload) data;
                                                             try {
