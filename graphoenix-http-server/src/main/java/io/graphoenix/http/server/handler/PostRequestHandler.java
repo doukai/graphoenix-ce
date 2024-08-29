@@ -93,8 +93,8 @@ public class PostRequestHandler extends BaseHandler {
                                     request.receiveForm()
                                             .reduce(Mono.just(new GraphQLRequest()),
                                                     (graphQLRequestMono, data) -> {
-                                                        if ("operations".equals(data.getName())) {
-                                                            try {
+                                                        try {
+                                                            if ("operations".equals(data.getName())) {
                                                                 return Mono.just(new String(data.get()))
                                                                         .flatMap(operstionsString ->
                                                                                 graphQLRequestMono
@@ -104,11 +104,7 @@ public class PostRequestHandler extends BaseHandler {
                                                                                                 }
                                                                                         )
                                                                         );
-                                                            } catch (IOException e) {
-                                                                throw new RuntimeException(e);
-                                                            }
-                                                        } else if ("map".equals(data.getName())) {
-                                                            try {
+                                                            } else if ("map".equals(data.getName())) {
                                                                 return Mono.just(new String(data.get()))
                                                                         .flatMap(mapString ->
                                                                                 graphQLRequestMono
@@ -118,12 +114,8 @@ public class PostRequestHandler extends BaseHandler {
                                                                                                 }
                                                                                         )
                                                                         );
-                                                            } catch (IOException e) {
-                                                                throw new RuntimeException(e);
-                                                            }
-                                                        } else if (data instanceof FileUpload && ((FileUpload) data).getFilename() != null) {
-                                                            FileUpload fileUpload = (FileUpload) data;
-                                                            try {
+                                                            } else if (data instanceof FileUpload && ((FileUpload) data).getFilename() != null) {
+                                                                FileUpload fileUpload = (FileUpload) data;
                                                                 FileInfo fileInfo = new FileInfo(fileUpload.getFilename(), fileUpload.getContentType(), fileUpload.get());
                                                                 return fileHandler.save(fileInfo)
                                                                         .flatMap(id ->
@@ -134,11 +126,11 @@ public class PostRequestHandler extends BaseHandler {
                                                                                                 }
                                                                                         )
                                                                         );
-                                                            } catch (IOException e) {
-                                                                throw new RuntimeException(e);
                                                             }
+                                                            return graphQLRequestMono;
+                                                        } catch (IOException e) {
+                                                            throw new RuntimeException(e);
                                                         }
-                                                        return graphQLRequestMono;
                                                     }
                                             )
                                             .flatMap(mono -> mono) :

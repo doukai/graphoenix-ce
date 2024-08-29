@@ -26,10 +26,7 @@ import jakarta.json.stream.JsonCollectors;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -46,7 +43,6 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
 
     private final DocumentManager documentManager;
     private final JsonProvider jsonProvider;
-    ;
 
     @Inject
     public MutationBeforeFetchHandler(DocumentManager documentManager, JsonProvider jsonProvider) {
@@ -155,7 +151,8 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
                                                                                     "",
                                                                                     subFieldDefinition,
                                                                                     inputValue,
-                                                                                    valueWithVariable
+                                                                                    valueWithVariable,
+                                                                                    field.getArguments()
                                                                             )
                                                                     )
                                                     )
@@ -183,7 +180,8 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
                                                                                                                     "/" + INPUT_VALUE_INPUT_NAME,
                                                                                                                     subFieldDefinition,
                                                                                                                     subInputValue,
-                                                                                                                    subValueWithVariable
+                                                                                                                    subValueWithVariable,
+                                                                                                                    objectValueWithVariable
                                                                                                             )
                                                                                                     )
                                                                                     )
@@ -215,7 +213,8 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
                                                                                                                                     "/" + INPUT_VALUE_LIST_NAME + "/" + index,
                                                                                                                                     subFieldDefinition,
                                                                                                                                     subInputValue,
-                                                                                                                                    subValueWithVariable
+                                                                                                                                    subValueWithVariable,
+                                                                                                                                    arrayValueWithVariable.getValueWithVariable(index).asObject()
                                                                                                                             )
                                                                                                                     )
                                                                                                     )
@@ -229,21 +228,22 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
         return Stream.empty();
     }
 
-    public Stream<FetchItem> buildFetchItems(ObjectType objectType, Field field, String path, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable) {
-        if (valueWithVariable.isNull()) {
-            return Stream.empty();
-        }
+    public Stream<FetchItem> buildFetchItems(ObjectType objectType, Field field, String path, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable, AbstractMap<String, JsonValue> arguments) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldDefinition.isFetchField()) {
             if (!fieldDefinition.getType().hasList() && !fieldDefinition.hasFetchWith() && documentManager.isFetchAnchor(objectType, fieldDefinition)) {
-                if (valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME) && valueWithVariable.asObject().keySet().size() == 1) {
-                    return Stream.empty();
-                }
                 String protocol = fieldDefinition.getFetchProtocolOrError().getValue();
                 String fetchFrom = fieldDefinition.getFetchFromOrError();
                 String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
                 String fetchTo = fieldDefinition.getFetchToOrError();
                 FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
+                if (valueWithVariable.isNull()) {
+                    arguments.put(fetchFrom, JsonValue.NULL);
+                    return Stream.empty();
+                }
+                if (valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME) && valueWithVariable.asObject().keySet().size() == 1) {
+                    return Stream.empty();
+                }
                 String id;
                 if (valueWithVariable.asJsonObject().containsKey(idField.getName())) {
                     id = getId(valueWithVariable.asJsonObject().get(idField.getName()));
@@ -287,7 +287,8 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
                                                                                             path + "/" + fieldDefinition.getName() + "/" + index,
                                                                                             subFieldDefinition,
                                                                                             subInputValue,
-                                                                                            subValueWithVariable
+                                                                                            subValueWithVariable,
+                                                                                            valueWithVariable.asArray().getValueWithVariable(index).asObject()
                                                                                     )
                                                                             )
                                                             )
@@ -305,7 +306,8 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
                                                                             path + "/" + fieldDefinition.getName(),
                                                                             subFieldDefinition,
                                                                             subInputValue,
-                                                                            subValueWithVariable
+                                                                            subValueWithVariable,
+                                                                            valueWithVariable.asObject()
                                                                     )
                                                             );
                                                 }

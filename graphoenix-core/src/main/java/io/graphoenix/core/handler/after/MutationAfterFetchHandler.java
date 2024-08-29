@@ -23,6 +23,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.literal.NamedLiteral;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
@@ -40,6 +41,8 @@ import java.util.stream.Stream;
 import static io.graphoenix.core.handler.after.ConnectionBuilder.CONNECTION_BUILDER_PRIORITY;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST;
+import static io.graphoenix.spi.utils.NameUtil.getAliasFromPath;
+import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 
 @ApplicationScoped
 @Priority(MutationAfterFetchHandler.MUTATION_AFTER_FETCH_HANDLER_PRIORITY)
@@ -282,7 +285,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
     }
 
     public Stream<FetchItem> buildFetchItems(ObjectType objectType, Field field, String path, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable, JsonValue jsonValue) {
-        if (valueWithVariable.isNull() || jsonValue == null || jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
+        if (jsonValue == null || jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
             return Stream.empty();
         }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
@@ -295,6 +298,49 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                     String packageName = fetchWithType.getPackageNameOrError();
                     String fetchWithFrom = fieldDefinition.getFetchWithFromOrError();
                     String fetchWithTo = fieldDefinition.getFetchWithToOrError();
+                    if (valueWithVariable.isNull() || fieldDefinition.getType().hasList() && valueWithVariable.asArray().isEmpty()) {
+                        FieldDefinition withTypeIdField = fetchWithType.getIDFieldOrError();
+                        JsonObject jsonObject = jsonProvider.createObjectBuilder()
+                                .add(FIELD_DEPRECATED_NAME, true)
+                                .add(
+                                        INPUT_VALUE_WHERE_NAME,
+                                        jsonProvider.createObjectBuilder()
+                                                .add(
+                                                        fetchWithType.getFields().stream()
+                                                                .filter(withTypeFieldDefinition ->
+                                                                        Stream
+                                                                                .concat(
+                                                                                        withTypeFieldDefinition.getMapFrom().stream(),
+                                                                                        withTypeFieldDefinition.getFetchFrom().stream()
+                                                                                )
+                                                                                .anyMatch(name -> name.equals(fetchWithFrom))
+                                                                )
+                                                                .findFirst()
+                                                                .map(AbstractDefinition::getName)
+                                                                .orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST.bind(fetchWithTo))),
+                                                        jsonProvider.createObjectBuilder()
+                                                                .add(
+                                                                        fetchFrom,
+                                                                        jsonProvider.createObjectBuilder()
+                                                                                .add(
+                                                                                        INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
+                                                                                        jsonValue.asJsonObject().get(fetchFrom)
+                                                                                )
+                                                                )
+                                                )
+                                )
+                                .build();
+                        return Stream.of(
+                                new FetchItem(
+                                        packageName,
+                                        packageManager.isLocalPackage(fetchWithType) ? ENUM_PROTOCOL_ENUM_VALUE_LOCAL : packageConfig.getDefaultFetchProtocol(),
+                                        new Field(typeNameToFieldName(fetchWithType.getName()) + SUFFIX_LIST)
+                                                .setAlias(getAliasFromPath(path))
+                                                .setArguments(jsonObject)
+                                                .addSelection(new Field(withTypeIdField.getName()))
+                                )
+                        );
+                    }
                     if (fieldDefinition.getType().hasList()) {
                         return valueWithVariable.asArray().getValueWithVariables().stream()
                                 .map(item ->
@@ -369,6 +415,35 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                     String protocol = fieldDefinition.getFetchProtocolOrError().getValue();
                     String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
                     String fetchTo = fieldDefinition.getFetchToOrError();
+                    if (valueWithVariable.isNull() || fieldDefinition.getType().hasList() && valueWithVariable.asArray().isEmpty()) {
+                        JsonObject jsonObject = jsonProvider.createObjectBuilder()
+                                .add(fetchTo, JsonValue.NULL)
+                                .add(
+                                        INPUT_VALUE_WHERE_NAME,
+                                        jsonProvider.createObjectBuilder()
+                                                .add(
+                                                        fetchTo,
+                                                        jsonProvider.createObjectBuilder()
+                                                                .add(
+                                                                        INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
+                                                                        jsonValue.asJsonObject().containsKey(INPUT_VALUE_WHERE_NAME) && jsonValue.asJsonObject().keySet().size() == 1 ?
+                                                                                jsonValue.asJsonObject().getJsonObject(INPUT_VALUE_WHERE_NAME).getJsonObject(fetchFrom).get(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME) :
+                                                                                jsonValue.asJsonObject().get(fetchFrom)
+                                                                )
+                                                )
+                                )
+                                .build();
+                        return Stream.of(
+                                new FetchItem(
+                                        packageName,
+                                        ENUM_PROTOCOL_ENUM_VALUE_LOCAL,
+                                        new Field(typeNameToFieldName(fieldTypeDefinition.getName()) + SUFFIX_LIST)
+                                                .setAlias(getAliasFromPath(path))
+                                                .setArguments(jsonObject)
+                                                .addSelection(new Field(idField.getName()))
+                                )
+                        );
+                    }
                     if (fieldDefinition.getType().hasList()) {
                         return valueWithVariable.asArray().getValueWithVariables().stream()
                                 .map(item ->
