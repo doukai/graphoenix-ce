@@ -75,7 +75,8 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                     operationType,
                                                     operationType.getField(field.getName()),
                                                     field,
-                                                    jsonValue.asJsonObject().get(selectionName)
+                                                    jsonValue.asJsonObject().get(selectionName),
+                                                    field.isMerge()
                                             );
                                         }
                                 )
@@ -135,7 +136,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                 .defaultIfEmpty(jsonValue);
     }
 
-    public Stream<FetchItem> buildFetchItems(ObjectType objectType, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
+    public Stream<FetchItem> buildFetchItems(ObjectType objectType, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue, boolean merge) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (documentManager.isMutationOperationType(objectType) && !packageManager.isLocalPackage(fieldDefinition)) {
             String protocol = fieldDefinition.getFetchProtocol().map(EnumValue::getValue)
@@ -171,7 +172,8 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                                                                                         subFieldDefinition,
                                                                                                                         subInputValue,
                                                                                                                         subValueWithVariable,
-                                                                                                                        jsonValue.asJsonObject()
+                                                                                                                        jsonValue.asJsonObject(),
+                                                                                                                        merge
                                                                                                                 )
                                                                                                         )
                                                                                         )
@@ -219,7 +221,8 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                                                                                                         subFieldDefinition,
                                                                                                                                         subInputValue,
                                                                                                                                         subValueWithVariable,
-                                                                                                                                        jsonValue.asJsonArray().get(index)
+                                                                                                                                        jsonValue.asJsonArray().get(index),
+                                                                                                                                        merge
                                                                                                                                 )
                                                                                                                         )
                                                                                                         )
@@ -248,7 +251,8 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                                                                         subFieldDefinition,
                                                                                                         inputValue,
                                                                                                         valueWithVariable,
-                                                                                                        item
+                                                                                                        item,
+                                                                                                        merge
                                                                                                 )
                                                                                         )
                                                                         )
@@ -274,7 +278,8 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                                         subFieldDefinition,
                                                                         inputValue,
                                                                         valueWithVariable,
-                                                                        jsonValue
+                                                                        jsonValue,
+                                                                        merge
                                                                 )
                                                         )
                                         )
@@ -284,7 +289,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
         return Stream.empty();
     }
 
-    public Stream<FetchItem> buildFetchItems(ObjectType objectType, Field field, String path, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable, JsonValue jsonValue) {
+    public Stream<FetchItem> buildFetchItems(ObjectType objectType, Field field, String path, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable, JsonValue jsonValue, boolean merge) {
         if (jsonValue == null || jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
             return Stream.empty();
         }
@@ -298,51 +303,52 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                     String packageName = fetchWithType.getPackageNameOrError();
                     String fetchWithFrom = fieldDefinition.getFetchWithFromOrError();
                     String fetchWithTo = fieldDefinition.getFetchWithToOrError();
+
+                    JsonObject jsonObject = jsonProvider.createObjectBuilder()
+                            .add(FIELD_DEPRECATED_NAME, true)
+                            .add(
+                                    INPUT_VALUE_WHERE_NAME,
+                                    jsonProvider.createObjectBuilder()
+                                            .add(
+                                                    fetchWithType.getFields().stream()
+                                                            .filter(withTypeFieldDefinition ->
+                                                                    Stream
+                                                                            .concat(
+                                                                                    withTypeFieldDefinition.getMapFrom().stream(),
+                                                                                    withTypeFieldDefinition.getFetchFrom().stream()
+                                                                            )
+                                                                            .anyMatch(name -> name.equals(fetchWithFrom))
+                                                            )
+                                                            .findFirst()
+                                                            .map(AbstractDefinition::getName)
+                                                            .orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST.bind(fetchWithTo))),
+                                                    jsonProvider.createObjectBuilder()
+                                                            .add(
+                                                                    fetchFrom,
+                                                                    jsonProvider.createObjectBuilder()
+                                                                            .add(
+                                                                                    INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
+                                                                                    jsonValue.asJsonObject().get(fetchFrom)
+                                                                            )
+                                                            )
+                                            )
+                            )
+                            .build();
+
+                    FetchItem removeRelationFetchItem = new FetchItem(
+                            packageName,
+                            packageManager.isLocalPackage(fetchWithType) ? ENUM_PROTOCOL_ENUM_VALUE_LOCAL : packageConfig.getDefaultFetchProtocol(),
+                            new Field(typeNameToFieldName(fetchWithType.getName()) + SUFFIX_LIST)
+                                    .setAlias(getAliasFromPath(path))
+                                    .setArguments(jsonObject)
+                                    .addSelection(new Field(fetchWithType.getIDFieldOrError().getName()))
+                    );
+
                     if (valueWithVariable.isNull() || fieldDefinition.getType().hasList() && valueWithVariable.asArray().isEmpty()) {
-                        FieldDefinition withTypeIdField = fetchWithType.getIDFieldOrError();
-                        JsonObject jsonObject = jsonProvider.createObjectBuilder()
-                                .add(FIELD_DEPRECATED_NAME, true)
-                                .add(
-                                        INPUT_VALUE_WHERE_NAME,
-                                        jsonProvider.createObjectBuilder()
-                                                .add(
-                                                        fetchWithType.getFields().stream()
-                                                                .filter(withTypeFieldDefinition ->
-                                                                        Stream
-                                                                                .concat(
-                                                                                        withTypeFieldDefinition.getMapFrom().stream(),
-                                                                                        withTypeFieldDefinition.getFetchFrom().stream()
-                                                                                )
-                                                                                .anyMatch(name -> name.equals(fetchWithFrom))
-                                                                )
-                                                                .findFirst()
-                                                                .map(AbstractDefinition::getName)
-                                                                .orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST.bind(fetchWithTo))),
-                                                        jsonProvider.createObjectBuilder()
-                                                                .add(
-                                                                        fetchFrom,
-                                                                        jsonProvider.createObjectBuilder()
-                                                                                .add(
-                                                                                        INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
-                                                                                        jsonValue.asJsonObject().get(fetchFrom)
-                                                                                )
-                                                                )
-                                                )
-                                )
-                                .build();
-                        return Stream.of(
-                                new FetchItem(
-                                        packageName,
-                                        packageManager.isLocalPackage(fetchWithType) ? ENUM_PROTOCOL_ENUM_VALUE_LOCAL : packageConfig.getDefaultFetchProtocol(),
-                                        new Field(typeNameToFieldName(fetchWithType.getName()) + SUFFIX_LIST)
-                                                .setAlias(getAliasFromPath(path))
-                                                .setArguments(jsonObject)
-                                                .addSelection(new Field(withTypeIdField.getName()))
-                                )
-                        );
+                        return Stream.of(removeRelationFetchItem);
                     }
                     if (fieldDefinition.getType().hasList()) {
-                        return valueWithVariable.asArray().getValueWithVariables().stream()
+                        Stream<FetchItem> fetchItemStream = valueWithVariable.asArray().getValueWithVariables().stream()
                                 .map(item ->
                                         item.asObject().containsKey(INPUT_VALUE_WHERE_NAME) && item.asObject().keySet().size() == 1 ?
                                                 jsonProvider.createObjectBuilder()
@@ -378,6 +384,15 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                             return new FetchItem(packageName, packageManager.isLocalPackage(fetchWithType) ? ENUM_PROTOCOL_ENUM_VALUE_LOCAL : packageConfig.getDefaultFetchProtocol(), path, fetchWithType.getName(), item, id, fetchWithType.getIDFieldOrError().getName());
                                         }
                                 );
+                        if (merge) {
+                            return fetchItemStream;
+                        } else {
+                            return Stream
+                                    .concat(
+                                            Stream.of(removeRelationFetchItem),
+                                            fetchItemStream
+                                    );
+                        }
                     } else {
                         String id;
                         if (valueWithVariable.asJsonObject().containsKey(idField.getName())) {
@@ -409,43 +424,50 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                         valueWithVariable
                                                 )
                                                 .build();
-                        return Stream.of(new FetchItem(packageName, packageManager.isLocalPackage(fetchWithType) ? ENUM_PROTOCOL_ENUM_VALUE_LOCAL : packageConfig.getDefaultFetchProtocol(), path, fetchWithType.getName(), mutationJsonValue, id, fetchWithType.getIDFieldOrError().getName()));
+                        FetchItem fetchItem = new FetchItem(packageName, packageManager.isLocalPackage(fetchWithType) ? ENUM_PROTOCOL_ENUM_VALUE_LOCAL : packageConfig.getDefaultFetchProtocol(), path, fetchWithType.getName(), mutationJsonValue, id, fetchWithType.getIDFieldOrError().getName());
+                        if (merge) {
+                            return Stream.of(fetchItem);
+                        } else {
+                            return Stream.of(removeRelationFetchItem, fetchItem);
+                        }
                     }
                 } else {
                     String protocol = fieldDefinition.getFetchProtocolOrError().getValue();
                     String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
                     String fetchTo = fieldDefinition.getFetchToOrError();
+
+                    JsonObject jsonObject = jsonProvider.createObjectBuilder()
+                            .add(fetchTo, JsonValue.NULL)
+                            .add(
+                                    INPUT_VALUE_WHERE_NAME,
+                                    jsonProvider.createObjectBuilder()
+                                            .add(
+                                                    fetchTo,
+                                                    jsonProvider.createObjectBuilder()
+                                                            .add(
+                                                                    INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
+                                                                    jsonValue.asJsonObject().containsKey(INPUT_VALUE_WHERE_NAME) && jsonValue.asJsonObject().keySet().size() == 1 ?
+                                                                            jsonValue.asJsonObject().getJsonObject(INPUT_VALUE_WHERE_NAME).getJsonObject(fetchFrom).get(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME) :
+                                                                            jsonValue.asJsonObject().get(fetchFrom)
+                                                            )
+                                            )
+                            )
+                            .build();
+
+                    FetchItem removeRelationFetchItem = new FetchItem(
+                            packageName,
+                            ENUM_PROTOCOL_ENUM_VALUE_LOCAL,
+                            new Field(typeNameToFieldName(fieldTypeDefinition.getName()) + SUFFIX_LIST)
+                                    .setAlias(getAliasFromPath(path))
+                                    .setArguments(jsonObject)
+                                    .addSelection(new Field(idField.getName()))
+                    );
+
                     if (valueWithVariable.isNull() || fieldDefinition.getType().hasList() && valueWithVariable.asArray().isEmpty()) {
-                        JsonObject jsonObject = jsonProvider.createObjectBuilder()
-                                .add(fetchTo, JsonValue.NULL)
-                                .add(
-                                        INPUT_VALUE_WHERE_NAME,
-                                        jsonProvider.createObjectBuilder()
-                                                .add(
-                                                        fetchTo,
-                                                        jsonProvider.createObjectBuilder()
-                                                                .add(
-                                                                        INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
-                                                                        jsonValue.asJsonObject().containsKey(INPUT_VALUE_WHERE_NAME) && jsonValue.asJsonObject().keySet().size() == 1 ?
-                                                                                jsonValue.asJsonObject().getJsonObject(INPUT_VALUE_WHERE_NAME).getJsonObject(fetchFrom).get(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME) :
-                                                                                jsonValue.asJsonObject().get(fetchFrom)
-                                                                )
-                                                )
-                                )
-                                .build();
-                        return Stream.of(
-                                new FetchItem(
-                                        packageName,
-                                        ENUM_PROTOCOL_ENUM_VALUE_LOCAL,
-                                        new Field(typeNameToFieldName(fieldTypeDefinition.getName()) + SUFFIX_LIST)
-                                                .setAlias(getAliasFromPath(path))
-                                                .setArguments(jsonObject)
-                                                .addSelection(new Field(idField.getName()))
-                                )
-                        );
+                        return Stream.of(removeRelationFetchItem);
                     }
                     if (fieldDefinition.getType().hasList()) {
-                        return valueWithVariable.asArray().getValueWithVariables().stream()
+                        Stream<FetchItem> fetchItemStream = valueWithVariable.asArray().getValueWithVariables().stream()
                                 .map(item ->
                                         jsonProvider.createObjectBuilder(item.asJsonObject())
                                                 .add(fetchTo, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fieldTypeDefinition.asObject().getField(fetchTo)))
@@ -461,6 +483,15 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                             return new FetchItem(packageName, protocol, path, fieldTypeDefinition.getName(), item, id, idField.getName());
                                         }
                                 );
+                        if (merge) {
+                            return fetchItemStream;
+                        } else {
+                            return Stream
+                                    .concat(
+                                            Stream.of(removeRelationFetchItem),
+                                            fetchItemStream
+                                    );
+                        }
                     } else if (!documentManager.isFetchAnchor(objectType, fieldDefinition)) {
                         String id;
                         if (valueWithVariable.asJsonObject().containsKey(idField.getName())) {
@@ -471,7 +502,12 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                         JsonValue mutationJsonValue = jsonProvider.createObjectBuilder(valueWithVariable.asObject())
                                 .add(fetchTo, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fieldTypeDefinition.asObject().getField(fetchTo)))
                                 .build();
-                        return Stream.of(new FetchItem(packageName, protocol, path, fieldTypeDefinition.getName(), mutationJsonValue, id, idField.getName()));
+                        FetchItem fetchItem = new FetchItem(packageName, protocol, path, fieldTypeDefinition.getName(), mutationJsonValue, id, idField.getName());
+                        if (merge) {
+                            return Stream.of(fetchItem);
+                        } else {
+                            return Stream.of(removeRelationFetchItem, fetchItem);
+                        }
                     }
                 }
             } else {
@@ -503,7 +539,6 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                 return Stream.empty();
             }
             Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
-            FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();
             return inputValueTypeDefinition.asInputObject().getInputValues().stream()
                     .filter(subInputValue -> !documentManager.getInputValueTypeDefinition(subInputValue).isLeaf())
                     .flatMap(subInputValue ->
@@ -529,7 +564,8 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                                                                             subFieldDefinition,
                                                                                                             subInputValue,
                                                                                                             subValueWithVariable,
-                                                                                                            item
+                                                                                                            item,
+                                                                                                            merge
                                                                                                     )
                                                                                             )
                                                                             )
@@ -549,7 +585,8 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                                             subFieldDefinition,
                                                                             subInputValue,
                                                                             subValueWithVariable,
-                                                                            fieldJsonValue
+                                                                            fieldJsonValue,
+                                                                            merge
                                                                     )
                                                             );
                                                 }
