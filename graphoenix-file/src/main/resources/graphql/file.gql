@@ -1,7 +1,13 @@
+"文件"
 type File {
+    "ID"
     id: ID @options(type: "String")
+    "文件名"
     name: String
+    "类型"
     contentType: String
+    "内容"
     content: String
+    "URL"
     url: String
 }

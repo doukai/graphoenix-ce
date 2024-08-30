@@ -11,6 +11,8 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+import static io.graphoenix.spi.constant.Hammurabi.SCALA_UPLOAD_NAME;
+
 @ApplicationScoped
 @GraphQLApi
 public class UploadApi {
@@ -23,12 +25,12 @@ public class UploadApi {
     }
 
     @Mutation
-    public Mono<File> singleUpload(@TypeName("Upload") String file) {
+    public Mono<File> singleUpload(@TypeName(SCALA_UPLOAD_NAME) String file) {
         return fileRepository.getFileById(file);
     }
 
     @Mutation
-    public Mono<List<File>> multipleUpload(List<@TypeName("Upload") String> files) {
+    public Mono<List<File>> multipleUpload(List<@TypeName(SCALA_UPLOAD_NAME) String> files) {
         return fileRepository.selectFileListByIdList(files);
     }
 }
