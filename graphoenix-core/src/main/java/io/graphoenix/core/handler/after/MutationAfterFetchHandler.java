@@ -310,26 +310,11 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                     INPUT_VALUE_WHERE_NAME,
                                     jsonProvider.createObjectBuilder()
                                             .add(
-                                                    fetchWithType.getFields().stream()
-                                                            .filter(withTypeFieldDefinition ->
-                                                                    Stream
-                                                                            .concat(
-                                                                                    withTypeFieldDefinition.getMapFrom().stream(),
-                                                                                    withTypeFieldDefinition.getFetchFrom().stream()
-                                                                            )
-                                                                            .anyMatch(name -> name.equals(fetchWithFrom))
-                                                            )
-                                                            .findFirst()
-                                                            .map(AbstractDefinition::getName)
-                                                            .orElseThrow(() -> new GraphQLErrors(FETCH_WITH_TO_OBJECT_FIELD_NOT_EXIST.bind(fetchWithTo))),
+                                                    fetchWithFrom,
                                                     jsonProvider.createObjectBuilder()
                                                             .add(
-                                                                    fetchFrom,
-                                                                    jsonProvider.createObjectBuilder()
-                                                                            .add(
-                                                                                    INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
-                                                                                    jsonValue.asJsonObject().get(fetchFrom)
-                                                                            )
+                                                                    INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
+                                                                    jsonValue.asJsonObject().get(fetchFrom)
                                                             )
                                             )
                             )
@@ -442,13 +427,13 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                     INPUT_VALUE_WHERE_NAME,
                                     jsonProvider.createObjectBuilder()
                                             .add(
-                                                    fetchTo,
+                                                    fetchFrom,
                                                     jsonProvider.createObjectBuilder()
                                                             .add(
                                                                     INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
                                                                     jsonValue.asJsonObject().containsKey(INPUT_VALUE_WHERE_NAME) && jsonValue.asJsonObject().keySet().size() == 1 ?
-                                                                            jsonValue.asJsonObject().getJsonObject(INPUT_VALUE_WHERE_NAME).getJsonObject(fetchFrom).get(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME) :
-                                                                            jsonValue.asJsonObject().get(fetchFrom)
+                                                                            jsonValue.asJsonObject().getJsonObject(INPUT_VALUE_WHERE_NAME).getJsonObject(fetchTo).get(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME) :
+                                                                            jsonValue.asJsonObject().get(fetchTo)
                                                             )
                                             )
                             )
@@ -503,22 +488,47 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                 .add(fetchTo, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fieldTypeDefinition.asObject().getField(fetchTo)))
                                 .build();
                         FetchItem fetchItem = new FetchItem(packageName, protocol, path, fieldTypeDefinition.getName(), mutationJsonValue, id, idField.getName());
-                        if (merge) {
-                            return Stream.of(fetchItem);
-                        } else {
-                            return Stream.of(removeRelationFetchItem, fetchItem);
-                        }
+                        return Stream.of(fetchItem);
                     }
                 }
             } else {
                 if (fieldDefinition.hasFetchWith()) {
-                    ObjectType fetchWithType = documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getFetchWithTypeOrError());
-                    String packageName = fetchWithType.getPackageNameOrError();
-                    String fetchWithFrom = fieldDefinition.getFetchWithFromOrError();
-                    String fetchWithTo = fieldDefinition.getFetchWithToOrError();
-
                     if (fieldDefinition.getType().hasList()) {
-                        return valueWithVariable.asArray().stream()
+                        ObjectType fetchWithType = documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getFetchWithTypeOrError());
+                        String packageName = fetchWithType.getPackageNameOrError();
+                        String fetchWithFrom = fieldDefinition.getFetchWithFromOrError();
+                        String fetchWithTo = fieldDefinition.getFetchWithToOrError();
+
+                        JsonObject jsonObject = jsonProvider.createObjectBuilder()
+                                .add(FIELD_DEPRECATED_NAME, true)
+                                .add(
+                                        INPUT_VALUE_WHERE_NAME,
+                                        jsonProvider.createObjectBuilder()
+                                                .add(
+                                                        fetchWithFrom,
+                                                        jsonProvider.createObjectBuilder()
+                                                                .add(
+                                                                        INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
+                                                                        jsonValue.asJsonObject().get(fetchFrom)
+                                                                )
+                                                )
+                                )
+                                .build();
+
+                        FetchItem removeRelationFetchItem = new FetchItem(
+                                packageName,
+                                packageManager.isLocalPackage(fetchWithType) ? ENUM_PROTOCOL_ENUM_VALUE_LOCAL : packageConfig.getDefaultFetchProtocol(),
+                                new Field(typeNameToFieldName(fetchWithType.getName()) + SUFFIX_LIST)
+                                        .setAlias(getAliasFromPath(path))
+                                        .setArguments(jsonObject)
+                                        .addSelection(new Field(fetchWithType.getIDFieldOrError().getName()))
+                        );
+
+                        if (valueWithVariable.isNull() || valueWithVariable.asArray().isEmpty()) {
+                            return Stream.of(removeRelationFetchItem);
+                        }
+
+                        Stream<FetchItem> fetchItemStream = valueWithVariable.asArray().stream()
                                 .map(item ->
                                         jsonProvider.createObjectBuilder()
                                                 .add(fetchWithFrom, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fetchWithType.getField(fetchWithFrom)))
@@ -530,6 +540,15 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                             return new FetchItem(packageName, packageManager.isLocalPackage(fetchWithType) ? ENUM_PROTOCOL_ENUM_VALUE_LOCAL : packageConfig.getDefaultFetchProtocol(), path, fetchWithType.getName(), item, id, fetchWithType.getIDFieldOrError().getName());
                                         }
                                 );
+                        if (merge) {
+                            return fetchItemStream;
+                        } else {
+                            return Stream
+                                    .concat(
+                                            Stream.of(removeRelationFetchItem),
+                                            fetchItemStream
+                                    );
+                        }
                     }
                 }
             }
