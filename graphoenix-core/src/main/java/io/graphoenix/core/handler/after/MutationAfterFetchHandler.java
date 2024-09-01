@@ -324,7 +324,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                             packageName,
                             packageManager.isLocalPackage(fetchWithType) ? ENUM_PROTOCOL_ENUM_VALUE_LOCAL : packageConfig.getDefaultFetchProtocol(),
                             new Field(typeNameToFieldName(fetchWithType.getName()) + SUFFIX_LIST)
-                                    .setAlias(getAliasFromPath(path))
+                                    .setAlias(getAliasFromPath(path + "/" + fieldDefinition.getName()))
                                     .setArguments(jsonObject)
                                     .addSelection(new Field(fetchWithType.getIDFieldOrError().getName()))
                     );
@@ -332,6 +332,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                     if (valueWithVariable.isNull() || fieldDefinition.getType().hasList() && valueWithVariable.asArray().isEmpty()) {
                         return Stream.of(removeRelationFetchItem);
                     }
+
                     if (fieldDefinition.getType().hasList()) {
                         Stream<FetchItem> fetchItemStream = valueWithVariable.asArray().getValueWithVariables().stream()
                                 .map(item ->
@@ -443,7 +444,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                             packageName,
                             ENUM_PROTOCOL_ENUM_VALUE_LOCAL,
                             new Field(typeNameToFieldName(fieldTypeDefinition.getName()) + SUFFIX_LIST)
-                                    .setAlias(getAliasFromPath(path))
+                                    .setAlias(getAliasFromPath(path + "/" + fieldDefinition.getName()))
                                     .setArguments(jsonObject)
                                     .addSelection(new Field(idField.getName()))
                     );
@@ -519,7 +520,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                 packageName,
                                 packageManager.isLocalPackage(fetchWithType) ? ENUM_PROTOCOL_ENUM_VALUE_LOCAL : packageConfig.getDefaultFetchProtocol(),
                                 new Field(typeNameToFieldName(fetchWithType.getName()) + SUFFIX_LIST)
-                                        .setAlias(getAliasFromPath(path))
+                                        .setAlias(getAliasFromPath(path + "/" + fieldDefinition.getName()))
                                         .setArguments(jsonObject)
                                         .addSelection(new Field(fetchWithType.getIDFieldOrError().getName()))
                         );
