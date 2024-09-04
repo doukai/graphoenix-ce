@@ -116,8 +116,8 @@ public class PostRequestHandler extends BaseHandler {
                                                                         );
                                                             } else if (data instanceof FileUpload && ((FileUpload) data).getFilename() != null) {
                                                                 FileUpload fileUpload = (FileUpload) data;
-                                                                FileInfo fileInfo = new FileInfo(fileUpload.getFilename(), fileUpload.getContentType(), fileUpload.get());
-                                                                return fileHandler.save(fileInfo)
+                                                                FileInfo fileInfo = new FileInfo(fileUpload.getFilename(), fileUpload.getContentType());
+                                                                return fileHandler.save(fileUpload.get(), fileInfo)
                                                                         .flatMap(id ->
                                                                                 graphQLRequestMono
                                                                                         .map(graphQLRequest -> {

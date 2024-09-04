@@ -10,9 +10,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import reactor.core.publisher.Mono;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -38,12 +36,12 @@ public class LocalFileHandler implements FileHandler {
     }
 
     @Override
-    public Mono<String> save(FileInfo fileInfo) {
+    public Mono<String> save(byte[] data, FileInfo fileInfo) {
         String id = UUID.randomUUID().toString();
         try {
             Path filePath = Files.createFile(path.resolve(id));
             try (FileOutputStream outputStream = new FileOutputStream(filePath.toFile())) {
-                outputStream.write(fileInfo.getData());
+                outputStream.write(data);
                 FileInput fileInput = new FileInput();
                 fileInput.setId(id);
                 fileInput.setName(fileInfo.getFilename());
@@ -59,20 +57,18 @@ public class LocalFileHandler implements FileHandler {
     }
 
     @Override
-    public Mono<FileInfo> get(String id) {
+    public Mono<FileInfo> getFileInfo(String id) {
         return fileRepository.getFileById(id)
-                .map(file -> {
-                            Path filePath = path.resolve(id);
-                            try (FileInputStream inputStream = new FileInputStream(filePath.toFile())) {
-                                FileInfo fileInfo = new FileInfo();
-                                fileInfo.setData(inputStream.readAllBytes());
-                                fileInfo.setFilename(file.getName());
-                                fileInfo.setContentType(file.getContentType());
-                                return fileInfo;
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                );
+                .map(file -> new FileInfo(file.getName(), file.getContentType()));
+    }
+
+    @Override
+    public InputStream get(String id) {
+        Path filePath = path.resolve(id);
+        try {
+            return new FileInputStream(filePath.toFile());
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

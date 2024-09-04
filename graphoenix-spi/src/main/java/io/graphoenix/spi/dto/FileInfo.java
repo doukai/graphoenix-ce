@@ -6,15 +6,12 @@ public class FileInfo {
 
     private String contentType;
 
-    private byte[] data;
-
     public FileInfo() {
     }
 
-    public FileInfo(String filename, String contentType, byte[] data) {
+    public FileInfo(String filename, String contentType) {
         this.filename = filename;
         this.contentType = contentType;
-        this.data = data;
     }
 
     public String getFilename() {
@@ -31,13 +28,5 @@ public class FileInfo {
 
     public void setContentType(String contentType) {
         this.contentType = contentType;
-    }
-
-    public byte[] getData() {
-        return data;
-    }
-
-    public void setData(byte[] data) {
-        this.data = data;
     }
 }
