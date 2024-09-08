@@ -105,7 +105,7 @@ public class QueryTranslator {
         ObjectType fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition).asObject();
         Table table = typeToTable(fieldTypeDefinition, level);
 
-        if (!groupBy && field.hasGroupBy() && fieldDefinition.getType().hasList()) {
+        if (!groupBy && (field.hasGroupBy() || field.getFields().stream().anyMatch(item -> fieldTypeDefinition.getField(item.getName()).isGroupFunctionField())) && fieldDefinition.getType().hasList()) {
             Column groupByColumn = graphqlFieldToColumn(fieldTypeDefinition.getName(), INPUT_VALUE_GROUP_BY_NAME, level);
             if (fieldDefinition.getType().hasList()) {
                 selectExpression = jsonExtractFunction(jsonAggregateFunction(groupByColumn, null, null));
@@ -127,12 +127,12 @@ public class QueryTranslator {
                                     .filter(subField -> !fieldTypeDefinition.asObject().getField(subField.getName()).isConnectionField())
                                     .map(subField ->
                                             new JsonKeyValuePair(
-                                                    new StringValue(Optional.ofNullable(subField.getAlias()).orElse(subField.getName())).toString(),
+                                                    new StringValue(Optional.ofNullable(subField.getAlias()).orElseGet(subField::getName)).toString(),
                                                     fieldToExpression(
                                                             fieldTypeDefinition.asObject(),
                                                             fieldTypeDefinition.asObject().getField(subField.getName()),
                                                             subField,
-                                                            field.hasGroupBy() && !fieldDefinition.getType().hasList(),
+                                                            (field.hasGroupBy() || field.getFields().stream().anyMatch(item -> fieldTypeDefinition.getField(item.getName()).isGroupFunctionField())) && !fieldDefinition.getType().hasList(),
                                                             level
                                                     ),
                                                     false,

@@ -685,44 +685,30 @@ public class DocumentBuilder {
             }
             return new InputValue(fieldDefinition.getName()).setType(argumentType);
         } else if (inputType.equals(InputType.ORDER_BY)) {
-            return new InputValue(fieldDefinition.getName()).setType(new TypeName(INPUT_SORT_NAME));
+            if (fieldTypeDefinition.isLeaf()) {
+                return new InputValue(fieldDefinition.getName()).setType(new TypeName(INPUT_SORT_NAME));
+            } else {
+                return new InputValue(fieldDefinition.getName()).setType(new TypeName(fieldTypeDefinition.getName() + InputType.ORDER_BY));
+            }
         }
         throw new GraphQLErrors(GraphQLErrorType.UNSUPPORTED_FIELD_TYPE.bind(inputType.toString()));
     }
 
     public Set<InputValue> buildInputValuesFromObjectType(FieldsType fieldsType, InputType inputType) {
-        if (inputType.equals(InputType.ORDER_BY)) {
-            return Stream
-                    .concat(
-                            fieldsType.getFields().stream(),
-                            documentManager.getDocument().getMetaInterface().stream()
-                                    .flatMap(interfaceType -> interfaceType.getFields().stream())
-                    )
-                    .filter(distinctByKey(FieldDefinition::getName))
-                    .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
-                    .filter(fieldDefinition -> !fieldDefinition.isFunctionField())
-                    .filter(fieldDefinition -> !fieldDefinition.isConnectionField())
-                    .filter(fieldDefinition -> !fieldDefinition.isAggregateField())
-                    .filter(fieldDefinition -> !fieldDefinition.getType().hasList())
-                    .filter(fieldDefinition -> documentManager.getFieldTypeDefinition(fieldDefinition).isLeaf())
-                    .map(fieldDefinition -> fieldToInputValue(fieldsType, fieldDefinition, inputType))
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
-        } else {
-            return Stream
-                    .concat(
-                            fieldsType.getFields().stream(),
-                            documentManager.getDocument().getMetaInterface().stream()
-                                    .flatMap(interfaceType -> interfaceType.getFields().stream())
-                    )
-                    .filter(distinctByKey(FieldDefinition::getName))
-                    .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
-                    .filter(fieldDefinition -> !fieldDefinition.isFunctionField())
-                    .filter(fieldDefinition -> !fieldDefinition.isConnectionField())
-                    .filter(fieldDefinition -> !fieldDefinition.isAggregateField())
-                    .filter(fieldDefinition -> !documentManager.getFieldTypeDefinition(fieldDefinition).isContainer())
-                    .map(fieldDefinition -> fieldToInputValue(fieldsType, fieldDefinition, inputType))
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
-        }
+        return Stream
+                .concat(
+                        fieldsType.getFields().stream(),
+                        documentManager.getDocument().getMetaInterface().stream()
+                                .flatMap(interfaceType -> interfaceType.getFields().stream())
+                )
+                .filter(distinctByKey(FieldDefinition::getName))
+                .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
+                .filter(fieldDefinition -> inputType.equals(InputType.ORDER_BY) || !fieldDefinition.isFunctionField())
+                .filter(fieldDefinition -> !fieldDefinition.isConnectionField())
+                .filter(fieldDefinition -> !fieldDefinition.isAggregateField())
+                .filter(fieldDefinition -> !documentManager.getFieldTypeDefinition(fieldDefinition).isContainer())
+                .map(fieldDefinition -> fieldToInputValue(fieldsType, fieldDefinition, inputType))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     public List<FieldDefinition> getMetaInterfaceFields() {
@@ -1142,7 +1128,7 @@ public class DocumentBuilder {
                                         fieldDefinition.getType().getTypeName().getName().equals(SCALA_DATE_NAME) ||
                                         fieldDefinition.getType().getTypeName().getName().equals(SCALA_TIME_NAME) ||
                                         fieldDefinition.getType().getTypeName().getName().equals(SCALA_DATE_TIME_NAME) ||
-                                        fieldDefinition.getType().getTypeName().getName().equals(SCALA_TIMESTAMP_NAME)||
+                                        fieldDefinition.getType().getTypeName().getName().equals(SCALA_TIMESTAMP_NAME) ||
                                         fieldDefinition.getType().getTypeName().getName().equals(SCALA_UPLOAD_NAME)
                         )
                         .flatMap(fieldDefinition ->

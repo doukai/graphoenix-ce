@@ -310,6 +310,12 @@ public class FieldDefinition extends AbstractDefinition {
         return hasDirective(DIRECTIVE_FUNC_NAME);
     }
 
+    public boolean isGroupFunctionField() {
+        return hasDirective(DIRECTIVE_FUNC_NAME) &&
+                Stream.of(SUFFIX_COUNT, SUFFIX_SUM, SUFFIX_AVG, SUFFIX_MAX, SUFFIX_MIN)
+                        .anyMatch(name -> name.toUpperCase().equals(getFunctionNameOrError()));
+    }
+
     public Optional<String> getFunctionName() {
         return Optional.ofNullable(getDirective(DIRECTIVE_FUNC_NAME))
                 .flatMap(directive -> directive.getArgumentOrEmpty(DIRECTIVE_FUNC_ARGUMENT_NAME_NAME))
