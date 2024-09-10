@@ -13,26 +13,26 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-public @interface __TypeOrderBy {
+public @interface __TypeOrderBy1 {
   Sort name() default Sort.ASC;
 
-  __SchemaOrderBy1 ofSchema() default @__SchemaOrderBy1;
+  __SchemaOrderBy2 ofSchema() default @__SchemaOrderBy2;
 
   Sort kind() default Sort.ASC;
 
   Sort description() default Sort.ASC;
 
-  __FieldOrderBy1 fields() default @__FieldOrderBy1;
+  __FieldOrderBy2 fields() default @__FieldOrderBy2;
 
-  __TypeOrderBy1 interfaces() default @__TypeOrderBy1;
+  __TypeOrderBy2 interfaces() default @__TypeOrderBy2;
 
-  __TypeOrderBy1 possibleTypes() default @__TypeOrderBy1;
+  __TypeOrderBy2 possibleTypes() default @__TypeOrderBy2;
 
-  __EnumValueOrderBy1 enumValues() default @__EnumValueOrderBy1;
+  __EnumValueOrderBy2 enumValues() default @__EnumValueOrderBy2;
 
-  __InputValueOrderBy1 inputFields() default @__InputValueOrderBy1;
+  __InputValueOrderBy2 inputFields() default @__InputValueOrderBy2;
 
-  __TypeOrderBy1 ofType() default @__TypeOrderBy1;
+  __TypeOrderBy2 ofType() default @__TypeOrderBy2;
 
   Sort isDeprecated() default Sort.ASC;
 
@@ -56,9 +56,9 @@ public @interface __TypeOrderBy {
 
   Sort ofTypeName() default Sort.ASC;
 
-  __TypeInterfacesOrderBy1 __typeInterfaces() default @__TypeInterfacesOrderBy1;
+  __TypeInterfacesOrderBy2 __typeInterfaces() default @__TypeInterfacesOrderBy2;
 
-  __TypePossibleTypesOrderBy1 __typePossibleTypes() default @__TypePossibleTypesOrderBy1;
+  __TypePossibleTypesOrderBy2 __typePossibleTypes() default @__TypePossibleTypesOrderBy2;
 
   Sort nameCount() default Sort.ASC;
 

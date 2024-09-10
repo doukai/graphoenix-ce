@@ -61,6 +61,21 @@ message FileOrderBy {
     io.graphoenix.core.Sort update_time = 12;
     io.graphoenix.core.Sort create_group_id = 13;
     io.graphoenix.core.Sort intro_typename = 14;
+    io.graphoenix.core.Sort id_count = 15;
+    io.graphoenix.core.Sort id_max = 16;
+    io.graphoenix.core.Sort id_min = 17;
+    io.graphoenix.core.Sort name_count = 18;
+    io.graphoenix.core.Sort name_max = 19;
+    io.graphoenix.core.Sort name_min = 20;
+    io.graphoenix.core.Sort content_type_count = 21;
+    io.graphoenix.core.Sort content_type_max = 22;
+    io.graphoenix.core.Sort content_type_min = 23;
+    io.graphoenix.core.Sort content_count = 24;
+    io.graphoenix.core.Sort content_max = 25;
+    io.graphoenix.core.Sort content_min = 26;
+    io.graphoenix.core.Sort url_count = 27;
+    io.graphoenix.core.Sort url_max = 28;
+    io.graphoenix.core.Sort url_min = 29;
 }
 message FileQueryArguments {
     io.graphoenix.core.StringExpression id = 1;

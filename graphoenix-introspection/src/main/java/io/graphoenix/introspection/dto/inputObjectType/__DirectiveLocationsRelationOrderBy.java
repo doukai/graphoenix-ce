@@ -13,6 +13,8 @@ public class __DirectiveLocationsRelationOrderBy {
 
   private Sort __directiveRef;
 
+  private __DirectiveOrderBy __directive;
+
   private Sort locationsRef;
 
   private Sort isDeprecated;
@@ -33,6 +35,18 @@ public class __DirectiveLocationsRelationOrderBy {
 
   private Sort __typename;
 
+  private Sort idCount;
+
+  private Sort idMax;
+
+  private Sort idMin;
+
+  private Sort __directiveRefCount;
+
+  private Sort __directiveRefMax;
+
+  private Sort __directiveRefMin;
+
   public Sort getId() {
     return this.id;
   }
@@ -47,6 +61,14 @@ public class __DirectiveLocationsRelationOrderBy {
 
   public void set__directiveRef(Sort __directiveRef) {
     this.__directiveRef = __directiveRef;
+  }
+
+  public __DirectiveOrderBy get__directive() {
+    return this.__directive;
+  }
+
+  public void set__directive(__DirectiveOrderBy __directive) {
+    this.__directive = __directive;
   }
 
   public Sort getLocationsRef() {
@@ -127,5 +149,53 @@ public class __DirectiveLocationsRelationOrderBy {
 
   public void set__typename(Sort __typename) {
     this.__typename = __typename;
+  }
+
+  public Sort getIdCount() {
+    return this.idCount;
+  }
+
+  public void setIdCount(Sort idCount) {
+    this.idCount = idCount;
+  }
+
+  public Sort getIdMax() {
+    return this.idMax;
+  }
+
+  public void setIdMax(Sort idMax) {
+    this.idMax = idMax;
+  }
+
+  public Sort getIdMin() {
+    return this.idMin;
+  }
+
+  public void setIdMin(Sort idMin) {
+    this.idMin = idMin;
+  }
+
+  public Sort get__directiveRefCount() {
+    return this.__directiveRefCount;
+  }
+
+  public void set__directiveRefCount(Sort __directiveRefCount) {
+    this.__directiveRefCount = __directiveRefCount;
+  }
+
+  public Sort get__directiveRefMax() {
+    return this.__directiveRefMax;
+  }
+
+  public void set__directiveRefMax(Sort __directiveRefMax) {
+    this.__directiveRefMax = __directiveRefMax;
+  }
+
+  public Sort get__directiveRefMin() {
+    return this.__directiveRefMin;
+  }
+
+  public void set__directiveRefMin(Sort __directiveRefMin) {
+    this.__directiveRefMin = __directiveRefMin;
   }
 }

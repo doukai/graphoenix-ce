@@ -18,6 +18,8 @@ public @interface __EnumValueOrderBy {
 
   Sort name() default Sort.ASC;
 
+  __TypeOrderBy1 ofType() default @__TypeOrderBy1;
+
   Sort description() default Sort.ASC;
 
   Sort deprecationReason() default Sort.ASC;
@@ -42,9 +44,41 @@ public @interface __EnumValueOrderBy {
 
   Sort ofTypeName() default Sort.ASC;
 
+  Sort idCount() default Sort.ASC;
+
+  Sort idMax() default Sort.ASC;
+
+  Sort idMin() default Sort.ASC;
+
+  Sort nameCount() default Sort.ASC;
+
+  Sort nameMax() default Sort.ASC;
+
+  Sort nameMin() default Sort.ASC;
+
+  Sort descriptionCount() default Sort.ASC;
+
+  Sort descriptionMax() default Sort.ASC;
+
+  Sort descriptionMin() default Sort.ASC;
+
+  Sort deprecationReasonCount() default Sort.ASC;
+
+  Sort deprecationReasonMax() default Sort.ASC;
+
+  Sort deprecationReasonMin() default Sort.ASC;
+
+  Sort ofTypeNameCount() default Sort.ASC;
+
+  Sort ofTypeNameMax() default Sort.ASC;
+
+  Sort ofTypeNameMin() default Sort.ASC;
+
   String $id() default "";
 
   String $name() default "";
+
+  String $ofType() default "";
 
   String $description() default "";
 
@@ -69,4 +103,34 @@ public @interface __EnumValueOrderBy {
   String $__typename() default "";
 
   String $ofTypeName() default "";
+
+  String $idCount() default "";
+
+  String $idMax() default "";
+
+  String $idMin() default "";
+
+  String $nameCount() default "";
+
+  String $nameMax() default "";
+
+  String $nameMin() default "";
+
+  String $descriptionCount() default "";
+
+  String $descriptionMax() default "";
+
+  String $descriptionMin() default "";
+
+  String $deprecationReasonCount() default "";
+
+  String $deprecationReasonMax() default "";
+
+  String $deprecationReasonMin() default "";
+
+  String $ofTypeNameCount() default "";
+
+  String $ofTypeNameMax() default "";
+
+  String $ofTypeNameMin() default "";
 }

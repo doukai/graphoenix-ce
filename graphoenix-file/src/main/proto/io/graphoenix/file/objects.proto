@@ -9,12 +9,15 @@ import "io/graphoenix/file/enums.proto";
 import "io/graphoenix/core/objects.proto";
 import "google/protobuf/timestamp.proto";
 
+/**
+* 文件
+*/
 message File {
-    string id = 1;
-    string name = 2;
-    string content_type = 3;
-    string content = 4;
-    string url = 5;
+    string id = 1; /* ID */
+    string name = 2; /* 文件名 */
+    string content_type = 3; /* 类型 */
+    string content = 4; /* 内容 */
+    string url = 5; /* URL */
     bool is_deprecated = 6;
     int32 version = 7;
     int32 realm_id = 8;

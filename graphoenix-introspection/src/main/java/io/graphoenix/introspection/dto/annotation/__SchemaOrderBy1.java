@@ -13,18 +13,18 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-public @interface __SchemaOrderBy {
+public @interface __SchemaOrderBy1 {
   Sort id() default Sort.ASC;
 
-  __TypeOrderBy1 types() default @__TypeOrderBy1;
+  __TypeOrderBy2 types() default @__TypeOrderBy2;
 
-  __TypeOrderBy1 queryType() default @__TypeOrderBy1;
+  __TypeOrderBy2 queryType() default @__TypeOrderBy2;
 
-  __TypeOrderBy1 mutationType() default @__TypeOrderBy1;
+  __TypeOrderBy2 mutationType() default @__TypeOrderBy2;
 
-  __TypeOrderBy1 subscriptionType() default @__TypeOrderBy1;
+  __TypeOrderBy2 subscriptionType() default @__TypeOrderBy2;
 
-  __DirectiveOrderBy1 directives() default @__DirectiveOrderBy1;
+  __DirectiveOrderBy2 directives() default @__DirectiveOrderBy2;
 
   Sort isDeprecated() default Sort.ASC;
 

@@ -13,26 +13,12 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-public @interface __TypeOrderBy {
+public @interface __TypeOrderBy2 {
   Sort name() default Sort.ASC;
-
-  __SchemaOrderBy1 ofSchema() default @__SchemaOrderBy1;
 
   Sort kind() default Sort.ASC;
 
   Sort description() default Sort.ASC;
-
-  __FieldOrderBy1 fields() default @__FieldOrderBy1;
-
-  __TypeOrderBy1 interfaces() default @__TypeOrderBy1;
-
-  __TypeOrderBy1 possibleTypes() default @__TypeOrderBy1;
-
-  __EnumValueOrderBy1 enumValues() default @__EnumValueOrderBy1;
-
-  __InputValueOrderBy1 inputFields() default @__InputValueOrderBy1;
-
-  __TypeOrderBy1 ofType() default @__TypeOrderBy1;
 
   Sort isDeprecated() default Sort.ASC;
 
@@ -55,10 +41,6 @@ public @interface __TypeOrderBy {
   Sort schemaId() default Sort.ASC;
 
   Sort ofTypeName() default Sort.ASC;
-
-  __TypeInterfacesOrderBy1 __typeInterfaces() default @__TypeInterfacesOrderBy1;
-
-  __TypePossibleTypesOrderBy1 __typePossibleTypes() default @__TypePossibleTypesOrderBy1;
 
   Sort nameCount() default Sort.ASC;
 
@@ -90,23 +72,9 @@ public @interface __TypeOrderBy {
 
   String $name() default "";
 
-  String $ofSchema() default "";
-
   String $kind() default "";
 
   String $description() default "";
-
-  String $fields() default "";
-
-  String $interfaces() default "";
-
-  String $possibleTypes() default "";
-
-  String $enumValues() default "";
-
-  String $inputFields() default "";
-
-  String $ofType() default "";
 
   String $isDeprecated() default "";
 
@@ -129,10 +97,6 @@ public @interface __TypeOrderBy {
   String $schemaId() default "";
 
   String $ofTypeName() default "";
-
-  String $__typeInterfaces() default "";
-
-  String $__typePossibleTypes() default "";
 
   String $nameCount() default "";
 

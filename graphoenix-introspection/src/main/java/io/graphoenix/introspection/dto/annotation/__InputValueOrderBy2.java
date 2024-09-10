@@ -13,26 +13,18 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-public @interface __TypeOrderBy {
+public @interface __InputValueOrderBy2 {
+  Sort id() default Sort.ASC;
+
   Sort name() default Sort.ASC;
 
-  __SchemaOrderBy1 ofSchema() default @__SchemaOrderBy1;
+  Sort fieldId() default Sort.ASC;
 
-  Sort kind() default Sort.ASC;
+  Sort directiveName() default Sort.ASC;
 
   Sort description() default Sort.ASC;
 
-  __FieldOrderBy1 fields() default @__FieldOrderBy1;
-
-  __TypeOrderBy1 interfaces() default @__TypeOrderBy1;
-
-  __TypeOrderBy1 possibleTypes() default @__TypeOrderBy1;
-
-  __EnumValueOrderBy1 enumValues() default @__EnumValueOrderBy1;
-
-  __InputValueOrderBy1 inputFields() default @__InputValueOrderBy1;
-
-  __TypeOrderBy1 ofType() default @__TypeOrderBy1;
+  Sort defaultValue() default Sort.ASC;
 
   Sort isDeprecated() default Sort.ASC;
 
@@ -52,13 +44,15 @@ public @interface __TypeOrderBy {
 
   Sort __typename() default Sort.ASC;
 
-  Sort schemaId() default Sort.ASC;
-
   Sort ofTypeName() default Sort.ASC;
 
-  __TypeInterfacesOrderBy1 __typeInterfaces() default @__TypeInterfacesOrderBy1;
+  Sort typeName() default Sort.ASC;
 
-  __TypePossibleTypesOrderBy1 __typePossibleTypes() default @__TypePossibleTypesOrderBy1;
+  Sort idCount() default Sort.ASC;
+
+  Sort idMax() default Sort.ASC;
+
+  Sort idMin() default Sort.ASC;
 
   Sort nameCount() default Sort.ASC;
 
@@ -66,11 +60,23 @@ public @interface __TypeOrderBy {
 
   Sort nameMin() default Sort.ASC;
 
+  Sort directiveNameCount() default Sort.ASC;
+
+  Sort directiveNameMax() default Sort.ASC;
+
+  Sort directiveNameMin() default Sort.ASC;
+
   Sort descriptionCount() default Sort.ASC;
 
   Sort descriptionMax() default Sort.ASC;
 
   Sort descriptionMin() default Sort.ASC;
+
+  Sort defaultValueCount() default Sort.ASC;
+
+  Sort defaultValueMax() default Sort.ASC;
+
+  Sort defaultValueMin() default Sort.ASC;
 
   Sort ofTypeNameCount() default Sort.ASC;
 
@@ -78,35 +84,33 @@ public @interface __TypeOrderBy {
 
   Sort ofTypeNameMin() default Sort.ASC;
 
-  Sort schemaIdCount() default Sort.ASC;
+  Sort typeNameCount() default Sort.ASC;
 
-  Sort schemaIdSum() default Sort.ASC;
+  Sort typeNameMax() default Sort.ASC;
 
-  Sort schemaIdAvg() default Sort.ASC;
+  Sort typeNameMin() default Sort.ASC;
 
-  Sort schemaIdMax() default Sort.ASC;
+  Sort fieldIdCount() default Sort.ASC;
 
-  Sort schemaIdMin() default Sort.ASC;
+  Sort fieldIdSum() default Sort.ASC;
+
+  Sort fieldIdAvg() default Sort.ASC;
+
+  Sort fieldIdMax() default Sort.ASC;
+
+  Sort fieldIdMin() default Sort.ASC;
+
+  String $id() default "";
 
   String $name() default "";
 
-  String $ofSchema() default "";
+  String $fieldId() default "";
 
-  String $kind() default "";
+  String $directiveName() default "";
 
   String $description() default "";
 
-  String $fields() default "";
-
-  String $interfaces() default "";
-
-  String $possibleTypes() default "";
-
-  String $enumValues() default "";
-
-  String $inputFields() default "";
-
-  String $ofType() default "";
+  String $defaultValue() default "";
 
   String $isDeprecated() default "";
 
@@ -126,13 +130,15 @@ public @interface __TypeOrderBy {
 
   String $__typename() default "";
 
-  String $schemaId() default "";
-
   String $ofTypeName() default "";
 
-  String $__typeInterfaces() default "";
+  String $typeName() default "";
 
-  String $__typePossibleTypes() default "";
+  String $idCount() default "";
+
+  String $idMax() default "";
+
+  String $idMin() default "";
 
   String $nameCount() default "";
 
@@ -140,11 +146,23 @@ public @interface __TypeOrderBy {
 
   String $nameMin() default "";
 
+  String $directiveNameCount() default "";
+
+  String $directiveNameMax() default "";
+
+  String $directiveNameMin() default "";
+
   String $descriptionCount() default "";
 
   String $descriptionMax() default "";
 
   String $descriptionMin() default "";
+
+  String $defaultValueCount() default "";
+
+  String $defaultValueMax() default "";
+
+  String $defaultValueMin() default "";
 
   String $ofTypeNameCount() default "";
 
@@ -152,13 +170,19 @@ public @interface __TypeOrderBy {
 
   String $ofTypeNameMin() default "";
 
-  String $schemaIdCount() default "";
+  String $typeNameCount() default "";
 
-  String $schemaIdSum() default "";
+  String $typeNameMax() default "";
 
-  String $schemaIdAvg() default "";
+  String $typeNameMin() default "";
 
-  String $schemaIdMax() default "";
+  String $fieldIdCount() default "";
 
-  String $schemaIdMin() default "";
+  String $fieldIdSum() default "";
+
+  String $fieldIdAvg() default "";
+
+  String $fieldIdMax() default "";
+
+  String $fieldIdMin() default "";
 }

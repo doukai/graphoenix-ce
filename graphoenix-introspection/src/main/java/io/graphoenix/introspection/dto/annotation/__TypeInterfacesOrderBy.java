@@ -8,6 +8,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.eclipse.microprofile.graphql.Name;
 
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
@@ -18,7 +19,12 @@ public @interface __TypeInterfacesOrderBy {
 
   Sort typeRef() default Sort.ASC;
 
+  __TypeOrderBy1 type() default @__TypeOrderBy1;
+
   Sort interfaceRef() default Sort.ASC;
+
+  @Name("interface")
+  __TypeOrderBy1 _interface() default @__TypeOrderBy1;
 
   Sort isDeprecated() default Sort.ASC;
 
@@ -38,11 +44,33 @@ public @interface __TypeInterfacesOrderBy {
 
   Sort __typename() default Sort.ASC;
 
+  Sort idCount() default Sort.ASC;
+
+  Sort idMax() default Sort.ASC;
+
+  Sort idMin() default Sort.ASC;
+
+  Sort typeRefCount() default Sort.ASC;
+
+  Sort typeRefMax() default Sort.ASC;
+
+  Sort typeRefMin() default Sort.ASC;
+
+  Sort interfaceRefCount() default Sort.ASC;
+
+  Sort interfaceRefMax() default Sort.ASC;
+
+  Sort interfaceRefMin() default Sort.ASC;
+
   String $id() default "";
 
   String $typeRef() default "";
 
+  String $type() default "";
+
   String $interfaceRef() default "";
+
+  String $interface() default "";
 
   String $isDeprecated() default "";
 
@@ -61,4 +89,22 @@ public @interface __TypeInterfacesOrderBy {
   String $createGroupId() default "";
 
   String $__typename() default "";
+
+  String $idCount() default "";
+
+  String $idMax() default "";
+
+  String $idMin() default "";
+
+  String $typeRefCount() default "";
+
+  String $typeRefMax() default "";
+
+  String $typeRefMin() default "";
+
+  String $interfaceRefCount() default "";
+
+  String $interfaceRefMax() default "";
+
+  String $interfaceRefMin() default "";
 }

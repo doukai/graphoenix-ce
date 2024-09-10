@@ -11,9 +11,23 @@ import org.eclipse.microprofile.graphql.Input;
 public class __TypeOrderBy {
   private Sort name;
 
+  private __SchemaOrderBy ofSchema;
+
   private Sort kind;
 
   private Sort description;
+
+  private __FieldOrderBy fields;
+
+  private __TypeOrderBy interfaces;
+
+  private __TypeOrderBy possibleTypes;
+
+  private __EnumValueOrderBy enumValues;
+
+  private __InputValueOrderBy inputFields;
+
+  private __TypeOrderBy ofType;
 
   private Sort isDeprecated;
 
@@ -37,12 +51,52 @@ public class __TypeOrderBy {
 
   private Sort ofTypeName;
 
+  private __TypeInterfacesOrderBy __typeInterfaces;
+
+  private __TypePossibleTypesOrderBy __typePossibleTypes;
+
+  private Sort nameCount;
+
+  private Sort nameMax;
+
+  private Sort nameMin;
+
+  private Sort descriptionCount;
+
+  private Sort descriptionMax;
+
+  private Sort descriptionMin;
+
+  private Sort ofTypeNameCount;
+
+  private Sort ofTypeNameMax;
+
+  private Sort ofTypeNameMin;
+
+  private Sort schemaIdCount;
+
+  private Sort schemaIdSum;
+
+  private Sort schemaIdAvg;
+
+  private Sort schemaIdMax;
+
+  private Sort schemaIdMin;
+
   public Sort getName() {
     return this.name;
   }
 
   public void setName(Sort name) {
     this.name = name;
+  }
+
+  public __SchemaOrderBy getOfSchema() {
+    return this.ofSchema;
+  }
+
+  public void setOfSchema(__SchemaOrderBy ofSchema) {
+    this.ofSchema = ofSchema;
   }
 
   public Sort getKind() {
@@ -59,6 +113,54 @@ public class __TypeOrderBy {
 
   public void setDescription(Sort description) {
     this.description = description;
+  }
+
+  public __FieldOrderBy getFields() {
+    return this.fields;
+  }
+
+  public void setFields(__FieldOrderBy fields) {
+    this.fields = fields;
+  }
+
+  public __TypeOrderBy getInterfaces() {
+    return this.interfaces;
+  }
+
+  public void setInterfaces(__TypeOrderBy interfaces) {
+    this.interfaces = interfaces;
+  }
+
+  public __TypeOrderBy getPossibleTypes() {
+    return this.possibleTypes;
+  }
+
+  public void setPossibleTypes(__TypeOrderBy possibleTypes) {
+    this.possibleTypes = possibleTypes;
+  }
+
+  public __EnumValueOrderBy getEnumValues() {
+    return this.enumValues;
+  }
+
+  public void setEnumValues(__EnumValueOrderBy enumValues) {
+    this.enumValues = enumValues;
+  }
+
+  public __InputValueOrderBy getInputFields() {
+    return this.inputFields;
+  }
+
+  public void setInputFields(__InputValueOrderBy inputFields) {
+    this.inputFields = inputFields;
+  }
+
+  public __TypeOrderBy getOfType() {
+    return this.ofType;
+  }
+
+  public void setOfType(__TypeOrderBy ofType) {
+    this.ofType = ofType;
   }
 
   public Sort getIsDeprecated() {
@@ -147,5 +249,133 @@ public class __TypeOrderBy {
 
   public void setOfTypeName(Sort ofTypeName) {
     this.ofTypeName = ofTypeName;
+  }
+
+  public __TypeInterfacesOrderBy get__typeInterfaces() {
+    return this.__typeInterfaces;
+  }
+
+  public void set__typeInterfaces(__TypeInterfacesOrderBy __typeInterfaces) {
+    this.__typeInterfaces = __typeInterfaces;
+  }
+
+  public __TypePossibleTypesOrderBy get__typePossibleTypes() {
+    return this.__typePossibleTypes;
+  }
+
+  public void set__typePossibleTypes(__TypePossibleTypesOrderBy __typePossibleTypes) {
+    this.__typePossibleTypes = __typePossibleTypes;
+  }
+
+  public Sort getNameCount() {
+    return this.nameCount;
+  }
+
+  public void setNameCount(Sort nameCount) {
+    this.nameCount = nameCount;
+  }
+
+  public Sort getNameMax() {
+    return this.nameMax;
+  }
+
+  public void setNameMax(Sort nameMax) {
+    this.nameMax = nameMax;
+  }
+
+  public Sort getNameMin() {
+    return this.nameMin;
+  }
+
+  public void setNameMin(Sort nameMin) {
+    this.nameMin = nameMin;
+  }
+
+  public Sort getDescriptionCount() {
+    return this.descriptionCount;
+  }
+
+  public void setDescriptionCount(Sort descriptionCount) {
+    this.descriptionCount = descriptionCount;
+  }
+
+  public Sort getDescriptionMax() {
+    return this.descriptionMax;
+  }
+
+  public void setDescriptionMax(Sort descriptionMax) {
+    this.descriptionMax = descriptionMax;
+  }
+
+  public Sort getDescriptionMin() {
+    return this.descriptionMin;
+  }
+
+  public void setDescriptionMin(Sort descriptionMin) {
+    this.descriptionMin = descriptionMin;
+  }
+
+  public Sort getOfTypeNameCount() {
+    return this.ofTypeNameCount;
+  }
+
+  public void setOfTypeNameCount(Sort ofTypeNameCount) {
+    this.ofTypeNameCount = ofTypeNameCount;
+  }
+
+  public Sort getOfTypeNameMax() {
+    return this.ofTypeNameMax;
+  }
+
+  public void setOfTypeNameMax(Sort ofTypeNameMax) {
+    this.ofTypeNameMax = ofTypeNameMax;
+  }
+
+  public Sort getOfTypeNameMin() {
+    return this.ofTypeNameMin;
+  }
+
+  public void setOfTypeNameMin(Sort ofTypeNameMin) {
+    this.ofTypeNameMin = ofTypeNameMin;
+  }
+
+  public Sort getSchemaIdCount() {
+    return this.schemaIdCount;
+  }
+
+  public void setSchemaIdCount(Sort schemaIdCount) {
+    this.schemaIdCount = schemaIdCount;
+  }
+
+  public Sort getSchemaIdSum() {
+    return this.schemaIdSum;
+  }
+
+  public void setSchemaIdSum(Sort schemaIdSum) {
+    this.schemaIdSum = schemaIdSum;
+  }
+
+  public Sort getSchemaIdAvg() {
+    return this.schemaIdAvg;
+  }
+
+  public void setSchemaIdAvg(Sort schemaIdAvg) {
+    this.schemaIdAvg = schemaIdAvg;
+  }
+
+  public Sort getSchemaIdMax() {
+    return this.schemaIdMax;
+  }
+
+  public void setSchemaIdMax(Sort schemaIdMax) {
+    this.schemaIdMax = schemaIdMax;
+  }
+
+  public Sort getSchemaIdMin() {
+    return this.schemaIdMin;
+  }
+
+  public void setSchemaIdMin(Sort schemaIdMin) {
+    this.schemaIdMin = schemaIdMin;
   }
 }

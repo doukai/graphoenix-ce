@@ -8,19 +8,23 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.eclipse.microprofile.graphql.Name;
 
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-public @interface __DirectiveLocationsRelationOrderBy {
+public @interface __TypeInterfacesOrderBy1 {
   Sort id() default Sort.ASC;
 
-  Sort __directiveRef() default Sort.ASC;
+  Sort typeRef() default Sort.ASC;
 
-  __DirectiveOrderBy1 __directive() default @__DirectiveOrderBy1;
+  __TypeOrderBy2 type() default @__TypeOrderBy2;
 
-  Sort locationsRef() default Sort.ASC;
+  Sort interfaceRef() default Sort.ASC;
+
+  @Name("interface")
+  __TypeOrderBy2 _interface() default @__TypeOrderBy2;
 
   Sort isDeprecated() default Sort.ASC;
 
@@ -46,19 +50,27 @@ public @interface __DirectiveLocationsRelationOrderBy {
 
   Sort idMin() default Sort.ASC;
 
-  Sort __directiveRefCount() default Sort.ASC;
+  Sort typeRefCount() default Sort.ASC;
 
-  Sort __directiveRefMax() default Sort.ASC;
+  Sort typeRefMax() default Sort.ASC;
 
-  Sort __directiveRefMin() default Sort.ASC;
+  Sort typeRefMin() default Sort.ASC;
+
+  Sort interfaceRefCount() default Sort.ASC;
+
+  Sort interfaceRefMax() default Sort.ASC;
+
+  Sort interfaceRefMin() default Sort.ASC;
 
   String $id() default "";
 
-  String $__directiveRef() default "";
+  String $typeRef() default "";
 
-  String $__directive() default "";
+  String $type() default "";
 
-  String $locationsRef() default "";
+  String $interfaceRef() default "";
+
+  String $interface() default "";
 
   String $isDeprecated() default "";
 
@@ -84,9 +96,15 @@ public @interface __DirectiveLocationsRelationOrderBy {
 
   String $idMin() default "";
 
-  String $__directiveRefCount() default "";
+  String $typeRefCount() default "";
 
-  String $__directiveRefMax() default "";
+  String $typeRefMax() default "";
 
-  String $__directiveRefMin() default "";
+  String $typeRefMin() default "";
+
+  String $interfaceRefCount() default "";
+
+  String $interfaceRefMax() default "";
+
+  String $interfaceRefMin() default "";
 }

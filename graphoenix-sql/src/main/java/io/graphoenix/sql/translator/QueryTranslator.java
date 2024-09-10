@@ -122,19 +122,31 @@ public class QueryTranslator {
             JsonFunction jsonObjectFunction =
                     jsonObjectFunction(
                             field.getFields().stream()
-                                    .filter(subField -> !fieldTypeDefinition.asObject().getField(subField.getName()).isFetchField())
-                                    .filter(subField -> !fieldTypeDefinition.asObject().getField(subField.getName()).isInvokeField())
-                                    .filter(subField -> !fieldTypeDefinition.asObject().getField(subField.getName()).isConnectionField())
+                                    .filter(subField -> {
+                                                FieldDefinition subFieldDefinition = fieldTypeDefinition.asObject().getField(subField.getName());
+                                                return !subFieldDefinition.isFetchField() &&
+                                                        !subFieldDefinition.isInvokeField() &&
+                                                        !subFieldDefinition.isConnectionField();
+                                            }
+                                    )
                                     .map(subField ->
                                             new JsonKeyValuePair(
                                                     new StringValue(Optional.ofNullable(subField.getAlias()).orElseGet(subField::getName)).toString(),
-                                                    fieldToExpression(
-                                                            fieldTypeDefinition.asObject(),
-                                                            fieldTypeDefinition.asObject().getField(subField.getName()),
-                                                            subField,
-                                                            (field.hasGroupBy() || field.getFields().stream().anyMatch(item -> fieldTypeDefinition.getField(item.getName()).isGroupFunctionField())) && !fieldDefinition.getType().hasList(),
-                                                            level
-                                                    ),
+                                                    groupBy ?
+                                                            groupFieldToExpression(
+                                                                    fieldTypeDefinition.asObject(),
+                                                                    fieldTypeDefinition.asObject().getField(subField.getName()),
+                                                                    subField,
+                                                                    (field.hasGroupBy() || field.getFields().stream().anyMatch(item -> fieldTypeDefinition.getField(item.getName()).isGroupFunctionField())) && !fieldDefinition.getType().hasList(),
+                                                                    level
+                                                            ) :
+                                                            fieldToExpression(
+                                                                    fieldTypeDefinition.asObject(),
+                                                                    fieldTypeDefinition.asObject().getField(subField.getName()),
+                                                                    subField,
+                                                                    (field.hasGroupBy() || field.getFields().stream().anyMatch(item -> fieldTypeDefinition.getField(item.getName()).isGroupFunctionField())) && !fieldDefinition.getType().hasList(),
+                                                                    level
+                                                            ),
                                                     false,
                                                     false
                                             )
@@ -330,6 +342,13 @@ public class QueryTranslator {
             whereExpression = argumentsTranslator.argumentsToWhereExpression(objectType, fieldDefinition, field, level);
         }
         if (!documentManager.isOperationType(objectType)) {
+            if (groupBy) {
+                plainSelect
+                        .addJoins(
+                                groupFieldToJoinStream(objectType, fieldDefinition, field, level)
+                                        .collect(Collectors.toList())
+                        );
+            }
             Table parentTable = typeToTable(objectType, level - 1);
             if (fieldDefinition.hasMapWith()) {
                 Table withTable = graphqlTypeToTable(fieldDefinition.getMapWithTypeOrError(), level);
@@ -383,6 +402,125 @@ public class QueryTranslator {
                     );
         }
         return plainSelect;
+    }
+
+    protected Expression groupFieldToExpression(ObjectType objectType, FieldDefinition fieldDefinition, Field field, boolean over, int level) {
+        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+        if (fieldTypeDefinition.isObject()) {
+            JsonFunction jsonObjectFunction =
+                    jsonObjectFunction(
+                            field.getFields().stream()
+                                    .filter(subField -> {
+                                                FieldDefinition subFieldDefinition = fieldTypeDefinition.asObject().getField(subField.getName());
+                                                return !subFieldDefinition.isFetchField() &&
+                                                        !subFieldDefinition.isInvokeField() &&
+                                                        !subFieldDefinition.isConnectionField() &&
+                                                        !subFieldDefinition.getType().hasList();
+                                            }
+                                    )
+                                    .map(subField ->
+                                            new JsonKeyValuePair(
+                                                    new StringValue(Optional.ofNullable(subField.getAlias()).orElseGet(subField::getName)).toString(),
+                                                    groupFieldToExpression(
+                                                            fieldTypeDefinition.asObject(),
+                                                            fieldTypeDefinition.asObject().getField(subField.getName()),
+                                                            subField,
+                                                            (field.hasGroupBy() || field.getFields().stream().anyMatch(item -> fieldTypeDefinition.asObject().getField(item.getName()).isGroupFunctionField())) && !fieldDefinition.getType().hasList(),
+                                                            level
+                                                    ),
+                                                    false,
+                                                    false
+                                            )
+                                    )
+                                    .collect(Collectors.toList())
+                    );
+
+            return jsonExtractFunction(jsonObjectFunction);
+        } else {
+            return leafFieldToExpression(objectType, fieldDefinition, field, over, level);
+        }
+    }
+
+    protected Stream<Join> groupFieldToJoinStream(ObjectType objectType, FieldDefinition fieldDefinition, Field field, int level) {
+        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+        if (!fieldTypeDefinition.isLeaf()) {
+            if (field.getFields() == null || field.getFields().isEmpty()) {
+                throw new GraphQLErrors(OBJECT_SELECTION_NOT_EXIST.bind(field.toString()));
+            }
+            Stream<Join> subFieldJoinStream = field.getFields().stream()
+                    .filter(subField -> {
+                                FieldDefinition subFieldDefinition = fieldTypeDefinition.asObject().getField(subField.getName());
+                                return !subFieldDefinition.isFetchField() &&
+                                        !subFieldDefinition.isInvokeField() &&
+                                        !subFieldDefinition.isConnectionField();
+                            }
+                    )
+                    .flatMap(subField -> groupFieldToJoinStream(fieldTypeDefinition.asObject(), fieldTypeDefinition.asObject().getField(subField.getName()), subField, level + 1));
+            Table table = typeToTable(fieldTypeDefinition.asObject(), level);
+            Table parentTable = typeToTable(objectType, level - 1);
+            if (fieldDefinition.hasMapWith()) {
+                Table withTable = graphqlTypeToTable(fieldDefinition.getMapWithTypeOrError(), level);
+                return Stream
+                        .concat(
+                                Stream.of(
+                                        new Join()
+                                                .withLeft(true)
+                                                .setFromItem(withTable)
+                                                .addOnExpression(
+                                                        new MultiAndExpression(
+                                                                Arrays.asList(
+                                                                        new EqualsTo()
+                                                                                .withLeftExpression(graphqlFieldToColumn(withTable, fieldDefinition.getMapWithFromOrError()))
+                                                                                .withRightExpression(graphqlFieldToColumn(parentTable, fieldDefinition.getMapFromOrError())),
+                                                                        new NotEqualsTo()
+                                                                                .withLeftExpression(graphqlFieldToColumn(withTable, FIELD_DEPRECATED_NAME))
+                                                                                .withRightExpression(new LongValue(1))
+                                                                )
+                                                        )
+                                                ),
+                                        new Join()
+                                                .withLeft(true)
+                                                .setFromItem(table)
+                                                .addOnExpression(
+                                                        new MultiAndExpression(
+                                                                Arrays.asList(
+                                                                        new EqualsTo()
+                                                                                .withLeftExpression(graphqlFieldToColumn(table, fieldDefinition.getMapToOrError()))
+                                                                                .withRightExpression(graphqlFieldToColumn(withTable, fieldDefinition.getMapWithToOrError())),
+                                                                        new NotEqualsTo()
+                                                                                .withLeftExpression(graphqlFieldToColumn(table, FIELD_DEPRECATED_NAME))
+                                                                                .withRightExpression(new LongValue(1))
+                                                                )
+                                                        )
+                                                )
+                                ),
+                                subFieldJoinStream
+                        );
+            } else {
+                return Stream
+                        .concat(
+                                Stream.of(
+                                        new Join()
+                                                .withLeft(true)
+                                                .setFromItem(table)
+                                                .addOnExpression(
+                                                        new MultiAndExpression(
+                                                                Arrays.asList(
+                                                                        new EqualsTo()
+                                                                                .withLeftExpression(graphqlFieldToColumn(table, fieldDefinition.getMapToOrError()))
+                                                                                .withRightExpression(graphqlFieldToColumn(parentTable, fieldDefinition.getMapFromOrError())),
+                                                                        new NotEqualsTo()
+                                                                                .withLeftExpression(graphqlFieldToColumn(table, FIELD_DEPRECATED_NAME))
+                                                                                .withRightExpression(new LongValue(1))
+                                                                )
+                                                        )
+                                                )
+                                ),
+                                subFieldJoinStream
+                        );
+            }
+        }
+        return Stream.empty();
     }
 
     protected Expression fieldToExpression(ObjectType objectType, FieldDefinition fieldDefinition, Field field, int level) {

@@ -13,20 +13,22 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-public @interface __FieldOrderBy {
+public @interface __InputValueOrderBy1 {
   Sort id() default Sort.ASC;
 
   Sort name() default Sort.ASC;
 
-  __TypeOrderBy1 ofType() default @__TypeOrderBy1;
+  __TypeOrderBy2 ofType() default @__TypeOrderBy2;
+
+  Sort fieldId() default Sort.ASC;
+
+  Sort directiveName() default Sort.ASC;
 
   Sort description() default Sort.ASC;
 
-  __InputValueOrderBy1 args() default @__InputValueOrderBy1;
+  __TypeOrderBy2 type() default @__TypeOrderBy2;
 
-  __TypeOrderBy1 type() default @__TypeOrderBy1;
-
-  Sort deprecationReason() default Sort.ASC;
+  Sort defaultValue() default Sort.ASC;
 
   Sort isDeprecated() default Sort.ASC;
 
@@ -62,17 +64,23 @@ public @interface __FieldOrderBy {
 
   Sort nameMin() default Sort.ASC;
 
+  Sort directiveNameCount() default Sort.ASC;
+
+  Sort directiveNameMax() default Sort.ASC;
+
+  Sort directiveNameMin() default Sort.ASC;
+
   Sort descriptionCount() default Sort.ASC;
 
   Sort descriptionMax() default Sort.ASC;
 
   Sort descriptionMin() default Sort.ASC;
 
-  Sort deprecationReasonCount() default Sort.ASC;
+  Sort defaultValueCount() default Sort.ASC;
 
-  Sort deprecationReasonMax() default Sort.ASC;
+  Sort defaultValueMax() default Sort.ASC;
 
-  Sort deprecationReasonMin() default Sort.ASC;
+  Sort defaultValueMin() default Sort.ASC;
 
   Sort ofTypeNameCount() default Sort.ASC;
 
@@ -86,19 +94,31 @@ public @interface __FieldOrderBy {
 
   Sort typeNameMin() default Sort.ASC;
 
+  Sort fieldIdCount() default Sort.ASC;
+
+  Sort fieldIdSum() default Sort.ASC;
+
+  Sort fieldIdAvg() default Sort.ASC;
+
+  Sort fieldIdMax() default Sort.ASC;
+
+  Sort fieldIdMin() default Sort.ASC;
+
   String $id() default "";
 
   String $name() default "";
 
   String $ofType() default "";
 
-  String $description() default "";
+  String $fieldId() default "";
 
-  String $args() default "";
+  String $directiveName() default "";
+
+  String $description() default "";
 
   String $type() default "";
 
-  String $deprecationReason() default "";
+  String $defaultValue() default "";
 
   String $isDeprecated() default "";
 
@@ -134,17 +154,23 @@ public @interface __FieldOrderBy {
 
   String $nameMin() default "";
 
+  String $directiveNameCount() default "";
+
+  String $directiveNameMax() default "";
+
+  String $directiveNameMin() default "";
+
   String $descriptionCount() default "";
 
   String $descriptionMax() default "";
 
   String $descriptionMin() default "";
 
-  String $deprecationReasonCount() default "";
+  String $defaultValueCount() default "";
 
-  String $deprecationReasonMax() default "";
+  String $defaultValueMax() default "";
 
-  String $deprecationReasonMin() default "";
+  String $defaultValueMin() default "";
 
   String $ofTypeNameCount() default "";
 
@@ -157,4 +183,14 @@ public @interface __FieldOrderBy {
   String $typeNameMax() default "";
 
   String $typeNameMin() default "";
+
+  String $fieldIdCount() default "";
+
+  String $fieldIdSum() default "";
+
+  String $fieldIdAvg() default "";
+
+  String $fieldIdMax() default "";
+
+  String $fieldIdMin() default "";
 }

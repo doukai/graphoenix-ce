@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-public @interface MetaExpression {
+public @interface MetaExpression1 {
   IntExpression realmId() default @IntExpression;
 
   StringExpression createUserId() default @StringExpression;

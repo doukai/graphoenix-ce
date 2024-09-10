@@ -13,12 +13,12 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-public @interface __DirectiveLocationsRelationOrderBy {
+public @interface __DirectiveLocationsRelationOrderBy1 {
   Sort id() default Sort.ASC;
 
   Sort __directiveRef() default Sort.ASC;
 
-  __DirectiveOrderBy1 __directive() default @__DirectiveOrderBy1;
+  __DirectiveOrderBy2 __directive() default @__DirectiveOrderBy2;
 
   Sort locationsRef() default Sort.ASC;
 

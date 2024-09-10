@@ -13,7 +13,13 @@ public class __FieldOrderBy {
 
   private Sort name;
 
+  private __TypeOrderBy ofType;
+
   private Sort description;
+
+  private __InputValueOrderBy args;
+
+  private __TypeOrderBy type;
 
   private Sort deprecationReason;
 
@@ -39,6 +45,42 @@ public class __FieldOrderBy {
 
   private Sort typeName;
 
+  private Sort idCount;
+
+  private Sort idMax;
+
+  private Sort idMin;
+
+  private Sort nameCount;
+
+  private Sort nameMax;
+
+  private Sort nameMin;
+
+  private Sort descriptionCount;
+
+  private Sort descriptionMax;
+
+  private Sort descriptionMin;
+
+  private Sort deprecationReasonCount;
+
+  private Sort deprecationReasonMax;
+
+  private Sort deprecationReasonMin;
+
+  private Sort ofTypeNameCount;
+
+  private Sort ofTypeNameMax;
+
+  private Sort ofTypeNameMin;
+
+  private Sort typeNameCount;
+
+  private Sort typeNameMax;
+
+  private Sort typeNameMin;
+
   public Sort getId() {
     return this.id;
   }
@@ -55,12 +97,36 @@ public class __FieldOrderBy {
     this.name = name;
   }
 
+  public __TypeOrderBy getOfType() {
+    return this.ofType;
+  }
+
+  public void setOfType(__TypeOrderBy ofType) {
+    this.ofType = ofType;
+  }
+
   public Sort getDescription() {
     return this.description;
   }
 
   public void setDescription(Sort description) {
     this.description = description;
+  }
+
+  public __InputValueOrderBy getArgs() {
+    return this.args;
+  }
+
+  public void setArgs(__InputValueOrderBy args) {
+    this.args = args;
+  }
+
+  public __TypeOrderBy getType() {
+    return this.type;
+  }
+
+  public void setType(__TypeOrderBy type) {
+    this.type = type;
   }
 
   public Sort getDeprecationReason() {
@@ -157,5 +223,149 @@ public class __FieldOrderBy {
 
   public void setTypeName(Sort typeName) {
     this.typeName = typeName;
+  }
+
+  public Sort getIdCount() {
+    return this.idCount;
+  }
+
+  public void setIdCount(Sort idCount) {
+    this.idCount = idCount;
+  }
+
+  public Sort getIdMax() {
+    return this.idMax;
+  }
+
+  public void setIdMax(Sort idMax) {
+    this.idMax = idMax;
+  }
+
+  public Sort getIdMin() {
+    return this.idMin;
+  }
+
+  public void setIdMin(Sort idMin) {
+    this.idMin = idMin;
+  }
+
+  public Sort getNameCount() {
+    return this.nameCount;
+  }
+
+  public void setNameCount(Sort nameCount) {
+    this.nameCount = nameCount;
+  }
+
+  public Sort getNameMax() {
+    return this.nameMax;
+  }
+
+  public void setNameMax(Sort nameMax) {
+    this.nameMax = nameMax;
+  }
+
+  public Sort getNameMin() {
+    return this.nameMin;
+  }
+
+  public void setNameMin(Sort nameMin) {
+    this.nameMin = nameMin;
+  }
+
+  public Sort getDescriptionCount() {
+    return this.descriptionCount;
+  }
+
+  public void setDescriptionCount(Sort descriptionCount) {
+    this.descriptionCount = descriptionCount;
+  }
+
+  public Sort getDescriptionMax() {
+    return this.descriptionMax;
+  }
+
+  public void setDescriptionMax(Sort descriptionMax) {
+    this.descriptionMax = descriptionMax;
+  }
+
+  public Sort getDescriptionMin() {
+    return this.descriptionMin;
+  }
+
+  public void setDescriptionMin(Sort descriptionMin) {
+    this.descriptionMin = descriptionMin;
+  }
+
+  public Sort getDeprecationReasonCount() {
+    return this.deprecationReasonCount;
+  }
+
+  public void setDeprecationReasonCount(Sort deprecationReasonCount) {
+    this.deprecationReasonCount = deprecationReasonCount;
+  }
+
+  public Sort getDeprecationReasonMax() {
+    return this.deprecationReasonMax;
+  }
+
+  public void setDeprecationReasonMax(Sort deprecationReasonMax) {
+    this.deprecationReasonMax = deprecationReasonMax;
+  }
+
+  public Sort getDeprecationReasonMin() {
+    return this.deprecationReasonMin;
+  }
+
+  public void setDeprecationReasonMin(Sort deprecationReasonMin) {
+    this.deprecationReasonMin = deprecationReasonMin;
+  }
+
+  public Sort getOfTypeNameCount() {
+    return this.ofTypeNameCount;
+  }
+
+  public void setOfTypeNameCount(Sort ofTypeNameCount) {
+    this.ofTypeNameCount = ofTypeNameCount;
+  }
+
+  public Sort getOfTypeNameMax() {
+    return this.ofTypeNameMax;
+  }
+
+  public void setOfTypeNameMax(Sort ofTypeNameMax) {
+    this.ofTypeNameMax = ofTypeNameMax;
+  }
+
+  public Sort getOfTypeNameMin() {
+    return this.ofTypeNameMin;
+  }
+
+  public void setOfTypeNameMin(Sort ofTypeNameMin) {
+    this.ofTypeNameMin = ofTypeNameMin;
+  }
+
+  public Sort getTypeNameCount() {
+    return this.typeNameCount;
+  }
+
+  public void setTypeNameCount(Sort typeNameCount) {
+    this.typeNameCount = typeNameCount;
+  }
+
+  public Sort getTypeNameMax() {
+    return this.typeNameMax;
+  }
+
+  public void setTypeNameMax(Sort typeNameMax) {
+    this.typeNameMax = typeNameMax;
+  }
+
+  public Sort getTypeNameMin() {
+    return this.typeNameMin;
+  }
+
+  public void setTypeNameMin(Sort typeNameMin) {
+    this.typeNameMin = typeNameMin;
   }
 }

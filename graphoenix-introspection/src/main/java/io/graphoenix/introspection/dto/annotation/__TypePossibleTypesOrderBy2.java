@@ -13,14 +13,12 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-public @interface __DirectiveLocationsRelationOrderBy {
+public @interface __TypePossibleTypesOrderBy2 {
   Sort id() default Sort.ASC;
 
-  Sort __directiveRef() default Sort.ASC;
+  Sort typeRef() default Sort.ASC;
 
-  __DirectiveOrderBy1 __directive() default @__DirectiveOrderBy1;
-
-  Sort locationsRef() default Sort.ASC;
+  Sort possibleTypeRef() default Sort.ASC;
 
   Sort isDeprecated() default Sort.ASC;
 
@@ -46,19 +44,23 @@ public @interface __DirectiveLocationsRelationOrderBy {
 
   Sort idMin() default Sort.ASC;
 
-  Sort __directiveRefCount() default Sort.ASC;
+  Sort typeRefCount() default Sort.ASC;
 
-  Sort __directiveRefMax() default Sort.ASC;
+  Sort typeRefMax() default Sort.ASC;
 
-  Sort __directiveRefMin() default Sort.ASC;
+  Sort typeRefMin() default Sort.ASC;
+
+  Sort possibleTypeRefCount() default Sort.ASC;
+
+  Sort possibleTypeRefMax() default Sort.ASC;
+
+  Sort possibleTypeRefMin() default Sort.ASC;
 
   String $id() default "";
 
-  String $__directiveRef() default "";
+  String $typeRef() default "";
 
-  String $__directive() default "";
-
-  String $locationsRef() default "";
+  String $possibleTypeRef() default "";
 
   String $isDeprecated() default "";
 
@@ -84,9 +86,15 @@ public @interface __DirectiveLocationsRelationOrderBy {
 
   String $idMin() default "";
 
-  String $__directiveRefCount() default "";
+  String $typeRefCount() default "";
 
-  String $__directiveRefMax() default "";
+  String $typeRefMax() default "";
 
-  String $__directiveRefMin() default "";
+  String $typeRefMin() default "";
+
+  String $possibleTypeRefCount() default "";
+
+  String $possibleTypeRefMax() default "";
+
+  String $possibleTypeRefMin() default "";
 }

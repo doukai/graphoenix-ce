@@ -18,7 +18,11 @@ public @interface __TypePossibleTypesOrderBy {
 
   Sort typeRef() default Sort.ASC;
 
+  __TypeOrderBy1 type() default @__TypeOrderBy1;
+
   Sort possibleTypeRef() default Sort.ASC;
+
+  __TypeOrderBy1 possibleType() default @__TypeOrderBy1;
 
   Sort isDeprecated() default Sort.ASC;
 
@@ -38,11 +42,33 @@ public @interface __TypePossibleTypesOrderBy {
 
   Sort __typename() default Sort.ASC;
 
+  Sort idCount() default Sort.ASC;
+
+  Sort idMax() default Sort.ASC;
+
+  Sort idMin() default Sort.ASC;
+
+  Sort typeRefCount() default Sort.ASC;
+
+  Sort typeRefMax() default Sort.ASC;
+
+  Sort typeRefMin() default Sort.ASC;
+
+  Sort possibleTypeRefCount() default Sort.ASC;
+
+  Sort possibleTypeRefMax() default Sort.ASC;
+
+  Sort possibleTypeRefMin() default Sort.ASC;
+
   String $id() default "";
 
   String $typeRef() default "";
 
+  String $type() default "";
+
   String $possibleTypeRef() default "";
+
+  String $possibleType() default "";
 
   String $isDeprecated() default "";
 
@@ -61,4 +87,22 @@ public @interface __TypePossibleTypesOrderBy {
   String $createGroupId() default "";
 
   String $__typename() default "";
+
+  String $idCount() default "";
+
+  String $idMax() default "";
+
+  String $idMin() default "";
+
+  String $typeRefCount() default "";
+
+  String $typeRefMax() default "";
+
+  String $typeRefMin() default "";
+
+  String $possibleTypeRefCount() default "";
+
+  String $possibleTypeRefMax() default "";
+
+  String $possibleTypeRefMin() default "";
 }

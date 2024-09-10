@@ -8,22 +8,47 @@ import java.lang.Integer;
 import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Id;
 import org.eclipse.microprofile.graphql.Type;
 
+/**
+ * 文件
+ */
 @Type
 @CompiledJson
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("文件")
 public class File implements Meta {
+  /**
+   * ID
+   */
   @Id
+  @Description("ID")
   private String id;
 
+  /**
+   * 文件名
+   */
+  @Description("文件名")
   private String name;
 
+  /**
+   * 类型
+   */
+  @Description("类型")
   private String contentType;
 
+  /**
+   * 内容
+   */
+  @Description("内容")
   private String content;
 
+  /**
+   * URL
+   */
+  @Description("URL")
   private String url;
 
   private Boolean isDeprecated = false;

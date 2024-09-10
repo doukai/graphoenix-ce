@@ -42,6 +42,36 @@ public @interface FileOrderBy {
 
   Sort __typename() default Sort.ASC;
 
+  Sort idCount() default Sort.ASC;
+
+  Sort idMax() default Sort.ASC;
+
+  Sort idMin() default Sort.ASC;
+
+  Sort nameCount() default Sort.ASC;
+
+  Sort nameMax() default Sort.ASC;
+
+  Sort nameMin() default Sort.ASC;
+
+  Sort contentTypeCount() default Sort.ASC;
+
+  Sort contentTypeMax() default Sort.ASC;
+
+  Sort contentTypeMin() default Sort.ASC;
+
+  Sort contentCount() default Sort.ASC;
+
+  Sort contentMax() default Sort.ASC;
+
+  Sort contentMin() default Sort.ASC;
+
+  Sort urlCount() default Sort.ASC;
+
+  Sort urlMax() default Sort.ASC;
+
+  Sort urlMin() default Sort.ASC;
+
   String $id() default "";
 
   String $name() default "";
@@ -69,4 +99,34 @@ public @interface FileOrderBy {
   String $createGroupId() default "";
 
   String $__typename() default "";
+
+  String $idCount() default "";
+
+  String $idMax() default "";
+
+  String $idMin() default "";
+
+  String $nameCount() default "";
+
+  String $nameMax() default "";
+
+  String $nameMin() default "";
+
+  String $contentTypeCount() default "";
+
+  String $contentTypeMax() default "";
+
+  String $contentTypeMin() default "";
+
+  String $contentCount() default "";
+
+  String $contentMax() default "";
+
+  String $contentMin() default "";
+
+  String $urlCount() default "";
+
+  String $urlMax() default "";
+
+  String $urlMin() default "";
 }

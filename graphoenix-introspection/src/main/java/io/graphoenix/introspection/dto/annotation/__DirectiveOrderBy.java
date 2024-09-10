@@ -16,7 +16,13 @@ import java.lang.annotation.Target;
 public @interface __DirectiveOrderBy {
   Sort name() default Sort.ASC;
 
+  __SchemaOrderBy1 ofSchema() default @__SchemaOrderBy1;
+
   Sort description() default Sort.ASC;
+
+  Sort locations() default Sort.ASC;
+
+  __InputValueOrderBy1 args() default @__InputValueOrderBy1;
 
   Sort isRepeatable() default Sort.ASC;
 
@@ -40,9 +46,40 @@ public @interface __DirectiveOrderBy {
 
   Sort schemaId() default Sort.ASC;
 
+  __DirectiveLocationsRelationOrderBy1 __directiveLocationsRelation(
+      ) default @__DirectiveLocationsRelationOrderBy1;
+
+  Sort nameCount() default Sort.ASC;
+
+  Sort nameMax() default Sort.ASC;
+
+  Sort nameMin() default Sort.ASC;
+
+  Sort descriptionCount() default Sort.ASC;
+
+  Sort descriptionMax() default Sort.ASC;
+
+  Sort descriptionMin() default Sort.ASC;
+
+  Sort schemaIdCount() default Sort.ASC;
+
+  Sort schemaIdSum() default Sort.ASC;
+
+  Sort schemaIdAvg() default Sort.ASC;
+
+  Sort schemaIdMax() default Sort.ASC;
+
+  Sort schemaIdMin() default Sort.ASC;
+
   String $name() default "";
 
+  String $ofSchema() default "";
+
   String $description() default "";
+
+  String $locations() default "";
+
+  String $args() default "";
 
   String $isRepeatable() default "";
 
@@ -65,4 +102,28 @@ public @interface __DirectiveOrderBy {
   String $__typename() default "";
 
   String $schemaId() default "";
+
+  String $__directiveLocationsRelation() default "";
+
+  String $nameCount() default "";
+
+  String $nameMax() default "";
+
+  String $nameMin() default "";
+
+  String $descriptionCount() default "";
+
+  String $descriptionMax() default "";
+
+  String $descriptionMin() default "";
+
+  String $schemaIdCount() default "";
+
+  String $schemaIdSum() default "";
+
+  String $schemaIdAvg() default "";
+
+  String $schemaIdMax() default "";
+
+  String $schemaIdMin() default "";
 }

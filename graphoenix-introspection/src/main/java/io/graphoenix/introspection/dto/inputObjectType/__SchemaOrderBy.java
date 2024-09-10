@@ -11,6 +11,16 @@ import org.eclipse.microprofile.graphql.Input;
 public class __SchemaOrderBy {
   private Sort id;
 
+  private __TypeOrderBy types;
+
+  private __TypeOrderBy queryType;
+
+  private __TypeOrderBy mutationType;
+
+  private __TypeOrderBy subscriptionType;
+
+  private __DirectiveOrderBy directives;
+
   private Sort isDeprecated;
 
   private Sort version;
@@ -35,12 +45,76 @@ public class __SchemaOrderBy {
 
   private Sort subscriptionTypeName;
 
+  private Sort idCount;
+
+  private Sort idMax;
+
+  private Sort idMin;
+
+  private Sort queryTypeNameCount;
+
+  private Sort queryTypeNameMax;
+
+  private Sort queryTypeNameMin;
+
+  private Sort mutationTypeNameCount;
+
+  private Sort mutationTypeNameMax;
+
+  private Sort mutationTypeNameMin;
+
+  private Sort subscriptionTypeNameCount;
+
+  private Sort subscriptionTypeNameMax;
+
+  private Sort subscriptionTypeNameMin;
+
   public Sort getId() {
     return this.id;
   }
 
   public void setId(Sort id) {
     this.id = id;
+  }
+
+  public __TypeOrderBy getTypes() {
+    return this.types;
+  }
+
+  public void setTypes(__TypeOrderBy types) {
+    this.types = types;
+  }
+
+  public __TypeOrderBy getQueryType() {
+    return this.queryType;
+  }
+
+  public void setQueryType(__TypeOrderBy queryType) {
+    this.queryType = queryType;
+  }
+
+  public __TypeOrderBy getMutationType() {
+    return this.mutationType;
+  }
+
+  public void setMutationType(__TypeOrderBy mutationType) {
+    this.mutationType = mutationType;
+  }
+
+  public __TypeOrderBy getSubscriptionType() {
+    return this.subscriptionType;
+  }
+
+  public void setSubscriptionType(__TypeOrderBy subscriptionType) {
+    this.subscriptionType = subscriptionType;
+  }
+
+  public __DirectiveOrderBy getDirectives() {
+    return this.directives;
+  }
+
+  public void setDirectives(__DirectiveOrderBy directives) {
+    this.directives = directives;
   }
 
   public Sort getIsDeprecated() {
@@ -137,5 +211,101 @@ public class __SchemaOrderBy {
 
   public void setSubscriptionTypeName(Sort subscriptionTypeName) {
     this.subscriptionTypeName = subscriptionTypeName;
+  }
+
+  public Sort getIdCount() {
+    return this.idCount;
+  }
+
+  public void setIdCount(Sort idCount) {
+    this.idCount = idCount;
+  }
+
+  public Sort getIdMax() {
+    return this.idMax;
+  }
+
+  public void setIdMax(Sort idMax) {
+    this.idMax = idMax;
+  }
+
+  public Sort getIdMin() {
+    return this.idMin;
+  }
+
+  public void setIdMin(Sort idMin) {
+    this.idMin = idMin;
+  }
+
+  public Sort getQueryTypeNameCount() {
+    return this.queryTypeNameCount;
+  }
+
+  public void setQueryTypeNameCount(Sort queryTypeNameCount) {
+    this.queryTypeNameCount = queryTypeNameCount;
+  }
+
+  public Sort getQueryTypeNameMax() {
+    return this.queryTypeNameMax;
+  }
+
+  public void setQueryTypeNameMax(Sort queryTypeNameMax) {
+    this.queryTypeNameMax = queryTypeNameMax;
+  }
+
+  public Sort getQueryTypeNameMin() {
+    return this.queryTypeNameMin;
+  }
+
+  public void setQueryTypeNameMin(Sort queryTypeNameMin) {
+    this.queryTypeNameMin = queryTypeNameMin;
+  }
+
+  public Sort getMutationTypeNameCount() {
+    return this.mutationTypeNameCount;
+  }
+
+  public void setMutationTypeNameCount(Sort mutationTypeNameCount) {
+    this.mutationTypeNameCount = mutationTypeNameCount;
+  }
+
+  public Sort getMutationTypeNameMax() {
+    return this.mutationTypeNameMax;
+  }
+
+  public void setMutationTypeNameMax(Sort mutationTypeNameMax) {
+    this.mutationTypeNameMax = mutationTypeNameMax;
+  }
+
+  public Sort getMutationTypeNameMin() {
+    return this.mutationTypeNameMin;
+  }
+
+  public void setMutationTypeNameMin(Sort mutationTypeNameMin) {
+    this.mutationTypeNameMin = mutationTypeNameMin;
+  }
+
+  public Sort getSubscriptionTypeNameCount() {
+    return this.subscriptionTypeNameCount;
+  }
+
+  public void setSubscriptionTypeNameCount(Sort subscriptionTypeNameCount) {
+    this.subscriptionTypeNameCount = subscriptionTypeNameCount;
+  }
+
+  public Sort getSubscriptionTypeNameMax() {
+    return this.subscriptionTypeNameMax;
+  }
+
+  public void setSubscriptionTypeNameMax(Sort subscriptionTypeNameMax) {
+    this.subscriptionTypeNameMax = subscriptionTypeNameMax;
+  }
+
+  public Sort getSubscriptionTypeNameMin() {
+    return this.subscriptionTypeNameMin;
+  }
+
+  public void setSubscriptionTypeNameMin(Sort subscriptionTypeNameMin) {
+    this.subscriptionTypeNameMin = subscriptionTypeNameMin;
   }
 }

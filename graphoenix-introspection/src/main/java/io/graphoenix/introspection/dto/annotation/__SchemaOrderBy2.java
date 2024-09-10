@@ -13,14 +13,8 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-public @interface __DirectiveLocationsRelationOrderBy {
+public @interface __SchemaOrderBy2 {
   Sort id() default Sort.ASC;
-
-  Sort __directiveRef() default Sort.ASC;
-
-  __DirectiveOrderBy1 __directive() default @__DirectiveOrderBy1;
-
-  Sort locationsRef() default Sort.ASC;
 
   Sort isDeprecated() default Sort.ASC;
 
@@ -40,25 +34,37 @@ public @interface __DirectiveLocationsRelationOrderBy {
 
   Sort __typename() default Sort.ASC;
 
+  Sort queryTypeName() default Sort.ASC;
+
+  Sort mutationTypeName() default Sort.ASC;
+
+  Sort subscriptionTypeName() default Sort.ASC;
+
   Sort idCount() default Sort.ASC;
 
   Sort idMax() default Sort.ASC;
 
   Sort idMin() default Sort.ASC;
 
-  Sort __directiveRefCount() default Sort.ASC;
+  Sort queryTypeNameCount() default Sort.ASC;
 
-  Sort __directiveRefMax() default Sort.ASC;
+  Sort queryTypeNameMax() default Sort.ASC;
 
-  Sort __directiveRefMin() default Sort.ASC;
+  Sort queryTypeNameMin() default Sort.ASC;
+
+  Sort mutationTypeNameCount() default Sort.ASC;
+
+  Sort mutationTypeNameMax() default Sort.ASC;
+
+  Sort mutationTypeNameMin() default Sort.ASC;
+
+  Sort subscriptionTypeNameCount() default Sort.ASC;
+
+  Sort subscriptionTypeNameMax() default Sort.ASC;
+
+  Sort subscriptionTypeNameMin() default Sort.ASC;
 
   String $id() default "";
-
-  String $__directiveRef() default "";
-
-  String $__directive() default "";
-
-  String $locationsRef() default "";
 
   String $isDeprecated() default "";
 
@@ -78,15 +84,33 @@ public @interface __DirectiveLocationsRelationOrderBy {
 
   String $__typename() default "";
 
+  String $queryTypeName() default "";
+
+  String $mutationTypeName() default "";
+
+  String $subscriptionTypeName() default "";
+
   String $idCount() default "";
 
   String $idMax() default "";
 
   String $idMin() default "";
 
-  String $__directiveRefCount() default "";
+  String $queryTypeNameCount() default "";
 
-  String $__directiveRefMax() default "";
+  String $queryTypeNameMax() default "";
 
-  String $__directiveRefMin() default "";
+  String $queryTypeNameMin() default "";
+
+  String $mutationTypeNameCount() default "";
+
+  String $mutationTypeNameMax() default "";
+
+  String $mutationTypeNameMin() default "";
+
+  String $subscriptionTypeNameCount() default "";
+
+  String $subscriptionTypeNameMax() default "";
+
+  String $subscriptionTypeNameMin() default "";
 }
