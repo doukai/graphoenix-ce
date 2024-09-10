@@ -171,6 +171,19 @@ public class QueryTranslator {
             plainSelect.addSelectItem(selectExpression, new Alias(graphqlFieldNameToColumnName(INPUT_VALUE_GROUP_BY_NAME)));
             plainSelect.setOrderByElements(argumentsToOrderByList(fieldDefinition, field, level));
             plainSelect.setLimit(argumentsToLimit(fieldDefinition, field));
+            plainSelect
+                    .addJoins(
+                            field.getFields().stream()
+                                    .filter(subField -> {
+                                                FieldDefinition subFieldDefinition = fieldTypeDefinition.asObject().getField(subField.getName());
+                                                return !subFieldDefinition.isFetchField() &&
+                                                        !subFieldDefinition.isInvokeField() &&
+                                                        !subFieldDefinition.isConnectionField();
+                                            }
+                                    )
+                                    .flatMap(subField -> groupFieldToJoinStream(fieldTypeDefinition.asObject(), fieldTypeDefinition.asObject().getField(subField.getName()), subField, level + 1))
+                                    .collect(Collectors.toList())
+                    );
         } else {
             plainSelect.addSelectItem(selectExpression);
         }
@@ -342,13 +355,6 @@ public class QueryTranslator {
             whereExpression = argumentsTranslator.argumentsToWhereExpression(objectType, fieldDefinition, field, level);
         }
         if (!documentManager.isOperationType(objectType)) {
-            if (groupBy) {
-                plainSelect
-                        .addJoins(
-                                groupFieldToJoinStream(objectType, fieldDefinition, field, level)
-                                        .collect(Collectors.toList())
-                        );
-            }
             Table parentTable = typeToTable(objectType, level - 1);
             if (fieldDefinition.hasMapWith()) {
                 Table withTable = graphqlTypeToTable(fieldDefinition.getMapWithTypeOrError(), level);
@@ -426,7 +432,7 @@ public class QueryTranslator {
                                                             fieldTypeDefinition.asObject().getField(subField.getName()),
                                                             subField,
                                                             (field.hasGroupBy() || field.getFields().stream().anyMatch(item -> fieldTypeDefinition.asObject().getField(item.getName()).isGroupFunctionField())) && !fieldDefinition.getType().hasList(),
-                                                            level
+                                                            level + 1
                                                     ),
                                                     false,
                                                     false
