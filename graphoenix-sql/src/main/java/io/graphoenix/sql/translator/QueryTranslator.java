@@ -77,7 +77,7 @@ public class QueryTranslator {
                 )
                 .collect(Collectors.toList());
 
-        if ((jsonKeyValuePairList.isEmpty())) {
+        if (jsonKeyValuePairList.isEmpty()) {
             return Optional.empty();
         }
 
