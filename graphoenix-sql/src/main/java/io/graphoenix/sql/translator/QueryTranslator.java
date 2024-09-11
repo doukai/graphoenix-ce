@@ -724,7 +724,7 @@ public class QueryTranslator {
                                         .stream()
                                         .filter(ValueWithVariable::isObject)
                                         .flatMap(valueWithVariable ->
-                                                inputValue.asInputObject().getInputValues().stream()
+                                                documentManager.getInputValueTypeDefinition(inputValue).asInputObject().getInputValues().stream()
                                                         .flatMap(subInputValue ->
                                                                 valueWithVariable.asObject().getValueWithVariableOrEmpty(subInputValue.getName())
                                                                         .or(() -> Optional.ofNullable(subInputValue.getDefaultValue()))
@@ -735,7 +735,7 @@ public class QueryTranslator {
                                                                                         Expression expression;
                                                                                         if (subFieldDefinition.isFunctionField()) {
                                                                                             expression = new Function()
-                                                                                                    .withName(fieldDefinition.getFunctionNameOrError())
+                                                                                                    .withName(subFieldDefinition.getFunctionNameOrError())
                                                                                                     .withParameters(graphqlFieldToColumn(table, subFieldDefinition.getFunctionFieldOrError()));
                                                                                         } else {
                                                                                             expression = graphqlFieldToColumn(table, subFieldDefinition.getName());
@@ -795,7 +795,7 @@ public class QueryTranslator {
         }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         Table table = typeToTable(fieldTypeDefinition.asObject(), level);
-        return inputValue.asInputObject().getInputValues().stream()
+        return documentManager.getInputValueTypeDefinition(inputValue).asInputObject().getInputValues().stream()
                 .flatMap(subInputValue ->
                         valueWithVariable.asObject().getValueWithVariableOrEmpty(subInputValue.getName())
                                 .or(() -> Optional.ofNullable(subInputValue.getDefaultValue()))
@@ -806,7 +806,7 @@ public class QueryTranslator {
                                                 Expression expression;
                                                 if (subFieldDefinition.isFunctionField()) {
                                                     expression = new Function()
-                                                            .withName(fieldDefinition.getFunctionNameOrError())
+                                                            .withName(subFieldDefinition.getFunctionNameOrError())
                                                             .withParameters(graphqlFieldToColumn(table, subFieldDefinition.getFunctionFieldOrError()));
                                                 } else {
                                                     expression = graphqlFieldToColumn(table, subFieldDefinition.getName());

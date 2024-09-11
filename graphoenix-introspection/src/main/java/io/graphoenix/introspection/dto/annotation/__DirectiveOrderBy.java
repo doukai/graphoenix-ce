@@ -49,6 +49,11 @@ public @interface __DirectiveOrderBy {
   __DirectiveLocationsRelationOrderBy1 __directiveLocationsRelation(
       ) default @__DirectiveLocationsRelationOrderBy1;
 
+  __InputValueOrderBy1 argsAggregate() default @__InputValueOrderBy1;
+
+  __DirectiveLocationsRelationOrderBy1 __directiveLocationsRelationAggregate(
+      ) default @__DirectiveLocationsRelationOrderBy1;
+
   Sort nameCount() default Sort.ASC;
 
   Sort nameMax() default Sort.ASC;
@@ -104,6 +109,10 @@ public @interface __DirectiveOrderBy {
   String $schemaId() default "";
 
   String $__directiveLocationsRelation() default "";
+
+  String $argsAggregate() default "";
+
+  String $__directiveLocationsRelationAggregate() default "";
 
   String $nameCount() default "";
 

@@ -43,6 +43,10 @@ public class __DirectiveOrderBy {
 
   private __DirectiveLocationsRelationOrderBy __directiveLocationsRelation;
 
+  private __InputValueOrderBy argsAggregate;
+
+  private __DirectiveLocationsRelationOrderBy __directiveLocationsRelationAggregate;
+
   private Sort nameCount;
 
   private Sort nameMax;
@@ -200,6 +204,23 @@ public class __DirectiveOrderBy {
   public void set__directiveLocationsRelation(
       __DirectiveLocationsRelationOrderBy __directiveLocationsRelation) {
     this.__directiveLocationsRelation = __directiveLocationsRelation;
+  }
+
+  public __InputValueOrderBy getArgsAggregate() {
+    return this.argsAggregate;
+  }
+
+  public void setArgsAggregate(__InputValueOrderBy argsAggregate) {
+    this.argsAggregate = argsAggregate;
+  }
+
+  public __DirectiveLocationsRelationOrderBy get__directiveLocationsRelationAggregate() {
+    return this.__directiveLocationsRelationAggregate;
+  }
+
+  public void set__directiveLocationsRelationAggregate(
+      __DirectiveLocationsRelationOrderBy __directiveLocationsRelationAggregate) {
+    this.__directiveLocationsRelationAggregate = __directiveLocationsRelationAggregate;
   }
 
   public Sort getNameCount() {

@@ -60,6 +60,20 @@ public @interface __TypeOrderBy {
 
   __TypePossibleTypesOrderBy1 __typePossibleTypes() default @__TypePossibleTypesOrderBy1;
 
+  __FieldOrderBy1 fieldsAggregate() default @__FieldOrderBy1;
+
+  __TypeOrderBy1 interfacesAggregate() default @__TypeOrderBy1;
+
+  __TypeOrderBy1 possibleTypesAggregate() default @__TypeOrderBy1;
+
+  __EnumValueOrderBy1 enumValuesAggregate() default @__EnumValueOrderBy1;
+
+  __InputValueOrderBy1 inputFieldsAggregate() default @__InputValueOrderBy1;
+
+  __TypeInterfacesOrderBy1 __typeInterfacesAggregate() default @__TypeInterfacesOrderBy1;
+
+  __TypePossibleTypesOrderBy1 __typePossibleTypesAggregate() default @__TypePossibleTypesOrderBy1;
+
   Sort nameCount() default Sort.ASC;
 
   Sort nameMax() default Sort.ASC;
@@ -133,6 +147,20 @@ public @interface __TypeOrderBy {
   String $__typeInterfaces() default "";
 
   String $__typePossibleTypes() default "";
+
+  String $fieldsAggregate() default "";
+
+  String $interfacesAggregate() default "";
+
+  String $possibleTypesAggregate() default "";
+
+  String $enumValuesAggregate() default "";
+
+  String $inputFieldsAggregate() default "";
+
+  String $__typeInterfacesAggregate() default "";
+
+  String $__typePossibleTypesAggregate() default "";
 
   String $nameCount() default "";
 

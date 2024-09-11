@@ -703,9 +703,9 @@ public class DocumentBuilder {
                 )
                 .filter(distinctByKey(FieldDefinition::getName))
                 .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
-                .filter(fieldDefinition -> inputType.equals(InputType.ORDER_BY) || !fieldDefinition.isFunctionField())
                 .filter(fieldDefinition -> !fieldDefinition.isConnectionField())
-                .filter(fieldDefinition -> !fieldDefinition.isAggregateField())
+                .filter(fieldDefinition -> inputType.equals(InputType.ORDER_BY) || !fieldDefinition.isFunctionField())
+                .filter(fieldDefinition -> inputType.equals(InputType.ORDER_BY) || !fieldDefinition.isAggregateField())
                 .filter(fieldDefinition -> !documentManager.getFieldTypeDefinition(fieldDefinition).isContainer())
                 .map(fieldDefinition -> fieldToInputValue(fieldsType, fieldDefinition, inputType))
                 .collect(Collectors.toCollection(LinkedHashSet::new));

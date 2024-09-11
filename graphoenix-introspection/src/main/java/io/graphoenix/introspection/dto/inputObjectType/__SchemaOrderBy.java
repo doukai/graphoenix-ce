@@ -45,6 +45,10 @@ public class __SchemaOrderBy {
 
   private Sort subscriptionTypeName;
 
+  private __TypeOrderBy typesAggregate;
+
+  private __DirectiveOrderBy directivesAggregate;
+
   private Sort idCount;
 
   private Sort idMax;
@@ -211,6 +215,22 @@ public class __SchemaOrderBy {
 
   public void setSubscriptionTypeName(Sort subscriptionTypeName) {
     this.subscriptionTypeName = subscriptionTypeName;
+  }
+
+  public __TypeOrderBy getTypesAggregate() {
+    return this.typesAggregate;
+  }
+
+  public void setTypesAggregate(__TypeOrderBy typesAggregate) {
+    this.typesAggregate = typesAggregate;
+  }
+
+  public __DirectiveOrderBy getDirectivesAggregate() {
+    return this.directivesAggregate;
+  }
+
+  public void setDirectivesAggregate(__DirectiveOrderBy directivesAggregate) {
+    this.directivesAggregate = directivesAggregate;
   }
 
   public Sort getIdCount() {

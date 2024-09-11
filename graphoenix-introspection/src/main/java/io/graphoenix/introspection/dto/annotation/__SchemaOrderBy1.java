@@ -50,6 +50,10 @@ public @interface __SchemaOrderBy1 {
 
   Sort subscriptionTypeName() default Sort.ASC;
 
+  __TypeOrderBy2 typesAggregate() default @__TypeOrderBy2;
+
+  __DirectiveOrderBy2 directivesAggregate() default @__DirectiveOrderBy2;
+
   Sort idCount() default Sort.ASC;
 
   Sort idMax() default Sort.ASC;
@@ -109,6 +113,10 @@ public @interface __SchemaOrderBy1 {
   String $mutationTypeName() default "";
 
   String $subscriptionTypeName() default "";
+
+  String $typesAggregate() default "";
+
+  String $directivesAggregate() default "";
 
   String $idCount() default "";
 

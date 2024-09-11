@@ -50,6 +50,8 @@ public @interface __FieldOrderBy1 {
 
   Sort typeName() default Sort.ASC;
 
+  __InputValueOrderBy2 argsAggregate() default @__InputValueOrderBy2;
+
   Sort idCount() default Sort.ASC;
 
   Sort idMax() default Sort.ASC;
@@ -121,6 +123,8 @@ public @interface __FieldOrderBy1 {
   String $ofTypeName() default "";
 
   String $typeName() default "";
+
+  String $argsAggregate() default "";
 
   String $idCount() default "";
 

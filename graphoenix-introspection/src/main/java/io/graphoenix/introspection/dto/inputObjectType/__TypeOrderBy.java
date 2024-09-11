@@ -55,6 +55,20 @@ public class __TypeOrderBy {
 
   private __TypePossibleTypesOrderBy __typePossibleTypes;
 
+  private __FieldOrderBy fieldsAggregate;
+
+  private __TypeOrderBy interfacesAggregate;
+
+  private __TypeOrderBy possibleTypesAggregate;
+
+  private __EnumValueOrderBy enumValuesAggregate;
+
+  private __InputValueOrderBy inputFieldsAggregate;
+
+  private __TypeInterfacesOrderBy __typeInterfacesAggregate;
+
+  private __TypePossibleTypesOrderBy __typePossibleTypesAggregate;
+
   private Sort nameCount;
 
   private Sort nameMax;
@@ -265,6 +279,63 @@ public class __TypeOrderBy {
 
   public void set__typePossibleTypes(__TypePossibleTypesOrderBy __typePossibleTypes) {
     this.__typePossibleTypes = __typePossibleTypes;
+  }
+
+  public __FieldOrderBy getFieldsAggregate() {
+    return this.fieldsAggregate;
+  }
+
+  public void setFieldsAggregate(__FieldOrderBy fieldsAggregate) {
+    this.fieldsAggregate = fieldsAggregate;
+  }
+
+  public __TypeOrderBy getInterfacesAggregate() {
+    return this.interfacesAggregate;
+  }
+
+  public void setInterfacesAggregate(__TypeOrderBy interfacesAggregate) {
+    this.interfacesAggregate = interfacesAggregate;
+  }
+
+  public __TypeOrderBy getPossibleTypesAggregate() {
+    return this.possibleTypesAggregate;
+  }
+
+  public void setPossibleTypesAggregate(__TypeOrderBy possibleTypesAggregate) {
+    this.possibleTypesAggregate = possibleTypesAggregate;
+  }
+
+  public __EnumValueOrderBy getEnumValuesAggregate() {
+    return this.enumValuesAggregate;
+  }
+
+  public void setEnumValuesAggregate(__EnumValueOrderBy enumValuesAggregate) {
+    this.enumValuesAggregate = enumValuesAggregate;
+  }
+
+  public __InputValueOrderBy getInputFieldsAggregate() {
+    return this.inputFieldsAggregate;
+  }
+
+  public void setInputFieldsAggregate(__InputValueOrderBy inputFieldsAggregate) {
+    this.inputFieldsAggregate = inputFieldsAggregate;
+  }
+
+  public __TypeInterfacesOrderBy get__typeInterfacesAggregate() {
+    return this.__typeInterfacesAggregate;
+  }
+
+  public void set__typeInterfacesAggregate(__TypeInterfacesOrderBy __typeInterfacesAggregate) {
+    this.__typeInterfacesAggregate = __typeInterfacesAggregate;
+  }
+
+  public __TypePossibleTypesOrderBy get__typePossibleTypesAggregate() {
+    return this.__typePossibleTypesAggregate;
+  }
+
+  public void set__typePossibleTypesAggregate(
+      __TypePossibleTypesOrderBy __typePossibleTypesAggregate) {
+    this.__typePossibleTypesAggregate = __typePossibleTypesAggregate;
   }
 
   public Sort getNameCount() {

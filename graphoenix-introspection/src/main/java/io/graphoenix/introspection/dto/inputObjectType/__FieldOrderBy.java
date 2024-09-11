@@ -45,6 +45,8 @@ public class __FieldOrderBy {
 
   private Sort typeName;
 
+  private __InputValueOrderBy argsAggregate;
+
   private Sort idCount;
 
   private Sort idMax;
@@ -223,6 +225,14 @@ public class __FieldOrderBy {
 
   public void setTypeName(Sort typeName) {
     this.typeName = typeName;
+  }
+
+  public __InputValueOrderBy getArgsAggregate() {
+    return this.argsAggregate;
+  }
+
+  public void setArgsAggregate(__InputValueOrderBy argsAggregate) {
+    this.argsAggregate = argsAggregate;
   }
 
   public Sort getIdCount() {
