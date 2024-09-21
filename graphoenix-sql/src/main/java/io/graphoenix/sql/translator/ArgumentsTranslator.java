@@ -145,7 +145,8 @@ public class ArgumentsTranslator {
                                                                                     .or(() ->
                                                                                             arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
                                                                                                     .flatMap(arr -> arrToExpression(column, opr, fieldDefinition.getArgument(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(arguments)))
-                                                                                    );
+                                                                                    )
+                                                                                    .or(() -> valToExpression(column, opr));
                                                                         } else {
                                                                             Column column = graphqlFieldToColumn(objectType.getName(), fieldDefinition.getName(), level);
                                                                             return arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
@@ -155,7 +156,8 @@ public class ArgumentsTranslator {
                                                                                     .or(() ->
                                                                                             arguments.getArgumentOrEmpty(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
                                                                                                     .flatMap(arr -> arrToExpression(column, opr, fieldDefinition.getArgument(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(arguments)))
-                                                                                    );
+                                                                                    )
+                                                                                    .or(() -> valToExpression(column, opr));
                                                                         }
                                                                     }
                                                             )
@@ -274,6 +276,7 @@ public class ArgumentsTranslator {
                                                                     objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
                                                                             .flatMap(arr -> arrToExpression(column, opr, inputObject.getInputValue(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(objectValueWithVariable)))
                                                             )
+                                                            .or(() -> valToExpression(column, opr))
                                                             .map(expression -> existsExpression(selectFromFieldType(objectType, fieldDefinition, expression, level)));
                                                 } else {
                                                     Column column = graphqlFieldToColumn(objectType.getName(), fieldDefinition.getName(), level);
@@ -284,7 +287,8 @@ public class ArgumentsTranslator {
                                                             .or(() ->
                                                                     objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME)
                                                                             .flatMap(arr -> arrToExpression(column, opr, inputObject.getInputValue(INPUT_OPERATOR_INPUT_VALUE_ARR_NAME), arr, skipNull(objectValueWithVariable)))
-                                                            );
+                                                            )
+                                                            .or(() -> valToExpression(column, opr));
                                                 }
                                             }
                                     )
@@ -631,11 +635,38 @@ public class ArgumentsTranslator {
                                     .collect(Collectors.toList())
                     );
                     break;
+                case INPUT_OPERATOR_INPUT_VALUE_NIL:
+                    where = new IsNullExpression()
+                            .withLeftExpression(column);
+                    break;
+                case INPUT_OPERATOR_INPUT_VALUE_NNIL:
+                    where = new IsNullExpression()
+                            .withNot(true)
+                            .withLeftExpression(column);
+                    break;
                 default:
                     throw new GraphQLErrors(GraphQLErrorType.UNSUPPORTED_OPERATOR_VALUE.bind(opr));
             }
             return Optional.of(where);
         }
+    }
+
+    protected Optional<Expression> valToExpression(Column column, String opr) {
+        Expression where;
+        switch (opr) {
+            case INPUT_OPERATOR_INPUT_VALUE_NIL:
+                where = new IsNullExpression()
+                        .withLeftExpression(column);
+                break;
+            case INPUT_OPERATOR_INPUT_VALUE_NNIL:
+                where = new IsNullExpression()
+                        .withNot(true)
+                        .withLeftExpression(column);
+                break;
+            default:
+                throw new GraphQLErrors(GraphQLErrorType.UNSUPPORTED_OPERATOR_VALUE.bind(opr));
+        }
+        return Optional.of(where);
     }
 
     protected Expression skipNullExpression(Expression value, Expression where) {
