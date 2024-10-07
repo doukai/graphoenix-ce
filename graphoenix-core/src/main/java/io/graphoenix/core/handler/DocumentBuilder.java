@@ -1129,7 +1129,8 @@ public class DocumentBuilder {
                                         fieldDefinition.getType().getTypeName().getName().equals(SCALA_TIME_NAME) ||
                                         fieldDefinition.getType().getTypeName().getName().equals(SCALA_DATE_TIME_NAME) ||
                                         fieldDefinition.getType().getTypeName().getName().equals(SCALA_TIMESTAMP_NAME) ||
-                                        fieldDefinition.getType().getTypeName().getName().equals(SCALA_UPLOAD_NAME)
+                                        fieldDefinition.getType().getTypeName().getName().equals(SCALA_UPLOAD_NAME) ||
+                                        documentManager.getFieldTypeDefinition(fieldDefinition).isEnum()
                         )
                         .flatMap(fieldDefinition ->
                                 Stream.of(
