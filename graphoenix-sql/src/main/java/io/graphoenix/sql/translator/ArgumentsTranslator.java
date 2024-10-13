@@ -98,13 +98,20 @@ public class ArgumentsTranslator {
                     expressionListToMultipleExpression(expressionList, isOr(field.getArguments()), isNot(field.getArguments())) :
                     expressionListToMultipleExpression(expressionList, isOr(field.getArguments()), isNot(field.getArguments()))
                             .map(expression ->
-                                    new MultiAndExpression(
+                                    (Expression) new MultiAndExpression(
                                             new ExpressionList<>(
                                                     expression,
                                                     new NotEqualsTo()
                                                             .withLeftExpression(graphqlFieldToColumn(fieldTypeDefinition.asObject().getName(), FIELD_DEPRECATED_NAME, level))
                                                             .withRightExpression(new LongValue(1))
                                             )
+                                    )
+                            )
+                            .or(() ->
+                                    Optional.of(
+                                            new NotEqualsTo()
+                                                    .withLeftExpression(graphqlFieldToColumn(fieldTypeDefinition.asObject().getName(), FIELD_DEPRECATED_NAME, level))
+                                                    .withRightExpression(new LongValue(1))
                                     )
                             );
         } else {
@@ -226,13 +233,20 @@ public class ArgumentsTranslator {
                     expressionListToMultipleExpression(expressionList, isOr(valueWithVariable), isNot(valueWithVariable)) :
                     expressionListToMultipleExpression(expressionList, isOr(valueWithVariable), isNot(valueWithVariable))
                             .map(expression ->
-                                    new MultiAndExpression(
+                                    (Expression) new MultiAndExpression(
                                             new ExpressionList<>(
                                                     expression,
                                                     new NotEqualsTo()
                                                             .withLeftExpression(graphqlFieldToColumn(fieldTypeDefinition.asObject().getName(), FIELD_DEPRECATED_NAME, level))
                                                             .withRightExpression(new LongValue(1))
                                             )
+                                    )
+                            )
+                            .or(() ->
+                                    Optional.of(
+                                            new NotEqualsTo()
+                                                    .withLeftExpression(graphqlFieldToColumn(fieldTypeDefinition.asObject().getName(), FIELD_DEPRECATED_NAME, level))
+                                                    .withRightExpression(new LongValue(1))
                                     )
                             );
         } else {
