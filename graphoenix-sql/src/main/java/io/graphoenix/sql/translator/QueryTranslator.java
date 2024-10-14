@@ -308,6 +308,23 @@ public class QueryTranslator {
                                                                     )
                                                     )
                                     )
+                    )
+                    .map(expression ->
+                            (Expression) new MultiAndExpression(
+                                    new ExpressionList<>(
+                                            expression,
+                                            new NotEqualsTo()
+                                                    .withLeftExpression(graphqlFieldToColumn(fieldTypeDefinition.asObject().getName(), FIELD_DEPRECATED_NAME, level))
+                                                    .withRightExpression(new LongValue(1))
+                                    )
+                            )
+                    )
+                    .or(() ->
+                            Optional.of(
+                                    new NotEqualsTo()
+                                            .withLeftExpression(graphqlFieldToColumn(fieldTypeDefinition.asObject().getName(), FIELD_DEPRECATED_NAME, level))
+                                            .withRightExpression(new LongValue(1))
+                            )
                     );
 
             fieldDefinition.getArgumentOrEmpty(INPUT_VALUE_LIST_NAME)
