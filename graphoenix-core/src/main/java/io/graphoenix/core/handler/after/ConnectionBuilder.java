@@ -202,7 +202,7 @@ public class ConnectionBuilder implements OperationAfterHandler {
                                                                 FIELD_NODE_NAME,
                                                                 edgeField.getFields().stream()
                                                                         .map(nodeField -> Optional.ofNullable(nodeField.getAlias()).orElseGet(nodeField::getName))
-                                                                        .map(key -> new AbstractMap.SimpleEntry<>(key, node.asJsonObject().get(key)))
+                                                                        .map(key -> new AbstractMap.SimpleEntry<>(key, node.asJsonObject().getOrDefault(key, NULL)))
                                                                         .collect(JsonCollectors.toJsonObject())
                                                         );
                                                     }

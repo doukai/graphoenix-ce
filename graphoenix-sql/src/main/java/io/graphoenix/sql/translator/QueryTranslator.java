@@ -370,6 +370,16 @@ public class QueryTranslator {
         } else {
             whereExpression = argumentsTranslator.argumentsToWhereExpression(objectType, fieldDefinition, field, level);
         }
+
+        if (!fieldDefinition.getType().hasList()) {
+            plainSelect
+                    .setLimit(
+                            new Limit()
+                                    .withOffset(new LongValue(0))
+                                    .withRowCount(new LongValue(1))
+                    );
+        }
+
         if (!documentManager.isOperationType(objectType)) {
             Table parentTable = typeToTable(objectType, level - 1);
             if (fieldDefinition.hasMapWith()) {
@@ -415,14 +425,6 @@ public class QueryTranslator {
             }
         }
         whereExpression.ifPresent(plainSelect::setWhere);
-        if (!fieldDefinition.getType().hasList()) {
-            plainSelect
-                    .setLimit(
-                            new Limit()
-                                    .withOffset(new LongValue(0))
-                                    .withRowCount(new LongValue(1))
-                    );
-        }
         return plainSelect;
     }
 
