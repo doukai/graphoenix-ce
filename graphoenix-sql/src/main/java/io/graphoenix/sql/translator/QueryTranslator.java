@@ -104,8 +104,9 @@ public class QueryTranslator {
         FromItem fromItem;
         ObjectType fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition).asObject();
         Table table = typeToTable(fieldTypeDefinition, level);
-        boolean hasGroupBy = field.hasGroupBy() || field.getFields().stream().anyMatch(item -> fieldTypeDefinition.getField(item.getName()).isGroupFunctionField());
-        if (!inGroupBy && hasGroupBy && fieldDefinition.getType().hasList()) {
+        boolean hasGroupBy = field.hasGroupBy();
+        boolean hasGroupFunctionField = field.getFields().stream().anyMatch(item -> fieldTypeDefinition.getField(item.getName()).isGroupFunctionField());
+        if (!inGroupBy && (hasGroupBy || hasGroupFunctionField) && fieldDefinition.getType().hasList()) {
             Column groupByColumn = graphqlFieldToColumn(fieldTypeDefinition.getName(), INPUT_VALUE_GROUP_BY_NAME, level);
             if (fieldDefinition.getType().hasList()) {
                 selectExpression = jsonExtractFunction(jsonAggregateFunction(groupByColumn, null, null));
@@ -143,7 +144,7 @@ public class QueryTranslator {
                                                                     fieldTypeDefinition.asObject(),
                                                                     fieldTypeDefinition.asObject().getField(subField.getName()),
                                                                     subField,
-                                                                    hasGroupBy && !fieldDefinition.getType().hasList(),
+                                                                    !fieldDefinition.getType().hasList() && hasGroupBy,
                                                                     level
                                                             ),
                                                     false,
