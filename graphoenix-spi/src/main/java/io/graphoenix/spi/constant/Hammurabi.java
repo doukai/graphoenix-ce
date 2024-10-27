@@ -200,6 +200,7 @@ public class Hammurabi {
 
 
     public static final String DIRECTIVE_MERGE_NAME = "merge";
+    public static final String DIRECTIVE_UNIQUE_MERGE_NAME = "uniqueMerge";
     public static final String DIRECTIVE_MERGE_ARGUMENT_ARGUMENTS_NAME = "arguments";
 
 

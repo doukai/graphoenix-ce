@@ -350,6 +350,35 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                                                         )
                                                         )
                                         );
+                            } else if (executableElement.getParameters().stream()
+                                    .anyMatch(variableElement ->
+                                            variableElement.getAnnotationMirrors().stream()
+                                                    .anyMatch(annotationMirror ->
+                                                            annotationMirror.getAnnotationType().getAnnotation(io.graphoenix.spi.annotation.Directive.class) != null
+                                                    )
+                                    )
+                            ) {
+                                boolean async = executableElement.getAnnotation(Async.class) != null;
+                                ObjectValueWithVariable invoke = ObjectValueWithVariable.of(
+                                        INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME, executableElement.getEnclosingElement().toString(),
+                                        INPUT_INVOKE_INPUT_VALUE_METHOD_NAME_NAME, async ? getAsyncMethodName(executableElement, types) : executableElement.getSimpleName().toString(),
+                                        INPUT_INVOKE_INPUT_VALUE_PARAMETER_NAME,
+                                        new ArrayValueWithVariable(
+                                                executableElement.getParameters().stream()
+                                                        .map(parameter ->
+                                                                ObjectValueWithVariable.of(
+                                                                        INPUT_INVOKE_PARAMETER_INPUT_VALUE_NAME_NAME,
+                                                                        parameter.getSimpleName().toString(),
+                                                                        INPUT_INVOKE_PARAMETER_INPUT_VALUE_CLASS_NAME_NAME,
+                                                                        ElementUtil.getTypeWithArgumentsName(parameter.asType(), types)
+                                                                )
+                                                        )
+                                                        .collect(Collectors.toList())
+                                        ),
+                                        INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME, ElementUtil.getTypeWithArgumentsName(executableElement.getReturnType(), types),
+                                        INPUT_INVOKE_INPUT_VALUE_ASYNC_NAME, async
+                                );
+                                // TODO
                             }
                         }
                 );
