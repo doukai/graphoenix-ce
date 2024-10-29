@@ -50,10 +50,16 @@ public class InputInvokeHandlerBuilder {
     }
 
     public void writeToFiler(Filer filer) throws IOException {
-        this.invokeClassSet = documentManager.getDocument().getInputObjectTypes()
-                .filter(packageManager::isLocalPackage)
-//                .filter(InputObjectType::isInvokesInput)
-                .flatMap(this::getInvokes)
+        this.invokeClassSet = Stream.concat(
+                        documentManager.getDocument().getInputObjectTypes()
+                                .filter(packageManager::isLocalPackage)
+//                              .filter(InputObjectType::isInvokesInput)
+                                .flatMap(this::getInvokes),
+                        documentManager.getDocument().getObjectTypes()
+                                .filter(packageManager::isLocalPackage)
+                                .flatMap(objectType -> objectType.getFields().stream())
+                                .flatMap(fieldDefinition -> fieldDefinition.getInvokes().stream())
+                )
                 .map(Tuple3::getT1)
                 .collect(Collectors.toSet());
         this.buildClass().writeTo(filer);
@@ -334,6 +340,6 @@ public class InputInvokeHandlerBuilder {
                                 .flatMap(interfaceObjectName -> documentManager.getDocument().getInputObjectType(interfaceObjectName).stream())
                                 .flatMap(this::getInvokes)
                 )
-                .filter(StreamUtil.distinctByKey(tuple4 -> tuple4.getT1() + "." + tuple4.getT1()));
+                .filter(StreamUtil.distinctByKey(tuple4 -> tuple4.getT1() + "." + tuple4.getT2()));
     }
 }

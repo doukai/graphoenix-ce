@@ -378,7 +378,32 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                         INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME, ElementUtil.getTypeWithArgumentsName(executableElement.getReturnType(), types),
                                         INPUT_INVOKE_INPUT_VALUE_ASYNC_NAME, async
                                 );
-                                // TODO
+
+                                executableElement.getParameters().stream()
+                                        .flatMap(variableElement ->
+                                                variableElement.getAnnotationMirrors().stream()
+                                                        .filter(annotationMirror ->
+                                                                annotationMirror.getAnnotationType().getAnnotation(io.graphoenix.spi.annotation.Directive.class) != null
+                                                        )
+                                        )
+                                        .findFirst()
+                                        .map(annotationMirror -> annotationMirror.getAnnotationType().getAnnotation(io.graphoenix.spi.annotation.Directive.class).value())
+                                        .ifPresent(directiveName ->
+                                                documentManager.getDocument().getObjectTypes()
+                                                        .flatMap(objectType -> objectType.getFields().stream())
+                                                        .filter(fieldDefinition -> fieldDefinition.hasDirective(directiveName))
+                                                        .forEach(fieldDefinition ->
+                                                                Optional.ofNullable(fieldDefinition.getDirective(DIRECTIVE_INVOKES_NAME))
+                                                                        .ifPresentOrElse(
+                                                                                directive -> directive.getArgument(DIRECTIVE_INVOKES_METHODS_NAME).asArray().add(invoke),
+                                                                                () -> fieldDefinition
+                                                                                        .addDirective(
+                                                                                                new Directive(DIRECTIVE_INVOKES_NAME)
+                                                                                                        .addArgument(DIRECTIVE_INVOKES_METHODS_NAME, new ArrayValueWithVariable(invoke))
+                                                                                        )
+                                                                        )
+                                                        )
+                                        );
                             }
                         }
                 );
