@@ -398,8 +398,12 @@ public class TypeSpecBuilder {
                 .add("{")
                 .add(
                         CodeBlock.join(
-                                directiveDefinition.getDirectiveLocations().stream()
-                                        .map(this::buildElementType)
+                                Stream
+                                        .concat(
+                                                directiveDefinition.getDirectiveLocations().stream()
+                                                        .map(this::buildElementType),
+                                                Stream.of((ElementType.PARAMETER))
+                                        )
                                         .distinct()
                                         .map(elementType -> CodeBlock.of("$T.$L", ElementType.class, elementType))
                                         .collect(Collectors.toList()),
@@ -430,13 +434,13 @@ public class TypeSpecBuilder {
             case "QUERY":
             case "MUTATION":
             case "SUBSCRIPTION":
-                return ElementType.METHOD;
+            case "FRAGMENT_SPREAD":
+            case "INLINE_FRAGMENT":
+                return ElementType.CONSTRUCTOR;
             case "FIELD":
-            case "FIELD_DEFINITION":
-            case "ENUM_VALUE":
-            case "INPUT_FIELD_DEFINITION":
-                return ElementType.FIELD;
+                return ElementType.METHOD;
             case "SCHEMA":
+            case "SCALAR":
             case "OBJECT":
             case "INTERFACE":
             case "ENUM":
@@ -444,10 +448,10 @@ public class TypeSpecBuilder {
             case "INPUT_OBJECT":
             case "FRAGMENT_DEFINITION":
                 return ElementType.TYPE;
-            case "SCALAR":
-            case "FRAGMENT_SPREAD":
-            case "INLINE_FRAGMENT":
-                return ElementType.TYPE_USE;
+            case "FIELD_DEFINITION":
+            case "ENUM_VALUE":
+            case "INPUT_FIELD_DEFINITION":
+                return ElementType.FIELD;
             case "ARGUMENT_DEFINITION":
                 return ElementType.PARAMETER;
             default:
