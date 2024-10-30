@@ -14,7 +14,7 @@ import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
-import reactor.util.function.Tuple4;
+import reactor.util.function.Tuple6;
 import reactor.util.function.Tuples;
 
 import javax.lang.model.element.ExecutableElement;
@@ -560,7 +560,7 @@ public class FieldDefinition extends AbstractDefinition {
         return hasDirective(DIRECTIVE_DENY_ALL);
     }
 
-    public List<Tuple4<String, String, String, Boolean>> getInvokes() {
+    public List<Tuple6<String, String, String, Boolean, ArrayValueWithVariable, String>> getInvokes() {
         return Stream.ofNullable(getDirective(DIRECTIVE_INVOKES_NAME))
                 .flatMap(directive ->
                         directive.getArgumentOrEmpty(DIRECTIVE_INVOKES_METHODS_NAME).stream()
@@ -576,7 +576,9 @@ public class FieldDefinition extends AbstractDefinition {
                                                 objectValueWithVariable.getValueWithVariableOrError(INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME).asString().getValue(),
                                                 objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_INVOKE_INPUT_VALUE_ASYNC_NAME)
                                                         .map(valueWithVariable -> valueWithVariable.asBoolean().getValue())
-                                                        .orElse(false)
+                                                        .orElse(false),
+                                                objectValueWithVariable.getValueWithVariableOrError(INPUT_INVOKE_INPUT_VALUE_PARAMETER_NAME).asArray(),
+                                                objectValueWithVariable.getValueWithVariableOrError(INPUT_INVOKE_INPUT_VALUE_DIRECTIVE_NAME_NAME).asString().getValue()
                                         )
                                 )
                 )

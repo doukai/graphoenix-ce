@@ -358,27 +358,6 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                                     )
                                     )
                             ) {
-                                boolean async = executableElement.getAnnotation(Async.class) != null;
-                                ObjectValueWithVariable invoke = ObjectValueWithVariable.of(
-                                        INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME, executableElement.getEnclosingElement().toString(),
-                                        INPUT_INVOKE_INPUT_VALUE_METHOD_NAME_NAME, async ? getAsyncMethodName(executableElement, types) : executableElement.getSimpleName().toString(),
-                                        INPUT_INVOKE_INPUT_VALUE_PARAMETER_NAME,
-                                        new ArrayValueWithVariable(
-                                                executableElement.getParameters().stream()
-                                                        .map(parameter ->
-                                                                ObjectValueWithVariable.of(
-                                                                        INPUT_INVOKE_PARAMETER_INPUT_VALUE_NAME_NAME,
-                                                                        parameter.getSimpleName().toString(),
-                                                                        INPUT_INVOKE_PARAMETER_INPUT_VALUE_CLASS_NAME_NAME,
-                                                                        ElementUtil.getTypeWithArgumentsName(parameter.asType(), types)
-                                                                )
-                                                        )
-                                                        .collect(Collectors.toList())
-                                        ),
-                                        INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME, ElementUtil.getTypeWithArgumentsName(executableElement.getReturnType(), types),
-                                        INPUT_INVOKE_INPUT_VALUE_ASYNC_NAME, async
-                                );
-
                                 executableElement.getParameters().stream()
                                         .flatMap(variableElement ->
                                                 variableElement.getAnnotationMirrors().stream()
@@ -388,21 +367,44 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                         )
                                         .findFirst()
                                         .map(annotationMirror -> annotationMirror.getAnnotationType().getAnnotation(io.graphoenix.spi.annotation.Directive.class).value())
-                                        .ifPresent(directiveName ->
-                                                documentManager.getDocument().getObjectTypes()
-                                                        .flatMap(objectType -> objectType.getFields().stream())
-                                                        .filter(fieldDefinition -> fieldDefinition.hasDirective(directiveName))
-                                                        .forEach(fieldDefinition ->
-                                                                Optional.ofNullable(fieldDefinition.getDirective(DIRECTIVE_INVOKES_NAME))
-                                                                        .ifPresentOrElse(
-                                                                                directive -> directive.getArgument(DIRECTIVE_INVOKES_METHODS_NAME).asArray().add(invoke),
-                                                                                () -> fieldDefinition
-                                                                                        .addDirective(
-                                                                                                new Directive(DIRECTIVE_INVOKES_NAME)
-                                                                                                        .addArgument(DIRECTIVE_INVOKES_METHODS_NAME, new ArrayValueWithVariable(invoke))
-                                                                                        )
-                                                                        )
-                                                        )
+                                        .ifPresent(directiveName -> {
+                                                    boolean async = executableElement.getAnnotation(Async.class) != null;
+                                                    ObjectValueWithVariable invoke = ObjectValueWithVariable.of(
+                                                            INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME, executableElement.getEnclosingElement().toString(),
+                                                            INPUT_INVOKE_INPUT_VALUE_METHOD_NAME_NAME, async ? getAsyncMethodName(executableElement, types) : executableElement.getSimpleName().toString(),
+                                                            INPUT_INVOKE_INPUT_VALUE_PARAMETER_NAME,
+                                                            new ArrayValueWithVariable(
+                                                                    executableElement.getParameters().stream()
+                                                                            .map(parameter ->
+                                                                                    ObjectValueWithVariable.of(
+                                                                                            INPUT_INVOKE_PARAMETER_INPUT_VALUE_NAME_NAME,
+                                                                                            parameter.getSimpleName().toString(),
+                                                                                            INPUT_INVOKE_PARAMETER_INPUT_VALUE_CLASS_NAME_NAME,
+                                                                                            ElementUtil.getTypeWithArgumentsName(parameter.asType(), types)
+                                                                                    )
+                                                                            )
+                                                                            .collect(Collectors.toList())
+                                                            ),
+                                                            INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME, ElementUtil.getTypeWithArgumentsName(executableElement.getReturnType(), types),
+                                                            INPUT_INVOKE_INPUT_VALUE_ASYNC_NAME, async,
+                                                            INPUT_INVOKE_INPUT_VALUE_DIRECTIVE_NAME_NAME, directiveName
+                                                    );
+
+                                                    documentManager.getDocument().getObjectTypes()
+                                                            .flatMap(objectType -> objectType.getFields().stream())
+                                                            .filter(fieldDefinition -> fieldDefinition.hasDirective(directiveName))
+                                                            .forEach(fieldDefinition ->
+                                                                    Optional.ofNullable(fieldDefinition.getDirective(DIRECTIVE_INVOKES_NAME))
+                                                                            .ifPresentOrElse(
+                                                                                    directive -> directive.getArgument(DIRECTIVE_INVOKES_METHODS_NAME).asArray().add(invoke),
+                                                                                    () -> fieldDefinition
+                                                                                            .addDirective(
+                                                                                                    new Directive(DIRECTIVE_INVOKES_NAME)
+                                                                                                            .addArgument(DIRECTIVE_INVOKES_METHODS_NAME, new ArrayValueWithVariable(invoke))
+                                                                                            )
+                                                                            )
+                                                            );
+                                                }
                                         );
                             }
                         }

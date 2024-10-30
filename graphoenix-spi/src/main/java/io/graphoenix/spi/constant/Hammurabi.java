@@ -101,6 +101,7 @@ public class Hammurabi {
     public static final String INPUT_INVOKE_INPUT_VALUE_PARAMETER_NAME = "parameters";
     public static final String INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME = "returnClassName";
     public static final String INPUT_INVOKE_INPUT_VALUE_ASYNC_NAME = "async";
+    public static final String INPUT_INVOKE_INPUT_VALUE_DIRECTIVE_NAME_NAME = "directiveName";
 
 
     public static final String INPUT_INVOKE_PARAMETER_INPUT_VALUE_NAME_NAME = "name";
@@ -122,6 +123,7 @@ public class Hammurabi {
     public static final String DIRECTIVE_INVOKE_ARGUMENT_RETURN_CLASS_NAME_NAME = "returnClassName";
     public static final String DIRECTIVE_INVOKE_ARGUMENT_THROWN_TYPES_NAME = "thrownTypes";
     public static final String DIRECTIVE_INVOKE_ASYNC_NAME = "async";
+    public static final String DIRECTIVE_INVOKE_DIRECTIVE_NAME_NAME = "directiveName";
 
 
     public static final String DIRECTIVE_INVOKES_NAME = "invokes";

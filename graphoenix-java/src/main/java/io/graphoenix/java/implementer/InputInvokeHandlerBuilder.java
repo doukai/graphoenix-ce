@@ -9,7 +9,9 @@ import io.graphoenix.java.utils.TypeNameUtil;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.common.Arguments;
 import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
+import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.InputObjectType;
+import io.graphoenix.spi.graphql.type.ObjectType;
 import io.graphoenix.spi.utils.StreamUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -20,6 +22,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple3;
 import reactor.util.function.Tuple4;
+import reactor.util.function.Tuples;
 
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.Modifier;
@@ -77,6 +80,14 @@ public class InputInvokeHandlerBuilder {
                 .addAnnotation(ApplicationScoped.class)
                 .addField(
                         FieldSpec.builder(
+                                ClassName.get(DocumentManager.class),
+                                "documentManager",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addField(
+                        FieldSpec.builder(
                                 ClassName.get(Jsonb.class),
                                 "jsonb",
                                 Modifier.PRIVATE,
@@ -104,6 +115,7 @@ public class InputInvokeHandlerBuilder {
         MethodSpec.Builder builder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Inject.class)
+                .addParameter(ClassName.get(DocumentManager.class), "documentManager")
                 .addParameter(ClassName.get(Jsonb.class), "jsonb")
                 .addParameters(
                         invokeClassSet.stream()
@@ -118,6 +130,7 @@ public class InputInvokeHandlerBuilder {
                                 )
                                 .collect(Collectors.toList())
                 )
+                .addStatement("this.documentManager = documentManager")
                 .addStatement("this.jsonb = jsonb");
 
         invokeClassSet.stream()
@@ -242,6 +255,117 @@ public class InputInvokeHandlerBuilder {
                         .add(CodeBlock.join(
                                         Streams
                                                 .concat(
+                                                        inputObjectType.getInputValues().stream()
+                                                                .filter(inputValue -> !documentManager.getInputValueTypeDefinition(inputValue).isInputObject())
+                                                                .flatMap(inputValue -> {
+                                                                            InputObjectType inputValueType = documentManager.getInputValueTypeDefinition(inputValue).asInputObject();
+                                                                            if (inputValueType.getName().endsWith(SUFFIX_INPUT)) {
+                                                                                String typeName = inputValueType.getName().substring(0, inputValueType.getName().lastIndexOf(SUFFIX_INPUT));
+                                                                                return documentManager.getDocument().getObjectType(typeName).stream()
+                                                                                        .flatMap(objectType -> Stream.ofNullable(Tuples.of(objectType, objectType.getField(inputValue.getName()))));
+                                                                            } else if (inputValueType.getName().endsWith(SUFFIX_EXPRESSION)) {
+                                                                                String typeName = inputValueType.getName().substring(0, inputValueType.getName().lastIndexOf(SUFFIX_EXPRESSION));
+                                                                                return documentManager.getDocument().getObjectType(typeName).stream()
+                                                                                        .flatMap(objectType -> Stream.ofNullable(Tuples.of(objectType, objectType.getField(inputValue.getName()))));
+                                                                            }
+                                                                            return Stream.empty();
+                                                                        }
+                                                                )
+                                                                .filter(tuple2 -> !tuple2.getT2().getInvokes().isEmpty())
+                                                                .map(tuple2 -> {
+                                                                            ObjectType objectType = tuple2.getT1();
+                                                                            FieldDefinition fieldDefinition = tuple2.getT2();
+                                                                            CodeBlock caseCodeBlock = CodeBlock.of("case $S:\n", fieldDefinition.getName());
+                                                                            CodeBlock invokesCodeBlock = fieldDefinition.getInvokes().stream()
+                                                                                    .reduce(
+                                                                                            CodeBlock.of("$L.$L()", resultParameterName, getFieldGetterMethodName(fieldDefinition.getName())),
+                                                                                            (codeBlock, tuple6) -> {
+                                                                                                String apiVariableName = typeNameToFieldName(toClassName(tuple6.getT1()).simpleName());
+                                                                                                String methodName = tuple6.getT2();
+                                                                                                ClassName returnClassName = toClassName(getClassName(tuple6.getT3()));
+                                                                                                Boolean async = tuple6.getT4();
+                                                                                                int parametersCount = tuple6.getT5().size();
+                                                                                                String directiveName = tuple6.getT6();
+                                                                                                CodeBlock invokeCodeBlock;
+                                                                                                if (parametersCount == 0) {
+                                                                                                    if (async) {
+                                                                                                        invokeCodeBlock = CodeBlock.of("$L.get().async($S, $L)",
+                                                                                                                apiVariableName,
+                                                                                                                methodName,
+                                                                                                                codeBlock
+                                                                                                        );
+                                                                                                    } else if (returnClassName.canonicalName().equals(Mono.class.getCanonicalName())) {
+                                                                                                        invokeCodeBlock = CodeBlock.of("$L.get().$L($L)",
+                                                                                                                apiVariableName,
+                                                                                                                methodName,
+                                                                                                                codeBlock
+                                                                                                        );
+                                                                                                    } else if (returnClassName.canonicalName().equals(Flux.class.getCanonicalName())) {
+                                                                                                        invokeCodeBlock = CodeBlock.of("$L.get().$L($L).last()",
+                                                                                                                apiVariableName,
+                                                                                                                methodName,
+                                                                                                                codeBlock
+                                                                                                        );
+                                                                                                    } else {
+                                                                                                        invokeCodeBlock = CodeBlock.of("$T.justOrEmpty($L.get().$L($L))",
+                                                                                                                ClassName.get(Mono.class),
+                                                                                                                apiVariableName,
+                                                                                                                methodName,
+                                                                                                                codeBlock
+                                                                                                        );
+                                                                                                    }
+                                                                                                } else {
+                                                                                                    CodeBlock argumentsBlock = CodeBlock.of("documentManager.getDocument().getObjectTypeOrError($S).getField($S).getDirective($S).getArguments()",
+                                                                                                            objectType.getName(),
+                                                                                                            fieldDefinition.getName(),
+                                                                                                            directiveName
+                                                                                                    );
+
+                                                                                                    if (async) {
+                                                                                                        invokeCodeBlock = CodeBlock.of("$L.get().async($S, $L, $L)",
+                                                                                                                apiVariableName,
+                                                                                                                methodName,
+                                                                                                                codeBlock,
+                                                                                                                argumentsBlock
+                                                                                                        );
+                                                                                                    } else if (returnClassName.canonicalName().equals(Mono.class.getCanonicalName())) {
+                                                                                                        invokeCodeBlock = CodeBlock.of("$L.get().$L($L, $L)",
+                                                                                                                apiVariableName,
+                                                                                                                methodName,
+                                                                                                                codeBlock,
+                                                                                                                argumentsBlock
+                                                                                                        );
+                                                                                                    } else if (returnClassName.canonicalName().equals(Flux.class.getCanonicalName())) {
+                                                                                                        invokeCodeBlock = CodeBlock.of("$L.get().$L($L, $L).last()",
+                                                                                                                apiVariableName,
+                                                                                                                methodName,
+                                                                                                                codeBlock,
+                                                                                                                argumentsBlock
+                                                                                                        );
+                                                                                                    } else {
+                                                                                                        invokeCodeBlock = CodeBlock.of("$T.justOrEmpty($L.get().$L($L, $L))",
+                                                                                                                ClassName.get(Mono.class),
+                                                                                                                apiVariableName,
+                                                                                                                methodName,
+                                                                                                                codeBlock,
+                                                                                                                argumentsBlock
+                                                                                                        );
+                                                                                                    }
+                                                                                                }
+                                                                                                return invokeCodeBlock;
+                                                                                            },
+                                                                                            (x, y) -> y
+                                                                                    );
+                                                                            CodeBlock invokeCodeBlock = CodeBlock.of("return $L.doOnNext($L -> $L.$L($L));",
+                                                                                    invokesCodeBlock,
+                                                                                    getFieldName(fieldDefinition.getName()),
+                                                                                    resultParameterName,
+                                                                                    getFieldSetterMethodName(fieldDefinition.getName()),
+                                                                                    getFieldName(fieldDefinition.getName())
+                                                                            );
+                                                                            return CodeBlock.builder().add(caseCodeBlock).indent().add(invokeCodeBlock).unindent().build();
+                                                                        }
+                                                                ),
                                                         inputObjectType.getInputValues().stream()
                                                                 .filter(inputValue -> documentManager.getInputValueTypeDefinition(inputValue).isInputObject())
                                                                 .filter(inputValue -> {
