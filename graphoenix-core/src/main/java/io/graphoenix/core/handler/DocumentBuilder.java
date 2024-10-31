@@ -104,6 +104,10 @@ public class DocumentBuilder {
                 .filter(enumType -> !enumType.isContainer())
                 .forEach(this::buildEnum);
 
+        document.getDirectives()
+                .filter(packageManager::isOwnPackage)
+                .forEach(this::buildDirectiveDefinition);
+
         document
                 .addDefinitions(buildInputObjects(document))
                 .addDefinitions(buildContainerTypeObjects(document));
@@ -591,6 +595,17 @@ public class DocumentBuilder {
             );
         }
         return enumType;
+    }
+
+    public DirectiveDefinition buildDirectiveDefinition(DirectiveDefinition directiveDefinition) {
+        if (directiveDefinition.getPackageName().isEmpty()) {
+            if (directiveDefinition.getDescription() == null) {
+                directiveDefinition.setDescription(DIRECTIVE_PACKAGE_NAME + ":" + packageConfig.getPackageName());
+            } else {
+                directiveDefinition.setDescription(directiveDefinition.getDescription() + " " + DIRECTIVE_PACKAGE_NAME + ":" + packageConfig.getPackageName());
+            }
+        }
+        return directiveDefinition;
     }
 
     public FieldDefinition buildField(ObjectType objectType, FieldDefinition fieldDefinition) {

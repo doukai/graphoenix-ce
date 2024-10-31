@@ -9,6 +9,8 @@ import org.stringtemplate.v4.STGroupFile;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_PACKAGE_NAME;
+
 public class DirectiveDefinition extends AbstractDefinition implements Definition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/DirectiveDefinition.stg");
@@ -109,6 +111,13 @@ public class DirectiveDefinition extends AbstractDefinition implements Definitio
     @Override
     public boolean isDirective() {
         return true;
+    }
+
+    @Override
+    public Optional<String> getPackageName() {
+        return Optional.ofNullable(getDescription())
+                .filter(description -> description.contains(DIRECTIVE_PACKAGE_NAME + ":"))
+                .map(description -> description.substring(description.lastIndexOf(DIRECTIVE_PACKAGE_NAME + ":") + DIRECTIVE_PACKAGE_NAME.length() + 1));
     }
 
     @Override

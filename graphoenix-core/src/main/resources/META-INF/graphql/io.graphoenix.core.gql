@@ -197,25 +197,25 @@ input __DirectiveLocationExpression @package(name: "io.graphoenix.core") @class(
     val: __DirectiveLocation
     arr: [__DirectiveLocation]
 }
-directive @options(type: String default: String length: Int decimals: Int unique: Boolean autoIncrement: Boolean protocol: Protocol = GRPC) on FIELD_DEFINITION
-directive @map(from: String! with: With to: String anchor: Boolean) on FIELD_DEFINITION
-directive @fetch(protocol: Protocol from: String! with: With to: String anchor: Boolean) on FIELD_DEFINITION
-directive @invoke(className: String methodName: String parameters: [InvokeParameter] returnClassName: String async: Boolean = false directiveName: String) on FIELD_DEFINITION | INPUT_OBJECT | QUERY | MUTATION | SUBSCRIPTION
-directive @invokes(methods: [Invoke]) on FIELD_DEFINITION | INPUT_OBJECT | QUERY | MUTATION | SUBSCRIPTION
-directive @cursor on FIELD_DEFINITION
-directive @func(name: Func field: String) on FIELD_DEFINITION
-directive @container on OBJECT
-directive @class(name: String! exists: Boolean) on OBJECT
-directive @annotation(name: String!) on OBJECT
-directive @grpc(name: String!) on OBJECT
-directive @package(name: String!) on OBJECT | FIELD_DEFINITION | QUERY | MUTATION | SUBSCRIPTION
-directive @connection(field: String agg: String) on FIELD_DEFINITION
-directive @format(value: String locale: String) on FIELD | FIELD_DEFINITION
-directive @hide on FIELD | FIELD_DEFINITION
-directive @merge on FIELD
-directive @uniqueMerge on FIELD
-directive @permitAll on FIELD | OBJECT
-directive @denyAll on FIELD | OBJECT
-directive @rolesAllowed(roles: [String]) on FIELD | OBJECT
-directive @implements(interfaces: [String]) on OBJECT | INPUT_OBJECT
-directive @interface on OBJECT | INPUT_OBJECT
+"package:io.graphoenix.core" directive @options(type: String default: String length: Int decimals: Int unique: Boolean autoIncrement: Boolean protocol: Protocol = GRPC) on FIELD_DEFINITION
+"package:io.graphoenix.core" directive @map(from: String! with: With to: String anchor: Boolean) on FIELD_DEFINITION
+"package:io.graphoenix.core" directive @fetch(protocol: Protocol from: String! with: With to: String anchor: Boolean) on FIELD_DEFINITION
+"package:io.graphoenix.core" directive @invoke(className: String methodName: String parameters: [InvokeParameter] returnClassName: String async: Boolean = false directiveName: String) on FIELD_DEFINITION | INPUT_OBJECT | QUERY | MUTATION | SUBSCRIPTION
+"package:io.graphoenix.core" directive @invokes(methods: [Invoke]) on FIELD_DEFINITION | INPUT_OBJECT | QUERY | MUTATION | SUBSCRIPTION
+"package:io.graphoenix.core" directive @cursor on FIELD_DEFINITION
+"package:io.graphoenix.core" directive @func(name: Func field: String) on FIELD_DEFINITION
+"package:io.graphoenix.core" directive @container on OBJECT
+"package:io.graphoenix.core" directive @class(name: String! exists: Boolean) on OBJECT
+"package:io.graphoenix.core" directive @annotation(name: String!) on OBJECT
+"package:io.graphoenix.core" directive @grpc(name: String!) on OBJECT
+"package:io.graphoenix.core" directive @package(name: String!) on OBJECT | FIELD_DEFINITION | QUERY | MUTATION | SUBSCRIPTION
+"package:io.graphoenix.core" directive @connection(field: String agg: String) on FIELD_DEFINITION
+"package:io.graphoenix.core" directive @format(value: String locale: String) on FIELD | FIELD_DEFINITION
+"package:io.graphoenix.core" directive @hide on FIELD | FIELD_DEFINITION
+"package:io.graphoenix.core" directive @merge on FIELD
+"package:io.graphoenix.core" directive @uniqueMerge on FIELD
+"package:io.graphoenix.core" directive @permitAll on FIELD | OBJECT
+"package:io.graphoenix.core" directive @denyAll on FIELD | OBJECT
+"package:io.graphoenix.core" directive @rolesAllowed(roles: [String]) on FIELD | OBJECT
+"package:io.graphoenix.core" directive @implements(interfaces: [String]) on OBJECT | INPUT_OBJECT
+"package:io.graphoenix.core" directive @interface on OBJECT | INPUT_OBJECT

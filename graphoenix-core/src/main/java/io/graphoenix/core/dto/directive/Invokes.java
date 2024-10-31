@@ -8,12 +8,17 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.eclipse.microprofile.graphql.Description;
 
+/**
+ * package:io.graphoenix.core
+ */
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("invokes")
-@Target({ElementType.METHOD,ElementType.TYPE,ElementType.FIELD})
+@Target({ElementType.CONSTRUCTOR,ElementType.TYPE,ElementType.FIELD,ElementType.PARAMETER})
+@Description("package:io.graphoenix.core")
 public @interface Invokes {
   Invoke[] methods() default {};
 }

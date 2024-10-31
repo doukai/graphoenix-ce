@@ -80,6 +80,12 @@ public @interface __TypeOrderBy {
 
   Sort nameMin() default Sort.ASC;
 
+  Sort kindCount() default Sort.ASC;
+
+  Sort kindMax() default Sort.ASC;
+
+  Sort kindMin() default Sort.ASC;
+
   Sort descriptionCount() default Sort.ASC;
 
   Sort descriptionMax() default Sort.ASC;
@@ -167,6 +173,12 @@ public @interface __TypeOrderBy {
   String $nameMax() default "";
 
   String $nameMin() default "";
+
+  String $kindCount() default "";
+
+  String $kindMax() default "";
+
+  String $kindMin() default "";
 
   String $descriptionCount() default "";
 

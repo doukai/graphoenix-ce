@@ -55,6 +55,12 @@ public class __DirectiveLocationsRelation implements Meta {
 
   private String __directiveRefMin;
 
+  private Integer locationsRefCount;
+
+  private __DirectiveLocation locationsRefMax;
+
+  private __DirectiveLocation locationsRefMin;
+
   public String getId() {
     return this.id;
   }
@@ -221,5 +227,29 @@ public class __DirectiveLocationsRelation implements Meta {
 
   public void set__directiveRefMin(String __directiveRefMin) {
     this.__directiveRefMin = __directiveRefMin;
+  }
+
+  public Integer getLocationsRefCount() {
+    return this.locationsRefCount;
+  }
+
+  public void setLocationsRefCount(Integer locationsRefCount) {
+    this.locationsRefCount = locationsRefCount;
+  }
+
+  public __DirectiveLocation getLocationsRefMax() {
+    return this.locationsRefMax;
+  }
+
+  public void setLocationsRefMax(__DirectiveLocation locationsRefMax) {
+    this.locationsRefMax = locationsRefMax;
+  }
+
+  public __DirectiveLocation getLocationsRefMin() {
+    return this.locationsRefMin;
+  }
+
+  public void setLocationsRefMin(__DirectiveLocation locationsRefMin) {
+    this.locationsRefMin = locationsRefMin;
   }
 }

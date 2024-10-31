@@ -25,6 +25,8 @@ public @interface Invoke {
 
   boolean async() default false;
 
+  String directiveName() default "";
+
   String $className() default "";
 
   String $methodName() default "";
@@ -36,4 +38,6 @@ public @interface Invoke {
   String $thrownTypes() default "";
 
   String $async() default "";
+
+  String $directiveName() default "";
 }

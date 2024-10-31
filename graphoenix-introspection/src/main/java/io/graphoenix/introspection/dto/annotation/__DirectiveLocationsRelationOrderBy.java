@@ -52,6 +52,12 @@ public @interface __DirectiveLocationsRelationOrderBy {
 
   Sort __directiveRefMin() default Sort.ASC;
 
+  Sort locationsRefCount() default Sort.ASC;
+
+  Sort locationsRefMax() default Sort.ASC;
+
+  Sort locationsRefMin() default Sort.ASC;
+
   String $id() default "";
 
   String $__directiveRef() default "";
@@ -89,4 +95,10 @@ public @interface __DirectiveLocationsRelationOrderBy {
   String $__directiveRefMax() default "";
 
   String $__directiveRefMin() default "";
+
+  String $locationsRefCount() default "";
+
+  String $locationsRefMax() default "";
+
+  String $locationsRefMin() default "";
 }

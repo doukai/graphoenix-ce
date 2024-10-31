@@ -67,6 +67,7 @@ message Invoke {
     string return_class_name = 4;
     repeated string thrown_types = 5;
     bool async = 6;
+    string directive_name = 7;
 }
 message InvokeParameter {
     string name = 1;

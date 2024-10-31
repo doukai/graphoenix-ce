@@ -25,6 +25,8 @@ public class Invoke {
   @DefaultValue("false")
   private Boolean async = false;
 
+  private String directiveName;
+
   public String getClassName() {
     return this.className;
   }
@@ -71,5 +73,13 @@ public class Invoke {
 
   public void setAsync(Boolean async) {
     this.async = async;
+  }
+
+  public String getDirectiveName() {
+    return this.directiveName;
+  }
+
+  public void setDirectiveName(String directiveName) {
+    this.directiveName = directiveName;
   }
 }

@@ -47,6 +47,12 @@ public class __DirectiveLocationsRelationOrderBy {
 
   private Sort __directiveRefMin;
 
+  private Sort locationsRefCount;
+
+  private Sort locationsRefMax;
+
+  private Sort locationsRefMin;
+
   public Sort getId() {
     return this.id;
   }
@@ -197,5 +203,29 @@ public class __DirectiveLocationsRelationOrderBy {
 
   public void set__directiveRefMin(Sort __directiveRefMin) {
     this.__directiveRefMin = __directiveRefMin;
+  }
+
+  public Sort getLocationsRefCount() {
+    return this.locationsRefCount;
+  }
+
+  public void setLocationsRefCount(Sort locationsRefCount) {
+    this.locationsRefCount = locationsRefCount;
+  }
+
+  public Sort getLocationsRefMax() {
+    return this.locationsRefMax;
+  }
+
+  public void setLocationsRefMax(Sort locationsRefMax) {
+    this.locationsRefMax = locationsRefMax;
+  }
+
+  public Sort getLocationsRefMin() {
+    return this.locationsRefMin;
+  }
+
+  public void setLocationsRefMin(Sort locationsRefMin) {
+    this.locationsRefMin = locationsRefMin;
   }
 }

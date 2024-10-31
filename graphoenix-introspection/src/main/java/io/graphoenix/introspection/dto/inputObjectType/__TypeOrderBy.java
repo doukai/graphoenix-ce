@@ -75,6 +75,12 @@ public class __TypeOrderBy {
 
   private Sort nameMin;
 
+  private Sort kindCount;
+
+  private Sort kindMax;
+
+  private Sort kindMin;
+
   private Sort descriptionCount;
 
   private Sort descriptionMax;
@@ -360,6 +366,30 @@ public class __TypeOrderBy {
 
   public void setNameMin(Sort nameMin) {
     this.nameMin = nameMin;
+  }
+
+  public Sort getKindCount() {
+    return this.kindCount;
+  }
+
+  public void setKindCount(Sort kindCount) {
+    this.kindCount = kindCount;
+  }
+
+  public Sort getKindMax() {
+    return this.kindMax;
+  }
+
+  public void setKindMax(Sort kindMax) {
+    this.kindMax = kindMax;
+  }
+
+  public Sort getKindMin() {
+    return this.kindMin;
+  }
+
+  public void setKindMin(Sort kindMin) {
+    this.kindMin = kindMin;
   }
 
   public Sort getDescriptionCount() {

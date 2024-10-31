@@ -6,6 +6,7 @@ import io.graphoenix.spi.annotation.Application;
 import io.graphoenix.spi.annotation.Package;
 import io.graphoenix.spi.dto.PackageURL;
 import io.graphoenix.spi.graphql.Definition;
+import io.graphoenix.spi.graphql.type.DirectiveDefinition;
 import io.graphoenix.spi.handler.PackageProvider;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Default;
@@ -85,6 +86,10 @@ public class PackageManager {
 
     public boolean isOwnPackage(Definition abstractDefinition) {
         return abstractDefinition.getPackageName().map(this::isOwnPackage).orElse(true);
+    }
+
+    public boolean isOwnPackage(DirectiveDefinition directiveDefinition) {
+        return directiveDefinition.getPackageName().map(this::isOwnPackage).orElse(true);
     }
 
     public boolean isOwnPackage(String packageName) {

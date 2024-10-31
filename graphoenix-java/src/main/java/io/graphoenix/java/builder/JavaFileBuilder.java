@@ -44,6 +44,7 @@ public class JavaFileBuilder {
     public Stream<JavaFile> buildJavaFileList() {
         return Streams.concat(
                 documentManager.getDocument().getDirectives()
+                        .filter(packageManager::isOwnPackage)
                         .map(typeSpecBuilder::buildType)
                         .map(typeSpec -> JavaFile.builder(packageConfig.getDirectivePackageName(), typeSpec).build()),
                 documentManager.getDocument().getEnums()

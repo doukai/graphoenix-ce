@@ -7,11 +7,16 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.eclipse.microprofile.graphql.Description;
 
+/**
+ * package:io.graphoenix.core
+ */
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("merge")
-@Target({ElementType.FIELD})
+@Target({ElementType.METHOD,ElementType.PARAMETER})
+@Description("package:io.graphoenix.core")
 public @interface Merge {
 }

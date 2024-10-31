@@ -101,6 +101,12 @@ public class __Type implements Meta {
 
   private String nameMin;
 
+  private Integer kindCount;
+
+  private __TypeKind kindMax;
+
+  private __TypeKind kindMin;
+
   private Integer descriptionCount;
 
   private String descriptionMax;
@@ -458,6 +464,30 @@ public class __Type implements Meta {
 
   public void setNameMin(String nameMin) {
     this.nameMin = nameMin;
+  }
+
+  public Integer getKindCount() {
+    return this.kindCount;
+  }
+
+  public void setKindCount(Integer kindCount) {
+    this.kindCount = kindCount;
+  }
+
+  public __TypeKind getKindMax() {
+    return this.kindMax;
+  }
+
+  public void setKindMax(__TypeKind kindMax) {
+    this.kindMax = kindMax;
+  }
+
+  public __TypeKind getKindMin() {
+    return this.kindMin;
+  }
+
+  public void setKindMin(__TypeKind kindMin) {
+    this.kindMin = kindMin;
   }
 
   public Integer getDescriptionCount() {
