@@ -123,4 +123,40 @@ public class DocumentManager {
                 throw new GraphQLErrors(UNSUPPORTED_OPERATION_TYPE.bind(operation.getOperationType()));
         }
     }
+
+    public ObjectType getInputObjectBelong(InputObjectType inputObjectType) {
+        String typeName = null;
+        if (inputObjectType.getName().endsWith(SUFFIX_INPUT)) {
+            typeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_INPUT));
+        } else if (inputObjectType.getName().endsWith(SUFFIX_EXPRESSION)) {
+            typeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_EXPRESSION));
+        } else {
+            String queryTypeName = getDocument().getQueryOperationTypeOrError().getName();
+            if (inputObjectType.getName().endsWith(SUFFIX_LIST + queryTypeName + SUFFIX_ARGUMENTS)) {
+                typeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_LIST + queryTypeName + SUFFIX_ARGUMENTS));
+            } else if (inputObjectType.getName().endsWith(queryTypeName + SUFFIX_ARGUMENTS)) {
+                typeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(queryTypeName + SUFFIX_ARGUMENTS));
+            }
+
+            String mutationTypeName = getDocument().getMutationOperationTypeOrError().getName();
+            if (inputObjectType.getName().endsWith(SUFFIX_LIST + mutationTypeName + SUFFIX_ARGUMENTS)) {
+                typeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_LIST + mutationTypeName + SUFFIX_ARGUMENTS));
+            } else if (inputObjectType.getName().endsWith(mutationTypeName + SUFFIX_ARGUMENTS)) {
+                typeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(mutationTypeName + SUFFIX_ARGUMENTS));
+            }
+
+            String subscriptionTypeName = getDocument().getSubscriptionOperationTypeOrError().getName();
+            if (inputObjectType.getName().endsWith(SUFFIX_LIST + subscriptionTypeName + SUFFIX_ARGUMENTS)) {
+                typeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_LIST + subscriptionTypeName + SUFFIX_ARGUMENTS));
+            } else if (inputObjectType.getName().endsWith(subscriptionTypeName + SUFFIX_ARGUMENTS)) {
+                typeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(subscriptionTypeName + SUFFIX_ARGUMENTS));
+            }
+        }
+        if (typeName != null) {
+            if (getDocument().getDefinition(typeName).isObject()) {
+                return getDocument().getObjectTypeOrError(typeName);
+            }
+        }
+        return null;
+    }
 }

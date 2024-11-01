@@ -62,23 +62,22 @@ public class JsonSchemaTranslator {
     }
 
     public Map.Entry<String, JsonValue> inputObjectToJsonSchema(InputObjectType inputObjectType) {
-        String mutationTypeName = documentManager.getDocument().getMutationOperationTypeOrError().getName();
-        String queryTypeName = documentManager.getDocument().getQueryOperationTypeOrError().getName();
-        String subscriptionTypeName = documentManager.getDocument().getSubscriptionOperationTypeOrError().getName();
-        if (inputObjectType.getName().endsWith(SUFFIX_INPUT)) {
-            String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_INPUT));
-            Definition definition = documentManager.getDocument().getDefinition(objectTypeName);
-            if (definition != null && definition.isObject()) {
+        ObjectType objectType = documentManager.getInputObjectBelong(inputObjectType);
+        if (objectType != null) {
+            String mutationTypeName = documentManager.getDocument().getMutationOperationTypeOrError().getName();
+            String queryTypeName = documentManager.getDocument().getQueryOperationTypeOrError().getName();
+            String subscriptionTypeName = documentManager.getDocument().getSubscriptionOperationTypeOrError().getName();
+            if (inputObjectType.getName().endsWith(SUFFIX_INPUT)) {
                 JsonArrayBuilder jsonArrayBuilder = jsonProvider.createArrayBuilder()
                         .add(
                                 jsonProvider.createObjectBuilder()
-                                        .add("properties", inputObjectToUpdateProperties(inputObjectType, definition.asObject()))
+                                        .add("properties", inputObjectToUpdateProperties(inputObjectType, objectType))
                                         .add("required", jsonProvider.createArrayBuilder().add(INPUT_VALUE_WHERE_NAME))
                         )
                         .add(
                                 jsonProvider.createObjectBuilder()
-                                        .add("properties", inputObjectToInsertProperties(inputObjectType, definition.asObject()))
-                                        .add("required", buildRequired(definition.asObject()))
+                                        .add("properties", inputObjectToInsertProperties(inputObjectType, objectType))
+                                        .add("required", buildRequired(objectType))
                         );
 
                 JsonObjectBuilder builder = buildJsonSchemaBuilder(inputObjectType)
@@ -88,12 +87,8 @@ public class JsonSchemaTranslator {
                         .add("additionalProperties", TRUE);
 
                 return new AbstractMap.SimpleEntry<>(inputObjectType.getName(), builder.build());
-            }
-        } else if (inputObjectType.getName().endsWith(SUFFIX_LIST + mutationTypeName + SUFFIX_ARGUMENTS)) {
-            String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_LIST + mutationTypeName + SUFFIX_ARGUMENTS));
-            Definition definition = documentManager.getDocument().getDefinition(objectTypeName);
-            if (definition != null && definition.isObject()) {
-                String operationFieldName = mutationTypeName + "_" + typeNameToFieldName(objectTypeName) + SUFFIX_LIST + "_" + SUFFIX_ARGUMENTS;
+            } else if (inputObjectType.getName().endsWith(SUFFIX_LIST + mutationTypeName + SUFFIX_ARGUMENTS)) {
+                String operationFieldName = mutationTypeName + "_" + typeNameToFieldName(objectType.getName()) + SUFFIX_LIST + "_" + SUFFIX_ARGUMENTS;
                 JsonArrayBuilder jsonArrayBuilder = jsonProvider.createArrayBuilder()
                         .add(
                                 jsonProvider.createObjectBuilder()
@@ -102,7 +97,7 @@ public class JsonSchemaTranslator {
                         )
                         .add(
                                 jsonProvider.createObjectBuilder()
-                                        .add("properties", inputObjectToUpdateProperties(inputObjectType, definition.asObject()))
+                                        .add("properties", inputObjectToUpdateProperties(inputObjectType, objectType))
                                         .add("required", jsonProvider.createArrayBuilder().add(INPUT_VALUE_WHERE_NAME))
                         );
 
@@ -113,17 +108,13 @@ public class JsonSchemaTranslator {
                         .add("additionalProperties", TRUE);
 
                 return new AbstractMap.SimpleEntry<>(operationFieldName, builder.build());
-            }
-        } else if (inputObjectType.getName().endsWith(mutationTypeName + SUFFIX_ARGUMENTS)) {
-            String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(mutationTypeName + SUFFIX_ARGUMENTS));
-            Definition definition = documentManager.getDocument().getDefinition(objectTypeName);
-            if (definition != null && definition.isObject()) {
-                String operationFieldName = mutationTypeName + "_" + typeNameToFieldName(objectTypeName) + "_" + SUFFIX_ARGUMENTS;
+            } else if (inputObjectType.getName().endsWith(mutationTypeName + SUFFIX_ARGUMENTS)) {
+                String operationFieldName = mutationTypeName + "_" + typeNameToFieldName(objectType.getName()) + "_" + SUFFIX_ARGUMENTS;
                 JsonArrayBuilder jsonArrayBuilder = jsonProvider.createArrayBuilder()
                         .add(
                                 jsonProvider.createObjectBuilder()
-                                        .add("properties", inputObjectToInsertProperties(inputObjectType, definition.asObject()))
-                                        .add("required", buildRequired(definition.asObject()))
+                                        .add("properties", inputObjectToInsertProperties(inputObjectType, objectType))
+                                        .add("required", buildRequired(objectType))
                         )
                         .add(
                                 jsonProvider.createObjectBuilder()
@@ -132,7 +123,7 @@ public class JsonSchemaTranslator {
                         )
                         .add(
                                 jsonProvider.createObjectBuilder()
-                                        .add("properties", inputObjectToUpdateProperties(inputObjectType, definition.asObject()))
+                                        .add("properties", inputObjectToUpdateProperties(inputObjectType, objectType))
                                         .add("required", jsonProvider.createArrayBuilder().add(INPUT_VALUE_WHERE_NAME))
                         );
 
@@ -143,12 +134,8 @@ public class JsonSchemaTranslator {
                         .add("additionalProperties", TRUE);
 
                 return new AbstractMap.SimpleEntry<>(operationFieldName, builder.build());
-            }
-        } else if (inputObjectType.getName().endsWith(SUFFIX_LIST + queryTypeName + SUFFIX_ARGUMENTS)) {
-            String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_LIST + queryTypeName + SUFFIX_ARGUMENTS));
-            Definition definition = documentManager.getDocument().getDefinition(objectTypeName);
-            if (definition != null && definition.isObject()) {
-                String operationFieldName = queryTypeName + "_" + typeNameToFieldName(objectTypeName) + SUFFIX_LIST + "_" + SUFFIX_ARGUMENTS;
+            } else if (inputObjectType.getName().endsWith(SUFFIX_LIST + queryTypeName + SUFFIX_ARGUMENTS)) {
+                String operationFieldName = queryTypeName + "_" + typeNameToFieldName(objectType.getName()) + SUFFIX_LIST + "_" + SUFFIX_ARGUMENTS;
                 JsonObjectBuilder builder = buildJsonSchemaBuilder(inputObjectType)
                         .add("$id", jsonProvider.createValue("#" + operationFieldName))
                         .add("type", jsonProvider.createValue("object"))
@@ -157,12 +144,8 @@ public class JsonSchemaTranslator {
                         .add("required", buildRequired(inputObjectType));
 
                 return new AbstractMap.SimpleEntry<>(operationFieldName, builder.build());
-            }
-        } else if (inputObjectType.getName().endsWith(queryTypeName + SUFFIX_ARGUMENTS)) {
-            String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(queryTypeName + SUFFIX_ARGUMENTS));
-            Definition definition = documentManager.getDocument().getDefinition(objectTypeName);
-            if (definition != null && definition.isObject()) {
-                String operationFieldName = queryTypeName + "_" + typeNameToFieldName(objectTypeName) + "_" + SUFFIX_ARGUMENTS;
+            } else if (inputObjectType.getName().endsWith(queryTypeName + SUFFIX_ARGUMENTS)) {
+                String operationFieldName = queryTypeName + "_" + typeNameToFieldName(objectType.getName()) + "_" + SUFFIX_ARGUMENTS;
                 JsonObjectBuilder builder = buildJsonSchemaBuilder(inputObjectType)
                         .add("$id", jsonProvider.createValue("#" + operationFieldName))
                         .add("type", jsonProvider.createValue("object"))
@@ -171,12 +154,8 @@ public class JsonSchemaTranslator {
                         .add("required", buildRequired(inputObjectType));
 
                 return new AbstractMap.SimpleEntry<>(operationFieldName, builder.build());
-            }
-        } else if (inputObjectType.getName().endsWith(SUFFIX_LIST + subscriptionTypeName + SUFFIX_ARGUMENTS)) {
-            String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_LIST + subscriptionTypeName + SUFFIX_ARGUMENTS));
-            Definition definition = documentManager.getDocument().getDefinition(objectTypeName);
-            if (definition != null && definition.isObject()) {
-                String operationFieldName = subscriptionTypeName + "_" + typeNameToFieldName(objectTypeName) + SUFFIX_LIST + "_" + SUFFIX_ARGUMENTS;
+            } else if (inputObjectType.getName().endsWith(SUFFIX_LIST + subscriptionTypeName + SUFFIX_ARGUMENTS)) {
+                String operationFieldName = subscriptionTypeName + "_" + typeNameToFieldName(objectType.getName()) + SUFFIX_LIST + "_" + SUFFIX_ARGUMENTS;
                 JsonObjectBuilder builder = buildJsonSchemaBuilder(inputObjectType)
                         .add("$id", jsonProvider.createValue("#" + operationFieldName))
                         .add("type", jsonProvider.createValue("object"))
@@ -185,12 +164,8 @@ public class JsonSchemaTranslator {
                         .add("required", buildRequired(inputObjectType));
 
                 return new AbstractMap.SimpleEntry<>(operationFieldName, builder.build());
-            }
-        } else if (inputObjectType.getName().endsWith(subscriptionTypeName + SUFFIX_ARGUMENTS)) {
-            String objectTypeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(subscriptionTypeName + SUFFIX_ARGUMENTS));
-            Definition definition = documentManager.getDocument().getDefinition(objectTypeName);
-            if (definition != null && definition.isObject()) {
-                String operationFieldName = subscriptionTypeName + "_" + typeNameToFieldName(objectTypeName) + "_" + SUFFIX_ARGUMENTS;
+            } else if (inputObjectType.getName().endsWith(subscriptionTypeName + SUFFIX_ARGUMENTS)) {
+                String operationFieldName = subscriptionTypeName + "_" + typeNameToFieldName(objectType.getName()) + "_" + SUFFIX_ARGUMENTS;
                 JsonObjectBuilder builder = buildJsonSchemaBuilder(inputObjectType)
                         .add("$id", jsonProvider.createValue("#" + operationFieldName))
                         .add("type", jsonProvider.createValue("object"))
