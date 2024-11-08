@@ -102,6 +102,8 @@ public class Hammurabi {
     public static final String INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME = "returnClassName";
     public static final String INPUT_INVOKE_INPUT_VALUE_ASYNC_NAME = "async";
     public static final String INPUT_INVOKE_INPUT_VALUE_DIRECTIVE_NAME_NAME = "directiveName";
+    public static final String INPUT_INVOKE_INPUT_VALUE_ON_FIELD_NAME = "onField";
+    public static final String INPUT_INVOKE_INPUT_VALUE_ON_INPUT_VALUE_NAME = "onInputValue";
 
 
     public static final String INPUT_INVOKE_PARAMETER_INPUT_VALUE_NAME_NAME = "name";

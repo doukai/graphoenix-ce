@@ -31,7 +31,7 @@ public class Directive {
     }
 
     public Directive(AnnotationMirror annotationMirror) {
-        this.name = annotationMirror.getAnnotationType().getAnnotation(io.graphoenix.spi.annotation.Directive.class).value();
+        this.name = annotationMirror.getAnnotationType().asElement().getAnnotation(io.graphoenix.spi.annotation.Directive.class).value();
         if (annotationMirror.getElementValues() != null) {
             setArguments(new Arguments(annotationMirror));
         }

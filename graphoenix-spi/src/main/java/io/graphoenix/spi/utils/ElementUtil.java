@@ -99,7 +99,7 @@ public final class ElementUtil {
 
     public static List<Directive> getDirectivesFromElement(Element element) {
         return element.getAnnotationMirrors().stream()
-                .filter(annotationMirror -> annotationMirror.getAnnotationType().getAnnotation(io.graphoenix.spi.annotation.Directive.class) != null)
+                .filter(annotationMirror -> annotationMirror.getAnnotationType().asElement().getAnnotation(io.graphoenix.spi.annotation.Directive.class) != null)
                 .map(Directive::new)
                 .collect(Collectors.toList());
     }

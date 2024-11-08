@@ -3,10 +3,8 @@ package io.graphoenix.core.annotation.processor;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.GraphQLConfigRegister;
-import io.graphoenix.spi.annotation.Application;
-import io.graphoenix.spi.annotation.GraphQLOperation;
+import io.graphoenix.spi.annotation.*;
 import io.graphoenix.spi.annotation.Package;
-import io.graphoenix.spi.annotation.SelectionSet;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.common.ArrayValueWithVariable;
@@ -354,7 +352,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                     .anyMatch(variableElement ->
                                             variableElement.getAnnotationMirrors().stream()
                                                     .anyMatch(annotationMirror ->
-                                                            annotationMirror.getAnnotationType().getAnnotation(io.graphoenix.spi.annotation.Directive.class) != null
+                                                            annotationMirror.getAnnotationType().asElement().getAnnotation(io.graphoenix.spi.annotation.Directive.class) != null
                                                     )
                                     )
                             ) {
@@ -362,13 +360,15 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                         .flatMap(variableElement ->
                                                 variableElement.getAnnotationMirrors().stream()
                                                         .filter(annotationMirror ->
-                                                                annotationMirror.getAnnotationType().getAnnotation(io.graphoenix.spi.annotation.Directive.class) != null
+                                                                annotationMirror.getAnnotationType().asElement().getAnnotation(io.graphoenix.spi.annotation.Directive.class) != null
                                                         )
                                         )
                                         .findFirst()
-                                        .map(annotationMirror -> annotationMirror.getAnnotationType().getAnnotation(io.graphoenix.spi.annotation.Directive.class).value())
+                                        .map(annotationMirror -> annotationMirror.getAnnotationType().asElement().getAnnotation(io.graphoenix.spi.annotation.Directive.class).value())
                                         .ifPresent(directiveName -> {
                                                     boolean async = executableElement.getAnnotation(Async.class) != null;
+                                                    boolean onField = executableElement.getAnnotation(OnField.class) != null;
+                                                    boolean onInputValue = executableElement.getAnnotation(OnInputValue.class) != null;
                                                     ObjectValueWithVariable invoke = ObjectValueWithVariable.of(
                                                             INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME, executableElement.getEnclosingElement().toString(),
                                                             INPUT_INVOKE_INPUT_VALUE_METHOD_NAME_NAME, async ? getAsyncMethodName(executableElement, types) : executableElement.getSimpleName().toString(),
@@ -387,7 +387,9 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                                             ),
                                                             INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME, ElementUtil.getTypeWithArgumentsName(executableElement.getReturnType(), types),
                                                             INPUT_INVOKE_INPUT_VALUE_ASYNC_NAME, async,
-                                                            INPUT_INVOKE_INPUT_VALUE_DIRECTIVE_NAME_NAME, directiveName
+                                                            INPUT_INVOKE_INPUT_VALUE_DIRECTIVE_NAME_NAME, directiveName,
+                                                            INPUT_INVOKE_INPUT_VALUE_ON_FIELD_NAME, onField,
+                                                            INPUT_INVOKE_INPUT_VALUE_ON_INPUT_VALUE_NAME, onInputValue
                                                     );
 
                                                     documentManager.getDocument().getObjectTypes()
