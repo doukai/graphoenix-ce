@@ -62,7 +62,7 @@ public class JsonSchemaTranslator {
     }
 
     public Map.Entry<String, JsonValue> inputObjectToJsonSchema(InputObjectType inputObjectType) {
-        ObjectType objectType = documentManager.getInputObjectBelong(inputObjectType);
+        ObjectType objectType = documentManager.getInputObjectBelongObject(inputObjectType);
         if (objectType != null) {
             String mutationTypeName = documentManager.getDocument().getMutationOperationTypeOrError().getName();
             String queryTypeName = documentManager.getDocument().getQueryOperationTypeOrError().getName();

@@ -4,18 +4,13 @@ import com.google.common.collect.Iterators;
 import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.AbstractDefinition;
-import io.graphoenix.spi.graphql.common.ArrayValueWithVariable;
-import io.graphoenix.spi.graphql.common.Directive;
-import io.graphoenix.spi.graphql.common.EnumValue;
-import io.graphoenix.spi.graphql.common.ValueWithVariable;
+import io.graphoenix.spi.graphql.common.*;
 import io.nozdormu.spi.async.Async;
 import jakarta.annotation.security.DenyAll;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
-import reactor.util.function.Tuple8;
-import reactor.util.function.Tuples;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
@@ -560,7 +555,7 @@ public class FieldDefinition extends AbstractDefinition {
         return hasDirective(DIRECTIVE_DENY_ALL);
     }
 
-    public List<Tuple8<String, String, String, Boolean, ArrayValueWithVariable, String, Boolean, Boolean>> getInvokes() {
+    public List<ObjectValueWithVariable> getInvokes() {
         return Stream.ofNullable(getDirective(DIRECTIVE_INVOKES_NAME))
                 .flatMap(directive ->
                         directive.getArgumentOrEmpty(DIRECTIVE_INVOKES_METHODS_NAME).stream()
@@ -569,24 +564,6 @@ public class FieldDefinition extends AbstractDefinition {
                                 .flatMap(arrayValueWithVariable -> arrayValueWithVariable.getValueWithVariables().stream())
                                 .filter(ValueWithVariable::isObject)
                                 .map(ValueWithVariable::asObject)
-                                .map(objectValueWithVariable ->
-                                        Tuples.of(
-                                                objectValueWithVariable.getValueWithVariableOrError(INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME).asString().getValue(),
-                                                objectValueWithVariable.getValueWithVariableOrError(INPUT_INVOKE_INPUT_VALUE_METHOD_NAME_NAME).asString().getValue(),
-                                                objectValueWithVariable.getValueWithVariableOrError(INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME).asString().getValue(),
-                                                objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_INVOKE_INPUT_VALUE_ASYNC_NAME)
-                                                        .map(valueWithVariable -> valueWithVariable.asBoolean().getValue())
-                                                        .orElse(false),
-                                                objectValueWithVariable.getValueWithVariableOrError(INPUT_INVOKE_INPUT_VALUE_PARAMETER_NAME).asArray(),
-                                                objectValueWithVariable.getValueWithVariableOrError(INPUT_INVOKE_INPUT_VALUE_DIRECTIVE_NAME_NAME).asString().getValue(),
-                                                objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_INVOKE_INPUT_VALUE_ON_FIELD_NAME)
-                                                        .map(valueWithVariable -> valueWithVariable.asBoolean().getValue())
-                                                        .orElse(false),
-                                                objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_INVOKE_INPUT_VALUE_ON_INPUT_VALUE_NAME)
-                                                        .map(valueWithVariable -> valueWithVariable.asBoolean().getValue())
-                                                        .orElse(false)
-                                        )
-                                )
                 )
                 .collect(Collectors.toList());
     }

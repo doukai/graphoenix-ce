@@ -104,6 +104,7 @@ public class Hammurabi {
     public static final String INPUT_INVOKE_INPUT_VALUE_DIRECTIVE_NAME_NAME = "directiveName";
     public static final String INPUT_INVOKE_INPUT_VALUE_ON_FIELD_NAME = "onField";
     public static final String INPUT_INVOKE_INPUT_VALUE_ON_INPUT_VALUE_NAME = "onInputValue";
+    public static final String INPUT_INVOKE_INPUT_VALUE_ON_EXPRESSION_NAME = "onExpression";
 
 
     public static final String INPUT_INVOKE_PARAMETER_INPUT_VALUE_NAME_NAME = "name";

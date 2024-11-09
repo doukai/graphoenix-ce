@@ -25,6 +25,12 @@ public @interface Invoke2 {
 
   String directiveName() default "";
 
+  boolean onField() default false;
+
+  boolean onInputValue() default false;
+
+  boolean onExpression() default false;
+
   String $className() default "";
 
   String $methodName() default "";
@@ -36,4 +42,10 @@ public @interface Invoke2 {
   String $async() default "";
 
   String $directiveName() default "";
+
+  String $onField() default "";
+
+  String $onInputValue() default "";
+
+  String $onExpression() default "";
 }

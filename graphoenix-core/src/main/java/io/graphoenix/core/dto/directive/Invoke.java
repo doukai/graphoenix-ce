@@ -30,6 +30,4 @@ public @interface Invoke {
   String returnClassName() default "";
 
   boolean async() default false;
-
-  String directiveName() default "";
 }

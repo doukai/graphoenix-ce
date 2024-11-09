@@ -369,6 +369,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                                     boolean async = executableElement.getAnnotation(Async.class) != null;
                                                     boolean onField = executableElement.getAnnotation(OnField.class) != null;
                                                     boolean onInputValue = executableElement.getAnnotation(OnInputValue.class) != null;
+                                                    boolean onExpression = executableElement.getAnnotation(OnExpression.class) != null;
                                                     ObjectValueWithVariable invoke = ObjectValueWithVariable.of(
                                                             INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME, executableElement.getEnclosingElement().toString(),
                                                             INPUT_INVOKE_INPUT_VALUE_METHOD_NAME_NAME, async ? getAsyncMethodName(executableElement, types) : executableElement.getSimpleName().toString(),
@@ -389,7 +390,8 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                                             INPUT_INVOKE_INPUT_VALUE_ASYNC_NAME, async,
                                                             INPUT_INVOKE_INPUT_VALUE_DIRECTIVE_NAME_NAME, directiveName,
                                                             INPUT_INVOKE_INPUT_VALUE_ON_FIELD_NAME, onField,
-                                                            INPUT_INVOKE_INPUT_VALUE_ON_INPUT_VALUE_NAME, onInputValue
+                                                            INPUT_INVOKE_INPUT_VALUE_ON_INPUT_VALUE_NAME, onInputValue,
+                                                            INPUT_INVOKE_INPUT_VALUE_ON_EXPRESSION_NAME, onExpression
                                                     );
 
                                                     documentManager.getDocument().getObjectTypes()

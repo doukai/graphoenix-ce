@@ -26,7 +26,6 @@ import jakarta.json.stream.JsonCollectors;
 import org.tinylog.Logger;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuple8;
 
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.Modifier;
@@ -40,6 +39,7 @@ import static io.graphoenix.core.utils.TypeNameUtil.getArgumentTypeNames;
 import static io.graphoenix.core.utils.TypeNameUtil.getClassName;
 import static io.graphoenix.java.utils.NameUtil.*;
 import static io.graphoenix.java.utils.TypeNameUtil.toClassName;
+import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 
 @ApplicationScoped
@@ -68,7 +68,7 @@ public class InvokeHandlerBuilder {
                                 .filter(packageManager::isLocalPackage)
                                 .flatMap(objectType -> objectType.getFields().stream())
                                 .flatMap(fieldDefinition -> fieldDefinition.getInvokes().stream())
-                                .map(Tuple8::getT1)
+                                .map(objectValueWithVariable -> objectValueWithVariable.getString(INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME))
                 )
                 .collect(Collectors.toSet());
         this.buildClass().writeTo(filer);
@@ -279,23 +279,26 @@ public class InvokeHandlerBuilder {
                                                                                         .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
                                                                                         .filter(fieldDefinition -> !fieldDefinition.isFetchField())
                                                                                         .filter(fieldDefinition -> !fieldDefinition.isFunctionField())
-                                                                                        .filter(fieldDefinition -> !documentManager.getFieldTypeDefinition(fieldDefinition).isObject())
+                                                                                        .filter(fieldDefinition -> documentManager.getFieldTypeDefinition(fieldDefinition).isLeaf())
                                                                                         .filter(fieldDefinition -> !fieldDefinition.getInvokes().isEmpty())
-                                                                                        .filter(fieldDefinition -> fieldDefinition.getInvokes().stream().anyMatch(Tuple8::getT7))
+                                                                                        .filter(fieldDefinition ->
+                                                                                                fieldDefinition.getInvokes().stream()
+                                                                                                        .anyMatch(objectValueWithVariable -> objectValueWithVariable.getBoolean(INPUT_INVOKE_INPUT_VALUE_ON_FIELD_NAME, false))
+                                                                                        )
                                                                                         .map(fieldDefinition -> {
                                                                                                     CodeBlock caseCodeBlock = CodeBlock.of("case $S:\n", fieldDefinition.getName());
                                                                                                     CodeBlock getFieldCodeBlock = CodeBlock.of("$L.$L()", resultParameterName, getFieldGetterMethodName(fieldDefinition.getName()));
                                                                                                     CodeBlock invokesCodeBlock = fieldDefinition.getInvokes().stream()
-                                                                                                            .filter(Tuple8::getT7)
+                                                                                                            .filter(objectValueWithVariable -> objectValueWithVariable.getBoolean(INPUT_INVOKE_INPUT_VALUE_ON_FIELD_NAME, false))
                                                                                                             .reduce(
                                                                                                                     CodeBlock.builder().build(),
-                                                                                                                    (codeBlock, tuple6) -> {
-                                                                                                                        String apiVariableName = typeNameToFieldName(toClassName(tuple6.getT1()).simpleName());
-                                                                                                                        String methodName = tuple6.getT2();
-                                                                                                                        ClassName returnClassName = toClassName(getClassName(tuple6.getT3()));
-                                                                                                                        Boolean async = tuple6.getT4();
-                                                                                                                        int parametersCount = tuple6.getT5().size();
-                                                                                                                        String directiveName = tuple6.getT6();
+                                                                                                                    (codeBlock, objectValueWithVariable) -> {
+                                                                                                                        String apiVariableName = typeNameToFieldName(toClassName(objectValueWithVariable.getString(INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME)).simpleName());
+                                                                                                                        String methodName = objectValueWithVariable.getString(INPUT_INVOKE_INPUT_VALUE_METHOD_NAME_NAME);
+                                                                                                                        ClassName returnClassName = toClassName(getClassName(objectValueWithVariable.getString(INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME)));
+                                                                                                                        boolean async = objectValueWithVariable.getBoolean(INPUT_INVOKE_INPUT_VALUE_ASYNC_NAME, false);
+                                                                                                                        int parametersCount = objectValueWithVariable.getJsonArray(INPUT_INVOKE_INPUT_VALUE_PARAMETER_NAME).size();
+                                                                                                                        String directiveName = objectValueWithVariable.getString(INPUT_INVOKE_INPUT_VALUE_DIRECTIVE_NAME_NAME);
                                                                                                                         CodeBlock invokeCodeBlock;
                                                                                                                         if (parametersCount == 1) {
                                                                                                                             if (async) {

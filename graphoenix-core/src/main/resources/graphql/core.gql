@@ -157,6 +157,9 @@ input Invoke {
     thrownTypes: [String]
     async: Boolean = false
     directiveName: String
+    onField: Boolean = false
+    onInputValue: Boolean = false
+    onExpression: Boolean = false
 }
 input InvokeParameter {
     name: String
@@ -200,7 +203,7 @@ input __DirectiveLocationExpression {
 directive @options(type: String default: String length: Int decimals: Int unique: Boolean autoIncrement: Boolean protocol: Protocol = GRPC) on FIELD_DEFINITION
 directive @map(from: String! with: With to: String anchor: Boolean) on FIELD_DEFINITION
 directive @fetch(protocol: Protocol from: String! with: With to: String anchor: Boolean) on FIELD_DEFINITION
-directive @invoke(className: String methodName: String parameters: [InvokeParameter] returnClassName: String async: Boolean = false directiveName: String) on FIELD_DEFINITION | INPUT_OBJECT | QUERY | MUTATION | SUBSCRIPTION
+directive @invoke(className: String methodName: String parameters: [InvokeParameter] returnClassName: String async: Boolean = false) on FIELD_DEFINITION | INPUT_OBJECT | QUERY | MUTATION | SUBSCRIPTION
 directive @invokes(methods: [Invoke]) on FIELD_DEFINITION | INPUT_OBJECT | QUERY | MUTATION | SUBSCRIPTION
 directive @cursor on FIELD_DEFINITION
 directive @func(name: Func field: String) on FIELD_DEFINITION

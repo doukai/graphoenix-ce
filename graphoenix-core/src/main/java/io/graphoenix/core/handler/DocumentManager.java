@@ -124,7 +124,17 @@ public class DocumentManager {
         }
     }
 
-    public ObjectType getInputObjectBelong(InputObjectType inputObjectType) {
+    public ObjectType getInputObjectBelongObject(InputObjectType inputObjectType) {
+        Definition definition = getInputObjectBelong(inputObjectType);
+        if (definition != null) {
+            if (definition.isObject()) {
+                return definition.asObject();
+            }
+        }
+        return null;
+    }
+
+    public Definition getInputObjectBelong(InputObjectType inputObjectType) {
         String typeName = null;
         if (inputObjectType.getName().endsWith(SUFFIX_INPUT)) {
             typeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_INPUT));
@@ -153,9 +163,7 @@ public class DocumentManager {
             }
         }
         if (typeName != null) {
-            if (getDocument().getDefinition(typeName).isObject()) {
-                return getDocument().getObjectTypeOrError(typeName);
-            }
+            return getDocument().getDefinition(typeName);
         }
         return null;
     }

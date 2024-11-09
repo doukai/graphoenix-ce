@@ -27,6 +27,15 @@ public class Invoke {
 
   private String directiveName;
 
+  @DefaultValue("false")
+  private Boolean onField = false;
+
+  @DefaultValue("false")
+  private Boolean onInputValue = false;
+
+  @DefaultValue("false")
+  private Boolean onExpression = false;
+
   public String getClassName() {
     return this.className;
   }
@@ -81,5 +90,29 @@ public class Invoke {
 
   public void setDirectiveName(String directiveName) {
     this.directiveName = directiveName;
+  }
+
+  public Boolean getOnField() {
+    return this.onField;
+  }
+
+  public void setOnField(Boolean onField) {
+    this.onField = onField;
+  }
+
+  public Boolean getOnInputValue() {
+    return this.onInputValue;
+  }
+
+  public void setOnInputValue(Boolean onInputValue) {
+    this.onInputValue = onInputValue;
+  }
+
+  public Boolean getOnExpression() {
+    return this.onExpression;
+  }
+
+  public void setOnExpression(Boolean onExpression) {
+    this.onExpression = onExpression;
   }
 }

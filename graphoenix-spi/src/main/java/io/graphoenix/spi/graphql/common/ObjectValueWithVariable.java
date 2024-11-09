@@ -215,7 +215,7 @@ public class ObjectValueWithVariable extends AbstractMap<String, JsonValue> impl
     public boolean getBoolean(String name, boolean defaultValue) {
         JsonValue value = get(name);
         if (value == null) {
-            throw new NullPointerException();
+            return defaultValue;
         } else if (value instanceof BooleanValue) {
             return ((BooleanValue) value).getValue();
         } else if (value == JsonValue.TRUE) {

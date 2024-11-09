@@ -4,12 +4,11 @@ import com.google.common.collect.Iterators;
 import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
+import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import org.eclipse.microprofile.graphql.Ignore;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
-import reactor.util.function.Tuple4;
-import reactor.util.function.Tuples;
 
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
@@ -149,7 +148,7 @@ public class InputObjectType extends AbstractDefinition implements Definition {
         return hasDirective(DIRECTIVE_INVOKES_NAME);
     }
 
-    public List<Tuple4<String, String, String, Boolean>> getInputInvokes() {
+    public List<ObjectValueWithVariable> getInputInvokes() {
         return Stream.ofNullable(getDirective(DIRECTIVE_INVOKES_NAME))
                 .flatMap(directive ->
                         directive.getArgumentOrEmpty(DIRECTIVE_INVOKES_METHODS_NAME).stream()
@@ -158,16 +157,6 @@ public class InputObjectType extends AbstractDefinition implements Definition {
                                 .flatMap(arrayValueWithVariable -> arrayValueWithVariable.getValueWithVariables().stream())
                                 .filter(ValueWithVariable::isObject)
                                 .map(ValueWithVariable::asObject)
-                                .map(objectValueWithVariable ->
-                                        Tuples.of(
-                                                objectValueWithVariable.getValueWithVariableOrError(INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME).asString().getValue(),
-                                                objectValueWithVariable.getValueWithVariableOrError(INPUT_INVOKE_INPUT_VALUE_METHOD_NAME_NAME).asString().getValue(),
-                                                objectValueWithVariable.getValueWithVariableOrError(INPUT_INVOKE_INPUT_VALUE_RETURN_CLASS_NAME_NAME).asString().getValue(),
-                                                objectValueWithVariable.getValueWithVariableOrEmpty(INPUT_INVOKE_INPUT_VALUE_ASYNC_NAME)
-                                                        .map(valueWithVariable -> valueWithVariable.asBoolean().getValue())
-                                                        .orElse(false)
-                                        )
-                                )
                 )
                 .collect(Collectors.toList());
     }
