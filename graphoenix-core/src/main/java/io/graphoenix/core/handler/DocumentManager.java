@@ -124,46 +124,46 @@ public class DocumentManager {
         }
     }
 
-    public ObjectType getInputObjectBelongObject(InputObjectType inputObjectType) {
-        Definition definition = getInputObjectBelong(inputObjectType);
-        if (definition != null) {
-            if (definition.isObject()) {
-                return definition.asObject();
-            }
-        }
-        return null;
-    }
-
-    public Definition getInputObjectBelong(InputObjectType inputObjectType) {
+    public Definition getInputBelong(Definition definition) {
         String typeName = null;
-        if (inputObjectType.getName().endsWith(SUFFIX_INPUT)) {
-            typeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_INPUT));
-        } else if (inputObjectType.getName().endsWith(SUFFIX_EXPRESSION)) {
-            typeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_EXPRESSION));
+        if (definition.getName().endsWith(SUFFIX_INPUT)) {
+            typeName = definition.getName().substring(0, definition.getName().lastIndexOf(SUFFIX_INPUT));
+        } else if (definition.getName().endsWith(SUFFIX_EXPRESSION)) {
+            typeName = definition.getName().substring(0, definition.getName().lastIndexOf(SUFFIX_EXPRESSION));
         } else {
             String queryTypeName = getDocument().getQueryOperationTypeOrError().getName();
-            if (inputObjectType.getName().endsWith(SUFFIX_LIST + queryTypeName + SUFFIX_ARGUMENTS)) {
-                typeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_LIST + queryTypeName + SUFFIX_ARGUMENTS));
-            } else if (inputObjectType.getName().endsWith(queryTypeName + SUFFIX_ARGUMENTS)) {
-                typeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(queryTypeName + SUFFIX_ARGUMENTS));
+            if (definition.getName().endsWith(SUFFIX_LIST + queryTypeName + SUFFIX_ARGUMENTS)) {
+                typeName = definition.getName().substring(0, definition.getName().lastIndexOf(SUFFIX_LIST + queryTypeName + SUFFIX_ARGUMENTS));
+            } else if (definition.getName().endsWith(queryTypeName + SUFFIX_ARGUMENTS)) {
+                typeName = definition.getName().substring(0, definition.getName().lastIndexOf(queryTypeName + SUFFIX_ARGUMENTS));
             }
 
             String mutationTypeName = getDocument().getMutationOperationTypeOrError().getName();
-            if (inputObjectType.getName().endsWith(SUFFIX_LIST + mutationTypeName + SUFFIX_ARGUMENTS)) {
-                typeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_LIST + mutationTypeName + SUFFIX_ARGUMENTS));
-            } else if (inputObjectType.getName().endsWith(mutationTypeName + SUFFIX_ARGUMENTS)) {
-                typeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(mutationTypeName + SUFFIX_ARGUMENTS));
+            if (definition.getName().endsWith(SUFFIX_LIST + mutationTypeName + SUFFIX_ARGUMENTS)) {
+                typeName = definition.getName().substring(0, definition.getName().lastIndexOf(SUFFIX_LIST + mutationTypeName + SUFFIX_ARGUMENTS));
+            } else if (definition.getName().endsWith(mutationTypeName + SUFFIX_ARGUMENTS)) {
+                typeName = definition.getName().substring(0, definition.getName().lastIndexOf(mutationTypeName + SUFFIX_ARGUMENTS));
             }
 
             String subscriptionTypeName = getDocument().getSubscriptionOperationTypeOrError().getName();
-            if (inputObjectType.getName().endsWith(SUFFIX_LIST + subscriptionTypeName + SUFFIX_ARGUMENTS)) {
-                typeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(SUFFIX_LIST + subscriptionTypeName + SUFFIX_ARGUMENTS));
-            } else if (inputObjectType.getName().endsWith(subscriptionTypeName + SUFFIX_ARGUMENTS)) {
-                typeName = inputObjectType.getName().substring(0, inputObjectType.getName().lastIndexOf(subscriptionTypeName + SUFFIX_ARGUMENTS));
+            if (definition.getName().endsWith(SUFFIX_LIST + subscriptionTypeName + SUFFIX_ARGUMENTS)) {
+                typeName = definition.getName().substring(0, definition.getName().lastIndexOf(SUFFIX_LIST + subscriptionTypeName + SUFFIX_ARGUMENTS));
+            } else if (definition.getName().endsWith(subscriptionTypeName + SUFFIX_ARGUMENTS)) {
+                typeName = definition.getName().substring(0, definition.getName().lastIndexOf(subscriptionTypeName + SUFFIX_ARGUMENTS));
             }
         }
         if (typeName != null) {
             return getDocument().getDefinition(typeName);
+        }
+        return null;
+    }
+
+    public ObjectType getInputObjectBelong(InputObjectType inputObjectType) {
+        Definition definition = getInputBelong(inputObjectType);
+        if (definition != null) {
+            if (definition.isObject()) {
+                return definition.asObject();
+            }
         }
         return null;
     }

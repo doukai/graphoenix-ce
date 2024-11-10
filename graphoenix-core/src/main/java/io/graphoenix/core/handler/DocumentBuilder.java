@@ -1,6 +1,7 @@
 package io.graphoenix.core.handler;
 
 import com.google.common.collect.Streams;
+import io.graphoenix.core.config.MessageConfig;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.spi.error.GraphQLErrorType;
 import io.graphoenix.spi.error.GraphQLErrors;
@@ -15,10 +16,8 @@ import io.graphoenix.spi.graphql.type.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.text.MessageFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,12 +29,14 @@ import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 public class DocumentBuilder {
 
     private final PackageConfig packageConfig;
+    private final MessageConfig messageConfig;
     private final PackageManager packageManager;
     private final DocumentManager documentManager;
 
     @Inject
-    public DocumentBuilder(PackageConfig packageConfig, PackageManager packageManager, DocumentManager documentManager) {
+    public DocumentBuilder(PackageConfig packageConfig, MessageConfig messageConfig, PackageManager packageManager, DocumentManager documentManager) {
         this.packageConfig = packageConfig;
+        this.messageConfig = messageConfig;
         this.packageManager = packageManager;
         this.documentManager = documentManager;
     }
@@ -115,15 +116,15 @@ public class DocumentBuilder {
         if (document.getObjectTypes().anyMatch(objectType -> !objectType.isContainer())) {
 
             ObjectType queryType = document.getQueryOperationType()
-                    .orElseGet(() -> new ObjectType(TYPE_QUERY_NAME))
+                    .orElseGet(() -> new ObjectType(TYPE_QUERY_NAME).setDescription(messageConfig.getQueryObject()))
                     .setFields(buildQueryTypeFields(document));
 
             ObjectType mutationType = document.getMutationOperationType()
-                    .orElseGet(() -> new ObjectType(TYPE_MUTATION_NAME))
+                    .orElseGet(() -> new ObjectType(TYPE_MUTATION_NAME).setDescription(messageConfig.getMutationObject()))
                     .setFields(buildMutationTypeFields(document));
 
             ObjectType subscriptionType = document.getSubscriptionOperationType()
-                    .orElseGet(() -> new ObjectType(TYPE_SUBSCRIPTION_NAME))
+                    .orElseGet(() -> new ObjectType(TYPE_SUBSCRIPTION_NAME).setDescription(messageConfig.getSubscriptionObject()))
                     .setFields(buildSubscriptionTypeFields(document));
 
             document.getQueryOperationType()
@@ -271,10 +272,16 @@ public class DocumentBuilder {
 
     public ObjectType buildMapWithObject(ObjectType objectType, FieldDefinition fieldDefinition) {
         ObjectType relationObjectType = new ObjectType(fieldDefinition.getMapWithTypeOrError())
-                .addField(new FieldDefinition(FIELD_ID_NAME).setType(new TypeName(SCALA_ID_NAME)))
+                .addField(new FieldDefinition(FIELD_ID_NAME).setType(new TypeName(SCALA_ID_NAME)).setDescription(messageConfig.getIdField()))
                 .addField(
                         new FieldDefinition(fieldDefinition.getMapWithFromOrError())
                                 .setType(documentManager.getFieldMapFromFieldDefinition(objectType, fieldDefinition).getTypeNameWithoutID())
+                                .setDescription(
+                                        String.format(
+                                                messageConfig.getRefField(),
+                                                Optional.ofNullable(objectType.getDescription()).orElseGet(objectType::getName)
+                                        )
+                                )
                 )
                 .addField(
                         new FieldDefinition(getTypeRefTypeFieldName(fieldDefinition.getMapWithFromOrError()))
@@ -285,6 +292,7 @@ public class DocumentBuilder {
                                                 .addArgument(DIRECTIVE_MAP_ARGUMENT_TO_NAME, fieldDefinition.getMapFromOrError())
                                                 .addArgument(DIRECTIVE_MAP_ARGUMENT_ANCHOR_NAME, true)
                                 )
+                                .setDescription(Optional.ofNullable(objectType.getDescription()).orElseGet(objectType::getName))
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_PACKAGE_NAME)
