@@ -40,25 +40,25 @@ public class DescriptionConfig {
     private String queryArguments = "Query Arguments for %s";
 
     @Optional
-    private String queryListArguments = "Query List Arguments for %s";
+    private String queryListArguments = "Query Arguments for %s List";
 
     @Optional
-    private String queryConnectionArguments = "Query Connection Arguments for %s";
+    private String queryConnectionArguments = "Query Arguments for %s Connection";
 
     @Optional
     private String mutationArguments = "Mutation Arguments for %s";
 
     @Optional
-    private String mutationListArguments = "Mutation List Arguments for %s";
+    private String mutationListArguments = "Mutation Arguments for %s List";
 
     @Optional
     private String subscriptionArguments = "Subscription Arguments for %s";
 
     @Optional
-    private String subscriptionListArguments = "Subscription List Arguments for %s";
+    private String subscriptionListArguments = "Subscription Arguments for %s List";
 
     @Optional
-    private String subscriptionConnectionArguments = "Subscription Connection Arguments for %s";
+    private String subscriptionConnectionArguments = "Subscription Arguments for %s Connection";
 
     @Optional
     private String queryField = "Query Field for %s";
@@ -67,7 +67,7 @@ public class DescriptionConfig {
     private String queryListField = "Query Field for %s List";
 
     @Optional
-    private String queryConnectionField = "Query Connection for %s";
+    private String queryConnectionField = "Query Field for %s Connection";
 
     @Optional
     private String mutationField = "Mutation Field for %s";
@@ -82,7 +82,7 @@ public class DescriptionConfig {
     private String subscriptionListField = "Subscription Field for %s List";
 
     @Optional
-    private String subscriptionConnectionField = "Subscription Connection for %s";
+    private String subscriptionConnectionField = "Subscription Field for %s Connection";
 
     @Optional
     private String idField = "ID";
@@ -103,7 +103,7 @@ public class DescriptionConfig {
     private String aggField = "Aggregate Field for %s";
 
     @Optional
-    private String totalCountField = "Total Count";
+    private String totalCountField = "Total";
 
     @Optional
     private String pageInfoField = "Page Info";

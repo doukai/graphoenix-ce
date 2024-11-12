@@ -937,7 +937,8 @@ public class DocumentBuilder {
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_IMPLEMENTS_NAME)
-                                .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
+                                .addArgument(
+                                        DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                         new ArrayValueWithVariable(
                                                 Stream
                                                         .concat(
@@ -980,7 +981,8 @@ public class DocumentBuilder {
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_IMPLEMENTS_NAME)
-                                .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
+                                .addArgument(
+                                        DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                         new ArrayValueWithVariable(
                                                 Stream
                                                         .concat(
@@ -1285,90 +1287,99 @@ public class DocumentBuilder {
                 .filter(fieldDefinition -> !fieldDefinition.getType().hasList())
                 .collect(Collectors.toList());
 
-        return Stream.concat(
-                fieldDefinitions.stream()
-                        .filter(fieldDefinition ->
-                                fieldDefinition.getType().getTypeName().getName().equals(SCALA_ID_NAME) ||
-                                        fieldDefinition.getType().getTypeName().getName().equals(SCALA_STRING_NAME) ||
-                                        fieldDefinition.getType().getTypeName().getName().equals(SCALA_DATE_NAME) ||
-                                        fieldDefinition.getType().getTypeName().getName().equals(SCALA_TIME_NAME) ||
-                                        fieldDefinition.getType().getTypeName().getName().equals(SCALA_DATE_TIME_NAME) ||
-                                        fieldDefinition.getType().getTypeName().getName().equals(SCALA_TIMESTAMP_NAME) ||
-                                        fieldDefinition.getType().getTypeName().getName().equals(SCALA_UPLOAD_NAME) ||
-                                        documentManager.getFieldTypeDefinition(fieldDefinition).isEnum()
-                        )
-                        .flatMap(fieldDefinition ->
-                                Stream.of(
-                                        Function.COUNT.toField(
-                                                        fieldDefinition.getName(),
-                                                        SCALA_INT_NAME,
-                                                        fieldDefinition.getType().getTypeName().getName(),
-                                                        fieldDefinition.getType().hasList()
-                                                )
-                                                .setDescription(String.format(descriptionConfig.getCountField(), Optional.ofNullable(fieldDefinition.getDescription()).orElseGet(fieldDefinition::getName))),
-                                        Function.MAX.toField(
-                                                        fieldDefinition.getName(),
-                                                        fieldDefinition.getTypeNameWithoutID(),
-                                                        fieldDefinition.getTypeNameWithoutID(),
-                                                        fieldDefinition.getType().hasList()
-                                                )
-                                                .setDescription(String.format(descriptionConfig.getMaxField(), Optional.ofNullable(fieldDefinition.getDescription()).orElseGet(fieldDefinition::getName))),
-                                        Function.MIN.toField(
-                                                        fieldDefinition.getName(),
-                                                        fieldDefinition.getTypeNameWithoutID(),
-                                                        fieldDefinition.getTypeNameWithoutID(),
-                                                        fieldDefinition.getType().hasList()
-                                                )
-                                                .setDescription(String.format(descriptionConfig.getMinField(), Optional.ofNullable(fieldDefinition.getDescription()).orElseGet(fieldDefinition::getName)))
+        return Stream
+                .concat(
+                        fieldDefinitions.stream()
+                                .filter(fieldDefinition ->
+                                        fieldDefinition.getType().getTypeName().getName().equals(SCALA_ID_NAME) ||
+                                                fieldDefinition.getType().getTypeName().getName().equals(SCALA_STRING_NAME) ||
+                                                fieldDefinition.getType().getTypeName().getName().equals(SCALA_DATE_NAME) ||
+                                                fieldDefinition.getType().getTypeName().getName().equals(SCALA_TIME_NAME) ||
+                                                fieldDefinition.getType().getTypeName().getName().equals(SCALA_DATE_TIME_NAME) ||
+                                                fieldDefinition.getType().getTypeName().getName().equals(SCALA_TIMESTAMP_NAME) ||
+                                                fieldDefinition.getType().getTypeName().getName().equals(SCALA_UPLOAD_NAME) ||
+                                                documentManager.getFieldTypeDefinition(fieldDefinition).isEnum()
                                 )
-                        ),
-                fieldDefinitions.stream()
-                        .filter(fieldDefinition ->
-                                fieldDefinition.getType().getTypeName().getName().equals(SCALA_INT_NAME) ||
-                                        fieldDefinition.getType().getTypeName().getName().equals(SCALA_FLOAT_NAME) ||
-                                        fieldDefinition.getType().getTypeName().getName().equals(SCALA_BIG_INTEGER_NAME) ||
-                                        fieldDefinition.getType().getTypeName().getName().equals(SCALA_BIG_DECIMAL_NAME)
-                        )
-                        .flatMap(fieldDefinition ->
-                                Stream.of(
-                                        (FieldDefinition) Function.COUNT.toField(
-                                                        fieldDefinition.getName(),
-                                                        SCALA_INT_NAME,
-                                                        fieldDefinition.getTypeNameWithoutID(),
-                                                        fieldDefinition.getType().hasList()
-                                                )
-                                                .setDescription(String.format(descriptionConfig.getCountField(), Optional.ofNullable(fieldDefinition.getDescription()).orElseGet(fieldDefinition::getName))),
-                                        Function.SUM.toField(
-                                                        fieldDefinition.getName(),
-                                                        fieldDefinition.getTypeNameWithoutID(),
-                                                        fieldDefinition.getTypeNameWithoutID(),
-                                                        fieldDefinition.getType().hasList()
-                                                )
-                                                .setDescription(String.format(descriptionConfig.getSumField(), Optional.ofNullable(fieldDefinition.getDescription()).orElseGet(fieldDefinition::getName))),
-                                        Function.AVG.toField(
-                                                        fieldDefinition.getName(),
-                                                        fieldDefinition.getTypeNameWithoutID(),
-                                                        fieldDefinition.getTypeNameWithoutID(),
-                                                        fieldDefinition.getType().hasList()
-                                                )
-                                                .setDescription(String.format(descriptionConfig.getAvgField(), Optional.ofNullable(fieldDefinition.getDescription()).orElseGet(fieldDefinition::getName))),
-                                        Function.MAX.toField(
-                                                        fieldDefinition.getName(),
-                                                        fieldDefinition.getTypeNameWithoutID(),
-                                                        fieldDefinition.getTypeNameWithoutID(),
-                                                        fieldDefinition.getType().hasList()
-                                                )
-                                                .setDescription(String.format(descriptionConfig.getMaxField(), Optional.ofNullable(fieldDefinition.getDescription()).orElseGet(fieldDefinition::getName))),
-                                        Function.MIN.toField(
-                                                        fieldDefinition.getName(),
-                                                        fieldDefinition.getTypeNameWithoutID(),
-                                                        fieldDefinition.getTypeNameWithoutID(),
-                                                        fieldDefinition.getType().hasList()
-                                                )
-                                                .setDescription(String.format(descriptionConfig.getMinField(), Optional.ofNullable(fieldDefinition.getDescription()).orElseGet(fieldDefinition::getName)))
+                                .flatMap(fieldDefinition ->
+                                        Stream.of(
+                                                Function.COUNT.toField(
+                                                                fieldDefinition.getName(),
+                                                                SCALA_INT_NAME,
+                                                                fieldDefinition.getType().getTypeName().getName(),
+                                                                fieldDefinition.getType().hasList()
+                                                        )
+                                                        .setDescription(
+                                                                String.format(
+                                                                        descriptionConfig.getCountField(),
+                                                                        fieldDefinition.getType().getTypeName().getName().equals(SCALA_ID_NAME) ?
+                                                                                Optional.ofNullable(objectType.getDescription()).orElseGet(objectType::getName) :
+                                                                                Optional.ofNullable(fieldDefinition.getDescription()).orElseGet(fieldDefinition::getName)
+                                                                )
+                                                        ),
+                                                Function.MAX.toField(
+                                                                fieldDefinition.getName(),
+                                                                fieldDefinition.getTypeNameWithoutID(),
+                                                                fieldDefinition.getTypeNameWithoutID(),
+                                                                fieldDefinition.getType().hasList()
+                                                        )
+                                                        .setDescription(String.format(descriptionConfig.getMaxField(), Optional.ofNullable(fieldDefinition.getDescription()).orElseGet(fieldDefinition::getName))),
+                                                Function.MIN.toField(
+                                                                fieldDefinition.getName(),
+                                                                fieldDefinition.getTypeNameWithoutID(),
+                                                                fieldDefinition.getTypeNameWithoutID(),
+                                                                fieldDefinition.getType().hasList()
+                                                        )
+                                                        .setDescription(String.format(descriptionConfig.getMinField(), Optional.ofNullable(fieldDefinition.getDescription()).orElseGet(fieldDefinition::getName)))
+                                        )
+                                ),
+                        fieldDefinitions.stream()
+                                .filter(fieldDefinition ->
+                                        fieldDefinition.getType().getTypeName().getName().equals(SCALA_INT_NAME) ||
+                                                fieldDefinition.getType().getTypeName().getName().equals(SCALA_FLOAT_NAME) ||
+                                                fieldDefinition.getType().getTypeName().getName().equals(SCALA_BIG_INTEGER_NAME) ||
+                                                fieldDefinition.getType().getTypeName().getName().equals(SCALA_BIG_DECIMAL_NAME)
                                 )
-                        )
-        ).collect(Collectors.toList());
+                                .flatMap(fieldDefinition ->
+                                        Stream.of(
+                                                (FieldDefinition) Function.COUNT.toField(
+                                                                fieldDefinition.getName(),
+                                                                SCALA_INT_NAME,
+                                                                fieldDefinition.getTypeNameWithoutID(),
+                                                                fieldDefinition.getType().hasList()
+                                                        )
+                                                        .setDescription(String.format(descriptionConfig.getCountField(), Optional.ofNullable(fieldDefinition.getDescription()).orElseGet(fieldDefinition::getName))),
+                                                Function.SUM.toField(
+                                                                fieldDefinition.getName(),
+                                                                fieldDefinition.getTypeNameWithoutID(),
+                                                                fieldDefinition.getTypeNameWithoutID(),
+                                                                fieldDefinition.getType().hasList()
+                                                        )
+                                                        .setDescription(String.format(descriptionConfig.getSumField(), Optional.ofNullable(fieldDefinition.getDescription()).orElseGet(fieldDefinition::getName))),
+                                                Function.AVG.toField(
+                                                                fieldDefinition.getName(),
+                                                                fieldDefinition.getTypeNameWithoutID(),
+                                                                fieldDefinition.getTypeNameWithoutID(),
+                                                                fieldDefinition.getType().hasList()
+                                                        )
+                                                        .setDescription(String.format(descriptionConfig.getAvgField(), Optional.ofNullable(fieldDefinition.getDescription()).orElseGet(fieldDefinition::getName))),
+                                                Function.MAX.toField(
+                                                                fieldDefinition.getName(),
+                                                                fieldDefinition.getTypeNameWithoutID(),
+                                                                fieldDefinition.getTypeNameWithoutID(),
+                                                                fieldDefinition.getType().hasList()
+                                                        )
+                                                        .setDescription(String.format(descriptionConfig.getMaxField(), Optional.ofNullable(fieldDefinition.getDescription()).orElseGet(fieldDefinition::getName))),
+                                                Function.MIN.toField(
+                                                                fieldDefinition.getName(),
+                                                                fieldDefinition.getTypeNameWithoutID(),
+                                                                fieldDefinition.getTypeNameWithoutID(),
+                                                                fieldDefinition.getType().hasList()
+                                                        )
+                                                        .setDescription(String.format(descriptionConfig.getMinField(), Optional.ofNullable(fieldDefinition.getDescription()).orElseGet(fieldDefinition::getName)))
+                                        )
+                                )
+                )
+                .collect(Collectors.toList());
     }
 
     public FieldDefinition buildListObjectConnectionField(FieldDefinition fieldDefinition) {
@@ -1481,7 +1492,8 @@ public class DocumentBuilder {
                     )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
-                                    .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
+                                    .addArgument(
+                                            DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                             new ArrayValueWithVariable(
                                                     Stream
                                                             .concat(
@@ -1517,7 +1529,8 @@ public class DocumentBuilder {
                     )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
-                                    .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
+                                    .addArgument(
+                                            DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                             new ArrayValueWithVariable(
                                                     Stream
                                                             .concat(
@@ -1551,7 +1564,8 @@ public class DocumentBuilder {
                     )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
-                                    .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
+                                    .addArgument(
+                                            DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                             new ArrayValueWithVariable(
                                                     Stream
                                                             .concat(
@@ -1603,7 +1617,8 @@ public class DocumentBuilder {
                     )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
-                                    .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
+                                    .addArgument(
+                                            DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                             new ArrayValueWithVariable(
                                                     Stream
                                                             .concat(
@@ -1650,7 +1665,8 @@ public class DocumentBuilder {
                     )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
-                                    .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
+                                    .addArgument(
+                                            DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                             new ArrayValueWithVariable(
                                                     Stream
                                                             .concat(
@@ -1691,7 +1707,8 @@ public class DocumentBuilder {
                     )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
-                                    .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
+                                    .addArgument(
+                                            DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                             new ArrayValueWithVariable(
                                                     Stream
                                                             .concat(
@@ -1743,7 +1760,8 @@ public class DocumentBuilder {
                     )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
-                                    .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
+                                    .addArgument(
+                                            DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                             new ArrayValueWithVariable(
                                                     Stream
                                                             .concat(
@@ -1790,7 +1808,8 @@ public class DocumentBuilder {
                     )
                     .addDirective(
                             new Directive(DIRECTIVE_IMPLEMENTS_NAME)
-                                    .addArgument(DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
+                                    .addArgument(
+                                            DIRECTIVE_IMPLEMENTS_ARGUMENT_INTERFACES_NAME,
                                             new ArrayValueWithVariable(
                                                     Stream
                                                             .concat(
