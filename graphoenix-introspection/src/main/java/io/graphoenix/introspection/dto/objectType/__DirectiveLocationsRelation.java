@@ -9,56 +9,149 @@ import java.lang.Integer;
 import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Id;
 import org.eclipse.microprofile.graphql.Type;
 
+/**
+ * Relationship Object between __Directive and locations
+ */
 @Type
 @CompiledJson
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Relationship Object between __Directive and locations")
 public class __DirectiveLocationsRelation implements Meta {
+  /**
+   * ID
+   */
   @Id
+  @Description("ID")
   private String id;
 
+  /**
+   * __Directive Reference
+   */
+  @Description("__Directive Reference")
   private String __directiveRef;
 
+  /**
+   * __Directive
+   */
+  @Description("__Directive")
   private __Directive __directive;
 
+  /**
+   * locations Reference
+   */
+  @Description("locations Reference")
   private __DirectiveLocation locationsRef;
 
+  /**
+   * Is Deprecated
+   */
+  @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private Integer version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private Integer realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private String createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private LocalDateTime createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private String updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private LocalDateTime updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private String createGroupId;
 
+  /**
+   * Type Name
+   */
+  @Description("Type Name")
   private String __typename = "__DirectiveLocationsRelation";
 
+  /**
+   * Count of Relationship Object between __Directive and locations
+   */
+  @Description("Count of Relationship Object between __Directive and locations")
   private Integer idCount;
 
+  /**
+   * Max of ID
+   */
+  @Description("Max of ID")
   private Integer idMax;
 
+  /**
+   * Min of ID
+   */
+  @Description("Min of ID")
   private Integer idMin;
 
+  /**
+   * Count of __Directive Reference
+   */
+  @Description("Count of __Directive Reference")
   private Integer __directiveRefCount;
 
+  /**
+   * Max of __Directive Reference
+   */
+  @Description("Max of __Directive Reference")
   private String __directiveRefMax;
 
+  /**
+   * Min of __Directive Reference
+   */
+  @Description("Min of __Directive Reference")
   private String __directiveRefMin;
 
+  /**
+   * Count of locations Reference
+   */
+  @Description("Count of locations Reference")
   private Integer locationsRefCount;
 
+  /**
+   * Max of locations Reference
+   */
+  @Description("Max of locations Reference")
   private __DirectiveLocation locationsRefMax;
 
+  /**
+   * Min of locations Reference
+   */
+  @Description("Min of locations Reference")
   private __DirectiveLocation locationsRefMin;
 
   public String getId() {

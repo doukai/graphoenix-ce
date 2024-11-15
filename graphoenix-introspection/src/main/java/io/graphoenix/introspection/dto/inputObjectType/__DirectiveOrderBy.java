@@ -3,70 +3,195 @@ package io.graphoenix.introspection.dto.inputObjectType;
 import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.enumType.Sort;
 import jakarta.annotation.Generated;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Order Input for __Directive
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Order Input for __Directive")
 public class __DirectiveOrderBy {
+  /**
+   * name
+   */
+  @Description("name")
   private Sort name;
 
+  /**
+   * ofSchema
+   */
+  @Description("ofSchema")
   private __SchemaOrderBy ofSchema;
 
+  /**
+   * description
+   */
+  @Description("description")
   private Sort description;
 
+  /**
+   * locations
+   */
+  @Description("locations")
   private Sort locations;
 
+  /**
+   * args
+   */
+  @Description("args")
   private __InputValueOrderBy args;
 
+  /**
+   * isRepeatable
+   */
+  @Description("isRepeatable")
   private Sort isRepeatable;
 
+  /**
+   * Is Deprecated
+   */
+  @Description("Is Deprecated")
   private Sort isDeprecated;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private Sort version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private Sort realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private Sort createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private Sort createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private Sort updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private Sort updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private Sort createGroupId;
 
+  /**
+   * Type Name
+   */
+  @Description("Type Name")
   private Sort __typename;
 
+  /**
+   * ofSchema Reference
+   */
+  @Description("ofSchema Reference")
   private Sort schemaId;
 
+  /**
+   * Relationship Object between __Directive and locations
+   */
+  @Description("Relationship Object between __Directive and locations")
   private __DirectiveLocationsRelationOrderBy __directiveLocationsRelation;
 
+  /**
+   * Aggregate Field for args
+   */
+  @Description("Aggregate Field for args")
   private __InputValueOrderBy argsAggregate;
 
+  /**
+   * Aggregate Field for Relationship Object between __Directive and locations
+   */
+  @Description("Aggregate Field for Relationship Object between __Directive and locations")
   private __DirectiveLocationsRelationOrderBy __directiveLocationsRelationAggregate;
 
+  /**
+   * Count of __Directive
+   */
+  @Description("Count of __Directive")
   private Sort nameCount;
 
+  /**
+   * Max of name
+   */
+  @Description("Max of name")
   private Sort nameMax;
 
+  /**
+   * Min of name
+   */
+  @Description("Min of name")
   private Sort nameMin;
 
+  /**
+   * Count of description
+   */
+  @Description("Count of description")
   private Sort descriptionCount;
 
+  /**
+   * Max of description
+   */
+  @Description("Max of description")
   private Sort descriptionMax;
 
+  /**
+   * Min of description
+   */
+  @Description("Min of description")
   private Sort descriptionMin;
 
+  /**
+   * Count of ofSchema Reference
+   */
+  @Description("Count of ofSchema Reference")
   private Sort schemaIdCount;
 
+  /**
+   * Sum of ofSchema Reference
+   */
+  @Description("Sum of ofSchema Reference")
   private Sort schemaIdSum;
 
+  /**
+   * Avg of ofSchema Reference
+   */
+  @Description("Avg of ofSchema Reference")
   private Sort schemaIdAvg;
 
+  /**
+   * Max of ofSchema Reference
+   */
+  @Description("Max of ofSchema Reference")
   private Sort schemaIdMax;
 
+  /**
+   * Min of ofSchema Reference
+   */
+  @Description("Min of ofSchema Reference")
   private Sort schemaIdMin;
 
   public Sort getName() {

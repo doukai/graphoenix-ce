@@ -9,44 +9,113 @@ import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
 import org.eclipse.microprofile.graphql.DefaultValue;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Mutation Input for __EnumValue
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Mutation Input for __EnumValue")
 public class __EnumValueInput implements MetaInput {
+  /**
+   * id
+   */
+  @Description("id")
   private String id;
 
+  /**
+   * name
+   */
+  @Description("name")
   private String name;
 
+  /**
+   * ofType
+   */
+  @Description("ofType")
   private __TypeInput ofType;
 
+  /**
+   * description
+   */
+  @Description("description")
   private String description;
 
+  /**
+   * deprecationReason
+   */
+  @Description("deprecationReason")
   private String deprecationReason;
 
+  /**
+   * Is Deprecated
+   */
   @DefaultValue("false")
+  @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private Integer version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private Integer realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private String createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private LocalDateTime createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private String updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private LocalDateTime updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private String createGroupId;
 
+  /**
+   * Type Name
+   */
   @DefaultValue("\"__EnumValue\"")
-  private String __typename = "__EnumValue";
+  @Description("Type Name")
+  private String __typename = "\"__EnumValue\"";
 
+  /**
+   * ofType Reference
+   */
+  @Description("ofType Reference")
   private String ofTypeName;
 
+  /**
+   * Where
+   */
+  @Description("Where")
   private __EnumValueExpression where;
 
   public String getId() {

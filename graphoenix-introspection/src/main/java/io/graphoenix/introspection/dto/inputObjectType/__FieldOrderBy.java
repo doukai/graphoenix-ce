@@ -3,84 +3,237 @@ package io.graphoenix.introspection.dto.inputObjectType;
 import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.enumType.Sort;
 import jakarta.annotation.Generated;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Order Input for __Field
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Order Input for __Field")
 public class __FieldOrderBy {
+  /**
+   * id
+   */
+  @Description("id")
   private Sort id;
 
+  /**
+   * name
+   */
+  @Description("name")
   private Sort name;
 
+  /**
+   * ofType
+   */
+  @Description("ofType")
   private __TypeOrderBy ofType;
 
+  /**
+   * description
+   */
+  @Description("description")
   private Sort description;
 
+  /**
+   * args
+   */
+  @Description("args")
   private __InputValueOrderBy args;
 
+  /**
+   * type
+   */
+  @Description("type")
   private __TypeOrderBy type;
 
+  /**
+   * deprecationReason
+   */
+  @Description("deprecationReason")
   private Sort deprecationReason;
 
+  /**
+   * Is Deprecated
+   */
+  @Description("Is Deprecated")
   private Sort isDeprecated;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private Sort version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private Sort realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private Sort createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private Sort createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private Sort updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private Sort updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private Sort createGroupId;
 
+  /**
+   * Type Name
+   */
+  @Description("Type Name")
   private Sort __typename;
 
+  /**
+   * ofType Reference
+   */
+  @Description("ofType Reference")
   private Sort ofTypeName;
 
+  /**
+   * type Reference
+   */
+  @Description("type Reference")
   private Sort typeName;
 
+  /**
+   * Aggregate Field for args
+   */
+  @Description("Aggregate Field for args")
   private __InputValueOrderBy argsAggregate;
 
+  /**
+   * Count of __Field
+   */
+  @Description("Count of __Field")
   private Sort idCount;
 
+  /**
+   * Max of id
+   */
+  @Description("Max of id")
   private Sort idMax;
 
+  /**
+   * Min of id
+   */
+  @Description("Min of id")
   private Sort idMin;
 
+  /**
+   * Count of name
+   */
+  @Description("Count of name")
   private Sort nameCount;
 
+  /**
+   * Max of name
+   */
+  @Description("Max of name")
   private Sort nameMax;
 
+  /**
+   * Min of name
+   */
+  @Description("Min of name")
   private Sort nameMin;
 
+  /**
+   * Count of description
+   */
+  @Description("Count of description")
   private Sort descriptionCount;
 
+  /**
+   * Max of description
+   */
+  @Description("Max of description")
   private Sort descriptionMax;
 
+  /**
+   * Min of description
+   */
+  @Description("Min of description")
   private Sort descriptionMin;
 
+  /**
+   * Count of deprecationReason
+   */
+  @Description("Count of deprecationReason")
   private Sort deprecationReasonCount;
 
+  /**
+   * Max of deprecationReason
+   */
+  @Description("Max of deprecationReason")
   private Sort deprecationReasonMax;
 
+  /**
+   * Min of deprecationReason
+   */
+  @Description("Min of deprecationReason")
   private Sort deprecationReasonMin;
 
+  /**
+   * Count of ofType Reference
+   */
+  @Description("Count of ofType Reference")
   private Sort ofTypeNameCount;
 
+  /**
+   * Max of ofType Reference
+   */
+  @Description("Max of ofType Reference")
   private Sort ofTypeNameMax;
 
+  /**
+   * Min of ofType Reference
+   */
+  @Description("Min of ofType Reference")
   private Sort ofTypeNameMin;
 
+  /**
+   * Count of type Reference
+   */
+  @Description("Count of type Reference")
   private Sort typeNameCount;
 
+  /**
+   * Max of type Reference
+   */
+  @Description("Max of type Reference")
   private Sort typeNameMax;
 
+  /**
+   * Min of type Reference
+   */
+  @Description("Min of type Reference")
   private Sort typeNameMin;
 
   public Sort getId() {

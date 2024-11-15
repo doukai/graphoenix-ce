@@ -695,11 +695,7 @@ public class DocumentBuilder {
 
     public DirectiveDefinition buildDirectiveDefinition(DirectiveDefinition directiveDefinition) {
         if (directiveDefinition.getPackageName().isEmpty()) {
-            if (directiveDefinition.getDescription() == null) {
-                directiveDefinition.setDescription(DIRECTIVE_PACKAGE_NAME + ":" + packageConfig.getPackageName());
-            } else {
-                directiveDefinition.setDescription(directiveDefinition.getDescription() + " " + DIRECTIVE_PACKAGE_NAME + ":" + packageConfig.getPackageName());
-            }
+            directiveDefinition.addArgument(new InputValue(DIRECTIVE_PACKAGE_NAME).setType(new TypeName(SCALA_STRING_NAME)).setDefaultValue(packageConfig.getPackageName()));
         }
         return directiveDefinition;
     }

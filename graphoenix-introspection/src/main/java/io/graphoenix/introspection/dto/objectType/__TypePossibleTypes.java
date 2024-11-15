@@ -8,58 +8,155 @@ import java.lang.Integer;
 import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Id;
 import org.eclipse.microprofile.graphql.Type;
 
+/**
+ * Relationship Object between __Type and __Type
+ */
 @Type
 @CompiledJson
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Relationship Object between __Type and __Type")
 public class __TypePossibleTypes implements Meta {
+  /**
+   * ID
+   */
   @Id
+  @Description("ID")
   private String id;
 
+  /**
+   * __Type Reference
+   */
+  @Description("__Type Reference")
   private String typeRef;
 
+  /**
+   * __Type
+   */
+  @Description("__Type")
   private __Type type;
 
+  /**
+   * __Type Reference
+   */
+  @Description("__Type Reference")
   private String possibleTypeRef;
 
+  /**
+   * __Type
+   */
+  @Description("__Type")
   private __Type possibleType;
 
+  /**
+   * Is Deprecated
+   */
+  @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private Integer version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private Integer realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private String createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private LocalDateTime createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private String updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private LocalDateTime updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private String createGroupId;
 
+  /**
+   * Type Name
+   */
+  @Description("Type Name")
   private String __typename = "__TypePossibleTypes";
 
+  /**
+   * Count of Relationship Object between __Type and __Type
+   */
+  @Description("Count of Relationship Object between __Type and __Type")
   private Integer idCount;
 
+  /**
+   * Max of ID
+   */
+  @Description("Max of ID")
   private Integer idMax;
 
+  /**
+   * Min of ID
+   */
+  @Description("Min of ID")
   private Integer idMin;
 
+  /**
+   * Count of __Type Reference
+   */
+  @Description("Count of __Type Reference")
   private Integer typeRefCount;
 
+  /**
+   * Max of __Type Reference
+   */
+  @Description("Max of __Type Reference")
   private String typeRefMax;
 
+  /**
+   * Min of __Type Reference
+   */
+  @Description("Min of __Type Reference")
   private String typeRefMin;
 
+  /**
+   * Count of __Type Reference
+   */
+  @Description("Count of __Type Reference")
   private Integer possibleTypeRefCount;
 
+  /**
+   * Max of __Type Reference
+   */
+  @Description("Max of __Type Reference")
   private String possibleTypeRefMax;
 
+  /**
+   * Min of __Type Reference
+   */
+  @Description("Min of __Type Reference")
   private String possibleTypeRefMin;
 
   public String getId() {

@@ -555,19 +555,6 @@ public class FieldDefinition extends AbstractDefinition {
         return hasDirective(DIRECTIVE_DENY_ALL);
     }
 
-    public List<ObjectValueWithVariable> getInvokes() {
-        return Stream.ofNullable(getDirective(DIRECTIVE_INVOKES_NAME))
-                .flatMap(directive ->
-                        directive.getArgumentOrEmpty(DIRECTIVE_INVOKES_METHODS_NAME).stream()
-                                .filter(ValueWithVariable::isArray)
-                                .map(ValueWithVariable::asArray)
-                                .flatMap(arrayValueWithVariable -> arrayValueWithVariable.getValueWithVariables().stream())
-                                .filter(ValueWithVariable::isObject)
-                                .map(ValueWithVariable::asObject)
-                )
-                .collect(Collectors.toList());
-    }
-
     @Override
     public String toString() {
         ST st = stGroupFile.getInstanceOf("fieldDefinitionDefinition");

@@ -6,33 +6,86 @@ import io.graphoenix.core.dto.inputObjectType.MetaExpression;
 import io.graphoenix.core.dto.inputObjectType.StringExpression;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Query Expression Input for NamedStruct
+ */
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Query Expression Input for NamedStruct")
 public interface NamedStructExpression extends MetaExpression {
+  /**
+   * name
+   */
+  @Description("name")
   StringExpression name = null;
 
+  /**
+   * description
+   */
+  @Description("description")
   StringExpression description = null;
 
+  /**
+   * Include Deprecated
+   */
+  @Description("Include Deprecated")
   Boolean includeDeprecated = false;
 
+  /**
+   * version
+   */
+  @Description("version")
   IntExpression version = null;
 
+  /**
+   * realmId
+   */
+  @Description("realmId")
   IntExpression realmId = null;
 
+  /**
+   * createUserId
+   */
+  @Description("createUserId")
   StringExpression createUserId = null;
 
+  /**
+   * createTime
+   */
+  @Description("createTime")
   StringExpression createTime = null;
 
+  /**
+   * updateUserId
+   */
+  @Description("updateUserId")
   StringExpression updateUserId = null;
 
+  /**
+   * updateTime
+   */
+  @Description("updateTime")
   StringExpression updateTime = null;
 
+  /**
+   * createGroupId
+   */
+  @Description("createGroupId")
   StringExpression createGroupId = null;
 
+  /**
+   * Not
+   */
+  @Description("Not")
   Boolean not = false;
 
+  /**
+   * Condition
+   */
+  @Description("Condition")
   Conditional cond = Conditional.AND;
 
   StringExpression getName();

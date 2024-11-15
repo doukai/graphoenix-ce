@@ -7,34 +7,87 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.eclipse.microprofile.graphql.Description;
 
+/**
+ * Mutation Input for TreeStruct
+ */
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
+@Description("Mutation Input for TreeStruct")
 public @interface TreeStructInput {
+  /**
+   * name
+   */
+  @Description("name")
   String name() default "";
 
+  /**
+   * path
+   */
+  @Description("path")
   String path() default "";
 
+  /**
+   * deep
+   */
+  @Description("deep")
   int deep() default 0;
 
+  /**
+   * parentId
+   */
+  @Description("parentId")
   String parentId() default "";
 
+  /**
+   * Is Deprecated
+   */
+  @Description("Is Deprecated")
   boolean isDeprecated() default false;
 
+  /**
+   * version
+   */
+  @Description("version")
   int version() default 0;
 
+  /**
+   * realmId
+   */
+  @Description("realmId")
   int realmId() default 0;
 
+  /**
+   * createUserId
+   */
+  @Description("createUserId")
   String createUserId() default "";
 
+  /**
+   * createTime
+   */
+  @Description("createTime")
   String createTime() default "";
 
+  /**
+   * updateUserId
+   */
+  @Description("updateUserId")
   String updateUserId() default "";
 
+  /**
+   * updateTime
+   */
+  @Description("updateTime")
   String updateTime() default "";
 
+  /**
+   * createGroupId
+   */
+  @Description("createGroupId")
   String createGroupId() default "";
 
   String $name() default "";

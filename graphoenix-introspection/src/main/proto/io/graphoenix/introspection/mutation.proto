@@ -12,23 +12,26 @@ import "io/graphoenix/introspection/input_objects.proto";
 import "io/graphoenix/introspection/mutation_requests.proto";
 import "io/graphoenix/introspection/mutation_responses.proto";
 
+/**
+* Mutation
+*/
 service MutationService {
-    rpc IntroSchema (MutationIntroSchemaRequest) returns (MutationIntroSchemaResponse);
-    rpc IntroSchemaList (MutationIntroSchemaListRequest) returns (MutationIntroSchemaListResponse);
-    rpc IntroType (MutationIntroTypeRequest) returns (MutationIntroTypeResponse);
-    rpc IntroTypeList (MutationIntroTypeListRequest) returns (MutationIntroTypeListResponse);
-    rpc IntroField (MutationIntroFieldRequest) returns (MutationIntroFieldResponse);
-    rpc IntroFieldList (MutationIntroFieldListRequest) returns (MutationIntroFieldListResponse);
-    rpc IntroInputValue (MutationIntroInputValueRequest) returns (MutationIntroInputValueResponse);
-    rpc IntroInputValueList (MutationIntroInputValueListRequest) returns (MutationIntroInputValueListResponse);
-    rpc IntroEnumValue (MutationIntroEnumValueRequest) returns (MutationIntroEnumValueResponse);
-    rpc IntroEnumValueList (MutationIntroEnumValueListRequest) returns (MutationIntroEnumValueListResponse);
-    rpc IntroDirective (MutationIntroDirectiveRequest) returns (MutationIntroDirectiveResponse);
-    rpc IntroDirectiveList (MutationIntroDirectiveListRequest) returns (MutationIntroDirectiveListResponse);
-    rpc IntroTypeInterfaces (MutationIntroTypeInterfacesRequest) returns (MutationIntroTypeInterfacesResponse);
-    rpc IntroTypeInterfacesList (MutationIntroTypeInterfacesListRequest) returns (MutationIntroTypeInterfacesListResponse);
-    rpc IntroTypePossibleTypes (MutationIntroTypePossibleTypesRequest) returns (MutationIntroTypePossibleTypesResponse);
-    rpc IntroTypePossibleTypesList (MutationIntroTypePossibleTypesListRequest) returns (MutationIntroTypePossibleTypesListResponse);
-    rpc IntroDirectiveLocationsRelation (MutationIntroDirectiveLocationsRelationRequest) returns (MutationIntroDirectiveLocationsRelationResponse);
-    rpc IntroDirectiveLocationsRelationList (MutationIntroDirectiveLocationsRelationListRequest) returns (MutationIntroDirectiveLocationsRelationListResponse);
+    rpc IntroSchema (MutationIntroSchemaRequest) returns (MutationIntroSchemaResponse); /* Mutation Field for __Schema */
+    rpc IntroSchemaList (MutationIntroSchemaListRequest) returns (MutationIntroSchemaListResponse); /* Mutation Field for __Schema List */
+    rpc IntroType (MutationIntroTypeRequest) returns (MutationIntroTypeResponse); /* Mutation Field for __Type */
+    rpc IntroTypeList (MutationIntroTypeListRequest) returns (MutationIntroTypeListResponse); /* Mutation Field for __Type List */
+    rpc IntroField (MutationIntroFieldRequest) returns (MutationIntroFieldResponse); /* Mutation Field for __Field */
+    rpc IntroFieldList (MutationIntroFieldListRequest) returns (MutationIntroFieldListResponse); /* Mutation Field for __Field List */
+    rpc IntroInputValue (MutationIntroInputValueRequest) returns (MutationIntroInputValueResponse); /* Mutation Field for __InputValue */
+    rpc IntroInputValueList (MutationIntroInputValueListRequest) returns (MutationIntroInputValueListResponse); /* Mutation Field for __InputValue List */
+    rpc IntroEnumValue (MutationIntroEnumValueRequest) returns (MutationIntroEnumValueResponse); /* Mutation Field for __EnumValue */
+    rpc IntroEnumValueList (MutationIntroEnumValueListRequest) returns (MutationIntroEnumValueListResponse); /* Mutation Field for __EnumValue List */
+    rpc IntroDirective (MutationIntroDirectiveRequest) returns (MutationIntroDirectiveResponse); /* Mutation Field for __Directive */
+    rpc IntroDirectiveList (MutationIntroDirectiveListRequest) returns (MutationIntroDirectiveListResponse); /* Mutation Field for __Directive List */
+    rpc IntroTypeInterfaces (MutationIntroTypeInterfacesRequest) returns (MutationIntroTypeInterfacesResponse); /* Mutation Field for Relationship Object between __Type and __Type */
+    rpc IntroTypeInterfacesList (MutationIntroTypeInterfacesListRequest) returns (MutationIntroTypeInterfacesListResponse); /* Mutation Field for Relationship Object between __Type and __Type List */
+    rpc IntroTypePossibleTypes (MutationIntroTypePossibleTypesRequest) returns (MutationIntroTypePossibleTypesResponse); /* Mutation Field for Relationship Object between __Type and __Type */
+    rpc IntroTypePossibleTypesList (MutationIntroTypePossibleTypesListRequest) returns (MutationIntroTypePossibleTypesListResponse); /* Mutation Field for Relationship Object between __Type and __Type List */
+    rpc IntroDirectiveLocationsRelation (MutationIntroDirectiveLocationsRelationRequest) returns (MutationIntroDirectiveLocationsRelationResponse); /* Mutation Field for Relationship Object between __Directive and locations */
+    rpc IntroDirectiveLocationsRelationList (MutationIntroDirectiveLocationsRelationListRequest) returns (MutationIntroDirectiveLocationsRelationListResponse); /* Mutation Field for Relationship Object between __Directive and locations List */
 }

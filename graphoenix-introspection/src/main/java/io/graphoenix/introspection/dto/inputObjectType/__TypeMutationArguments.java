@@ -11,62 +11,167 @@ import java.lang.String;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Mutation Arguments for __Type
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Mutation Arguments for __Type")
 public class __TypeMutationArguments implements MetaInput {
+  /**
+   * name
+   */
+  @Description("name")
   private String name;
 
+  /**
+   * ofSchema
+   */
+  @Description("ofSchema")
   private __SchemaInput ofSchema;
 
+  /**
+   * kind
+   */
+  @Description("kind")
   private __TypeKind kind;
 
+  /**
+   * description
+   */
+  @Description("description")
   private String description;
 
+  /**
+   * fields
+   */
+  @Description("fields")
   private Collection<__FieldInput> fields;
 
+  /**
+   * interfaces
+   */
+  @Description("interfaces")
   private Collection<__TypeInput> interfaces;
 
+  /**
+   * possibleTypes
+   */
+  @Description("possibleTypes")
   private Collection<__TypeInput> possibleTypes;
 
+  /**
+   * enumValues
+   */
+  @Description("enumValues")
   private Collection<__EnumValueInput> enumValues;
 
+  /**
+   * inputFields
+   */
+  @Description("inputFields")
   private Collection<__InputValueInput> inputFields;
 
+  /**
+   * ofType
+   */
+  @Description("ofType")
   private __TypeInput ofType;
 
+  /**
+   * Is Deprecated
+   */
   @DefaultValue("false")
+  @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private Integer version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private Integer realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private String createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private LocalDateTime createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private String updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private LocalDateTime updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private String createGroupId;
 
+  /**
+   * Type Name
+   */
   @DefaultValue("\"__Type\"")
-  private String __typename = "__Type";
+  @Description("Type Name")
+  private String __typename = "\"__Type\"";
 
+  /**
+   * ofSchema Reference
+   */
+  @Description("ofSchema Reference")
   private Integer schemaId;
 
+  /**
+   * ofType Reference
+   */
+  @Description("ofType Reference")
   private String ofTypeName;
 
+  /**
+   * Relationship Object between __Type and __Type
+   */
+  @Description("Relationship Object between __Type and __Type")
   private Collection<__TypeInterfacesInput> __typeInterfaces;
 
+  /**
+   * Relationship Object between __Type and __Type
+   */
+  @Description("Relationship Object between __Type and __Type")
   private Collection<__TypePossibleTypesInput> __typePossibleTypes;
 
+  /**
+   * Input
+   */
+  @Description("Input")
   private __TypeInput input;
 
+  /**
+   * Where
+   */
+  @Description("Where")
   private __TypeExpression where;
 
   public String getName() {

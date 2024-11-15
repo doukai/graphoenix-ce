@@ -6,17 +6,34 @@ import io.graphoenix.core.dto.enumType.__DirectiveLocation;
 import jakarta.annotation.Generated;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Query Expression Input for __DirectiveLocation
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Query Expression Input for __DirectiveLocation")
 public class __DirectiveLocationExpression {
+  /**
+   * Operators
+   */
   @DefaultValue("EQ")
+  @Description("Operators")
   private Operator opr = Operator.EQ;
 
+  /**
+   * Value
+   */
+  @Description("Value")
   private __DirectiveLocation val;
 
+  /**
+   * Array
+   */
+  @Description("Array")
   private Collection<__DirectiveLocation> arr;
 
   public Operator getOpr() {

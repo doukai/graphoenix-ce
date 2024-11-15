@@ -11,65 +11,174 @@ import java.lang.Boolean;
 import java.lang.Override;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Query Expression Input for __Type
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Query Expression Input for __Type")
 public class __TypeExpression implements MetaExpression {
+  /**
+   * name
+   */
+  @Description("name")
   private StringExpression name;
 
+  /**
+   * ofSchema
+   */
+  @Description("ofSchema")
   private __SchemaExpression ofSchema;
 
+  /**
+   * kind
+   */
+  @Description("kind")
   private __TypeKindExpression kind;
 
+  /**
+   * description
+   */
+  @Description("description")
   private StringExpression description;
 
+  /**
+   * fields
+   */
+  @Description("fields")
   private __FieldExpression fields;
 
+  /**
+   * interfaces
+   */
+  @Description("interfaces")
   private __TypeExpression interfaces;
 
+  /**
+   * possibleTypes
+   */
+  @Description("possibleTypes")
   private __TypeExpression possibleTypes;
 
+  /**
+   * enumValues
+   */
+  @Description("enumValues")
   private __EnumValueExpression enumValues;
 
+  /**
+   * inputFields
+   */
+  @Description("inputFields")
   private __InputValueExpression inputFields;
 
+  /**
+   * ofType
+   */
+  @Description("ofType")
   private __TypeExpression ofType;
 
+  /**
+   * Include Deprecated
+   */
   @DefaultValue("false")
+  @Description("Include Deprecated")
   private Boolean includeDeprecated = false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private IntExpression version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private IntExpression realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private StringExpression createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private StringExpression createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private StringExpression updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private StringExpression updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private StringExpression createGroupId;
 
+  /**
+   * Type Name
+   */
+  @Description("Type Name")
   private StringExpression __typename;
 
+  /**
+   * ofSchema Reference
+   */
+  @Description("ofSchema Reference")
   private IntExpression schemaId;
 
+  /**
+   * ofType Reference
+   */
+  @Description("ofType Reference")
   private StringExpression ofTypeName;
 
+  /**
+   * Relationship Object between __Type and __Type
+   */
+  @Description("Relationship Object between __Type and __Type")
   private __TypeInterfacesExpression __typeInterfaces;
 
+  /**
+   * Relationship Object between __Type and __Type
+   */
+  @Description("Relationship Object between __Type and __Type")
   private __TypePossibleTypesExpression __typePossibleTypes;
 
+  /**
+   * Not
+   */
   @DefaultValue("false")
+  @Description("Not")
   private Boolean not = false;
 
+  /**
+   * Condition
+   */
   @DefaultValue("AND")
+  @Description("Condition")
   private Conditional cond = Conditional.AND;
 
+  /**
+   * Expressions
+   */
+  @Description("Expressions")
   private Collection<__TypeExpression> exs;
 
   public StringExpression getName() {

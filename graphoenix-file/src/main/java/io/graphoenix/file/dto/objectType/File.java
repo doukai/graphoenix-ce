@@ -51,52 +51,148 @@ public class File implements Meta {
   @Description("URL")
   private String url;
 
+  /**
+   * Is Deprecated
+   */
+  @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private Integer version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private Integer realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private String createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private LocalDateTime createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private String updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private LocalDateTime updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private String createGroupId;
 
+  /**
+   * Type Name
+   */
+  @Description("Type Name")
   private String __typename = "File";
 
+  /**
+   * Count of 文件
+   */
+  @Description("Count of 文件")
   private Integer idCount;
 
+  /**
+   * Max of ID
+   */
+  @Description("Max of ID")
   private String idMax;
 
+  /**
+   * Min of ID
+   */
+  @Description("Min of ID")
   private String idMin;
 
+  /**
+   * Count of 文件名
+   */
+  @Description("Count of 文件名")
   private Integer nameCount;
 
+  /**
+   * Max of 文件名
+   */
+  @Description("Max of 文件名")
   private String nameMax;
 
+  /**
+   * Min of 文件名
+   */
+  @Description("Min of 文件名")
   private String nameMin;
 
+  /**
+   * Count of 类型
+   */
+  @Description("Count of 类型")
   private Integer contentTypeCount;
 
+  /**
+   * Max of 类型
+   */
+  @Description("Max of 类型")
   private String contentTypeMax;
 
+  /**
+   * Min of 类型
+   */
+  @Description("Min of 类型")
   private String contentTypeMin;
 
+  /**
+   * Count of 内容
+   */
+  @Description("Count of 内容")
   private Integer contentCount;
 
+  /**
+   * Max of 内容
+   */
+  @Description("Max of 内容")
   private String contentMax;
 
+  /**
+   * Min of 内容
+   */
+  @Description("Min of 内容")
   private String contentMin;
 
+  /**
+   * Count of URL
+   */
+  @Description("Count of URL")
   private Integer urlCount;
 
+  /**
+   * Max of URL
+   */
+  @Description("Max of URL")
   private String urlMax;
 
+  /**
+   * Min of URL
+   */
+  @Description("Min of URL")
   private String urlMin;
 
   public String getId() {

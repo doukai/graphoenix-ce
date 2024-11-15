@@ -10,252 +10,285 @@ import "io/graphoenix/core/enums.proto";
 import "io/graphoenix/core/input_objects.proto";
 import "google/protobuf/timestamp.proto";
 
+/**
+* Query Expression Input for 文件
+*/
 message FileExpression {
-    io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression name = 2;
-    io.graphoenix.core.StringExpression content_type = 3;
-    io.graphoenix.core.StringExpression content = 4;
-    io.graphoenix.core.StringExpression url = 5;
-    bool include_deprecated = 6;
-    io.graphoenix.core.IntExpression version = 7;
-    io.graphoenix.core.IntExpression realm_id = 8;
-    io.graphoenix.core.StringExpression create_user_id = 9;
-    io.graphoenix.core.StringExpression create_time = 10;
-    io.graphoenix.core.StringExpression update_user_id = 11;
-    io.graphoenix.core.StringExpression update_time = 12;
-    io.graphoenix.core.StringExpression create_group_id = 13;
-    io.graphoenix.core.StringExpression intro_typename = 14;
-    bool not = 15;
-    io.graphoenix.core.Conditional cond = 16;
-    repeated FileExpression exs = 17;
+    io.graphoenix.core.StringExpression id = 1; /* ID */
+    io.graphoenix.core.StringExpression name = 2; /* 文件名 */
+    io.graphoenix.core.StringExpression content_type = 3; /* 类型 */
+    io.graphoenix.core.StringExpression content = 4; /* 内容 */
+    io.graphoenix.core.StringExpression url = 5; /* URL */
+    bool include_deprecated = 6; /* Include Deprecated */
+    io.graphoenix.core.IntExpression version = 7; /* Version */
+    io.graphoenix.core.IntExpression realm_id = 8; /* Realm ID */
+    io.graphoenix.core.StringExpression create_user_id = 9; /* Create User ID */
+    io.graphoenix.core.StringExpression create_time = 10; /* Create Time */
+    io.graphoenix.core.StringExpression update_user_id = 11; /* Update User ID */
+    io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
+    io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
+    io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
+    bool not = 15; /* Not */
+    io.graphoenix.core.Conditional cond = 16; /* Condition */
+    repeated FileExpression exs = 17; /* Expressions */
 }
+/**
+* Mutation Input for 文件
+*/
 message FileInput {
-    string id = 1;
-    string name = 2;
-    string content_type = 3;
-    string content = 4;
-    string url = 5;
-    bool is_deprecated = 6;
-    int32 version = 7;
-    int32 realm_id = 8;
-    string create_user_id = 9;
-    google.protobuf.Timestamp create_time = 10;
-    string update_user_id = 11;
-    google.protobuf.Timestamp update_time = 12;
-    string create_group_id = 13;
-    string intro_typename = 14;
-    FileExpression where = 15;
+    string id = 1; /* ID */
+    string name = 2; /* 文件名 */
+    string content_type = 3; /* 类型 */
+    string content = 4; /* 内容 */
+    string url = 5; /* URL */
+    bool is_deprecated = 6; /* Is Deprecated */
+    int32 version = 7; /* Version */
+    int32 realm_id = 8; /* Realm ID */
+    string create_user_id = 9; /* Create User ID */
+    google.protobuf.Timestamp create_time = 10; /* Create Time */
+    string update_user_id = 11; /* Update User ID */
+    google.protobuf.Timestamp update_time = 12; /* Update Time */
+    string create_group_id = 13; /* Create Group ID */
+    string intro_typename = 14; /* Type Name */
+    FileExpression where = 15; /* Where */
 }
+/**
+* Order Input for 文件
+*/
 message FileOrderBy {
-    io.graphoenix.core.Sort id = 1;
-    io.graphoenix.core.Sort name = 2;
-    io.graphoenix.core.Sort content_type = 3;
-    io.graphoenix.core.Sort content = 4;
-    io.graphoenix.core.Sort url = 5;
-    io.graphoenix.core.Sort is_deprecated = 6;
-    io.graphoenix.core.Sort version = 7;
-    io.graphoenix.core.Sort realm_id = 8;
-    io.graphoenix.core.Sort create_user_id = 9;
-    io.graphoenix.core.Sort create_time = 10;
-    io.graphoenix.core.Sort update_user_id = 11;
-    io.graphoenix.core.Sort update_time = 12;
-    io.graphoenix.core.Sort create_group_id = 13;
-    io.graphoenix.core.Sort intro_typename = 14;
-    io.graphoenix.core.Sort id_count = 15;
-    io.graphoenix.core.Sort id_max = 16;
-    io.graphoenix.core.Sort id_min = 17;
-    io.graphoenix.core.Sort name_count = 18;
-    io.graphoenix.core.Sort name_max = 19;
-    io.graphoenix.core.Sort name_min = 20;
-    io.graphoenix.core.Sort content_type_count = 21;
-    io.graphoenix.core.Sort content_type_max = 22;
-    io.graphoenix.core.Sort content_type_min = 23;
-    io.graphoenix.core.Sort content_count = 24;
-    io.graphoenix.core.Sort content_max = 25;
-    io.graphoenix.core.Sort content_min = 26;
-    io.graphoenix.core.Sort url_count = 27;
-    io.graphoenix.core.Sort url_max = 28;
-    io.graphoenix.core.Sort url_min = 29;
+    io.graphoenix.core.Sort id = 1; /* ID */
+    io.graphoenix.core.Sort name = 2; /* 文件名 */
+    io.graphoenix.core.Sort content_type = 3; /* 类型 */
+    io.graphoenix.core.Sort content = 4; /* 内容 */
+    io.graphoenix.core.Sort url = 5; /* URL */
+    io.graphoenix.core.Sort is_deprecated = 6; /* Is Deprecated */
+    io.graphoenix.core.Sort version = 7; /* Version */
+    io.graphoenix.core.Sort realm_id = 8; /* Realm ID */
+    io.graphoenix.core.Sort create_user_id = 9; /* Create User ID */
+    io.graphoenix.core.Sort create_time = 10; /* Create Time */
+    io.graphoenix.core.Sort update_user_id = 11; /* Update User ID */
+    io.graphoenix.core.Sort update_time = 12; /* Update Time */
+    io.graphoenix.core.Sort create_group_id = 13; /* Create Group ID */
+    io.graphoenix.core.Sort intro_typename = 14; /* Type Name */
+    io.graphoenix.core.Sort id_count = 15; /* Count of 文件 */
+    io.graphoenix.core.Sort id_max = 16; /* Max of ID */
+    io.graphoenix.core.Sort id_min = 17; /* Min of ID */
+    io.graphoenix.core.Sort name_count = 18; /* Count of 文件名 */
+    io.graphoenix.core.Sort name_max = 19; /* Max of 文件名 */
+    io.graphoenix.core.Sort name_min = 20; /* Min of 文件名 */
+    io.graphoenix.core.Sort content_type_count = 21; /* Count of 类型 */
+    io.graphoenix.core.Sort content_type_max = 22; /* Max of 类型 */
+    io.graphoenix.core.Sort content_type_min = 23; /* Min of 类型 */
+    io.graphoenix.core.Sort content_count = 24; /* Count of 内容 */
+    io.graphoenix.core.Sort content_max = 25; /* Max of 内容 */
+    io.graphoenix.core.Sort content_min = 26; /* Min of 内容 */
+    io.graphoenix.core.Sort url_count = 27; /* Count of URL */
+    io.graphoenix.core.Sort url_max = 28; /* Max of URL */
+    io.graphoenix.core.Sort url_min = 29; /* Min of URL */
 }
+/**
+* Query Arguments for 文件
+*/
 message FileQueryArguments {
-    io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression name = 2;
-    io.graphoenix.core.StringExpression content_type = 3;
-    io.graphoenix.core.StringExpression content = 4;
-    io.graphoenix.core.StringExpression url = 5;
-    bool include_deprecated = 6;
-    io.graphoenix.core.IntExpression version = 7;
-    io.graphoenix.core.IntExpression realm_id = 8;
-    io.graphoenix.core.StringExpression create_user_id = 9;
-    io.graphoenix.core.StringExpression create_time = 10;
-    io.graphoenix.core.StringExpression update_user_id = 11;
-    io.graphoenix.core.StringExpression update_time = 12;
-    io.graphoenix.core.StringExpression create_group_id = 13;
-    io.graphoenix.core.StringExpression intro_typename = 14;
-    repeated string group_by = 15;
-    bool not = 16;
-    io.graphoenix.core.Conditional cond = 17;
-    repeated FileExpression exs = 18;
+    io.graphoenix.core.StringExpression id = 1; /* ID */
+    io.graphoenix.core.StringExpression name = 2; /* 文件名 */
+    io.graphoenix.core.StringExpression content_type = 3; /* 类型 */
+    io.graphoenix.core.StringExpression content = 4; /* 内容 */
+    io.graphoenix.core.StringExpression url = 5; /* URL */
+    bool include_deprecated = 6; /* Include Deprecated */
+    io.graphoenix.core.IntExpression version = 7; /* Version */
+    io.graphoenix.core.IntExpression realm_id = 8; /* Realm ID */
+    io.graphoenix.core.StringExpression create_user_id = 9; /* Create User ID */
+    io.graphoenix.core.StringExpression create_time = 10; /* Create Time */
+    io.graphoenix.core.StringExpression update_user_id = 11; /* Update User ID */
+    io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
+    io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
+    io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
+    repeated string group_by = 15; /* Group By */
+    bool not = 16; /* Not */
+    io.graphoenix.core.Conditional cond = 17; /* Condition */
+    repeated FileExpression exs = 18; /* Expressions */
 }
+/**
+* Query Arguments for 文件 List
+*/
 message FileListQueryArguments {
-    io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression name = 2;
-    io.graphoenix.core.StringExpression content_type = 3;
-    io.graphoenix.core.StringExpression content = 4;
-    io.graphoenix.core.StringExpression url = 5;
-    bool include_deprecated = 6;
-    io.graphoenix.core.IntExpression version = 7;
-    io.graphoenix.core.IntExpression realm_id = 8;
-    io.graphoenix.core.StringExpression create_user_id = 9;
-    io.graphoenix.core.StringExpression create_time = 10;
-    io.graphoenix.core.StringExpression update_user_id = 11;
-    io.graphoenix.core.StringExpression update_time = 12;
-    io.graphoenix.core.StringExpression create_group_id = 13;
-    io.graphoenix.core.StringExpression intro_typename = 14;
-    FileOrderBy order_by = 15;
-    repeated string group_by = 16;
-    bool not = 17;
-    io.graphoenix.core.Conditional cond = 18;
-    repeated FileExpression exs = 19;
-    int32 first = 20;
-    int32 last = 21;
-    int32 offset = 22;
-    string after = 23;
-    string before = 24;
+    io.graphoenix.core.StringExpression id = 1; /* ID */
+    io.graphoenix.core.StringExpression name = 2; /* 文件名 */
+    io.graphoenix.core.StringExpression content_type = 3; /* 类型 */
+    io.graphoenix.core.StringExpression content = 4; /* 内容 */
+    io.graphoenix.core.StringExpression url = 5; /* URL */
+    bool include_deprecated = 6; /* Include Deprecated */
+    io.graphoenix.core.IntExpression version = 7; /* Version */
+    io.graphoenix.core.IntExpression realm_id = 8; /* Realm ID */
+    io.graphoenix.core.StringExpression create_user_id = 9; /* Create User ID */
+    io.graphoenix.core.StringExpression create_time = 10; /* Create Time */
+    io.graphoenix.core.StringExpression update_user_id = 11; /* Update User ID */
+    io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
+    io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
+    io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
+    FileOrderBy order_by = 15; /* Order By */
+    repeated string group_by = 16; /* Group By */
+    bool not = 17; /* Not */
+    io.graphoenix.core.Conditional cond = 18; /* Condition */
+    repeated FileExpression exs = 19; /* Expressions */
+    int32 first = 20; /* First */
+    int32 last = 21; /* Last */
+    int32 offset = 22; /* Offset */
+    string after = 23; /* After */
+    string before = 24; /* Before */
 }
+/**
+* Query Arguments for 文件 Connection
+*/
 message FileConnectionQueryArguments {
-    io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression name = 2;
-    io.graphoenix.core.StringExpression content_type = 3;
-    io.graphoenix.core.StringExpression content = 4;
-    io.graphoenix.core.StringExpression url = 5;
-    bool include_deprecated = 6;
-    io.graphoenix.core.IntExpression version = 7;
-    io.graphoenix.core.IntExpression realm_id = 8;
-    io.graphoenix.core.StringExpression create_user_id = 9;
-    io.graphoenix.core.StringExpression create_time = 10;
-    io.graphoenix.core.StringExpression update_user_id = 11;
-    io.graphoenix.core.StringExpression update_time = 12;
-    io.graphoenix.core.StringExpression create_group_id = 13;
-    io.graphoenix.core.StringExpression intro_typename = 14;
-    FileOrderBy order_by = 15;
-    repeated string group_by = 16;
-    bool not = 17;
-    io.graphoenix.core.Conditional cond = 18;
-    repeated FileExpression exs = 19;
-    int32 first = 20;
-    int32 last = 21;
-    int32 offset = 22;
-    string after = 23;
-    string before = 24;
+    io.graphoenix.core.StringExpression id = 1; /* ID */
+    io.graphoenix.core.StringExpression name = 2; /* 文件名 */
+    io.graphoenix.core.StringExpression content_type = 3; /* 类型 */
+    io.graphoenix.core.StringExpression content = 4; /* 内容 */
+    io.graphoenix.core.StringExpression url = 5; /* URL */
+    bool include_deprecated = 6; /* Include Deprecated */
+    io.graphoenix.core.IntExpression version = 7; /* Version */
+    io.graphoenix.core.IntExpression realm_id = 8; /* Realm ID */
+    io.graphoenix.core.StringExpression create_user_id = 9; /* Create User ID */
+    io.graphoenix.core.StringExpression create_time = 10; /* Create Time */
+    io.graphoenix.core.StringExpression update_user_id = 11; /* Update User ID */
+    io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
+    io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
+    io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
+    FileOrderBy order_by = 15; /* Order By */
+    repeated string group_by = 16; /* Group By */
+    bool not = 17; /* Not */
+    io.graphoenix.core.Conditional cond = 18; /* Condition */
+    repeated FileExpression exs = 19; /* Expressions */
+    int32 first = 20; /* First */
+    int32 last = 21; /* Last */
+    int32 offset = 22; /* Offset */
+    string after = 23; /* After */
+    string before = 24; /* Before */
 }
+/**
+* Mutation Arguments for 文件
+*/
 message FileMutationArguments {
-    string id = 1;
-    string name = 2;
-    string content_type = 3;
-    string content = 4;
-    string url = 5;
-    bool is_deprecated = 6;
-    int32 version = 7;
-    int32 realm_id = 8;
-    string create_user_id = 9;
-    google.protobuf.Timestamp create_time = 10;
-    string update_user_id = 11;
-    google.protobuf.Timestamp update_time = 12;
-    string create_group_id = 13;
-    string intro_typename = 14;
-    FileInput input = 15;
-    FileExpression where = 16;
+    string id = 1; /* ID */
+    string name = 2; /* 文件名 */
+    string content_type = 3; /* 类型 */
+    string content = 4; /* 内容 */
+    string url = 5; /* URL */
+    bool is_deprecated = 6; /* Is Deprecated */
+    int32 version = 7; /* Version */
+    int32 realm_id = 8; /* Realm ID */
+    string create_user_id = 9; /* Create User ID */
+    google.protobuf.Timestamp create_time = 10; /* Create Time */
+    string update_user_id = 11; /* Update User ID */
+    google.protobuf.Timestamp update_time = 12; /* Update Time */
+    string create_group_id = 13; /* Create Group ID */
+    string intro_typename = 14; /* Type Name */
+    FileInput input = 15; /* Input */
+    FileExpression where = 16; /* Where */
 }
+/**
+* Mutation Arguments for 文件 List
+*/
 message FileListMutationArguments {
-    string id = 1;
-    string name = 2;
-    string content_type = 3;
-    string content = 4;
-    string url = 5;
-    bool is_deprecated = 6;
-    int32 version = 7;
-    int32 realm_id = 8;
-    string create_user_id = 9;
-    google.protobuf.Timestamp create_time = 10;
-    string update_user_id = 11;
-    google.protobuf.Timestamp update_time = 12;
-    string create_group_id = 13;
-    string intro_typename = 14;
-    repeated FileInput list = 15;
-    FileExpression where = 16;
+    string id = 1; /* ID */
+    string name = 2; /* 文件名 */
+    string content_type = 3; /* 类型 */
+    string content = 4; /* 内容 */
+    string url = 5; /* URL */
+    bool is_deprecated = 6; /* Is Deprecated */
+    int32 version = 7; /* Version */
+    int32 realm_id = 8; /* Realm ID */
+    string create_user_id = 9; /* Create User ID */
+    google.protobuf.Timestamp create_time = 10; /* Create Time */
+    string update_user_id = 11; /* Update User ID */
+    google.protobuf.Timestamp update_time = 12; /* Update Time */
+    string create_group_id = 13; /* Create Group ID */
+    string intro_typename = 14; /* Type Name */
+    repeated FileInput list = 15; /* Input List */
+    FileExpression where = 16; /* Where */
 }
+/**
+* Subscription Arguments for 文件
+*/
 message FileSubscriptionArguments {
-    io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression name = 2;
-    io.graphoenix.core.StringExpression content_type = 3;
-    io.graphoenix.core.StringExpression content = 4;
-    io.graphoenix.core.StringExpression url = 5;
-    bool include_deprecated = 6;
-    io.graphoenix.core.IntExpression version = 7;
-    io.graphoenix.core.IntExpression realm_id = 8;
-    io.graphoenix.core.StringExpression create_user_id = 9;
-    io.graphoenix.core.StringExpression create_time = 10;
-    io.graphoenix.core.StringExpression update_user_id = 11;
-    io.graphoenix.core.StringExpression update_time = 12;
-    io.graphoenix.core.StringExpression create_group_id = 13;
-    io.graphoenix.core.StringExpression intro_typename = 14;
-    repeated string group_by = 15;
-    bool not = 16;
-    io.graphoenix.core.Conditional cond = 17;
-    repeated FileExpression exs = 18;
+    io.graphoenix.core.StringExpression id = 1; /* ID */
+    io.graphoenix.core.StringExpression name = 2; /* 文件名 */
+    io.graphoenix.core.StringExpression content_type = 3; /* 类型 */
+    io.graphoenix.core.StringExpression content = 4; /* 内容 */
+    io.graphoenix.core.StringExpression url = 5; /* URL */
+    bool include_deprecated = 6; /* Include Deprecated */
+    io.graphoenix.core.IntExpression version = 7; /* Version */
+    io.graphoenix.core.IntExpression realm_id = 8; /* Realm ID */
+    io.graphoenix.core.StringExpression create_user_id = 9; /* Create User ID */
+    io.graphoenix.core.StringExpression create_time = 10; /* Create Time */
+    io.graphoenix.core.StringExpression update_user_id = 11; /* Update User ID */
+    io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
+    io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
+    io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
+    repeated string group_by = 15; /* Group By */
+    bool not = 16; /* Not */
+    io.graphoenix.core.Conditional cond = 17; /* Condition */
+    repeated FileExpression exs = 18; /* Expressions */
 }
+/**
+* Subscription Arguments for 文件 List
+*/
 message FileListSubscriptionArguments {
-    io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression name = 2;
-    io.graphoenix.core.StringExpression content_type = 3;
-    io.graphoenix.core.StringExpression content = 4;
-    io.graphoenix.core.StringExpression url = 5;
-    bool include_deprecated = 6;
-    io.graphoenix.core.IntExpression version = 7;
-    io.graphoenix.core.IntExpression realm_id = 8;
-    io.graphoenix.core.StringExpression create_user_id = 9;
-    io.graphoenix.core.StringExpression create_time = 10;
-    io.graphoenix.core.StringExpression update_user_id = 11;
-    io.graphoenix.core.StringExpression update_time = 12;
-    io.graphoenix.core.StringExpression create_group_id = 13;
-    io.graphoenix.core.StringExpression intro_typename = 14;
-    FileOrderBy order_by = 15;
-    repeated string group_by = 16;
-    bool not = 17;
-    io.graphoenix.core.Conditional cond = 18;
-    repeated FileExpression exs = 19;
-    int32 first = 20;
-    int32 last = 21;
-    int32 offset = 22;
-    string after = 23;
-    string before = 24;
+    io.graphoenix.core.StringExpression id = 1; /* ID */
+    io.graphoenix.core.StringExpression name = 2; /* 文件名 */
+    io.graphoenix.core.StringExpression content_type = 3; /* 类型 */
+    io.graphoenix.core.StringExpression content = 4; /* 内容 */
+    io.graphoenix.core.StringExpression url = 5; /* URL */
+    bool include_deprecated = 6; /* Include Deprecated */
+    io.graphoenix.core.IntExpression version = 7; /* Version */
+    io.graphoenix.core.IntExpression realm_id = 8; /* Realm ID */
+    io.graphoenix.core.StringExpression create_user_id = 9; /* Create User ID */
+    io.graphoenix.core.StringExpression create_time = 10; /* Create Time */
+    io.graphoenix.core.StringExpression update_user_id = 11; /* Update User ID */
+    io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
+    io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
+    io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
+    FileOrderBy order_by = 15; /* Order By */
+    repeated string group_by = 16; /* Group By */
+    bool not = 17; /* Not */
+    io.graphoenix.core.Conditional cond = 18; /* Condition */
+    repeated FileExpression exs = 19; /* Expressions */
+    int32 first = 20; /* First */
+    int32 last = 21; /* Input List */
+    int32 offset = 22; /* Offset */
+    string after = 23; /* After */
+    string before = 24; /* Before */
 }
+/**
+* Subscription Arguments for 文件 List
+*/
 message FileConnectionSubscriptionArguments {
-    io.graphoenix.core.StringExpression id = 1;
-    io.graphoenix.core.StringExpression name = 2;
-    io.graphoenix.core.StringExpression content_type = 3;
-    io.graphoenix.core.StringExpression content = 4;
-    io.graphoenix.core.StringExpression url = 5;
-    bool include_deprecated = 6;
-    io.graphoenix.core.IntExpression version = 7;
-    io.graphoenix.core.IntExpression realm_id = 8;
-    io.graphoenix.core.StringExpression create_user_id = 9;
-    io.graphoenix.core.StringExpression create_time = 10;
-    io.graphoenix.core.StringExpression update_user_id = 11;
-    io.graphoenix.core.StringExpression update_time = 12;
-    io.graphoenix.core.StringExpression create_group_id = 13;
-    io.graphoenix.core.StringExpression intro_typename = 14;
-    FileOrderBy order_by = 15;
-    repeated string group_by = 16;
-    bool not = 17;
-    io.graphoenix.core.Conditional cond = 18;
-    repeated FileExpression exs = 19;
-    int32 first = 20;
-    int32 last = 21;
-    int32 offset = 22;
-    string after = 23;
-    string before = 24;
+    io.graphoenix.core.StringExpression id = 1; /* ID */
+    io.graphoenix.core.StringExpression name = 2; /* 文件名 */
+    io.graphoenix.core.StringExpression content_type = 3; /* 类型 */
+    io.graphoenix.core.StringExpression content = 4; /* 内容 */
+    io.graphoenix.core.StringExpression url = 5; /* URL */
+    bool include_deprecated = 6; /* Include Deprecated */
+    io.graphoenix.core.IntExpression version = 7; /* Version */
+    io.graphoenix.core.IntExpression realm_id = 8; /* Realm ID */
+    io.graphoenix.core.StringExpression create_user_id = 9; /* Create User ID */
+    io.graphoenix.core.StringExpression create_time = 10; /* Create Time */
+    io.graphoenix.core.StringExpression update_user_id = 11; /* Update User ID */
+    io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
+    io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
+    io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
+    FileOrderBy order_by = 15; /* Order By */
+    repeated string group_by = 16; /* Order By */
+    bool not = 17; /* Not */
+    io.graphoenix.core.Conditional cond = 18; /* Condition */
+    repeated FileExpression exs = 19; /* Expressions */
+    int32 first = 20; /* First */
+    int32 last = 21; /* Last */
+    int32 offset = 22; /* Offset */
+    string after = 23; /* After */
+    string before = 24; /* Before */
 }
 message Mutation_singleUpload_Arguments {
     string file = 1;

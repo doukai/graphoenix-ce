@@ -12,8 +12,11 @@ import "io/graphoenix/file/input_objects.proto";
 import "io/graphoenix/file/query_requests.proto";
 import "io/graphoenix/file/query_responses.proto";
 
+/**
+* Query
+*/
 service QueryService {
-    rpc File (QueryFileRequest) returns (QueryFileResponse);
-    rpc FileList (QueryFileListRequest) returns (QueryFileListResponse);
-    rpc FileConnection (QueryFileConnectionRequest) returns (QueryFileConnectionResponse);
+    rpc File (QueryFileRequest) returns (QueryFileResponse); /* Query Field for 文件 */
+    rpc FileList (QueryFileListRequest) returns (QueryFileListResponse); /* Query Field for 文件 List */
+    rpc FileConnection (QueryFileConnectionRequest) returns (QueryFileConnectionResponse); /* Query Field for 文件 Connection */
 }

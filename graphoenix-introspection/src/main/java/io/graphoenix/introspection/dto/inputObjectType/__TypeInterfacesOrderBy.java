@@ -3,58 +3,155 @@ package io.graphoenix.introspection.dto.inputObjectType;
 import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.enumType.Sort;
 import jakarta.annotation.Generated;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 import org.eclipse.microprofile.graphql.Name;
 
+/**
+ * Order Input for Relationship Object between __Type and __Type
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Order Input for Relationship Object between __Type and __Type")
 public class __TypeInterfacesOrderBy {
+  /**
+   * ID
+   */
+  @Description("ID")
   private Sort id;
 
+  /**
+   * __Type Reference
+   */
+  @Description("__Type Reference")
   private Sort typeRef;
 
+  /**
+   * __Type
+   */
+  @Description("__Type")
   private __TypeOrderBy type;
 
+  /**
+   * __Type Reference
+   */
+  @Description("__Type Reference")
   private Sort interfaceRef;
 
+  /**
+   * __Type
+   */
   @Name("interface")
+  @Description("__Type")
   private __TypeOrderBy _interface;
 
+  /**
+   * Is Deprecated
+   */
+  @Description("Is Deprecated")
   private Sort isDeprecated;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private Sort version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private Sort realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private Sort createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private Sort createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private Sort updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private Sort updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private Sort createGroupId;
 
+  /**
+   * Type Name
+   */
+  @Description("Type Name")
   private Sort __typename;
 
+  /**
+   * Count of Relationship Object between __Type and __Type
+   */
+  @Description("Count of Relationship Object between __Type and __Type")
   private Sort idCount;
 
+  /**
+   * Max of ID
+   */
+  @Description("Max of ID")
   private Sort idMax;
 
+  /**
+   * Min of ID
+   */
+  @Description("Min of ID")
   private Sort idMin;
 
+  /**
+   * Count of __Type Reference
+   */
+  @Description("Count of __Type Reference")
   private Sort typeRefCount;
 
+  /**
+   * Max of __Type Reference
+   */
+  @Description("Max of __Type Reference")
   private Sort typeRefMax;
 
+  /**
+   * Min of __Type Reference
+   */
+  @Description("Min of __Type Reference")
   private Sort typeRefMin;
 
+  /**
+   * Count of __Type Reference
+   */
+  @Description("Count of __Type Reference")
   private Sort interfaceRefCount;
 
+  /**
+   * Max of __Type Reference
+   */
+  @Description("Max of __Type Reference")
   private Sort interfaceRefMax;
 
+  /**
+   * Min of __Type Reference
+   */
+  @Description("Min of __Type Reference")
   private Sort interfaceRefMin;
 
   public Sort getId() {

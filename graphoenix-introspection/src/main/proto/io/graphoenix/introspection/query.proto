@@ -12,32 +12,35 @@ import "io/graphoenix/introspection/input_objects.proto";
 import "io/graphoenix/introspection/query_requests.proto";
 import "io/graphoenix/introspection/query_responses.proto";
 
+/**
+* Query
+*/
 service QueryService {
-    rpc IntroSchema (QueryIntroSchemaRequest) returns (QueryIntroSchemaResponse);
-    rpc IntroSchemaList (QueryIntroSchemaListRequest) returns (QueryIntroSchemaListResponse);
-    rpc IntroSchemaConnection (QueryIntroSchemaConnectionRequest) returns (QueryIntroSchemaConnectionResponse);
-    rpc IntroType (QueryIntroTypeRequest) returns (QueryIntroTypeResponse);
-    rpc IntroTypeList (QueryIntroTypeListRequest) returns (QueryIntroTypeListResponse);
-    rpc IntroTypeConnection (QueryIntroTypeConnectionRequest) returns (QueryIntroTypeConnectionResponse);
-    rpc IntroField (QueryIntroFieldRequest) returns (QueryIntroFieldResponse);
-    rpc IntroFieldList (QueryIntroFieldListRequest) returns (QueryIntroFieldListResponse);
-    rpc IntroFieldConnection (QueryIntroFieldConnectionRequest) returns (QueryIntroFieldConnectionResponse);
-    rpc IntroInputValue (QueryIntroInputValueRequest) returns (QueryIntroInputValueResponse);
-    rpc IntroInputValueList (QueryIntroInputValueListRequest) returns (QueryIntroInputValueListResponse);
-    rpc IntroInputValueConnection (QueryIntroInputValueConnectionRequest) returns (QueryIntroInputValueConnectionResponse);
-    rpc IntroEnumValue (QueryIntroEnumValueRequest) returns (QueryIntroEnumValueResponse);
-    rpc IntroEnumValueList (QueryIntroEnumValueListRequest) returns (QueryIntroEnumValueListResponse);
-    rpc IntroEnumValueConnection (QueryIntroEnumValueConnectionRequest) returns (QueryIntroEnumValueConnectionResponse);
-    rpc IntroDirective (QueryIntroDirectiveRequest) returns (QueryIntroDirectiveResponse);
-    rpc IntroDirectiveList (QueryIntroDirectiveListRequest) returns (QueryIntroDirectiveListResponse);
-    rpc IntroDirectiveConnection (QueryIntroDirectiveConnectionRequest) returns (QueryIntroDirectiveConnectionResponse);
-    rpc IntroTypeInterfaces (QueryIntroTypeInterfacesRequest) returns (QueryIntroTypeInterfacesResponse);
-    rpc IntroTypeInterfacesList (QueryIntroTypeInterfacesListRequest) returns (QueryIntroTypeInterfacesListResponse);
-    rpc IntroTypeInterfacesConnection (QueryIntroTypeInterfacesConnectionRequest) returns (QueryIntroTypeInterfacesConnectionResponse);
-    rpc IntroTypePossibleTypes (QueryIntroTypePossibleTypesRequest) returns (QueryIntroTypePossibleTypesResponse);
-    rpc IntroTypePossibleTypesList (QueryIntroTypePossibleTypesListRequest) returns (QueryIntroTypePossibleTypesListResponse);
-    rpc IntroTypePossibleTypesConnection (QueryIntroTypePossibleTypesConnectionRequest) returns (QueryIntroTypePossibleTypesConnectionResponse);
-    rpc IntroDirectiveLocationsRelation (QueryIntroDirectiveLocationsRelationRequest) returns (QueryIntroDirectiveLocationsRelationResponse);
-    rpc IntroDirectiveLocationsRelationList (QueryIntroDirectiveLocationsRelationListRequest) returns (QueryIntroDirectiveLocationsRelationListResponse);
-    rpc IntroDirectiveLocationsRelationConnection (QueryIntroDirectiveLocationsRelationConnectionRequest) returns (QueryIntroDirectiveLocationsRelationConnectionResponse);
+    rpc IntroSchema (QueryIntroSchemaRequest) returns (QueryIntroSchemaResponse); /* Query Field for __Schema */
+    rpc IntroSchemaList (QueryIntroSchemaListRequest) returns (QueryIntroSchemaListResponse); /* Query Field for __Schema List */
+    rpc IntroSchemaConnection (QueryIntroSchemaConnectionRequest) returns (QueryIntroSchemaConnectionResponse); /* Query Field for __Schema Connection */
+    rpc IntroType (QueryIntroTypeRequest) returns (QueryIntroTypeResponse); /* Query Field for __Type */
+    rpc IntroTypeList (QueryIntroTypeListRequest) returns (QueryIntroTypeListResponse); /* Query Field for __Type List */
+    rpc IntroTypeConnection (QueryIntroTypeConnectionRequest) returns (QueryIntroTypeConnectionResponse); /* Query Field for __Type Connection */
+    rpc IntroField (QueryIntroFieldRequest) returns (QueryIntroFieldResponse); /* Query Field for __Field */
+    rpc IntroFieldList (QueryIntroFieldListRequest) returns (QueryIntroFieldListResponse); /* Query Field for __Field List */
+    rpc IntroFieldConnection (QueryIntroFieldConnectionRequest) returns (QueryIntroFieldConnectionResponse); /* Query Field for __Field Connection */
+    rpc IntroInputValue (QueryIntroInputValueRequest) returns (QueryIntroInputValueResponse); /* Query Field for __InputValue */
+    rpc IntroInputValueList (QueryIntroInputValueListRequest) returns (QueryIntroInputValueListResponse); /* Query Field for __InputValue List */
+    rpc IntroInputValueConnection (QueryIntroInputValueConnectionRequest) returns (QueryIntroInputValueConnectionResponse); /* Query Field for __InputValue Connection */
+    rpc IntroEnumValue (QueryIntroEnumValueRequest) returns (QueryIntroEnumValueResponse); /* Query Field for __EnumValue */
+    rpc IntroEnumValueList (QueryIntroEnumValueListRequest) returns (QueryIntroEnumValueListResponse); /* Query Field for __EnumValue List */
+    rpc IntroEnumValueConnection (QueryIntroEnumValueConnectionRequest) returns (QueryIntroEnumValueConnectionResponse); /* Query Field for __EnumValue Connection */
+    rpc IntroDirective (QueryIntroDirectiveRequest) returns (QueryIntroDirectiveResponse); /* Query Field for __Directive */
+    rpc IntroDirectiveList (QueryIntroDirectiveListRequest) returns (QueryIntroDirectiveListResponse); /* Query Field for __Directive List */
+    rpc IntroDirectiveConnection (QueryIntroDirectiveConnectionRequest) returns (QueryIntroDirectiveConnectionResponse); /* Query Field for __Directive Connection */
+    rpc IntroTypeInterfaces (QueryIntroTypeInterfacesRequest) returns (QueryIntroTypeInterfacesResponse); /* Query Field for Relationship Object between __Type and __Type */
+    rpc IntroTypeInterfacesList (QueryIntroTypeInterfacesListRequest) returns (QueryIntroTypeInterfacesListResponse); /* Query Field for Relationship Object between __Type and __Type List */
+    rpc IntroTypeInterfacesConnection (QueryIntroTypeInterfacesConnectionRequest) returns (QueryIntroTypeInterfacesConnectionResponse); /* Query Field for Relationship Object between __Type and __Type Connection */
+    rpc IntroTypePossibleTypes (QueryIntroTypePossibleTypesRequest) returns (QueryIntroTypePossibleTypesResponse); /* Query Field for Relationship Object between __Type and __Type */
+    rpc IntroTypePossibleTypesList (QueryIntroTypePossibleTypesListRequest) returns (QueryIntroTypePossibleTypesListResponse); /* Query Field for Relationship Object between __Type and __Type List */
+    rpc IntroTypePossibleTypesConnection (QueryIntroTypePossibleTypesConnectionRequest) returns (QueryIntroTypePossibleTypesConnectionResponse); /* Query Field for Relationship Object between __Type and __Type Connection */
+    rpc IntroDirectiveLocationsRelation (QueryIntroDirectiveLocationsRelationRequest) returns (QueryIntroDirectiveLocationsRelationResponse); /* Query Field for Relationship Object between __Directive and locations */
+    rpc IntroDirectiveLocationsRelationList (QueryIntroDirectiveLocationsRelationListRequest) returns (QueryIntroDirectiveLocationsRelationListResponse); /* Query Field for Relationship Object between __Directive and locations List */
+    rpc IntroDirectiveLocationsRelationConnection (QueryIntroDirectiveLocationsRelationConnectionRequest) returns (QueryIntroDirectiveLocationsRelationConnectionResponse); /* Query Field for Relationship Object between __Directive and locations Connection */
 }

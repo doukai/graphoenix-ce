@@ -629,6 +629,18 @@ public class TypeSpecBuilder {
         if (inputValueTypeDefinition.isScalar()) {
             if (inputValueTypeDefinition.getName().equals("String")) {
                 return CodeBlock.of("$S", defaultValue);
+            } else if (inputValueTypeDefinition.getName().equals("BigInteger")) {
+                return CodeBlock.of("$T.valueOf($L)", ClassName.get(BigInteger.class), defaultValue);
+            } else if (inputValueTypeDefinition.getName().equals("BigDecimal")) {
+                return CodeBlock.of("$T.valueOf($L)", ClassName.get(BigDecimal.class), defaultValue);
+            } else if (inputValueTypeDefinition.getName().equals("Date")) {
+                return CodeBlock.of("$T.parse($S)", ClassName.get(LocalDate.class), defaultValue);
+            } else if (inputValueTypeDefinition.getName().equals("Time")) {
+                return CodeBlock.of("$T.parse($S)", ClassName.get(LocalTime.class), defaultValue);
+            } else if (inputValueTypeDefinition.getName().equals("DateTime")) {
+                return CodeBlock.of("$T.parse($S)", ClassName.get(LocalDateTime.class), defaultValue);
+            } else if (inputValueTypeDefinition.getName().equals("Timestamp")) {
+                return CodeBlock.of("$T.parse($S)", ClassName.get(LocalDateTime.class), defaultValue);
             } else {
                 return CodeBlock.of("$L", defaultValue);
             }
@@ -646,7 +658,23 @@ public class TypeSpecBuilder {
     private CodeBlock buildDefaultValue(InputValue inputValue, String defaultValue) {
         Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
         if (inputValueTypeDefinition.isScalar()) {
-            return CodeBlock.of("$L", defaultValue);
+            if (inputValueTypeDefinition.getName().equals("String")) {
+                return CodeBlock.of("$S", defaultValue);
+            } else if (inputValueTypeDefinition.getName().equals("BigInteger")) {
+                return CodeBlock.of("$T.valueOf($L)", ClassName.get(BigInteger.class), defaultValue);
+            } else if (inputValueTypeDefinition.getName().equals("BigDecimal")) {
+                return CodeBlock.of("$T.valueOf($L)", ClassName.get(BigDecimal.class), defaultValue);
+            } else if (inputValueTypeDefinition.getName().equals("Date")) {
+                return CodeBlock.of("$T.parse($S)", ClassName.get(LocalDate.class), defaultValue);
+            } else if (inputValueTypeDefinition.getName().equals("Time")) {
+                return CodeBlock.of("$T.parse($S)", ClassName.get(LocalTime.class), defaultValue);
+            } else if (inputValueTypeDefinition.getName().equals("DateTime")) {
+                return CodeBlock.of("$T.parse($S)", ClassName.get(LocalDateTime.class), defaultValue);
+            } else if (inputValueTypeDefinition.getName().equals("Timestamp")) {
+                return CodeBlock.of("$T.parse($S)", ClassName.get(LocalDateTime.class), defaultValue);
+            } else {
+                return CodeBlock.of("$L", defaultValue);
+            }
         } else if (inputValueTypeDefinition.isEnum()) {
             return CodeBlock.of(
                     "$T.$L",

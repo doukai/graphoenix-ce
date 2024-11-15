@@ -9,42 +9,107 @@ import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
 import org.eclipse.microprofile.graphql.DefaultValue;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Mutation Input for Relationship Object between __Type and __Type
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Mutation Input for Relationship Object between __Type and __Type")
 public class __TypePossibleTypesInput implements MetaInput {
+  /**
+   * ID
+   */
+  @Description("ID")
   private String id;
 
+  /**
+   * __Type Reference
+   */
+  @Description("__Type Reference")
   private String typeRef;
 
+  /**
+   * __Type
+   */
+  @Description("__Type")
   private __TypeInput type;
 
+  /**
+   * __Type Reference
+   */
+  @Description("__Type Reference")
   private String possibleTypeRef;
 
+  /**
+   * __Type
+   */
+  @Description("__Type")
   private __TypeInput possibleType;
 
+  /**
+   * Is Deprecated
+   */
   @DefaultValue("false")
+  @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private Integer version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private Integer realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private String createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private LocalDateTime createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private String updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private LocalDateTime updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private String createGroupId;
 
+  /**
+   * Type Name
+   */
   @DefaultValue("\"__TypePossibleTypes\"")
-  private String __typename = "__TypePossibleTypes";
+  @Description("Type Name")
+  private String __typename = "\"__TypePossibleTypes\"";
 
+  /**
+   * Where
+   */
+  @Description("Where")
   private __TypePossibleTypesExpression where;
 
   public String getId() {

@@ -10,42 +10,107 @@ import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
 import org.eclipse.microprofile.graphql.DefaultValue;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Mutation Arguments for Relationship Object between __Directive and locations
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Mutation Arguments for Relationship Object between __Directive and locations")
 public class __DirectiveLocationsRelationMutationArguments implements MetaInput {
+  /**
+   * ID
+   */
+  @Description("ID")
   private String id;
 
+  /**
+   * __Directive Reference
+   */
+  @Description("__Directive Reference")
   private String __directiveRef;
 
+  /**
+   * __Directive
+   */
+  @Description("__Directive")
   private __DirectiveInput __directive;
 
+  /**
+   * locations Reference
+   */
+  @Description("locations Reference")
   private __DirectiveLocation locationsRef;
 
+  /**
+   * Is Deprecated
+   */
   @DefaultValue("false")
+  @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private Integer version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private Integer realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private String createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private LocalDateTime createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private String updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private LocalDateTime updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private String createGroupId;
 
+  /**
+   * Type Name
+   */
   @DefaultValue("\"__DirectiveLocationsRelation\"")
-  private String __typename = "__DirectiveLocationsRelation";
+  @Description("Type Name")
+  private String __typename = "\"__DirectiveLocationsRelation\"";
 
+  /**
+   * Input
+   */
+  @Description("Input")
   private __DirectiveLocationsRelationInput input;
 
+  /**
+   * Where
+   */
+  @Description("Where")
   private __DirectiveLocationsRelationExpression where;
 
   public String getId() {

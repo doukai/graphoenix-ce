@@ -10,6 +10,7 @@ import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Id;
 import org.eclipse.microprofile.graphql.NonNull;
 import org.eclipse.microprofile.graphql.Type;
@@ -41,92 +42,268 @@ public class __Type implements Meta {
 
   private __Type ofType;
 
+  /**
+   * Is Deprecated
+   */
+  @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private Integer version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private Integer realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private String createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private LocalDateTime createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private String updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private LocalDateTime updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private String createGroupId;
 
+  /**
+   * Type Name
+   */
+  @Description("Type Name")
   private String __typename = "__Type";
 
+  /**
+   * ofSchema Reference
+   */
+  @Description("ofSchema Reference")
   private Integer schemaId;
 
+  /**
+   * ofType Reference
+   */
+  @Description("ofType Reference")
   private String ofTypeName;
 
+  /**
+   * Relationship Object between __Type and __Type
+   */
+  @Description("Relationship Object between __Type and __Type")
   private Collection<__TypeInterfaces> __typeInterfaces;
 
+  /**
+   * Relationship Object between __Type and __Type
+   */
+  @Description("Relationship Object between __Type and __Type")
   private Collection<__TypePossibleTypes> __typePossibleTypes;
 
+  /**
+   * Aggregate Field for fields
+   */
+  @Description("Aggregate Field for fields")
   private __Field fieldsAggregate;
 
+  /**
+   * Connection Field for fields
+   */
+  @Description("Connection Field for fields")
   private __FieldConnection fieldsConnection;
 
+  /**
+   * Aggregate Field for interfaces
+   */
+  @Description("Aggregate Field for interfaces")
   private __Type interfacesAggregate;
 
+  /**
+   * Connection Field for interfaces
+   */
+  @Description("Connection Field for interfaces")
   private __TypeConnection interfacesConnection;
 
+  /**
+   * Aggregate Field for possibleTypes
+   */
+  @Description("Aggregate Field for possibleTypes")
   private __Type possibleTypesAggregate;
 
+  /**
+   * Connection Field for possibleTypes
+   */
+  @Description("Connection Field for possibleTypes")
   private __TypeConnection possibleTypesConnection;
 
+  /**
+   * Aggregate Field for enumValues
+   */
+  @Description("Aggregate Field for enumValues")
   private __EnumValue enumValuesAggregate;
 
+  /**
+   * Connection Field for enumValues
+   */
+  @Description("Connection Field for enumValues")
   private __EnumValueConnection enumValuesConnection;
 
+  /**
+   * Aggregate Field for inputFields
+   */
+  @Description("Aggregate Field for inputFields")
   private __InputValue inputFieldsAggregate;
 
+  /**
+   * Connection Field for inputFields
+   */
+  @Description("Connection Field for inputFields")
   private __InputValueConnection inputFieldsConnection;
 
+  /**
+   * Aggregate Field for Relationship Object between __Type and __Type
+   */
+  @Description("Aggregate Field for Relationship Object between __Type and __Type")
   private __TypeInterfaces __typeInterfacesAggregate;
 
+  /**
+   * Connection Field for Relationship Object between __Type and __Type
+   */
+  @Description("Connection Field for Relationship Object between __Type and __Type")
   private __TypeInterfacesConnection __typeInterfacesConnection;
 
+  /**
+   * Aggregate Field for Relationship Object between __Type and __Type
+   */
+  @Description("Aggregate Field for Relationship Object between __Type and __Type")
   private __TypePossibleTypes __typePossibleTypesAggregate;
 
+  /**
+   * Connection Field for Relationship Object between __Type and __Type
+   */
+  @Description("Connection Field for Relationship Object between __Type and __Type")
   private __TypePossibleTypesConnection __typePossibleTypesConnection;
 
+  /**
+   * Count of __Type
+   */
+  @Description("Count of __Type")
   private Integer nameCount;
 
+  /**
+   * Max of name
+   */
+  @Description("Max of name")
   private String nameMax;
 
+  /**
+   * Min of name
+   */
+  @Description("Min of name")
   private String nameMin;
 
+  /**
+   * Count of kind
+   */
+  @Description("Count of kind")
   private Integer kindCount;
 
+  /**
+   * Max of kind
+   */
+  @Description("Max of kind")
   private __TypeKind kindMax;
 
+  /**
+   * Min of kind
+   */
+  @Description("Min of kind")
   private __TypeKind kindMin;
 
+  /**
+   * Count of description
+   */
+  @Description("Count of description")
   private Integer descriptionCount;
 
+  /**
+   * Max of description
+   */
+  @Description("Max of description")
   private String descriptionMax;
 
+  /**
+   * Min of description
+   */
+  @Description("Min of description")
   private String descriptionMin;
 
+  /**
+   * Count of ofType Reference
+   */
+  @Description("Count of ofType Reference")
   private Integer ofTypeNameCount;
 
+  /**
+   * Max of ofType Reference
+   */
+  @Description("Max of ofType Reference")
   private String ofTypeNameMax;
 
+  /**
+   * Min of ofType Reference
+   */
+  @Description("Min of ofType Reference")
   private String ofTypeNameMin;
 
+  /**
+   * Count of ofSchema Reference
+   */
+  @Description("Count of ofSchema Reference")
   private Integer schemaIdCount;
 
+  /**
+   * Sum of ofSchema Reference
+   */
+  @Description("Sum of ofSchema Reference")
   private Integer schemaIdSum;
 
+  /**
+   * Avg of ofSchema Reference
+   */
+  @Description("Avg of ofSchema Reference")
   private Integer schemaIdAvg;
 
+  /**
+   * Max of ofSchema Reference
+   */
+  @Description("Max of ofSchema Reference")
   private Integer schemaIdMax;
 
+  /**
+   * Min of ofSchema Reference
+   */
+  @Description("Min of ofSchema Reference")
   private Integer schemaIdMin;
 
   public String getName() {

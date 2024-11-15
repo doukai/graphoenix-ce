@@ -3,104 +3,297 @@ package io.graphoenix.introspection.dto.inputObjectType;
 import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.enumType.Sort;
 import jakarta.annotation.Generated;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Order Input for __Type
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Order Input for __Type")
 public class __TypeOrderBy {
+  /**
+   * name
+   */
+  @Description("name")
   private Sort name;
 
+  /**
+   * ofSchema
+   */
+  @Description("ofSchema")
   private __SchemaOrderBy ofSchema;
 
+  /**
+   * kind
+   */
+  @Description("kind")
   private Sort kind;
 
+  /**
+   * description
+   */
+  @Description("description")
   private Sort description;
 
+  /**
+   * fields
+   */
+  @Description("fields")
   private __FieldOrderBy fields;
 
+  /**
+   * interfaces
+   */
+  @Description("interfaces")
   private __TypeOrderBy interfaces;
 
+  /**
+   * possibleTypes
+   */
+  @Description("possibleTypes")
   private __TypeOrderBy possibleTypes;
 
+  /**
+   * enumValues
+   */
+  @Description("enumValues")
   private __EnumValueOrderBy enumValues;
 
+  /**
+   * inputFields
+   */
+  @Description("inputFields")
   private __InputValueOrderBy inputFields;
 
+  /**
+   * ofType
+   */
+  @Description("ofType")
   private __TypeOrderBy ofType;
 
+  /**
+   * Is Deprecated
+   */
+  @Description("Is Deprecated")
   private Sort isDeprecated;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private Sort version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private Sort realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private Sort createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private Sort createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private Sort updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private Sort updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private Sort createGroupId;
 
+  /**
+   * Type Name
+   */
+  @Description("Type Name")
   private Sort __typename;
 
+  /**
+   * ofSchema Reference
+   */
+  @Description("ofSchema Reference")
   private Sort schemaId;
 
+  /**
+   * ofType Reference
+   */
+  @Description("ofType Reference")
   private Sort ofTypeName;
 
+  /**
+   * Relationship Object between __Type and __Type
+   */
+  @Description("Relationship Object between __Type and __Type")
   private __TypeInterfacesOrderBy __typeInterfaces;
 
+  /**
+   * Relationship Object between __Type and __Type
+   */
+  @Description("Relationship Object between __Type and __Type")
   private __TypePossibleTypesOrderBy __typePossibleTypes;
 
+  /**
+   * Aggregate Field for fields
+   */
+  @Description("Aggregate Field for fields")
   private __FieldOrderBy fieldsAggregate;
 
+  /**
+   * Aggregate Field for interfaces
+   */
+  @Description("Aggregate Field for interfaces")
   private __TypeOrderBy interfacesAggregate;
 
+  /**
+   * Aggregate Field for possibleTypes
+   */
+  @Description("Aggregate Field for possibleTypes")
   private __TypeOrderBy possibleTypesAggregate;
 
+  /**
+   * Aggregate Field for enumValues
+   */
+  @Description("Aggregate Field for enumValues")
   private __EnumValueOrderBy enumValuesAggregate;
 
+  /**
+   * Aggregate Field for inputFields
+   */
+  @Description("Aggregate Field for inputFields")
   private __InputValueOrderBy inputFieldsAggregate;
 
+  /**
+   * Aggregate Field for Relationship Object between __Type and __Type
+   */
+  @Description("Aggregate Field for Relationship Object between __Type and __Type")
   private __TypeInterfacesOrderBy __typeInterfacesAggregate;
 
+  /**
+   * Aggregate Field for Relationship Object between __Type and __Type
+   */
+  @Description("Aggregate Field for Relationship Object between __Type and __Type")
   private __TypePossibleTypesOrderBy __typePossibleTypesAggregate;
 
+  /**
+   * Count of __Type
+   */
+  @Description("Count of __Type")
   private Sort nameCount;
 
+  /**
+   * Max of name
+   */
+  @Description("Max of name")
   private Sort nameMax;
 
+  /**
+   * Min of name
+   */
+  @Description("Min of name")
   private Sort nameMin;
 
+  /**
+   * Count of kind
+   */
+  @Description("Count of kind")
   private Sort kindCount;
 
+  /**
+   * Max of kind
+   */
+  @Description("Max of kind")
   private Sort kindMax;
 
+  /**
+   * Min of kind
+   */
+  @Description("Min of kind")
   private Sort kindMin;
 
+  /**
+   * Count of description
+   */
+  @Description("Count of description")
   private Sort descriptionCount;
 
+  /**
+   * Max of description
+   */
+  @Description("Max of description")
   private Sort descriptionMax;
 
+  /**
+   * Min of description
+   */
+  @Description("Min of description")
   private Sort descriptionMin;
 
+  /**
+   * Count of ofType Reference
+   */
+  @Description("Count of ofType Reference")
   private Sort ofTypeNameCount;
 
+  /**
+   * Max of ofType Reference
+   */
+  @Description("Max of ofType Reference")
   private Sort ofTypeNameMax;
 
+  /**
+   * Min of ofType Reference
+   */
+  @Description("Min of ofType Reference")
   private Sort ofTypeNameMin;
 
+  /**
+   * Count of ofSchema Reference
+   */
+  @Description("Count of ofSchema Reference")
   private Sort schemaIdCount;
 
+  /**
+   * Sum of ofSchema Reference
+   */
+  @Description("Sum of ofSchema Reference")
   private Sort schemaIdSum;
 
+  /**
+   * Avg of ofSchema Reference
+   */
+  @Description("Avg of ofSchema Reference")
   private Sort schemaIdAvg;
 
+  /**
+   * Max of ofSchema Reference
+   */
+  @Description("Max of ofSchema Reference")
   private Sort schemaIdMax;
 
+  /**
+   * Min of ofSchema Reference
+   */
+  @Description("Min of ofSchema Reference")
   private Sort schemaIdMin;
 
   public Sort getName() {

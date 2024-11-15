@@ -8,16 +8,33 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.eclipse.microprofile.graphql.Description;
 
+/**
+ * Query Expression Input for 文件
+ */
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
+@Description("Query Expression Input for 文件")
 public @interface FileExpression2 {
+  /**
+   * Include Deprecated
+   */
+  @Description("Include Deprecated")
   boolean includeDeprecated() default false;
 
+  /**
+   * Not
+   */
+  @Description("Not")
   boolean not() default false;
 
+  /**
+   * Condition
+   */
+  @Description("Condition")
   Conditional cond() default Conditional.AND;
 
   String $includeDeprecated() default "";

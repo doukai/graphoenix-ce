@@ -8,72 +8,197 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.eclipse.microprofile.graphql.Description;
 
+/**
+ * Order Input for __Directive
+ */
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
+@Description("Order Input for __Directive")
 public @interface __DirectiveOrderBy {
+  /**
+   * name
+   */
+  @Description("name")
   Sort name() default Sort.ASC;
 
+  /**
+   * ofSchema
+   */
+  @Description("ofSchema")
   __SchemaOrderBy1 ofSchema() default @__SchemaOrderBy1;
 
+  /**
+   * description
+   */
+  @Description("description")
   Sort description() default Sort.ASC;
 
+  /**
+   * locations
+   */
+  @Description("locations")
   Sort locations() default Sort.ASC;
 
+  /**
+   * args
+   */
+  @Description("args")
   __InputValueOrderBy1 args() default @__InputValueOrderBy1;
 
+  /**
+   * isRepeatable
+   */
+  @Description("isRepeatable")
   Sort isRepeatable() default Sort.ASC;
 
+  /**
+   * Is Deprecated
+   */
+  @Description("Is Deprecated")
   Sort isDeprecated() default Sort.ASC;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   Sort version() default Sort.ASC;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   Sort realmId() default Sort.ASC;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   Sort createUserId() default Sort.ASC;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   Sort createTime() default Sort.ASC;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   Sort updateUserId() default Sort.ASC;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   Sort updateTime() default Sort.ASC;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   Sort createGroupId() default Sort.ASC;
 
+  /**
+   * Type Name
+   */
+  @Description("Type Name")
   Sort __typename() default Sort.ASC;
 
+  /**
+   * ofSchema Reference
+   */
+  @Description("ofSchema Reference")
   Sort schemaId() default Sort.ASC;
 
+  /**
+   * Relationship Object between __Directive and locations
+   */
+  @Description("Relationship Object between __Directive and locations")
   __DirectiveLocationsRelationOrderBy1 __directiveLocationsRelation(
       ) default @__DirectiveLocationsRelationOrderBy1;
 
+  /**
+   * Aggregate Field for args
+   */
+  @Description("Aggregate Field for args")
   __InputValueOrderBy1 argsAggregate() default @__InputValueOrderBy1;
 
+  /**
+   * Aggregate Field for Relationship Object between __Directive and locations
+   */
+  @Description("Aggregate Field for Relationship Object between __Directive and locations")
   __DirectiveLocationsRelationOrderBy1 __directiveLocationsRelationAggregate(
       ) default @__DirectiveLocationsRelationOrderBy1;
 
+  /**
+   * Count of __Directive
+   */
+  @Description("Count of __Directive")
   Sort nameCount() default Sort.ASC;
 
+  /**
+   * Max of name
+   */
+  @Description("Max of name")
   Sort nameMax() default Sort.ASC;
 
+  /**
+   * Min of name
+   */
+  @Description("Min of name")
   Sort nameMin() default Sort.ASC;
 
+  /**
+   * Count of description
+   */
+  @Description("Count of description")
   Sort descriptionCount() default Sort.ASC;
 
+  /**
+   * Max of description
+   */
+  @Description("Max of description")
   Sort descriptionMax() default Sort.ASC;
 
+  /**
+   * Min of description
+   */
+  @Description("Min of description")
   Sort descriptionMin() default Sort.ASC;
 
+  /**
+   * Count of ofSchema Reference
+   */
+  @Description("Count of ofSchema Reference")
   Sort schemaIdCount() default Sort.ASC;
 
+  /**
+   * Sum of ofSchema Reference
+   */
+  @Description("Sum of ofSchema Reference")
   Sort schemaIdSum() default Sort.ASC;
 
+  /**
+   * Avg of ofSchema Reference
+   */
+  @Description("Avg of ofSchema Reference")
   Sort schemaIdAvg() default Sort.ASC;
 
+  /**
+   * Max of ofSchema Reference
+   */
+  @Description("Max of ofSchema Reference")
   Sort schemaIdMax() default Sort.ASC;
 
+  /**
+   * Min of ofSchema Reference
+   */
+  @Description("Min of ofSchema Reference")
   Sort schemaIdMin() default Sort.ASC;
 
   String $name() default "";

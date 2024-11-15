@@ -3,54 +3,147 @@ package io.graphoenix.introspection.dto.inputObjectType;
 import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.enumType.Sort;
 import jakarta.annotation.Generated;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Order Input for Relationship Object between __Directive and locations
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Order Input for Relationship Object between __Directive and locations")
 public class __DirectiveLocationsRelationOrderBy {
+  /**
+   * ID
+   */
+  @Description("ID")
   private Sort id;
 
+  /**
+   * __Directive Reference
+   */
+  @Description("__Directive Reference")
   private Sort __directiveRef;
 
+  /**
+   * __Directive
+   */
+  @Description("__Directive")
   private __DirectiveOrderBy __directive;
 
+  /**
+   * locations Reference
+   */
+  @Description("locations Reference")
   private Sort locationsRef;
 
+  /**
+   * Is Deprecated
+   */
+  @Description("Is Deprecated")
   private Sort isDeprecated;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private Sort version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private Sort realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private Sort createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private Sort createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private Sort updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private Sort updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private Sort createGroupId;
 
+  /**
+   * Type Name
+   */
+  @Description("Type Name")
   private Sort __typename;
 
+  /**
+   * Count of Relationship Object between __Directive and locations
+   */
+  @Description("Count of Relationship Object between __Directive and locations")
   private Sort idCount;
 
+  /**
+   * Max of ID
+   */
+  @Description("Max of ID")
   private Sort idMax;
 
+  /**
+   * Min of ID
+   */
+  @Description("Min of ID")
   private Sort idMin;
 
+  /**
+   * Count of __Directive Reference
+   */
+  @Description("Count of __Directive Reference")
   private Sort __directiveRefCount;
 
+  /**
+   * Max of __Directive Reference
+   */
+  @Description("Max of __Directive Reference")
   private Sort __directiveRefMax;
 
+  /**
+   * Min of __Directive Reference
+   */
+  @Description("Min of __Directive Reference")
   private Sort __directiveRefMin;
 
+  /**
+   * Count of locations Reference
+   */
+  @Description("Count of locations Reference")
   private Sort locationsRefCount;
 
+  /**
+   * Max of locations Reference
+   */
+  @Description("Max of locations Reference")
   private Sort locationsRefMax;
 
+  /**
+   * Min of locations Reference
+   */
+  @Description("Min of locations Reference")
   private Sort locationsRefMin;
 
   public Sort getId() {

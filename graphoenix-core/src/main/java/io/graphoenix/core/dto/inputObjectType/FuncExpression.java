@@ -6,17 +6,34 @@ import io.graphoenix.core.dto.enumType.Operator;
 import jakarta.annotation.Generated;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Query Expression Input for Func
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Query Expression Input for Func")
 public class FuncExpression {
+  /**
+   * Operators
+   */
   @DefaultValue("EQ")
+  @Description("Operators")
   private Operator opr = Operator.EQ;
 
+  /**
+   * Value
+   */
+  @Description("Value")
   private Func val;
 
+  /**
+   * Array
+   */
+  @Description("Array")
   private Collection<Func> arr;
 
   public Operator getOpr() {

@@ -200,6 +200,11 @@ input __DirectiveLocationExpression {
     val: __DirectiveLocation
     arr: [__DirectiveLocation]
 }
+input __DirectiveLocationExpression {
+    opr: Operator = EQ
+    val: __DirectiveLocation
+    arr: [__DirectiveLocation]
+}
 directive @options(type: String default: String length: Int decimals: Int unique: Boolean autoIncrement: Boolean protocol: Protocol = GRPC) on FIELD_DEFINITION
 directive @map(from: String! with: With to: String anchor: Boolean) on FIELD_DEFINITION
 directive @fetch(protocol: Protocol from: String! with: With to: String anchor: Boolean) on FIELD_DEFINITION

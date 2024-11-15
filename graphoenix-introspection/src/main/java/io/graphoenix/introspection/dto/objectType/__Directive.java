@@ -10,6 +10,7 @@ import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Id;
 import org.eclipse.microprofile.graphql.NonNull;
 import org.eclipse.microprofile.graphql.Type;
@@ -35,56 +36,160 @@ public class __Directive implements Meta {
   @NonNull
   private Boolean isRepeatable;
 
+  /**
+   * Is Deprecated
+   */
+  @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private Integer version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private Integer realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private String createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private LocalDateTime createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private String updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private LocalDateTime updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private String createGroupId;
 
+  /**
+   * Type Name
+   */
+  @Description("Type Name")
   private String __typename = "__Directive";
 
+  /**
+   * ofSchema Reference
+   */
+  @Description("ofSchema Reference")
   private Integer schemaId;
 
+  /**
+   * Relationship Object between __Directive and locations
+   */
+  @Description("Relationship Object between __Directive and locations")
   private Collection<__DirectiveLocationsRelation> __directiveLocationsRelation;
 
+  /**
+   * Aggregate Field for args
+   */
+  @Description("Aggregate Field for args")
   private __InputValue argsAggregate;
 
+  /**
+   * Connection Field for args
+   */
+  @Description("Connection Field for args")
   private __InputValueConnection argsConnection;
 
+  /**
+   * Aggregate Field for Relationship Object between __Directive and locations
+   */
+  @Description("Aggregate Field for Relationship Object between __Directive and locations")
   private __DirectiveLocationsRelation __directiveLocationsRelationAggregate;
 
+  /**
+   * Connection Field for Relationship Object between __Directive and locations
+   */
+  @Description("Connection Field for Relationship Object between __Directive and locations")
   private __DirectiveLocationsRelationConnection __directiveLocationsRelationConnection;
 
+  /**
+   * Count of __Directive
+   */
+  @Description("Count of __Directive")
   private Integer nameCount;
 
+  /**
+   * Max of name
+   */
+  @Description("Max of name")
   private String nameMax;
 
+  /**
+   * Min of name
+   */
+  @Description("Min of name")
   private String nameMin;
 
+  /**
+   * Count of description
+   */
+  @Description("Count of description")
   private Integer descriptionCount;
 
+  /**
+   * Max of description
+   */
+  @Description("Max of description")
   private String descriptionMax;
 
+  /**
+   * Min of description
+   */
+  @Description("Min of description")
   private String descriptionMin;
 
+  /**
+   * Count of ofSchema Reference
+   */
+  @Description("Count of ofSchema Reference")
   private Integer schemaIdCount;
 
+  /**
+   * Sum of ofSchema Reference
+   */
+  @Description("Sum of ofSchema Reference")
   private Integer schemaIdSum;
 
+  /**
+   * Avg of ofSchema Reference
+   */
+  @Description("Avg of ofSchema Reference")
   private Integer schemaIdAvg;
 
+  /**
+   * Max of ofSchema Reference
+   */
+  @Description("Max of ofSchema Reference")
   private Integer schemaIdMax;
 
+  /**
+   * Min of ofSchema Reference
+   */
+  @Description("Min of ofSchema Reference")
   private Integer schemaIdMin;
 
   public String getName() {

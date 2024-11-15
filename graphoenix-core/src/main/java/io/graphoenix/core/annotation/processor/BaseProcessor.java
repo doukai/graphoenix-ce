@@ -13,6 +13,7 @@ import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.*;
+import io.graphoenix.spi.graphql.type.TypeName;
 import io.graphoenix.spi.utils.ElementUtil;
 import io.nozdormu.config.TypesafeConfig;
 import io.nozdormu.spi.async.Async;
@@ -394,17 +395,21 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                                             INPUT_INVOKE_INPUT_VALUE_ON_EXPRESSION_NAME, onExpression
                                                     );
 
-                                                    documentManager.getDocument().getObjectTypes()
-                                                            .flatMap(objectType -> objectType.getFields().stream())
-                                                            .filter(fieldDefinition -> fieldDefinition.hasDirective(directiveName))
-                                                            .forEach(fieldDefinition ->
-                                                                    Optional.ofNullable(fieldDefinition.getDirective(DIRECTIVE_INVOKES_NAME))
+                                                    documentManager.getDocument().getDirective(directiveName)
+                                                            .ifPresent(directiveDefinition ->
+                                                                    Stream.ofNullable(directiveDefinition.getArguments())
+                                                                            .flatMap(Collection::stream)
+                                                                            .filter(inputValue -> inputValue.getName().equals(DIRECTIVE_INVOKES_NAME))
+                                                                            .findFirst()
                                                                             .ifPresentOrElse(
-                                                                                    directive -> directive.getArgument(DIRECTIVE_INVOKES_METHODS_NAME).asArray().add(invoke),
-                                                                                    () -> fieldDefinition
-                                                                                            .addDirective(
-                                                                                                    new Directive(DIRECTIVE_INVOKES_NAME)
-                                                                                                            .addArgument(DIRECTIVE_INVOKES_METHODS_NAME, new ArrayValueWithVariable(invoke))
+                                                                                    inputValue -> inputValue.getDefaultValue().asObject().getValueWithVariable(DIRECTIVE_INVOKES_METHODS_NAME).asArray().add(invoke),
+                                                                                    () -> directiveDefinition
+                                                                                            .addArgument(
+                                                                                                    new InputValue(DIRECTIVE_INVOKES_NAME)
+                                                                                                            .setType(new ListType(new TypeName(INPUT_INVOKE_NAME)))
+                                                                                                            .setDefaultValue(
+                                                                                                                    ObjectValueWithVariable.of(DIRECTIVE_INVOKES_METHODS_NAME, new ArrayValueWithVariable(invoke))
+                                                                                                            )
                                                                                             )
                                                                             )
                                                             );

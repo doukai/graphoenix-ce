@@ -10,52 +10,137 @@ import java.lang.String;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Mutation Arguments for __Schema List
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Mutation Arguments for __Schema List")
 public class __SchemaListMutationArguments implements MetaInput {
+  /**
+   * id
+   */
+  @Description("id")
   private String id;
 
+  /**
+   * types
+   */
+  @Description("types")
   private Collection<__TypeInput> types;
 
+  /**
+   * queryType
+   */
+  @Description("queryType")
   private __TypeInput queryType;
 
+  /**
+   * mutationType
+   */
+  @Description("mutationType")
   private __TypeInput mutationType;
 
+  /**
+   * subscriptionType
+   */
+  @Description("subscriptionType")
   private __TypeInput subscriptionType;
 
+  /**
+   * directives
+   */
+  @Description("directives")
   private Collection<__DirectiveInput> directives;
 
+  /**
+   * Is Deprecated
+   */
   @DefaultValue("false")
+  @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private Integer version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private Integer realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private String createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private LocalDateTime createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private String updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private LocalDateTime updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private String createGroupId;
 
+  /**
+   * Type Name
+   */
   @DefaultValue("\"__Schema\"")
-  private String __typename = "__Schema";
+  @Description("Type Name")
+  private String __typename = "\"__Schema\"";
 
+  /**
+   * queryType Reference
+   */
+  @Description("queryType Reference")
   private String queryTypeName;
 
+  /**
+   * mutationType Reference
+   */
+  @Description("mutationType Reference")
   private String mutationTypeName;
 
+  /**
+   * subscriptionType Reference
+   */
+  @Description("subscriptionType Reference")
   private String subscriptionTypeName;
 
+  /**
+   * Input List
+   */
+  @Description("Input List")
   private Collection<__SchemaInput> list;
 
+  /**
+   * Where
+   */
+  @Description("Where")
   private __SchemaExpression where;
 
   public String getId() {

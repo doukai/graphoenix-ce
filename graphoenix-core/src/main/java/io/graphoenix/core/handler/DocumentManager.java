@@ -3,11 +3,17 @@ package io.graphoenix.core.handler;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.Document;
+import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
+import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.*;
 import jakarta.enterprise.context.ApplicationScoped;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_OPERATION_TYPE;
@@ -166,5 +172,25 @@ public class DocumentManager {
             }
         }
         return null;
+    }
+
+    public List<ObjectValueWithVariable> getDirectiveInvokes(Definition definition) {
+        return Stream.ofNullable(definition.getDirectives())
+                .flatMap(Collection::stream)
+                .flatMap(directive -> document.getDirective(directive.getName()).stream())
+                .flatMap(directiveDefinition ->
+                        Stream.ofNullable(directiveDefinition.getArguments())
+                                .flatMap(Collection::stream)
+                                .filter(inputValue -> inputValue.getName().equals(DIRECTIVE_INVOKES_NAME))
+                                .flatMap(inputValue ->
+                                        inputValue.getDefaultValue().asObject().getValueWithVariableOrEmpty(DIRECTIVE_INVOKES_METHODS_NAME).stream()
+                                                .filter(ValueWithVariable::isArray)
+                                                .map(ValueWithVariable::asArray)
+                                                .flatMap(arrayValueWithVariable -> arrayValueWithVariable.getValueWithVariables().stream())
+                                                .filter(ValueWithVariable::isObject)
+                                                .map(ValueWithVariable::asObject)
+                                )
+                )
+                .collect(Collectors.toList());
     }
 }

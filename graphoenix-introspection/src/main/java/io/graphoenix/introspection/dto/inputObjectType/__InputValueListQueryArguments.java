@@ -12,71 +12,192 @@ import java.lang.Override;
 import java.lang.String;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Query Arguments for __InputValue List
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Query Arguments for __InputValue List")
 public class __InputValueListQueryArguments implements MetaExpression {
+  /**
+   * id
+   */
+  @Description("id")
   private StringExpression id;
 
+  /**
+   * name
+   */
+  @Description("name")
   private StringExpression name;
 
+  /**
+   * ofType
+   */
+  @Description("ofType")
   private __TypeExpression ofType;
 
+  /**
+   * fieldId
+   */
+  @Description("fieldId")
   private IntExpression fieldId;
 
+  /**
+   * directiveName
+   */
+  @Description("directiveName")
   private StringExpression directiveName;
 
+  /**
+   * description
+   */
+  @Description("description")
   private StringExpression description;
 
+  /**
+   * type
+   */
+  @Description("type")
   private __TypeExpression type;
 
+  /**
+   * defaultValue
+   */
+  @Description("defaultValue")
   private StringExpression defaultValue;
 
+  /**
+   * Include Deprecated
+   */
   @DefaultValue("false")
+  @Description("Include Deprecated")
   private Boolean includeDeprecated = false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private IntExpression version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private IntExpression realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private StringExpression createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private StringExpression createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private StringExpression updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private StringExpression updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private StringExpression createGroupId;
 
+  /**
+   * Type Name
+   */
+  @Description("Type Name")
   private StringExpression __typename;
 
+  /**
+   * ofType Reference
+   */
+  @Description("ofType Reference")
   private StringExpression ofTypeName;
 
+  /**
+   * type Reference
+   */
+  @Description("type Reference")
   private StringExpression typeName;
 
+  /**
+   * Order By
+   */
+  @Description("Order By")
   private __InputValueOrderBy orderBy;
 
+  /**
+   * Group By
+   */
+  @Description("Group By")
   private Collection<String> groupBy;
 
+  /**
+   * Not
+   */
   @DefaultValue("false")
+  @Description("Not")
   private Boolean not = false;
 
+  /**
+   * Condition
+   */
   @DefaultValue("AND")
+  @Description("Condition")
   private Conditional cond = Conditional.AND;
 
+  /**
+   * Expressions
+   */
+  @Description("Expressions")
   private Collection<__InputValueExpression> exs;
 
+  /**
+   * First
+   */
+  @Description("First")
   private Integer first;
 
+  /**
+   * Last
+   */
+  @Description("Last")
   private Integer last;
 
+  /**
+   * Offset
+   */
+  @Description("Offset")
   private Integer offset;
 
+  /**
+   * After
+   */
+  @Description("After")
   private String after;
 
+  /**
+   * Before
+   */
+  @Description("Before")
   private String before;
 
   public StringExpression getId() {

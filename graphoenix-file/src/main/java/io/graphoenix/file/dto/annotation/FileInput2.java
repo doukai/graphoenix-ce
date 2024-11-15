@@ -7,39 +7,100 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.eclipse.microprofile.graphql.Description;
 
+/**
+ * Mutation Input for 文件
+ */
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
+@Description("Mutation Input for 文件")
 public @interface FileInput2 {
+  /**
+   * ID
+   */
+  @Description("ID")
   String id() default "";
 
+  /**
+   * 文件名
+   */
+  @Description("文件名")
   String name() default "";
 
+  /**
+   * 类型
+   */
+  @Description("类型")
   String contentType() default "";
 
+  /**
+   * 内容
+   */
+  @Description("内容")
   String content() default "";
 
+  /**
+   * URL
+   */
+  @Description("URL")
   String url() default "";
 
+  /**
+   * Is Deprecated
+   */
+  @Description("Is Deprecated")
   boolean isDeprecated() default false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   int version() default 0;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   int realmId() default 0;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   String createUserId() default "";
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   String createTime() default "";
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   String updateUserId() default "";
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   String updateTime() default "";
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   String createGroupId() default "";
 
-  String __typename() default "File";
+  /**
+   * Type Name
+   */
+  @Description("Type Name")
+  String __typename() default "\"File\"";
 
   String $id() default "";
 

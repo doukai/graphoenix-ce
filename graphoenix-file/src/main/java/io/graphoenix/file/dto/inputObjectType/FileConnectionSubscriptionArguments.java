@@ -12,61 +12,162 @@ import java.lang.Override;
 import java.lang.String;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Subscription Arguments for 文件 List
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Subscription Arguments for 文件 List")
 public class FileConnectionSubscriptionArguments implements MetaExpression {
+  /**
+   * ID
+   */
+  @Description("ID")
   private StringExpression id;
 
+  /**
+   * 文件名
+   */
+  @Description("文件名")
   private StringExpression name;
 
+  /**
+   * 类型
+   */
+  @Description("类型")
   private StringExpression contentType;
 
+  /**
+   * 内容
+   */
+  @Description("内容")
   private StringExpression content;
 
+  /**
+   * URL
+   */
+  @Description("URL")
   private StringExpression url;
 
+  /**
+   * Include Deprecated
+   */
   @DefaultValue("false")
+  @Description("Include Deprecated")
   private Boolean includeDeprecated = false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private IntExpression version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private IntExpression realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private StringExpression createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private StringExpression createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private StringExpression updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private StringExpression updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private StringExpression createGroupId;
 
+  /**
+   * Type Name
+   */
+  @Description("Type Name")
   private StringExpression __typename;
 
+  /**
+   * Order By
+   */
+  @Description("Order By")
   private FileOrderBy orderBy;
 
+  /**
+   * Order By
+   */
+  @Description("Order By")
   private Collection<String> groupBy;
 
+  /**
+   * Not
+   */
   @DefaultValue("false")
+  @Description("Not")
   private Boolean not = false;
 
+  /**
+   * Condition
+   */
   @DefaultValue("AND")
+  @Description("Condition")
   private Conditional cond = Conditional.AND;
 
+  /**
+   * Expressions
+   */
+  @Description("Expressions")
   private Collection<FileExpression> exs;
 
+  /**
+   * First
+   */
+  @Description("First")
   private Integer first;
 
+  /**
+   * Last
+   */
+  @Description("Last")
   private Integer last;
 
+  /**
+   * Offset
+   */
+  @Description("Offset")
   private Integer offset;
 
+  /**
+   * After
+   */
+  @Description("After")
   private String after;
 
+  /**
+   * Before
+   */
+  @Description("Before")
   private String before;
 
   public StringExpression getId() {

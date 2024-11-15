@@ -3,64 +3,177 @@ package io.graphoenix.introspection.dto.objectType;
 import com.dslplatform.json.CompiledJson;
 import jakarta.annotation.Generated;
 import java.util.Collection;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Type;
 
+/**
+ * Query
+ */
 @Type
 @CompiledJson
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Query")
 public class Query {
+  /**
+   * Query Field for __Schema
+   */
+  @Description("Query Field for __Schema")
   private __Schema __schema;
 
+  /**
+   * Query Field for __Schema List
+   */
+  @Description("Query Field for __Schema List")
   private Collection<__Schema> __schemaList;
 
+  /**
+   * Query Field for __Schema Connection
+   */
+  @Description("Query Field for __Schema Connection")
   private __SchemaConnection __schemaConnection;
 
+  /**
+   * Query Field for __Type
+   */
+  @Description("Query Field for __Type")
   private __Type __type;
 
+  /**
+   * Query Field for __Type List
+   */
+  @Description("Query Field for __Type List")
   private Collection<__Type> __typeList;
 
+  /**
+   * Query Field for __Type Connection
+   */
+  @Description("Query Field for __Type Connection")
   private __TypeConnection __typeConnection;
 
+  /**
+   * Query Field for __Field
+   */
+  @Description("Query Field for __Field")
   private __Field __field;
 
+  /**
+   * Query Field for __Field List
+   */
+  @Description("Query Field for __Field List")
   private Collection<__Field> __fieldList;
 
+  /**
+   * Query Field for __Field Connection
+   */
+  @Description("Query Field for __Field Connection")
   private __FieldConnection __fieldConnection;
 
+  /**
+   * Query Field for __InputValue
+   */
+  @Description("Query Field for __InputValue")
   private __InputValue __inputValue;
 
+  /**
+   * Query Field for __InputValue List
+   */
+  @Description("Query Field for __InputValue List")
   private Collection<__InputValue> __inputValueList;
 
+  /**
+   * Query Field for __InputValue Connection
+   */
+  @Description("Query Field for __InputValue Connection")
   private __InputValueConnection __inputValueConnection;
 
+  /**
+   * Query Field for __EnumValue
+   */
+  @Description("Query Field for __EnumValue")
   private __EnumValue __enumValue;
 
+  /**
+   * Query Field for __EnumValue List
+   */
+  @Description("Query Field for __EnumValue List")
   private Collection<__EnumValue> __enumValueList;
 
+  /**
+   * Query Field for __EnumValue Connection
+   */
+  @Description("Query Field for __EnumValue Connection")
   private __EnumValueConnection __enumValueConnection;
 
+  /**
+   * Query Field for __Directive
+   */
+  @Description("Query Field for __Directive")
   private __Directive __directive;
 
+  /**
+   * Query Field for __Directive List
+   */
+  @Description("Query Field for __Directive List")
   private Collection<__Directive> __directiveList;
 
+  /**
+   * Query Field for __Directive Connection
+   */
+  @Description("Query Field for __Directive Connection")
   private __DirectiveConnection __directiveConnection;
 
+  /**
+   * Query Field for Relationship Object between __Type and __Type
+   */
+  @Description("Query Field for Relationship Object between __Type and __Type")
   private __TypeInterfaces __typeInterfaces;
 
+  /**
+   * Query Field for Relationship Object between __Type and __Type List
+   */
+  @Description("Query Field for Relationship Object between __Type and __Type List")
   private Collection<__TypeInterfaces> __typeInterfacesList;
 
+  /**
+   * Query Field for Relationship Object between __Type and __Type Connection
+   */
+  @Description("Query Field for Relationship Object between __Type and __Type Connection")
   private __TypeInterfacesConnection __typeInterfacesConnection;
 
+  /**
+   * Query Field for Relationship Object between __Type and __Type
+   */
+  @Description("Query Field for Relationship Object between __Type and __Type")
   private __TypePossibleTypes __typePossibleTypes;
 
+  /**
+   * Query Field for Relationship Object between __Type and __Type List
+   */
+  @Description("Query Field for Relationship Object between __Type and __Type List")
   private Collection<__TypePossibleTypes> __typePossibleTypesList;
 
+  /**
+   * Query Field for Relationship Object between __Type and __Type Connection
+   */
+  @Description("Query Field for Relationship Object between __Type and __Type Connection")
   private __TypePossibleTypesConnection __typePossibleTypesConnection;
 
+  /**
+   * Query Field for Relationship Object between __Directive and locations
+   */
+  @Description("Query Field for Relationship Object between __Directive and locations")
   private __DirectiveLocationsRelation __directiveLocationsRelation;
 
+  /**
+   * Query Field for Relationship Object between __Directive and locations List
+   */
+  @Description("Query Field for Relationship Object between __Directive and locations List")
   private Collection<__DirectiveLocationsRelation> __directiveLocationsRelationList;
 
+  /**
+   * Query Field for Relationship Object between __Directive and locations Connection
+   */
+  @Description("Query Field for Relationship Object between __Directive and locations Connection")
   private __DirectiveLocationsRelationConnection __directiveLocationsRelationConnection;
 
   public __Schema get__schema() {

@@ -11,48 +11,125 @@ import java.lang.String;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Mutation Input for __Directive
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Mutation Input for __Directive")
 public class __DirectiveInput implements MetaInput {
+  /**
+   * name
+   */
+  @Description("name")
   private String name;
 
+  /**
+   * ofSchema
+   */
+  @Description("ofSchema")
   private __SchemaInput ofSchema;
 
+  /**
+   * description
+   */
+  @Description("description")
   private String description;
 
+  /**
+   * locations
+   */
+  @Description("locations")
   private Collection<__DirectiveLocation> locations;
 
+  /**
+   * args
+   */
+  @Description("args")
   private Collection<__InputValueInput> args;
 
+  /**
+   * isRepeatable
+   */
+  @Description("isRepeatable")
   private Boolean isRepeatable;
 
+  /**
+   * Is Deprecated
+   */
   @DefaultValue("false")
+  @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private Integer version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private Integer realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private String createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private LocalDateTime createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private String updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private LocalDateTime updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private String createGroupId;
 
+  /**
+   * Type Name
+   */
   @DefaultValue("\"__Directive\"")
-  private String __typename = "__Directive";
+  @Description("Type Name")
+  private String __typename = "\"__Directive\"";
 
+  /**
+   * ofSchema Reference
+   */
+  @Description("ofSchema Reference")
   private Integer schemaId;
 
+  /**
+   * Relationship Object between __Directive and locations
+   */
+  @Description("Relationship Object between __Directive and locations")
   private Collection<__DirectiveLocationsRelationInput> __directiveLocationsRelation;
 
+  /**
+   * Where
+   */
+  @Description("Where")
   private __DirectiveExpression where;
 
   public String getName() {

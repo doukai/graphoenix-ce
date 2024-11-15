@@ -9,6 +9,7 @@ import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Id;
 import org.eclipse.microprofile.graphql.NonNull;
 import org.eclipse.microprofile.graphql.Type;
@@ -33,60 +34,172 @@ public class __Schema implements Meta {
   @NonNull
   private Collection<__Directive> directives;
 
+  /**
+   * Is Deprecated
+   */
+  @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private Integer version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private Integer realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private String createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private LocalDateTime createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private String updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private LocalDateTime updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private String createGroupId;
 
+  /**
+   * Type Name
+   */
+  @Description("Type Name")
   private String __typename = "__Schema";
 
+  /**
+   * queryType Reference
+   */
+  @Description("queryType Reference")
   private String queryTypeName;
 
+  /**
+   * mutationType Reference
+   */
+  @Description("mutationType Reference")
   private String mutationTypeName;
 
+  /**
+   * subscriptionType Reference
+   */
+  @Description("subscriptionType Reference")
   private String subscriptionTypeName;
 
+  /**
+   * Aggregate Field for types
+   */
+  @Description("Aggregate Field for types")
   private __Type typesAggregate;
 
+  /**
+   * Connection Field for types
+   */
+  @Description("Connection Field for types")
   private __TypeConnection typesConnection;
 
+  /**
+   * Aggregate Field for directives
+   */
+  @Description("Aggregate Field for directives")
   private __Directive directivesAggregate;
 
+  /**
+   * Connection Field for directives
+   */
+  @Description("Connection Field for directives")
   private __DirectiveConnection directivesConnection;
 
+  /**
+   * Count of __Schema
+   */
+  @Description("Count of __Schema")
   private Integer idCount;
 
+  /**
+   * Max of id
+   */
+  @Description("Max of id")
   private Integer idMax;
 
+  /**
+   * Min of id
+   */
+  @Description("Min of id")
   private Integer idMin;
 
+  /**
+   * Count of queryType Reference
+   */
+  @Description("Count of queryType Reference")
   private Integer queryTypeNameCount;
 
+  /**
+   * Max of queryType Reference
+   */
+  @Description("Max of queryType Reference")
   private String queryTypeNameMax;
 
+  /**
+   * Min of queryType Reference
+   */
+  @Description("Min of queryType Reference")
   private String queryTypeNameMin;
 
+  /**
+   * Count of mutationType Reference
+   */
+  @Description("Count of mutationType Reference")
   private Integer mutationTypeNameCount;
 
+  /**
+   * Max of mutationType Reference
+   */
+  @Description("Max of mutationType Reference")
   private String mutationTypeNameMax;
 
+  /**
+   * Min of mutationType Reference
+   */
+  @Description("Min of mutationType Reference")
   private String mutationTypeNameMin;
 
+  /**
+   * Count of subscriptionType Reference
+   */
+  @Description("Count of subscriptionType Reference")
   private Integer subscriptionTypeNameCount;
 
+  /**
+   * Max of subscriptionType Reference
+   */
+  @Description("Max of subscriptionType Reference")
   private String subscriptionTypeNameMax;
 
+  /**
+   * Min of subscriptionType Reference
+   */
+  @Description("Min of subscriptionType Reference")
   private String subscriptionTypeNameMin;
 
   public String getId() {

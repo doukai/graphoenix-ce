@@ -8,6 +8,7 @@ import java.lang.Integer;
 import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Id;
 import org.eclipse.microprofile.graphql.NonNull;
 import org.eclipse.microprofile.graphql.Type;
@@ -34,78 +35,226 @@ public class __InputValue implements Meta {
 
   private String defaultValue;
 
+  /**
+   * Is Deprecated
+   */
+  @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private Integer version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private Integer realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private String createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private LocalDateTime createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private String updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private LocalDateTime updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private String createGroupId;
 
+  /**
+   * Type Name
+   */
+  @Description("Type Name")
   private String __typename = "__InputValue";
 
+  /**
+   * ofType Reference
+   */
+  @Description("ofType Reference")
   private String ofTypeName;
 
+  /**
+   * type Reference
+   */
+  @Description("type Reference")
   private String typeName;
 
+  /**
+   * Count of __InputValue
+   */
+  @Description("Count of __InputValue")
   private Integer idCount;
 
+  /**
+   * Max of id
+   */
+  @Description("Max of id")
   private Integer idMax;
 
+  /**
+   * Min of id
+   */
+  @Description("Min of id")
   private Integer idMin;
 
+  /**
+   * Count of name
+   */
+  @Description("Count of name")
   private Integer nameCount;
 
+  /**
+   * Max of name
+   */
+  @Description("Max of name")
   private String nameMax;
 
+  /**
+   * Min of name
+   */
+  @Description("Min of name")
   private String nameMin;
 
+  /**
+   * Count of directiveName
+   */
+  @Description("Count of directiveName")
   private Integer directiveNameCount;
 
+  /**
+   * Max of directiveName
+   */
+  @Description("Max of directiveName")
   private String directiveNameMax;
 
+  /**
+   * Min of directiveName
+   */
+  @Description("Min of directiveName")
   private String directiveNameMin;
 
+  /**
+   * Count of description
+   */
+  @Description("Count of description")
   private Integer descriptionCount;
 
+  /**
+   * Max of description
+   */
+  @Description("Max of description")
   private String descriptionMax;
 
+  /**
+   * Min of description
+   */
+  @Description("Min of description")
   private String descriptionMin;
 
+  /**
+   * Count of defaultValue
+   */
+  @Description("Count of defaultValue")
   private Integer defaultValueCount;
 
+  /**
+   * Max of defaultValue
+   */
+  @Description("Max of defaultValue")
   private String defaultValueMax;
 
+  /**
+   * Min of defaultValue
+   */
+  @Description("Min of defaultValue")
   private String defaultValueMin;
 
+  /**
+   * Count of ofType Reference
+   */
+  @Description("Count of ofType Reference")
   private Integer ofTypeNameCount;
 
+  /**
+   * Max of ofType Reference
+   */
+  @Description("Max of ofType Reference")
   private String ofTypeNameMax;
 
+  /**
+   * Min of ofType Reference
+   */
+  @Description("Min of ofType Reference")
   private String ofTypeNameMin;
 
+  /**
+   * Count of type Reference
+   */
+  @Description("Count of type Reference")
   private Integer typeNameCount;
 
+  /**
+   * Max of type Reference
+   */
+  @Description("Max of type Reference")
   private String typeNameMax;
 
+  /**
+   * Min of type Reference
+   */
+  @Description("Min of type Reference")
   private String typeNameMin;
 
+  /**
+   * Count of fieldId
+   */
+  @Description("Count of fieldId")
   private Integer fieldIdCount;
 
+  /**
+   * Sum of fieldId
+   */
+  @Description("Sum of fieldId")
   private Integer fieldIdSum;
 
+  /**
+   * Avg of fieldId
+   */
+  @Description("Avg of fieldId")
   private Integer fieldIdAvg;
 
+  /**
+   * Max of fieldId
+   */
+  @Description("Max of fieldId")
   private Integer fieldIdMax;
 
+  /**
+   * Min of fieldId
+   */
+  @Description("Min of fieldId")
   private Integer fieldIdMin;
 
   public String getId() {

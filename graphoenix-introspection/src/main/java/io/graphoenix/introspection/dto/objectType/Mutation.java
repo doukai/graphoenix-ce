@@ -3,46 +3,123 @@ package io.graphoenix.introspection.dto.objectType;
 import com.dslplatform.json.CompiledJson;
 import jakarta.annotation.Generated;
 import java.util.Collection;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Type;
 
+/**
+ * Mutation
+ */
 @Type
 @CompiledJson
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Mutation")
 public class Mutation {
+  /**
+   * Mutation Field for __Schema
+   */
+  @Description("Mutation Field for __Schema")
   private __Schema __schema;
 
+  /**
+   * Mutation Field for __Schema List
+   */
+  @Description("Mutation Field for __Schema List")
   private Collection<__Schema> __schemaList;
 
+  /**
+   * Mutation Field for __Type
+   */
+  @Description("Mutation Field for __Type")
   private __Type __type;
 
+  /**
+   * Mutation Field for __Type List
+   */
+  @Description("Mutation Field for __Type List")
   private Collection<__Type> __typeList;
 
+  /**
+   * Mutation Field for __Field
+   */
+  @Description("Mutation Field for __Field")
   private __Field __field;
 
+  /**
+   * Mutation Field for __Field List
+   */
+  @Description("Mutation Field for __Field List")
   private Collection<__Field> __fieldList;
 
+  /**
+   * Mutation Field for __InputValue
+   */
+  @Description("Mutation Field for __InputValue")
   private __InputValue __inputValue;
 
+  /**
+   * Mutation Field for __InputValue List
+   */
+  @Description("Mutation Field for __InputValue List")
   private Collection<__InputValue> __inputValueList;
 
+  /**
+   * Mutation Field for __EnumValue
+   */
+  @Description("Mutation Field for __EnumValue")
   private __EnumValue __enumValue;
 
+  /**
+   * Mutation Field for __EnumValue List
+   */
+  @Description("Mutation Field for __EnumValue List")
   private Collection<__EnumValue> __enumValueList;
 
+  /**
+   * Mutation Field for __Directive
+   */
+  @Description("Mutation Field for __Directive")
   private __Directive __directive;
 
+  /**
+   * Mutation Field for __Directive List
+   */
+  @Description("Mutation Field for __Directive List")
   private Collection<__Directive> __directiveList;
 
+  /**
+   * Mutation Field for Relationship Object between __Type and __Type
+   */
+  @Description("Mutation Field for Relationship Object between __Type and __Type")
   private __TypeInterfaces __typeInterfaces;
 
+  /**
+   * Mutation Field for Relationship Object between __Type and __Type List
+   */
+  @Description("Mutation Field for Relationship Object between __Type and __Type List")
   private Collection<__TypeInterfaces> __typeInterfacesList;
 
+  /**
+   * Mutation Field for Relationship Object between __Type and __Type
+   */
+  @Description("Mutation Field for Relationship Object between __Type and __Type")
   private __TypePossibleTypes __typePossibleTypes;
 
+  /**
+   * Mutation Field for Relationship Object between __Type and __Type List
+   */
+  @Description("Mutation Field for Relationship Object between __Type and __Type List")
   private Collection<__TypePossibleTypes> __typePossibleTypesList;
 
+  /**
+   * Mutation Field for Relationship Object between __Directive and locations
+   */
+  @Description("Mutation Field for Relationship Object between __Directive and locations")
   private __DirectiveLocationsRelation __directiveLocationsRelation;
 
+  /**
+   * Mutation Field for Relationship Object between __Directive and locations List
+   */
+  @Description("Mutation Field for Relationship Object between __Directive and locations List")
   private Collection<__DirectiveLocationsRelation> __directiveLocationsRelationList;
 
   public __Schema get__schema() {

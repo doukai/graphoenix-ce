@@ -52,6 +52,9 @@ public class Hammurabi {
     public static final String INPUT_CONDITIONAL_INPUT_VALUE_AND = "AND";
     public static final String INPUT_CONDITIONAL_INPUT_VALUE_OR = "OR";
 
+    
+    public static final String INPUT_INVOKE_NAME = "Invoke";
+
 
     public static final String INPUT_OPERATOR_NAME = "Operator";
     public static final String INPUT_OPERATOR_INPUT_VALUE_EQ = "EQ";

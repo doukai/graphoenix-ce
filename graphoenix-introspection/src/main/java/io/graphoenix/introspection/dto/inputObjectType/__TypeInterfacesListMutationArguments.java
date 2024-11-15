@@ -10,46 +10,115 @@ import java.lang.String;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 import org.eclipse.microprofile.graphql.Name;
 
+/**
+ * Mutation Arguments for Relationship Object between __Type and __Type List
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Mutation Arguments for Relationship Object between __Type and __Type List")
 public class __TypeInterfacesListMutationArguments implements MetaInput {
+  /**
+   * ID
+   */
+  @Description("ID")
   private String id;
 
+  /**
+   * __Type Reference
+   */
+  @Description("__Type Reference")
   private String typeRef;
 
+  /**
+   * __Type
+   */
+  @Description("__Type")
   private __TypeInput type;
 
+  /**
+   * __Type Reference
+   */
+  @Description("__Type Reference")
   private String interfaceRef;
 
+  /**
+   * __Type
+   */
   @Name("interface")
+  @Description("__Type")
   private __TypeInput _interface;
 
+  /**
+   * Is Deprecated
+   */
   @DefaultValue("false")
+  @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private Integer version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private Integer realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private String createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private LocalDateTime createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private String updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private LocalDateTime updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private String createGroupId;
 
+  /**
+   * Type Name
+   */
   @DefaultValue("\"__TypeInterfaces\"")
-  private String __typename = "__TypeInterfaces";
+  @Description("Type Name")
+  private String __typename = "\"__TypeInterfaces\"";
 
+  /**
+   * Input List
+   */
+  @Description("Input List")
   private Collection<__TypeInterfacesInput> list;
 
+  /**
+   * Where
+   */
+  @Description("Where")
   private __TypeInterfacesExpression where;
 
   public String getId() {

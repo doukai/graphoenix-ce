@@ -13,59 +13,156 @@ import java.lang.Override;
 import java.lang.String;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Query Arguments for Relationship Object between __Directive and locations Connection
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Query Arguments for Relationship Object between __Directive and locations Connection")
 public class __DirectiveLocationsRelationConnectionQueryArguments implements MetaExpression {
+  /**
+   * ID
+   */
+  @Description("ID")
   private StringExpression id;
 
+  /**
+   * __Directive Reference
+   */
+  @Description("__Directive Reference")
   private StringExpression __directiveRef;
 
+  /**
+   * __Directive
+   */
+  @Description("__Directive")
   private __DirectiveExpression __directive;
 
+  /**
+   * locations Reference
+   */
+  @Description("locations Reference")
   private __DirectiveLocationExpression locationsRef;
 
+  /**
+   * Include Deprecated
+   */
   @DefaultValue("false")
+  @Description("Include Deprecated")
   private Boolean includeDeprecated = false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private IntExpression version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private IntExpression realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private StringExpression createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private StringExpression createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private StringExpression updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private StringExpression updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private StringExpression createGroupId;
 
+  /**
+   * Type Name
+   */
+  @Description("Type Name")
   private StringExpression __typename;
 
+  /**
+   * Order By
+   */
+  @Description("Order By")
   private __DirectiveLocationsRelationOrderBy orderBy;
 
+  /**
+   * Group By
+   */
+  @Description("Group By")
   private Collection<String> groupBy;
 
+  /**
+   * Not
+   */
   @DefaultValue("false")
+  @Description("Not")
   private Boolean not = false;
 
+  /**
+   * Condition
+   */
   @DefaultValue("AND")
+  @Description("Condition")
   private Conditional cond = Conditional.AND;
 
+  /**
+   * Expressions
+   */
+  @Description("Expressions")
   private Collection<__DirectiveLocationsRelationExpression> exs;
 
+  /**
+   * First
+   */
+  @Description("First")
   private Integer first;
 
+  /**
+   * Last
+   */
+  @Description("Last")
   private Integer last;
 
+  /**
+   * Offset
+   */
+  @Description("Offset")
   private Integer offset;
 
+  /**
+   * After
+   */
+  @Description("After")
   private String after;
 
+  /**
+   * Before
+   */
+  @Description("Before")
   private String before;
 
   public StringExpression getId() {

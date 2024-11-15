@@ -10,54 +10,143 @@ import java.lang.String;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Mutation Arguments for __InputValue List
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Mutation Arguments for __InputValue List")
 public class __InputValueListMutationArguments implements MetaInput {
+  /**
+   * id
+   */
+  @Description("id")
   private String id;
 
+  /**
+   * name
+   */
+  @Description("name")
   private String name;
 
+  /**
+   * ofType
+   */
+  @Description("ofType")
   private __TypeInput ofType;
 
+  /**
+   * fieldId
+   */
+  @Description("fieldId")
   private Integer fieldId;
 
+  /**
+   * directiveName
+   */
+  @Description("directiveName")
   private String directiveName;
 
+  /**
+   * description
+   */
+  @Description("description")
   private String description;
 
+  /**
+   * type
+   */
+  @Description("type")
   private __TypeInput type;
 
+  /**
+   * defaultValue
+   */
+  @Description("defaultValue")
   private String defaultValue;
 
+  /**
+   * Is Deprecated
+   */
   @DefaultValue("false")
+  @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private Integer version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private Integer realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private String createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private LocalDateTime createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private String updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private LocalDateTime updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private String createGroupId;
 
+  /**
+   * Type Name
+   */
   @DefaultValue("\"__InputValue\"")
-  private String __typename = "__InputValue";
+  @Description("Type Name")
+  private String __typename = "\"__InputValue\"";
 
+  /**
+   * ofType Reference
+   */
+  @Description("ofType Reference")
   private String ofTypeName;
 
+  /**
+   * type Reference
+   */
+  @Description("type Reference")
   private String typeName;
 
+  /**
+   * Input List
+   */
+  @Description("Input List")
   private Collection<__InputValueInput> list;
 
+  /**
+   * Where
+   */
+  @Description("Where")
   private __InputValueExpression where;
 
   public String getId() {

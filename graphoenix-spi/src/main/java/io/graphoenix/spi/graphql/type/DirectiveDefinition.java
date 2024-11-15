@@ -3,13 +3,16 @@ package io.graphoenix.spi.graphql.type;
 import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
+import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
+import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_PACKAGE_NAME;
+import static io.graphoenix.spi.constant.Hammurabi.*;
 
 public class DirectiveDefinition extends AbstractDefinition implements Definition {
 
@@ -115,9 +118,26 @@ public class DirectiveDefinition extends AbstractDefinition implements Definitio
 
     @Override
     public Optional<String> getPackageName() {
-        return Optional.ofNullable(getDescription())
-                .filter(description -> description.contains(DIRECTIVE_PACKAGE_NAME + ":"))
-                .map(description -> description.substring(description.lastIndexOf(DIRECTIVE_PACKAGE_NAME + ":") + DIRECTIVE_PACKAGE_NAME.length() + 1));
+        return Stream.ofNullable(getArguments())
+                .flatMap(Collection::stream)
+                .filter(inputValue -> inputValue.getName().equals(DIRECTIVE_PACKAGE_NAME))
+                .findFirst()
+                .map(inputValue -> inputValue.getDefaultValue().asString().getString());
+    }
+
+    public List<ObjectValueWithVariable> getInvokes() {
+        return Stream.ofNullable(getArguments())
+                .flatMap(Collection::stream)
+                .filter(inputValue -> inputValue.getName().equals(DIRECTIVE_INVOKES_NAME))
+                .flatMap(inputValue ->
+                        inputValue.getDefaultValue().asObject().getValueWithVariableOrEmpty(DIRECTIVE_INVOKES_METHODS_NAME).stream()
+                                .filter(ValueWithVariable::isArray)
+                                .map(ValueWithVariable::asArray)
+                                .flatMap(arrayValueWithVariable -> arrayValueWithVariable.getValueWithVariables().stream())
+                                .filter(ValueWithVariable::isObject)
+                                .map(ValueWithVariable::asObject)
+                )
+                .collect(Collectors.toList());
     }
 
     @Override

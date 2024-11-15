@@ -13,55 +13,144 @@ import java.lang.Override;
 import java.lang.String;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Query Arguments for __Directive
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Query Arguments for __Directive")
 public class __DirectiveQueryArguments implements MetaExpression {
+  /**
+   * name
+   */
+  @Description("name")
   private StringExpression name;
 
+  /**
+   * ofSchema
+   */
+  @Description("ofSchema")
   private __SchemaExpression ofSchema;
 
+  /**
+   * description
+   */
+  @Description("description")
   private StringExpression description;
 
+  /**
+   * locations
+   */
+  @Description("locations")
   private __DirectiveLocationExpression locations;
 
+  /**
+   * args
+   */
+  @Description("args")
   private __InputValueExpression args;
 
+  /**
+   * isRepeatable
+   */
+  @Description("isRepeatable")
   private BooleanExpression isRepeatable;
 
+  /**
+   * Include Deprecated
+   */
   @DefaultValue("false")
+  @Description("Include Deprecated")
   private Boolean includeDeprecated = false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private IntExpression version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private IntExpression realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private StringExpression createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private StringExpression createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private StringExpression updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private StringExpression updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private StringExpression createGroupId;
 
+  /**
+   * Type Name
+   */
+  @Description("Type Name")
   private StringExpression __typename;
 
+  /**
+   * ofSchema Reference
+   */
+  @Description("ofSchema Reference")
   private IntExpression schemaId;
 
+  /**
+   * Relationship Object between __Directive and locations
+   */
+  @Description("Relationship Object between __Directive and locations")
   private __DirectiveLocationsRelationExpression __directiveLocationsRelation;
 
+  /**
+   * Group By
+   */
+  @Description("Group By")
   private Collection<String> groupBy;
 
+  /**
+   * Not
+   */
   @DefaultValue("false")
+  @Description("Not")
   private Boolean not = false;
 
+  /**
+   * Condition
+   */
   @DefaultValue("AND")
+  @Description("Condition")
   private Conditional cond = Conditional.AND;
 
+  /**
+   * Expressions
+   */
+  @Description("Expressions")
   private Collection<__DirectiveExpression> exs;
 
   public StringExpression getName() {

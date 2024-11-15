@@ -67,7 +67,8 @@ public class InvokeHandlerBuilder {
                         documentManager.getDocument().getObjectTypes()
                                 .filter(packageManager::isLocalPackage)
                                 .flatMap(objectType -> objectType.getFields().stream())
-                                .flatMap(fieldDefinition -> fieldDefinition.getInvokes().stream())
+                                .flatMap(fieldDefinition -> documentManager.getDirectiveInvokes(fieldDefinition).stream())
+                                .filter(objectValueWithVariable -> objectValueWithVariable.getBoolean(INPUT_INVOKE_INPUT_VALUE_ON_FIELD_NAME, false))
                                 .map(objectValueWithVariable -> objectValueWithVariable.getString(INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME))
                 )
                 .collect(Collectors.toSet());
@@ -280,15 +281,15 @@ public class InvokeHandlerBuilder {
                                                                                         .filter(fieldDefinition -> !fieldDefinition.isFetchField())
                                                                                         .filter(fieldDefinition -> !fieldDefinition.isFunctionField())
                                                                                         .filter(fieldDefinition -> documentManager.getFieldTypeDefinition(fieldDefinition).isLeaf())
-                                                                                        .filter(fieldDefinition -> !fieldDefinition.getInvokes().isEmpty())
+                                                                                        .filter(fieldDefinition -> !documentManager.getDirectiveInvokes(fieldDefinition).isEmpty())
                                                                                         .filter(fieldDefinition ->
-                                                                                                fieldDefinition.getInvokes().stream()
+                                                                                                documentManager.getDirectiveInvokes(fieldDefinition).stream()
                                                                                                         .anyMatch(objectValueWithVariable -> objectValueWithVariable.getBoolean(INPUT_INVOKE_INPUT_VALUE_ON_FIELD_NAME, false))
                                                                                         )
                                                                                         .map(fieldDefinition -> {
                                                                                                     CodeBlock caseCodeBlock = CodeBlock.of("case $S:\n", fieldDefinition.getName());
                                                                                                     CodeBlock getFieldCodeBlock = CodeBlock.of("$L.$L()", resultParameterName, getFieldGetterMethodName(fieldDefinition.getName()));
-                                                                                                    CodeBlock invokesCodeBlock = fieldDefinition.getInvokes().stream()
+                                                                                                    CodeBlock invokesCodeBlock = documentManager.getDirectiveInvokes(fieldDefinition).stream()
                                                                                                             .filter(objectValueWithVariable -> objectValueWithVariable.getBoolean(INPUT_INVOKE_INPUT_VALUE_ON_FIELD_NAME, false))
                                                                                                             .reduce(
                                                                                                                     CodeBlock.builder().build(),

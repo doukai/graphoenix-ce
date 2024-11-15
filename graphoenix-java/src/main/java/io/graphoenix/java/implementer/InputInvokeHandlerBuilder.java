@@ -58,7 +58,11 @@ public class InputInvokeHandlerBuilder {
                         documentManager.getDocument().getObjectTypes()
                                 .filter(packageManager::isLocalPackage)
                                 .flatMap(objectType -> objectType.getFields().stream())
-                                .flatMap(fieldDefinition -> fieldDefinition.getInvokes().stream())
+                                .flatMap(fieldDefinition -> documentManager.getDirectiveInvokes(fieldDefinition).stream())
+                                .filter(objectValueWithVariable ->
+                                        objectValueWithVariable.getBoolean(INPUT_INVOKE_INPUT_VALUE_ON_EXPRESSION_NAME, false) ||
+                                                objectValueWithVariable.getBoolean(INPUT_INVOKE_INPUT_VALUE_ON_INPUT_VALUE_NAME, false)
+                                )
                                 .map(objectValueWithVariable -> objectValueWithVariable.getString(INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME))
                 )
                 .collect(Collectors.toSet());
@@ -253,9 +257,9 @@ public class InputInvokeHandlerBuilder {
                                                                                         documentManager.getInputBelong(documentManager.getInputValueTypeDefinition(inputValue)).isLeaf()
                                                                 )
                                                                 .filter(inputValue -> objectType.getField(inputValue.getName()) != null)
-                                                                .filter(inputValue -> !objectType.getField(inputValue.getName()).getInvokes().isEmpty())
+                                                                .filter(inputValue -> !documentManager.getDirectiveInvokes(objectType.getField(inputValue.getName())).isEmpty())
                                                                 .filter(inputValue ->
-                                                                        objectType.getField(inputValue.getName()).getInvokes().stream()
+                                                                        documentManager.getDirectiveInvokes(objectType.getField(inputValue.getName())).stream()
                                                                                 .anyMatch(objectValueWithVariable ->
                                                                                         documentManager.getInputValueTypeDefinition(inputValue).getName().endsWith(SUFFIX_EXPRESSION) ?
                                                                                                 objectValueWithVariable.getBoolean(INPUT_INVOKE_INPUT_VALUE_ON_EXPRESSION_NAME, false) :
@@ -266,7 +270,7 @@ public class InputInvokeHandlerBuilder {
                                                                             FieldDefinition fieldDefinition = objectType.getField(inputValue.getName());
                                                                             CodeBlock caseCodeBlock = CodeBlock.of("case $S:\n", fieldDefinition.getName());
                                                                             CodeBlock getFieldCodeBlock = CodeBlock.of("$L.$L()", resultParameterName, getFieldGetterMethodName(fieldDefinition.getName()));
-                                                                            CodeBlock invokesCodeBlock = fieldDefinition.getInvokes().stream()
+                                                                            CodeBlock invokesCodeBlock = documentManager.getDirectiveInvokes(fieldDefinition).stream()
                                                                                     .filter(objectValueWithVariable ->
                                                                                             documentManager.getInputValueTypeDefinition(inputValue).getName().endsWith(SUFFIX_EXPRESSION) ?
                                                                                                     objectValueWithVariable.getBoolean(INPUT_INVOKE_INPUT_VALUE_ON_EXPRESSION_NAME, false) :

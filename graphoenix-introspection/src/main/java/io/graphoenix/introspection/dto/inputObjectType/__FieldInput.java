@@ -10,50 +10,131 @@ import java.lang.String;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Mutation Input for __Field
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Mutation Input for __Field")
 public class __FieldInput implements MetaInput {
+  /**
+   * id
+   */
+  @Description("id")
   private String id;
 
+  /**
+   * name
+   */
+  @Description("name")
   private String name;
 
+  /**
+   * ofType
+   */
+  @Description("ofType")
   private __TypeInput ofType;
 
+  /**
+   * description
+   */
+  @Description("description")
   private String description;
 
+  /**
+   * args
+   */
+  @Description("args")
   private Collection<__InputValueInput> args;
 
+  /**
+   * type
+   */
+  @Description("type")
   private __TypeInput type;
 
+  /**
+   * deprecationReason
+   */
+  @Description("deprecationReason")
   private String deprecationReason;
 
+  /**
+   * Is Deprecated
+   */
   @DefaultValue("false")
+  @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private Integer version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private Integer realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private String createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private LocalDateTime createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private String updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private LocalDateTime updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private String createGroupId;
 
+  /**
+   * Type Name
+   */
   @DefaultValue("\"__Field\"")
-  private String __typename = "__Field";
+  @Description("Type Name")
+  private String __typename = "\"__Field\"";
 
+  /**
+   * ofType Reference
+   */
+  @Description("ofType Reference")
   private String ofTypeName;
 
+  /**
+   * type Reference
+   */
+  @Description("type Reference")
   private String typeName;
 
+  /**
+   * Where
+   */
+  @Description("Where")
   private __FieldExpression where;
 
   public String getId() {

@@ -10,44 +10,117 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.eclipse.microprofile.graphql.Description;
 
+/**
+ * Query Expression Input for Relationship Object between __Type and __Type
+ */
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
+@Description("Query Expression Input for Relationship Object between __Type and __Type")
 public @interface __TypePossibleTypesExpression {
+  /**
+   * ID
+   */
+  @Description("ID")
   StringExpression id() default @StringExpression;
 
+  /**
+   * __Type Reference
+   */
+  @Description("__Type Reference")
   StringExpression typeRef() default @StringExpression;
 
+  /**
+   * __Type
+   */
+  @Description("__Type")
   __TypeExpression1 type() default @__TypeExpression1;
 
+  /**
+   * __Type Reference
+   */
+  @Description("__Type Reference")
   StringExpression possibleTypeRef() default @StringExpression;
 
+  /**
+   * __Type
+   */
+  @Description("__Type")
   __TypeExpression1 possibleType() default @__TypeExpression1;
 
+  /**
+   * Include Deprecated
+   */
+  @Description("Include Deprecated")
   boolean includeDeprecated() default false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   IntExpression version() default @IntExpression;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   IntExpression realmId() default @IntExpression;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   StringExpression createUserId() default @StringExpression;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   StringExpression createTime() default @StringExpression;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   StringExpression updateUserId() default @StringExpression;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   StringExpression updateTime() default @StringExpression;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   StringExpression createGroupId() default @StringExpression;
 
+  /**
+   * Type Name
+   */
+  @Description("Type Name")
   StringExpression __typename() default @StringExpression;
 
+  /**
+   * Not
+   */
+  @Description("Not")
   boolean not() default false;
 
+  /**
+   * Condition
+   */
+  @Description("Condition")
   Conditional cond() default Conditional.AND;
 
+  /**
+   * Expressions
+   */
+  @Description("Expressions")
   __TypePossibleTypesExpression1[] exs() default {};
 
   String $id() default "";

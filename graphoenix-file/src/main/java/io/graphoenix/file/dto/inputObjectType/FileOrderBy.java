@@ -3,68 +3,189 @@ package io.graphoenix.file.dto.inputObjectType;
 import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.enumType.Sort;
 import jakarta.annotation.Generated;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Order Input for 文件
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Order Input for 文件")
 public class FileOrderBy {
+  /**
+   * ID
+   */
+  @Description("ID")
   private Sort id;
 
+  /**
+   * 文件名
+   */
+  @Description("文件名")
   private Sort name;
 
+  /**
+   * 类型
+   */
+  @Description("类型")
   private Sort contentType;
 
+  /**
+   * 内容
+   */
+  @Description("内容")
   private Sort content;
 
+  /**
+   * URL
+   */
+  @Description("URL")
   private Sort url;
 
+  /**
+   * Is Deprecated
+   */
+  @Description("Is Deprecated")
   private Sort isDeprecated;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private Sort version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private Sort realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private Sort createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private Sort createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private Sort updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private Sort updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private Sort createGroupId;
 
+  /**
+   * Type Name
+   */
+  @Description("Type Name")
   private Sort __typename;
 
+  /**
+   * Count of 文件
+   */
+  @Description("Count of 文件")
   private Sort idCount;
 
+  /**
+   * Max of ID
+   */
+  @Description("Max of ID")
   private Sort idMax;
 
+  /**
+   * Min of ID
+   */
+  @Description("Min of ID")
   private Sort idMin;
 
+  /**
+   * Count of 文件名
+   */
+  @Description("Count of 文件名")
   private Sort nameCount;
 
+  /**
+   * Max of 文件名
+   */
+  @Description("Max of 文件名")
   private Sort nameMax;
 
+  /**
+   * Min of 文件名
+   */
+  @Description("Min of 文件名")
   private Sort nameMin;
 
+  /**
+   * Count of 类型
+   */
+  @Description("Count of 类型")
   private Sort contentTypeCount;
 
+  /**
+   * Max of 类型
+   */
+  @Description("Max of 类型")
   private Sort contentTypeMax;
 
+  /**
+   * Min of 类型
+   */
+  @Description("Min of 类型")
   private Sort contentTypeMin;
 
+  /**
+   * Count of 内容
+   */
+  @Description("Count of 内容")
   private Sort contentCount;
 
+  /**
+   * Max of 内容
+   */
+  @Description("Max of 内容")
   private Sort contentMax;
 
+  /**
+   * Min of 内容
+   */
+  @Description("Min of 内容")
   private Sort contentMin;
 
+  /**
+   * Count of URL
+   */
+  @Description("Count of URL")
   private Sort urlCount;
 
+  /**
+   * Max of URL
+   */
+  @Description("Max of URL")
   private Sort urlMax;
 
+  /**
+   * Min of URL
+   */
+  @Description("Min of URL")
   private Sort urlMin;
 
   public Sort getId() {

@@ -12,69 +12,186 @@ import java.lang.Override;
 import java.lang.String;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Query Arguments for __Schema List
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Query Arguments for __Schema List")
 public class __SchemaListQueryArguments implements MetaExpression {
+  /**
+   * id
+   */
+  @Description("id")
   private StringExpression id;
 
+  /**
+   * types
+   */
+  @Description("types")
   private __TypeExpression types;
 
+  /**
+   * queryType
+   */
+  @Description("queryType")
   private __TypeExpression queryType;
 
+  /**
+   * mutationType
+   */
+  @Description("mutationType")
   private __TypeExpression mutationType;
 
+  /**
+   * subscriptionType
+   */
+  @Description("subscriptionType")
   private __TypeExpression subscriptionType;
 
+  /**
+   * directives
+   */
+  @Description("directives")
   private __DirectiveExpression directives;
 
+  /**
+   * Include Deprecated
+   */
   @DefaultValue("false")
+  @Description("Include Deprecated")
   private Boolean includeDeprecated = false;
 
+  /**
+   * Version
+   */
+  @Description("Version")
   private IntExpression version;
 
+  /**
+   * Realm ID
+   */
+  @Description("Realm ID")
   private IntExpression realmId;
 
+  /**
+   * Create User ID
+   */
+  @Description("Create User ID")
   private StringExpression createUserId;
 
+  /**
+   * Create Time
+   */
+  @Description("Create Time")
   private StringExpression createTime;
 
+  /**
+   * Update User ID
+   */
+  @Description("Update User ID")
   private StringExpression updateUserId;
 
+  /**
+   * Update Time
+   */
+  @Description("Update Time")
   private StringExpression updateTime;
 
+  /**
+   * Create Group ID
+   */
+  @Description("Create Group ID")
   private StringExpression createGroupId;
 
+  /**
+   * Type Name
+   */
+  @Description("Type Name")
   private StringExpression __typename;
 
+  /**
+   * queryType Reference
+   */
+  @Description("queryType Reference")
   private StringExpression queryTypeName;
 
+  /**
+   * mutationType Reference
+   */
+  @Description("mutationType Reference")
   private StringExpression mutationTypeName;
 
+  /**
+   * subscriptionType Reference
+   */
+  @Description("subscriptionType Reference")
   private StringExpression subscriptionTypeName;
 
+  /**
+   * Order By
+   */
+  @Description("Order By")
   private __SchemaOrderBy orderBy;
 
+  /**
+   * Group By
+   */
+  @Description("Group By")
   private Collection<String> groupBy;
 
+  /**
+   * Not
+   */
   @DefaultValue("false")
+  @Description("Not")
   private Boolean not = false;
 
+  /**
+   * Condition
+   */
   @DefaultValue("AND")
+  @Description("Condition")
   private Conditional cond = Conditional.AND;
 
+  /**
+   * Expressions
+   */
+  @Description("Expressions")
   private Collection<__SchemaExpression> exs;
 
+  /**
+   * First
+   */
+  @Description("First")
   private Integer first;
 
+  /**
+   * Last
+   */
+  @Description("Last")
   private Integer last;
 
+  /**
+   * Offset
+   */
+  @Description("Offset")
   private Integer offset;
 
+  /**
+   * After
+   */
+  @Description("After")
   private String after;
 
+  /**
+   * Before
+   */
+  @Description("Before")
   private String before;
 
   public StringExpression getId() {

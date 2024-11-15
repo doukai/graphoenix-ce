@@ -306,6 +306,11 @@ public class Document {
                 .map(Definition::asDirective);
     }
 
+    public Optional<DirectiveDefinition> getDirective(String name) {
+        return Optional.ofNullable(getDefinition(name))
+                .map(Definition::asDirective);
+    }
+
     public Stream<ObjectType> getImplementsObjectType(String name) {
         return getDefinitions().stream()
                 .filter(Definition::isObject)

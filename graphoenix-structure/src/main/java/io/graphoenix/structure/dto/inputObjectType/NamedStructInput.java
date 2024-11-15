@@ -6,29 +6,74 @@ import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.String;
 import java.time.LocalDateTime;
+import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
+/**
+ * Mutation Input for NamedStruct
+ */
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Description("Mutation Input for NamedStruct")
 public interface NamedStructInput extends MetaInput {
+  /**
+   * name
+   */
+  @Description("name")
   String name = null;
 
+  /**
+   * description
+   */
+  @Description("description")
   String description = null;
 
+  /**
+   * Is Deprecated
+   */
+  @Description("Is Deprecated")
   Boolean isDeprecated = false;
 
+  /**
+   * version
+   */
+  @Description("version")
   Integer version = null;
 
+  /**
+   * realmId
+   */
+  @Description("realmId")
   Integer realmId = null;
 
+  /**
+   * createUserId
+   */
+  @Description("createUserId")
   String createUserId = null;
 
+  /**
+   * createTime
+   */
+  @Description("createTime")
   LocalDateTime createTime = null;
 
+  /**
+   * updateUserId
+   */
+  @Description("updateUserId")
   String updateUserId = null;
 
+  /**
+   * updateTime
+   */
+  @Description("updateTime")
   LocalDateTime updateTime = null;
 
+  /**
+   * createGroupId
+   */
+  @Description("createGroupId")
   String createGroupId = null;
 
   String getName();
