@@ -326,7 +326,9 @@ public class IntrospectionMutationBuilder {
         }
 
         if (inputValue.getDefaultValue() != null) {
-            __inputValue.setDefaultValue(inputValue.getDefaultValue().toString());
+            if (!inputValue.getDefaultValue().isObject()) {
+                __inputValue.setDefaultValue(inputValue.getDefaultValue().toString());
+            }
         }
         __inputValue.setType(buildType(inputValue.getType(), level));
         return __inputValue;
