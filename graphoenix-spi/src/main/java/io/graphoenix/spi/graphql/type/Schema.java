@@ -42,6 +42,7 @@ public class Schema extends AbstractDefinition implements Definition {
 
     public Schema(GraphqlParser.SchemaExtensionContext schemaExtensionContext) {
         super(schemaExtensionContext.directives());
+        setExtension(true);
         this.query = schemaExtensionContext.operationTypeDefinition().stream()
                 .filter(operationTypeDefinitionContext -> operationTypeDefinitionContext.operationType().QUERY() != null)
                 .findFirst()

@@ -59,6 +59,7 @@ public class ObjectType extends AbstractDefinition implements Definition, Fields
 
     public ObjectType(GraphqlParser.ObjectTypeExtensionDefinitionContext objectTypeExtensionDefinitionContext) {
         super(objectTypeExtensionDefinitionContext.name(), null, objectTypeExtensionDefinitionContext.directives());
+        setExtension(true);
         if (objectTypeExtensionDefinitionContext.implementsInterfaces() != null) {
             setInterfaces(
                     getImplementsInterfaces(objectTypeExtensionDefinitionContext.implementsInterfaces())

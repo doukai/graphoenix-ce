@@ -43,6 +43,10 @@ public interface Definition {
         return false;
     }
 
+    default boolean isExtension() {
+        return false;
+    }
+
     default boolean isDirective() {
         return false;
     }

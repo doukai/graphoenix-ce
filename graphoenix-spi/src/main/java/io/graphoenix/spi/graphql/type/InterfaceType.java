@@ -59,6 +59,7 @@ public class InterfaceType extends AbstractDefinition implements Definition, Fie
 
     public InterfaceType(GraphqlParser.InterfaceTypeExtensionDefinitionContext interfaceTypeExtensionDefinitionContext) {
         super(interfaceTypeExtensionDefinitionContext.name(), null, interfaceTypeExtensionDefinitionContext.directives());
+        setExtension(true);
         if (interfaceTypeExtensionDefinitionContext.implementsInterfaces() != null) {
             setInterfaces(
                     getImplementsInterfaces(interfaceTypeExtensionDefinitionContext.implementsInterfaces())

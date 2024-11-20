@@ -233,13 +233,7 @@ public class Document {
 
     public Document merge(GraphqlParser.DocumentContext documentContext) {
         this.definitionMap.putAll(
-                (Map<? extends String, ? extends Definition>) Stream
-                        .concat(
-                                documentContext.definition().stream()
-                                        .filter(definitionContext -> definitionContext.typeSystemExtension() == null),
-                                documentContext.definition().stream()
-                                        .filter(definitionContext -> definitionContext.typeSystemExtension() != null)
-                        )
+                (Map<? extends String, ? extends Definition>) documentContext.definition().stream()
                         .map(this::merge)
                         .collect(
                                 Collectors.toMap(
@@ -413,42 +407,44 @@ public class Document {
     }
 
     public Definition merge(Definition definition) {
-        if (definition.isSchema()) {
-            getSchema()
-                    .ifPresentOrElse(
-                            schema -> schema.merge(definition.asSchema()),
-                            () -> addDefinition(definition)
-                    );
-        } else if (definition.isObject()) {
-            getObjectType(definition.getName())
-                    .ifPresentOrElse(
-                            objectType -> objectType.merge(definition.asObject()),
-                            () -> addDefinition(definition)
-                    );
-        } else if (definition.isInterface()) {
-            getInterfaceType(definition.getName())
-                    .ifPresentOrElse(
-                            interfaceType -> interfaceType.merge(definition.asObject()),
-                            () -> addDefinition(definition)
-                    );
-        } else if (definition.isInputObject()) {
-            getInputObjectType(definition.getName())
-                    .ifPresentOrElse(
-                            inputObjectType -> inputObjectType.merge(definition.asObject()),
-                            () -> addDefinition(definition)
-                    );
-        } else if (definition.isEnum()) {
-            getEnumType(definition.getName())
-                    .ifPresentOrElse(
-                            enumType -> enumType.merge(definition.asObject()),
-                            () -> addDefinition(definition)
-                    );
-        } else if (definition.isScalar()) {
-            getScalarType(definition.getName())
-                    .ifPresentOrElse(
-                            scalarType -> scalarType.merge(definition.asScalar()),
-                            () -> addDefinition(definition)
-                    );
+        if (!definition.isExtension()) {
+            if (definition.isSchema()) {
+                getSchema()
+                        .ifPresentOrElse(
+                                schema -> schema.merge(definition.asSchema()),
+                                () -> addDefinition(definition)
+                        );
+            } else if (definition.isObject()) {
+                getObjectType(definition.getName())
+                        .ifPresentOrElse(
+                                objectType -> objectType.merge(definition.asObject()),
+                                () -> addDefinition(definition)
+                        );
+            } else if (definition.isInterface()) {
+                getInterfaceType(definition.getName())
+                        .ifPresentOrElse(
+                                interfaceType -> interfaceType.merge(definition.asObject()),
+                                () -> addDefinition(definition)
+                        );
+            } else if (definition.isInputObject()) {
+                getInputObjectType(definition.getName())
+                        .ifPresentOrElse(
+                                inputObjectType -> inputObjectType.merge(definition.asObject()),
+                                () -> addDefinition(definition)
+                        );
+            } else if (definition.isEnum()) {
+                getEnumType(definition.getName())
+                        .ifPresentOrElse(
+                                enumType -> enumType.merge(definition.asObject()),
+                                () -> addDefinition(definition)
+                        );
+            } else if (definition.isScalar()) {
+                getScalarType(definition.getName())
+                        .ifPresentOrElse(
+                                scalarType -> scalarType.merge(definition.asScalar()),
+                                () -> addDefinition(definition)
+                        );
+            }
         } else {
             this.definitionMap.put(definition.getName(), definition);
         }

@@ -1,6 +1,6 @@
 interfaceTypeDefinition(interfaceType) ::= <<
 <if(interfaceType.description)>"<interfaceType.description>"<endif>
-interface <interfaceType.name><if(interfaceType.interfaces)> implements <interfaceType.interfaces:{interface|<interface>};separator=" & "><endif><if(interfaceType.directives)> <interfaceType.directives:{directive|<directive>};separator=" "><endif> {
+<if(interfaceType.extend)>extend <endif>interface <interfaceType.name><if(interfaceType.interfaces)> implements <interfaceType.interfaces:{interface|<interface>};separator=" & "><endif><if(interfaceType.directives)> <interfaceType.directives:{directive|<directive>};separator=" "><endif> {
   <interfaceType.fields:{field|<field>};separator="\n">
 }
 >>

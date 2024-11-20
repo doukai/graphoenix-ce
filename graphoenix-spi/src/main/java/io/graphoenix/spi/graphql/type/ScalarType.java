@@ -26,6 +26,7 @@ public class ScalarType extends AbstractDefinition implements Definition {
 
     public ScalarType(GraphqlParser.ScalarTypeExtensionDefinitionContext scalarTypeExtensionDefinitionContext) {
         super(scalarTypeExtensionDefinitionContext.name(), null, scalarTypeExtensionDefinitionContext.directives());
+        setExtension(true);
     }
 
     public ScalarType merge(GraphqlParser.ScalarTypeDefinitionContext... scalarTypeDefinitionContexts) {

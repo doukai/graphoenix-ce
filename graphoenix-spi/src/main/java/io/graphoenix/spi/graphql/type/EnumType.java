@@ -45,6 +45,7 @@ public class EnumType extends AbstractDefinition implements Definition {
 
     public EnumType(GraphqlParser.EnumTypeExtensionDefinitionContext enumTypeExtensionDefinitionContext) {
         super(enumTypeExtensionDefinitionContext.name(), null, enumTypeExtensionDefinitionContext.directives());
+        setExtension(true);
         if (enumTypeExtensionDefinitionContext.extensionEnumValueDefinitions() != null) {
             setEnumValues(
                     enumTypeExtensionDefinitionContext.extensionEnumValueDefinitions().enumValueDefinition().stream()

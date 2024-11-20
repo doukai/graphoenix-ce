@@ -494,6 +494,14 @@ public class DocumentBuilder {
         objectType
                 .addInterface(INTERFACE_META_NAME)
                 .addFields(getMetaInterfaceFields())
+                .addField(buildTypeNameField(objectType))
+                .addFields(buildFunctionFieldList(objectType));
+
+        return objectType;
+    }
+
+    public ObjectType buildObjectRelation(ObjectType objectType) {
+        objectType
                 .setFields(
                         objectType.getFields().stream()
                                 .map(fieldDefinition ->
@@ -503,7 +511,6 @@ public class DocumentBuilder {
                                 )
                                 .collect(Collectors.toCollection(LinkedHashSet::new))
                 )
-                .addField(buildTypeNameField(objectType))
                 .addFields(
                         objectType.getFields().stream()
                                 .filter(FieldDefinition::isFetchField)
@@ -608,8 +615,7 @@ public class DocumentBuilder {
                                         )
                                 )
                                 .collect(Collectors.toList())
-                )
-                .addFields(buildFunctionFieldList(objectType));
+                );
 
         return objectType;
     }

@@ -27,6 +27,7 @@ public abstract class AbstractDefinition implements Definition {
     private String name;
     private String description;
     private Map<String, Directive> directiveMap;
+    private boolean extension = false;
 
     public AbstractDefinition() {
     }
@@ -202,6 +203,15 @@ public abstract class AbstractDefinition implements Definition {
                         )
         );
         return (T) this;
+    }
+
+    @Override
+    public boolean isExtension() {
+        return extension;
+    }
+
+    public void setExtension(boolean extension) {
+        this.extension = extension;
     }
 
     @Override

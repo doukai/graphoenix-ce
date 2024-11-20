@@ -47,6 +47,7 @@ public class InputObjectType extends AbstractDefinition implements Definition {
 
     public InputObjectType(GraphqlParser.InputObjectTypeExtensionDefinitionContext inputObjectTypeExtensionDefinitionContext) {
         super(inputObjectTypeExtensionDefinitionContext.name(), null, inputObjectTypeExtensionDefinitionContext.directives());
+        setExtension(true);
         if (inputObjectTypeExtensionDefinitionContext.extensionInputObjectValueDefinitions() != null) {
             setInputValues(
                     inputObjectTypeExtensionDefinitionContext.extensionInputObjectValueDefinitions().inputValueDefinition().stream()
