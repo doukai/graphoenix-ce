@@ -45,6 +45,17 @@ public class InputObjectType extends AbstractDefinition implements Definition {
         }
     }
 
+    public InputObjectType(GraphqlParser.InputObjectTypeExtensionDefinitionContext inputObjectTypeExtensionDefinitionContext) {
+        super(inputObjectTypeExtensionDefinitionContext.name(), null, inputObjectTypeExtensionDefinitionContext.directives());
+        if (inputObjectTypeExtensionDefinitionContext.extensionInputObjectValueDefinitions() != null) {
+            setInputValues(
+                    inputObjectTypeExtensionDefinitionContext.extensionInputObjectValueDefinitions().inputValueDefinition().stream()
+                            .map(InputValue::new)
+                            .collect(Collectors.toList())
+            );
+        }
+    }
+
     public InputObjectType(TypeElement typeElement, Types types) {
         super(typeElement);
         setInputValues(
@@ -59,6 +70,14 @@ public class InputObjectType extends AbstractDefinition implements Definition {
     public InputObjectType merge(GraphqlParser.InputObjectTypeDefinitionContext... inputObjectTypeDefinitionContexts) {
         return merge(
                 Stream.of(inputObjectTypeDefinitionContexts)
+                        .map(InputObjectType::new)
+                        .toArray(InputObjectType[]::new)
+        );
+    }
+
+    public InputObjectType merge(GraphqlParser.InputObjectTypeExtensionDefinitionContext... inputObjectTypeExtensionDefinitionContexts) {
+        return merge(
+                Stream.of(inputObjectTypeExtensionDefinitionContexts)
                         .map(InputObjectType::new)
                         .toArray(InputObjectType[]::new)
         );

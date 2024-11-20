@@ -6,6 +6,8 @@ import io.graphoenix.spi.graphql.Definition;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
+import java.util.stream.Stream;
+
 public class ScalarType extends AbstractDefinition implements Definition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/ScalarType.stg");
@@ -20,6 +22,26 @@ public class ScalarType extends AbstractDefinition implements Definition {
 
     public ScalarType(GraphqlParser.ScalarTypeDefinitionContext scalarTypeDefinitionContext) {
         super(scalarTypeDefinitionContext.name(), scalarTypeDefinitionContext.description(), scalarTypeDefinitionContext.directives());
+    }
+
+    public ScalarType(GraphqlParser.ScalarTypeExtensionDefinitionContext scalarTypeExtensionDefinitionContext) {
+        super(scalarTypeExtensionDefinitionContext.name(), null, scalarTypeExtensionDefinitionContext.directives());
+    }
+
+    public ScalarType merge(GraphqlParser.ScalarTypeDefinitionContext... scalarTypeDefinitionContexts) {
+        return merge(
+                Stream.of(scalarTypeDefinitionContexts)
+                        .map(ScalarType::new)
+                        .toArray(ScalarType[]::new)
+        );
+    }
+
+    public ScalarType merge(GraphqlParser.ScalarTypeExtensionDefinitionContext... scalarTypeExtensionDefinitionContexts) {
+        return merge(
+                Stream.of(scalarTypeExtensionDefinitionContexts)
+                        .map(ScalarType::new)
+                        .toArray(ScalarType[]::new)
+        );
     }
 
     @Override

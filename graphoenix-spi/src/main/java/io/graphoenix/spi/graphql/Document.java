@@ -233,7 +233,13 @@ public class Document {
 
     public Document merge(GraphqlParser.DocumentContext documentContext) {
         this.definitionMap.putAll(
-                (Map<? extends String, ? extends Definition>) documentContext.definition().stream()
+                (Map<? extends String, ? extends Definition>) Stream
+                        .concat(
+                                documentContext.definition().stream()
+                                        .filter(definitionContext -> definitionContext.typeSystemExtension() == null),
+                                documentContext.definition().stream()
+                                        .filter(definitionContext -> definitionContext.typeSystemExtension() != null)
+                        )
                         .map(this::merge)
                         .collect(
                                 Collectors.toMap(
@@ -407,7 +413,13 @@ public class Document {
     }
 
     public Definition merge(Definition definition) {
-        if (definition.isObject()) {
+        if (definition.isSchema()) {
+            getSchema()
+                    .ifPresentOrElse(
+                            schema -> schema.merge(definition.asSchema()),
+                            () -> addDefinition(definition)
+                    );
+        } else if (definition.isObject()) {
             getObjectType(definition.getName())
                     .ifPresentOrElse(
                             objectType -> objectType.merge(definition.asObject()),
@@ -431,6 +443,12 @@ public class Document {
                             enumType -> enumType.merge(definition.asObject()),
                             () -> addDefinition(definition)
                     );
+        } else if (definition.isScalar()) {
+            getScalarType(definition.getName())
+                    .ifPresentOrElse(
+                            scalarType -> scalarType.merge(definition.asScalar()),
+                            () -> addDefinition(definition)
+                    );
         } else {
             this.definitionMap.put(definition.getName(), definition);
         }
@@ -439,46 +457,7 @@ public class Document {
 
     public Definition merge(GraphqlParser.DefinitionContext definitionContext) {
         Definition definition = Definition.of(definitionContext);
-        if (definitionContext.operationDefinition() != null) {
-            return definition;
-        } else if (definitionContext.fragmentDefinition() != null) {
-            return definition;
-        } else if (definitionContext.typeSystemDefinition() != null) {
-            if (definitionContext.typeSystemDefinition().schemaDefinition() != null) {
-                return definition;
-            } else if (definitionContext.typeSystemDefinition().typeDefinition() != null) {
-                if (definitionContext.typeSystemDefinition().typeDefinition().scalarTypeDefinition() != null) {
-                    return definition;
-                } else if (definitionContext.typeSystemDefinition().typeDefinition().enumTypeDefinition() != null) {
-                    if (definitionMap.get(definition.getName()) != null) {
-                        return ((EnumType) definitionMap.get(definition.getName())).merge((EnumType) definition);
-                    } else {
-                        return definition;
-                    }
-                } else if (definitionContext.typeSystemDefinition().typeDefinition().objectTypeDefinition() != null) {
-                    if (definitionMap.get(definition.getName()) != null) {
-                        return ((ObjectType) definitionMap.get(definition.getName())).merge((ObjectType) definition);
-                    } else {
-                        return definition;
-                    }
-                } else if (definitionContext.typeSystemDefinition().typeDefinition().interfaceTypeDefinition() != null) {
-                    if (definitionMap.get(definition.getName()) != null) {
-                        return ((InterfaceType) definitionMap.get(definition.getName())).merge((InterfaceType) definition);
-                    } else {
-                        return definition;
-                    }
-                } else if (definitionContext.typeSystemDefinition().typeDefinition().inputObjectTypeDefinition() != null) {
-                    if (definitionMap.get(definition.getName()) != null) {
-                        return ((InputObjectType) definitionMap.get(definition.getName())).merge((InputObjectType) definition);
-                    } else {
-                        return definition;
-                    }
-                }
-            } else if (definitionContext.typeSystemDefinition().directiveDefinition() != null) {
-                return definition;
-            }
-        }
-        throw new RuntimeException("unsupported document definition: " + definitionContext.getText());
+        return merge(definition);
     }
 
     public Optional<Schema> getSchema() {

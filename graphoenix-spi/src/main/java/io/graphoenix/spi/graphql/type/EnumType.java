@@ -43,6 +43,17 @@ public class EnumType extends AbstractDefinition implements Definition {
         }
     }
 
+    public EnumType(GraphqlParser.EnumTypeExtensionDefinitionContext enumTypeExtensionDefinitionContext) {
+        super(enumTypeExtensionDefinitionContext.name(), null, enumTypeExtensionDefinitionContext.directives());
+        if (enumTypeExtensionDefinitionContext.extensionEnumValueDefinitions() != null) {
+            setEnumValues(
+                    enumTypeExtensionDefinitionContext.extensionEnumValueDefinitions().enumValueDefinition().stream()
+                            .map(EnumValueDefinition::new)
+                            .collect(Collectors.toList())
+            );
+        }
+    }
+
     public EnumType(TypeElement typeElement) {
         super(typeElement);
         setEnumValues(
@@ -57,6 +68,14 @@ public class EnumType extends AbstractDefinition implements Definition {
     public EnumType merge(GraphqlParser.EnumTypeDefinitionContext... enumTypeDefinitionContexts) {
         return merge(
                 Stream.of(enumTypeDefinitionContexts)
+                        .map(EnumType::new)
+                        .toArray(EnumType[]::new)
+        );
+    }
+
+    public EnumType merge(GraphqlParser.EnumTypeExtensionDefinitionContext... enumTypeExtensionDefinitionContexts) {
+        return merge(
+                Stream.of(enumTypeExtensionDefinitionContexts)
                         .map(EnumType::new)
                         .toArray(EnumType[]::new)
         );

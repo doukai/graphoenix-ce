@@ -6,6 +6,8 @@ import io.graphoenix.spi.graphql.Definition;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
+import java.util.stream.Stream;
+
 public class Schema extends AbstractDefinition implements Definition {
 
     private final STGroupFile stGroupFile = new STGroupFile("stg/type/Schema.stg");
@@ -36,6 +38,43 @@ public class Schema extends AbstractDefinition implements Definition {
                 .findFirst()
                 .map(operationTypeDefinitionContext -> operationTypeDefinitionContext.typeName().name().getText())
                 .orElse(null);
+    }
+
+    public Schema(GraphqlParser.SchemaExtensionContext schemaExtensionContext) {
+        super(schemaExtensionContext.directives());
+        this.query = schemaExtensionContext.operationTypeDefinition().stream()
+                .filter(operationTypeDefinitionContext -> operationTypeDefinitionContext.operationType().QUERY() != null)
+                .findFirst()
+                .map(operationTypeDefinitionContext -> operationTypeDefinitionContext.typeName().name().getText())
+                .orElse(null);
+
+        this.mutation = schemaExtensionContext.operationTypeDefinition().stream()
+                .filter(operationTypeDefinitionContext -> operationTypeDefinitionContext.operationType().MUTATION() != null)
+                .findFirst()
+                .map(operationTypeDefinitionContext -> operationTypeDefinitionContext.typeName().name().getText())
+                .orElse(null);
+
+        this.subscription = schemaExtensionContext.operationTypeDefinition().stream()
+                .filter(operationTypeDefinitionContext -> operationTypeDefinitionContext.operationType().SUBSCRIPTION() != null)
+                .findFirst()
+                .map(operationTypeDefinitionContext -> operationTypeDefinitionContext.typeName().name().getText())
+                .orElse(null);
+    }
+
+    public Schema merge(GraphqlParser.SchemaDefinitionContext schemaDefinitionContext) {
+        return merge(
+                Stream.of(schemaDefinitionContext)
+                        .map(Schema::new)
+                        .toArray(Schema[]::new)
+        );
+    }
+
+    public Schema merge(GraphqlParser.SchemaExtensionContext schemaExtensionContext) {
+        return merge(
+                Stream.of(schemaExtensionContext)
+                        .map(Schema::new)
+                        .toArray(Schema[]::new)
+        );
     }
 
     public String getQuery() {

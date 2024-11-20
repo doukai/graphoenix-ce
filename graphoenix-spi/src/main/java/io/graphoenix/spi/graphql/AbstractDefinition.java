@@ -11,10 +11,7 @@ import org.eclipse.microprofile.graphql.Source;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -49,6 +46,17 @@ public abstract class AbstractDefinition implements Definition {
         if (directivesContext != null) {
             setDirectives(
                     directivesContext.directive().stream()
+                            .map(Directive::new)
+                            .collect(Collectors.toList())
+            );
+        }
+    }
+
+    public AbstractDefinition(List<GraphqlParser.DirectivesContext> directivesContextList) {
+        if (directivesContextList != null) {
+            setDirectives(
+                    directivesContextList.stream()
+                            .flatMap(directivesContext -> directivesContext.directive().stream())
                             .map(Directive::new)
                             .collect(Collectors.toList())
             );

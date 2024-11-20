@@ -57,6 +57,23 @@ public class InterfaceType extends AbstractDefinition implements Definition, Fie
         }
     }
 
+    public InterfaceType(GraphqlParser.InterfaceTypeExtensionDefinitionContext interfaceTypeExtensionDefinitionContext) {
+        super(interfaceTypeExtensionDefinitionContext.name(), null, interfaceTypeExtensionDefinitionContext.directives());
+        if (interfaceTypeExtensionDefinitionContext.implementsInterfaces() != null) {
+            setInterfaces(
+                    getImplementsInterfaces(interfaceTypeExtensionDefinitionContext.implementsInterfaces())
+                            .collect(Collectors.toList())
+            );
+        }
+        if (interfaceTypeExtensionDefinitionContext.extensionFieldsDefinition() != null) {
+            setFields(
+                    interfaceTypeExtensionDefinitionContext.extensionFieldsDefinition().fieldDefinition().stream()
+                            .map(FieldDefinition::new)
+                            .collect(Collectors.toList())
+            );
+        }
+    }
+
     public InterfaceType(TypeElement typeElement, Types types) {
         super(typeElement);
         addDirective(new Directive(DIRECTIVE_CONTAINER_NAME));
@@ -77,6 +94,14 @@ public class InterfaceType extends AbstractDefinition implements Definition, Fie
     public InterfaceType merge(GraphqlParser.InterfaceTypeDefinitionContext... interfaceTypeDefinitionContexts) {
         return merge(
                 Stream.of(interfaceTypeDefinitionContexts)
+                        .map(InterfaceType::new)
+                        .toArray(InterfaceType[]::new)
+        );
+    }
+
+    public InterfaceType merge(GraphqlParser.InterfaceTypeExtensionDefinitionContext... interfaceTypeExtensionDefinitionContexts) {
+        return merge(
+                Stream.of(interfaceTypeExtensionDefinitionContexts)
                         .map(InterfaceType::new)
                         .toArray(InterfaceType[]::new)
         );

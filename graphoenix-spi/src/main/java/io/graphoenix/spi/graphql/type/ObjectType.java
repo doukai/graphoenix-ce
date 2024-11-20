@@ -57,6 +57,23 @@ public class ObjectType extends AbstractDefinition implements Definition, Fields
         }
     }
 
+    public ObjectType(GraphqlParser.ObjectTypeExtensionDefinitionContext objectTypeExtensionDefinitionContext) {
+        super(objectTypeExtensionDefinitionContext.name(), null, objectTypeExtensionDefinitionContext.directives());
+        if (objectTypeExtensionDefinitionContext.implementsInterfaces() != null) {
+            setInterfaces(
+                    getImplementsInterfaces(objectTypeExtensionDefinitionContext.implementsInterfaces())
+                            .collect(Collectors.toCollection(LinkedHashSet::new))
+            );
+        }
+        if (objectTypeExtensionDefinitionContext.extensionFieldsDefinition() != null) {
+            setFields(
+                    objectTypeExtensionDefinitionContext.extensionFieldsDefinition().fieldDefinition().stream()
+                            .map(FieldDefinition::new)
+                            .collect(Collectors.toList())
+            );
+        }
+    }
+
     public ObjectType(TypeElement typeElement, Types types) {
         super(typeElement);
         addDirective(new Directive(DIRECTIVE_CONTAINER_NAME));
@@ -77,6 +94,14 @@ public class ObjectType extends AbstractDefinition implements Definition, Fields
     public ObjectType merge(GraphqlParser.ObjectTypeDefinitionContext... objectTypeDefinitionContexts) {
         return merge(
                 Stream.of(objectTypeDefinitionContexts)
+                        .map(ObjectType::new)
+                        .toArray(ObjectType[]::new)
+        );
+    }
+
+    public ObjectType merge(GraphqlParser.ObjectTypeExtensionDefinitionContext... objectTypeExtensionDefinitionContexts) {
+        return merge(
+                Stream.of(objectTypeExtensionDefinitionContexts)
                         .map(ObjectType::new)
                         .toArray(ObjectType[]::new)
         );

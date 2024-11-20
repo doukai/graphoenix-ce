@@ -140,6 +140,22 @@ public interface Definition {
             } else if (definitionContext.typeSystemDefinition().directiveDefinition() != null) {
                 return new DirectiveDefinition(definitionContext.typeSystemDefinition().directiveDefinition());
             }
+        } else if (definitionContext.typeSystemExtension() != null) {
+            if (definitionContext.typeSystemExtension().schemaExtension() != null) {
+                return new Schema(definitionContext.typeSystemExtension().schemaExtension());
+            } else if (definitionContext.typeSystemExtension().typeExtension() != null) {
+                if (definitionContext.typeSystemExtension().typeExtension().scalarTypeExtensionDefinition() != null) {
+                    return new ScalarType(definitionContext.typeSystemExtension().typeExtension().scalarTypeExtensionDefinition());
+                } else if (definitionContext.typeSystemExtension().typeExtension().enumTypeExtensionDefinition() != null) {
+                    return new EnumType(definitionContext.typeSystemExtension().typeExtension().enumTypeExtensionDefinition());
+                } else if (definitionContext.typeSystemExtension().typeExtension().objectTypeExtensionDefinition() != null) {
+                    return new ObjectType(definitionContext.typeSystemExtension().typeExtension().objectTypeExtensionDefinition());
+                } else if (definitionContext.typeSystemExtension().typeExtension().interfaceTypeExtensionDefinition() != null) {
+                    return new InterfaceType(definitionContext.typeSystemExtension().typeExtension().interfaceTypeExtensionDefinition());
+                } else if (definitionContext.typeSystemExtension().typeExtension().inputObjectTypeExtensionDefinition() != null) {
+                    return new InputObjectType(definitionContext.typeSystemExtension().typeExtension().inputObjectTypeExtensionDefinition());
+                }
+            }
         }
         throw new RuntimeException("unsupported document definition: " + definitionContext.getText());
     }
