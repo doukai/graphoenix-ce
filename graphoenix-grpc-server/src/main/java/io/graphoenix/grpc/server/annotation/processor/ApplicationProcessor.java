@@ -44,13 +44,12 @@ public class ApplicationProcessor extends BaseProcessor {
         try {
             GraphQLConfig graphQLConfig = BeanContext.get(GraphQLConfig.class);
             GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
-            configRegister.registerPackage(ApplicationProcessor.class.getClassLoader(), true);
+            configRegister.registerApplication(ApplicationProcessor.class.getClassLoader());
             registerElements(roundEnv);
             registerOperations(roundEnv);
             if (graphQLConfig.getMapToLocalFetch()) {
                 documentBuilder.mapToLocalFetch();
             }
-
             ReactorGrpcServiceImplementer reactorGrpcServiceImplementer = BeanContext.get(ReactorGrpcServiceImplementer.class);
             reactorGrpcServiceImplementer.writeToFiler(filer);
             GrpcServiceImplementer grpcServiceImplementer = BeanContext.get(GrpcServiceImplementer.class);

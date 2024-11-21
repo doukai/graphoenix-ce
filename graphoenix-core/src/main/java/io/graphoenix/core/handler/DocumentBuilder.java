@@ -113,7 +113,6 @@ public class DocumentBuilder {
                 .addDefinitions(buildContainerTypeObjects(document));
 
         if (document.getObjectTypes().anyMatch(objectType -> !objectType.isContainer())) {
-
             ObjectType queryType = document.getQueryOperationType()
                     .orElseGet(() -> new ObjectType(TYPE_QUERY_NAME).setDescription(descriptionConfig.getQueryObject()))
                     .setFields(buildQueryTypeFields(document));
@@ -494,14 +493,6 @@ public class DocumentBuilder {
         objectType
                 .addInterface(INTERFACE_META_NAME)
                 .addFields(getMetaInterfaceFields())
-                .addField(buildTypeNameField(objectType))
-                .addFields(buildFunctionFieldList(objectType));
-
-        return objectType;
-    }
-
-    public ObjectType buildObjectRelation(ObjectType objectType) {
-        objectType
                 .setFields(
                         objectType.getFields().stream()
                                 .map(fieldDefinition ->
@@ -511,6 +502,7 @@ public class DocumentBuilder {
                                 )
                                 .collect(Collectors.toCollection(LinkedHashSet::new))
                 )
+                .addField(buildTypeNameField(objectType))
                 .addFields(
                         objectType.getFields().stream()
                                 .filter(FieldDefinition::isFetchField)
@@ -615,7 +607,8 @@ public class DocumentBuilder {
                                         )
                                 )
                                 .collect(Collectors.toList())
-                );
+                )
+                .addFields(buildFunctionFieldList(objectType));
 
         return objectType;
     }
@@ -867,37 +860,39 @@ public class DocumentBuilder {
     }
 
     public List<InputObjectType> buildInputObjects(Document document) {
-        return Streams.concat(
-                document.getDefinitions().stream()
-                        .filter(Definition::isObject)
-                        .map(Definition::asObject)
-                        .filter(packageManager::isOwnPackage)
-                        .filter(objectType -> !objectType.isContainer())
-                        .filter(objectType -> !documentManager.isOperationType(objectType))
-                        .flatMap(objectType ->
-                                Stream.of(
-                                        fieldsToExpression(objectType),
-                                        fieldsToInput(objectType),
-                                        fieldsToOrderBy(objectType)
-                                )
-                        ),
-                document.getDefinitions().stream()
-                        .filter(Definition::isInterface)
-                        .map(Definition::asInterface)
-                        .filter(packageManager::isOwnPackage)
-                        .filter(interfaceType -> !interfaceType.getName().equals(INTERFACE_META_NAME))
-                        .flatMap(interfaceType ->
-                                Stream.of(
-                                        fieldsToExpression(interfaceType),
-                                        fieldsToInput(interfaceType)
-                                )
-                        ),
-                document.getDefinitions().stream()
-                        .filter(Definition::isEnum)
-                        .map(Definition::asEnum)
-                        .filter(packageManager::isOwnPackage)
-                        .map(this::enumToExpression)
-        ).collect(Collectors.toList());
+        return Streams
+                .concat(
+                        document.getDefinitions().stream()
+                                .filter(Definition::isObject)
+                                .map(Definition::asObject)
+                                .filter(packageManager::isOwnPackage)
+                                .filter(objectType -> !objectType.isContainer())
+                                .filter(objectType -> !documentManager.isOperationType(objectType))
+                                .flatMap(objectType ->
+                                        Stream.of(
+                                                fieldsToExpression(objectType),
+                                                fieldsToInput(objectType),
+                                                fieldsToOrderBy(objectType)
+                                        )
+                                ),
+                        document.getDefinitions().stream()
+                                .filter(Definition::isInterface)
+                                .map(Definition::asInterface)
+                                .filter(packageManager::isOwnPackage)
+                                .filter(interfaceType -> !interfaceType.getName().equals(INTERFACE_META_NAME))
+                                .flatMap(interfaceType ->
+                                        Stream.of(
+                                                fieldsToExpression(interfaceType),
+                                                fieldsToInput(interfaceType)
+                                        )
+                                ),
+                        document.getDefinitions().stream()
+                                .filter(Definition::isEnum)
+                                .map(Definition::asEnum)
+                                .filter(packageManager::isOwnPackage)
+                                .map(this::enumToExpression)
+                )
+                .collect(Collectors.toList());
     }
 
     public List<ObjectType> buildContainerTypeObjects(Document document) {

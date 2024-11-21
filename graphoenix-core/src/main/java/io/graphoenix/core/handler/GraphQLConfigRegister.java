@@ -87,30 +87,38 @@ public class GraphQLConfigRegister {
     }
 
     public void registerPackage(ClassLoader classLoader) throws IOException, URISyntaxException {
-        registerPackage(classLoader, false);
+        register(classLoader, false);
     }
 
-    public void registerPackage(ClassLoader classLoader, boolean application) throws IOException, URISyntaxException {
+    public void registerApplication(ClassLoader classLoader) throws IOException, URISyntaxException {
+        register(classLoader, true);
+    }
+
+    public void register(ClassLoader classLoader, boolean application) throws IOException, URISyntaxException {
         Enumeration<URL> urlEnumeration = classLoader.getResources("META-INF/graphql");
         while (urlEnumeration.hasMoreElements()) {
             URL url = urlEnumeration.nextElement();
             URI uri = url.toURI();
             try (Stream<Path> pathStream = Files.list(Path.of(uri))) {
-                registerPackage(pathStream, application);
+                register(pathStream, application);
             } catch (FileSystemNotFoundException fileSystemNotFoundException) {
                 Map<String, String> env = new HashMap<>();
                 try (FileSystem fileSystem = FileSystems.newFileSystem(uri, env);
                      Stream<Path> pathStream = Files.list(fileSystem.getPath("META-INF/graphql"))) {
-                    registerPackage(pathStream, application);
+                    register(pathStream, application);
                 }
             }
         }
     }
 
-    public void registerPackage(Stream<Path> pathStream, boolean application) {
+    public void register(Stream<Path> pathStream, boolean application) {
         pathStream
                 .filter(path -> !path.getFileName().toString().equals("main.gql"))
-                .filter(path -> application || !path.getFileName().toString().equals(packageConfig.getPackageName() + ".gql"))
+                .filter(path ->
+                        application ||
+                                !path.getFileName().toString().equals(packageConfig.getPackageName() + ".gql") &&
+                                        !path.getFileName().toString().equals(packageConfig.getPackageName() + ".graphql")
+                )
                 .forEach(path -> {
                             try {
                                 documentManager.getDocument().merge(path);
@@ -120,9 +128,5 @@ public class GraphQLConfigRegister {
                             }
                         }
                 );
-    }
-
-    public void registerPackage() throws IOException, URISyntaxException {
-        registerPackage(getClass().getClassLoader());
     }
 }

@@ -407,44 +407,48 @@ public class Document {
     }
 
     public Definition merge(Definition definition) {
-        if (!definition.isExtension()) {
-            if (definition.isSchema()) {
-                getSchema()
-                        .ifPresentOrElse(
-                                schema -> schema.merge(definition.asSchema()),
-                                () -> addDefinition(definition)
-                        );
-            } else if (definition.isObject()) {
-                getObjectType(definition.getName())
-                        .ifPresentOrElse(
-                                objectType -> objectType.merge(definition.asObject()),
-                                () -> addDefinition(definition)
-                        );
-            } else if (definition.isInterface()) {
-                getInterfaceType(definition.getName())
-                        .ifPresentOrElse(
-                                interfaceType -> interfaceType.merge(definition.asObject()),
-                                () -> addDefinition(definition)
-                        );
-            } else if (definition.isInputObject()) {
-                getInputObjectType(definition.getName())
-                        .ifPresentOrElse(
-                                inputObjectType -> inputObjectType.merge(definition.asObject()),
-                                () -> addDefinition(definition)
-                        );
-            } else if (definition.isEnum()) {
-                getEnumType(definition.getName())
-                        .ifPresentOrElse(
-                                enumType -> enumType.merge(definition.asObject()),
-                                () -> addDefinition(definition)
-                        );
-            } else if (definition.isScalar()) {
-                getScalarType(definition.getName())
-                        .ifPresentOrElse(
-                                scalarType -> scalarType.merge(definition.asScalar()),
-                                () -> addDefinition(definition)
-                        );
-            }
+        if (definition.isSchema()) {
+            getSchema()
+                    .filter(schema -> schema.isExtension() == definition.isExtension())
+                    .ifPresentOrElse(
+                            schema -> schema.merge(definition.asSchema()),
+                            () -> addDefinition(definition)
+                    );
+        } else if (definition.isObject()) {
+            getObjectType(definition.getName())
+                    .filter(objectType -> objectType.isExtension() == definition.isExtension())
+                    .ifPresentOrElse(
+                            objectType -> objectType.merge(definition.asObject()),
+                            () -> addDefinition(definition)
+                    );
+        } else if (definition.isInterface()) {
+            getInterfaceType(definition.getName())
+                    .filter(interfaceType -> interfaceType.isExtension() == definition.isExtension())
+                    .ifPresentOrElse(
+                            interfaceType -> interfaceType.merge(definition.asObject()),
+                            () -> addDefinition(definition)
+                    );
+        } else if (definition.isInputObject()) {
+            getInputObjectType(definition.getName())
+                    .filter(inputObjectType -> inputObjectType.isExtension() == definition.isExtension())
+                    .ifPresentOrElse(
+                            inputObjectType -> inputObjectType.merge(definition.asObject()),
+                            () -> addDefinition(definition)
+                    );
+        } else if (definition.isEnum()) {
+            getEnumType(definition.getName())
+                    .filter(enumType -> enumType.isExtension() == definition.isExtension())
+                    .ifPresentOrElse(
+                            enumType -> enumType.merge(definition.asObject()),
+                            () -> addDefinition(definition)
+                    );
+        } else if (definition.isScalar()) {
+            getScalarType(definition.getName())
+                    .filter(scalarType -> scalarType.isExtension() == definition.isExtension())
+                    .ifPresentOrElse(
+                            scalarType -> scalarType.merge(definition.asScalar()),
+                            () -> addDefinition(definition)
+                    );
         } else {
             this.definitionMap.put(definition.getName(), definition);
         }

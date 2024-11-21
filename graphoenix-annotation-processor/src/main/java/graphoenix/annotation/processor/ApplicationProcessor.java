@@ -53,7 +53,7 @@ public class ApplicationProcessor extends BaseProcessor {
         try {
             GraphQLConfig graphQLConfig = BeanContext.get(GraphQLConfig.class);
             GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
-            configRegister.registerPackage(ApplicationProcessor.class.getClassLoader(), true);
+            configRegister.registerApplication(ApplicationProcessor.class.getClassLoader());
             registerElements(roundEnv);
             registerOperations(roundEnv);
             documentBuilder.buildFetchFieldsProtocol();
@@ -64,7 +64,6 @@ public class ApplicationProcessor extends BaseProcessor {
             Writer writer = mainGraphQL.openWriter();
             writer.write(documentManager.getDocument().toString());
             writer.close();
-
             if (documentManager.getDocument().getObjectTypes()
                     .flatMap(objectType -> objectType.getFields().stream())
                     .filter(packageManager::isLocalPackage)
@@ -73,7 +72,6 @@ public class ApplicationProcessor extends BaseProcessor {
                 InvokeHandlerBuilder invokeHandlerBuilder = BeanContext.get(InvokeHandlerBuilder.class);
                 invokeHandlerBuilder.writeToFiler(filer);
             }
-
             if (documentManager.getDocument().getInputObjectTypes()
                     .filter(packageManager::isLocalPackage)
                     .anyMatch(InputObjectType::isInvokesInput)
