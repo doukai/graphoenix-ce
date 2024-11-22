@@ -408,49 +408,35 @@ public class Document {
 
     public Definition merge(Definition definition) {
         if (definition.isSchema()) {
-            getSchema()
+            return getSchema()
                     .filter(schema -> schema.isExtension() == definition.isExtension())
-                    .ifPresentOrElse(
-                            schema -> schema.merge(definition.asSchema()),
-                            () -> addDefinition(definition)
-                    );
+                    .map(schema -> (Schema) schema.merge(definition.asSchema()))
+                    .orElse(definition.asSchema());
         } else if (definition.isObject()) {
-            getObjectType(definition.getName())
+            return getObjectType(definition.getName())
                     .filter(objectType -> objectType.isExtension() == definition.isExtension())
-                    .ifPresentOrElse(
-                            objectType -> objectType.merge(definition.asObject()),
-                            () -> addDefinition(definition)
-                    );
+                    .map(objectType -> objectType.merge(definition.asObject()))
+                    .orElse(definition.asObject());
         } else if (definition.isInterface()) {
-            getInterfaceType(definition.getName())
+            return getInterfaceType(definition.getName())
                     .filter(interfaceType -> interfaceType.isExtension() == definition.isExtension())
-                    .ifPresentOrElse(
-                            interfaceType -> interfaceType.merge(definition.asObject()),
-                            () -> addDefinition(definition)
-                    );
+                    .map(interfaceType -> interfaceType.merge(definition.asInterface()))
+                    .orElse(definition.asInterface());
         } else if (definition.isInputObject()) {
-            getInputObjectType(definition.getName())
+            return getInputObjectType(definition.getName())
                     .filter(inputObjectType -> inputObjectType.isExtension() == definition.isExtension())
-                    .ifPresentOrElse(
-                            inputObjectType -> inputObjectType.merge(definition.asObject()),
-                            () -> addDefinition(definition)
-                    );
+                    .map(inputObjectType -> inputObjectType.merge(definition.asInputObject()))
+                    .orElse(definition.asInputObject());
         } else if (definition.isEnum()) {
-            getEnumType(definition.getName())
+            return getEnumType(definition.getName())
                     .filter(enumType -> enumType.isExtension() == definition.isExtension())
-                    .ifPresentOrElse(
-                            enumType -> enumType.merge(definition.asObject()),
-                            () -> addDefinition(definition)
-                    );
+                    .map(enumType -> enumType.merge(definition.asEnum()))
+                    .orElse(definition.asEnum());
         } else if (definition.isScalar()) {
-            getScalarType(definition.getName())
+            return getScalarType(definition.getName())
                     .filter(scalarType -> scalarType.isExtension() == definition.isExtension())
-                    .ifPresentOrElse(
-                            scalarType -> scalarType.merge(definition.asScalar()),
-                            () -> addDefinition(definition)
-                    );
-        } else {
-            this.definitionMap.put(definition.getName(), definition);
+                    .map(scalarType -> (ScalarType) scalarType.merge(definition.asScalar()))
+                    .orElse(definition.asScalar());
         }
         return definition;
     }
