@@ -183,7 +183,7 @@ public class FieldDefinition extends AbstractDefinition {
         return Optional.ofNullable(getDirective(DIRECTIVE_OPTIONS_NAME))
                 .flatMap(directive -> directive.getArgumentOrEmpty(DIRECTIVE_OPTIONS_ARGUMENT_DEFAULT_NAME))
                 .filter(ValueWithVariable::isString)
-                .map(valueWithVariable -> valueWithVariable.asString().getValue());
+                .map(valueWithVariable -> valueWithVariable.asString().getString());
     }
 
     public Optional<Integer> getLength() {

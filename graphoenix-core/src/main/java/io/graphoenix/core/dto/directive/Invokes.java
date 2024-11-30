@@ -20,5 +20,5 @@ public @interface Invokes {
   Invoke[] methods() default {};
 
   @Name("package")
-  String _package() default "\"io.graphoenix.core\"";
+  String _package() default "io.graphoenix.core";
 }

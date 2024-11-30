@@ -472,7 +472,7 @@ public class TypeSpecBuilder {
         }
         fieldDefinition.getDefault()
                 .ifPresent(defaultValue ->
-                        builder.initializer("$L", buildDefaultValue(fieldDefinition, defaultValue))
+                        builder.initializer(buildDefaultValue(fieldDefinition, defaultValue))
                 );
         if (fieldDefinition.getType().getTypeName().getName().equals(SCALA_ID_NAME)) {
             builder.addAnnotation(Id.class);
@@ -506,8 +506,8 @@ public class TypeSpecBuilder {
         }
         fieldDefinition.getDefault()
                 .ifPresentOrElse(
-                        defaultValue -> builder.initializer("$L", buildDefaultValue(fieldDefinition, defaultValue)),
-                        () -> builder.initializer("$L", "null")
+                        defaultValue -> builder.initializer(buildDefaultValue(fieldDefinition, defaultValue)),
+                        () -> builder.initializer("null")
                 );
         if (fieldDefinition.getType().isNonNull()) {
             builder.addAnnotation(NonNull.class);
@@ -536,10 +536,17 @@ public class TypeSpecBuilder {
             );
         }
         if (inputValue.getDefaultValue() != null) {
-            builder.initializer("$L", buildDefaultValue(inputValue, inputValue.getDefaultValue().toString()));
+            builder.initializer(buildDefaultValue(inputValue, inputValue.getDefaultValue().toString()));
             builder.addAnnotation(
                     AnnotationSpec.builder(DefaultValue.class)
-                            .addMember("value", "$S", inputValue.getDefaultValue())
+                            .addMember(
+                                    "value",
+                                    CodeBlock.of("$S",
+                                            inputValue.getDefaultValue().isString() ?
+                                                    inputValue.getDefaultValue().asString().getString() :
+                                                    inputValue.getDefaultValue().toString()
+                                    )
+                            )
                             .build()
             );
         }
@@ -570,9 +577,9 @@ public class TypeSpecBuilder {
             );
         }
         if (inputValue.getDefaultValue() != null) {
-            builder.initializer("$L", buildDefaultValue(inputValue, inputValue.getDefaultValue().toString()));
+            builder.initializer(buildDefaultValue(inputValue, inputValue.getDefaultValue().toString()));
         } else {
-            builder.initializer("$L", "null");
+            builder.initializer("null");
         }
         if (inputValue.getType().isNonNull()) {
             builder.addAnnotation(NonNull.class);
@@ -658,9 +665,7 @@ public class TypeSpecBuilder {
     private CodeBlock buildDefaultValue(InputValue inputValue, String defaultValue) {
         Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
         if (inputValueTypeDefinition.isScalar()) {
-            if (inputValueTypeDefinition.getName().equals("String")) {
-                return CodeBlock.of("$S", defaultValue);
-            } else if (inputValueTypeDefinition.getName().equals("BigInteger")) {
+            if (inputValueTypeDefinition.getName().equals("BigInteger")) {
                 return CodeBlock.of("$T.valueOf($L)", ClassName.get(BigInteger.class), defaultValue);
             } else if (inputValueTypeDefinition.getName().equals("BigDecimal")) {
                 return CodeBlock.of("$T.valueOf($L)", ClassName.get(BigDecimal.class), defaultValue);

@@ -102,7 +102,7 @@ public @interface __TypeInterfacesListMutationArguments {
    * Type Name
    */
   @Description("Type Name")
-  String __typename() default "\"__TypeInterfaces\"";
+  String __typename() default "__TypeInterfaces";
 
   /**
    * Input List

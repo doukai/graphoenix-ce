@@ -19,5 +19,5 @@ public @interface Implements {
   String[] interfaces() default {};
 
   @Name("package")
-  String _package() default "\"io.graphoenix.core\"";
+  String _package() default "io.graphoenix.core";
 }

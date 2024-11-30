@@ -118,7 +118,7 @@ public @interface __InputValueInput1 {
    * Type Name
    */
   @Description("Type Name")
-  String __typename() default "\"__InputValue\"";
+  String __typename() default "__InputValue";
 
   /**
    * ofType Reference

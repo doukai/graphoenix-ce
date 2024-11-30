@@ -104,9 +104,9 @@ public class __TypeInterfacesInput implements MetaInput {
   /**
    * Type Name
    */
-  @DefaultValue("\"__TypeInterfaces\"")
+  @DefaultValue("__TypeInterfaces")
   @Description("Type Name")
-  private String __typename = "\"__TypeInterfaces\"";
+  private String __typename = "__TypeInterfaces";
 
   /**
    * Where

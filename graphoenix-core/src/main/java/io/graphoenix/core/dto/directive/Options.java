@@ -33,5 +33,5 @@ public @interface Options {
   Protocol protocol() default Protocol.GRPC;
 
   @Name("package")
-  String _package() default "\"io.graphoenix.core\"";
+  String _package() default "io.graphoenix.core";
 }

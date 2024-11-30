@@ -100,7 +100,7 @@ public @interface FileInput1 {
    * Type Name
    */
   @Description("Type Name")
-  String __typename() default "\"File\"";
+  String __typename() default "File";
 
   /**
    * Where

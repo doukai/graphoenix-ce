@@ -94,7 +94,7 @@ public @interface __FieldInput2 {
    * Type Name
    */
   @Description("Type Name")
-  String __typename() default "\"__Field\"";
+  String __typename() default "__Field";
 
   /**
    * ofType Reference

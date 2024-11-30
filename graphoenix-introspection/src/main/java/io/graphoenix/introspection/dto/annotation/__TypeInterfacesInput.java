@@ -102,7 +102,7 @@ public @interface __TypeInterfacesInput {
    * Type Name
    */
   @Description("Type Name")
-  String __typename() default "\"__TypeInterfaces\"";
+  String __typename() default "__TypeInterfaces";
 
   /**
    * Where

@@ -106,7 +106,7 @@ public @interface __SchemaInput {
    * Type Name
    */
   @Description("Type Name")
-  String __typename() default "\"__Schema\"";
+  String __typename() default "__Schema";
 
   /**
    * queryType Reference

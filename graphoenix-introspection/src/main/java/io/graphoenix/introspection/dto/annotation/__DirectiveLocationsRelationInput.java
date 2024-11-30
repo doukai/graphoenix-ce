@@ -95,7 +95,7 @@ public @interface __DirectiveLocationsRelationInput {
    * Type Name
    */
   @Description("Type Name")
-  String __typename() default "\"__DirectiveLocationsRelation\"";
+  String __typename() default "__DirectiveLocationsRelation";
 
   /**
    * Where

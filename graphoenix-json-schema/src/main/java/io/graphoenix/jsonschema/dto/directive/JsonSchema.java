@@ -79,5 +79,5 @@ public @interface JsonSchema {
   Property[] dependentRequired() default {};
 
   @Name("package")
-  String _package() default "\"io.graphoenix.jsonschema\"";
+  String _package() default "io.graphoenix.jsonschema";
 }

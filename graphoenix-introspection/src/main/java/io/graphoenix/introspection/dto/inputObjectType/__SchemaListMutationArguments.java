@@ -109,9 +109,9 @@ public class __SchemaListMutationArguments implements MetaInput {
   /**
    * Type Name
    */
-  @DefaultValue("\"__Schema\"")
+  @DefaultValue("__Schema")
   @Description("Type Name")
-  private String __typename = "\"__Schema\"";
+  private String __typename = "__Schema";
 
   /**
    * queryType Reference

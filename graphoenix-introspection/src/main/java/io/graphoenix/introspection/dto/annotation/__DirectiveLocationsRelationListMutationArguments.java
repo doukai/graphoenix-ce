@@ -95,7 +95,7 @@ public @interface __DirectiveLocationsRelationListMutationArguments {
    * Type Name
    */
   @Description("Type Name")
-  String __typename() default "\"__DirectiveLocationsRelation\"";
+  String __typename() default "__DirectiveLocationsRelation";
 
   /**
    * Input List

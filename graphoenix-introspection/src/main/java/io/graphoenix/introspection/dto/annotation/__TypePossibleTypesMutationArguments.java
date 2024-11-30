@@ -100,7 +100,7 @@ public @interface __TypePossibleTypesMutationArguments {
    * Type Name
    */
   @Description("Type Name")
-  String __typename() default "\"__TypePossibleTypes\"";
+  String __typename() default "__TypePossibleTypes";
 
   /**
    * Input

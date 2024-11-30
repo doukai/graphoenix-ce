@@ -103,9 +103,9 @@ public class __EnumValueListMutationArguments implements MetaInput {
   /**
    * Type Name
    */
-  @DefaultValue("\"__EnumValue\"")
+  @DefaultValue("__EnumValue")
   @Description("Type Name")
-  private String __typename = "\"__EnumValue\"";
+  private String __typename = "__EnumValue";
 
   /**
    * ofType Reference

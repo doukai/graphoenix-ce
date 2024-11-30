@@ -95,7 +95,7 @@ public @interface __DirectiveInput2 {
    * Type Name
    */
   @Description("Type Name")
-  String __typename() default "\"__Directive\"";
+  String __typename() default "__Directive";
 
   /**
    * ofSchema Reference

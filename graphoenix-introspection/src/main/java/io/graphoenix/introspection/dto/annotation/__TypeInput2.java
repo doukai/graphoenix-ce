@@ -89,7 +89,7 @@ public @interface __TypeInput2 {
    * Type Name
    */
   @Description("Type Name")
-  String __typename() default "\"__Type\"";
+  String __typename() default "__Type";
 
   /**
    * ofSchema Reference

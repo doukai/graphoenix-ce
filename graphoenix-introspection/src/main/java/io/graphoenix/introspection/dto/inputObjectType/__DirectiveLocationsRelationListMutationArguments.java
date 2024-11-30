@@ -98,9 +98,9 @@ public class __DirectiveLocationsRelationListMutationArguments implements MetaIn
   /**
    * Type Name
    */
-  @DefaultValue("\"__DirectiveLocationsRelation\"")
+  @DefaultValue("__DirectiveLocationsRelation")
   @Description("Type Name")
-  private String __typename = "\"__DirectiveLocationsRelation\"";
+  private String __typename = "__DirectiveLocationsRelation";
 
   /**
    * Input List

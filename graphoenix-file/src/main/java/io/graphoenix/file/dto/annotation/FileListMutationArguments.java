@@ -100,7 +100,7 @@ public @interface FileListMutationArguments {
    * Type Name
    */
   @Description("Type Name")
-  String __typename() default "\"File\"";
+  String __typename() default "File";
 
   /**
    * Input List

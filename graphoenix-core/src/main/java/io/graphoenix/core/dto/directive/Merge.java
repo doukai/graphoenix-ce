@@ -17,5 +17,5 @@ import org.eclipse.microprofile.graphql.Name;
 @Target({ElementType.METHOD,ElementType.PARAMETER})
 public @interface Merge {
   @Name("package")
-  String _package() default "\"io.graphoenix.core\"";
+  String _package() default "io.graphoenix.core";
 }

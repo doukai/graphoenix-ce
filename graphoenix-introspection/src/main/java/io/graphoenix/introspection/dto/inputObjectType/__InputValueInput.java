@@ -120,9 +120,9 @@ public class __InputValueInput implements MetaInput {
   /**
    * Type Name
    */
-  @DefaultValue("\"__InputValue\"")
+  @DefaultValue("__InputValue")
   @Description("Type Name")
-  private String __typename = "\"__InputValue\"";
+  private String __typename = "__InputValue";
 
   /**
    * ofType Reference

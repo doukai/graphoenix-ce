@@ -89,7 +89,7 @@ public @interface __DirectiveLocationsRelationInput2 {
    * Type Name
    */
   @Description("Type Name")
-  String __typename() default "\"__DirectiveLocationsRelation\"";
+  String __typename() default "__DirectiveLocationsRelation";
 
   String $id() default "";
 

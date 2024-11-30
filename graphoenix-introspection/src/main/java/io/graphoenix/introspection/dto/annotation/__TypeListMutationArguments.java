@@ -131,7 +131,7 @@ public @interface __TypeListMutationArguments {
    * Type Name
    */
   @Description("Type Name")
-  String __typename() default "\"__Type\"";
+  String __typename() default "__Type";
 
   /**
    * ofSchema Reference

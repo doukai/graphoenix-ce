@@ -29,5 +29,5 @@ public @interface Fetch {
   boolean anchor() default false;
 
   @Name("package")
-  String _package() default "\"io.graphoenix.core\"";
+  String _package() default "io.graphoenix.core";
 }

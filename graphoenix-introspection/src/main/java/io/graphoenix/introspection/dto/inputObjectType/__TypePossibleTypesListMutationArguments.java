@@ -103,9 +103,9 @@ public class __TypePossibleTypesListMutationArguments implements MetaInput {
   /**
    * Type Name
    */
-  @DefaultValue("\"__TypePossibleTypes\"")
+  @DefaultValue("__TypePossibleTypes")
   @Description("Type Name")
-  private String __typename = "\"__TypePossibleTypes\"";
+  private String __typename = "__TypePossibleTypes";
 
   /**
    * Input List

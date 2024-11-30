@@ -115,9 +115,9 @@ public class __FieldInput implements MetaInput {
   /**
    * Type Name
    */
-  @DefaultValue("\"__Field\"")
+  @DefaultValue("__Field")
   @Description("Type Name")
-  private String __typename = "\"__Field\"";
+  private String __typename = "__Field";
 
   /**
    * ofType Reference

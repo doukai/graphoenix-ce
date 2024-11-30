@@ -110,9 +110,9 @@ public class __DirectiveInput implements MetaInput {
   /**
    * Type Name
    */
-  @DefaultValue("\"__Directive\"")
+  @DefaultValue("__Directive")
   @Description("Type Name")
-  private String __typename = "\"__Directive\"";
+  private String __typename = "__Directive";
 
   /**
    * ofSchema Reference

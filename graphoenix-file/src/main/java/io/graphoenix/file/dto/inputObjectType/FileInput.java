@@ -102,9 +102,9 @@ public class FileInput implements MetaInput {
   /**
    * Type Name
    */
-  @DefaultValue("\"File\"")
+  @DefaultValue("File")
   @Description("Type Name")
-  private String __typename = "\"File\"";
+  private String __typename = "File";
 
   /**
    * Where

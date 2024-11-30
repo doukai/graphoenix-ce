@@ -100,7 +100,7 @@ public @interface __EnumValueInput {
    * Type Name
    */
   @Description("Type Name")
-  String __typename() default "\"__EnumValue\"";
+  String __typename() default "__EnumValue";
 
   /**
    * ofType Reference

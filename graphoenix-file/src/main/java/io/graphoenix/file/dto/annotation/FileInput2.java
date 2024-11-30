@@ -100,7 +100,7 @@ public @interface FileInput2 {
    * Type Name
    */
   @Description("Type Name")
-  String __typename() default "\"File\"";
+  String __typename() default "File";
 
   String $id() default "";
 

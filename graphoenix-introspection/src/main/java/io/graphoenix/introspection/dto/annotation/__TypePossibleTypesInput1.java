@@ -100,7 +100,7 @@ public @interface __TypePossibleTypesInput1 {
    * Type Name
    */
   @Description("Type Name")
-  String __typename() default "\"__TypePossibleTypes\"";
+  String __typename() default "__TypePossibleTypes";
 
   /**
    * Where

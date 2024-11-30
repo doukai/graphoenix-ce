@@ -21,5 +21,5 @@ public @interface Format {
   String locale() default "";
 
   @Name("package")
-  String _package() default "\"io.graphoenix.core\"";
+  String _package() default "io.graphoenix.core";
 }

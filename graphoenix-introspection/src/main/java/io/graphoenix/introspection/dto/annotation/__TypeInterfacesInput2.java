@@ -88,7 +88,7 @@ public @interface __TypeInterfacesInput2 {
    * Type Name
    */
   @Description("Type Name")
-  String __typename() default "\"__TypeInterfaces\"";
+  String __typename() default "__TypeInterfaces";
 
   String $id() default "";
 

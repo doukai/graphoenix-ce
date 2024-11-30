@@ -134,9 +134,9 @@ public class __TypeInput implements MetaInput {
   /**
    * Type Name
    */
-  @DefaultValue("\"__Type\"")
+  @DefaultValue("__Type")
   @Description("Type Name")
-  private String __typename = "\"__Type\"";
+  private String __typename = "__Type";
 
   /**
    * ofSchema Reference
