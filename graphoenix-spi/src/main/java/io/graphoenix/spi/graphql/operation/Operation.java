@@ -117,30 +117,35 @@ public class Operation extends AbstractDefinition implements Definition {
     }
 
     public Collection<Selection> getSelections() {
-        return selections;
+        if (selections != null) {
+            return selections.stream().filter(Selection::isInclude).collect(Collectors.toList());
+        }
+        return null;
     }
 
     public Collection<Field> getFields() {
-        return Optional.ofNullable(selections)
+        return Optional.ofNullable(getSelections())
                 .map(fields ->
                         fields.stream()
                                 .filter(Selection::isField)
                                 .map(Selection::asField)
+                                .filter(Field::isInclude)
                                 .collect(Collectors.toList())
                 )
                 .orElse(null);
     }
 
     public Selection getSelection(int index) {
-        return Iterators.get(selections.iterator(), index);
+        return Iterators.get(getSelections().iterator(), index);
     }
 
     public Collection<Fragment> getFragments() {
-        return Optional.ofNullable(selections)
+        return Optional.ofNullable(getSelections())
                 .map(fragments ->
                         fragments.stream()
                                 .filter(Selection::isFragment)
                                 .map(Selection::asFragment)
+                                .filter(Fragment::isInclude)
                                 .collect(Collectors.toList())
                 )
                 .orElse(null);
@@ -158,7 +163,7 @@ public class Operation extends AbstractDefinition implements Definition {
     }
 
     public Field getField(String name) {
-        return this.selections.stream()
+        return getSelections().stream()
                 .filter(Selection::isField)
                 .map(selection -> (Field) selection)
                 .filter(field -> field.getAlias() != null && field.getAlias().equals(name) || field.getName().equals(name))
@@ -176,7 +181,7 @@ public class Operation extends AbstractDefinition implements Definition {
                 Stream.ofNullable(fields)
                         .flatMap(Collection::stream)
                         .reduce(
-                                this.selections,
+                                getSelections(),
                                 (pre, cur) ->
                                         Stream
                                                 .concat(

@@ -37,7 +37,10 @@ public class FragmentDefinition extends AbstractDefinition implements Definition
     }
 
     public Collection<Selection> getSelections() {
-        return selections;
+        if (selections != null) {
+            return selections.stream().filter(Selection::isInclude).collect(Collectors.toList());
+        }
+        return null;
     }
 
     public FragmentDefinition setSelections(Collection<Selection> selections) {

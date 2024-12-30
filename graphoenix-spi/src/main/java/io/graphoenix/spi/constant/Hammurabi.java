@@ -52,7 +52,7 @@ public class Hammurabi {
     public static final String INPUT_CONDITIONAL_INPUT_VALUE_AND = "AND";
     public static final String INPUT_CONDITIONAL_INPUT_VALUE_OR = "OR";
 
-    
+
     public static final String INPUT_INVOKE_NAME = "Invoke";
 
 
@@ -210,6 +210,12 @@ public class Hammurabi {
     public static final String DIRECTIVE_MERGE_NAME = "merge";
     public static final String DIRECTIVE_UNIQUE_MERGE_NAME = "uniqueMerge";
     public static final String DIRECTIVE_MERGE_ARGUMENT_ARGUMENTS_NAME = "arguments";
+
+    public static final String DIRECTIVE_INCLUDE_NAME = "include";
+    public static final String DIRECTIVE_INCLUDE_ARGUMENT_IF_NAME = "if";
+
+    public static final String DIRECTIVE_SKIP_NAME = "skip";
+    public static final String DIRECTIVE_SKIP_ARGUMENT_IF_NAME = "if";
 
 
     public static final String DIRECTIVE_PERMIT_ALL = "permitAll";
