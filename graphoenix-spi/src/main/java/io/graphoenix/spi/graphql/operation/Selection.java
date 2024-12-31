@@ -36,13 +36,13 @@ public interface Selection extends Definition {
     }
 
     default boolean isInclude() {
-        return !hasDirective(DIRECTIVE_INCLUDE_NAME) && !hasDirective(DIRECTIVE_HIDE_NAME) ||
+        return !hasDirective(DIRECTIVE_INCLUDE_NAME) && !hasDirective(DIRECTIVE_SKIP_NAME) ||
                 hasDirective(DIRECTIVE_INCLUDE_NAME) && Optional.ofNullable(getDirective(DIRECTIVE_INCLUDE_NAME))
                         .flatMap(directive -> directive.getArgumentOrEmpty(DIRECTIVE_INCLUDE_ARGUMENT_IF_NAME))
                         .filter(ValueWithVariable::isBoolean)
                         .map(valueWithVariable -> valueWithVariable.asBoolean().getValue())
                         .orElse(true) ||
-                hasDirective(DIRECTIVE_HIDE_NAME) && !Optional.ofNullable(getDirective(DIRECTIVE_SKIP_NAME))
+                hasDirective(DIRECTIVE_SKIP_NAME) && !Optional.ofNullable(getDirective(DIRECTIVE_SKIP_NAME))
                         .flatMap(directive -> directive.getArgumentOrEmpty(DIRECTIVE_SKIP_ARGUMENT_IF_NAME))
                         .filter(ValueWithVariable::isBoolean)
                         .map(valueWithVariable -> valueWithVariable.asBoolean().getValue())

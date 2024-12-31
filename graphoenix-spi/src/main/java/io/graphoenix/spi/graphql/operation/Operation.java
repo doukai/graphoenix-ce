@@ -129,7 +129,6 @@ public class Operation extends AbstractDefinition implements Definition {
                         fields.stream()
                                 .filter(Selection::isField)
                                 .map(Selection::asField)
-                                .filter(Field::isInclude)
                                 .collect(Collectors.toList())
                 )
                 .orElse(null);
@@ -145,7 +144,6 @@ public class Operation extends AbstractDefinition implements Definition {
                         fragments.stream()
                                 .filter(Selection::isFragment)
                                 .map(Selection::asFragment)
-                                .filter(Fragment::isInclude)
                                 .collect(Collectors.toList())
                 )
                 .orElse(null);
