@@ -20,7 +20,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Mutation Input for Relationship Object between __Directive and locations")
-public class __DirectiveLocationsRelationInput implements MetaInput {
+public class __DirectiveLocationsRelationInput implements MetaInput, __DirectiveLocationsRelationInputBase {
   /**
    * ID
    */
@@ -107,44 +107,54 @@ public class __DirectiveLocationsRelationInput implements MetaInput {
   @Description("Where")
   private __DirectiveLocationsRelationExpression where;
 
+  @Override
   public String getId() {
     return this.id;
   }
 
+  @Override
   public void setId(String id) {
-    this.id = id;
+    this.id = (String)id;
   }
 
+  @Override
   public String get__directiveRef() {
     return this.__directiveRef;
   }
 
+  @Override
   public void set__directiveRef(String __directiveRef) {
-    this.__directiveRef = __directiveRef;
+    this.__directiveRef = (String)__directiveRef;
   }
 
+  @Override
   public __DirectiveInput get__directive() {
     return this.__directive;
   }
 
+  @Override
   public void set__directive(__DirectiveInput __directive) {
-    this.__directive = __directive;
+    this.__directive = (__DirectiveInput)__directive;
   }
 
+  @Override
   public __DirectiveLocation getLocationsRef() {
     return this.locationsRef;
   }
 
+  @Override
   public void setLocationsRef(__DirectiveLocation locationsRef) {
-    this.locationsRef = locationsRef;
+    this.locationsRef = (__DirectiveLocation)locationsRef;
   }
 
+  @Override
   public Boolean getIsDeprecated() {
     return this.isDeprecated;
   }
 
+  @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = isDeprecated;
+    this.isDeprecated = (Boolean)isDeprecated;
   }
 
   @Override
@@ -217,12 +227,14 @@ public class __DirectiveLocationsRelationInput implements MetaInput {
     this.createGroupId = (String)createGroupId;
   }
 
+  @Override
   public String get__typename() {
     return this.__typename;
   }
 
+  @Override
   public void set__typename(String __typename) {
-    this.__typename = __typename;
+    this.__typename = (String)__typename;
   }
 
   public __DirectiveLocationsRelationExpression getWhere() {

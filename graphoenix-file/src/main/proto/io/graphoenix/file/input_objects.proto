@@ -13,6 +13,46 @@ import "google/protobuf/timestamp.proto";
 /**
 * Query Expression Input for 文件
 */
+message FileExpressionBase {
+    io.graphoenix.core.StringExpression id = 1; /* ID */
+    io.graphoenix.core.StringExpression name = 2; /* 文件名 */
+    io.graphoenix.core.StringExpression content_type = 3; /* 类型 */
+    io.graphoenix.core.StringExpression content = 4; /* 内容 */
+    io.graphoenix.core.StringExpression url = 5; /* URL */
+    bool include_deprecated = 6; /* Include Deprecated */
+    io.graphoenix.core.IntExpression version = 7; /* Version */
+    io.graphoenix.core.IntExpression realm_id = 8; /* Realm ID */
+    io.graphoenix.core.StringExpression create_user_id = 9; /* Create User ID */
+    io.graphoenix.core.StringExpression create_time = 10; /* Create Time */
+    io.graphoenix.core.StringExpression update_user_id = 11; /* Update User ID */
+    io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
+    io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
+    io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
+    bool not = 15; /* Not */
+    io.graphoenix.core.Conditional cond = 16; /* Condition */
+}
+/**
+* Mutation Input for 文件
+*/
+message FileInputBase {
+    string id = 1; /* ID */
+    string name = 2; /* 文件名 */
+    string content_type = 3; /* 类型 */
+    string content = 4; /* 内容 */
+    string url = 5; /* URL */
+    bool is_deprecated = 6; /* Is Deprecated */
+    int32 version = 7; /* Version */
+    int32 realm_id = 8; /* Realm ID */
+    string create_user_id = 9; /* Create User ID */
+    google.protobuf.Timestamp create_time = 10; /* Create Time */
+    string update_user_id = 11; /* Update User ID */
+    google.protobuf.Timestamp update_time = 12; /* Update Time */
+    string create_group_id = 13; /* Create Group ID */
+    string intro_typename = 14; /* Type Name */
+}
+/**
+* Query Expression Input for 文件
+*/
 message FileExpression {
     io.graphoenix.core.StringExpression id = 1; /* ID */
     io.graphoenix.core.StringExpression name = 2; /* 文件名 */

@@ -19,7 +19,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Mutation Arguments for 文件")
-public class FileMutationArguments implements MetaInput {
+public class FileMutationArguments implements MetaInput, FileInputBase {
   /**
    * ID
    */
@@ -118,52 +118,64 @@ public class FileMutationArguments implements MetaInput {
   @Description("Where")
   private FileExpression where;
 
+  @Override
   public String getId() {
     return this.id;
   }
 
+  @Override
   public void setId(String id) {
-    this.id = id;
+    this.id = (String)id;
   }
 
+  @Override
   public String getName() {
     return this.name;
   }
 
+  @Override
   public void setName(String name) {
-    this.name = name;
+    this.name = (String)name;
   }
 
+  @Override
   public String getContentType() {
     return this.contentType;
   }
 
+  @Override
   public void setContentType(String contentType) {
-    this.contentType = contentType;
+    this.contentType = (String)contentType;
   }
 
+  @Override
   public String getContent() {
     return this.content;
   }
 
+  @Override
   public void setContent(String content) {
-    this.content = content;
+    this.content = (String)content;
   }
 
+  @Override
   public String getUrl() {
     return this.url;
   }
 
+  @Override
   public void setUrl(String url) {
-    this.url = url;
+    this.url = (String)url;
   }
 
+  @Override
   public Boolean getIsDeprecated() {
     return this.isDeprecated;
   }
 
+  @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = isDeprecated;
+    this.isDeprecated = (Boolean)isDeprecated;
   }
 
   @Override
@@ -236,12 +248,14 @@ public class FileMutationArguments implements MetaInput {
     this.createGroupId = (String)createGroupId;
   }
 
+  @Override
   public String get__typename() {
     return this.__typename;
   }
 
+  @Override
   public void set__typename(String __typename) {
-    this.__typename = __typename;
+    this.__typename = (String)__typename;
   }
 
   public FileInput getInput() {

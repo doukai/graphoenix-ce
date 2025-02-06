@@ -13,6 +13,54 @@ import "google/protobuf/timestamp.proto";
 /**
 * Query Expression Input for __Schema
 */
+message IntroSchemaExpressionBase {
+    io.graphoenix.core.StringExpression id = 1; /* id */
+    IntroTypeExpression types = 2; /* types */
+    IntroTypeExpression query_type = 3; /* queryType */
+    IntroTypeExpression mutation_type = 4; /* mutationType */
+    IntroTypeExpression subscription_type = 5; /* subscriptionType */
+    IntroDirectiveExpression directives = 6; /* directives */
+    bool include_deprecated = 7; /* Include Deprecated */
+    io.graphoenix.core.IntExpression version = 8; /* Version */
+    io.graphoenix.core.IntExpression realm_id = 9; /* Realm ID */
+    io.graphoenix.core.StringExpression create_user_id = 10; /* Create User ID */
+    io.graphoenix.core.StringExpression create_time = 11; /* Create Time */
+    io.graphoenix.core.StringExpression update_user_id = 12; /* Update User ID */
+    io.graphoenix.core.StringExpression update_time = 13; /* Update Time */
+    io.graphoenix.core.StringExpression create_group_id = 14; /* Create Group ID */
+    io.graphoenix.core.StringExpression intro_typename = 15; /* Type Name */
+    io.graphoenix.core.StringExpression query_type_name = 16; /* queryType Reference */
+    io.graphoenix.core.StringExpression mutation_type_name = 17; /* mutationType Reference */
+    io.graphoenix.core.StringExpression subscription_type_name = 18; /* subscriptionType Reference */
+    bool not = 19; /* Not */
+    io.graphoenix.core.Conditional cond = 20; /* Condition */
+}
+/**
+* Mutation Input for __Schema
+*/
+message IntroSchemaInputBase {
+    string id = 1; /* id */
+    repeated IntroTypeInput types = 2; /* types */
+    IntroTypeInput query_type = 3; /* queryType */
+    IntroTypeInput mutation_type = 4; /* mutationType */
+    IntroTypeInput subscription_type = 5; /* subscriptionType */
+    repeated IntroDirectiveInput directives = 6; /* directives */
+    bool is_deprecated = 7; /* Is Deprecated */
+    int32 version = 8; /* Version */
+    int32 realm_id = 9; /* Realm ID */
+    string create_user_id = 10; /* Create User ID */
+    google.protobuf.Timestamp create_time = 11; /* Create Time */
+    string update_user_id = 12; /* Update User ID */
+    google.protobuf.Timestamp update_time = 13; /* Update Time */
+    string create_group_id = 14; /* Create Group ID */
+    string intro_typename = 15; /* Type Name */
+    string query_type_name = 16; /* queryType Reference */
+    string mutation_type_name = 17; /* mutationType Reference */
+    string subscription_type_name = 18; /* subscriptionType Reference */
+}
+/**
+* Query Expression Input for __Schema
+*/
 message IntroSchemaExpression {
     io.graphoenix.core.StringExpression id = 1; /* id */
     IntroTypeExpression types = 2; /* types */
@@ -96,6 +144,64 @@ message IntroSchemaOrderBy {
     io.graphoenix.core.Sort subscription_type_name_count = 30; /* Count of subscriptionType Reference */
     io.graphoenix.core.Sort subscription_type_name_max = 31; /* Max of subscriptionType Reference */
     io.graphoenix.core.Sort subscription_type_name_min = 32; /* Min of subscriptionType Reference */
+}
+/**
+* Query Expression Input for __Type
+*/
+message IntroTypeExpressionBase {
+    io.graphoenix.core.StringExpression name = 1; /* name */
+    IntroSchemaExpression of_schema = 2; /* ofSchema */
+    io.graphoenix.core.IntroTypeKindExpression kind = 3; /* kind */
+    io.graphoenix.core.StringExpression description = 4; /* description */
+    IntroFieldExpression fields = 5; /* fields */
+    IntroTypeExpression interfaces = 6; /* interfaces */
+    IntroTypeExpression possible_types = 7; /* possibleTypes */
+    IntroEnumValueExpression enum_values = 8; /* enumValues */
+    IntroInputValueExpression input_fields = 9; /* inputFields */
+    IntroTypeExpression of_type = 10; /* ofType */
+    bool include_deprecated = 11; /* Include Deprecated */
+    io.graphoenix.core.IntExpression version = 12; /* Version */
+    io.graphoenix.core.IntExpression realm_id = 13; /* Realm ID */
+    io.graphoenix.core.StringExpression create_user_id = 14; /* Create User ID */
+    io.graphoenix.core.StringExpression create_time = 15; /* Create Time */
+    io.graphoenix.core.StringExpression update_user_id = 16; /* Update User ID */
+    io.graphoenix.core.StringExpression update_time = 17; /* Update Time */
+    io.graphoenix.core.StringExpression create_group_id = 18; /* Create Group ID */
+    io.graphoenix.core.StringExpression intro_typename = 19; /* Type Name */
+    io.graphoenix.core.IntExpression schema_id = 20; /* ofSchema Reference */
+    io.graphoenix.core.StringExpression of_type_name = 21; /* ofType Reference */
+    IntroTypeInterfacesExpression intro_type_interfaces = 22; /* Relationship Object between __Type and __Type */
+    IntroTypePossibleTypesExpression intro_type_possible_types = 23; /* Relationship Object between __Type and __Type */
+    bool not = 24; /* Not */
+    io.graphoenix.core.Conditional cond = 25; /* Condition */
+}
+/**
+* Mutation Input for __Type
+*/
+message IntroTypeInputBase {
+    string name = 1; /* name */
+    IntroSchemaInput of_schema = 2; /* ofSchema */
+    io.graphoenix.core.IntroTypeKind kind = 3; /* kind */
+    string description = 4; /* description */
+    repeated IntroFieldInput fields = 5; /* fields */
+    repeated IntroTypeInput interfaces = 6; /* interfaces */
+    repeated IntroTypeInput possible_types = 7; /* possibleTypes */
+    repeated IntroEnumValueInput enum_values = 8; /* enumValues */
+    repeated IntroInputValueInput input_fields = 9; /* inputFields */
+    IntroTypeInput of_type = 10; /* ofType */
+    bool is_deprecated = 11; /* Is Deprecated */
+    int32 version = 12; /* Version */
+    int32 realm_id = 13; /* Realm ID */
+    string create_user_id = 14; /* Create User ID */
+    google.protobuf.Timestamp create_time = 15; /* Create Time */
+    string update_user_id = 16; /* Update User ID */
+    google.protobuf.Timestamp update_time = 17; /* Update Time */
+    string create_group_id = 18; /* Create Group ID */
+    string intro_typename = 19; /* Type Name */
+    int32 schema_id = 20; /* ofSchema Reference */
+    string of_type_name = 21; /* ofType Reference */
+    repeated IntroTypeInterfacesInput intro_type_interfaces = 22; /* Relationship Object between __Type and __Type */
+    repeated IntroTypePossibleTypesInput intro_type_possible_types = 23; /* Relationship Object between __Type and __Type */
 }
 /**
 * Query Expression Input for __Type
@@ -212,6 +318,54 @@ message IntroTypeOrderBy {
 /**
 * Query Expression Input for __Field
 */
+message IntroFieldExpressionBase {
+    io.graphoenix.core.StringExpression id = 1; /* id */
+    io.graphoenix.core.StringExpression name = 2; /* name */
+    IntroTypeExpression of_type = 3; /* ofType */
+    io.graphoenix.core.StringExpression description = 4; /* description */
+    IntroInputValueExpression args = 5; /* args */
+    IntroTypeExpression type = 6; /* type */
+    io.graphoenix.core.StringExpression deprecation_reason = 7; /* deprecationReason */
+    bool include_deprecated = 8; /* Include Deprecated */
+    io.graphoenix.core.IntExpression version = 9; /* Version */
+    io.graphoenix.core.IntExpression realm_id = 10; /* Realm ID */
+    io.graphoenix.core.StringExpression create_user_id = 11; /* Create User ID */
+    io.graphoenix.core.StringExpression create_time = 12; /* Create Time */
+    io.graphoenix.core.StringExpression update_user_id = 13; /* Update User ID */
+    io.graphoenix.core.StringExpression update_time = 14; /* Update Time */
+    io.graphoenix.core.StringExpression create_group_id = 15; /* Create Group ID */
+    io.graphoenix.core.StringExpression intro_typename = 16; /* Type Name */
+    io.graphoenix.core.StringExpression of_type_name = 17; /* ofType Reference */
+    io.graphoenix.core.StringExpression type_name = 18; /* type Reference */
+    bool not = 19; /* Not */
+    io.graphoenix.core.Conditional cond = 20; /* Condition */
+}
+/**
+* Mutation Input for __Field
+*/
+message IntroFieldInputBase {
+    string id = 1; /* id */
+    string name = 2; /* name */
+    IntroTypeInput of_type = 3; /* ofType */
+    string description = 4; /* description */
+    repeated IntroInputValueInput args = 5; /* args */
+    IntroTypeInput type = 6; /* type */
+    string deprecation_reason = 7; /* deprecationReason */
+    bool is_deprecated = 8; /* Is Deprecated */
+    int32 version = 9; /* Version */
+    int32 realm_id = 10; /* Realm ID */
+    string create_user_id = 11; /* Create User ID */
+    google.protobuf.Timestamp create_time = 12; /* Create Time */
+    string update_user_id = 13; /* Update User ID */
+    google.protobuf.Timestamp update_time = 14; /* Update Time */
+    string create_group_id = 15; /* Create Group ID */
+    string intro_typename = 16; /* Type Name */
+    string of_type_name = 17; /* ofType Reference */
+    string type_name = 18; /* type Reference */
+}
+/**
+* Query Expression Input for __Field
+*/
 message IntroFieldExpression {
     io.graphoenix.core.StringExpression id = 1; /* id */
     io.graphoenix.core.StringExpression name = 2; /* name */
@@ -300,6 +454,56 @@ message IntroFieldOrderBy {
     io.graphoenix.core.Sort type_name_count = 35; /* Count of type Reference */
     io.graphoenix.core.Sort type_name_max = 36; /* Max of type Reference */
     io.graphoenix.core.Sort type_name_min = 37; /* Min of type Reference */
+}
+/**
+* Query Expression Input for __InputValue
+*/
+message IntroInputValueExpressionBase {
+    io.graphoenix.core.StringExpression id = 1; /* id */
+    io.graphoenix.core.StringExpression name = 2; /* name */
+    IntroTypeExpression of_type = 3; /* ofType */
+    io.graphoenix.core.IntExpression field_id = 4; /* fieldId */
+    io.graphoenix.core.StringExpression directive_name = 5; /* directiveName */
+    io.graphoenix.core.StringExpression description = 6; /* description */
+    IntroTypeExpression type = 7; /* type */
+    io.graphoenix.core.StringExpression default_value = 8; /* defaultValue */
+    bool include_deprecated = 9; /* Include Deprecated */
+    io.graphoenix.core.IntExpression version = 10; /* Version */
+    io.graphoenix.core.IntExpression realm_id = 11; /* Realm ID */
+    io.graphoenix.core.StringExpression create_user_id = 12; /* Create User ID */
+    io.graphoenix.core.StringExpression create_time = 13; /* Create Time */
+    io.graphoenix.core.StringExpression update_user_id = 14; /* Update User ID */
+    io.graphoenix.core.StringExpression update_time = 15; /* Update Time */
+    io.graphoenix.core.StringExpression create_group_id = 16; /* Create Group ID */
+    io.graphoenix.core.StringExpression intro_typename = 17; /* Type Name */
+    io.graphoenix.core.StringExpression of_type_name = 18; /* ofType Reference */
+    io.graphoenix.core.StringExpression type_name = 19; /* type Reference */
+    bool not = 20; /* Not */
+    io.graphoenix.core.Conditional cond = 21; /* Condition */
+}
+/**
+* Mutation Input for __InputValue
+*/
+message IntroInputValueInputBase {
+    string id = 1; /* id */
+    string name = 2; /* name */
+    IntroTypeInput of_type = 3; /* ofType */
+    int32 field_id = 4; /* fieldId */
+    string directive_name = 5; /* directiveName */
+    string description = 6; /* description */
+    IntroTypeInput type = 7; /* type */
+    string default_value = 8; /* defaultValue */
+    bool is_deprecated = 9; /* Is Deprecated */
+    int32 version = 10; /* Version */
+    int32 realm_id = 11; /* Realm ID */
+    string create_user_id = 12; /* Create User ID */
+    google.protobuf.Timestamp create_time = 13; /* Create Time */
+    string update_user_id = 14; /* Update User ID */
+    google.protobuf.Timestamp update_time = 15; /* Update Time */
+    string create_group_id = 16; /* Create Group ID */
+    string intro_typename = 17; /* Type Name */
+    string of_type_name = 18; /* ofType Reference */
+    string type_name = 19; /* type Reference */
 }
 /**
 * Query Expression Input for __InputValue
@@ -406,6 +610,48 @@ message IntroInputValueOrderBy {
 /**
 * Query Expression Input for __EnumValue
 */
+message IntroEnumValueExpressionBase {
+    io.graphoenix.core.StringExpression id = 1; /* id */
+    io.graphoenix.core.StringExpression name = 2; /* name */
+    IntroTypeExpression of_type = 3; /* ofType */
+    io.graphoenix.core.StringExpression description = 4; /* description */
+    io.graphoenix.core.StringExpression deprecation_reason = 5; /* deprecationReason */
+    bool include_deprecated = 6; /* Include Deprecated */
+    io.graphoenix.core.IntExpression version = 7; /* Version */
+    io.graphoenix.core.IntExpression realm_id = 8; /* Realm ID */
+    io.graphoenix.core.StringExpression create_user_id = 9; /* Create User ID */
+    io.graphoenix.core.StringExpression create_time = 10; /* Create Time */
+    io.graphoenix.core.StringExpression update_user_id = 11; /* Update User ID */
+    io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
+    io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
+    io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
+    io.graphoenix.core.StringExpression of_type_name = 15; /* ofType Reference */
+    bool not = 16; /* Not */
+    io.graphoenix.core.Conditional cond = 17; /* Condition */
+}
+/**
+* Mutation Input for __EnumValue
+*/
+message IntroEnumValueInputBase {
+    string id = 1; /* id */
+    string name = 2; /* name */
+    IntroTypeInput of_type = 3; /* ofType */
+    string description = 4; /* description */
+    string deprecation_reason = 5; /* deprecationReason */
+    bool is_deprecated = 6; /* Is Deprecated */
+    int32 version = 7; /* Version */
+    int32 realm_id = 8; /* Realm ID */
+    string create_user_id = 9; /* Create User ID */
+    google.protobuf.Timestamp create_time = 10; /* Create Time */
+    string update_user_id = 11; /* Update User ID */
+    google.protobuf.Timestamp update_time = 12; /* Update Time */
+    string create_group_id = 13; /* Create Group ID */
+    string intro_typename = 14; /* Type Name */
+    string of_type_name = 15; /* ofType Reference */
+}
+/**
+* Query Expression Input for __EnumValue
+*/
 message IntroEnumValueExpression {
     io.graphoenix.core.StringExpression id = 1; /* id */
     io.graphoenix.core.StringExpression name = 2; /* name */
@@ -481,6 +727,52 @@ message IntroEnumValueOrderBy {
     io.graphoenix.core.Sort of_type_name_count = 28; /* Count of ofType Reference */
     io.graphoenix.core.Sort of_type_name_max = 29; /* Max of ofType Reference */
     io.graphoenix.core.Sort of_type_name_min = 30; /* Min of ofType Reference */
+}
+/**
+* Query Expression Input for __Directive
+*/
+message IntroDirectiveExpressionBase {
+    io.graphoenix.core.StringExpression name = 1; /* name */
+    IntroSchemaExpression of_schema = 2; /* ofSchema */
+    io.graphoenix.core.StringExpression description = 3; /* description */
+    io.graphoenix.core.IntroDirectiveLocationExpression locations = 4; /* locations */
+    IntroInputValueExpression args = 5; /* args */
+    io.graphoenix.core.BooleanExpression is_repeatable = 6; /* isRepeatable */
+    bool include_deprecated = 7; /* Include Deprecated */
+    io.graphoenix.core.IntExpression version = 8; /* Version */
+    io.graphoenix.core.IntExpression realm_id = 9; /* Realm ID */
+    io.graphoenix.core.StringExpression create_user_id = 10; /* Create User ID */
+    io.graphoenix.core.StringExpression create_time = 11; /* Create Time */
+    io.graphoenix.core.StringExpression update_user_id = 12; /* Update User ID */
+    io.graphoenix.core.StringExpression update_time = 13; /* Update Time */
+    io.graphoenix.core.StringExpression create_group_id = 14; /* Create Group ID */
+    io.graphoenix.core.StringExpression intro_typename = 15; /* Type Name */
+    io.graphoenix.core.IntExpression schema_id = 16; /* ofSchema Reference */
+    IntroDirectiveLocationsRelationExpression intro_directive_locations_relation = 17; /* Relationship Object between __Directive and locations */
+    bool not = 18; /* Not */
+    io.graphoenix.core.Conditional cond = 19; /* Condition */
+}
+/**
+* Mutation Input for __Directive
+*/
+message IntroDirectiveInputBase {
+    string name = 1; /* name */
+    IntroSchemaInput of_schema = 2; /* ofSchema */
+    string description = 3; /* description */
+    repeated io.graphoenix.core.IntroDirectiveLocation locations = 4; /* locations */
+    repeated IntroInputValueInput args = 5; /* args */
+    bool is_repeatable = 6; /* isRepeatable */
+    bool is_deprecated = 7; /* Is Deprecated */
+    int32 version = 8; /* Version */
+    int32 realm_id = 9; /* Realm ID */
+    string create_user_id = 10; /* Create User ID */
+    google.protobuf.Timestamp create_time = 11; /* Create Time */
+    string update_user_id = 12; /* Update User ID */
+    google.protobuf.Timestamp update_time = 13; /* Update Time */
+    string create_group_id = 14; /* Create Group ID */
+    string intro_typename = 15; /* Type Name */
+    int32 schema_id = 16; /* ofSchema Reference */
+    repeated IntroDirectiveLocationsRelationInput intro_directive_locations_relation = 17; /* Relationship Object between __Directive and locations */
 }
 /**
 * Query Expression Input for __Directive
@@ -568,6 +860,46 @@ message IntroDirectiveOrderBy {
 /**
 * Query Expression Input for Relationship Object between __Type and __Type
 */
+message IntroTypeInterfacesExpressionBase {
+    io.graphoenix.core.StringExpression id = 1; /* ID */
+    io.graphoenix.core.StringExpression type_ref = 2; /* __Type Reference */
+    IntroTypeExpression type = 3; /* __Type */
+    io.graphoenix.core.StringExpression interface_ref = 4; /* __Type Reference */
+    IntroTypeExpression interface = 5; /* __Type */
+    bool include_deprecated = 6; /* Include Deprecated */
+    io.graphoenix.core.IntExpression version = 7; /* Version */
+    io.graphoenix.core.IntExpression realm_id = 8; /* Realm ID */
+    io.graphoenix.core.StringExpression create_user_id = 9; /* Create User ID */
+    io.graphoenix.core.StringExpression create_time = 10; /* Create Time */
+    io.graphoenix.core.StringExpression update_user_id = 11; /* Update User ID */
+    io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
+    io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
+    io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
+    bool not = 15; /* Not */
+    io.graphoenix.core.Conditional cond = 16; /* Condition */
+}
+/**
+* Mutation Input for Relationship Object between __Type and __Type
+*/
+message IntroTypeInterfacesInputBase {
+    string id = 1; /* ID */
+    string type_ref = 2; /* __Type Reference */
+    IntroTypeInput type = 3; /* __Type */
+    string interface_ref = 4; /* __Type Reference */
+    IntroTypeInput interface = 5; /* __Type */
+    bool is_deprecated = 6; /* Is Deprecated */
+    int32 version = 7; /* Version */
+    int32 realm_id = 8; /* Realm ID */
+    string create_user_id = 9; /* Create User ID */
+    google.protobuf.Timestamp create_time = 10; /* Create Time */
+    string update_user_id = 11; /* Update User ID */
+    google.protobuf.Timestamp update_time = 12; /* Update Time */
+    string create_group_id = 13; /* Create Group ID */
+    string intro_typename = 14; /* Type Name */
+}
+/**
+* Query Expression Input for Relationship Object between __Type and __Type
+*/
 message IntroTypeInterfacesExpression {
     io.graphoenix.core.StringExpression id = 1; /* ID */
     io.graphoenix.core.StringExpression type_ref = 2; /* __Type Reference */
@@ -638,6 +970,46 @@ message IntroTypeInterfacesOrderBy {
 /**
 * Query Expression Input for Relationship Object between __Type and __Type
 */
+message IntroTypePossibleTypesExpressionBase {
+    io.graphoenix.core.StringExpression id = 1; /* ID */
+    io.graphoenix.core.StringExpression type_ref = 2; /* __Type Reference */
+    IntroTypeExpression type = 3; /* __Type */
+    io.graphoenix.core.StringExpression possible_type_ref = 4; /* __Type Reference */
+    IntroTypeExpression possible_type = 5; /* __Type */
+    bool include_deprecated = 6; /* Include Deprecated */
+    io.graphoenix.core.IntExpression version = 7; /* Version */
+    io.graphoenix.core.IntExpression realm_id = 8; /* Realm ID */
+    io.graphoenix.core.StringExpression create_user_id = 9; /* Create User ID */
+    io.graphoenix.core.StringExpression create_time = 10; /* Create Time */
+    io.graphoenix.core.StringExpression update_user_id = 11; /* Update User ID */
+    io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
+    io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
+    io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
+    bool not = 15; /* Not */
+    io.graphoenix.core.Conditional cond = 16; /* Condition */
+}
+/**
+* Mutation Input for Relationship Object between __Type and __Type
+*/
+message IntroTypePossibleTypesInputBase {
+    string id = 1; /* ID */
+    string type_ref = 2; /* __Type Reference */
+    IntroTypeInput type = 3; /* __Type */
+    string possible_type_ref = 4; /* __Type Reference */
+    IntroTypeInput possible_type = 5; /* __Type */
+    bool is_deprecated = 6; /* Is Deprecated */
+    int32 version = 7; /* Version */
+    int32 realm_id = 8; /* Realm ID */
+    string create_user_id = 9; /* Create User ID */
+    google.protobuf.Timestamp create_time = 10; /* Create Time */
+    string update_user_id = 11; /* Update User ID */
+    google.protobuf.Timestamp update_time = 12; /* Update Time */
+    string create_group_id = 13; /* Create Group ID */
+    string intro_typename = 14; /* Type Name */
+}
+/**
+* Query Expression Input for Relationship Object between __Type and __Type
+*/
 message IntroTypePossibleTypesExpression {
     io.graphoenix.core.StringExpression id = 1; /* ID */
     io.graphoenix.core.StringExpression type_ref = 2; /* __Type Reference */
@@ -704,6 +1076,44 @@ message IntroTypePossibleTypesOrderBy {
     io.graphoenix.core.Sort possible_type_ref_count = 21; /* Count of __Type Reference */
     io.graphoenix.core.Sort possible_type_ref_max = 22; /* Max of __Type Reference */
     io.graphoenix.core.Sort possible_type_ref_min = 23; /* Min of __Type Reference */
+}
+/**
+* Query Expression Input for Relationship Object between __Directive and locations
+*/
+message IntroDirectiveLocationsRelationExpressionBase {
+    io.graphoenix.core.StringExpression id = 1; /* ID */
+    io.graphoenix.core.StringExpression intro_directive_ref = 2; /* __Directive Reference */
+    IntroDirectiveExpression intro_directive = 3; /* __Directive */
+    io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4; /* locations Reference */
+    bool include_deprecated = 5; /* Include Deprecated */
+    io.graphoenix.core.IntExpression version = 6; /* Version */
+    io.graphoenix.core.IntExpression realm_id = 7; /* Realm ID */
+    io.graphoenix.core.StringExpression create_user_id = 8; /* Create User ID */
+    io.graphoenix.core.StringExpression create_time = 9; /* Create Time */
+    io.graphoenix.core.StringExpression update_user_id = 10; /* Update User ID */
+    io.graphoenix.core.StringExpression update_time = 11; /* Update Time */
+    io.graphoenix.core.StringExpression create_group_id = 12; /* Create Group ID */
+    io.graphoenix.core.StringExpression intro_typename = 13; /* Type Name */
+    bool not = 14; /* Not */
+    io.graphoenix.core.Conditional cond = 15; /* Condition */
+}
+/**
+* Mutation Input for Relationship Object between __Directive and locations
+*/
+message IntroDirectiveLocationsRelationInputBase {
+    string id = 1; /* ID */
+    string intro_directive_ref = 2; /* __Directive Reference */
+    IntroDirectiveInput intro_directive = 3; /* __Directive */
+    io.graphoenix.core.IntroDirectiveLocation locations_ref = 4; /* locations Reference */
+    bool is_deprecated = 5; /* Is Deprecated */
+    int32 version = 6; /* Version */
+    int32 realm_id = 7; /* Realm ID */
+    string create_user_id = 8; /* Create User ID */
+    google.protobuf.Timestamp create_time = 9; /* Create Time */
+    string update_user_id = 10; /* Update User ID */
+    google.protobuf.Timestamp update_time = 11; /* Update Time */
+    string create_group_id = 12; /* Create Group ID */
+    string intro_typename = 13; /* Type Name */
 }
 /**
 * Query Expression Input for Relationship Object between __Directive and locations

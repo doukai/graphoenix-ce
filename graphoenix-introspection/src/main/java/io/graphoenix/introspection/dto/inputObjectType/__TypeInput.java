@@ -21,7 +21,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Mutation Input for __Type")
-public class __TypeInput implements MetaInput {
+public class __TypeInput implements MetaInput, __TypeInputBase {
   /**
    * name
    */
@@ -168,92 +168,114 @@ public class __TypeInput implements MetaInput {
   @Description("Where")
   private __TypeExpression where;
 
+  @Override
   public String getName() {
     return this.name;
   }
 
+  @Override
   public void setName(String name) {
-    this.name = name;
+    this.name = (String)name;
   }
 
+  @Override
   public __SchemaInput getOfSchema() {
     return this.ofSchema;
   }
 
+  @Override
   public void setOfSchema(__SchemaInput ofSchema) {
-    this.ofSchema = ofSchema;
+    this.ofSchema = (__SchemaInput)ofSchema;
   }
 
+  @Override
   public __TypeKind getKind() {
     return this.kind;
   }
 
+  @Override
   public void setKind(__TypeKind kind) {
-    this.kind = kind;
+    this.kind = (__TypeKind)kind;
   }
 
+  @Override
   public String getDescription() {
     return this.description;
   }
 
+  @Override
   public void setDescription(String description) {
-    this.description = description;
+    this.description = (String)description;
   }
 
+  @Override
   public Collection<__FieldInput> getFields() {
     return this.fields;
   }
 
+  @Override
   public void setFields(Collection<__FieldInput> fields) {
-    this.fields = fields;
+    this.fields = (Collection<__FieldInput>)fields;
   }
 
+  @Override
   public Collection<__TypeInput> getInterfaces() {
     return this.interfaces;
   }
 
+  @Override
   public void setInterfaces(Collection<__TypeInput> interfaces) {
-    this.interfaces = interfaces;
+    this.interfaces = (Collection<__TypeInput>)interfaces;
   }
 
+  @Override
   public Collection<__TypeInput> getPossibleTypes() {
     return this.possibleTypes;
   }
 
+  @Override
   public void setPossibleTypes(Collection<__TypeInput> possibleTypes) {
-    this.possibleTypes = possibleTypes;
+    this.possibleTypes = (Collection<__TypeInput>)possibleTypes;
   }
 
+  @Override
   public Collection<__EnumValueInput> getEnumValues() {
     return this.enumValues;
   }
 
+  @Override
   public void setEnumValues(Collection<__EnumValueInput> enumValues) {
-    this.enumValues = enumValues;
+    this.enumValues = (Collection<__EnumValueInput>)enumValues;
   }
 
+  @Override
   public Collection<__InputValueInput> getInputFields() {
     return this.inputFields;
   }
 
+  @Override
   public void setInputFields(Collection<__InputValueInput> inputFields) {
-    this.inputFields = inputFields;
+    this.inputFields = (Collection<__InputValueInput>)inputFields;
   }
 
+  @Override
   public __TypeInput getOfType() {
     return this.ofType;
   }
 
+  @Override
   public void setOfType(__TypeInput ofType) {
-    this.ofType = ofType;
+    this.ofType = (__TypeInput)ofType;
   }
 
+  @Override
   public Boolean getIsDeprecated() {
     return this.isDeprecated;
   }
 
+  @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = isDeprecated;
+    this.isDeprecated = (Boolean)isDeprecated;
   }
 
   @Override
@@ -326,44 +348,54 @@ public class __TypeInput implements MetaInput {
     this.createGroupId = (String)createGroupId;
   }
 
+  @Override
   public String get__typename() {
     return this.__typename;
   }
 
+  @Override
   public void set__typename(String __typename) {
-    this.__typename = __typename;
+    this.__typename = (String)__typename;
   }
 
+  @Override
   public Integer getSchemaId() {
     return this.schemaId;
   }
 
+  @Override
   public void setSchemaId(Integer schemaId) {
-    this.schemaId = schemaId;
+    this.schemaId = (Integer)schemaId;
   }
 
+  @Override
   public String getOfTypeName() {
     return this.ofTypeName;
   }
 
+  @Override
   public void setOfTypeName(String ofTypeName) {
-    this.ofTypeName = ofTypeName;
+    this.ofTypeName = (String)ofTypeName;
   }
 
+  @Override
   public Collection<__TypeInterfacesInput> get__typeInterfaces() {
     return this.__typeInterfaces;
   }
 
+  @Override
   public void set__typeInterfaces(Collection<__TypeInterfacesInput> __typeInterfaces) {
-    this.__typeInterfaces = __typeInterfaces;
+    this.__typeInterfaces = (Collection<__TypeInterfacesInput>)__typeInterfaces;
   }
 
+  @Override
   public Collection<__TypePossibleTypesInput> get__typePossibleTypes() {
     return this.__typePossibleTypes;
   }
 
+  @Override
   public void set__typePossibleTypes(Collection<__TypePossibleTypesInput> __typePossibleTypes) {
-    this.__typePossibleTypes = __typePossibleTypes;
+    this.__typePossibleTypes = (Collection<__TypePossibleTypesInput>)__typePossibleTypes;
   }
 
   public __TypeExpression getWhere() {

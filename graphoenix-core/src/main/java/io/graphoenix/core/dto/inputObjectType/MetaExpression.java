@@ -18,27 +18,39 @@ public interface MetaExpression {
 
   StringExpression createGroupId = null;
 
-  IntExpression getRealmId();
+  default IntExpression getRealmId() {
+    return realmId;
+  }
 
   void setRealmId(IntExpression realmId);
 
-  StringExpression getCreateUserId();
+  default StringExpression getCreateUserId() {
+    return createUserId;
+  }
 
   void setCreateUserId(StringExpression createUserId);
 
-  StringExpression getCreateTime();
+  default StringExpression getCreateTime() {
+    return createTime;
+  }
 
   void setCreateTime(StringExpression createTime);
 
-  StringExpression getUpdateUserId();
+  default StringExpression getUpdateUserId() {
+    return updateUserId;
+  }
 
   void setUpdateUserId(StringExpression updateUserId);
 
-  StringExpression getUpdateTime();
+  default StringExpression getUpdateTime() {
+    return updateTime;
+  }
 
   void setUpdateTime(StringExpression updateTime);
 
-  StringExpression getCreateGroupId();
+  default StringExpression getCreateGroupId() {
+    return createGroupId;
+  }
 
   void setCreateGroupId(StringExpression createGroupId);
 }

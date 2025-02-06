@@ -20,7 +20,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Mutation Input for __Schema")
-public class __SchemaInput implements MetaInput {
+public class __SchemaInput implements MetaInput, __SchemaInputBase {
   /**
    * id
    */
@@ -137,60 +137,74 @@ public class __SchemaInput implements MetaInput {
   @Description("Where")
   private __SchemaExpression where;
 
+  @Override
   public String getId() {
     return this.id;
   }
 
+  @Override
   public void setId(String id) {
-    this.id = id;
+    this.id = (String)id;
   }
 
+  @Override
   public Collection<__TypeInput> getTypes() {
     return this.types;
   }
 
+  @Override
   public void setTypes(Collection<__TypeInput> types) {
-    this.types = types;
+    this.types = (Collection<__TypeInput>)types;
   }
 
+  @Override
   public __TypeInput getQueryType() {
     return this.queryType;
   }
 
+  @Override
   public void setQueryType(__TypeInput queryType) {
-    this.queryType = queryType;
+    this.queryType = (__TypeInput)queryType;
   }
 
+  @Override
   public __TypeInput getMutationType() {
     return this.mutationType;
   }
 
+  @Override
   public void setMutationType(__TypeInput mutationType) {
-    this.mutationType = mutationType;
+    this.mutationType = (__TypeInput)mutationType;
   }
 
+  @Override
   public __TypeInput getSubscriptionType() {
     return this.subscriptionType;
   }
 
+  @Override
   public void setSubscriptionType(__TypeInput subscriptionType) {
-    this.subscriptionType = subscriptionType;
+    this.subscriptionType = (__TypeInput)subscriptionType;
   }
 
+  @Override
   public Collection<__DirectiveInput> getDirectives() {
     return this.directives;
   }
 
+  @Override
   public void setDirectives(Collection<__DirectiveInput> directives) {
-    this.directives = directives;
+    this.directives = (Collection<__DirectiveInput>)directives;
   }
 
+  @Override
   public Boolean getIsDeprecated() {
     return this.isDeprecated;
   }
 
+  @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = isDeprecated;
+    this.isDeprecated = (Boolean)isDeprecated;
   }
 
   @Override
@@ -263,36 +277,44 @@ public class __SchemaInput implements MetaInput {
     this.createGroupId = (String)createGroupId;
   }
 
+  @Override
   public String get__typename() {
     return this.__typename;
   }
 
+  @Override
   public void set__typename(String __typename) {
-    this.__typename = __typename;
+    this.__typename = (String)__typename;
   }
 
+  @Override
   public String getQueryTypeName() {
     return this.queryTypeName;
   }
 
+  @Override
   public void setQueryTypeName(String queryTypeName) {
-    this.queryTypeName = queryTypeName;
+    this.queryTypeName = (String)queryTypeName;
   }
 
+  @Override
   public String getMutationTypeName() {
     return this.mutationTypeName;
   }
 
+  @Override
   public void setMutationTypeName(String mutationTypeName) {
-    this.mutationTypeName = mutationTypeName;
+    this.mutationTypeName = (String)mutationTypeName;
   }
 
+  @Override
   public String getSubscriptionTypeName() {
     return this.subscriptionTypeName;
   }
 
+  @Override
   public void setSubscriptionTypeName(String subscriptionTypeName) {
-    this.subscriptionTypeName = subscriptionTypeName;
+    this.subscriptionTypeName = (String)subscriptionTypeName;
   }
 
   public __SchemaExpression getWhere() {

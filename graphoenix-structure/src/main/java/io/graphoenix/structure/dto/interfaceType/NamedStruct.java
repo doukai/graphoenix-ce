@@ -11,11 +11,15 @@ public interface NamedStruct {
 
   String description = null;
 
-  String getName();
+  default String getName() {
+    return name;
+  }
 
   void setName(String name);
 
-  String getDescription();
+  default String getDescription() {
+    return description;
+  }
 
   void setDescription(String description);
 }

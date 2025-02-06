@@ -20,7 +20,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Mutation Arguments for Relationship Object between __Type and __Type List")
-public class __TypePossibleTypesListMutationArguments implements MetaInput {
+public class __TypePossibleTypesListMutationArguments implements MetaInput, __TypePossibleTypesInputBase {
   /**
    * ID
    */
@@ -119,52 +119,64 @@ public class __TypePossibleTypesListMutationArguments implements MetaInput {
   @Description("Where")
   private __TypePossibleTypesExpression where;
 
+  @Override
   public String getId() {
     return this.id;
   }
 
+  @Override
   public void setId(String id) {
-    this.id = id;
+    this.id = (String)id;
   }
 
+  @Override
   public String getTypeRef() {
     return this.typeRef;
   }
 
+  @Override
   public void setTypeRef(String typeRef) {
-    this.typeRef = typeRef;
+    this.typeRef = (String)typeRef;
   }
 
+  @Override
   public __TypeInput getType() {
     return this.type;
   }
 
+  @Override
   public void setType(__TypeInput type) {
-    this.type = type;
+    this.type = (__TypeInput)type;
   }
 
+  @Override
   public String getPossibleTypeRef() {
     return this.possibleTypeRef;
   }
 
+  @Override
   public void setPossibleTypeRef(String possibleTypeRef) {
-    this.possibleTypeRef = possibleTypeRef;
+    this.possibleTypeRef = (String)possibleTypeRef;
   }
 
+  @Override
   public __TypeInput getPossibleType() {
     return this.possibleType;
   }
 
+  @Override
   public void setPossibleType(__TypeInput possibleType) {
-    this.possibleType = possibleType;
+    this.possibleType = (__TypeInput)possibleType;
   }
 
+  @Override
   public Boolean getIsDeprecated() {
     return this.isDeprecated;
   }
 
+  @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = isDeprecated;
+    this.isDeprecated = (Boolean)isDeprecated;
   }
 
   @Override
@@ -237,12 +249,14 @@ public class __TypePossibleTypesListMutationArguments implements MetaInput {
     this.createGroupId = (String)createGroupId;
   }
 
+  @Override
   public String get__typename() {
     return this.__typename;
   }
 
+  @Override
   public void set__typename(String __typename) {
-    this.__typename = __typename;
+    this.__typename = (String)__typename;
   }
 
   public Collection<__TypePossibleTypesInput> getList() {

@@ -15,7 +15,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Query Expression Input for TreeStruct")
-public interface TreeStructExpression extends MetaExpression {
+public interface TreeStructExpression extends MetaExpression, TreeStructExpressionBase {
   /**
    * name
    */
@@ -100,59 +100,87 @@ public interface TreeStructExpression extends MetaExpression {
   @Description("Condition")
   Conditional cond = Conditional.AND;
 
-  StringExpression getName();
+  default StringExpression getName() {
+    return name;
+  }
 
   void setName(StringExpression name);
 
-  StringExpression getPath();
+  default StringExpression getPath() {
+    return path;
+  }
 
   void setPath(StringExpression path);
 
-  IntExpression getDeep();
+  default IntExpression getDeep() {
+    return deep;
+  }
 
   void setDeep(IntExpression deep);
 
-  StringExpression getParentId();
+  default StringExpression getParentId() {
+    return parentId;
+  }
 
   void setParentId(StringExpression parentId);
 
-  Boolean getIncludeDeprecated();
+  default Boolean getIncludeDeprecated() {
+    return includeDeprecated;
+  }
 
   void setIncludeDeprecated(Boolean includeDeprecated);
 
-  IntExpression getVersion();
+  default IntExpression getVersion() {
+    return version;
+  }
 
   void setVersion(IntExpression version);
 
-  IntExpression getRealmId();
+  default IntExpression getRealmId() {
+    return realmId;
+  }
 
   void setRealmId(IntExpression realmId);
 
-  StringExpression getCreateUserId();
+  default StringExpression getCreateUserId() {
+    return createUserId;
+  }
 
   void setCreateUserId(StringExpression createUserId);
 
-  StringExpression getCreateTime();
+  default StringExpression getCreateTime() {
+    return createTime;
+  }
 
   void setCreateTime(StringExpression createTime);
 
-  StringExpression getUpdateUserId();
+  default StringExpression getUpdateUserId() {
+    return updateUserId;
+  }
 
   void setUpdateUserId(StringExpression updateUserId);
 
-  StringExpression getUpdateTime();
+  default StringExpression getUpdateTime() {
+    return updateTime;
+  }
 
   void setUpdateTime(StringExpression updateTime);
 
-  StringExpression getCreateGroupId();
+  default StringExpression getCreateGroupId() {
+    return createGroupId;
+  }
 
   void setCreateGroupId(StringExpression createGroupId);
 
-  Boolean getNot();
+  default Boolean getNot() {
+    return not;
+  }
 
   void setNot(Boolean not);
 
-  Conditional getCond();
+  default Conditional getCond() {
+    return cond;
+  }
 
   void setCond(Conditional cond);
 }

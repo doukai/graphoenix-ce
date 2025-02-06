@@ -16,19 +16,27 @@ public interface TreeStruct {
 
   String parentId = null;
 
-  String getName();
+  default String getName() {
+    return name;
+  }
 
   void setName(String name);
 
-  String getPath();
+  default String getPath() {
+    return path;
+  }
 
   void setPath(String path);
 
-  Integer getDeep();
+  default Integer getDeep() {
+    return deep;
+  }
 
   void setDeep(Integer deep);
 
-  String getParentId();
+  default String getParentId() {
+    return parentId;
+  }
 
   void setParentId(String parentId);
 }

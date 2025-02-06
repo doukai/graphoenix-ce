@@ -19,7 +19,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Mutation Arguments for __EnumValue")
-public class __EnumValueMutationArguments implements MetaInput {
+public class __EnumValueMutationArguments implements MetaInput, __EnumValueInputBase {
   /**
    * id
    */
@@ -124,52 +124,64 @@ public class __EnumValueMutationArguments implements MetaInput {
   @Description("Where")
   private __EnumValueExpression where;
 
+  @Override
   public String getId() {
     return this.id;
   }
 
+  @Override
   public void setId(String id) {
-    this.id = id;
+    this.id = (String)id;
   }
 
+  @Override
   public String getName() {
     return this.name;
   }
 
+  @Override
   public void setName(String name) {
-    this.name = name;
+    this.name = (String)name;
   }
 
+  @Override
   public __TypeInput getOfType() {
     return this.ofType;
   }
 
+  @Override
   public void setOfType(__TypeInput ofType) {
-    this.ofType = ofType;
+    this.ofType = (__TypeInput)ofType;
   }
 
+  @Override
   public String getDescription() {
     return this.description;
   }
 
+  @Override
   public void setDescription(String description) {
-    this.description = description;
+    this.description = (String)description;
   }
 
+  @Override
   public String getDeprecationReason() {
     return this.deprecationReason;
   }
 
+  @Override
   public void setDeprecationReason(String deprecationReason) {
-    this.deprecationReason = deprecationReason;
+    this.deprecationReason = (String)deprecationReason;
   }
 
+  @Override
   public Boolean getIsDeprecated() {
     return this.isDeprecated;
   }
 
+  @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = isDeprecated;
+    this.isDeprecated = (Boolean)isDeprecated;
   }
 
   @Override
@@ -242,20 +254,24 @@ public class __EnumValueMutationArguments implements MetaInput {
     this.createGroupId = (String)createGroupId;
   }
 
+  @Override
   public String get__typename() {
     return this.__typename;
   }
 
+  @Override
   public void set__typename(String __typename) {
-    this.__typename = __typename;
+    this.__typename = (String)__typename;
   }
 
+  @Override
   public String getOfTypeName() {
     return this.ofTypeName;
   }
 
+  @Override
   public void setOfTypeName(String ofTypeName) {
-    this.ofTypeName = ofTypeName;
+    this.ofTypeName = (String)ofTypeName;
   }
 
   public __EnumValueInput getInput() {

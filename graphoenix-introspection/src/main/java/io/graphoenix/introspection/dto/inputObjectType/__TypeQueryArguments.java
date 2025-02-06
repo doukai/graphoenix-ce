@@ -22,7 +22,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Query Arguments for __Type")
-public class __TypeQueryArguments implements MetaExpression {
+public class __TypeQueryArguments implements MetaExpression, __TypeExpressionBase {
   /**
    * name
    */
@@ -188,100 +188,124 @@ public class __TypeQueryArguments implements MetaExpression {
   @Description("Expressions")
   private Collection<__TypeExpression> exs;
 
+  @Override
   public StringExpression getName() {
     return this.name;
   }
 
+  @Override
   public void setName(StringExpression name) {
-    this.name = name;
+    this.name = (StringExpression)name;
   }
 
+  @Override
   public __SchemaExpression getOfSchema() {
     return this.ofSchema;
   }
 
+  @Override
   public void setOfSchema(__SchemaExpression ofSchema) {
-    this.ofSchema = ofSchema;
+    this.ofSchema = (__SchemaExpression)ofSchema;
   }
 
+  @Override
   public __TypeKindExpression getKind() {
     return this.kind;
   }
 
+  @Override
   public void setKind(__TypeKindExpression kind) {
-    this.kind = kind;
+    this.kind = (__TypeKindExpression)kind;
   }
 
+  @Override
   public StringExpression getDescription() {
     return this.description;
   }
 
+  @Override
   public void setDescription(StringExpression description) {
-    this.description = description;
+    this.description = (StringExpression)description;
   }
 
+  @Override
   public __FieldExpression getFields() {
     return this.fields;
   }
 
+  @Override
   public void setFields(__FieldExpression fields) {
-    this.fields = fields;
+    this.fields = (__FieldExpression)fields;
   }
 
+  @Override
   public __TypeExpression getInterfaces() {
     return this.interfaces;
   }
 
+  @Override
   public void setInterfaces(__TypeExpression interfaces) {
-    this.interfaces = interfaces;
+    this.interfaces = (__TypeExpression)interfaces;
   }
 
+  @Override
   public __TypeExpression getPossibleTypes() {
     return this.possibleTypes;
   }
 
+  @Override
   public void setPossibleTypes(__TypeExpression possibleTypes) {
-    this.possibleTypes = possibleTypes;
+    this.possibleTypes = (__TypeExpression)possibleTypes;
   }
 
+  @Override
   public __EnumValueExpression getEnumValues() {
     return this.enumValues;
   }
 
+  @Override
   public void setEnumValues(__EnumValueExpression enumValues) {
-    this.enumValues = enumValues;
+    this.enumValues = (__EnumValueExpression)enumValues;
   }
 
+  @Override
   public __InputValueExpression getInputFields() {
     return this.inputFields;
   }
 
+  @Override
   public void setInputFields(__InputValueExpression inputFields) {
-    this.inputFields = inputFields;
+    this.inputFields = (__InputValueExpression)inputFields;
   }
 
+  @Override
   public __TypeExpression getOfType() {
     return this.ofType;
   }
 
+  @Override
   public void setOfType(__TypeExpression ofType) {
-    this.ofType = ofType;
+    this.ofType = (__TypeExpression)ofType;
   }
 
+  @Override
   public Boolean getIncludeDeprecated() {
     return this.includeDeprecated;
   }
 
+  @Override
   public void setIncludeDeprecated(Boolean includeDeprecated) {
-    this.includeDeprecated = includeDeprecated;
+    this.includeDeprecated = (Boolean)includeDeprecated;
   }
 
+  @Override
   public IntExpression getVersion() {
     return this.version;
   }
 
+  @Override
   public void setVersion(IntExpression version) {
-    this.version = version;
+    this.version = (IntExpression)version;
   }
 
   @Override
@@ -344,44 +368,54 @@ public class __TypeQueryArguments implements MetaExpression {
     this.createGroupId = (StringExpression)createGroupId;
   }
 
+  @Override
   public StringExpression get__typename() {
     return this.__typename;
   }
 
+  @Override
   public void set__typename(StringExpression __typename) {
-    this.__typename = __typename;
+    this.__typename = (StringExpression)__typename;
   }
 
+  @Override
   public IntExpression getSchemaId() {
     return this.schemaId;
   }
 
+  @Override
   public void setSchemaId(IntExpression schemaId) {
-    this.schemaId = schemaId;
+    this.schemaId = (IntExpression)schemaId;
   }
 
+  @Override
   public StringExpression getOfTypeName() {
     return this.ofTypeName;
   }
 
+  @Override
   public void setOfTypeName(StringExpression ofTypeName) {
-    this.ofTypeName = ofTypeName;
+    this.ofTypeName = (StringExpression)ofTypeName;
   }
 
+  @Override
   public __TypeInterfacesExpression get__typeInterfaces() {
     return this.__typeInterfaces;
   }
 
+  @Override
   public void set__typeInterfaces(__TypeInterfacesExpression __typeInterfaces) {
-    this.__typeInterfaces = __typeInterfaces;
+    this.__typeInterfaces = (__TypeInterfacesExpression)__typeInterfaces;
   }
 
+  @Override
   public __TypePossibleTypesExpression get__typePossibleTypes() {
     return this.__typePossibleTypes;
   }
 
+  @Override
   public void set__typePossibleTypes(__TypePossibleTypesExpression __typePossibleTypes) {
-    this.__typePossibleTypes = __typePossibleTypes;
+    this.__typePossibleTypes = (__TypePossibleTypesExpression)__typePossibleTypes;
   }
 
   public Collection<String> getGroupBy() {
@@ -392,20 +426,24 @@ public class __TypeQueryArguments implements MetaExpression {
     this.groupBy = groupBy;
   }
 
+  @Override
   public Boolean getNot() {
     return this.not;
   }
 
+  @Override
   public void setNot(Boolean not) {
-    this.not = not;
+    this.not = (Boolean)not;
   }
 
+  @Override
   public Conditional getCond() {
     return this.cond;
   }
 
+  @Override
   public void setCond(Conditional cond) {
-    this.cond = cond;
+    this.cond = (Conditional)cond;
   }
 
   public Collection<__TypeExpression> getExs() {

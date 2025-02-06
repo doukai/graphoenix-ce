@@ -23,7 +23,7 @@ import org.eclipse.microprofile.graphql.Name;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Subscription Arguments for Relationship Object between __Type and __Type List")
-public class __TypeInterfacesListSubscriptionArguments implements MetaExpression {
+public class __TypeInterfacesListSubscriptionArguments implements MetaExpression, __TypeInterfacesExpressionBase {
   /**
    * ID
    */
@@ -172,36 +172,44 @@ public class __TypeInterfacesListSubscriptionArguments implements MetaExpression
   @Description("Before")
   private String before;
 
+  @Override
   public StringExpression getId() {
     return this.id;
   }
 
+  @Override
   public void setId(StringExpression id) {
-    this.id = id;
+    this.id = (StringExpression)id;
   }
 
+  @Override
   public StringExpression getTypeRef() {
     return this.typeRef;
   }
 
+  @Override
   public void setTypeRef(StringExpression typeRef) {
-    this.typeRef = typeRef;
+    this.typeRef = (StringExpression)typeRef;
   }
 
+  @Override
   public __TypeExpression getType() {
     return this.type;
   }
 
+  @Override
   public void setType(__TypeExpression type) {
-    this.type = type;
+    this.type = (__TypeExpression)type;
   }
 
+  @Override
   public StringExpression getInterfaceRef() {
     return this.interfaceRef;
   }
 
+  @Override
   public void setInterfaceRef(StringExpression interfaceRef) {
-    this.interfaceRef = interfaceRef;
+    this.interfaceRef = (StringExpression)interfaceRef;
   }
 
   public __TypeExpression get_interface() {
@@ -212,20 +220,24 @@ public class __TypeInterfacesListSubscriptionArguments implements MetaExpression
     this._interface = _interface;
   }
 
+  @Override
   public Boolean getIncludeDeprecated() {
     return this.includeDeprecated;
   }
 
+  @Override
   public void setIncludeDeprecated(Boolean includeDeprecated) {
-    this.includeDeprecated = includeDeprecated;
+    this.includeDeprecated = (Boolean)includeDeprecated;
   }
 
+  @Override
   public IntExpression getVersion() {
     return this.version;
   }
 
+  @Override
   public void setVersion(IntExpression version) {
-    this.version = version;
+    this.version = (IntExpression)version;
   }
 
   @Override
@@ -288,12 +300,14 @@ public class __TypeInterfacesListSubscriptionArguments implements MetaExpression
     this.createGroupId = (StringExpression)createGroupId;
   }
 
+  @Override
   public StringExpression get__typename() {
     return this.__typename;
   }
 
+  @Override
   public void set__typename(StringExpression __typename) {
-    this.__typename = __typename;
+    this.__typename = (StringExpression)__typename;
   }
 
   public __TypeInterfacesOrderBy getOrderBy() {
@@ -312,20 +326,24 @@ public class __TypeInterfacesListSubscriptionArguments implements MetaExpression
     this.groupBy = groupBy;
   }
 
+  @Override
   public Boolean getNot() {
     return this.not;
   }
 
+  @Override
   public void setNot(Boolean not) {
-    this.not = not;
+    this.not = (Boolean)not;
   }
 
+  @Override
   public Conditional getCond() {
     return this.cond;
   }
 
+  @Override
   public void setCond(Conditional cond) {
-    this.cond = cond;
+    this.cond = (Conditional)cond;
   }
 
   public Collection<__TypeInterfacesExpression> getExs() {

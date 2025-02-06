@@ -22,7 +22,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Query Arguments for __InputValue Connection")
-public class __InputValueConnectionQueryArguments implements MetaExpression {
+public class __InputValueConnectionQueryArguments implements MetaExpression, __InputValueExpressionBase {
   /**
    * id
    */
@@ -200,84 +200,104 @@ public class __InputValueConnectionQueryArguments implements MetaExpression {
   @Description("Before")
   private String before;
 
+  @Override
   public StringExpression getId() {
     return this.id;
   }
 
+  @Override
   public void setId(StringExpression id) {
-    this.id = id;
+    this.id = (StringExpression)id;
   }
 
+  @Override
   public StringExpression getName() {
     return this.name;
   }
 
+  @Override
   public void setName(StringExpression name) {
-    this.name = name;
+    this.name = (StringExpression)name;
   }
 
+  @Override
   public __TypeExpression getOfType() {
     return this.ofType;
   }
 
+  @Override
   public void setOfType(__TypeExpression ofType) {
-    this.ofType = ofType;
+    this.ofType = (__TypeExpression)ofType;
   }
 
+  @Override
   public IntExpression getFieldId() {
     return this.fieldId;
   }
 
+  @Override
   public void setFieldId(IntExpression fieldId) {
-    this.fieldId = fieldId;
+    this.fieldId = (IntExpression)fieldId;
   }
 
+  @Override
   public StringExpression getDirectiveName() {
     return this.directiveName;
   }
 
+  @Override
   public void setDirectiveName(StringExpression directiveName) {
-    this.directiveName = directiveName;
+    this.directiveName = (StringExpression)directiveName;
   }
 
+  @Override
   public StringExpression getDescription() {
     return this.description;
   }
 
+  @Override
   public void setDescription(StringExpression description) {
-    this.description = description;
+    this.description = (StringExpression)description;
   }
 
+  @Override
   public __TypeExpression getType() {
     return this.type;
   }
 
+  @Override
   public void setType(__TypeExpression type) {
-    this.type = type;
+    this.type = (__TypeExpression)type;
   }
 
+  @Override
   public StringExpression getDefaultValue() {
     return this.defaultValue;
   }
 
+  @Override
   public void setDefaultValue(StringExpression defaultValue) {
-    this.defaultValue = defaultValue;
+    this.defaultValue = (StringExpression)defaultValue;
   }
 
+  @Override
   public Boolean getIncludeDeprecated() {
     return this.includeDeprecated;
   }
 
+  @Override
   public void setIncludeDeprecated(Boolean includeDeprecated) {
-    this.includeDeprecated = includeDeprecated;
+    this.includeDeprecated = (Boolean)includeDeprecated;
   }
 
+  @Override
   public IntExpression getVersion() {
     return this.version;
   }
 
+  @Override
   public void setVersion(IntExpression version) {
-    this.version = version;
+    this.version = (IntExpression)version;
   }
 
   @Override
@@ -340,28 +360,34 @@ public class __InputValueConnectionQueryArguments implements MetaExpression {
     this.createGroupId = (StringExpression)createGroupId;
   }
 
+  @Override
   public StringExpression get__typename() {
     return this.__typename;
   }
 
+  @Override
   public void set__typename(StringExpression __typename) {
-    this.__typename = __typename;
+    this.__typename = (StringExpression)__typename;
   }
 
+  @Override
   public StringExpression getOfTypeName() {
     return this.ofTypeName;
   }
 
+  @Override
   public void setOfTypeName(StringExpression ofTypeName) {
-    this.ofTypeName = ofTypeName;
+    this.ofTypeName = (StringExpression)ofTypeName;
   }
 
+  @Override
   public StringExpression getTypeName() {
     return this.typeName;
   }
 
+  @Override
   public void setTypeName(StringExpression typeName) {
-    this.typeName = typeName;
+    this.typeName = (StringExpression)typeName;
   }
 
   public __InputValueOrderBy getOrderBy() {
@@ -380,20 +406,24 @@ public class __InputValueConnectionQueryArguments implements MetaExpression {
     this.groupBy = groupBy;
   }
 
+  @Override
   public Boolean getNot() {
     return this.not;
   }
 
+  @Override
   public void setNot(Boolean not) {
-    this.not = not;
+    this.not = (Boolean)not;
   }
 
+  @Override
   public Conditional getCond() {
     return this.cond;
   }
 
+  @Override
   public void setCond(Conditional cond) {
-    this.cond = cond;
+    this.cond = (Conditional)cond;
   }
 
   public Collection<__InputValueExpression> getExs() {

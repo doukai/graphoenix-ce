@@ -233,6 +233,7 @@ public class Hammurabi {
     public static final String SUFFIX_AGGREGATE = "Aggregate";
     public static final String SUFFIX_EDGE = "Edge";
     public static final String SUFFIX_EXPRESSION = "Expression";
+    public static final String SUFFIX_BASE = "Base";
     public static final String SUFFIX_COUNT = "Count";
     public static final String SUFFIX_SUM = "Sum";
     public static final String SUFFIX_AVG = "Avg";

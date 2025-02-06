@@ -20,7 +20,7 @@ import org.eclipse.microprofile.graphql.Name;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Mutation Input for Relationship Object between __Type and __Type")
-public class __TypeInterfacesInput implements MetaInput {
+public class __TypeInterfacesInput implements MetaInput, __TypeInterfacesInputBase {
   /**
    * ID
    */
@@ -114,36 +114,44 @@ public class __TypeInterfacesInput implements MetaInput {
   @Description("Where")
   private __TypeInterfacesExpression where;
 
+  @Override
   public String getId() {
     return this.id;
   }
 
+  @Override
   public void setId(String id) {
-    this.id = id;
+    this.id = (String)id;
   }
 
+  @Override
   public String getTypeRef() {
     return this.typeRef;
   }
 
+  @Override
   public void setTypeRef(String typeRef) {
-    this.typeRef = typeRef;
+    this.typeRef = (String)typeRef;
   }
 
+  @Override
   public __TypeInput getType() {
     return this.type;
   }
 
+  @Override
   public void setType(__TypeInput type) {
-    this.type = type;
+    this.type = (__TypeInput)type;
   }
 
+  @Override
   public String getInterfaceRef() {
     return this.interfaceRef;
   }
 
+  @Override
   public void setInterfaceRef(String interfaceRef) {
-    this.interfaceRef = interfaceRef;
+    this.interfaceRef = (String)interfaceRef;
   }
 
   public __TypeInput get_interface() {
@@ -154,12 +162,14 @@ public class __TypeInterfacesInput implements MetaInput {
     this._interface = _interface;
   }
 
+  @Override
   public Boolean getIsDeprecated() {
     return this.isDeprecated;
   }
 
+  @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = isDeprecated;
+    this.isDeprecated = (Boolean)isDeprecated;
   }
 
   @Override
@@ -232,12 +242,14 @@ public class __TypeInterfacesInput implements MetaInput {
     this.createGroupId = (String)createGroupId;
   }
 
+  @Override
   public String get__typename() {
     return this.__typename;
   }
 
+  @Override
   public void set__typename(String __typename) {
-    this.__typename = __typename;
+    this.__typename = (String)__typename;
   }
 
   public __TypeInterfacesExpression getWhere() {

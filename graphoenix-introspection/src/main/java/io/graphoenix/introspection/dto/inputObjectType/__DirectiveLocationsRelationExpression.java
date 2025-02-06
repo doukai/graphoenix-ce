@@ -21,7 +21,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Query Expression Input for Relationship Object between __Directive and locations")
-public class __DirectiveLocationsRelationExpression implements MetaExpression {
+public class __DirectiveLocationsRelationExpression implements MetaExpression, __DirectiveLocationsRelationExpressionBase {
   /**
    * ID
    */
@@ -121,52 +121,64 @@ public class __DirectiveLocationsRelationExpression implements MetaExpression {
   @Description("Expressions")
   private Collection<__DirectiveLocationsRelationExpression> exs;
 
+  @Override
   public StringExpression getId() {
     return this.id;
   }
 
+  @Override
   public void setId(StringExpression id) {
-    this.id = id;
+    this.id = (StringExpression)id;
   }
 
+  @Override
   public StringExpression get__directiveRef() {
     return this.__directiveRef;
   }
 
+  @Override
   public void set__directiveRef(StringExpression __directiveRef) {
-    this.__directiveRef = __directiveRef;
+    this.__directiveRef = (StringExpression)__directiveRef;
   }
 
+  @Override
   public __DirectiveExpression get__directive() {
     return this.__directive;
   }
 
+  @Override
   public void set__directive(__DirectiveExpression __directive) {
-    this.__directive = __directive;
+    this.__directive = (__DirectiveExpression)__directive;
   }
 
+  @Override
   public __DirectiveLocationExpression getLocationsRef() {
     return this.locationsRef;
   }
 
+  @Override
   public void setLocationsRef(__DirectiveLocationExpression locationsRef) {
-    this.locationsRef = locationsRef;
+    this.locationsRef = (__DirectiveLocationExpression)locationsRef;
   }
 
+  @Override
   public Boolean getIncludeDeprecated() {
     return this.includeDeprecated;
   }
 
+  @Override
   public void setIncludeDeprecated(Boolean includeDeprecated) {
-    this.includeDeprecated = includeDeprecated;
+    this.includeDeprecated = (Boolean)includeDeprecated;
   }
 
+  @Override
   public IntExpression getVersion() {
     return this.version;
   }
 
+  @Override
   public void setVersion(IntExpression version) {
-    this.version = version;
+    this.version = (IntExpression)version;
   }
 
   @Override
@@ -229,28 +241,34 @@ public class __DirectiveLocationsRelationExpression implements MetaExpression {
     this.createGroupId = (StringExpression)createGroupId;
   }
 
+  @Override
   public StringExpression get__typename() {
     return this.__typename;
   }
 
+  @Override
   public void set__typename(StringExpression __typename) {
-    this.__typename = __typename;
+    this.__typename = (StringExpression)__typename;
   }
 
+  @Override
   public Boolean getNot() {
     return this.not;
   }
 
+  @Override
   public void setNot(Boolean not) {
-    this.not = not;
+    this.not = (Boolean)not;
   }
 
+  @Override
   public Conditional getCond() {
     return this.cond;
   }
 
+  @Override
   public void setCond(Conditional cond) {
-    this.cond = cond;
+    this.cond = (Conditional)cond;
   }
 
   public Collection<__DirectiveLocationsRelationExpression> getExs() {

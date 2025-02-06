@@ -22,7 +22,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Subscription Arguments for 文件 List")
-public class FileConnectionSubscriptionArguments implements MetaExpression {
+public class FileConnectionSubscriptionArguments implements MetaExpression, FileExpressionBase {
   /**
    * ID
    */
@@ -170,60 +170,74 @@ public class FileConnectionSubscriptionArguments implements MetaExpression {
   @Description("Before")
   private String before;
 
+  @Override
   public StringExpression getId() {
     return this.id;
   }
 
+  @Override
   public void setId(StringExpression id) {
-    this.id = id;
+    this.id = (StringExpression)id;
   }
 
+  @Override
   public StringExpression getName() {
     return this.name;
   }
 
+  @Override
   public void setName(StringExpression name) {
-    this.name = name;
+    this.name = (StringExpression)name;
   }
 
+  @Override
   public StringExpression getContentType() {
     return this.contentType;
   }
 
+  @Override
   public void setContentType(StringExpression contentType) {
-    this.contentType = contentType;
+    this.contentType = (StringExpression)contentType;
   }
 
+  @Override
   public StringExpression getContent() {
     return this.content;
   }
 
+  @Override
   public void setContent(StringExpression content) {
-    this.content = content;
+    this.content = (StringExpression)content;
   }
 
+  @Override
   public StringExpression getUrl() {
     return this.url;
   }
 
+  @Override
   public void setUrl(StringExpression url) {
-    this.url = url;
+    this.url = (StringExpression)url;
   }
 
+  @Override
   public Boolean getIncludeDeprecated() {
     return this.includeDeprecated;
   }
 
+  @Override
   public void setIncludeDeprecated(Boolean includeDeprecated) {
-    this.includeDeprecated = includeDeprecated;
+    this.includeDeprecated = (Boolean)includeDeprecated;
   }
 
+  @Override
   public IntExpression getVersion() {
     return this.version;
   }
 
+  @Override
   public void setVersion(IntExpression version) {
-    this.version = version;
+    this.version = (IntExpression)version;
   }
 
   @Override
@@ -286,12 +300,14 @@ public class FileConnectionSubscriptionArguments implements MetaExpression {
     this.createGroupId = (StringExpression)createGroupId;
   }
 
+  @Override
   public StringExpression get__typename() {
     return this.__typename;
   }
 
+  @Override
   public void set__typename(StringExpression __typename) {
-    this.__typename = __typename;
+    this.__typename = (StringExpression)__typename;
   }
 
   public FileOrderBy getOrderBy() {
@@ -310,20 +326,24 @@ public class FileConnectionSubscriptionArguments implements MetaExpression {
     this.groupBy = groupBy;
   }
 
+  @Override
   public Boolean getNot() {
     return this.not;
   }
 
+  @Override
   public void setNot(Boolean not) {
-    this.not = not;
+    this.not = (Boolean)not;
   }
 
+  @Override
   public Conditional getCond() {
     return this.cond;
   }
 
+  @Override
   public void setCond(Conditional cond) {
-    this.cond = cond;
+    this.cond = (Conditional)cond;
   }
 
   public Collection<FileExpression> getExs() {

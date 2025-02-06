@@ -20,7 +20,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Mutation Input for __Field")
-public class __FieldInput implements MetaInput {
+public class __FieldInput implements MetaInput, __FieldInputBase {
   /**
    * id
    */
@@ -137,68 +137,84 @@ public class __FieldInput implements MetaInput {
   @Description("Where")
   private __FieldExpression where;
 
+  @Override
   public String getId() {
     return this.id;
   }
 
+  @Override
   public void setId(String id) {
-    this.id = id;
+    this.id = (String)id;
   }
 
+  @Override
   public String getName() {
     return this.name;
   }
 
+  @Override
   public void setName(String name) {
-    this.name = name;
+    this.name = (String)name;
   }
 
+  @Override
   public __TypeInput getOfType() {
     return this.ofType;
   }
 
+  @Override
   public void setOfType(__TypeInput ofType) {
-    this.ofType = ofType;
+    this.ofType = (__TypeInput)ofType;
   }
 
+  @Override
   public String getDescription() {
     return this.description;
   }
 
+  @Override
   public void setDescription(String description) {
-    this.description = description;
+    this.description = (String)description;
   }
 
+  @Override
   public Collection<__InputValueInput> getArgs() {
     return this.args;
   }
 
+  @Override
   public void setArgs(Collection<__InputValueInput> args) {
-    this.args = args;
+    this.args = (Collection<__InputValueInput>)args;
   }
 
+  @Override
   public __TypeInput getType() {
     return this.type;
   }
 
+  @Override
   public void setType(__TypeInput type) {
-    this.type = type;
+    this.type = (__TypeInput)type;
   }
 
+  @Override
   public String getDeprecationReason() {
     return this.deprecationReason;
   }
 
+  @Override
   public void setDeprecationReason(String deprecationReason) {
-    this.deprecationReason = deprecationReason;
+    this.deprecationReason = (String)deprecationReason;
   }
 
+  @Override
   public Boolean getIsDeprecated() {
     return this.isDeprecated;
   }
 
+  @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = isDeprecated;
+    this.isDeprecated = (Boolean)isDeprecated;
   }
 
   @Override
@@ -271,28 +287,34 @@ public class __FieldInput implements MetaInput {
     this.createGroupId = (String)createGroupId;
   }
 
+  @Override
   public String get__typename() {
     return this.__typename;
   }
 
+  @Override
   public void set__typename(String __typename) {
-    this.__typename = __typename;
+    this.__typename = (String)__typename;
   }
 
+  @Override
   public String getOfTypeName() {
     return this.ofTypeName;
   }
 
+  @Override
   public void setOfTypeName(String ofTypeName) {
-    this.ofTypeName = ofTypeName;
+    this.ofTypeName = (String)ofTypeName;
   }
 
+  @Override
   public String getTypeName() {
     return this.typeName;
   }
 
+  @Override
   public void setTypeName(String typeName) {
-    this.typeName = typeName;
+    this.typeName = (String)typeName;
   }
 
   public __FieldExpression getWhere() {

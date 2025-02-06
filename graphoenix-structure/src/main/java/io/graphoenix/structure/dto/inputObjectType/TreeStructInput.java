@@ -15,7 +15,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Mutation Input for TreeStruct")
-public interface TreeStructInput extends MetaInput {
+public interface TreeStructInput extends MetaInput, TreeStructInputBase {
   /**
    * name
    */
@@ -88,51 +88,75 @@ public interface TreeStructInput extends MetaInput {
   @Description("createGroupId")
   String createGroupId = null;
 
-  String getName();
+  default String getName() {
+    return name;
+  }
 
   void setName(String name);
 
-  String getPath();
+  default String getPath() {
+    return path;
+  }
 
   void setPath(String path);
 
-  Integer getDeep();
+  default Integer getDeep() {
+    return deep;
+  }
 
   void setDeep(Integer deep);
 
-  String getParentId();
+  default String getParentId() {
+    return parentId;
+  }
 
   void setParentId(String parentId);
 
-  Boolean getIsDeprecated();
+  default Boolean getIsDeprecated() {
+    return isDeprecated;
+  }
 
   void setIsDeprecated(Boolean isDeprecated);
 
-  Integer getVersion();
+  default Integer getVersion() {
+    return version;
+  }
 
   void setVersion(Integer version);
 
-  Integer getRealmId();
+  default Integer getRealmId() {
+    return realmId;
+  }
 
   void setRealmId(Integer realmId);
 
-  String getCreateUserId();
+  default String getCreateUserId() {
+    return createUserId;
+  }
 
   void setCreateUserId(String createUserId);
 
-  LocalDateTime getCreateTime();
+  default LocalDateTime getCreateTime() {
+    return createTime;
+  }
 
   void setCreateTime(LocalDateTime createTime);
 
-  String getUpdateUserId();
+  default String getUpdateUserId() {
+    return updateUserId;
+  }
 
   void setUpdateUserId(String updateUserId);
 
-  LocalDateTime getUpdateTime();
+  default LocalDateTime getUpdateTime() {
+    return updateTime;
+  }
 
   void setUpdateTime(LocalDateTime updateTime);
 
-  String getCreateGroupId();
+  default String getCreateGroupId() {
+    return createGroupId;
+  }
 
   void setCreateGroupId(String createGroupId);
 }

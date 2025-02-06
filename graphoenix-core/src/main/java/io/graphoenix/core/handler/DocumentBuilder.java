@@ -870,6 +870,8 @@ public class DocumentBuilder {
                                 .filter(objectType -> !documentManager.isOperationType(objectType))
                                 .flatMap(objectType ->
                                         Stream.of(
+                                                fieldsToExpression(objectType, true),
+                                                fieldsToInput(objectType, true),
                                                 fieldsToExpression(objectType),
                                                 fieldsToInput(objectType),
                                                 fieldsToOrderBy(objectType)
@@ -882,6 +884,8 @@ public class DocumentBuilder {
                                 .filter(interfaceType -> !interfaceType.getName().equals(INTERFACE_META_NAME))
                                 .flatMap(interfaceType ->
                                         Stream.of(
+                                                fieldsToExpression(interfaceType, true),
+                                                fieldsToInput(interfaceType, true),
                                                 fieldsToExpression(interfaceType),
                                                 fieldsToInput(interfaceType)
                                         )
@@ -912,7 +916,11 @@ public class DocumentBuilder {
     }
 
     public InputObjectType fieldsToExpression(FieldsType fieldsType) {
-        InputObjectType inputObjectType = new InputObjectType(fieldsType.getName() + InputType.EXPRESSION)
+        return fieldsToExpression(fieldsType, false);
+    }
+
+    public InputObjectType fieldsToExpression(FieldsType fieldsType, boolean base) {
+        InputObjectType inputObjectType = new InputObjectType(fieldsType.getName() + InputType.EXPRESSION + (base ? SUFFIX_BASE : ""))
                 .setInputValues(buildInputValuesFromObjectType(fieldsType, InputType.EXPRESSION))
                 .addInputValue(new InputValue(INPUT_VALUE_NOT_NAME).setType(new TypeName(SCALA_BOOLEAN_NAME)).setDefaultValue(false).setDescription(descriptionConfig.getNotArgument()))
                 .addInputValue(new InputValue(INPUT_VALUE_COND_NAME).setType(new TypeName(INPUT_CONDITIONAL_NAME)).setDefaultValue(new EnumValue(INPUT_CONDITIONAL_INPUT_VALUE_AND)).setDescription(descriptionConfig.getCondArgument()))
@@ -922,15 +930,15 @@ public class DocumentBuilder {
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_CLASS_NAME)
-                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + fieldsType.getName() + InputType.EXPRESSION)
+                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + fieldsType.getName() + InputType.EXPRESSION + (base ? SUFFIX_BASE : ""))
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_ANNOTATION_NAME)
-                                .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + fieldsType.getName() + InputType.EXPRESSION)
+                                .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + fieldsType.getName() + InputType.EXPRESSION + (base ? SUFFIX_BASE : ""))
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_GRPC_NAME)
-                                .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcInputObjectTypePackageName() + "." + getGrpcName(fieldsType.getName() + InputType.EXPRESSION))
+                                .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcInputObjectTypePackageName() + "." + getGrpcName(fieldsType.getName() + InputType.EXPRESSION + (base ? SUFFIX_BASE : "")))
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_IMPLEMENTS_NAME)
@@ -939,17 +947,22 @@ public class DocumentBuilder {
                                         new ArrayValueWithVariable(
                                                 Stream
                                                         .concat(
-                                                                Stream.ofNullable(fieldsType.getInterfaces()).flatMap(Collection::stream),
-                                                                Stream.of(INTERFACE_META_NAME)
+                                                                Stream
+                                                                        .concat(
+                                                                                Stream.ofNullable(fieldsType.getInterfaces()).flatMap(Collection::stream),
+                                                                                Stream.of(INTERFACE_META_NAME)
+                                                                        )
+                                                                        .map(interfaceName -> interfaceName + SUFFIX_EXPRESSION),
+                                                                base ? Stream.empty() : Stream.of(fieldsType.getName() + InputType.EXPRESSION + SUFFIX_BASE)
                                                         )
-                                                        .map(interfaceName -> interfaceName + SUFFIX_EXPRESSION)
                                                         .distinct()
                                                         .collect(Collectors.toList())
                                         )
                                 )
                 )
                 .setDescription(String.format(descriptionConfig.getQueryExpression(), Optional.ofNullable(fieldsType.getDescription()).orElseGet(fieldsType::getName)));
-        if (fieldsType instanceof InterfaceType) {
+
+        if (base || fieldsType instanceof InterfaceType) {
             inputObjectType.addDirective(new Directive(DIRECTIVE_INTERFACE_NAME));
         } else {
             inputObjectType.addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(fieldsType.getName() + InputType.EXPRESSION))).setDescription(descriptionConfig.getExsArgument()));
@@ -958,7 +971,11 @@ public class DocumentBuilder {
     }
 
     public InputObjectType fieldsToInput(FieldsType fieldsType) {
-        InputObjectType inputObjectType = new InputObjectType(fieldsType.getName() + InputType.INPUT)
+        return fieldsToInput(fieldsType, false);
+    }
+
+    public InputObjectType fieldsToInput(FieldsType fieldsType, boolean base) {
+        InputObjectType inputObjectType = new InputObjectType(fieldsType.getName() + InputType.INPUT + (base ? SUFFIX_BASE : ""))
                 .setInputValues(buildInputValuesFromObjectType(fieldsType, InputType.INPUT))
                 .addDirective(
                         new Directive(DIRECTIVE_PACKAGE_NAME)
@@ -966,15 +983,15 @@ public class DocumentBuilder {
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_CLASS_NAME)
-                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + fieldsType.getName() + InputType.INPUT)
+                                .addArgument(DIRECTIVE_CLASS_ARGUMENT_NAME_NAME, packageConfig.getInputObjectTypePackageName() + "." + fieldsType.getName() + InputType.INPUT + (base ? SUFFIX_BASE : ""))
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_ANNOTATION_NAME)
-                                .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + fieldsType.getName() + InputType.INPUT)
+                                .addArgument(DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME, packageConfig.getAnnotationPackageName() + "." + fieldsType.getName() + InputType.INPUT + (base ? SUFFIX_BASE : ""))
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_GRPC_NAME)
-                                .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcInputObjectTypePackageName() + "." + getGrpcName(fieldsType.getName() + InputType.INPUT))
+                                .addArgument(DIRECTIVE_GRPC_ARGUMENT_NAME_NAME, packageConfig.getGrpcInputObjectTypePackageName() + "." + getGrpcName(fieldsType.getName() + InputType.INPUT + (base ? SUFFIX_BASE : "")))
                 )
                 .addDirective(
                         new Directive(DIRECTIVE_IMPLEMENTS_NAME)
@@ -983,17 +1000,21 @@ public class DocumentBuilder {
                                         new ArrayValueWithVariable(
                                                 Stream
                                                         .concat(
-                                                                Stream.ofNullable(fieldsType.getInterfaces()).flatMap(Collection::stream),
-                                                                Stream.of(INTERFACE_META_NAME)
+                                                                Stream
+                                                                        .concat(
+                                                                                Stream.ofNullable(fieldsType.getInterfaces()).flatMap(Collection::stream),
+                                                                                Stream.of(INTERFACE_META_NAME)
+                                                                        )
+                                                                        .map(interfaceName -> interfaceName + SUFFIX_INPUT),
+                                                                base ? Stream.empty() : Stream.of(fieldsType.getName() + InputType.INPUT + SUFFIX_BASE)
                                                         )
-                                                        .map(interfaceName -> interfaceName + SUFFIX_INPUT)
                                                         .distinct()
                                                         .collect(Collectors.toList())
                                         )
                                 )
                 )
                 .setDescription(String.format(descriptionConfig.getMutationInput(), Optional.ofNullable(fieldsType.getDescription()).orElseGet(fieldsType::getName)));
-        if (fieldsType instanceof InterfaceType) {
+        if (base || fieldsType instanceof InterfaceType) {
             inputObjectType.addDirective(new Directive(DIRECTIVE_INTERFACE_NAME));
         } else {
             inputObjectType.addInputValue(new InputValue(INPUT_VALUE_WHERE_NAME).setType(new TypeName(fieldsType.getName() + InputType.EXPRESSION)).setDescription(descriptionConfig.getWhereArgument()));
@@ -1494,10 +1515,14 @@ public class DocumentBuilder {
                                             new ArrayValueWithVariable(
                                                     Stream
                                                             .concat(
-                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
-                                                                    Stream.of(INTERFACE_META_NAME)
+                                                                    Stream
+                                                                            .concat(
+                                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
+                                                                                    Stream.of(INTERFACE_META_NAME)
+                                                                            )
+                                                                            .map(interfaceName -> interfaceName + SUFFIX_EXPRESSION),
+                                                                    Stream.of(objectType.getName() + InputType.EXPRESSION + SUFFIX_BASE)
                                                             )
-                                                            .map(interfaceName -> interfaceName + SUFFIX_EXPRESSION)
                                                             .distinct()
                                                             .collect(Collectors.toList())
                                             )
@@ -1531,10 +1556,14 @@ public class DocumentBuilder {
                                             new ArrayValueWithVariable(
                                                     Stream
                                                             .concat(
-                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
-                                                                    Stream.of(INTERFACE_META_NAME)
+                                                                    Stream
+                                                                            .concat(
+                                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
+                                                                                    Stream.of(INTERFACE_META_NAME)
+                                                                            )
+                                                                            .map(interfaceName -> interfaceName + SUFFIX_EXPRESSION),
+                                                                    Stream.of(objectType.getName() + InputType.EXPRESSION + SUFFIX_BASE)
                                                             )
-                                                            .map(interfaceName -> interfaceName + SUFFIX_EXPRESSION)
                                                             .distinct()
                                                             .collect(Collectors.toList())
                                             )
@@ -1566,10 +1595,14 @@ public class DocumentBuilder {
                                             new ArrayValueWithVariable(
                                                     Stream
                                                             .concat(
-                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
-                                                                    Stream.of(INTERFACE_META_NAME)
+                                                                    Stream
+                                                                            .concat(
+                                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
+                                                                                    Stream.of(INTERFACE_META_NAME)
+                                                                            )
+                                                                            .map(interfaceName -> interfaceName + SUFFIX_INPUT),
+                                                                    Stream.of(objectType.getName() + InputType.INPUT + SUFFIX_BASE)
                                                             )
-                                                            .map(interfaceName -> interfaceName + SUFFIX_INPUT)
                                                             .distinct()
                                                             .collect(Collectors.toList())
                                             )
@@ -1619,10 +1652,14 @@ public class DocumentBuilder {
                                             new ArrayValueWithVariable(
                                                     Stream
                                                             .concat(
-                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
-                                                                    Stream.of(INTERFACE_META_NAME)
+                                                                    Stream
+                                                                            .concat(
+                                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
+                                                                                    Stream.of(INTERFACE_META_NAME)
+                                                                            )
+                                                                            .map(interfaceName -> interfaceName + SUFFIX_EXPRESSION),
+                                                                    Stream.of(objectType.getName() + InputType.EXPRESSION + SUFFIX_BASE)
                                                             )
-                                                            .map(interfaceName -> interfaceName + SUFFIX_EXPRESSION)
                                                             .distinct()
                                                             .collect(Collectors.toList())
                                             )
@@ -1667,10 +1704,14 @@ public class DocumentBuilder {
                                             new ArrayValueWithVariable(
                                                     Stream
                                                             .concat(
-                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
-                                                                    Stream.of(INTERFACE_META_NAME)
+                                                                    Stream
+                                                                            .concat(
+                                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
+                                                                                    Stream.of(INTERFACE_META_NAME)
+                                                                            )
+                                                                            .map(interfaceName -> interfaceName + SUFFIX_EXPRESSION),
+                                                                    Stream.of(objectType.getName() + InputType.EXPRESSION + SUFFIX_BASE)
                                                             )
-                                                            .map(interfaceName -> interfaceName + SUFFIX_EXPRESSION)
                                                             .distinct()
                                                             .collect(Collectors.toList())
                                             )
@@ -1709,10 +1750,14 @@ public class DocumentBuilder {
                                             new ArrayValueWithVariable(
                                                     Stream
                                                             .concat(
-                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
-                                                                    Stream.of(INTERFACE_META_NAME)
+                                                                    Stream
+                                                                            .concat(
+                                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
+                                                                                    Stream.of(INTERFACE_META_NAME)
+                                                                            )
+                                                                            .map(interfaceName -> interfaceName + SUFFIX_INPUT),
+                                                                    Stream.of(objectType.getName() + InputType.INPUT + SUFFIX_BASE)
                                                             )
-                                                            .map(interfaceName -> interfaceName + SUFFIX_INPUT)
                                                             .distinct()
                                                             .collect(Collectors.toList())
                                             )
@@ -1762,10 +1807,14 @@ public class DocumentBuilder {
                                             new ArrayValueWithVariable(
                                                     Stream
                                                             .concat(
-                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
-                                                                    Stream.of(INTERFACE_META_NAME)
+                                                                    Stream
+                                                                            .concat(
+                                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
+                                                                                    Stream.of(INTERFACE_META_NAME)
+                                                                            )
+                                                                            .map(interfaceName -> interfaceName + SUFFIX_EXPRESSION),
+                                                                    Stream.of(objectType.getName() + InputType.EXPRESSION + SUFFIX_BASE)
                                                             )
-                                                            .map(interfaceName -> interfaceName + SUFFIX_EXPRESSION)
                                                             .distinct()
                                                             .collect(Collectors.toList())
                                             )
@@ -1810,10 +1859,14 @@ public class DocumentBuilder {
                                             new ArrayValueWithVariable(
                                                     Stream
                                                             .concat(
-                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
-                                                                    Stream.of(INTERFACE_META_NAME)
+                                                                    Stream
+                                                                            .concat(
+                                                                                    Stream.ofNullable(objectType.getInterfaces()).flatMap(Collection::stream),
+                                                                                    Stream.of(INTERFACE_META_NAME)
+                                                                            )
+                                                                            .map(interfaceName -> interfaceName + SUFFIX_EXPRESSION),
+                                                                    Stream.of(objectType.getName() + InputType.EXPRESSION + SUFFIX_BASE)
                                                             )
-                                                            .map(interfaceName -> interfaceName + SUFFIX_EXPRESSION)
                                                             .distinct()
                                                             .collect(Collectors.toList())
                                             )

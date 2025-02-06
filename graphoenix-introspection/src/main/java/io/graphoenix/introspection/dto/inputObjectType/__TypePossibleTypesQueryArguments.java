@@ -21,7 +21,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Query Arguments for Relationship Object between __Type and __Type")
-public class __TypePossibleTypesQueryArguments implements MetaExpression {
+public class __TypePossibleTypesQueryArguments implements MetaExpression, __TypePossibleTypesExpressionBase {
   /**
    * ID
    */
@@ -133,60 +133,74 @@ public class __TypePossibleTypesQueryArguments implements MetaExpression {
   @Description("Expressions")
   private Collection<__TypePossibleTypesExpression> exs;
 
+  @Override
   public StringExpression getId() {
     return this.id;
   }
 
+  @Override
   public void setId(StringExpression id) {
-    this.id = id;
+    this.id = (StringExpression)id;
   }
 
+  @Override
   public StringExpression getTypeRef() {
     return this.typeRef;
   }
 
+  @Override
   public void setTypeRef(StringExpression typeRef) {
-    this.typeRef = typeRef;
+    this.typeRef = (StringExpression)typeRef;
   }
 
+  @Override
   public __TypeExpression getType() {
     return this.type;
   }
 
+  @Override
   public void setType(__TypeExpression type) {
-    this.type = type;
+    this.type = (__TypeExpression)type;
   }
 
+  @Override
   public StringExpression getPossibleTypeRef() {
     return this.possibleTypeRef;
   }
 
+  @Override
   public void setPossibleTypeRef(StringExpression possibleTypeRef) {
-    this.possibleTypeRef = possibleTypeRef;
+    this.possibleTypeRef = (StringExpression)possibleTypeRef;
   }
 
+  @Override
   public __TypeExpression getPossibleType() {
     return this.possibleType;
   }
 
+  @Override
   public void setPossibleType(__TypeExpression possibleType) {
-    this.possibleType = possibleType;
+    this.possibleType = (__TypeExpression)possibleType;
   }
 
+  @Override
   public Boolean getIncludeDeprecated() {
     return this.includeDeprecated;
   }
 
+  @Override
   public void setIncludeDeprecated(Boolean includeDeprecated) {
-    this.includeDeprecated = includeDeprecated;
+    this.includeDeprecated = (Boolean)includeDeprecated;
   }
 
+  @Override
   public IntExpression getVersion() {
     return this.version;
   }
 
+  @Override
   public void setVersion(IntExpression version) {
-    this.version = version;
+    this.version = (IntExpression)version;
   }
 
   @Override
@@ -249,12 +263,14 @@ public class __TypePossibleTypesQueryArguments implements MetaExpression {
     this.createGroupId = (StringExpression)createGroupId;
   }
 
+  @Override
   public StringExpression get__typename() {
     return this.__typename;
   }
 
+  @Override
   public void set__typename(StringExpression __typename) {
-    this.__typename = __typename;
+    this.__typename = (StringExpression)__typename;
   }
 
   public Collection<String> getGroupBy() {
@@ -265,20 +281,24 @@ public class __TypePossibleTypesQueryArguments implements MetaExpression {
     this.groupBy = groupBy;
   }
 
+  @Override
   public Boolean getNot() {
     return this.not;
   }
 
+  @Override
   public void setNot(Boolean not) {
-    this.not = not;
+    this.not = (Boolean)not;
   }
 
+  @Override
   public Conditional getCond() {
     return this.cond;
   }
 
+  @Override
   public void setCond(Conditional cond) {
-    this.cond = cond;
+    this.cond = (Conditional)cond;
   }
 
   public Collection<__TypePossibleTypesExpression> getExs() {

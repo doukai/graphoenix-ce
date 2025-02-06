@@ -958,7 +958,8 @@ public class TypeSpecBuilder {
         String getterName = getFieldGetterMethodName(fieldSpec.name);
         return MethodSpec.methodBuilder(getterName)
                 .returns(fieldSpec.type)
-                .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
+                .addModifiers(Modifier.DEFAULT, Modifier.PUBLIC)
+                .addStatement("return " + fieldSpec.name)
                 .build();
     }
 

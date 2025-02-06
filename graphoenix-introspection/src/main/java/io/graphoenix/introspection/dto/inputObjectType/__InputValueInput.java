@@ -19,7 +19,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Mutation Input for __InputValue")
-public class __InputValueInput implements MetaInput {
+public class __InputValueInput implements MetaInput, __InputValueInputBase {
   /**
    * id
    */
@@ -142,76 +142,94 @@ public class __InputValueInput implements MetaInput {
   @Description("Where")
   private __InputValueExpression where;
 
+  @Override
   public String getId() {
     return this.id;
   }
 
+  @Override
   public void setId(String id) {
-    this.id = id;
+    this.id = (String)id;
   }
 
+  @Override
   public String getName() {
     return this.name;
   }
 
+  @Override
   public void setName(String name) {
-    this.name = name;
+    this.name = (String)name;
   }
 
+  @Override
   public __TypeInput getOfType() {
     return this.ofType;
   }
 
+  @Override
   public void setOfType(__TypeInput ofType) {
-    this.ofType = ofType;
+    this.ofType = (__TypeInput)ofType;
   }
 
+  @Override
   public Integer getFieldId() {
     return this.fieldId;
   }
 
+  @Override
   public void setFieldId(Integer fieldId) {
-    this.fieldId = fieldId;
+    this.fieldId = (Integer)fieldId;
   }
 
+  @Override
   public String getDirectiveName() {
     return this.directiveName;
   }
 
+  @Override
   public void setDirectiveName(String directiveName) {
-    this.directiveName = directiveName;
+    this.directiveName = (String)directiveName;
   }
 
+  @Override
   public String getDescription() {
     return this.description;
   }
 
+  @Override
   public void setDescription(String description) {
-    this.description = description;
+    this.description = (String)description;
   }
 
+  @Override
   public __TypeInput getType() {
     return this.type;
   }
 
+  @Override
   public void setType(__TypeInput type) {
-    this.type = type;
+    this.type = (__TypeInput)type;
   }
 
+  @Override
   public String getDefaultValue() {
     return this.defaultValue;
   }
 
+  @Override
   public void setDefaultValue(String defaultValue) {
-    this.defaultValue = defaultValue;
+    this.defaultValue = (String)defaultValue;
   }
 
+  @Override
   public Boolean getIsDeprecated() {
     return this.isDeprecated;
   }
 
+  @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = isDeprecated;
+    this.isDeprecated = (Boolean)isDeprecated;
   }
 
   @Override
@@ -284,28 +302,34 @@ public class __InputValueInput implements MetaInput {
     this.createGroupId = (String)createGroupId;
   }
 
+  @Override
   public String get__typename() {
     return this.__typename;
   }
 
+  @Override
   public void set__typename(String __typename) {
-    this.__typename = __typename;
+    this.__typename = (String)__typename;
   }
 
+  @Override
   public String getOfTypeName() {
     return this.ofTypeName;
   }
 
+  @Override
   public void setOfTypeName(String ofTypeName) {
-    this.ofTypeName = ofTypeName;
+    this.ofTypeName = (String)ofTypeName;
   }
 
+  @Override
   public String getTypeName() {
     return this.typeName;
   }
 
+  @Override
   public void setTypeName(String typeName) {
-    this.typeName = typeName;
+    this.typeName = (String)typeName;
   }
 
   public __InputValueExpression getWhere() {

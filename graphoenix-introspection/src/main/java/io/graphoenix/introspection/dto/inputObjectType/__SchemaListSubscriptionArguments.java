@@ -22,7 +22,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Subscription Arguments for __Schema List")
-public class __SchemaListSubscriptionArguments implements MetaExpression {
+public class __SchemaListSubscriptionArguments implements MetaExpression, __SchemaExpressionBase {
   /**
    * id
    */
@@ -194,68 +194,84 @@ public class __SchemaListSubscriptionArguments implements MetaExpression {
   @Description("Before")
   private String before;
 
+  @Override
   public StringExpression getId() {
     return this.id;
   }
 
+  @Override
   public void setId(StringExpression id) {
-    this.id = id;
+    this.id = (StringExpression)id;
   }
 
+  @Override
   public __TypeExpression getTypes() {
     return this.types;
   }
 
+  @Override
   public void setTypes(__TypeExpression types) {
-    this.types = types;
+    this.types = (__TypeExpression)types;
   }
 
+  @Override
   public __TypeExpression getQueryType() {
     return this.queryType;
   }
 
+  @Override
   public void setQueryType(__TypeExpression queryType) {
-    this.queryType = queryType;
+    this.queryType = (__TypeExpression)queryType;
   }
 
+  @Override
   public __TypeExpression getMutationType() {
     return this.mutationType;
   }
 
+  @Override
   public void setMutationType(__TypeExpression mutationType) {
-    this.mutationType = mutationType;
+    this.mutationType = (__TypeExpression)mutationType;
   }
 
+  @Override
   public __TypeExpression getSubscriptionType() {
     return this.subscriptionType;
   }
 
+  @Override
   public void setSubscriptionType(__TypeExpression subscriptionType) {
-    this.subscriptionType = subscriptionType;
+    this.subscriptionType = (__TypeExpression)subscriptionType;
   }
 
+  @Override
   public __DirectiveExpression getDirectives() {
     return this.directives;
   }
 
+  @Override
   public void setDirectives(__DirectiveExpression directives) {
-    this.directives = directives;
+    this.directives = (__DirectiveExpression)directives;
   }
 
+  @Override
   public Boolean getIncludeDeprecated() {
     return this.includeDeprecated;
   }
 
+  @Override
   public void setIncludeDeprecated(Boolean includeDeprecated) {
-    this.includeDeprecated = includeDeprecated;
+    this.includeDeprecated = (Boolean)includeDeprecated;
   }
 
+  @Override
   public IntExpression getVersion() {
     return this.version;
   }
 
+  @Override
   public void setVersion(IntExpression version) {
-    this.version = version;
+    this.version = (IntExpression)version;
   }
 
   @Override
@@ -318,36 +334,44 @@ public class __SchemaListSubscriptionArguments implements MetaExpression {
     this.createGroupId = (StringExpression)createGroupId;
   }
 
+  @Override
   public StringExpression get__typename() {
     return this.__typename;
   }
 
+  @Override
   public void set__typename(StringExpression __typename) {
-    this.__typename = __typename;
+    this.__typename = (StringExpression)__typename;
   }
 
+  @Override
   public StringExpression getQueryTypeName() {
     return this.queryTypeName;
   }
 
+  @Override
   public void setQueryTypeName(StringExpression queryTypeName) {
-    this.queryTypeName = queryTypeName;
+    this.queryTypeName = (StringExpression)queryTypeName;
   }
 
+  @Override
   public StringExpression getMutationTypeName() {
     return this.mutationTypeName;
   }
 
+  @Override
   public void setMutationTypeName(StringExpression mutationTypeName) {
-    this.mutationTypeName = mutationTypeName;
+    this.mutationTypeName = (StringExpression)mutationTypeName;
   }
 
+  @Override
   public StringExpression getSubscriptionTypeName() {
     return this.subscriptionTypeName;
   }
 
+  @Override
   public void setSubscriptionTypeName(StringExpression subscriptionTypeName) {
-    this.subscriptionTypeName = subscriptionTypeName;
+    this.subscriptionTypeName = (StringExpression)subscriptionTypeName;
   }
 
   public __SchemaOrderBy getOrderBy() {
@@ -366,20 +390,24 @@ public class __SchemaListSubscriptionArguments implements MetaExpression {
     this.groupBy = groupBy;
   }
 
+  @Override
   public Boolean getNot() {
     return this.not;
   }
 
+  @Override
   public void setNot(Boolean not) {
-    this.not = not;
+    this.not = (Boolean)not;
   }
 
+  @Override
   public Conditional getCond() {
     return this.cond;
   }
 
+  @Override
   public void setCond(Conditional cond) {
-    this.cond = cond;
+    this.cond = (Conditional)cond;
   }
 
   public Collection<__SchemaExpression> getExs() {

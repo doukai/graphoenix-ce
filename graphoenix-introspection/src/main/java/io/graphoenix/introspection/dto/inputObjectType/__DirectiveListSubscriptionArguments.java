@@ -24,7 +24,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Subscription Arguments for __Directive List")
-public class __DirectiveListSubscriptionArguments implements MetaExpression {
+public class __DirectiveListSubscriptionArguments implements MetaExpression, __DirectiveExpressionBase {
   /**
    * name
    */
@@ -190,68 +190,84 @@ public class __DirectiveListSubscriptionArguments implements MetaExpression {
   @Description("Before")
   private String before;
 
+  @Override
   public StringExpression getName() {
     return this.name;
   }
 
+  @Override
   public void setName(StringExpression name) {
-    this.name = name;
+    this.name = (StringExpression)name;
   }
 
+  @Override
   public __SchemaExpression getOfSchema() {
     return this.ofSchema;
   }
 
+  @Override
   public void setOfSchema(__SchemaExpression ofSchema) {
-    this.ofSchema = ofSchema;
+    this.ofSchema = (__SchemaExpression)ofSchema;
   }
 
+  @Override
   public StringExpression getDescription() {
     return this.description;
   }
 
+  @Override
   public void setDescription(StringExpression description) {
-    this.description = description;
+    this.description = (StringExpression)description;
   }
 
+  @Override
   public __DirectiveLocationExpression getLocations() {
     return this.locations;
   }
 
+  @Override
   public void setLocations(__DirectiveLocationExpression locations) {
-    this.locations = locations;
+    this.locations = (__DirectiveLocationExpression)locations;
   }
 
+  @Override
   public __InputValueExpression getArgs() {
     return this.args;
   }
 
+  @Override
   public void setArgs(__InputValueExpression args) {
-    this.args = args;
+    this.args = (__InputValueExpression)args;
   }
 
+  @Override
   public BooleanExpression getIsRepeatable() {
     return this.isRepeatable;
   }
 
+  @Override
   public void setIsRepeatable(BooleanExpression isRepeatable) {
-    this.isRepeatable = isRepeatable;
+    this.isRepeatable = (BooleanExpression)isRepeatable;
   }
 
+  @Override
   public Boolean getIncludeDeprecated() {
     return this.includeDeprecated;
   }
 
+  @Override
   public void setIncludeDeprecated(Boolean includeDeprecated) {
-    this.includeDeprecated = includeDeprecated;
+    this.includeDeprecated = (Boolean)includeDeprecated;
   }
 
+  @Override
   public IntExpression getVersion() {
     return this.version;
   }
 
+  @Override
   public void setVersion(IntExpression version) {
-    this.version = version;
+    this.version = (IntExpression)version;
   }
 
   @Override
@@ -314,29 +330,35 @@ public class __DirectiveListSubscriptionArguments implements MetaExpression {
     this.createGroupId = (StringExpression)createGroupId;
   }
 
+  @Override
   public StringExpression get__typename() {
     return this.__typename;
   }
 
+  @Override
   public void set__typename(StringExpression __typename) {
-    this.__typename = __typename;
+    this.__typename = (StringExpression)__typename;
   }
 
+  @Override
   public IntExpression getSchemaId() {
     return this.schemaId;
   }
 
+  @Override
   public void setSchemaId(IntExpression schemaId) {
-    this.schemaId = schemaId;
+    this.schemaId = (IntExpression)schemaId;
   }
 
+  @Override
   public __DirectiveLocationsRelationExpression get__directiveLocationsRelation() {
     return this.__directiveLocationsRelation;
   }
 
+  @Override
   public void set__directiveLocationsRelation(
       __DirectiveLocationsRelationExpression __directiveLocationsRelation) {
-    this.__directiveLocationsRelation = __directiveLocationsRelation;
+    this.__directiveLocationsRelation = (__DirectiveLocationsRelationExpression)__directiveLocationsRelation;
   }
 
   public __DirectiveOrderBy getOrderBy() {
@@ -355,20 +377,24 @@ public class __DirectiveListSubscriptionArguments implements MetaExpression {
     this.groupBy = groupBy;
   }
 
+  @Override
   public Boolean getNot() {
     return this.not;
   }
 
+  @Override
   public void setNot(Boolean not) {
-    this.not = not;
+    this.not = (Boolean)not;
   }
 
+  @Override
   public Conditional getCond() {
     return this.cond;
   }
 
+  @Override
   public void setCond(Conditional cond) {
-    this.cond = cond;
+    this.cond = (Conditional)cond;
   }
 
   public Collection<__DirectiveExpression> getExs() {

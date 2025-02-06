@@ -23,31 +23,45 @@ public interface MetaInput {
 
   String createGroupId = null;
 
-  Integer getVersion();
+  default Integer getVersion() {
+    return version;
+  }
 
   void setVersion(Integer version);
 
-  Integer getRealmId();
+  default Integer getRealmId() {
+    return realmId;
+  }
 
   void setRealmId(Integer realmId);
 
-  String getCreateUserId();
+  default String getCreateUserId() {
+    return createUserId;
+  }
 
   void setCreateUserId(String createUserId);
 
-  LocalDateTime getCreateTime();
+  default LocalDateTime getCreateTime() {
+    return createTime;
+  }
 
   void setCreateTime(LocalDateTime createTime);
 
-  String getUpdateUserId();
+  default String getUpdateUserId() {
+    return updateUserId;
+  }
 
   void setUpdateUserId(String updateUserId);
 
-  LocalDateTime getUpdateTime();
+  default LocalDateTime getUpdateTime() {
+    return updateTime;
+  }
 
   void setUpdateTime(LocalDateTime updateTime);
 
-  String getCreateGroupId();
+  default String getCreateGroupId() {
+    return createGroupId;
+  }
 
   void setCreateGroupId(String createGroupId);
 }
