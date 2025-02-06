@@ -266,6 +266,9 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
                 );
             }
         } else if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
+            if (valueWithVariable.isNull()) {
+                return Stream.empty();
+            }
             Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
             return inputValueTypeDefinition.asInputObject().getInputValues().stream()
                     .filter(subInputValue -> !documentManager.getInputValueTypeDefinition(subInputValue).isLeaf())
