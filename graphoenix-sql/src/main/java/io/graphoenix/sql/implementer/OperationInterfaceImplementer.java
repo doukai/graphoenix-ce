@@ -21,6 +21,8 @@ import io.graphoenix.spi.graphql.type.ObjectType;
 import io.graphoenix.sql.handler.SQLFormatHandler;
 import io.graphoenix.sql.translator.MutationTranslator;
 import io.graphoenix.sql.translator.QueryTranslator;
+import io.nozdormu.spi.async.Async;
+import io.nozdormu.spi.async.Asyncable;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.bind.Jsonb;
@@ -132,11 +134,11 @@ public class OperationInterfaceImplementer {
     }
 
     public JavaFile buildImplementClass(String packageName, String simpleName, List<Operation> operationList) {
-
         TypeSpec.Builder builder = TypeSpec.classBuilder("SQL" + simpleName + "Impl")
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(ApplicationScoped.class)
                 .addSuperinterface(ClassName.get(packageName, simpleName))
+                .addSuperinterface(Asyncable.class)
                 .addField(
                         FieldSpec
                                 .builder(
@@ -187,7 +189,7 @@ public class OperationInterfaceImplementer {
                 .builder(
                         TypeName.get(String.class),
                         operation.getInvokeMethodNameOrError() + "_" + operation.getInvokeMethodIndexOrError(),
-                        Modifier.PRIVATE,
+                        Modifier.PUBLIC,
                         Modifier.STATIC,
                         Modifier.FINAL
                 )
@@ -241,6 +243,14 @@ public class OperationInterfaceImplementer {
                 )
                 .returns(typeName);
 
+
+        String returnTypeName = operation.getInvokeReturnClassNameOrError();
+        String returnClassName = getClassName(returnTypeName);
+        String[] returnTypeArgumentTypeNames = getArgumentTypeNames(returnTypeName);
+        if (returnTypeArgumentTypeNames.length == 0 || !returnClassName.equals(Mono.class.getCanonicalName())) {
+            builder.addAnnotation(Async.class);
+        }
+
         CodeBlock parameterMapCodeBlock;
         if (parameters.isEmpty()) {
             parameterMapCodeBlock = CodeBlock.of("$T.of()", ClassName.get(Map.class));
@@ -270,8 +280,6 @@ public class OperationInterfaceImplementer {
         CodeBlock codeBlock = parameters.stream()
                 .map(entry ->
                         new AbstractMap.SimpleEntry<>(entry.getKey(), getVariableInputValue(entry.getKey(), field, fieldDefinition).orElseThrow(() -> new RuntimeException("variable inputValue not found: " + entry.getKey())))
-
-
                 )
                 .filter(entry -> documentManager.getInputValueTypeDefinition(entry.getValue()).isInputObject())
                 .reduce(getCodeBlock(operation, parameterMapCodeBlock),
@@ -308,13 +316,28 @@ public class OperationInterfaceImplementer {
 
         List<String> thrownTypes = operation.getInvokeThrownTypes().collect(Collectors.toList());
         if (thrownTypes.isEmpty()) {
-            builder.beginControlFlow("try")
-                    .addStatement("return $L", codeBlock)
-                    .nextControlFlow("catch($T e)", Exception.class)
-                    .addStatement("throw new $T(e)", GraphQLErrors.class)
-                    .endControlFlow();
+            if (returnTypeArgumentTypeNames.length == 0 || !returnClassName.equals(Mono.class.getCanonicalName())) {
+                builder.beginControlFlow("try")
+                        .addStatement("$T result = $L", ParameterizedTypeName.get(ClassName.get(Mono.class), typeName), codeBlock)
+                        .addStatement("return await(result)")
+                        .nextControlFlow("catch($T e)", Exception.class)
+                        .addStatement("throw new $T(e)", GraphQLErrors.class)
+                        .endControlFlow();
+            } else {
+                builder.beginControlFlow("try")
+                        .addStatement("return $L", codeBlock)
+                        .nextControlFlow("catch($T e)", Exception.class)
+                        .addStatement("throw new $T(e)", GraphQLErrors.class)
+                        .endControlFlow();
+            }
         } else {
-            builder.addStatement("return $L", codeBlock);
+            if (returnTypeArgumentTypeNames.length == 0 || !returnClassName.equals(Mono.class.getCanonicalName())) {
+                builder
+                        .addStatement("$T result = $L", ParameterizedTypeName.get(ClassName.get(Mono.class), typeName), codeBlock)
+                        .addStatement("return await(result)");
+            } else {
+                builder.addStatement("return $L", codeBlock);
+            }
         }
         return builder.build();
     }
@@ -392,19 +415,21 @@ public class OperationInterfaceImplementer {
                     return collectionImplementationClassName
                             .map(collectionClassName ->
                                     CodeBlock.of(
-                                            "new $T(operationDAO.find($L, $L, $T.class).$L())",
-                                            collectionClassName,
+                                            "operationDAO.findAsync($L, $L, $T.class).mapNotNull($T::$L).mapNotNull($T::new)",
                                             sqlFieldName,
                                             parameterMapCodeBlock,
                                             operationTypeClassName,
-                                            fieldGetterMethodName
+                                            operationTypeClassName,
+                                            fieldGetterMethodName,
+                                            collectionClassName
                                     )
                             )
                             .orElseGet(() ->
                                     CodeBlock.of(
-                                            "operationDAO.find($L, $L, $T.class).$L()",
+                                            "operationDAO.findAsync($L, $L, $T.class).mapNotNull($T::$L)",
                                             sqlFieldName,
                                             parameterMapCodeBlock,
+                                            operationTypeClassName,
                                             operationTypeClassName,
                                             fieldGetterMethodName
                                     )
@@ -412,21 +437,23 @@ public class OperationInterfaceImplementer {
                 } else if (operation.getOperationType().equals(OPERATION_MUTATION_NAME)) {
                     Optional<ClassName> collectionImplementationClassName = getCollectionImplementationClassName(returnTypeName);
                     return collectionImplementationClassName
-                            .map(collectionTypeName ->
+                            .map(collectionClassName ->
                                     CodeBlock.of(
-                                            "new $T(operationDAO.save($L, $L, $T.class).$L())",
-                                            collectionTypeName,
+                                            "operationDAO.saveAsync($L, $L, $T.class).mapNotNull($T::$L).mapNotNull($T::new)",
                                             sqlFieldName,
                                             parameterMapCodeBlock,
                                             operationTypeClassName,
-                                            fieldGetterMethodName
+                                            operationTypeClassName,
+                                            fieldGetterMethodName,
+                                            collectionClassName
                                     )
                             )
                             .orElseGet(() ->
                                     CodeBlock.of(
-                                            "operationDAO.save($L, $L, $T.class).$L()",
+                                            "operationDAO.saveAsync($L, $L, $T.class).mapNotNull($T::$L)",
                                             sqlFieldName,
                                             parameterMapCodeBlock,
+                                            operationTypeClassName,
                                             operationTypeClassName,
                                             fieldGetterMethodName
                                     )
@@ -436,17 +463,19 @@ public class OperationInterfaceImplementer {
         } else {
             if (operation.getOperationType() == null || operation.getOperationType().equals(OPERATION_QUERY_NAME)) {
                 return CodeBlock.of(
-                        "operationDAO.find($L, $L, $T.class).$L()",
+                        "operationDAO.findAsync($L, $L, $T.class).mapNotNull($T::$L)",
                         sqlFieldName,
                         parameterMapCodeBlock,
+                        operationTypeClassName,
                         operationTypeClassName,
                         fieldGetterMethodName
                 );
             } else if (operation.getOperationType().equals(OPERATION_MUTATION_NAME)) {
                 return CodeBlock.of(
-                        "operationDAO.save($L, $L, $T.class).$L()",
+                        "operationDAO.saveAsync($L, $L, $T.class).mapNotNull($T::$L)",
                         sqlFieldName,
                         parameterMapCodeBlock,
+                        operationTypeClassName,
                         operationTypeClassName,
                         fieldGetterMethodName
                 );
