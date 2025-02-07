@@ -138,6 +138,12 @@ public @interface __DirectiveExpressionBase {
   @Description("Condition")
   Conditional cond() default Conditional.AND;
 
+  /**
+   * Expressions
+   */
+  @Description("Expressions")
+  __DirectiveExpression1[] exs() default {};
+
   String $name() default "";
 
   String $ofSchema() default "";
@@ -175,4 +181,6 @@ public @interface __DirectiveExpressionBase {
   String $not() default "";
 
   String $cond() default "";
+
+  String $exs() default "";
 }

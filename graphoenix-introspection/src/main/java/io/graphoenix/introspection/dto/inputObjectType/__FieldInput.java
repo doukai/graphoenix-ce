@@ -317,11 +317,13 @@ public class __FieldInput implements MetaInput, __FieldInputBase {
     this.typeName = (String)typeName;
   }
 
+  @Override
   public __FieldExpression getWhere() {
     return this.where;
   }
 
+  @Override
   public void setWhere(__FieldExpression where) {
-    this.where = where;
+    this.where = (__FieldExpression)where;
   }
 }

@@ -365,11 +365,13 @@ public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaEx
     this.cond = (Conditional)cond;
   }
 
+  @Override
   public Collection<__SchemaExpression> getExs() {
     return this.exs;
   }
 
+  @Override
   public void setExs(Collection<__SchemaExpression> exs) {
-    this.exs = exs;
+    this.exs = (Collection<__SchemaExpression>)exs;
   }
 }

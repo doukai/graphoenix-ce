@@ -317,11 +317,13 @@ public class __SchemaInput implements MetaInput, __SchemaInputBase {
     this.subscriptionTypeName = (String)subscriptionTypeName;
   }
 
+  @Override
   public __SchemaExpression getWhere() {
     return this.where;
   }
 
+  @Override
   public void setWhere(__SchemaExpression where) {
-    this.where = where;
+    this.where = (__SchemaExpression)where;
   }
 }

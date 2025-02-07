@@ -105,6 +105,12 @@ public @interface TreeStructExpressionBase {
   @Description("Condition")
   Conditional cond() default Conditional.AND;
 
+  /**
+   * Expressions
+   */
+  @Description("Expressions")
+  TreeStructExpression1[] exs() default {};
+
   String $name() default "";
 
   String $path() default "";
@@ -132,4 +138,6 @@ public @interface TreeStructExpressionBase {
   String $not() default "";
 
   String $cond() default "";
+
+  String $exs() default "";
 }

@@ -347,11 +347,13 @@ public class __InputValueListMutationArguments implements MetaInput, __InputValu
     this.list = list;
   }
 
+  @Override
   public __InputValueExpression getWhere() {
     return this.where;
   }
 
+  @Override
   public void setWhere(__InputValueExpression where) {
-    this.where = where;
+    this.where = (__InputValueExpression)where;
   }
 }

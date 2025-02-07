@@ -331,11 +331,13 @@ public class __SchemaListMutationArguments implements MetaInput, __SchemaInputBa
     this.list = list;
   }
 
+  @Override
   public __SchemaExpression getWhere() {
     return this.where;
   }
 
+  @Override
   public void setWhere(__SchemaExpression where) {
-    this.where = where;
+    this.where = (__SchemaExpression)where;
   }
 }

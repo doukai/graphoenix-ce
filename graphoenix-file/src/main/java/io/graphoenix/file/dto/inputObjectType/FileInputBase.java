@@ -100,6 +100,12 @@ public interface FileInputBase extends MetaInput {
   @Description("Type Name")
   String __typename = "File";
 
+  /**
+   * Where
+   */
+  @Description("Where")
+  FileExpression where = null;
+
   default String getId() {
     return id;
   }
@@ -183,4 +189,10 @@ public interface FileInputBase extends MetaInput {
   }
 
   void set__typename(String __typename);
+
+  default FileExpression getWhere() {
+    return where;
+  }
+
+  void setWhere(FileExpression where);
 }

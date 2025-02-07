@@ -120,6 +120,12 @@ public interface __DirectiveInputBase extends MetaInput {
   @Description("Relationship Object between __Directive and locations")
   Collection<__DirectiveLocationsRelationInput> __directiveLocationsRelation = null;
 
+  /**
+   * Where
+   */
+  @Description("Where")
+  __DirectiveExpression where = null;
+
   default String getName() {
     return name;
   }
@@ -222,4 +228,10 @@ public interface __DirectiveInputBase extends MetaInput {
 
   void set__directiveLocationsRelation(
       Collection<__DirectiveLocationsRelationInput> __directiveLocationsRelation);
+
+  default __DirectiveExpression getWhere() {
+    return where;
+  }
+
+  void setWhere(__DirectiveExpression where);
 }

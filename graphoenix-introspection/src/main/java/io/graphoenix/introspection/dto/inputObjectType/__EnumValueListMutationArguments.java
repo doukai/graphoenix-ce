@@ -283,11 +283,13 @@ public class __EnumValueListMutationArguments implements MetaInput, __EnumValueI
     this.list = list;
   }
 
+  @Override
   public __EnumValueExpression getWhere() {
     return this.where;
   }
 
+  @Override
   public void setWhere(__EnumValueExpression where) {
-    this.where = where;
+    this.where = (__EnumValueExpression)where;
   }
 }

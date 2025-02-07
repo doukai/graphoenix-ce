@@ -346,12 +346,14 @@ public class __TypePossibleTypesListSubscriptionArguments implements MetaExpress
     this.cond = (Conditional)cond;
   }
 
+  @Override
   public Collection<__TypePossibleTypesExpression> getExs() {
     return this.exs;
   }
 
+  @Override
   public void setExs(Collection<__TypePossibleTypesExpression> exs) {
-    this.exs = exs;
+    this.exs = (Collection<__TypePossibleTypesExpression>)exs;
   }
 
   public Integer getFirst() {

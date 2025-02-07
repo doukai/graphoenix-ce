@@ -119,6 +119,12 @@ public @interface __TypeInterfacesExpressionBase {
   @Description("Condition")
   Conditional cond() default Conditional.AND;
 
+  /**
+   * Expressions
+   */
+  @Description("Expressions")
+  __TypeInterfacesExpression1[] exs() default {};
+
   String $id() default "";
 
   String $typeRef() default "";
@@ -150,4 +156,6 @@ public @interface __TypeInterfacesExpressionBase {
   String $not() default "";
 
   String $cond() default "";
+
+  String $exs() default "";
 }

@@ -130,6 +130,12 @@ public interface __InputValueInputBase extends MetaInput {
   @Description("type Reference")
   String typeName = null;
 
+  /**
+   * Where
+   */
+  @Description("Where")
+  __InputValueExpression where = null;
+
   default String getId() {
     return id;
   }
@@ -243,4 +249,10 @@ public interface __InputValueInputBase extends MetaInput {
   }
 
   void setTypeName(String typeName);
+
+  default __InputValueExpression getWhere() {
+    return where;
+  }
+
+  void setWhere(__InputValueExpression where);
 }

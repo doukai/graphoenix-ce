@@ -346,12 +346,14 @@ public class FileConnectionSubscriptionArguments implements MetaExpression, File
     this.cond = (Conditional)cond;
   }
 
+  @Override
   public Collection<FileExpression> getExs() {
     return this.exs;
   }
 
+  @Override
   public void setExs(Collection<FileExpression> exs) {
-    this.exs = exs;
+    this.exs = (Collection<FileExpression>)exs;
   }
 
   public Integer getFirst() {

@@ -104,6 +104,12 @@ public @interface __TypeInterfacesInputBase1 {
   @Description("Type Name")
   String __typename() default "__TypeInterfaces";
 
+  /**
+   * Where
+   */
+  @Description("Where")
+  __TypeInterfacesExpression2 where() default @__TypeInterfacesExpression2;
+
   String $id() default "";
 
   String $typeRef() default "";
@@ -131,4 +137,6 @@ public @interface __TypeInterfacesInputBase1 {
   String $createGroupId() default "";
 
   String $__typename() default "";
+
+  String $where() default "";
 }

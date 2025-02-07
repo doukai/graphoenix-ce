@@ -962,7 +962,11 @@ public class DocumentBuilder {
                 )
                 .setDescription(String.format(descriptionConfig.getQueryExpression(), Optional.ofNullable(fieldsType.getDescription()).orElseGet(fieldsType::getName)));
 
-        if (base || fieldsType instanceof InterfaceType) {
+        if (base) {
+            inputObjectType
+                    .addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(fieldsType.getName() + InputType.EXPRESSION))).setDescription(descriptionConfig.getExsArgument()))
+                    .addDirective(new Directive(DIRECTIVE_INTERFACE_NAME));
+        } else if (fieldsType instanceof InterfaceType) {
             inputObjectType.addDirective(new Directive(DIRECTIVE_INTERFACE_NAME));
         } else {
             inputObjectType.addInputValue(new InputValue(INPUT_VALUE_EXS_NAME).setType(new ListType(new TypeName(fieldsType.getName() + InputType.EXPRESSION))).setDescription(descriptionConfig.getExsArgument()));
@@ -1014,7 +1018,11 @@ public class DocumentBuilder {
                                 )
                 )
                 .setDescription(String.format(descriptionConfig.getMutationInput(), Optional.ofNullable(fieldsType.getDescription()).orElseGet(fieldsType::getName)));
-        if (base || fieldsType instanceof InterfaceType) {
+        if (base) {
+            inputObjectType
+                    .addInputValue(new InputValue(INPUT_VALUE_WHERE_NAME).setType(new TypeName(fieldsType.getName() + InputType.EXPRESSION)).setDescription(descriptionConfig.getWhereArgument()))
+                    .addDirective(new Directive(DIRECTIVE_INTERFACE_NAME));
+        } else if (fieldsType instanceof InterfaceType) {
             inputObjectType.addDirective(new Directive(DIRECTIVE_INTERFACE_NAME));
         } else {
             inputObjectType.addInputValue(new InputValue(INPUT_VALUE_WHERE_NAME).setType(new TypeName(fieldsType.getName() + InputType.EXPRESSION)).setDescription(descriptionConfig.getWhereArgument()));

@@ -252,11 +252,13 @@ public class __DirectiveLocationsRelationListMutationArguments implements MetaIn
     this.list = list;
   }
 
+  @Override
   public __DirectiveLocationsRelationExpression getWhere() {
     return this.where;
   }
 
+  @Override
   public void setWhere(__DirectiveLocationsRelationExpression where) {
-    this.where = where;
+    this.where = (__DirectiveLocationsRelationExpression)where;
   }
 }

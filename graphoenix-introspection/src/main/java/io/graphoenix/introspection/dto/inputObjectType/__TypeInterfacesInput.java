@@ -252,11 +252,13 @@ public class __TypeInterfacesInput implements MetaInput, __TypeInterfacesInputBa
     this.__typename = (String)__typename;
   }
 
+  @Override
   public __TypeInterfacesExpression getWhere() {
     return this.where;
   }
 
+  @Override
   public void setWhere(__TypeInterfacesExpression where) {
-    this.where = where;
+    this.where = (__TypeInterfacesExpression)where;
   }
 }

@@ -141,6 +141,12 @@ public @interface __SchemaExpressionBase {
   @Description("Condition")
   Conditional cond() default Conditional.AND;
 
+  /**
+   * Expressions
+   */
+  @Description("Expressions")
+  __SchemaExpression1[] exs() default {};
+
   String $id() default "";
 
   String $types() default "";
@@ -180,4 +186,6 @@ public @interface __SchemaExpressionBase {
   String $not() default "";
 
   String $cond() default "";
+
+  String $exs() default "";
 }

@@ -172,6 +172,12 @@ public @interface __TypeExpressionBase1 {
   @Description("Condition")
   Conditional cond() default Conditional.AND;
 
+  /**
+   * Expressions
+   */
+  @Description("Expressions")
+  __TypeExpression2[] exs() default {};
+
   String $name() default "";
 
   String $ofSchema() default "";
@@ -221,4 +227,6 @@ public @interface __TypeExpressionBase1 {
   String $not() default "";
 
   String $cond() default "";
+
+  String $exs() default "";
 }

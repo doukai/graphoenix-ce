@@ -93,6 +93,12 @@ public @interface NamedStructExpressionBase1 {
   @Description("Condition")
   Conditional cond() default Conditional.AND;
 
+  /**
+   * Expressions
+   */
+  @Description("Expressions")
+  NamedStructExpression2[] exs() default {};
+
   String $name() default "";
 
   String $description() default "";
@@ -116,4 +122,6 @@ public @interface NamedStructExpressionBase1 {
   String $not() default "";
 
   String $cond() default "";
+
+  String $exs() default "";
 }

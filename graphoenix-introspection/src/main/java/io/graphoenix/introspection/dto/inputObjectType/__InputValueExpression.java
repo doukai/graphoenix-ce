@@ -366,11 +366,13 @@ public class __InputValueExpression implements MetaExpression, __InputValueExpre
     this.cond = (Conditional)cond;
   }
 
+  @Override
   public Collection<__InputValueExpression> getExs() {
     return this.exs;
   }
 
+  @Override
   public void setExs(Collection<__InputValueExpression> exs) {
-    this.exs = exs;
+    this.exs = (Collection<__InputValueExpression>)exs;
   }
 }

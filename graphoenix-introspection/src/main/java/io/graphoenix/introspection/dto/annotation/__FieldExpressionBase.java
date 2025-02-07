@@ -141,6 +141,12 @@ public @interface __FieldExpressionBase {
   @Description("Condition")
   Conditional cond() default Conditional.AND;
 
+  /**
+   * Expressions
+   */
+  @Description("Expressions")
+  __FieldExpression1[] exs() default {};
+
   String $id() default "";
 
   String $name() default "";
@@ -180,4 +186,6 @@ public @interface __FieldExpressionBase {
   String $not() default "";
 
   String $cond() default "";
+
+  String $exs() default "";
 }

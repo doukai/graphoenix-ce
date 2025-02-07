@@ -352,11 +352,13 @@ public class __DirectiveSubscriptionArguments implements MetaExpression, __Direc
     this.cond = (Conditional)cond;
   }
 
+  @Override
   public Collection<__DirectiveExpression> getExs() {
     return this.exs;
   }
 
+  @Override
   public void setExs(Collection<__DirectiveExpression> exs) {
-    this.exs = exs;
+    this.exs = (Collection<__DirectiveExpression>)exs;
   }
 }

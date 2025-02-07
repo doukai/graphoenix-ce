@@ -331,11 +331,13 @@ public class __FieldListMutationArguments implements MetaInput, __FieldInputBase
     this.list = list;
   }
 
+  @Override
   public __FieldExpression getWhere() {
     return this.where;
   }
 
+  @Override
   public void setWhere(__FieldExpression where) {
-    this.where = where;
+    this.where = (__FieldExpression)where;
   }
 }

@@ -398,11 +398,13 @@ public class __TypeInput implements MetaInput, __TypeInputBase {
     this.__typePossibleTypes = (Collection<__TypePossibleTypesInput>)__typePossibleTypes;
   }
 
+  @Override
   public __TypeExpression getWhere() {
     return this.where;
   }
 
+  @Override
   public void setWhere(__TypeExpression where) {
-    this.where = where;
+    this.where = (__TypeExpression)where;
   }
 }

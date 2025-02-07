@@ -6,6 +6,7 @@ import io.graphoenix.core.dto.inputObjectType.MetaExpression;
 import io.graphoenix.core.dto.inputObjectType.StringExpression;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
+import java.util.Collection;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
@@ -88,6 +89,12 @@ public interface NamedStructExpressionBase extends MetaExpression {
   @Description("Condition")
   Conditional cond = Conditional.AND;
 
+  /**
+   * Expressions
+   */
+  @Description("Expressions")
+  Collection<? extends NamedStructExpression> exs = null;
+
   default StringExpression getName() {
     return name;
   }
@@ -159,4 +166,10 @@ public interface NamedStructExpressionBase extends MetaExpression {
   }
 
   void setCond(Conditional cond);
+
+  default Collection<? extends NamedStructExpression> getExs() {
+    return exs;
+  }
+
+  void setExs(Collection<? extends NamedStructExpression> exs);
 }

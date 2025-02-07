@@ -34,6 +34,7 @@ message IntroSchemaExpressionBase {
     io.graphoenix.core.StringExpression subscription_type_name = 18; /* subscriptionType Reference */
     bool not = 19; /* Not */
     io.graphoenix.core.Conditional cond = 20; /* Condition */
+    repeated IntroSchemaExpression exs = 21; /* Expressions */
 }
 /**
 * Mutation Input for __Schema
@@ -57,6 +58,7 @@ message IntroSchemaInputBase {
     string query_type_name = 16; /* queryType Reference */
     string mutation_type_name = 17; /* mutationType Reference */
     string subscription_type_name = 18; /* subscriptionType Reference */
+    IntroSchemaExpression where = 19; /* Where */
 }
 /**
 * Query Expression Input for __Schema
@@ -174,6 +176,7 @@ message IntroTypeExpressionBase {
     IntroTypePossibleTypesExpression intro_type_possible_types = 23; /* Relationship Object between __Type and __Type */
     bool not = 24; /* Not */
     io.graphoenix.core.Conditional cond = 25; /* Condition */
+    repeated IntroTypeExpression exs = 26; /* Expressions */
 }
 /**
 * Mutation Input for __Type
@@ -202,6 +205,7 @@ message IntroTypeInputBase {
     string of_type_name = 21; /* ofType Reference */
     repeated IntroTypeInterfacesInput intro_type_interfaces = 22; /* Relationship Object between __Type and __Type */
     repeated IntroTypePossibleTypesInput intro_type_possible_types = 23; /* Relationship Object between __Type and __Type */
+    IntroTypeExpression where = 24; /* Where */
 }
 /**
 * Query Expression Input for __Type
@@ -339,6 +343,7 @@ message IntroFieldExpressionBase {
     io.graphoenix.core.StringExpression type_name = 18; /* type Reference */
     bool not = 19; /* Not */
     io.graphoenix.core.Conditional cond = 20; /* Condition */
+    repeated IntroFieldExpression exs = 21; /* Expressions */
 }
 /**
 * Mutation Input for __Field
@@ -362,6 +367,7 @@ message IntroFieldInputBase {
     string intro_typename = 16; /* Type Name */
     string of_type_name = 17; /* ofType Reference */
     string type_name = 18; /* type Reference */
+    IntroFieldExpression where = 19; /* Where */
 }
 /**
 * Query Expression Input for __Field
@@ -480,6 +486,7 @@ message IntroInputValueExpressionBase {
     io.graphoenix.core.StringExpression type_name = 19; /* type Reference */
     bool not = 20; /* Not */
     io.graphoenix.core.Conditional cond = 21; /* Condition */
+    repeated IntroInputValueExpression exs = 22; /* Expressions */
 }
 /**
 * Mutation Input for __InputValue
@@ -504,6 +511,7 @@ message IntroInputValueInputBase {
     string intro_typename = 17; /* Type Name */
     string of_type_name = 18; /* ofType Reference */
     string type_name = 19; /* type Reference */
+    IntroInputValueExpression where = 20; /* Where */
 }
 /**
 * Query Expression Input for __InputValue
@@ -628,6 +636,7 @@ message IntroEnumValueExpressionBase {
     io.graphoenix.core.StringExpression of_type_name = 15; /* ofType Reference */
     bool not = 16; /* Not */
     io.graphoenix.core.Conditional cond = 17; /* Condition */
+    repeated IntroEnumValueExpression exs = 18; /* Expressions */
 }
 /**
 * Mutation Input for __EnumValue
@@ -648,6 +657,7 @@ message IntroEnumValueInputBase {
     string create_group_id = 13; /* Create Group ID */
     string intro_typename = 14; /* Type Name */
     string of_type_name = 15; /* ofType Reference */
+    IntroEnumValueExpression where = 16; /* Where */
 }
 /**
 * Query Expression Input for __EnumValue
@@ -751,6 +761,7 @@ message IntroDirectiveExpressionBase {
     IntroDirectiveLocationsRelationExpression intro_directive_locations_relation = 17; /* Relationship Object between __Directive and locations */
     bool not = 18; /* Not */
     io.graphoenix.core.Conditional cond = 19; /* Condition */
+    repeated IntroDirectiveExpression exs = 20; /* Expressions */
 }
 /**
 * Mutation Input for __Directive
@@ -773,6 +784,7 @@ message IntroDirectiveInputBase {
     string intro_typename = 15; /* Type Name */
     int32 schema_id = 16; /* ofSchema Reference */
     repeated IntroDirectiveLocationsRelationInput intro_directive_locations_relation = 17; /* Relationship Object between __Directive and locations */
+    IntroDirectiveExpression where = 18; /* Where */
 }
 /**
 * Query Expression Input for __Directive
@@ -877,6 +889,7 @@ message IntroTypeInterfacesExpressionBase {
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
     bool not = 15; /* Not */
     io.graphoenix.core.Conditional cond = 16; /* Condition */
+    repeated IntroTypeInterfacesExpression exs = 17; /* Expressions */
 }
 /**
 * Mutation Input for Relationship Object between __Type and __Type
@@ -896,6 +909,7 @@ message IntroTypeInterfacesInputBase {
     google.protobuf.Timestamp update_time = 12; /* Update Time */
     string create_group_id = 13; /* Create Group ID */
     string intro_typename = 14; /* Type Name */
+    IntroTypeInterfacesExpression where = 15; /* Where */
 }
 /**
 * Query Expression Input for Relationship Object between __Type and __Type
@@ -987,6 +1001,7 @@ message IntroTypePossibleTypesExpressionBase {
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
     bool not = 15; /* Not */
     io.graphoenix.core.Conditional cond = 16; /* Condition */
+    repeated IntroTypePossibleTypesExpression exs = 17; /* Expressions */
 }
 /**
 * Mutation Input for Relationship Object between __Type and __Type
@@ -1006,6 +1021,7 @@ message IntroTypePossibleTypesInputBase {
     google.protobuf.Timestamp update_time = 12; /* Update Time */
     string create_group_id = 13; /* Create Group ID */
     string intro_typename = 14; /* Type Name */
+    IntroTypePossibleTypesExpression where = 15; /* Where */
 }
 /**
 * Query Expression Input for Relationship Object between __Type and __Type
@@ -1096,6 +1112,7 @@ message IntroDirectiveLocationsRelationExpressionBase {
     io.graphoenix.core.StringExpression intro_typename = 13; /* Type Name */
     bool not = 14; /* Not */
     io.graphoenix.core.Conditional cond = 15; /* Condition */
+    repeated IntroDirectiveLocationsRelationExpression exs = 16; /* Expressions */
 }
 /**
 * Mutation Input for Relationship Object between __Directive and locations
@@ -1114,6 +1131,7 @@ message IntroDirectiveLocationsRelationInputBase {
     google.protobuf.Timestamp update_time = 11; /* Update Time */
     string create_group_id = 12; /* Create Group ID */
     string intro_typename = 13; /* Type Name */
+    IntroDirectiveLocationsRelationExpression where = 14; /* Where */
 }
 /**
 * Query Expression Input for Relationship Object between __Directive and locations

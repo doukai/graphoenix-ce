@@ -317,11 +317,13 @@ public class __DirectiveListMutationArguments implements MetaInput, __DirectiveI
     this.list = list;
   }
 
+  @Override
   public __DirectiveExpression getWhere() {
     return this.where;
   }
 
+  @Override
   public void setWhere(__DirectiveExpression where) {
-    this.where = where;
+    this.where = (__DirectiveExpression)where;
   }
 }

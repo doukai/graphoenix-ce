@@ -331,12 +331,14 @@ public class __DirectiveLocationsRelationConnectionSubscriptionArguments impleme
     this.cond = (Conditional)cond;
   }
 
+  @Override
   public Collection<__DirectiveLocationsRelationExpression> getExs() {
     return this.exs;
   }
 
+  @Override
   public void setExs(Collection<__DirectiveLocationsRelationExpression> exs) {
-    this.exs = exs;
+    this.exs = (Collection<__DirectiveLocationsRelationExpression>)exs;
   }
 
   public Integer getFirst() {

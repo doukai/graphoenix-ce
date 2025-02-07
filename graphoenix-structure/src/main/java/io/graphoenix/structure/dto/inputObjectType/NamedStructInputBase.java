@@ -76,6 +76,12 @@ public interface NamedStructInputBase extends MetaInput {
   @Description("createGroupId")
   String createGroupId = null;
 
+  /**
+   * Where
+   */
+  @Description("Where")
+  NamedStructExpression where = null;
+
   default String getName() {
     return name;
   }
@@ -135,4 +141,10 @@ public interface NamedStructInputBase extends MetaInput {
   }
 
   void setCreateGroupId(String createGroupId);
+
+  default NamedStructExpression getWhere() {
+    return where;
+  }
+
+  void setWhere(NamedStructExpression where);
 }

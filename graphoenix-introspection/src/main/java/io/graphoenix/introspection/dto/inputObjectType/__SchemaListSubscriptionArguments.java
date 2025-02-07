@@ -410,12 +410,14 @@ public class __SchemaListSubscriptionArguments implements MetaExpression, __Sche
     this.cond = (Conditional)cond;
   }
 
+  @Override
   public Collection<__SchemaExpression> getExs() {
     return this.exs;
   }
 
+  @Override
   public void setExs(Collection<__SchemaExpression> exs) {
-    this.exs = exs;
+    this.exs = (Collection<__SchemaExpression>)exs;
   }
 
   public Integer getFirst() {

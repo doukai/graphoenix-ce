@@ -268,11 +268,13 @@ public class __EnumValueInput implements MetaInput, __EnumValueInputBase {
     this.ofTypeName = (String)ofTypeName;
   }
 
+  @Override
   public __EnumValueExpression getWhere() {
     return this.where;
   }
 
+  @Override
   public void setWhere(__EnumValueExpression where) {
-    this.where = where;
+    this.where = (__EnumValueExpression)where;
   }
 }

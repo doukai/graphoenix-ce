@@ -156,6 +156,12 @@ public interface __TypeInputBase extends MetaInput {
   @Description("Relationship Object between __Type and __Type")
   Collection<__TypePossibleTypesInput> __typePossibleTypes = null;
 
+  /**
+   * Where
+   */
+  @Description("Where")
+  __TypeExpression where = null;
+
   default String getName() {
     return name;
   }
@@ -293,4 +299,10 @@ public interface __TypeInputBase extends MetaInput {
   }
 
   void set__typePossibleTypes(Collection<__TypePossibleTypesInput> __typePossibleTypes);
+
+  default __TypeExpression getWhere() {
+    return where;
+  }
+
+  void setWhere(__TypeExpression where);
 }

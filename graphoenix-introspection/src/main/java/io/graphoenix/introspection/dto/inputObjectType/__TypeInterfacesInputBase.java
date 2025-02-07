@@ -102,6 +102,12 @@ public interface __TypeInterfacesInputBase extends MetaInput {
   @Description("Type Name")
   String __typename = "__TypeInterfaces";
 
+  /**
+   * Where
+   */
+  @Description("Where")
+  __TypeInterfacesExpression where = null;
+
   default String getId() {
     return id;
   }
@@ -185,4 +191,10 @@ public interface __TypeInterfacesInputBase extends MetaInput {
   }
 
   void set__typename(String __typename);
+
+  default __TypeInterfacesExpression getWhere() {
+    return where;
+  }
+
+  void setWhere(__TypeInterfacesExpression where);
 }

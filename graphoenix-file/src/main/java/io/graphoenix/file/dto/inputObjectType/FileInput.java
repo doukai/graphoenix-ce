@@ -252,11 +252,13 @@ public class FileInput implements MetaInput, FileInputBase {
     this.__typename = (String)__typename;
   }
 
+  @Override
   public FileExpression getWhere() {
     return this.where;
   }
 
+  @Override
   public void setWhere(FileExpression where) {
-    this.where = where;
+    this.where = (FileExpression)where;
   }
 }

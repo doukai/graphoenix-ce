@@ -266,11 +266,13 @@ public class __TypeInterfacesMutationArguments implements MetaInput, __TypeInter
     this.input = input;
   }
 
+  @Override
   public __TypeInterfacesExpression getWhere() {
     return this.where;
   }
 
+  @Override
   public void setWhere(__TypeInterfacesExpression where) {
-    this.where = where;
+    this.where = (__TypeInterfacesExpression)where;
   }
 }

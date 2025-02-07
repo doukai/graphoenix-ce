@@ -125,6 +125,12 @@ public interface __SchemaInputBase extends MetaInput {
   @Description("subscriptionType Reference")
   String subscriptionTypeName = null;
 
+  /**
+   * Where
+   */
+  @Description("Where")
+  __SchemaExpression where = null;
+
   default String getId() {
     return id;
   }
@@ -232,4 +238,10 @@ public interface __SchemaInputBase extends MetaInput {
   }
 
   void setSubscriptionTypeName(String subscriptionTypeName);
+
+  default __SchemaExpression getWhere() {
+    return where;
+  }
+
+  void setWhere(__SchemaExpression where);
 }

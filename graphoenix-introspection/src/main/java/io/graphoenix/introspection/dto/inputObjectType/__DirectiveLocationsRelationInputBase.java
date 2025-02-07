@@ -95,6 +95,12 @@ public interface __DirectiveLocationsRelationInputBase extends MetaInput {
   @Description("Type Name")
   String __typename = "__DirectiveLocationsRelation";
 
+  /**
+   * Where
+   */
+  @Description("Where")
+  __DirectiveLocationsRelationExpression where = null;
+
   default String getId() {
     return id;
   }
@@ -172,4 +178,10 @@ public interface __DirectiveLocationsRelationInputBase extends MetaInput {
   }
 
   void set__typename(String __typename);
+
+  default __DirectiveLocationsRelationExpression getWhere() {
+    return where;
+  }
+
+  void setWhere(__DirectiveLocationsRelationExpression where);
 }

@@ -157,6 +157,12 @@ public @interface __TypeInputBase1 {
   @Description("Relationship Object between __Type and __Type")
   __TypePossibleTypesInput2[] __typePossibleTypes() default {};
 
+  /**
+   * Where
+   */
+  @Description("Where")
+  __TypeExpression2 where() default @__TypeExpression2;
+
   String $name() default "";
 
   String $ofSchema() default "";
@@ -202,4 +208,6 @@ public @interface __TypeInputBase1 {
   String $__typeInterfaces() default "";
 
   String $__typePossibleTypes() default "";
+
+  String $where() default "";
 }

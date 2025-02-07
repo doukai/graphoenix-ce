@@ -102,6 +102,12 @@ public @interface __TypePossibleTypesInputBase1 {
   @Description("Type Name")
   String __typename() default "__TypePossibleTypes";
 
+  /**
+   * Where
+   */
+  @Description("Where")
+  __TypePossibleTypesExpression2 where() default @__TypePossibleTypesExpression2;
+
   String $id() default "";
 
   String $typeRef() default "";
@@ -129,4 +135,6 @@ public @interface __TypePossibleTypesInputBase1 {
   String $createGroupId() default "";
 
   String $__typename() default "";
+
+  String $where() default "";
 }

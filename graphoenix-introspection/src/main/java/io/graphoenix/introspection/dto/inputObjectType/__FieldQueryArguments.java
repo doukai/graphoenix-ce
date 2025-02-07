@@ -365,11 +365,13 @@ public class __FieldQueryArguments implements MetaExpression, __FieldExpressionB
     this.cond = (Conditional)cond;
   }
 
+  @Override
   public Collection<__FieldExpression> getExs() {
     return this.exs;
   }
 
+  @Override
   public void setExs(Collection<__FieldExpression> exs) {
-    this.exs = exs;
+    this.exs = (Collection<__FieldExpression>)exs;
   }
 }

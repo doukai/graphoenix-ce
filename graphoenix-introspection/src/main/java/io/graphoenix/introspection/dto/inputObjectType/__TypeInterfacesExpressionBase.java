@@ -6,6 +6,7 @@ import io.graphoenix.core.dto.inputObjectType.MetaExpression;
 import io.graphoenix.core.dto.inputObjectType.StringExpression;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
+import java.util.Collection;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 import org.eclipse.microprofile.graphql.Name;
@@ -114,6 +115,12 @@ public interface __TypeInterfacesExpressionBase extends MetaExpression {
   @Description("Condition")
   Conditional cond = Conditional.AND;
 
+  /**
+   * Expressions
+   */
+  @Description("Expressions")
+  Collection<__TypeInterfacesExpression> exs = null;
+
   default StringExpression getId() {
     return id;
   }
@@ -209,4 +216,10 @@ public interface __TypeInterfacesExpressionBase extends MetaExpression {
   }
 
   void setCond(Conditional cond);
+
+  default Collection<__TypeInterfacesExpression> getExs() {
+    return exs;
+  }
+
+  void setExs(Collection<__TypeInterfacesExpression> exs);
 }

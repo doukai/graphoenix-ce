@@ -126,6 +126,12 @@ public @interface __SchemaInputBase {
   @Description("subscriptionType Reference")
   String subscriptionTypeName() default "";
 
+  /**
+   * Where
+   */
+  @Description("Where")
+  __SchemaExpression1 where() default @__SchemaExpression1;
+
   String $id() default "";
 
   String $types() default "";
@@ -161,4 +167,6 @@ public @interface __SchemaInputBase {
   String $mutationTypeName() default "";
 
   String $subscriptionTypeName() default "";
+
+  String $where() default "";
 }

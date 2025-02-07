@@ -108,6 +108,12 @@ public @interface __EnumValueInputBase1 {
   @Description("ofType Reference")
   String ofTypeName() default "";
 
+  /**
+   * Where
+   */
+  @Description("Where")
+  __EnumValueExpression2 where() default @__EnumValueExpression2;
+
   String $id() default "";
 
   String $name() default "";
@@ -137,4 +143,6 @@ public @interface __EnumValueInputBase1 {
   String $__typename() default "";
 
   String $ofTypeName() default "";
+
+  String $where() default "";
 }

@@ -301,11 +301,13 @@ public class __TypeInterfacesSubscriptionArguments implements MetaExpression, __
     this.cond = (Conditional)cond;
   }
 
+  @Override
   public Collection<__TypeInterfacesExpression> getExs() {
     return this.exs;
   }
 
+  @Override
   public void setExs(Collection<__TypeInterfacesExpression> exs) {
-    this.exs = exs;
+    this.exs = (Collection<__TypeInterfacesExpression>)exs;
   }
 }

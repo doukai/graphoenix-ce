@@ -132,6 +132,12 @@ public @interface __InputValueInputBase {
   @Description("type Reference")
   String typeName() default "";
 
+  /**
+   * Where
+   */
+  @Description("Where")
+  __InputValueExpression1 where() default @__InputValueExpression1;
+
   String $id() default "";
 
   String $name() default "";
@@ -169,4 +175,6 @@ public @interface __InputValueInputBase {
   String $ofTypeName() default "";
 
   String $typeName() default "";
+
+  String $where() default "";
 }

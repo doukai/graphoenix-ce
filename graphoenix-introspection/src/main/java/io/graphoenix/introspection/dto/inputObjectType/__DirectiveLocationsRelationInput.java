@@ -237,11 +237,13 @@ public class __DirectiveLocationsRelationInput implements MetaInput, __Directive
     this.__typename = (String)__typename;
   }
 
+  @Override
   public __DirectiveLocationsRelationExpression getWhere() {
     return this.where;
   }
 
+  @Override
   public void setWhere(__DirectiveLocationsRelationExpression where) {
-    this.where = where;
+    this.where = (__DirectiveLocationsRelationExpression)where;
   }
 }

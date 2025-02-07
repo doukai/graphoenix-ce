@@ -102,6 +102,12 @@ public @interface FileInputBase {
   @Description("Type Name")
   String __typename() default "File";
 
+  /**
+   * Where
+   */
+  @Description("Where")
+  FileExpression1 where() default @FileExpression1;
+
   String $id() default "";
 
   String $name() default "";
@@ -129,4 +135,6 @@ public @interface FileInputBase {
   String $createGroupId() default "";
 
   String $__typename() default "";
+
+  String $where() default "";
 }

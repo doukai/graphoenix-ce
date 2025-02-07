@@ -112,6 +112,12 @@ public @interface __DirectiveLocationsRelationExpressionBase1 {
   @Description("Condition")
   Conditional cond() default Conditional.AND;
 
+  /**
+   * Expressions
+   */
+  @Description("Expressions")
+  __DirectiveLocationsRelationExpression2[] exs() default {};
+
   String $id() default "";
 
   String $__directiveRef() default "";
@@ -141,4 +147,6 @@ public @interface __DirectiveLocationsRelationExpressionBase1 {
   String $not() default "";
 
   String $cond() default "";
+
+  String $exs() default "";
 }

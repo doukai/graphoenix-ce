@@ -410,12 +410,14 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
     this.cond = (Conditional)cond;
   }
 
+  @Override
   public Collection<__FieldExpression> getExs() {
     return this.exs;
   }
 
+  @Override
   public void setExs(Collection<__FieldExpression> exs) {
-    this.exs = exs;
+    this.exs = (Collection<__FieldExpression>)exs;
   }
 
   public Integer getFirst() {

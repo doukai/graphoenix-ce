@@ -90,6 +90,12 @@ public @interface TreeStructInputBase {
   @Description("createGroupId")
   String createGroupId() default "";
 
+  /**
+   * Where
+   */
+  @Description("Where")
+  TreeStructExpression1 where() default @TreeStructExpression1;
+
   String $name() default "";
 
   String $path() default "";
@@ -113,4 +119,6 @@ public @interface TreeStructInputBase {
   String $updateTime() default "";
 
   String $createGroupId() default "";
+
+  String $where() default "";
 }

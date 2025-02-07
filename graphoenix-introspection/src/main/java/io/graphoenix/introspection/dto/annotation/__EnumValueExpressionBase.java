@@ -123,6 +123,12 @@ public @interface __EnumValueExpressionBase {
   @Description("Condition")
   Conditional cond() default Conditional.AND;
 
+  /**
+   * Expressions
+   */
+  @Description("Expressions")
+  __EnumValueExpression1[] exs() default {};
+
   String $id() default "";
 
   String $name() default "";
@@ -156,4 +162,6 @@ public @interface __EnumValueExpressionBase {
   String $not() default "";
 
   String $cond() default "";
+
+  String $exs() default "";
 }

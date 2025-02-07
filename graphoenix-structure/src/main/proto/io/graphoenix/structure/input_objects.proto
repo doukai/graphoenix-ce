@@ -28,6 +28,7 @@ message TreeStructExpressionBase {
     io.graphoenix.core.StringExpression create_group_id = 12; /* createGroupId */
     bool not = 13; /* Not */
     io.graphoenix.core.Conditional cond = 14; /* Condition */
+    repeated TreeStructExpression exs = 15; /* Expressions */
 }
 /**
 * Mutation Input for TreeStruct
@@ -45,6 +46,7 @@ message TreeStructInputBase {
     string update_user_id = 10; /* updateUserId */
     google.protobuf.Timestamp update_time = 11; /* updateTime */
     string create_group_id = 12; /* createGroupId */
+    TreeStructExpression where = 13; /* Where */
 }
 /**
 * Query Expression Input for TreeStruct
@@ -98,6 +100,7 @@ message NamedStructExpressionBase {
     io.graphoenix.core.StringExpression create_group_id = 10; /* createGroupId */
     bool not = 11; /* Not */
     io.graphoenix.core.Conditional cond = 12; /* Condition */
+    repeated NamedStructExpression exs = 13; /* Expressions */
 }
 /**
 * Mutation Input for NamedStruct
@@ -113,6 +116,7 @@ message NamedStructInputBase {
     string update_user_id = 8; /* updateUserId */
     google.protobuf.Timestamp update_time = 9; /* updateTime */
     string create_group_id = 10; /* createGroupId */
+    NamedStructExpression where = 11; /* Where */
 }
 /**
 * Query Expression Input for NamedStruct

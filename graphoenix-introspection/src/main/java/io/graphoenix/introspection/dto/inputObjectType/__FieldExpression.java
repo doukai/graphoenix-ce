@@ -350,11 +350,13 @@ public class __FieldExpression implements MetaExpression, __FieldExpressionBase 
     this.cond = (Conditional)cond;
   }
 
+  @Override
   public Collection<__FieldExpression> getExs() {
     return this.exs;
   }
 
+  @Override
   public void setExs(Collection<__FieldExpression> exs) {
-    this.exs = exs;
+    this.exs = (Collection<__FieldExpression>)exs;
   }
 }

@@ -117,6 +117,12 @@ public @interface FileExpressionBase {
   @Description("Condition")
   Conditional cond() default Conditional.AND;
 
+  /**
+   * Expressions
+   */
+  @Description("Expressions")
+  FileExpression1[] exs() default {};
+
   String $id() default "";
 
   String $name() default "";
@@ -148,4 +154,6 @@ public @interface FileExpressionBase {
   String $not() default "";
 
   String $cond() default "";
+
+  String $exs() default "";
 }

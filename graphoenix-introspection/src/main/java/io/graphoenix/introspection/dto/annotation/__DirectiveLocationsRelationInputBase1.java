@@ -97,6 +97,12 @@ public @interface __DirectiveLocationsRelationInputBase1 {
   @Description("Type Name")
   String __typename() default "__DirectiveLocationsRelation";
 
+  /**
+   * Where
+   */
+  @Description("Where")
+  __DirectiveLocationsRelationExpression2 where() default @__DirectiveLocationsRelationExpression2;
+
   String $id() default "";
 
   String $__directiveRef() default "";
@@ -122,4 +128,6 @@ public @interface __DirectiveLocationsRelationInputBase1 {
   String $createGroupId() default "";
 
   String $__typename() default "";
+
+  String $where() default "";
 }

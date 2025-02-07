@@ -303,11 +303,13 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
     this.__directiveLocationsRelation = (Collection<__DirectiveLocationsRelationInput>)__directiveLocationsRelation;
   }
 
+  @Override
   public __DirectiveExpression getWhere() {
     return this.where;
   }
 
+  @Override
   public void setWhere(__DirectiveExpression where) {
-    this.where = where;
+    this.where = (__DirectiveExpression)where;
   }
 }

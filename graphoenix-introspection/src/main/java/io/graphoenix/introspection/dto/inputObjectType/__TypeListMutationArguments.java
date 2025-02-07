@@ -412,11 +412,13 @@ public class __TypeListMutationArguments implements MetaInput, __TypeInputBase {
     this.list = list;
   }
 
+  @Override
   public __TypeExpression getWhere() {
     return this.where;
   }
 
+  @Override
   public void setWhere(__TypeExpression where) {
-    this.where = where;
+    this.where = (__TypeExpression)where;
   }
 }

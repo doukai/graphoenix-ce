@@ -362,12 +362,14 @@ public class __EnumValueConnectionSubscriptionArguments implements MetaExpressio
     this.cond = (Conditional)cond;
   }
 
+  @Override
   public Collection<__EnumValueExpression> getExs() {
     return this.exs;
   }
 
+  @Override
   public void setExs(Collection<__EnumValueExpression> exs) {
-    this.exs = exs;
+    this.exs = (Collection<__EnumValueExpression>)exs;
   }
 
   public Integer getFirst() {

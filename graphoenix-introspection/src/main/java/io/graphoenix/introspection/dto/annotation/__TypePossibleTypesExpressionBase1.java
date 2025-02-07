@@ -117,6 +117,12 @@ public @interface __TypePossibleTypesExpressionBase1 {
   @Description("Condition")
   Conditional cond() default Conditional.AND;
 
+  /**
+   * Expressions
+   */
+  @Description("Expressions")
+  __TypePossibleTypesExpression2[] exs() default {};
+
   String $id() default "";
 
   String $typeRef() default "";
@@ -148,4 +154,6 @@ public @interface __TypePossibleTypesExpressionBase1 {
   String $not() default "";
 
   String $cond() default "";
+
+  String $exs() default "";
 }

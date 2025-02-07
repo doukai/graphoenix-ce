@@ -88,6 +88,12 @@ public interface TreeStructInputBase extends MetaInput {
   @Description("createGroupId")
   String createGroupId = null;
 
+  /**
+   * Where
+   */
+  @Description("Where")
+  TreeStructExpression where = null;
+
   default String getName() {
     return name;
   }
@@ -159,4 +165,10 @@ public interface TreeStructInputBase extends MetaInput {
   }
 
   void setCreateGroupId(String createGroupId);
+
+  default TreeStructExpression getWhere() {
+    return where;
+  }
+
+  void setWhere(TreeStructExpression where);
 }

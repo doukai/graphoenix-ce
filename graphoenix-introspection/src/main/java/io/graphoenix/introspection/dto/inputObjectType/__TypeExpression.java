@@ -431,11 +431,13 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
     this.cond = (Conditional)cond;
   }
 
+  @Override
   public Collection<__TypeExpression> getExs() {
     return this.exs;
   }
 
+  @Override
   public void setExs(Collection<__TypeExpression> exs) {
-    this.exs = exs;
+    this.exs = (Collection<__TypeExpression>)exs;
   }
 }

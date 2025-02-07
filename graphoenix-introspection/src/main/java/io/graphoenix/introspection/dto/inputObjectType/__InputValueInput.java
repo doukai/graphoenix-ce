@@ -332,11 +332,13 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
     this.typeName = (String)typeName;
   }
 
+  @Override
   public __InputValueExpression getWhere() {
     return this.where;
   }
 
+  @Override
   public void setWhere(__InputValueExpression where) {
-    this.where = where;
+    this.where = (__InputValueExpression)where;
   }
 }

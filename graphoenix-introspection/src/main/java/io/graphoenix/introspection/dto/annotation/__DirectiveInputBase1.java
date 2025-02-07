@@ -121,6 +121,12 @@ public @interface __DirectiveInputBase1 {
   @Description("Relationship Object between __Directive and locations")
   __DirectiveLocationsRelationInput2[] __directiveLocationsRelation() default {};
 
+  /**
+   * Where
+   */
+  @Description("Where")
+  __DirectiveExpression2 where() default @__DirectiveExpression2;
+
   String $name() default "";
 
   String $ofSchema() default "";
@@ -154,4 +160,6 @@ public @interface __DirectiveInputBase1 {
   String $schemaId() default "";
 
   String $__directiveLocationsRelation() default "";
+
+  String $where() default "";
 }

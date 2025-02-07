@@ -491,12 +491,14 @@ public class __TypeConnectionSubscriptionArguments implements MetaExpression, __
     this.cond = (Conditional)cond;
   }
 
+  @Override
   public Collection<__TypeExpression> getExs() {
     return this.exs;
   }
 
+  @Override
   public void setExs(Collection<__TypeExpression> exs) {
-    this.exs = exs;
+    this.exs = (Collection<__TypeExpression>)exs;
   }
 
   public Integer getFirst() {

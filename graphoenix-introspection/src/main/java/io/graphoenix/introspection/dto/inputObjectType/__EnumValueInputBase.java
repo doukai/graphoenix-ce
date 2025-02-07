@@ -106,6 +106,12 @@ public interface __EnumValueInputBase extends MetaInput {
   @Description("ofType Reference")
   String ofTypeName = null;
 
+  /**
+   * Where
+   */
+  @Description("Where")
+  __EnumValueExpression where = null;
+
   default String getId() {
     return id;
   }
@@ -195,4 +201,10 @@ public interface __EnumValueInputBase extends MetaInput {
   }
 
   void setOfTypeName(String ofTypeName);
+
+  default __EnumValueExpression getWhere() {
+    return where;
+  }
+
+  void setWhere(__EnumValueExpression where);
 }

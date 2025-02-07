@@ -147,6 +147,12 @@ public @interface __InputValueExpressionBase {
   @Description("Condition")
   Conditional cond() default Conditional.AND;
 
+  /**
+   * Expressions
+   */
+  @Description("Expressions")
+  __InputValueExpression1[] exs() default {};
+
   String $id() default "";
 
   String $name() default "";
@@ -188,4 +194,6 @@ public @interface __InputValueExpressionBase {
   String $not() default "";
 
   String $cond() default "";
+
+  String $exs() default "";
 }

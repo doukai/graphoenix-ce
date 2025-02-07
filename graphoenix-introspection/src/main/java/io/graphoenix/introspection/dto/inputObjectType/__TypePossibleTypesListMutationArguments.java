@@ -267,11 +267,13 @@ public class __TypePossibleTypesListMutationArguments implements MetaInput, __Ty
     this.list = list;
   }
 
+  @Override
   public __TypePossibleTypesExpression getWhere() {
     return this.where;
   }
 
+  @Override
   public void setWhere(__TypePossibleTypesExpression where) {
-    this.where = where;
+    this.where = (__TypePossibleTypesExpression)where;
   }
 }

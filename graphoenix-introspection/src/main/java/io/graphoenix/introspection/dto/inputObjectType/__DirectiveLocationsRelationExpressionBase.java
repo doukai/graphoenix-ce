@@ -7,6 +7,7 @@ import io.graphoenix.core.dto.inputObjectType.StringExpression;
 import io.graphoenix.core.dto.inputObjectType.__DirectiveLocationExpression;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
+import java.util.Collection;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
@@ -107,6 +108,12 @@ public interface __DirectiveLocationsRelationExpressionBase extends MetaExpressi
   @Description("Condition")
   Conditional cond = Conditional.AND;
 
+  /**
+   * Expressions
+   */
+  @Description("Expressions")
+  Collection<__DirectiveLocationsRelationExpression> exs = null;
+
   default StringExpression getId() {
     return id;
   }
@@ -196,4 +203,10 @@ public interface __DirectiveLocationsRelationExpressionBase extends MetaExpressi
   }
 
   void setCond(Conditional cond);
+
+  default Collection<__DirectiveLocationsRelationExpression> getExs() {
+    return exs;
+  }
+
+  void setExs(Collection<__DirectiveLocationsRelationExpression> exs);
 }

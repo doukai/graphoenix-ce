@@ -100,6 +100,12 @@ public interface __TypePossibleTypesInputBase extends MetaInput {
   @Description("Type Name")
   String __typename = "__TypePossibleTypes";
 
+  /**
+   * Where
+   */
+  @Description("Where")
+  __TypePossibleTypesExpression where = null;
+
   default String getId() {
     return id;
   }
@@ -183,4 +189,10 @@ public interface __TypePossibleTypesInputBase extends MetaInput {
   }
 
   void set__typename(String __typename);
+
+  default __TypePossibleTypesExpression getWhere() {
+    return where;
+  }
+
+  void setWhere(__TypePossibleTypesExpression where);
 }

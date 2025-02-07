@@ -78,6 +78,12 @@ public @interface NamedStructInputBase {
   @Description("createGroupId")
   String createGroupId() default "";
 
+  /**
+   * Where
+   */
+  @Description("Where")
+  NamedStructExpression1 where() default @NamedStructExpression1;
+
   String $name() default "";
 
   String $description() default "";
@@ -97,4 +103,6 @@ public @interface NamedStructInputBase {
   String $updateTime() default "";
 
   String $createGroupId() default "";
+
+  String $where() default "";
 }
