@@ -15,7 +15,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Mutation Input for NamedStruct")
-public interface NamedStructInput extends MetaInput, NamedStructInputBase {
+public interface NamedStructInput extends MetaInput {
   /**
    * name
    */

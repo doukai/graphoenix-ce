@@ -884,8 +884,6 @@ public class DocumentBuilder {
                                 .filter(interfaceType -> !interfaceType.getName().equals(INTERFACE_META_NAME))
                                 .flatMap(interfaceType ->
                                         Stream.of(
-                                                fieldsToExpression(interfaceType, true),
-                                                fieldsToInput(interfaceType, true),
                                                 fieldsToExpression(interfaceType),
                                                 fieldsToInput(interfaceType)
                                         )
@@ -953,7 +951,7 @@ public class DocumentBuilder {
                                                                                 Stream.of(INTERFACE_META_NAME)
                                                                         )
                                                                         .map(interfaceName -> interfaceName + SUFFIX_EXPRESSION),
-                                                                base ? Stream.empty() : Stream.of(fieldsType.getName() + InputType.EXPRESSION + SUFFIX_BASE)
+                                                                base || fieldsType instanceof InterfaceType ? Stream.empty() : Stream.of(fieldsType.getName() + InputType.EXPRESSION + SUFFIX_BASE)
                                                         )
                                                         .distinct()
                                                         .collect(Collectors.toList())
@@ -1010,7 +1008,7 @@ public class DocumentBuilder {
                                                                                 Stream.of(INTERFACE_META_NAME)
                                                                         )
                                                                         .map(interfaceName -> interfaceName + SUFFIX_INPUT),
-                                                                base ? Stream.empty() : Stream.of(fieldsType.getName() + InputType.INPUT + SUFFIX_BASE)
+                                                                base || fieldsType instanceof InterfaceType ? Stream.empty() : Stream.of(fieldsType.getName() + InputType.INPUT + SUFFIX_BASE)
                                                         )
                                                         .distinct()
                                                         .collect(Collectors.toList())

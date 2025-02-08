@@ -15,7 +15,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Query Expression Input for TreeStruct")
-public interface TreeStructExpression extends MetaExpression, TreeStructExpressionBase {
+public interface TreeStructExpression extends MetaExpression {
   /**
    * name
    */

@@ -15,7 +15,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Mutation Input for TreeStruct")
-public interface TreeStructInput extends MetaInput, TreeStructInputBase {
+public interface TreeStructInput extends MetaInput {
   /**
    * name
    */

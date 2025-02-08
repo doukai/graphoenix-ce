@@ -15,7 +15,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Query Expression Input for NamedStruct")
-public interface NamedStructExpression extends MetaExpression, NamedStructExpressionBase {
+public interface NamedStructExpression extends MetaExpression {
   /**
    * name
    */
