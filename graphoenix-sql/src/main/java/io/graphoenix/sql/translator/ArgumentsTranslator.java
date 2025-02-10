@@ -368,7 +368,6 @@ public class ArgumentsTranslator {
                                                 new MinorThan()
                                                         .withLeftExpression(column)
                                                         .withRightExpression(leafValueToDBValue(valueWithVariable))
-
                                         )
                         );
             }
@@ -453,11 +452,24 @@ public class ArgumentsTranslator {
                         );
             }
         } else {
+            Table parentTable = typeToTable(objectType, level);
             Table table = graphqlTypeToTable(fieldDefinition.getMapWithTypeOrError(), level);
             return new PlainSelect()
                     .addSelectItems(new AllColumns())
                     .withFromItem(table)
-                    .withWhere(expression);
+                    .withWhere(
+                            new MultiAndExpression(
+                                    Arrays.asList(
+                                            new EqualsTo()
+                                                    .withLeftExpression(graphqlFieldToColumn(table, fieldDefinition.getMapWithFromOrError()))
+                                                    .withRightExpression(graphqlFieldToColumn(parentTable, fieldDefinition.getMapFromOrError())),
+                                            expression,
+                                            new NotEqualsTo()
+                                                    .withLeftExpression(graphqlFieldToColumn(table, FIELD_DEPRECATED_NAME))
+                                                    .withRightExpression(new LongValue(1))
+                                    )
+                            )
+                    );
         }
     }
 
