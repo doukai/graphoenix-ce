@@ -10,6 +10,7 @@ import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.ObjectType;
 import io.graphoenix.spi.handler.OperationAfterHandler;
+import io.graphoenix.spi.utils.StreamUtil;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -67,6 +68,7 @@ public class SelectionHandler implements OperationAfterHandler {
                                                             );
                                                 }
                                         )
+                                        .filter(StreamUtil.distinctByKey(jsonObject -> jsonObject.getString("op") + jsonObject.getString("path")))
                                         .collect(JsonCollectors.toJsonArray())
                         )
                         .build()

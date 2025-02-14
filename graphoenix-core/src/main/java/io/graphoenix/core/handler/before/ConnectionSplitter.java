@@ -124,6 +124,7 @@ public class ConnectionSplitter implements OperationBeforeHandler {
                                     .filter(StreamUtil.distinctByKey(AbstractDefinition::getName));
 
                             return new Field(connectionFieldDefinition.getName())
+                                    .setAlias(Optional.ofNullable(field.getAlias()).orElseGet(field::getName) + SUFFIX_LIST)
                                     .setSelections(fieldStream.collect(Collectors.toList()))
                                     .setArguments(
                                             Stream.ofNullable(field.getArguments())
@@ -152,6 +153,7 @@ public class ConnectionSplitter implements OperationBeforeHandler {
                             FieldDefinition connectionAggDefinition = objectType.getField(fieldDefinition.getConnectionAggOrError());
                             ObjectType fieldTypeDefinition = documentManager.getFieldTypeDefinition(connectionAggDefinition).asObject();
                             return new Field(connectionAggDefinition.getName())
+                                    .setAlias(Optional.ofNullable(field.getAlias()).orElseGet(field::getName) + SUFFIX_AGGREGATE)
                                     .addSelection(new Field(fieldTypeDefinition.getIDFieldOrError().getName() + SUFFIX_COUNT))
                                     .setArguments(
                                             Stream.ofNullable(field.getArguments())

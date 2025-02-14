@@ -90,13 +90,11 @@ public class ConnectionBuilder implements OperationAfterHandler {
                         .flatMap(stream -> stream);
             } else {
                 if (fieldDefinition.isConnectionField()) {
-                    String filedName = fieldDefinition.getConnectionFieldOrError();
-                    if (jsonValue.asJsonObject().get(filedName) == null || jsonValue.asJsonObject().get(filedName).getValueType().equals(JsonValue.ValueType.NULL)) {
+                    if (jsonValue.asJsonObject().get(selectionName + SUFFIX_LIST) == null || jsonValue.asJsonObject().get(selectionName + SUFFIX_LIST).getValueType().equals(JsonValue.ValueType.NULL)) {
                         return Stream.empty();
                     }
-                    String aggName = fieldDefinition.getConnectionAggOrError();
                     FieldDefinition nodeFieldDefinition = documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(FIELD_EDGES_NAME)).asObject().getField(FIELD_NODE_NAME);
-                    JsonValue connectionJsonValue = buildConnection(nodeFieldDefinition, field, jsonValue.asJsonObject().get(filedName), jsonValue.asJsonObject().get(aggName));
+                    JsonValue connectionJsonValue = buildConnection(nodeFieldDefinition, field, jsonValue.asJsonObject().get(selectionName + SUFFIX_LIST), jsonValue.asJsonObject().get(selectionName + SUFFIX_AGGREGATE));
 
                     JsonObject patchItem = jsonProvider.createObjectBuilder()
                             .add("op", "add")

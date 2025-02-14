@@ -134,7 +134,7 @@ public class QueryTranslator {
                                             new JsonKeyValuePair(
                                                     new StringValue(Optional.ofNullable(subField.getAlias()).orElseGet(subField::getName)).toString(),
                                                     inGroupBy ?
-                                                            groupFieldToExpression(
+                                                            fieldToExpression(
                                                                     fieldTypeDefinition.asObject(),
                                                                     fieldTypeDefinition.asObject().getField(subField.getName()),
                                                                     subField,
@@ -427,42 +427,6 @@ public class QueryTranslator {
         }
         whereExpression.ifPresent(plainSelect::setWhere);
         return plainSelect;
-    }
-
-    protected Expression groupFieldToExpression(ObjectType objectType, FieldDefinition fieldDefinition, Field field, int level) {
-        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        if (fieldTypeDefinition.isObject()) {
-            JsonFunction jsonObjectFunction =
-                    jsonObjectFunction(
-                            field.getFields().stream()
-                                    .filter(subField -> {
-                                                FieldDefinition subFieldDefinition = fieldTypeDefinition.asObject().getField(subField.getName());
-                                                return !subFieldDefinition.isFetchField() &&
-                                                        !subFieldDefinition.isInvokeField() &&
-                                                        !subFieldDefinition.isConnectionField() &&
-                                                        !subFieldDefinition.getType().hasList();
-                                            }
-                                    )
-                                    .map(subField ->
-                                            new JsonKeyValuePair(
-                                                    new StringValue(Optional.ofNullable(subField.getAlias()).orElseGet(subField::getName)).toString(),
-                                                    groupFieldToExpression(
-                                                            fieldTypeDefinition.asObject(),
-                                                            fieldTypeDefinition.asObject().getField(subField.getName()),
-                                                            subField,
-                                                            level + 1
-                                                    ),
-                                                    false,
-                                                    false
-                                            )
-                                    )
-                                    .collect(Collectors.toList())
-                    );
-
-            return jsonExtractFunction(jsonObjectFunction);
-        } else {
-            return leafFieldToExpression(objectType, fieldDefinition, field, false, level);
-        }
     }
 
     protected Stream<Join> groupFieldToJoinStream(ObjectType objectType, FieldDefinition fieldDefinition, Field field, int level) {
