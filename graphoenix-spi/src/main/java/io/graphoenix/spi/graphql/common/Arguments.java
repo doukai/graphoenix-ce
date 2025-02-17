@@ -336,6 +336,7 @@ public class Arguments extends AbstractMap<String, JsonValue> implements ValueWi
         return st.render();
     }
 
+    @Override
     public String toJson() {
         StringWriter sw = new StringWriter();
         jsonProvider.createWriter(sw);

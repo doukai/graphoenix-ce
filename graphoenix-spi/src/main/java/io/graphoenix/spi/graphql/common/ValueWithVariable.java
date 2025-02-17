@@ -221,4 +221,8 @@ public interface ValueWithVariable extends JsonValue {
     default Variable asVariable() {
         return (Variable) this;
     }
+
+    default String toJson() {
+        return toString();
+    }
 }

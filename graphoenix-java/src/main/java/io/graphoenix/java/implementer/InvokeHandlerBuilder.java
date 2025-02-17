@@ -506,27 +506,27 @@ public class InvokeHandlerBuilder {
                                                                                                                                 InputValue inputValue = fieldDefinition.getArgument(parameter.getKey());
                                                                                                                                 if (documentManager.getInputValueTypeDefinition(inputValue).isLeaf()) {
                                                                                                                                     if (argumentTypeNames.length == 1) {
-                                                                                                                                        return CodeBlock.of("jsonb.fromJson(field.getArguments().get($S).toString(), new $T<$T<$T>>() {}.type)",
+                                                                                                                                        return CodeBlock.of("jsonb.fromJson(field.getArguments().getArgument($S).toJson(), new $T<$T<$T>>() {}.type)",
                                                                                                                                                 parameter.getKey(),
                                                                                                                                                 ClassName.get(TypeDefinition.class),
                                                                                                                                                 toClassName(className),
                                                                                                                                                 toClassName(argumentTypeNames[0])
                                                                                                                                         );
                                                                                                                                     }
-                                                                                                                                    return CodeBlock.of("jsonb.fromJson(field.getArguments().get($S).toString(), $T.class)",
+                                                                                                                                    return CodeBlock.of("jsonb.fromJson(field.getArguments().getArgument($S).toJson(), $T.class)",
                                                                                                                                             parameter.getKey(),
                                                                                                                                             toClassName(className)
                                                                                                                                     );
                                                                                                                                 } else {
                                                                                                                                     if (argumentTypeNames.length == 1) {
-                                                                                                                                        return CodeBlock.of("jsonb.fromJson(field.getArguments().getArgument($S).asObject().toJson(), new $T<$T<$T>>() {}.type)",
+                                                                                                                                        return CodeBlock.of("jsonb.fromJson(field.getArguments().getArgument($S).toJson(), new $T<$T<$T>>() {}.type)",
                                                                                                                                                 parameter.getKey(),
                                                                                                                                                 ClassName.get(TypeDefinition.class),
                                                                                                                                                 toClassName(className),
                                                                                                                                                 toClassName(argumentTypeNames[0])
                                                                                                                                         );
                                                                                                                                     }
-                                                                                                                                    return CodeBlock.of("jsonb.fromJson(field.getArguments().getArgument($S).asObject().toJson(), $T.class)",
+                                                                                                                                    return CodeBlock.of("jsonb.fromJson(field.getArguments().getArgument($S).toJson(), $T.class)",
                                                                                                                                             parameter.getKey(),
                                                                                                                                             toClassName(className)
                                                                                                                                     );
@@ -539,14 +539,24 @@ public class InvokeHandlerBuilder {
                                                                                                             .indent();
 
                                                                                                     if (async) {
-                                                                                                        codeBlockBuilder
-                                                                                                                .add("return $L.get().async($S, $L).map(sync -> ($T)sync)\n",
-                                                                                                                        apiVariableName,
-                                                                                                                        methodName,
-                                                                                                                        parametersCodeBlock,
-                                                                                                                        returnClassName
-                                                                                                                )
-                                                                                                                .indent();
+                                                                                                        if (parameters.isEmpty()) {
+                                                                                                            codeBlockBuilder
+                                                                                                                    .add("return $L.get().async($S).map(sync -> ($T)sync)\n",
+                                                                                                                            apiVariableName,
+                                                                                                                            methodName,
+                                                                                                                            returnClassName
+                                                                                                                    )
+                                                                                                                    .indent();
+                                                                                                        } else {
+                                                                                                            codeBlockBuilder
+                                                                                                                    .add("return $L.get().async($S, $L).map(sync -> ($T)sync)\n",
+                                                                                                                            apiVariableName,
+                                                                                                                            methodName,
+                                                                                                                            parametersCodeBlock,
+                                                                                                                            returnClassName
+                                                                                                                    )
+                                                                                                                    .indent();
+                                                                                                        }
                                                                                                     } else if (returnClassName.canonicalName().equals(Mono.class.getCanonicalName())) {
                                                                                                         codeBlockBuilder
                                                                                                                 .add("return $L.get().$L($L)\n",

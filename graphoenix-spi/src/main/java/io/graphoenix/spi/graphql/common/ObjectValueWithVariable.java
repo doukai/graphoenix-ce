@@ -315,6 +315,7 @@ public class ObjectValueWithVariable extends AbstractMap<String, JsonValue> impl
         return st.render();
     }
 
+    @Override
     public String toJson() {
         StringWriter sw = new StringWriter();
         jsonProvider.createWriter(sw);

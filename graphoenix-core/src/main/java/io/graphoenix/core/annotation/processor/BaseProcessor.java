@@ -440,7 +440,8 @@ public abstract class BaseProcessor extends AbstractProcessor {
     public Optional<? extends AnnotationMirror> getOperationAnnotationMirror(ExecutableElement executableElement) {
         return executableElement.getAnnotationMirrors().stream()
                 .filter(annotationMirror ->
-                        elements.getPackageOf(annotationMirror.getAnnotationType().asElement()).getQualifiedName().toString().equals(packageConfig.getAnnotationPackageName())
+                        Stream.of(TYPE_QUERY_NAME, TYPE_MUTATION_NAME, TYPE_SUBSCRIPTION_NAME)
+                                .anyMatch(name -> annotationMirror.getAnnotationType().asElement().getSimpleName().toString().equals(name))
                 )
                 .findFirst();
     }
@@ -493,20 +494,20 @@ public abstract class BaseProcessor extends AbstractProcessor {
                         new Directive(DIRECTIVE_PACKAGE_NAME)
                                 .addArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME, packageConfig.getPackageName())
                 );
-        FieldDefinition fieldDefinition;
+
         switch (annotationMirror.getAnnotationType().asElement().getSimpleName().toString()) {
             case TYPE_QUERY_NAME:
                 operation.setOperationType(OPERATION_QUERY_NAME);
-                fieldDefinition = documentManager.getDocument().getQueryOperationTypeOrError().getField(filedEntry.getKey().getSimpleName().toString());
                 break;
             case TYPE_MUTATION_NAME:
                 operation.setOperationType(OPERATION_MUTATION_NAME);
-                fieldDefinition = documentManager.getDocument().getMutationOperationTypeOrError().getField(filedEntry.getKey().getSimpleName().toString());
                 break;
             default:
                 throw new GraphQLErrors(UNSUPPORTED_OPERATION_TYPE);
         }
-        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+
+        io.graphoenix.spi.graphql.type.Type type = executableElementToTypeName(executableElement, types);
+        Definition fieldTypeDefinition = documentManager.getDocument().getDefinition(type.getTypeName().getName());
         if (fieldTypeDefinition.isObject()) {
             SelectionSet selectionSet = executableElement.getAnnotation(SelectionSet.class);
             if (selectionSet != null) {
