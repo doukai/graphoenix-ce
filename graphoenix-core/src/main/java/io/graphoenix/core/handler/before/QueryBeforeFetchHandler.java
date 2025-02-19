@@ -92,16 +92,21 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler, FetchBef
                         Flux
                                 .fromIterable(packageEntries.getValue().entrySet())
                                 .flatMap(protocolEntries ->
-                                        CDI.current().select(PackageFetchHandler.class, NamedLiteral.of(protocolEntries.getKey())).get()
-                                                .request(
-                                                        packageEntries.getKey(),
-                                                        new Operation()
-                                                                .setOperationType(OPERATION_QUERY_NAME)
-                                                                .setSelections(
-                                                                        protocolEntries.getValue().stream()
-                                                                                .map(FetchItem::getFetchField)
-                                                                                .filter(Objects::nonNull)
-                                                                                .collect(Collectors.toList())
+                                        Mono
+                                                .just(
+                                                        protocolEntries.getValue().stream()
+                                                                .map(FetchItem::getFetchField)
+                                                                .filter(Objects::nonNull)
+                                                                .collect(Collectors.toList())
+                                                )
+                                                .filter(fieldList -> !fieldList.isEmpty())
+                                                .flatMap(fieldList ->
+                                                        CDI.current().select(PackageFetchHandler.class, NamedLiteral.of(protocolEntries.getKey())).get()
+                                                                .request(
+                                                                        packageEntries.getKey(),
+                                                                        new Operation()
+                                                                                .setOperationType(OPERATION_QUERY_NAME)
+                                                                                .setSelections(fieldList)
                                                                 )
                                                 )
                                                 .flatMapMany(fetchJsonValue ->

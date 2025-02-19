@@ -100,13 +100,19 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                 .flatMap(packageEntries ->
                         Flux.fromIterable(packageEntries.getValue().entrySet())
                                 .flatMap(protocolEntries ->
-                                        CDI.current().select(PackageFetchHandler.class, NamedLiteral.of(protocolEntries.getKey())).get()
-                                                .request(
-                                                        packageEntries.getKey(),
-                                                        new Operation()
-                                                                .setOperationType(OPERATION_MUTATION_NAME)
-                                                                .setSelections(
-                                                                        FetchItem.buildMutationFields(protocolEntries.getValue())
+                                        Mono
+                                                .just(
+
+                                                        FetchItem.buildMutationFields(protocolEntries.getValue())
+                                                )
+                                                .filter(fieldList -> !fieldList.isEmpty())
+                                                .flatMap(fieldList ->
+                                                        CDI.current().select(PackageFetchHandler.class, NamedLiteral.of(protocolEntries.getKey())).get()
+                                                                .request(
+                                                                        packageEntries.getKey(),
+                                                                        new Operation()
+                                                                                .setOperationType(OPERATION_MUTATION_NAME)
+                                                                                .setSelections(fieldList)
                                                                 )
                                                 )
                                                 .flatMapMany(fetchJsonValue ->
