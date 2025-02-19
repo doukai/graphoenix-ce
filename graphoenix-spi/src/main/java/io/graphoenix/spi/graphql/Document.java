@@ -167,7 +167,6 @@ public class Document {
         return this;
     }
 
-
     public Document addDefinitionsByPathName(String pathName, String resourcePath) throws IOException {
         return addDefinitionsByPath(pathName, Paths.get(resourcePath));
     }

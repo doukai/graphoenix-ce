@@ -198,7 +198,11 @@ public final class ElementUtil {
             ) {
                 elementType = new TypeName(elementName + SUFFIX_INPUT);
             } else {
-                elementType = new TypeName(elementName);
+                if (Character.isDigit(elementName.charAt(elementName.length() - 1))) {
+                    elementType = new TypeName(elementName.substring(0, elementName.length() - 1));
+                } else {
+                    elementType = new TypeName(elementName);
+                }
             }
         }
 

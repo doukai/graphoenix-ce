@@ -2,9 +2,11 @@ package io.graphoenix.sql.implementer;
 
 import com.squareup.javapoet.*;
 import io.graphoenix.core.config.PackageConfig;
+import io.graphoenix.core.dao.PackageOperationDAO;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.core.utils.FileUtil;
+import io.graphoenix.java.implementer.PackageOperationInterfaceImplementer;
 import io.graphoenix.spi.dao.OperationDAO;
 import io.graphoenix.spi.error.GraphQLErrorType;
 import io.graphoenix.spi.error.GraphQLErrors;
@@ -57,20 +59,21 @@ public class OperationInterfaceImplementer {
     private final MutationTranslator mutationTranslator;
     private final SQLFormatHandler sqlFormatHandler;
     private final PackageConfig packageConfig;
+    private final PackageOperationInterfaceImplementer packageOperationInterfaceImplementer;
 
     @Inject
-    public OperationInterfaceImplementer(DocumentManager documentManager, PackageManager packageManager, QueryTranslator queryTranslator, MutationTranslator mutationTranslator, SQLFormatHandler sqlFormatHandler, PackageConfig packageConfig) {
+    public OperationInterfaceImplementer(DocumentManager documentManager, PackageManager packageManager, QueryTranslator queryTranslator, MutationTranslator mutationTranslator, SQLFormatHandler sqlFormatHandler, PackageConfig packageConfig, PackageOperationInterfaceImplementer packageOperationInterfaceImplementer) {
         this.documentManager = documentManager;
         this.packageManager = packageManager;
         this.queryTranslator = queryTranslator;
         this.mutationTranslator = mutationTranslator;
         this.sqlFormatHandler = sqlFormatHandler;
         this.packageConfig = packageConfig;
+        this.packageOperationInterfaceImplementer = packageOperationInterfaceImplementer;
     }
 
     public void writeToFiler(Filer filer) throws IOException {
         documentManager.getDocument().getOperations()
-                .filter(packageManager::isLocalPackage)
                 .map(operation ->
                         new AbstractMap.SimpleEntry<>(
                                 operation.getInvokeClassNameOrError(),
@@ -92,7 +95,9 @@ public class OperationInterfaceImplementer {
                             String simpleName = interfaceName.substring(index + 1);
                             try {
                                 buildImplementClass(packageName, simpleName, operationList).writeTo(filer);
-                                for (Operation operation : operationList) {
+                                for (Operation operation : operationList.stream()
+                                        .filter(operation -> packageManager.isLocalPackage(documentManager.getOperationTypeOrError(operation).getField(operation.getSelection(0).asField().getName())))
+                                        .collect(Collectors.toList())) {
                                     Map.Entry<String, String> sqlFileEntry = buildSQLFile(simpleName, operation);
                                     FileObject fileObject = filer.createResource(
                                             StandardLocation.CLASS_OUTPUT,
@@ -150,6 +155,26 @@ public class OperationInterfaceImplementer {
                                 .build()
                 )
                 .addField(
+                        FieldSpec
+                                .builder(
+                                        ClassName.get(PackageOperationDAO.class),
+                                        "packageOperationDAO",
+                                        Modifier.PRIVATE,
+                                        Modifier.FINAL
+                                )
+                                .build()
+                )
+                .addField(
+                        FieldSpec
+                                .builder(
+                                        ClassName.get(DocumentManager.class),
+                                        "documentManager",
+                                        Modifier.PRIVATE,
+                                        Modifier.FINAL
+                                )
+                                .build()
+                )
+                .addField(
                         FieldSpec.builder(
                                 ClassName.get(Jsonb.class),
                                 "jsonb",
@@ -180,6 +205,7 @@ public class OperationInterfaceImplementer {
     private List<FieldSpec> buildSQLFields(List<Operation> operationList) {
         return operationList.stream()
                 .sorted(Comparator.comparingInt(Operation::getInvokeMethodIndexOrError))
+                .filter(operation -> packageManager.isLocalPackage(documentManager.getOperationTypeOrError(operation).getField(operation.getSelection(0).asField().getName())))
                 .map(this::buildSQLField)
                 .collect(Collectors.toList());
     }
@@ -200,6 +226,7 @@ public class OperationInterfaceImplementer {
         ClassName typeClassName = ClassName.get(packageName, "SQL" + simpleName + "Impl");
         CodeBlock.Builder builder = CodeBlock.builder();
         operationList.stream()
+                .filter(operation -> packageManager.isLocalPackage(documentManager.getOperationTypeOrError(operation).getField(operation.getSelection(0).asField().getName())))
                 .sorted(Comparator.comparingInt(Operation::getInvokeMethodIndexOrError))
                 .forEach(operation ->
                         builder.addStatement(
@@ -218,9 +245,13 @@ public class OperationInterfaceImplementer {
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Inject.class)
                 .addParameter(ParameterSpec.builder(ClassName.get(OperationDAO.class), "operationDAO").build())
+                .addParameter(ParameterSpec.builder(ClassName.get(PackageOperationDAO.class), "packageOperationDAO").build())
+                .addParameter(ParameterSpec.builder(ClassName.get(DocumentManager.class), "documentManager").build())
                 .addParameter(ClassName.get(Jsonb.class), "jsonb")
                 .addParameter(ClassName.get(packageConfig.getHandlerPackageName(), "InputInvokeHandler"), "inputInvokeHandler")
                 .addStatement("this.operationDAO = operationDAO")
+                .addStatement("this.packageOperationDAO = packageOperationDAO")
+                .addStatement("this.documentManager = documentManager")
                 .addStatement("this.jsonb = jsonb")
                 .addStatement("this.inputInvokeHandler = inputInvokeHandler");
 
@@ -282,7 +313,9 @@ public class OperationInterfaceImplementer {
                         new AbstractMap.SimpleEntry<>(entry.getKey(), getVariableInputValue(entry.getKey(), field, fieldDefinition).orElseThrow(() -> new RuntimeException("variable inputValue not found: " + entry.getKey())))
                 )
                 .filter(entry -> documentManager.getInputValueTypeDefinition(entry.getValue()).isInputObject())
-                .reduce(getCodeBlock(operation, parameterMapCodeBlock),
+                .reduce(packageManager.isLocalPackage(fieldDefinition) ?
+                                getCodeBlock(operation, parameterMapCodeBlock) :
+                                packageOperationInterfaceImplementer.getCodeBlock(operation, parameterMapCodeBlock),
                         (pre, cur) -> {
                             InputValue variableInputValue = cur.getValue();
                             Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(variableInputValue);

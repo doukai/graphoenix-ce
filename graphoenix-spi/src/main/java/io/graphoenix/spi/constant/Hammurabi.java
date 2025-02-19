@@ -99,6 +99,7 @@ public class Hammurabi {
     public static final String INPUT_WITH_INPUT_VALUE_TO_NAME = "to";
 
 
+    public static final String INPUT_INVOKE_INPUT_VALUE_PACKAGE_NAME_NAME = "package";
     public static final String INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME = "className";
     public static final String INPUT_INVOKE_INPUT_VALUE_METHOD_NAME_NAME = "methodName";
     public static final String INPUT_INVOKE_INPUT_VALUE_PARAMETER_NAME = "parameters";

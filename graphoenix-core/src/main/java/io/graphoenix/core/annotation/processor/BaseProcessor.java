@@ -7,9 +7,8 @@ import io.graphoenix.spi.annotation.*;
 import io.graphoenix.spi.annotation.Package;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.Definition;
-import io.graphoenix.spi.graphql.common.ArrayValueWithVariable;
+import io.graphoenix.spi.graphql.common.*;
 import io.graphoenix.spi.graphql.common.Directive;
-import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.*;
@@ -34,10 +33,7 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -275,6 +271,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
                             ) {
                                 boolean async = executableElement.getAnnotation(Async.class) != null;
                                 ObjectValueWithVariable invoke = ObjectValueWithVariable.of(
+                                        INPUT_INVOKE_INPUT_VALUE_PACKAGE_NAME_NAME, packageConfig.getPackageName(),
                                         INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME, executableElement.getEnclosingElement().toString(),
                                         INPUT_INVOKE_INPUT_VALUE_METHOD_NAME_NAME, async ? getAsyncMethodName(executableElement, types) : executableElement.getSimpleName().toString(),
                                         INPUT_INVOKE_INPUT_VALUE_PARAMETER_NAME,
@@ -372,6 +369,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                                     boolean onInputValue = executableElement.getAnnotation(OnInputValue.class) != null;
                                                     boolean onExpression = executableElement.getAnnotation(OnExpression.class) != null;
                                                     ObjectValueWithVariable invoke = ObjectValueWithVariable.of(
+                                                            INPUT_INVOKE_INPUT_VALUE_PACKAGE_NAME_NAME, packageConfig.getPackageName(),
                                                             INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME, executableElement.getEnclosingElement().toString(),
                                                             INPUT_INVOKE_INPUT_VALUE_METHOD_NAME_NAME, async ? getAsyncMethodName(executableElement, types) : executableElement.getSimpleName().toString(),
                                                             INPUT_INVOKE_INPUT_VALUE_PARAMETER_NAME,
@@ -452,7 +450,9 @@ public abstract class BaseProcessor extends AbstractProcessor {
         Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> filedEntry = annotationMirror.getElementValues().entrySet().stream()
                 .findFirst()
                 .orElseThrow(() -> new GraphQLErrors(FIELD_DEFINITION_NOT_EXIST.bind(annotationMirror.toString())));
-        Field field = new Field(executableElement, filedEntry.getKey(), (AnnotationMirror) filedEntry.getValue());
+        AnnotationMirror fieldAnnotationMirror = (AnnotationMirror) filedEntry.getValue();
+
+        Field field = new Field(executableElement, filedEntry.getKey(), fieldAnnotationMirror);
         Operation operation = new Operation(
                 typeElement.getQualifiedName().toString().replaceAll("\\.", "_") +
                         "_" +
@@ -494,6 +494,18 @@ public abstract class BaseProcessor extends AbstractProcessor {
                         new Directive(DIRECTIVE_PACKAGE_NAME)
                                 .addArgument(DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME, packageConfig.getPackageName())
                 );
+
+        List<VariableDefinition> variableDefinitions = executableElement.getParameters().stream()
+                .map(variableElement ->
+                        new VariableDefinition()
+                                .setVariable(new Variable(variableElement.getSimpleName().toString()))
+                                .setType(variableElementToTypeName(variableElement, types))
+                )
+                .collect(Collectors.toList());
+
+        if (!variableDefinitions.isEmpty()) {
+            operation.setVariableDefinitions(variableDefinitions);
+        }
 
         switch (annotationMirror.getAnnotationType().asElement().getSimpleName().toString()) {
             case TYPE_QUERY_NAME:

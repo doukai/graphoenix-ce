@@ -59,6 +59,7 @@ public class InputInvokeHandlerBuilder {
                                 .filter(packageManager::isLocalPackage)
                                 .flatMap(objectType -> objectType.getFields().stream())
                                 .flatMap(fieldDefinition -> documentManager.getDirectiveInvokes(fieldDefinition).stream())
+                                .filter(objectValueWithVariable -> packageManager.isLocalPackage(objectValueWithVariable.getString(INPUT_INVOKE_INPUT_VALUE_PACKAGE_NAME_NAME)))
                                 .filter(objectValueWithVariable ->
                                         objectValueWithVariable.getBoolean(INPUT_INVOKE_INPUT_VALUE_ON_EXPRESSION_NAME, false) ||
                                                 objectValueWithVariable.getBoolean(INPUT_INVOKE_INPUT_VALUE_ON_INPUT_VALUE_NAME, false)
@@ -238,6 +239,7 @@ public class InputInvokeHandlerBuilder {
                 .filter(inputValue -> !documentManager.getDirectiveInvokes(objectType.getField(inputValue.getName())).isEmpty())
                 .filter(inputValue ->
                         documentManager.getDirectiveInvokes(objectType.getField(inputValue.getName())).stream()
+                                .filter(objectValueWithVariable -> packageManager.isLocalPackage(objectValueWithVariable.getString(INPUT_INVOKE_INPUT_VALUE_PACKAGE_NAME_NAME)))
                                 .anyMatch(objectValueWithVariable ->
                                         documentManager.getInputValueTypeDefinition(inputValue).getName().endsWith(SUFFIX_EXPRESSION) ?
                                                 objectValueWithVariable.getBoolean(INPUT_INVOKE_INPUT_VALUE_ON_EXPRESSION_NAME, false) :
@@ -248,6 +250,7 @@ public class InputInvokeHandlerBuilder {
                             FieldDefinition fieldDefinition = objectType.getField(inputValue.getName());
                             CodeBlock getFieldCodeBlock = CodeBlock.of("$L.$L()", resultParameterName, getFieldGetterMethodName(fieldDefinition.getName()));
                             CodeBlock invokesCodeBlock = documentManager.getDirectiveInvokes(fieldDefinition).stream()
+                                    .filter(objectValueWithVariable -> packageManager.isLocalPackage(objectValueWithVariable.getString(INPUT_INVOKE_INPUT_VALUE_PACKAGE_NAME_NAME)))
                                     .filter(objectValueWithVariable ->
                                             documentManager.getInputValueTypeDefinition(inputValue).getName().endsWith(SUFFIX_EXPRESSION) ?
                                                     objectValueWithVariable.getBoolean(INPUT_INVOKE_INPUT_VALUE_ON_EXPRESSION_NAME, false) :
@@ -454,6 +457,7 @@ public class InputInvokeHandlerBuilder {
                                 .flatMap(interfaceObjectName -> documentManager.getDocument().getInputObjectType(interfaceObjectName).stream())
                                 .flatMap(this::getInvokes)
                 )
+                .filter(objectValueWithVariable -> packageManager.isLocalPackage(objectValueWithVariable.getString(INPUT_INVOKE_INPUT_VALUE_PACKAGE_NAME_NAME)))
                 .filter(StreamUtil.distinctByKey(objectValueWithVariable -> objectValueWithVariable.getString(INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME) + "." + objectValueWithVariable.getString(INPUT_INVOKE_INPUT_VALUE_METHOD_NAME_NAME)));
     }
 }

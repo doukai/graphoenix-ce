@@ -20,6 +20,7 @@ dependencies {
     implementation 'com.github.vertical-blank:sql-formatter:2.0.3'
 
     annotationProcessor project(':graphoenix-core')
+    annotationProcessor project(':graphoenix-java')
     annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
     annotationProcessor 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
 
