@@ -690,7 +690,7 @@ public class ArgumentsTranslator {
                         .withLeftExpression(column);
                 break;
             default:
-                throw new GraphQLErrors(GraphQLErrorType.UNSUPPORTED_OPERATOR_VALUE.bind(opr));
+                return Optional.empty();
         }
         return Optional.of(where);
     }
