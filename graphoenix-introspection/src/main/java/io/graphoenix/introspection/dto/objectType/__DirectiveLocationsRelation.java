@@ -3,6 +3,7 @@ package io.graphoenix.introspection.dto.objectType;
 import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.enumType.__DirectiveLocation;
 import io.graphoenix.core.dto.interfaceType.Meta;
+import io.graphoenix.introspection.dto.inputObjectType.__DirectiveLocationsRelationInput;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -344,5 +345,25 @@ public class __DirectiveLocationsRelation implements Meta {
 
   public void setLocationsRefMin(__DirectiveLocation locationsRefMin) {
     this.locationsRefMin = locationsRefMin;
+  }
+
+  public __DirectiveLocationsRelationInput toInput() {
+    __DirectiveLocationsRelationInput input = new __DirectiveLocationsRelationInput();
+    input.setId(this.getId());
+    input.set__directiveRef(this.get__directiveRef());
+    if(get__directive() != null) {
+      input.set__directive(this.get__directive().toInput());
+    }
+    input.setLocationsRef(this.getLocationsRef());
+    input.setIsDeprecated(this.getIsDeprecated());
+    input.setVersion(this.getVersion());
+    input.setRealmId(this.getRealmId());
+    input.setCreateUserId(this.getCreateUserId());
+    input.setCreateTime(this.getCreateTime());
+    input.setUpdateUserId(this.getUpdateUserId());
+    input.setUpdateTime(this.getUpdateTime());
+    input.setCreateGroupId(this.getCreateGroupId());
+    input.set__typename(this.get__typename());
+    return input;
   }
 }

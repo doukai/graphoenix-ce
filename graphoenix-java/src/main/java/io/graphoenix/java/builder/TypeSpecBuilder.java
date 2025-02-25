@@ -5,6 +5,7 @@ import com.google.common.base.CaseFormat;
 import com.google.common.collect.Streams;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.*;
+import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.java.config.GeneratorConfig;
@@ -48,12 +49,14 @@ public class TypeSpecBuilder {
 
     private final DocumentManager documentManager;
     private final PackageManager packageManager;
+    private final PackageConfig packageConfig;
     private final GeneratorConfig generatorConfig;
 
     @Inject
-    public TypeSpecBuilder(DocumentManager documentManager, PackageManager packageManager, GeneratorConfig generatorConfig) {
+    public TypeSpecBuilder(DocumentManager documentManager, PackageManager packageManager, PackageConfig packageConfig, GeneratorConfig generatorConfig) {
         this.documentManager = documentManager;
         this.packageManager = packageManager;
+        this.packageConfig = packageConfig;
         this.generatorConfig = generatorConfig;
     }
 
@@ -104,6 +107,52 @@ public class TypeSpecBuilder {
                                     .addMember("value", "$S", objectType.getDescription())
                                     .build()
                     );
+        }
+        if (!objectType.isContainer() && !documentManager.isOperationType(objectType)) {
+            ClassName className = ClassName.get(packageConfig.getInputObjectTypePackageName(), objectType.getName() + SUFFIX_INPUT);
+            MethodSpec.Builder toInput = MethodSpec.methodBuilder("toInput")
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(className)
+                    .addStatement("$T input = new $T()", className, className);
+
+            objectType.getFields().stream()
+                    .filter(fieldDefinition -> !fieldDefinition.isFunctionField())
+                    .filter(fieldDefinition -> !fieldDefinition.isAggregateField())
+                    .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
+                    .filter(fieldDefinition -> !fieldDefinition.isFetchField())
+                    .filter(fieldDefinition -> !fieldDefinition.isConnectionField())
+                    .forEach(fieldDefinition -> {
+                                Definition definition = documentManager.getFieldTypeDefinition(fieldDefinition);
+                                if (definition.isLeaf()) {
+                                    toInput.addStatement(
+                                            "input.$L(this.$L())",
+                                            getFieldSetterMethodName(fieldDefinition.getName()),
+                                            getFieldGetterMethodName(fieldDefinition.getName())
+                                    );
+                                } else {
+                                    if (fieldDefinition.getType().hasList()) {
+                                        toInput.beginControlFlow("if($L() != null)", getFieldGetterMethodName(fieldDefinition.getName()))
+                                                .addStatement(
+                                                        "input.$L(this.$L().stream().map(item -> item.toInput()).collect($T.toList()))",
+                                                        getFieldSetterMethodName(fieldDefinition.getName()),
+                                                        getFieldGetterMethodName(fieldDefinition.getName()),
+                                                        ClassName.get(Collectors.class)
+                                                )
+                                                .endControlFlow();
+                                    } else {
+                                        toInput.beginControlFlow("if($L() != null)", getFieldGetterMethodName(fieldDefinition.getName()))
+                                                .addStatement(
+                                                        "input.$L(this.$L().toInput())",
+                                                        getFieldSetterMethodName(fieldDefinition.getName()),
+                                                        getFieldGetterMethodName(fieldDefinition.getName())
+                                                )
+                                                .endControlFlow();
+                                    }
+                                }
+                            }
+                    );
+            toInput.addStatement("return input");
+            builder.addMethod(toInput.build());
         }
         Logger.info("class {} build success", objectType.getName());
         return builder.build();

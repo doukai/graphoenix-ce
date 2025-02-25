@@ -2,6 +2,7 @@ package io.graphoenix.introspection.dto.objectType;
 
 import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.interfaceType.Meta;
+import io.graphoenix.introspection.dto.inputObjectType.__FieldInput;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -9,6 +10,7 @@ import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.stream.Collectors;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Id;
 import org.eclipse.microprofile.graphql.NonNull;
@@ -539,5 +541,34 @@ public class __Field implements Meta {
 
   public void setTypeNameMin(String typeNameMin) {
     this.typeNameMin = typeNameMin;
+  }
+
+  public __FieldInput toInput() {
+    __FieldInput input = new __FieldInput();
+    input.setId(this.getId());
+    input.setName(this.getName());
+    if(getOfType() != null) {
+      input.setOfType(this.getOfType().toInput());
+    }
+    input.setDescription(this.getDescription());
+    if(getArgs() != null) {
+      input.setArgs(this.getArgs().stream().map(item -> item.toInput()).collect(Collectors.toList()));
+    }
+    if(getType() != null) {
+      input.setType(this.getType().toInput());
+    }
+    input.setDeprecationReason(this.getDeprecationReason());
+    input.setIsDeprecated(this.getIsDeprecated());
+    input.setVersion(this.getVersion());
+    input.setRealmId(this.getRealmId());
+    input.setCreateUserId(this.getCreateUserId());
+    input.setCreateTime(this.getCreateTime());
+    input.setUpdateUserId(this.getUpdateUserId());
+    input.setUpdateTime(this.getUpdateTime());
+    input.setCreateGroupId(this.getCreateGroupId());
+    input.set__typename(this.get__typename());
+    input.setOfTypeName(this.getOfTypeName());
+    input.setTypeName(this.getTypeName());
+    return input;
   }
 }

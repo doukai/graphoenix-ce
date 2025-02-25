@@ -86,17 +86,32 @@ public class GrpcServerProducerBuilder {
                 .addStatement("ServerBuilder<?> serverBuilder = $T.forPort(grpcServerConfig.getPort())", ClassName.get(ServerBuilder.class));
 
         packageNameList
-                .forEach(packageName ->
-                        methodBuilder
-                                .addStatement(
-                                        "serverBuilder.addService(new $T()).addService(new $T()).addService(new $T()).addService(new $T()).addService(new $T()).addService(new $T())",
-                                        ClassName.get(packageName + ".grpc", "Grpc" + TYPE_QUERY_NAME + "ServiceImpl"),
-                                        ClassName.get(packageName + ".grpc", "Grpc" + TYPE_MUTATION_NAME + "ServiceImpl"),
-                                        ClassName.get(packageName + ".grpc", "GrpcGraphQLServiceImpl"),
-                                        ClassName.get(packageName + ".grpc", "ReactorGrpc" + TYPE_QUERY_NAME + "ServiceImpl"),
-                                        ClassName.get(packageName + ".grpc", "ReactorGrpc" + TYPE_MUTATION_NAME + "ServiceImpl"),
-                                        ClassName.get(packageName + ".grpc", "ReactorGrpcGraphQLServiceImpl")
-                                )
+                .forEach(packageName -> {
+                            if (documentManager.getDocument().getObjectTypes()
+                                    .anyMatch(objectType ->
+                                            !documentManager.isOperationType(objectType) &&
+                                                    !objectType.isContainer() &&
+                                                    objectType.getPackageName().orElseGet(packageConfig::getPackageName).equals(packageName))
+                            ) {
+                                methodBuilder
+                                        .addStatement(
+                                                "serverBuilder.addService(new $T()).addService(new $T()).addService(new $T()).addService(new $T()).addService(new $T()).addService(new $T())",
+                                                ClassName.get(packageName + ".grpc", "Grpc" + TYPE_QUERY_NAME + "ServiceImpl"),
+                                                ClassName.get(packageName + ".grpc", "Grpc" + TYPE_MUTATION_NAME + "ServiceImpl"),
+                                                ClassName.get(packageName + ".grpc", "GrpcGraphQLServiceImpl"),
+                                                ClassName.get(packageName + ".grpc", "ReactorGrpc" + TYPE_QUERY_NAME + "ServiceImpl"),
+                                                ClassName.get(packageName + ".grpc", "ReactorGrpc" + TYPE_MUTATION_NAME + "ServiceImpl"),
+                                                ClassName.get(packageName + ".grpc", "ReactorGrpcGraphQLServiceImpl")
+                                        );
+                            } else {
+                                methodBuilder
+                                        .addStatement(
+                                                "serverBuilder.addService(new $T()).addService(new $T())",
+                                                ClassName.get(packageName + ".grpc", "GrpcGraphQLServiceImpl"),
+                                                ClassName.get(packageName + ".grpc", "ReactorGrpcGraphQLServiceImpl")
+                                        );
+                            }
+                        }
                 );
         methodBuilder.addStatement("return serverBuilder.build()");
         return builder.addMethod(methodBuilder.build()).build();

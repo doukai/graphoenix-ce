@@ -102,16 +102,21 @@ public class VersionValidationHandler implements OperationBeforeHandler {
                 .collectList()
                 .flatMapMany(typeEntryList ->
                         Mono
-                                .from(
-                                        operationHandlerProvider.get().handle(
-                                                new Operation()
-                                                        .setOperationType(OPERATION_QUERY_NAME)
-                                                        .setSelections(
-                                                                typeEntryList.stream()
-                                                                        .map(AbstractMap.SimpleEntry::getKey)
-                                                                        .collect(Collectors.toList())
+                                .just(
+                                        typeEntryList.stream()
+                                                .map(AbstractMap.SimpleEntry::getKey)
+                                                .collect(Collectors.toList())
+                                )
+                                .filter(fieldList -> !fieldList.isEmpty())
+                                .flatMap(fieldList ->
+                                        Mono
+                                                .from(
+                                                        operationHandlerProvider.get().handle(
+                                                                new Operation()
+                                                                        .setOperationType(OPERATION_QUERY_NAME)
+                                                                        .setSelections(fieldList)
                                                         )
-                                        )
+                                                )
                                 )
                                 .flatMapMany(jsonValue ->
                                         Flux

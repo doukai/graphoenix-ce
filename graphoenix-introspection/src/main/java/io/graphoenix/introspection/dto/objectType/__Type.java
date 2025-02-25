@@ -3,6 +3,7 @@ package io.graphoenix.introspection.dto.objectType;
 import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.enumType.__TypeKind;
 import io.graphoenix.core.dto.interfaceType.Meta;
+import io.graphoenix.introspection.dto.inputObjectType.__TypeInput;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -10,6 +11,7 @@ import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.stream.Collectors;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Id;
 import org.eclipse.microprofile.graphql.NonNull;
@@ -753,5 +755,51 @@ public class __Type implements Meta {
 
   public void setSchemaIdMin(Integer schemaIdMin) {
     this.schemaIdMin = schemaIdMin;
+  }
+
+  public __TypeInput toInput() {
+    __TypeInput input = new __TypeInput();
+    input.setName(this.getName());
+    if(getOfSchema() != null) {
+      input.setOfSchema(this.getOfSchema().toInput());
+    }
+    input.setKind(this.getKind());
+    input.setDescription(this.getDescription());
+    if(getFields() != null) {
+      input.setFields(this.getFields().stream().map(item -> item.toInput()).collect(Collectors.toList()));
+    }
+    if(getInterfaces() != null) {
+      input.setInterfaces(this.getInterfaces().stream().map(item -> item.toInput()).collect(Collectors.toList()));
+    }
+    if(getPossibleTypes() != null) {
+      input.setPossibleTypes(this.getPossibleTypes().stream().map(item -> item.toInput()).collect(Collectors.toList()));
+    }
+    if(getEnumValues() != null) {
+      input.setEnumValues(this.getEnumValues().stream().map(item -> item.toInput()).collect(Collectors.toList()));
+    }
+    if(getInputFields() != null) {
+      input.setInputFields(this.getInputFields().stream().map(item -> item.toInput()).collect(Collectors.toList()));
+    }
+    if(getOfType() != null) {
+      input.setOfType(this.getOfType().toInput());
+    }
+    input.setIsDeprecated(this.getIsDeprecated());
+    input.setVersion(this.getVersion());
+    input.setRealmId(this.getRealmId());
+    input.setCreateUserId(this.getCreateUserId());
+    input.setCreateTime(this.getCreateTime());
+    input.setUpdateUserId(this.getUpdateUserId());
+    input.setUpdateTime(this.getUpdateTime());
+    input.setCreateGroupId(this.getCreateGroupId());
+    input.set__typename(this.get__typename());
+    input.setSchemaId(this.getSchemaId());
+    input.setOfTypeName(this.getOfTypeName());
+    if(get__typeInterfaces() != null) {
+      input.set__typeInterfaces(this.get__typeInterfaces().stream().map(item -> item.toInput()).collect(Collectors.toList()));
+    }
+    if(get__typePossibleTypes() != null) {
+      input.set__typePossibleTypes(this.get__typePossibleTypes().stream().map(item -> item.toInput()).collect(Collectors.toList()));
+    }
+    return input;
   }
 }

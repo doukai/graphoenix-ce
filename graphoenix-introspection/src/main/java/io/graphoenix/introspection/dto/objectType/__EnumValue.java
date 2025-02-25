@@ -2,6 +2,7 @@ package io.graphoenix.introspection.dto.objectType;
 
 import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.interfaceType.Meta;
+import io.graphoenix.introspection.dto.inputObjectType.__EnumValueInput;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -431,5 +432,27 @@ public class __EnumValue implements Meta {
 
   public void setOfTypeNameMin(String ofTypeNameMin) {
     this.ofTypeNameMin = ofTypeNameMin;
+  }
+
+  public __EnumValueInput toInput() {
+    __EnumValueInput input = new __EnumValueInput();
+    input.setId(this.getId());
+    input.setName(this.getName());
+    if(getOfType() != null) {
+      input.setOfType(this.getOfType().toInput());
+    }
+    input.setDescription(this.getDescription());
+    input.setDeprecationReason(this.getDeprecationReason());
+    input.setIsDeprecated(this.getIsDeprecated());
+    input.setVersion(this.getVersion());
+    input.setRealmId(this.getRealmId());
+    input.setCreateUserId(this.getCreateUserId());
+    input.setCreateTime(this.getCreateTime());
+    input.setUpdateUserId(this.getUpdateUserId());
+    input.setUpdateTime(this.getUpdateTime());
+    input.setCreateGroupId(this.getCreateGroupId());
+    input.set__typename(this.get__typename());
+    input.setOfTypeName(this.getOfTypeName());
+    return input;
   }
 }

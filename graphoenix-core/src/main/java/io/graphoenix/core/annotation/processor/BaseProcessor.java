@@ -6,6 +6,7 @@ import io.graphoenix.core.handler.GraphQLConfigRegister;
 import io.graphoenix.spi.annotation.*;
 import io.graphoenix.spi.annotation.Package;
 import io.graphoenix.spi.error.GraphQLErrors;
+import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.common.*;
 import io.graphoenix.spi.graphql.common.Directive;
@@ -14,6 +15,7 @@ import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.*;
 import io.graphoenix.spi.graphql.type.TypeName;
 import io.graphoenix.spi.utils.ElementUtil;
+import io.graphoenix.spi.utils.StreamUtil;
 import io.nozdormu.config.TypesafeConfig;
 import io.nozdormu.spi.async.Async;
 import io.nozdormu.spi.context.BeanContext;
@@ -525,7 +527,17 @@ public abstract class BaseProcessor extends AbstractProcessor {
             if (selectionSet != null) {
                 String value = selectionSet.value();
                 if (!value.isBlank()) {
-                    field.setSelections(graphqlToSelectionSet(value).selection().stream().map(Field::new).collect(Collectors.toList()));
+                    field.setSelections(
+                            Stream
+                                    .concat(
+                                            graphqlToSelectionSet(value).selection().stream().map(Field::new),
+                                            documentManager.getDocument().getInterfaceType(INTERFACE_META_NAME).stream()
+                                                    .flatMap(interfaceType -> interfaceType.getFields().stream())
+                                                    .map(fieldDefinition -> new Field(fieldDefinition.getName()))
+                                    )
+                                    .filter(StreamUtil.distinctByKey(AbstractDefinition::getName))
+                                    .collect(Collectors.toList())
+                    );
                 } else {
                     int layers = selectionSet.layers();
                     field.setSelections(buildFields(fieldTypeDefinition.asObject(), 0, layers));
@@ -538,28 +550,35 @@ public abstract class BaseProcessor extends AbstractProcessor {
     }
 
     public List<Field> buildFields(ObjectType objectType, int level, int layers) {
-        return objectType.getFields().stream()
-                .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
-                .filter(fieldDefinition -> !fieldDefinition.isFetchField())
-                .filter(fieldDefinition -> !fieldDefinition.isFunctionField())
-                .filter(fieldDefinition -> !fieldDefinition.isConnectionField())
-                .filter(fieldDefinition -> !fieldDefinition.isAggregateField())
-                .flatMap(fieldDefinition -> {
-                            Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-                            if (fieldTypeDefinition.isObject()) {
-                                if (level < layers) {
-                                    return Stream.of(
-                                            new Field(fieldDefinition.getName())
-                                                    .setSelections(buildFields(fieldTypeDefinition.asObject(), level + 1, layers))
-                                    );
-                                } else {
-                                    return Stream.empty();
-                                }
-                            } else {
-                                return Stream.of(new Field(fieldDefinition.getName()));
-                            }
-                        }
+        return Stream
+                .concat(
+                        objectType.getFields().stream()
+                                .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
+                                .filter(fieldDefinition -> !fieldDefinition.isFetchField())
+                                .filter(fieldDefinition -> !fieldDefinition.isFunctionField())
+                                .filter(fieldDefinition -> !fieldDefinition.isConnectionField())
+                                .filter(fieldDefinition -> !fieldDefinition.isAggregateField())
+                                .flatMap(fieldDefinition -> {
+                                            Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+                                            if (fieldTypeDefinition.isObject()) {
+                                                if (level < layers) {
+                                                    return Stream.of(
+                                                            new Field(fieldDefinition.getName())
+                                                                    .setSelections(buildFields(fieldTypeDefinition.asObject(), level + 1, layers))
+                                                    );
+                                                } else {
+                                                    return Stream.empty();
+                                                }
+                                            } else {
+                                                return Stream.of(new Field(fieldDefinition.getName()));
+                                            }
+                                        }
+                                ),
+                        documentManager.getDocument().getInterfaceType(INTERFACE_META_NAME).stream()
+                                .flatMap(interfaceType -> interfaceType.getFields().stream())
+                                .map(fieldDefinition -> new Field(fieldDefinition.getName()))
                 )
+                .filter(StreamUtil.distinctByKey(AbstractDefinition::getName))
                 .collect(Collectors.toList());
     }
 }

@@ -2,6 +2,7 @@ package io.graphoenix.introspection.dto.objectType;
 
 import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.interfaceType.Meta;
+import io.graphoenix.introspection.dto.inputObjectType.__InputValueInput;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -631,5 +632,33 @@ public class __InputValue implements Meta {
 
   public void setFieldIdMin(Integer fieldIdMin) {
     this.fieldIdMin = fieldIdMin;
+  }
+
+  public __InputValueInput toInput() {
+    __InputValueInput input = new __InputValueInput();
+    input.setId(this.getId());
+    input.setName(this.getName());
+    if(getOfType() != null) {
+      input.setOfType(this.getOfType().toInput());
+    }
+    input.setFieldId(this.getFieldId());
+    input.setDirectiveName(this.getDirectiveName());
+    input.setDescription(this.getDescription());
+    if(getType() != null) {
+      input.setType(this.getType().toInput());
+    }
+    input.setDefaultValue(this.getDefaultValue());
+    input.setIsDeprecated(this.getIsDeprecated());
+    input.setVersion(this.getVersion());
+    input.setRealmId(this.getRealmId());
+    input.setCreateUserId(this.getCreateUserId());
+    input.setCreateTime(this.getCreateTime());
+    input.setUpdateUserId(this.getUpdateUserId());
+    input.setUpdateTime(this.getUpdateTime());
+    input.setCreateGroupId(this.getCreateGroupId());
+    input.set__typename(this.get__typename());
+    input.setOfTypeName(this.getOfTypeName());
+    input.setTypeName(this.getTypeName());
+    return input;
   }
 }

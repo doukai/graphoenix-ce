@@ -2,6 +2,7 @@ package io.graphoenix.file.dto.objectType;
 
 import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.interfaceType.Meta;
+import io.graphoenix.file.dto.inputObjectType.FileInput;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -441,5 +442,24 @@ public class File implements Meta {
 
   public void setUrlMin(String urlMin) {
     this.urlMin = urlMin;
+  }
+
+  public FileInput toInput() {
+    FileInput input = new FileInput();
+    input.setId(this.getId());
+    input.setName(this.getName());
+    input.setContentType(this.getContentType());
+    input.setContent(this.getContent());
+    input.setUrl(this.getUrl());
+    input.setIsDeprecated(this.getIsDeprecated());
+    input.setVersion(this.getVersion());
+    input.setRealmId(this.getRealmId());
+    input.setCreateUserId(this.getCreateUserId());
+    input.setCreateTime(this.getCreateTime());
+    input.setUpdateUserId(this.getUpdateUserId());
+    input.setUpdateTime(this.getUpdateTime());
+    input.setCreateGroupId(this.getCreateGroupId());
+    input.set__typename(this.get__typename());
+    return input;
   }
 }

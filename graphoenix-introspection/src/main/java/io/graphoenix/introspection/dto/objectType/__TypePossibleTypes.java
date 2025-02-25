@@ -2,6 +2,7 @@ package io.graphoenix.introspection.dto.objectType;
 
 import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.interfaceType.Meta;
+import io.graphoenix.introspection.dto.inputObjectType.__TypePossibleTypesInput;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -357,5 +358,28 @@ public class __TypePossibleTypes implements Meta {
 
   public void setPossibleTypeRefMin(String possibleTypeRefMin) {
     this.possibleTypeRefMin = possibleTypeRefMin;
+  }
+
+  public __TypePossibleTypesInput toInput() {
+    __TypePossibleTypesInput input = new __TypePossibleTypesInput();
+    input.setId(this.getId());
+    input.setTypeRef(this.getTypeRef());
+    if(getType() != null) {
+      input.setType(this.getType().toInput());
+    }
+    input.setPossibleTypeRef(this.getPossibleTypeRef());
+    if(getPossibleType() != null) {
+      input.setPossibleType(this.getPossibleType().toInput());
+    }
+    input.setIsDeprecated(this.getIsDeprecated());
+    input.setVersion(this.getVersion());
+    input.setRealmId(this.getRealmId());
+    input.setCreateUserId(this.getCreateUserId());
+    input.setCreateTime(this.getCreateTime());
+    input.setUpdateUserId(this.getUpdateUserId());
+    input.setUpdateTime(this.getUpdateTime());
+    input.setCreateGroupId(this.getCreateGroupId());
+    input.set__typename(this.get__typename());
+    return input;
   }
 }

@@ -2,6 +2,7 @@ package io.graphoenix.introspection.dto.objectType;
 
 import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.interfaceType.Meta;
+import io.graphoenix.introspection.dto.inputObjectType.__SchemaInput;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -9,6 +10,7 @@ import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.stream.Collectors;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Id;
 import org.eclipse.microprofile.graphql.NonNull;
@@ -488,5 +490,38 @@ public class __Schema implements Meta {
 
   public void setSubscriptionTypeNameMin(String subscriptionTypeNameMin) {
     this.subscriptionTypeNameMin = subscriptionTypeNameMin;
+  }
+
+  public __SchemaInput toInput() {
+    __SchemaInput input = new __SchemaInput();
+    input.setId(this.getId());
+    if(getTypes() != null) {
+      input.setTypes(this.getTypes().stream().map(item -> item.toInput()).collect(Collectors.toList()));
+    }
+    if(getQueryType() != null) {
+      input.setQueryType(this.getQueryType().toInput());
+    }
+    if(getMutationType() != null) {
+      input.setMutationType(this.getMutationType().toInput());
+    }
+    if(getSubscriptionType() != null) {
+      input.setSubscriptionType(this.getSubscriptionType().toInput());
+    }
+    if(getDirectives() != null) {
+      input.setDirectives(this.getDirectives().stream().map(item -> item.toInput()).collect(Collectors.toList()));
+    }
+    input.setIsDeprecated(this.getIsDeprecated());
+    input.setVersion(this.getVersion());
+    input.setRealmId(this.getRealmId());
+    input.setCreateUserId(this.getCreateUserId());
+    input.setCreateTime(this.getCreateTime());
+    input.setUpdateUserId(this.getUpdateUserId());
+    input.setUpdateTime(this.getUpdateTime());
+    input.setCreateGroupId(this.getCreateGroupId());
+    input.set__typename(this.get__typename());
+    input.setQueryTypeName(this.getQueryTypeName());
+    input.setMutationTypeName(this.getMutationTypeName());
+    input.setSubscriptionTypeName(this.getSubscriptionTypeName());
+    return input;
   }
 }

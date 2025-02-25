@@ -3,6 +3,7 @@ package io.graphoenix.introspection.dto.objectType;
 import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.enumType.__DirectiveLocation;
 import io.graphoenix.core.dto.interfaceType.Meta;
+import io.graphoenix.introspection.dto.inputObjectType.__DirectiveInput;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -10,6 +11,7 @@ import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.stream.Collectors;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Id;
 import org.eclipse.microprofile.graphql.NonNull;
@@ -465,5 +467,33 @@ public class __Directive implements Meta {
 
   public void setSchemaIdMin(Integer schemaIdMin) {
     this.schemaIdMin = schemaIdMin;
+  }
+
+  public __DirectiveInput toInput() {
+    __DirectiveInput input = new __DirectiveInput();
+    input.setName(this.getName());
+    if(getOfSchema() != null) {
+      input.setOfSchema(this.getOfSchema().toInput());
+    }
+    input.setDescription(this.getDescription());
+    input.setLocations(this.getLocations());
+    if(getArgs() != null) {
+      input.setArgs(this.getArgs().stream().map(item -> item.toInput()).collect(Collectors.toList()));
+    }
+    input.setIsRepeatable(this.getIsRepeatable());
+    input.setIsDeprecated(this.getIsDeprecated());
+    input.setVersion(this.getVersion());
+    input.setRealmId(this.getRealmId());
+    input.setCreateUserId(this.getCreateUserId());
+    input.setCreateTime(this.getCreateTime());
+    input.setUpdateUserId(this.getUpdateUserId());
+    input.setUpdateTime(this.getUpdateTime());
+    input.setCreateGroupId(this.getCreateGroupId());
+    input.set__typename(this.get__typename());
+    input.setSchemaId(this.getSchemaId());
+    if(get__directiveLocationsRelation() != null) {
+      input.set__directiveLocationsRelation(this.get__directiveLocationsRelation().stream().map(item -> item.toInput()).collect(Collectors.toList()));
+    }
+    return input;
   }
 }
