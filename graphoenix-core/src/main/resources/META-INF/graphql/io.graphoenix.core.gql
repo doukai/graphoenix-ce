@@ -1,15 +1,15 @@
-scalar ID
-scalar Int
-scalar Float
-scalar String
-scalar Boolean
-scalar BigInteger
-scalar BigDecimal
-scalar Date
-scalar Time
-scalar DateTime
-scalar Timestamp
-scalar Upload
+scalar ID @package(name: "io.graphoenix.core")
+scalar Int @package(name: "io.graphoenix.core")
+scalar Float @package(name: "io.graphoenix.core")
+scalar String @package(name: "io.graphoenix.core")
+scalar Boolean @package(name: "io.graphoenix.core")
+scalar BigInteger @package(name: "io.graphoenix.core")
+scalar BigDecimal @package(name: "io.graphoenix.core")
+scalar Date @package(name: "io.graphoenix.core")
+scalar Time @package(name: "io.graphoenix.core")
+scalar DateTime @package(name: "io.graphoenix.core")
+scalar Timestamp @package(name: "io.graphoenix.core")
+scalar Upload @package(name: "io.graphoenix.core")
 enum Operator @package(name: "io.graphoenix.core") @class(name: "io.graphoenix.core.dto.enumType.Operator") @grpc(name: "io.graphoenix.core.dto.enumType.grpc.Operator") {
     EQ
     NEQ

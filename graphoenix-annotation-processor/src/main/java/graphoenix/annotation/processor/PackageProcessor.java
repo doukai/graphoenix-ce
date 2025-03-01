@@ -56,7 +56,7 @@ public class PackageProcessor extends BaseProcessor {
             registerOperations(roundEnv);
             FileObject packageGraphQL = filer.createResource(StandardLocation.CLASS_OUTPUT, "", "META-INF/graphql/" + packageConfig.getPackageName() + ".gql");
             Writer writer = packageGraphQL.openWriter();
-            writer.write(documentManager.getDocument().toString());
+            writer.write(documentManager.getPackageDocument().toString());
             writer.close();
 
         } catch (IOException | URISyntaxException e) {

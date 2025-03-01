@@ -8,6 +8,7 @@ import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.*;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import java.util.Collection;
 import java.util.List;
@@ -22,8 +23,24 @@ import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_OPERATION_TYP
 public class DocumentManager {
     private final Document document = new Document();
 
+    private final PackageManager packageManager;
+
+    @Inject
+    public DocumentManager(PackageManager packageManager) {
+        this.packageManager = packageManager;
+    }
+
     public Document getDocument() {
         return document;
+    }
+
+    public Document getPackageDocument() {
+        return document
+                .setDefinitions(
+                        document.getDefinitions().stream()
+                                .filter(packageManager::isOwnPackage)
+                                .collect(Collectors.toList())
+                );
     }
 
     public boolean isQueryOperationType(Definition definition) {
