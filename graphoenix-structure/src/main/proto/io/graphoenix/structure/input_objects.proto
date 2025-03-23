@@ -14,37 +14,33 @@ import "google/protobuf/timestamp.proto";
 * Query Expression Input for TreeStruct
 */
 message TreeStructExpression {
-    io.graphoenix.core.StringExpression name = 1; /* name */
-    io.graphoenix.core.StringExpression path = 2; /* path */
-    io.graphoenix.core.IntExpression deep = 3; /* deep */
-    io.graphoenix.core.StringExpression parent_id = 4; /* parentId */
-    bool include_deprecated = 5; /* Include Deprecated */
-    io.graphoenix.core.IntExpression version = 6; /* version */
-    io.graphoenix.core.IntExpression realm_id = 7; /* realmId */
-    io.graphoenix.core.StringExpression create_user_id = 8; /* createUserId */
-    io.graphoenix.core.StringExpression create_time = 9; /* createTime */
-    io.graphoenix.core.StringExpression update_user_id = 10; /* updateUserId */
-    io.graphoenix.core.StringExpression update_time = 11; /* updateTime */
-    io.graphoenix.core.StringExpression create_group_id = 12; /* createGroupId */
-    bool not = 13; /* Not */
-    io.graphoenix.core.Conditional cond = 14; /* Condition */
+    io.graphoenix.core.StringExpression parent_id = 1; /* parentId */
+    io.graphoenix.core.StringExpression name = 2; /* name */
+    bool include_deprecated = 3; /* Include Deprecated */
+    io.graphoenix.core.IntExpression version = 4; /* version */
+    io.graphoenix.core.IntExpression realm_id = 5; /* realmId */
+    io.graphoenix.core.StringExpression create_user_id = 6; /* createUserId */
+    io.graphoenix.core.StringExpression create_time = 7; /* createTime */
+    io.graphoenix.core.StringExpression update_user_id = 8; /* updateUserId */
+    io.graphoenix.core.StringExpression update_time = 9; /* updateTime */
+    io.graphoenix.core.StringExpression create_group_id = 10; /* createGroupId */
+    bool not = 11; /* Not */
+    io.graphoenix.core.Conditional cond = 12; /* Condition */
 }
 /**
 * Mutation Input for TreeStruct
 */
 message TreeStructInput {
-    string name = 1; /* name */
-    string path = 2; /* path */
-    int32 deep = 3; /* deep */
-    string parent_id = 4; /* parentId */
-    bool is_deprecated = 5; /* Is Deprecated */
-    int32 version = 6; /* version */
-    int32 realm_id = 7; /* realmId */
-    string create_user_id = 8; /* createUserId */
-    google.protobuf.Timestamp create_time = 9; /* createTime */
-    string update_user_id = 10; /* updateUserId */
-    google.protobuf.Timestamp update_time = 11; /* updateTime */
-    string create_group_id = 12; /* createGroupId */
+    string parent_id = 1; /* parentId */
+    string name = 2; /* name */
+    bool is_deprecated = 3; /* Is Deprecated */
+    int32 version = 4; /* version */
+    int32 realm_id = 5; /* realmId */
+    string create_user_id = 6; /* createUserId */
+    google.protobuf.Timestamp create_time = 7; /* createTime */
+    string update_user_id = 8; /* updateUserId */
+    google.protobuf.Timestamp update_time = 9; /* updateTime */
+    string create_group_id = 10; /* createGroupId */
 }
 /**
 * Query Expression Input for NamedStruct

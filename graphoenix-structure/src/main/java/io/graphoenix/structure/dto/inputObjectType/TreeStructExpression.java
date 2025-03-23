@@ -17,28 +17,16 @@ import org.eclipse.microprofile.graphql.Input;
 @Description("Query Expression Input for TreeStruct")
 public interface TreeStructExpression extends MetaExpression {
   /**
-   * name
-   */
-  @Description("name")
-  StringExpression name = null;
-
-  /**
-   * path
-   */
-  @Description("path")
-  StringExpression path = null;
-
-  /**
-   * deep
-   */
-  @Description("deep")
-  IntExpression deep = null;
-
-  /**
    * parentId
    */
   @Description("parentId")
   StringExpression parentId = null;
+
+  /**
+   * name
+   */
+  @Description("name")
+  StringExpression name = null;
 
   /**
    * Include Deprecated
@@ -100,29 +88,17 @@ public interface TreeStructExpression extends MetaExpression {
   @Description("Condition")
   Conditional cond = Conditional.AND;
 
-  default StringExpression getName() {
-    return name;
-  }
-
-  void setName(StringExpression name);
-
-  default StringExpression getPath() {
-    return path;
-  }
-
-  void setPath(StringExpression path);
-
-  default IntExpression getDeep() {
-    return deep;
-  }
-
-  void setDeep(IntExpression deep);
-
   default StringExpression getParentId() {
     return parentId;
   }
 
   void setParentId(StringExpression parentId);
+
+  default StringExpression getName() {
+    return name;
+  }
+
+  void setName(StringExpression name);
 
   default Boolean getIncludeDeprecated() {
     return includeDeprecated;

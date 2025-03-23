@@ -22,28 +22,16 @@ import org.eclipse.microprofile.graphql.Description;
 @Description("Query Expression Input for TreeStruct")
 public @interface TreeStructExpression1 {
   /**
-   * name
-   */
-  @Description("name")
-  StringExpression name() default @StringExpression;
-
-  /**
-   * path
-   */
-  @Description("path")
-  StringExpression path() default @StringExpression;
-
-  /**
-   * deep
-   */
-  @Description("deep")
-  IntExpression deep() default @IntExpression;
-
-  /**
    * parentId
    */
   @Description("parentId")
   StringExpression parentId() default @StringExpression;
+
+  /**
+   * name
+   */
+  @Description("name")
+  StringExpression name() default @StringExpression;
 
   /**
    * Include Deprecated
@@ -105,13 +93,9 @@ public @interface TreeStructExpression1 {
   @Description("Condition")
   Conditional cond() default Conditional.AND;
 
-  String $name() default "";
-
-  String $path() default "";
-
-  String $deep() default "";
-
   String $parentId() default "";
+
+  String $name() default "";
 
   String $includeDeprecated() default "";
 

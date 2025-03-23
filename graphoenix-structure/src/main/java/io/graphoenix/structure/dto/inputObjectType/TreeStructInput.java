@@ -17,28 +17,16 @@ import org.eclipse.microprofile.graphql.Input;
 @Description("Mutation Input for TreeStruct")
 public interface TreeStructInput extends MetaInput {
   /**
-   * name
-   */
-  @Description("name")
-  String name = null;
-
-  /**
-   * path
-   */
-  @Description("path")
-  String path = null;
-
-  /**
-   * deep
-   */
-  @Description("deep")
-  Integer deep = null;
-
-  /**
    * parentId
    */
   @Description("parentId")
   String parentId = null;
+
+  /**
+   * name
+   */
+  @Description("name")
+  String name = null;
 
   /**
    * Is Deprecated
@@ -88,29 +76,17 @@ public interface TreeStructInput extends MetaInput {
   @Description("createGroupId")
   String createGroupId = null;
 
-  default String getName() {
-    return name;
-  }
-
-  void setName(String name);
-
-  default String getPath() {
-    return path;
-  }
-
-  void setPath(String path);
-
-  default Integer getDeep() {
-    return deep;
-  }
-
-  void setDeep(Integer deep);
-
   default String getParentId() {
     return parentId;
   }
 
   void setParentId(String parentId);
+
+  default String getName() {
+    return name;
+  }
+
+  void setName(String name);
 
   default Boolean getIsDeprecated() {
     return isDeprecated;

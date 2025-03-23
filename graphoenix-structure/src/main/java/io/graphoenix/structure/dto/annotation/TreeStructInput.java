@@ -19,28 +19,16 @@ import org.eclipse.microprofile.graphql.Description;
 @Description("Mutation Input for TreeStruct")
 public @interface TreeStructInput {
   /**
-   * name
-   */
-  @Description("name")
-  String name() default "";
-
-  /**
-   * path
-   */
-  @Description("path")
-  String path() default "";
-
-  /**
-   * deep
-   */
-  @Description("deep")
-  int deep() default 0;
-
-  /**
    * parentId
    */
   @Description("parentId")
   String parentId() default "";
+
+  /**
+   * name
+   */
+  @Description("name")
+  String name() default "";
 
   /**
    * Is Deprecated
@@ -90,13 +78,9 @@ public @interface TreeStructInput {
   @Description("createGroupId")
   String createGroupId() default "";
 
-  String $name() default "";
-
-  String $path() default "";
-
-  String $deep() default "";
-
   String $parentId() default "";
+
+  String $name() default "";
 
   String $isDeprecated() default "";
 
