@@ -81,8 +81,8 @@ public class GraphQLRequest {
                         (variables, jsonString) ->
                                 jsonProvider
                                         .createPointer(
-                                                jsonString.getString()
-                                                        .replaceFirst("variables", "")
+                                                "/" + jsonString.getString()
+                                                        .replaceFirst("variables/", "")
                                                         .replaceAll("\\.", "/")
                                         )
                                         .replace(this.variables, jsonProvider.createValue(id)),
