@@ -102,16 +102,22 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
                 .collectList()
                 .flatMapMany(fieldEntryList ->
                         Mono
-                                .from(
-                                        operationHandlerProvider.get().handle(
-                                                new Operation()
-                                                        .setOperationType(OPERATION_QUERY_NAME)
-                                                        .setSelections(
-                                                                fieldEntryList.stream()
-                                                                        .map(AbstractMap.SimpleEntry::getKey)
-                                                                        .collect(Collectors.toList())
+                                .just(
+
+                                        fieldEntryList.stream()
+                                                .map(AbstractMap.SimpleEntry::getKey)
+                                                .collect(Collectors.toList())
+                                )
+                                .filter(fieldList -> !fieldList.isEmpty())
+                                .flatMap(fieldList ->
+                                        Mono
+                                                .from(
+                                                        operationHandlerProvider.get().handle(
+                                                                new Operation()
+                                                                        .setOperationType(OPERATION_QUERY_NAME)
+                                                                        .setSelections(fieldList)
                                                         )
-                                        )
+                                                )
                                 )
                                 .flatMapMany(jsonValue ->
                                         Flux
