@@ -593,11 +593,12 @@ public class ArgumentsTranslator {
                     Collections.singletonList(arr) :
                     arr.asArray().getValueWithVariables();
 
+            Expression value;
             if (valList.isEmpty()) {
-                return Optional.empty();
+                value = new Parenthesis(new ExpressionList<>(new NullValue()));
+            } else {
+                value = new Parenthesis(new ExpressionList<>(valList.stream().map(DBValueUtil::leafValueToDBValue).collect(Collectors.toList())));
             }
-
-            Expression value = new Parenthesis(new ExpressionList<>(valList.stream().map(DBValueUtil::leafValueToDBValue).collect(Collectors.toList())));
             Expression where;
             switch (opr) {
                 case INPUT_OPERATOR_INPUT_VALUE_IN:
