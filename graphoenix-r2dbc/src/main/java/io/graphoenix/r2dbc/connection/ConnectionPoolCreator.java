@@ -32,7 +32,6 @@ public class ConnectionPoolCreator {
                 .maxCreateConnectionTime(Duration.ofMillis(r2DBCConfig.getMaxCreateConnectionTimeMillis()))
                 .maxIdleTime(Duration.ofMillis(r2DBCConfig.getMaxIdleTimeMillis()))
                 .maxLifeTime(Duration.ofMillis(r2DBCConfig.getMaxLifeTimeMillis()))
-                .maxLifeTime(Duration.ofMillis(r2DBCConfig.getMaxLifeTimeMillis()))
                 .build();
 
         return new ConnectionPool(poolConfiguration);
