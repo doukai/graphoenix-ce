@@ -150,6 +150,9 @@ public class VersionValidationHandler implements OperationBeforeHandler {
     }
 
     public Stream<Tuple5<ObjectType, String, ValueWithVariable, String, ValueWithVariable>> buildVersionItems(FieldDefinition fieldDefinition, Field field) {
+        if (fieldDefinition == null) {
+            return Stream.empty();
+        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();

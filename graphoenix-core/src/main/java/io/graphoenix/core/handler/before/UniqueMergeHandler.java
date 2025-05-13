@@ -184,6 +184,9 @@ public class UniqueMergeHandler implements OperationBeforeHandler {
     }
 
     public Stream<Tuple5<ObjectType, String, ValueWithVariable, Field, String>> buildUniqueItems(FieldDefinition fieldDefinition, Field field) {
+        if (fieldDefinition == null) {
+            return Stream.empty();
+        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();

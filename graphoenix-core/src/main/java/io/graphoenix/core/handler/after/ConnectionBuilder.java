@@ -68,6 +68,9 @@ public class ConnectionBuilder implements OperationAfterHandler {
     }
 
     public Stream<JsonValue> buildConnections(String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
+        if (fieldDefinition == null) {
+            return Stream.empty();
+        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (packageManager.isLocalPackage(fieldDefinition) &&
                 !fieldDefinition.isInvokeField() &&

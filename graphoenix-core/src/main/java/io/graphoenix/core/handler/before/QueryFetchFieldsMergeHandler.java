@@ -50,6 +50,9 @@ public class QueryFetchFieldsMergeHandler implements OperationBeforeHandler, Fet
     }
 
     private Stream<Field> buildFetch(FieldDefinition fieldDefinition, Field field) {
+        if (fieldDefinition == null) {
+            return Stream.empty();
+        }
         if (fieldDefinition.isFetchField()) {
             return Stream.of(field, new Field(fieldDefinition.getFetchFromOrError()).addDirective(new Directive(DIRECTIVE_HIDE_NAME)));
         } else {

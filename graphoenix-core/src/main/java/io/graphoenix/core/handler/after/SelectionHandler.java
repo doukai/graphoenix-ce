@@ -77,7 +77,7 @@ public class SelectionHandler implements OperationAfterHandler {
     }
 
     public Stream<JsonObject> buildFormat(String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
-        if (jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
+        if (fieldDefinition == null || jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
             return Stream.empty();
         }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
@@ -176,7 +176,7 @@ public class SelectionHandler implements OperationAfterHandler {
     }
 
     public Stream<JsonObject> hideField(String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
-        if (jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
+        if (fieldDefinition == null || jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
             return Stream.empty();
         }
         if (field.isHide()) {

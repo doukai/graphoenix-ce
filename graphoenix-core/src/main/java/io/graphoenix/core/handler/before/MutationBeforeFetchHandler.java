@@ -135,6 +135,9 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
     }
 
     public Stream<FetchItem> buildFetchItems(FieldDefinition fieldDefinition, Field field) {
+        if (fieldDefinition == null) {
+            return Stream.empty();
+        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             return Streams

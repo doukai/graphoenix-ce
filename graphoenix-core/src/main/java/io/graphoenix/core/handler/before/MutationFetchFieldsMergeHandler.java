@@ -48,34 +48,39 @@ public class MutationFetchFieldsMergeHandler implements OperationBeforeHandler, 
                 operation
                         .mergeSelection(
                                 operation.getFields().stream()
-                                        .map(field -> buildFetch(operationType.getField(field.getName()), field))
+                                        .flatMap(field -> buildFetch(operationType.getField(field.getName()), field))
                                         .collect(Collectors.toList())
                         )
         );
     }
 
-    private Field buildFetch(FieldDefinition fieldDefinition, Field field) {
+    private Stream<Field> buildFetch(FieldDefinition fieldDefinition, Field field) {
+        if (fieldDefinition == null) {
+            return Stream.empty();
+        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject()) {
-            return field.mergeSelection(
-                    Stream.ofNullable(fieldDefinition.getArguments())
-                            .flatMap(Collection::stream)
-                            .filter(inputValue -> inputValue.getType().getTypeName().getName().endsWith(SUFFIX_INPUT))
-                            .flatMap(inputValue ->
-                                    Stream.ofNullable(fieldTypeDefinition.asObject().getField(inputValue.getName()))
-                                            .flatMap(subFieldDefinition ->
-                                                    Stream.ofNullable(field.getArguments())
-                                                            .flatMap(arguments ->
-                                                                    arguments.getArgumentOrEmpty(inputValue.getName())
-                                                                            .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
-                                                            )
-                                                            .flatMap(valueWithVariable -> buildFetch(subFieldDefinition, inputValue, valueWithVariable))
-                                            )
-                            )
-                            .collect(Collectors.toList())
+            return Stream.of(
+                    field.mergeSelection(
+                            Stream.ofNullable(fieldDefinition.getArguments())
+                                    .flatMap(Collection::stream)
+                                    .filter(inputValue -> inputValue.getType().getTypeName().getName().endsWith(SUFFIX_INPUT))
+                                    .flatMap(inputValue ->
+                                            Stream.ofNullable(fieldTypeDefinition.asObject().getField(inputValue.getName()))
+                                                    .flatMap(subFieldDefinition ->
+                                                            Stream.ofNullable(field.getArguments())
+                                                                    .flatMap(arguments ->
+                                                                            arguments.getArgumentOrEmpty(inputValue.getName())
+                                                                                    .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
+                                                                    )
+                                                                    .flatMap(valueWithVariable -> buildFetch(subFieldDefinition, inputValue, valueWithVariable))
+                                                    )
+                                    )
+                                    .collect(Collectors.toList())
+                    )
             );
         } else {
-            return field;
+            return Stream.of(field);
         }
     }
 

@@ -170,6 +170,9 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
     }
 
     public Stream<FetchItem> buildFetchItems(FieldDefinition fieldDefinition, Field field) {
+        if (fieldDefinition == null) {
+            return Stream.empty();
+        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             String alias = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
@@ -659,6 +662,9 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
     }
 
     private Stream<Field> mergeIDField(FieldDefinition fieldDefinition, Field field) {
+        if (fieldDefinition == null) {
+            return Stream.empty();
+        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject() && !fieldDefinition.isConnectionField()) {
             return Stream.of(

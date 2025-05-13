@@ -9,6 +9,8 @@ public enum GraphQLErrorType {
     INPUT_OBJECT_DEFINITION_NOT_EXIST(-5, "input object definition not exist: %s"),
     FIELD_DEFINITION_NOT_EXIST(-6, "field definition not exist in type %s: %s"),
     ID_FIELD_DEFINITION_NOT_EXIST(-7, "id field definition not exist: %s"),
+    INPUT_VALUE_NOT_EXIST(-8, "input value not exist in input object %s: %s"),
+    ENUM_VALUE_NOT_EXIST(-9, "enum value not exist in enum %s: %s"),
 
     OPERATION_NOT_EXIST(-10, "operation not exist"),
     QUERY_NOT_EXIST(-11, "query not exist in operation"),

@@ -54,11 +54,17 @@ public class OperationBuilder {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         return Stream.ofNullable(field.getFields())
                 .flatMap(Collection::stream)
-                .map(subField -> {
+                .flatMap(subField -> {
+                            FieldDefinition subFieldDefinition = fieldTypeDefinition.asObject().getField(subField.getName());
+                            if (subFieldDefinition == null) {
+                                return Stream.empty();
+                            }
                             String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
-                            return new AbstractMap.SimpleEntry<>(
-                                    subSelectionName,
-                                    updateJsonValue(subField, fieldTypeDefinition.asObject().getField(subField.getName()), jsonObject.get(subSelectionName))
+                            return Stream.of(
+                                    new AbstractMap.SimpleEntry<>(
+                                            subSelectionName,
+                                            updateJsonValue(subField, subFieldDefinition, jsonObject.get(subSelectionName))
+                                    )
                             );
                         }
                 )
