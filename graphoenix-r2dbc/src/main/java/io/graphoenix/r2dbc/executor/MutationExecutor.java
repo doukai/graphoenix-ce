@@ -53,7 +53,7 @@ public class MutationExecutor {
                         connection ->
                                 Flux.fromStream(mutationSqlStream)
                                         .window(groupSize)
-                                        .flatMap(sqlFlux ->
+                                        .concatMap(sqlFlux ->
                                                 sqlFlux.collectList()
                                                         .filter(sqlList -> !sqlList.isEmpty())
                                                         .flatMapMany(sqlList -> {
@@ -104,7 +104,7 @@ public class MutationExecutor {
                 .usingWhen(
                         connectionProvider.get(),
                         connection -> Flux.fromStream(mutationSqlStream)
-                                .flatMap(sql -> {
+                                .concatMap(sql -> {
                                             Logger.info("execute mutation:\r\n{}", sql);
                                             Logger.info("sql parameters:\r\n{}", parameters);
                                             Statement mutationStatement = connection.createStatement(sql);
