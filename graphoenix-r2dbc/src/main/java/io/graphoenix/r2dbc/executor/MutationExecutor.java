@@ -61,7 +61,7 @@ public class MutationExecutor {
                                                                     Logger.info("execute statement count:\r\n{}", sqlList.size());
                                                                     sqlList.forEach(batch::add);
                                                                     return Flux.from(batch.execute())
-                                                                            .flatMap(ResultUtil::getUpdateCountFromResult);
+                                                                            .concatMap(ResultUtil::getUpdateCountFromResult);
                                                                 }
                                                         )
                                         ),
@@ -110,7 +110,7 @@ public class MutationExecutor {
                                             Statement mutationStatement = connection.createStatement(sql);
                                             parameterBinder.bindParameters(sql, mutationStatement, parameters);
                                             return Flux.from(mutationStatement.execute())
-                                                    .flatMap(ResultUtil::getUpdateCountFromResult);
+                                                    .concatMap(ResultUtil::getUpdateCountFromResult);
                                         }
                                 ),
                         connectionProvider::close
