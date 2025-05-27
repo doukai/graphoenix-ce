@@ -293,7 +293,7 @@ public class InputInvokeHandlerBuilder {
                                                                 getFieldCodeBlock
                                                         );
                                                     }
-                                                } else {
+                                                } else if (parametersCount == 2) {
                                                     CodeBlock argumentsBlock = CodeBlock.of("documentManager.getDocument().getObjectTypeOrError($S).getField($S).getDirective($S).getArguments()",
                                                             objectType.getName(),
                                                             fieldDefinition.getName(),
@@ -328,6 +328,47 @@ public class InputInvokeHandlerBuilder {
                                                                 methodName,
                                                                 getFieldCodeBlock,
                                                                 argumentsBlock
+                                                        );
+                                                    }
+                                                } else {
+                                                    CodeBlock argumentsBlock = CodeBlock.of("documentManager.getDocument().getObjectTypeOrError($S).getField($S).getDirective($S).getArguments()",
+                                                            objectType.getName(),
+                                                            fieldDefinition.getName(),
+                                                            directiveName
+                                                    );
+
+                                                    if (async) {
+                                                        invokeCodeBlock = CodeBlock.of("$L.get().async($S, $L, $L, $L)",
+                                                                apiVariableName,
+                                                                methodName,
+                                                                getFieldCodeBlock,
+                                                                argumentsBlock,
+                                                                arguments ? "arguments" : "objectValueWithVariable"
+                                                        );
+                                                    } else if (returnClassName.canonicalName().equals(Mono.class.getCanonicalName())) {
+                                                        invokeCodeBlock = CodeBlock.of("$L.get().$L($L, $L, $L)",
+                                                                apiVariableName,
+                                                                methodName,
+                                                                getFieldCodeBlock,
+                                                                argumentsBlock,
+                                                                arguments ? "arguments" : "objectValueWithVariable"
+                                                        );
+                                                    } else if (returnClassName.canonicalName().equals(Flux.class.getCanonicalName())) {
+                                                        invokeCodeBlock = CodeBlock.of("$L.get().$L($L, $L, $L).last()",
+                                                                apiVariableName,
+                                                                methodName,
+                                                                getFieldCodeBlock,
+                                                                argumentsBlock,
+                                                                arguments ? "arguments" : "objectValueWithVariable"
+                                                        );
+                                                    } else {
+                                                        invokeCodeBlock = CodeBlock.of("$T.justOrEmpty($L.get().$L($L, $L, $L))",
+                                                                ClassName.get(Mono.class),
+                                                                apiVariableName,
+                                                                methodName,
+                                                                getFieldCodeBlock,
+                                                                argumentsBlock,
+                                                                arguments ? "arguments" : "objectValueWithVariable"
                                                         );
                                                     }
                                                 }
