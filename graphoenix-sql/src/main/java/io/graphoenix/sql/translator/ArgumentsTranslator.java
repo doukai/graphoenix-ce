@@ -759,7 +759,7 @@ public class ArgumentsTranslator {
                                                                 .withColDataType(colDataType)
                                                                 .addColumnSpecs("PATH", "'$'")
                                                 )
-                                                .withAlias(new Alias(inputValue.getName()))
+                                                .withAlias(new Alias(nameToDBEscape(inputValue.getName())))
                                 )
                 );
     }

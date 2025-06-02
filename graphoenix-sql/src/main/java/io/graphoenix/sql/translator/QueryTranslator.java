@@ -115,7 +115,7 @@ public class QueryTranslator {
             }
             fromItem = new ParenthesedSelect()
                     .withSelect(objectFieldToPlainSelect(objectType, fieldDefinition, field, true, level))
-                    .withAlias(new Alias(graphqlTypeNameToTableAliaName(fieldTypeDefinition.getName(), level)));
+                    .withAlias(new Alias(nameToDBEscape(graphqlTypeNameToTableAliaName(fieldTypeDefinition.getName(), level))));
             return plainSelect
                     .withFromItem(fromItem)
                     .addSelectItem(selectExpression);

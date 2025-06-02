@@ -944,7 +944,7 @@ public class MutationTranslator {
                                                 )
                                                 .collect(Collectors.toList())
                                 )
-                                .withAlias(new Alias(inputValue.getName()))
+                                .withAlias(new Alias(nameToDBEscape(inputValue.getName())))
                 );
     }
 
@@ -973,7 +973,7 @@ public class MutationTranslator {
                                                 )
                                                 .collect(Collectors.toList())
                                 )
-                                .withAlias(new Alias(inputValue.getName()))
+                                .withAlias(new Alias(nameToDBEscape(inputValue.getName())))
                 );
     }
 
@@ -992,7 +992,7 @@ public class MutationTranslator {
                                                 .withColDataType(typeTranslator.createColDataType(fieldDefinition, true))
                                                 .addColumnSpecs("PATH", "'$'")
                                 )
-                                .withAlias(new Alias(valueWithVariable.asVariable().getName()))
+                                .withAlias(new Alias(nameToDBEscape(valueWithVariable.asVariable().getName())))
                 );
     }
 

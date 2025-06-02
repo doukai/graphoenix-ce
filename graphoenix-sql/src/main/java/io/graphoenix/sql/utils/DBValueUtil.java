@@ -116,7 +116,7 @@ public final class DBValueUtil {
                                                                                                         )
                                                                                                         .addColumnSpecs("PATH", "'$." + idFieldName + "'")
                                                                                         )
-                                                                                        .withAlias(new Alias(valueWithVariable.asVariable().getName()))
+                                                                                        .withAlias(new Alias(nameToDBEscape(valueWithVariable.asVariable().getName())))
                                                                         )
                                                                         .withLimit(new Limit().withRowCount(new LongValue(1)))
                                                         ),
@@ -160,7 +160,7 @@ public final class DBValueUtil {
                                                                                                         )
                                                                                                         .addColumnSpecs("PATH", "'$." + idFieldName + "'")
                                                                                         )
-                                                                                        .withAlias(new Alias(valueWithVariable.asVariable().getName()))
+                                                                                        .withAlias(new Alias(nameToDBEscape(valueWithVariable.asVariable().getName())))
                                                                         )
                                                                         .withLimit(new Limit().withRowCount(new LongValue(1)))
                                                         ),
