@@ -53,16 +53,13 @@ public class ConnectionSplitter implements OperationBeforeHandler {
                 operation
                         .setSelections(
                                 operation.getFields().stream()
-                                        .flatMap(field -> buildConnection(operationType, operationType.getField(field.getName()), field))
+                                        .flatMap(field -> buildConnection(operationType, operationType.getFieldOrError(field.getName()), field))
                                         .collect(Collectors.toList())
                         )
         );
     }
 
     private Stream<Field> buildConnection(ObjectType objectType, FieldDefinition fieldDefinition, Field field) {
-        if (fieldDefinition == null) {
-            return Stream.empty();
-        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (packageManager.isLocalPackage(fieldDefinition) &&
                 !fieldDefinition.isInvokeField() &&
@@ -74,7 +71,7 @@ public class ConnectionSplitter implements OperationBeforeHandler {
                         field.setSelections(
                                 Stream.ofNullable(field.getFields())
                                         .flatMap(Collection::stream)
-                                        .flatMap(subField -> buildConnection(fieldTypeDefinition.asObject(), fieldTypeDefinition.asObject().getField(subField.getName()), subField))
+                                        .flatMap(subField -> buildConnection(fieldTypeDefinition.asObject(), fieldTypeDefinition.asObject().getFieldOrError(subField.getName()), subField))
                                         .collect(Collectors.toList())
                         )
                 );
@@ -101,7 +98,7 @@ public class ConnectionSplitter implements OperationBeforeHandler {
                             if (edges.getFields() == null || edges.getFields().isEmpty()) {
                                 throw new GraphQLErrors(OBJECT_SELECTION_NOT_EXIST.bind(edges.toString()));
                             }
-                            FieldDefinition connectionFieldDefinition = objectType.getField(fieldDefinition.getConnectionFieldOrError());
+                            FieldDefinition connectionFieldDefinition = objectType.getFieldOrError(fieldDefinition.getConnectionFieldOrError());
                             ObjectType fieldTypeDefinition = documentManager.getFieldTypeDefinition(connectionFieldDefinition).asObject();
                             Stream<Field> fieldStream = Stream
                                     .concat(
@@ -117,7 +114,7 @@ public class ConnectionSplitter implements OperationBeforeHandler {
                                                                         .flatMap(subField ->
                                                                                 buildConnection(
                                                                                         fieldTypeDefinition.asObject(),
-                                                                                        fieldTypeDefinition.asObject().getField(subField.getName()),
+                                                                                        fieldTypeDefinition.asObject().getFieldOrError(subField.getName()),
                                                                                         subField
                                                                                 )
                                                                         );
@@ -153,7 +150,7 @@ public class ConnectionSplitter implements OperationBeforeHandler {
         }
         return Optional.ofNullable(field.getField(FIELD_TOTAL_COUNT_NAME))
                 .map(totalCount -> {
-                            FieldDefinition connectionAggDefinition = objectType.getField(fieldDefinition.getConnectionAggOrError());
+                            FieldDefinition connectionAggDefinition = objectType.getFieldOrError(fieldDefinition.getConnectionAggOrError());
                             ObjectType fieldTypeDefinition = documentManager.getFieldTypeDefinition(connectionAggDefinition).asObject();
                             return new Field(connectionAggDefinition.getName())
                                     .setAlias(Optional.ofNullable(field.getAlias()).orElseGet(field::getName) + SUFFIX_AGGREGATE)

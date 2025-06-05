@@ -513,7 +513,7 @@ public class DocumentBuilder {
                                         (FieldDefinition) new FieldDefinition(fieldDefinition.getFetchFromOrError())
                                                 .setType(
                                                         documentManager.getFieldTypeDefinition(fieldDefinition).asObject()
-                                                                .getField(fieldDefinition.getFetchToOrError())
+                                                                .getFieldOrError(fieldDefinition.getFetchToOrError())
                                                                 .getTypeNameWithoutID()
                                                 )
                                                 .setDescription(
@@ -556,7 +556,7 @@ public class DocumentBuilder {
                                         (FieldDefinition) new FieldDefinition(fieldDefinition.getMapFromOrError())
                                                 .setType(
                                                         documentManager.getFieldTypeDefinition(fieldDefinition).asObject()
-                                                                .getField(fieldDefinition.getMapToOrError())
+                                                                .getFieldOrError(fieldDefinition.getMapToOrError())
                                                                 .getTypeNameWithoutID()
                                                 )
                                                 .setDescription(

@@ -57,7 +57,7 @@ public class ConnectionBuilder implements OperationAfterHandler {
                                 operation.getFields().stream()
                                         .flatMap(field -> {
                                                     String selectionName = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
-                                                    return buildConnections("/" + selectionName, operationType.getField(field.getName()), field, jsonValue);
+                                                    return buildConnections("/" + selectionName, operationType.getFieldOrError(field.getName()), field, jsonValue);
                                                 }
                                         )
                                         .collect(JsonCollectors.toJsonArray())
@@ -68,9 +68,6 @@ public class ConnectionBuilder implements OperationAfterHandler {
     }
 
     public Stream<JsonValue> buildConnections(String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
-        if (fieldDefinition == null) {
-            return Stream.empty();
-        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (packageManager.isLocalPackage(fieldDefinition) &&
                 !fieldDefinition.isInvokeField() &&
@@ -86,7 +83,7 @@ public class ConnectionBuilder implements OperationAfterHandler {
                                         .flatMap(Collection::stream)
                                         .flatMap(subField -> {
                                                     String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
-                                                    return buildConnections(path + "/" + index + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonObject().get(selectionName).asJsonArray().get(index));
+                                                    return buildConnections(path + "/" + index + "/" + subSelectionName, fieldTypeDefinition.asObject().getFieldOrError(subField.getName()), subField, jsonValue.asJsonObject().get(selectionName).asJsonArray().get(index));
                                                 }
                                         )
                         )
@@ -96,7 +93,7 @@ public class ConnectionBuilder implements OperationAfterHandler {
                     if (jsonValue.asJsonObject().get(selectionName + SUFFIX_LIST) == null || jsonValue.asJsonObject().get(selectionName + SUFFIX_LIST).getValueType().equals(JsonValue.ValueType.NULL)) {
                         return Stream.empty();
                     }
-                    FieldDefinition nodeFieldDefinition = documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(FIELD_EDGES_NAME)).asObject().getField(FIELD_NODE_NAME);
+                    FieldDefinition nodeFieldDefinition = documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getFieldOrError(FIELD_EDGES_NAME)).asObject().getFieldOrError(FIELD_NODE_NAME);
                     JsonValue connectionJsonValue = buildConnection(nodeFieldDefinition, field, jsonValue.asJsonObject().get(selectionName + SUFFIX_LIST), jsonValue.asJsonObject().get(selectionName + SUFFIX_AGGREGATE));
 
                     JsonObject patchItem = jsonProvider.createObjectBuilder()
@@ -118,7 +115,7 @@ public class ConnectionBuilder implements OperationAfterHandler {
                                                                     String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
                                                                     return buildConnections(
                                                                             path + "/" + FIELD_EDGES_NAME + "/" + index + "/" + FIELD_NODE_NAME + "/" + subSelectionName,
-                                                                            documentManager.getFieldTypeDefinition(nodeFieldDefinition).asObject().getField(subField.getName()),
+                                                                            documentManager.getFieldTypeDefinition(nodeFieldDefinition).asObject().getFieldOrError(subField.getName()),
                                                                             subField,
                                                                             edgesJsonValue.asJsonArray().get(index).asJsonObject().get(FIELD_NODE_NAME).asJsonObject()
                                                                     );
@@ -135,7 +132,7 @@ public class ConnectionBuilder implements OperationAfterHandler {
                             .flatMap(Collection::stream)
                             .flatMap(subField -> {
                                         String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
-                                        return buildConnections(path + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonObject().get(selectionName));
+                                        return buildConnections(path + "/" + subSelectionName, fieldTypeDefinition.asObject().getFieldOrError(subField.getName()), subField, jsonValue.asJsonObject().get(selectionName));
                                     }
                             );
                 }

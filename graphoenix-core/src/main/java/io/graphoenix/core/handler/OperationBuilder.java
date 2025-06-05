@@ -55,10 +55,7 @@ public class OperationBuilder {
         return Stream.ofNullable(field.getFields())
                 .flatMap(Collection::stream)
                 .flatMap(subField -> {
-                            FieldDefinition subFieldDefinition = fieldTypeDefinition.asObject().getField(subField.getName());
-                            if (subFieldDefinition == null) {
-                                return Stream.empty();
-                            }
+                            FieldDefinition subFieldDefinition = fieldTypeDefinition.asObject().getFieldOrError(subField.getName());
                             String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
                             return Stream.of(
                                     new AbstractMap.SimpleEntry<>(

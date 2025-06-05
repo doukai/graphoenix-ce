@@ -60,7 +60,7 @@ public class QueryTranslator {
 
         List<JsonKeyValuePair> jsonKeyValuePairList = operation.getFields().stream()
                 .filter(field -> {
-                            FieldDefinition fieldDefinition = operationType.getField(field.getName());
+                            FieldDefinition fieldDefinition = operationType.getFieldOrError(field.getName());
                             return packageManager.isLocalPackage(fieldDefinition) &&
                                     !fieldDefinition.isFetchField() &&
                                     !fieldDefinition.isInvokeField() &&
@@ -70,7 +70,7 @@ public class QueryTranslator {
                 .map(field ->
                         new JsonKeyValuePair(
                                 new StringValue(Optional.ofNullable(field.getAlias()).orElse(field.getName())).toString(),
-                                fieldToExpression(operationType, operationType.getField(field.getName()), field, 0),
+                                fieldToExpression(operationType, operationType.getFieldOrError(field.getName()), field, 0),
                                 false,
                                 false
                         )
@@ -105,7 +105,7 @@ public class QueryTranslator {
         ObjectType fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition).asObject();
         Table table = typeToTable(fieldTypeDefinition, level);
         boolean hasGroupBy = field.hasGroupBy();
-        boolean hasGroupFunctionField = field.getFields().stream().anyMatch(item -> fieldTypeDefinition.getField(item.getName()).isGroupFunctionField());
+        boolean hasGroupFunctionField = field.getFields().stream().anyMatch(item -> fieldTypeDefinition.getFieldOrError(item.getName()).isGroupFunctionField());
         if (!inGroupBy && (hasGroupBy || hasGroupFunctionField) && fieldDefinition.getType().hasList()) {
             Column groupByColumn = graphqlFieldToColumn(fieldTypeDefinition.getName(), INPUT_VALUE_GROUP_BY_NAME, level);
             if (fieldDefinition.getType().hasList()) {
@@ -124,7 +124,7 @@ public class QueryTranslator {
                     jsonObjectFunction(
                             field.getFields().stream()
                                     .filter(subField -> {
-                                                FieldDefinition subFieldDefinition = fieldTypeDefinition.asObject().getField(subField.getName());
+                                                FieldDefinition subFieldDefinition = fieldTypeDefinition.asObject().getFieldOrError(subField.getName());
                                                 return !subFieldDefinition.isFetchField() &&
                                                         !subFieldDefinition.isInvokeField() &&
                                                         !subFieldDefinition.isConnectionField();
@@ -136,13 +136,13 @@ public class QueryTranslator {
                                                     inGroupBy ?
                                                             fieldToExpression(
                                                                     fieldTypeDefinition.asObject(),
-                                                                    fieldTypeDefinition.asObject().getField(subField.getName()),
+                                                                    fieldTypeDefinition.asObject().getFieldOrError(subField.getName()),
                                                                     subField,
                                                                     level
                                                             ) :
                                                             fieldToExpression(
                                                                     fieldTypeDefinition.asObject(),
-                                                                    fieldTypeDefinition.asObject().getField(subField.getName()),
+                                                                    fieldTypeDefinition.asObject().getFieldOrError(subField.getName()),
                                                                     subField,
                                                                     !fieldDefinition.getType().hasList() && hasGroupBy,
                                                                     level
@@ -175,13 +175,13 @@ public class QueryTranslator {
                     .addJoins(
                             field.getFields().stream()
                                     .filter(subField -> {
-                                                FieldDefinition subFieldDefinition = fieldTypeDefinition.asObject().getField(subField.getName());
+                                                FieldDefinition subFieldDefinition = fieldTypeDefinition.asObject().getFieldOrError(subField.getName());
                                                 return !subFieldDefinition.isFetchField() &&
                                                         !subFieldDefinition.isInvokeField() &&
                                                         !subFieldDefinition.isConnectionField();
                                             }
                                     )
-                                    .flatMap(subField -> groupFieldToJoinStream(fieldTypeDefinition.asObject(), fieldTypeDefinition.asObject().getField(subField.getName()), subField, level + 1))
+                                    .flatMap(subField -> groupFieldToJoinStream(fieldTypeDefinition.asObject(), fieldTypeDefinition.asObject().getFieldOrError(subField.getName()), subField, level + 1))
                                     .collect(Collectors.toList())
                     );
         } else {
@@ -437,13 +437,13 @@ public class QueryTranslator {
             }
             Stream<Join> subFieldJoinStream = field.getFields().stream()
                     .filter(subField -> {
-                                FieldDefinition subFieldDefinition = fieldTypeDefinition.asObject().getField(subField.getName());
+                                FieldDefinition subFieldDefinition = fieldTypeDefinition.asObject().getFieldOrError(subField.getName());
                                 return !subFieldDefinition.isFetchField() &&
                                         !subFieldDefinition.isInvokeField() &&
                                         !subFieldDefinition.isConnectionField();
                             }
                     )
-                    .flatMap(subField -> groupFieldToJoinStream(fieldTypeDefinition.asObject(), fieldTypeDefinition.asObject().getField(subField.getName()), subField, level + 1));
+                    .flatMap(subField -> groupFieldToJoinStream(fieldTypeDefinition.asObject(), fieldTypeDefinition.asObject().getFieldOrError(subField.getName()), subField, level + 1));
             Table table = typeToTable(fieldTypeDefinition.asObject(), level);
             Table parentTable = typeToTable(objectType, level - 1);
             if (fieldDefinition.hasMapWith()) {
@@ -529,7 +529,7 @@ public class QueryTranslator {
         if (fieldDefinition.getType().hasList()) {
             Table table = typeToTable(objectType, level);
             ObjectType withType = documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getMapWithTypeOrError());
-            FieldDefinition withToFieldDefinition = withType.getField(fieldDefinition.getMapWithToOrError());
+            FieldDefinition withToFieldDefinition = withType.getFieldOrError(fieldDefinition.getMapWithToOrError());
             Table withTable = typeToTable(withType, level);
             Expression selectExpression;
 
@@ -590,7 +590,7 @@ public class QueryTranslator {
             if (fieldDefinition.isFunctionField()) {
                 Expression function = new Function()
                         .withName(fieldDefinition.getFunctionNameOrError())
-                        .withParameters(graphqlFieldToColumn(objectType.getName(), objectType.getField(fieldDefinition.getFunctionFieldOrError()).getName(), level));
+                        .withParameters(graphqlFieldToColumn(objectType.getName(), objectType.getFieldOrError(fieldDefinition.getFunctionFieldOrError()).getName(), level));
                 if (over) {
                     function = new AnalyticExpression((Function) function).withType(OVER);
                 }
@@ -714,7 +714,7 @@ public class QueryTranslator {
                                                                         .or(() -> Optional.ofNullable(subInputValue.getDefaultValue()))
                                                                         .stream()
                                                                         .flatMap(subValueWithVariable -> {
-                                                                                    FieldDefinition subFieldDefinition = fieldTypeDefinition.asObject().getField(subInputValue.getName());
+                                                                                    FieldDefinition subFieldDefinition = fieldTypeDefinition.asObject().getFieldOrError(subInputValue.getName());
                                                                                     if (subValueWithVariable.isEnum()) {
                                                                                         Expression expression;
                                                                                         if (subFieldDefinition.isFunctionField()) {
@@ -785,7 +785,7 @@ public class QueryTranslator {
                                 .or(() -> Optional.ofNullable(subInputValue.getDefaultValue()))
                                 .stream()
                                 .flatMap(subValueWithVariable -> {
-                                            FieldDefinition subFieldDefinition = fieldTypeDefinition.asObject().getField(subInputValue.getName());
+                                            FieldDefinition subFieldDefinition = fieldTypeDefinition.asObject().getFieldOrError(subInputValue.getName());
                                             if (subValueWithVariable.isEnum()) {
                                                 Expression expression;
                                                 if (subFieldDefinition.isFunctionField()) {

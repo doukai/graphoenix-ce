@@ -343,7 +343,7 @@ public class ArgumentsTranslator {
                         );
             } else {
                 ObjectType withType = documentManager.getDocument().getObjectTypeOrError(fieldDefinition.getMapWithTypeOrError());
-                FieldDefinition withToFieldDefinition = withType.getField(fieldDefinition.getMapWithToOrError());
+                FieldDefinition withToFieldDefinition = withType.getFieldOrError(fieldDefinition.getMapWithToOrError());
                 Column column = graphqlFieldToColumn(withType.getName(), withToFieldDefinition.getName(), level);
                 return Optional.ofNullable(fieldDefinition.getArgument(INPUT_VALUE_AFTER_NAME))
                         .flatMap(inputValue ->

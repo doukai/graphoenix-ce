@@ -68,7 +68,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler, FetchBef
                         operation.getFields().stream()
                                 .flatMap(field -> {
                                             String selectionName = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
-                                            return buildFetchItems("/" + selectionName, operationType.getField(field.getName()), field);
+                                            return buildFetchItems("/" + selectionName, operationType.getFieldOrError(field.getName()), field);
                                         }
                                 )
                                 .collect(
@@ -183,9 +183,6 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler, FetchBef
     }
 
     public Stream<FetchItem> buildFetchItems(String path, FieldDefinition fieldDefinition, Field field) {
-        if (fieldDefinition == null) {
-            return Stream.empty();
-        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             return Streams
@@ -194,7 +191,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler, FetchBef
                                     .flatMap(Collection::stream)
                                     .flatMap(subField -> {
                                                 String selectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
-                                                return buildFetchItems(path + "/" + selectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField);
+                                                return buildFetchItems(path + "/" + selectionName, fieldTypeDefinition.asObject().getFieldOrError(subField.getName()), subField);
                                             }
                                     ),
                             Stream.ofNullable(fieldDefinition.getArguments())

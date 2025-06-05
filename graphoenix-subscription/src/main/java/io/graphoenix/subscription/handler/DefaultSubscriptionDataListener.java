@@ -58,7 +58,7 @@ public class DefaultSubscriptionDataListener implements SubscriptionDataListener
                 .putAll(
                         operation.getFields().stream()
                                 .flatMap(field -> {
-                                            FieldDefinition fieldDefinition = operationType.getField(field.getName());
+                                            FieldDefinition fieldDefinition = operationType.getFieldOrError(field.getName());
                                             Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
                                             if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
                                                 return argumentsToFilter.argumentsToMultipleFilter(fieldDefinition, field).stream()
@@ -91,7 +91,7 @@ public class DefaultSubscriptionDataListener implements SubscriptionDataListener
         this.typeIDMap
                 .putAll(
                         operation.getFields().stream()
-                                .flatMap(field -> indexID(operationType.getField(field.getName()), jsonValue.asJsonObject().get(Optional.ofNullable(field.getAlias()).orElseGet(field::getName))))
+                                .flatMap(field -> indexID(operationType.getFieldOrError(field.getName()), jsonValue.asJsonObject().get(Optional.ofNullable(field.getAlias()).orElseGet(field::getName))))
                                 .collect(
                                         Collectors.groupingBy(
                                                 Map.Entry::getKey,
@@ -121,7 +121,7 @@ public class DefaultSubscriptionDataListener implements SubscriptionDataListener
                                     .map(idFieldDefinition -> new AbstractMap.SimpleEntry<>(fieldTypeDefinition.getName(), jsonValue.asJsonObject().getString(idFieldDefinition.getName()))),
                             jsonValue.asJsonObject().entrySet().stream()
                                     .flatMap(entry -> {
-                                                FieldDefinition subFieldDefinition = fieldTypeDefinition.asObject().getField(entry.getKey());
+                                                FieldDefinition subFieldDefinition = fieldTypeDefinition.asObject().getFieldOrError(entry.getKey());
                                                 if (entry.getValue().getValueType().equals(JsonValue.ValueType.ARRAY)) {
                                                     return entry.getValue().asJsonArray().stream()
                                                             .filter(item -> item.getValueType().equals(JsonValue.ValueType.OBJECT))
@@ -167,7 +167,7 @@ public class DefaultSubscriptionDataListener implements SubscriptionDataListener
                         mutation.asJsonObject().entrySet().stream()
                                 .filter(entry -> !entry.getKey().equals(INPUT_VALUE_WHERE_NAME))
                                 .anyMatch(entry -> {
-                                            FieldDefinition fieldDefinition = objectType.getField(entry.getKey());
+                                            FieldDefinition fieldDefinition = objectType.getFieldOrError(entry.getKey());
                                             if (entry.getValue().getValueType().equals(JsonValue.ValueType.ARRAY)) {
                                                 return entry.getValue().asJsonArray().stream()
                                                         .filter(item -> item.getValueType().equals(JsonValue.ValueType.OBJECT))

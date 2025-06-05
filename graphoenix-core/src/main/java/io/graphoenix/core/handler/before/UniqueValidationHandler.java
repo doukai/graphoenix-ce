@@ -57,7 +57,7 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
         return Flux
                 .fromStream(
                         operation.getFields().stream()
-                                .flatMap(field -> buildUniqueItems(operationType.getField(field.getName()), field))
+                                .flatMap(field -> buildUniqueItems(operationType.getFieldOrError(field.getName()), field))
                                 .collect(
                                         Collectors.groupingBy(
                                                 Tuple5::getT1,
@@ -161,9 +161,6 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
     }
 
     public Stream<Tuple5<ObjectType, String, ValueWithVariable, String, ValueWithVariable>> buildUniqueItems(FieldDefinition fieldDefinition, Field field) {
-        if (fieldDefinition == null) {
-            return Stream.empty();
-        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();

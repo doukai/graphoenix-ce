@@ -150,7 +150,7 @@ public class ProtobufConverter {
                             .map(entry ->
                                     new AbstractMap.SimpleEntry<>(
                                             CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, entry.getKey()),
-                                            toProtobufJsonValue(entry.getValue(), fieldTypeDefinition.asObject().getField(entry.getKey()))
+                                            toProtobufJsonValue(entry.getValue(), fieldTypeDefinition.asObject().getFieldOrError(entry.getKey()))
                                     )
                             )
                             .collect(JsonCollectors.toJsonObject());

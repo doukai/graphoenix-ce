@@ -73,7 +73,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                             String selectionName = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
                                             return buildFetchItems(
                                                     operationType,
-                                                    operationType.getField(field.getName()),
+                                                    operationType.getFieldOrError(field.getName()),
                                                     field,
                                                     jsonValue.asJsonObject().get(selectionName),
                                                     field.isMerge()
@@ -143,9 +143,6 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
     }
 
     public Stream<FetchItem> buildFetchItems(ObjectType objectType, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue, boolean merge) {
-        if (fieldDefinition == null) {
-            return Stream.empty();
-        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (documentManager.isMutationOperationType(objectType) && !packageManager.isLocalPackage(fieldDefinition)) {
             String protocol = fieldDefinition.getFetchProtocol().map(EnumValue::getValue)
@@ -347,11 +344,11 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                 .map(item ->
                                         item.asObject().containsKey(INPUT_VALUE_WHERE_NAME) && item.asObject().keySet().size() == 1 ?
                                                 jsonProvider.createObjectBuilder()
-                                                        .add(fetchWithFrom, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fetchWithType.getField(fetchWithFrom)))
+                                                        .add(fetchWithFrom, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fetchWithType.getFieldOrError(fetchWithFrom)))
                                                         .add(fetchWithTo, item.asObject().getJsonObject(INPUT_VALUE_WHERE_NAME).getJsonObject(idField.getName()).get(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
                                                         .build() :
                                                 jsonProvider.createObjectBuilder()
-                                                        .add(fetchWithFrom, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fetchWithType.getField(fetchWithFrom)))
+                                                        .add(fetchWithFrom, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fetchWithType.getFieldOrError(fetchWithFrom)))
                                                         .add(
                                                                 fetchWithType.getFields().stream()
                                                                         .filter(withTypeFieldDefinition ->
@@ -398,11 +395,11 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                         JsonValue mutationJsonValue =
                                 valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME) && valueWithVariable.asObject().keySet().size() == 1 ?
                                         jsonProvider.createObjectBuilder()
-                                                .add(fetchWithFrom, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fetchWithType.getField(fetchWithFrom)))
+                                                .add(fetchWithFrom, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fetchWithType.getFieldOrError(fetchWithFrom)))
                                                 .add(fetchWithTo, valueWithVariable.asObject().getJsonObject(INPUT_VALUE_WHERE_NAME).getJsonObject(idField.getName()).get(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
                                                 .build() :
                                         jsonProvider.createObjectBuilder()
-                                                .add(fetchWithFrom, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fetchWithType.getField(fetchWithFrom)))
+                                                .add(fetchWithFrom, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fetchWithType.getFieldOrError(fetchWithFrom)))
                                                 .add(
                                                         fetchWithType.getFields().stream()
                                                                 .filter(withTypeFieldDefinition ->
@@ -465,7 +462,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                         Stream<FetchItem> fetchItemStream = valueWithVariable.asArray().getValueWithVariables().stream()
                                 .map(item ->
                                         jsonProvider.createObjectBuilder(item.asJsonObject())
-                                                .add(fetchTo, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fieldTypeDefinition.asObject().getField(fetchTo)))
+                                                .add(fetchTo, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fieldTypeDefinition.asObject().getFieldOrError(fetchTo)))
                                                 .build()
                                 )
                                 .map(item -> {
@@ -495,7 +492,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                             id = UUID.randomUUID().toString();
                         }
                         JsonValue mutationJsonValue = jsonProvider.createObjectBuilder(valueWithVariable.asObject())
-                                .add(fetchTo, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fieldTypeDefinition.asObject().getField(fetchTo)))
+                                .add(fetchTo, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fieldTypeDefinition.asObject().getFieldOrError(fetchTo)))
                                 .build();
                         FetchItem fetchItem = new FetchItem(packageName, protocol, path, fieldTypeDefinition.getName(), mutationJsonValue, id, idField.getName());
                         return Stream.of(fetchItem);
@@ -541,7 +538,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                         Stream<FetchItem> fetchItemStream = valueWithVariable.asArray().stream()
                                 .map(item ->
                                         jsonProvider.createObjectBuilder()
-                                                .add(fetchWithFrom, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fetchWithType.getField(fetchWithFrom)))
+                                                .add(fetchWithFrom, getFetchFrom(jsonValue.asJsonObject().get(fetchFrom), fetchWithType.getFieldOrError(fetchWithFrom)))
                                                 .add(fetchWithTo, item)
                                                 .build()
                                 )

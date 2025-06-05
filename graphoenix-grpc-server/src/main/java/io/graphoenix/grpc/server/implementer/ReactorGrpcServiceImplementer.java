@@ -236,9 +236,9 @@ public class ReactorGrpcServiceImplementer {
                                                                         .getFieldTypeDefinition(
                                                                                 documentManager
                                                                                         .getFieldTypeDefinition(
-                                                                                                fieldTypeDefinition.asObject().getField(FIELD_EDGES_NAME)
+                                                                                                fieldTypeDefinition.asObject().getFieldOrError(FIELD_EDGES_NAME)
                                                                                         )
-                                                                                        .asObject().getField(FIELD_NODE_NAME)
+                                                                                        .asObject().getFieldOrError(FIELD_NODE_NAME)
                                                                         )
                                                                         .asObject().getFields().stream()
                                                                         .filter(subFieldDefinition -> !subFieldDefinition.isFunctionField())

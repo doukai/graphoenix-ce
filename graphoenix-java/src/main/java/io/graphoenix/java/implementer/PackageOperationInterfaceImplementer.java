@@ -32,7 +32,7 @@ public class PackageOperationInterfaceImplementer {
         String packageName = operation.getPackageNameOrError();
         ObjectType operationType = documentManager.getOperationTypeOrError(operation);
         Field field = operation.getSelection(0).asField();
-        FieldDefinition fieldDefinition = operationType.getField(field.getName());
+        FieldDefinition fieldDefinition = operationType.getFieldOrError(field.getName());
         String protocol = fieldDefinition.getFetchProtocol().orElse(new EnumValue(ENUM_PROTOCOL_ENUM_VALUE_GRPC)).getValue();
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
 

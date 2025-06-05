@@ -67,7 +67,7 @@ public class VersionValidationHandler implements OperationBeforeHandler {
         return Flux
                 .fromStream(
                         operation.getFields().stream()
-                                .flatMap(field -> buildVersionItems(operationType.getField(field.getName()), field))
+                                .flatMap(field -> buildVersionItems(operationType.getFieldOrError(field.getName()), field))
                                 .collect(
                                         Collectors.groupingBy(
                                                 Tuple5::getT1,
@@ -150,9 +150,6 @@ public class VersionValidationHandler implements OperationBeforeHandler {
     }
 
     public Stream<Tuple5<ObjectType, String, ValueWithVariable, String, ValueWithVariable>> buildVersionItems(FieldDefinition fieldDefinition, Field field) {
-        if (fieldDefinition == null) {
-            return Stream.empty();
-        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             FieldDefinition idField = fieldTypeDefinition.asObject().getIDFieldOrError();

@@ -69,7 +69,7 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
         return transactionCompensatorProvider.get()
                 .flatMap(transactionCompensator -> {
                             List<FetchItem> fetchItemList = operation.getFields().stream()
-                                    .flatMap(field -> buildFetchItems(operationType.getField(field.getName()), field))
+                                    .flatMap(field -> buildFetchItems(operationType.getFieldOrError(field.getName()), field))
                                     .collect(Collectors.toList());
 
                             return Flux
@@ -160,7 +160,7 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                                             operation
                                                     .mergeSelection(
                                                             operation.getFields().stream()
-                                                                    .flatMap(field -> mergeIDField(operationType.getField(field.getName()), field))
+                                                                    .flatMap(field -> mergeIDField(operationType.getFieldOrError(field.getName()), field))
                                                                     .collect(Collectors.toList())
                                                     )
                                     );
@@ -170,9 +170,6 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
     }
 
     public Stream<FetchItem> buildFetchItems(FieldDefinition fieldDefinition, Field field) {
-        if (fieldDefinition == null) {
-            return Stream.empty();
-        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             String alias = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
@@ -191,8 +188,9 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                             .setAlias(alias)
                             .setSelections(
                                     field.getArguments().getArguments().keySet().stream()
-                                            .filter(key -> documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(key)).isLeaf())
-                                            .map(Field::new)
+                                            .flatMap(key -> Stream.ofNullable(fieldTypeDefinition.asObject().getField(key)))
+                                            .filter(subFieldDefinition -> documentManager.getFieldTypeDefinition(subFieldDefinition).isLeaf())
+                                            .map(subFieldDefinition -> new Field(subFieldDefinition.getName()))
                                             .collect(Collectors.toList())
                             )
                             .mergeSelection(new Field(idField.getName()))
@@ -226,8 +224,9 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                                 .setAlias(alias + "__" + INPUT_VALUE_INPUT_NAME)
                                 .setSelections(
                                         input.getObjectValueWithVariable().keySet().stream()
-                                                .filter(key -> documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(key)).isLeaf())
-                                                .map(Field::new)
+                                                .flatMap(key -> Stream.ofNullable(fieldTypeDefinition.asObject().getField(key)))
+                                                .filter(subFieldDefinition -> documentManager.getFieldTypeDefinition(subFieldDefinition).isLeaf())
+                                                .map(subFieldDefinition -> new Field(subFieldDefinition.getName()))
                                                 .collect(Collectors.toList())
                                 )
                                 .mergeSelection(new Field(idField.getName()))
@@ -275,8 +274,9 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                                                     .setAlias(alias + "__" + INPUT_VALUE_LIST_NAME + "_" + index)
                                                     .setSelections(
                                                             item.getObjectValueWithVariable().keySet().stream()
-                                                                    .filter(key -> documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(key)).isLeaf())
-                                                                    .map(Field::new)
+                                                                    .flatMap(key -> Stream.ofNullable(fieldTypeDefinition.asObject().getField(key)))
+                                                                    .filter(subFieldDefinition -> documentManager.getFieldTypeDefinition(subFieldDefinition).isLeaf())
+                                                                    .map(subFieldDefinition -> new Field(subFieldDefinition.getName()))
                                                                     .collect(Collectors.toList())
                                                     )
                                                     .mergeSelection(new Field(idField.getName()))
@@ -552,7 +552,7 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                     FieldDefinition withTypeIdField = fetchWithType.getIDFieldOrError();
                     String fetchWithFrom = fieldDefinition.getFetchWithFrom().orElseGet(fieldDefinition::getMapWithFromOrError);
 
-                    FieldDefinition refFieldDefinition = objectType.getField(typeNameToFieldName(fetchWithType.getName()));
+                    FieldDefinition refFieldDefinition = objectType.getFieldOrError(typeNameToFieldName(fetchWithType.getName()));
                     String withTypeProtocol = packageManager.isLocalPackage(withTypePackageName) ?
                             ENUM_PROTOCOL_ENUM_VALUE_LOCAL :
                             packageConfig.getDefaultFetchProtocol();
@@ -662,9 +662,6 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
     }
 
     private Stream<Field> mergeIDField(FieldDefinition fieldDefinition, Field field) {
-        if (fieldDefinition == null) {
-            return Stream.empty();
-        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject() && !fieldDefinition.isConnectionField()) {
             return Stream.of(
@@ -679,7 +676,7 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                                                     .stream(),
                                             Stream.ofNullable(field.getFields())
                                                     .flatMap(Collection::stream)
-                                                    .flatMap(subField -> mergeIDField(fieldTypeDefinition.asObject().getField(subField.getName()), subField))
+                                                    .flatMap(subField -> mergeIDField(fieldTypeDefinition.asObject().getFieldOrError(subField.getName()), subField))
                                     )
                                     .collect(Collectors.toList())
                     )

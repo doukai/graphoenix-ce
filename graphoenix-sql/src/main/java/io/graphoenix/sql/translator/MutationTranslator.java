@@ -63,7 +63,7 @@ public class MutationTranslator {
         ObjectType operationType = documentManager.getOperationTypeOrError(operation);
         return operation.getFields().stream()
                 .filter(field -> {
-                            FieldDefinition fieldDefinition = operationType.getField(field.getName());
+                            FieldDefinition fieldDefinition = operationType.getFieldOrError(field.getName());
                             return packageManager.isLocalPackage(fieldDefinition) &&
                                     !fieldDefinition.isFetchField() &&
                                     !fieldDefinition.isInvokeField() &&
@@ -71,7 +71,7 @@ public class MutationTranslator {
                                     !fieldDefinition.isConnectionField();
                         }
                 )
-                .flatMap(field -> fieldToMutationStatementStream(operationType, operationType.getField(field.getName()), field));
+                .flatMap(field -> fieldToMutationStatementStream(operationType, operationType.getFieldOrError(field.getName()), field));
     }
 
     protected Stream<Statement> fieldToMutationStatementStream(ObjectType objectType, FieldDefinition fieldDefinition, Field field) {

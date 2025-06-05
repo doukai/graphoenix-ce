@@ -64,7 +64,7 @@ public class RabbitMQSubscriptionHandler implements SubscriptionHandler {
                         sender.declare(queue(requestId).autoDelete(true))
                                 .thenMany(
                                         Flux.fromIterable(operation.getFields())
-                                                .map(field -> operationType.getField(field.getName()))
+                                                .map(field -> operationType.getFieldOrError(field.getName()))
                                                 .filter(fieldDefinition -> {
                                                             Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
                                                             return fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer();

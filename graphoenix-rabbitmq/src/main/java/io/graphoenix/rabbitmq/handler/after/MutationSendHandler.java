@@ -46,8 +46,8 @@ public class MutationSendHandler implements OperationAfterHandler {
         ObjectType operationType = documentManager.getOperationTypeOrError(operation);
         Map<String, List<JsonObject>> typeJsonObjectListMap =
                 operation.getFields().stream()
-                        .filter(field -> !operationType.getField(field.getName()).isInvokeField())
-                        .flatMap(field -> buildTypeJsonObjectEntryStream(operationType.getField(field.getName()), field.getArguments()))
+                        .filter(field -> !operationType.getFieldOrError(field.getName()).isInvokeField())
+                        .flatMap(field -> buildTypeJsonObjectEntryStream(operationType.getFieldOrError(field.getName()), field.getArguments()))
                         .collect(
                                 Collectors.groupingBy(
                                         Map.Entry::getKey,
@@ -97,15 +97,15 @@ public class MutationSendHandler implements OperationAfterHandler {
                                                 jsonValue.asJsonObject().getJsonObject(INPUT_VALUE_INPUT_NAME).entrySet().stream()
                                                         .filter(entry ->
                                                                 entry.getKey().equals(INPUT_VALUE_WHERE_NAME) ||
-                                                                        documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(entry.getKey())).isLeaf()
+                                                                        documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getFieldOrError(entry.getKey())).isLeaf()
                                                         ).map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue()))
                                                         .collect(JsonCollectors.toJsonObject())
                                         )
                                 ),
                                 jsonValue.asJsonObject().getJsonObject(INPUT_VALUE_INPUT_NAME).entrySet().stream()
                                         .filter(entry -> !entry.getKey().equals(INPUT_VALUE_WHERE_NAME))
-                                        .filter(entry -> !documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(entry.getKey())).isLeaf())
-                                        .flatMap(entry -> buildTypeJsonObjectEntryStream(fieldTypeDefinition.asObject().getField(entry.getKey()), entry.getValue()))
+                                        .filter(entry -> !documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getFieldOrError(entry.getKey())).isLeaf())
+                                        .flatMap(entry -> buildTypeJsonObjectEntryStream(fieldTypeDefinition.asObject().getFieldOrError(entry.getKey()), entry.getValue()))
                         );
             } else {
                 return Stream
@@ -116,7 +116,7 @@ public class MutationSendHandler implements OperationAfterHandler {
                                                 jsonValue.asJsonObject().entrySet().stream()
                                                         .filter(entry ->
                                                                 entry.getKey().equals(INPUT_VALUE_WHERE_NAME) ||
-                                                                        documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(entry.getKey())).isLeaf()
+                                                                        documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getFieldOrError(entry.getKey())).isLeaf()
                                                         )
                                                         .map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue()))
                                                         .collect(JsonCollectors.toJsonObject())
@@ -124,8 +124,8 @@ public class MutationSendHandler implements OperationAfterHandler {
                                 ),
                                 jsonValue.asJsonObject().entrySet().stream()
                                         .filter(entry -> !entry.getKey().equals(INPUT_VALUE_WHERE_NAME))
-                                        .filter(entry -> !documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getField(entry.getKey())).isLeaf())
-                                        .flatMap(entry -> buildTypeJsonObjectEntryStream(fieldTypeDefinition.asObject().getField(entry.getKey()), entry.getValue()))
+                                        .filter(entry -> !documentManager.getFieldTypeDefinition(fieldTypeDefinition.asObject().getFieldOrError(entry.getKey())).isLeaf())
+                                        .flatMap(entry -> buildTypeJsonObjectEntryStream(fieldTypeDefinition.asObject().getFieldOrError(entry.getKey()), entry.getValue()))
                         );
             }
         }

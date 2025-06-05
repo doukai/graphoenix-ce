@@ -42,7 +42,7 @@ public class SubscriptionIDFieldsMergeHandler implements OperationBeforeHandler 
                 operation
                         .mergeSelection(
                                 operation.getFields().stream()
-                                        .flatMap(field -> mergeIDField(operationType.getField(field.getName()), field))
+                                        .flatMap(field -> mergeIDField(operationType.getFieldOrError(field.getName()), field))
                                         .collect(Collectors.toList())
                         )
         );
@@ -63,7 +63,7 @@ public class SubscriptionIDFieldsMergeHandler implements OperationBeforeHandler 
                                                     .stream(),
                                             Stream.ofNullable(field.getFields())
                                                     .flatMap(Collection::stream)
-                                                    .flatMap(subField -> mergeIDField(fieldTypeDefinition.asObject().getField(subField.getName()), subField))
+                                                    .flatMap(subField -> mergeIDField(fieldTypeDefinition.asObject().getFieldOrError(subField.getName()), subField))
                                     )
                                     .collect(Collectors.toList())
                     )

@@ -43,16 +43,13 @@ public class QueryFetchFieldsMergeHandler implements OperationBeforeHandler, Fet
                 operation
                         .mergeSelection(
                                 operation.getFields().stream()
-                                        .flatMap(field -> buildFetch(operationType.getField(field.getName()), field))
+                                        .flatMap(field -> buildFetch(operationType.getFieldOrError(field.getName()), field))
                                         .collect(Collectors.toList())
                         )
         );
     }
 
     private Stream<Field> buildFetch(FieldDefinition fieldDefinition, Field field) {
-        if (fieldDefinition == null) {
-            return Stream.empty();
-        }
         if (fieldDefinition.isFetchField()) {
             return Stream.of(field, new Field(fieldDefinition.getFetchFromOrError()).addDirective(new Directive(DIRECTIVE_HIDE_NAME)));
         } else {
@@ -62,7 +59,7 @@ public class QueryFetchFieldsMergeHandler implements OperationBeforeHandler, Fet
                         field.mergeSelection(
                                 Stream.ofNullable(field.getFields())
                                         .flatMap(Collection::stream)
-                                        .flatMap(subField -> buildFetch(fieldTypeDefinition.asObject().getField(subField.getName()), subField))
+                                        .flatMap(subField -> buildFetch(fieldTypeDefinition.asObject().getFieldOrError(subField.getName()), subField))
                                         .collect(Collectors.toList())
                         )
                 );

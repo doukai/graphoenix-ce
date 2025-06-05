@@ -68,7 +68,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler, FetchAfter
                         operation.getFields().stream()
                                 .flatMap(field -> {
                                             String selectionName = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
-                                            return buildFetchItems(operationType, "/" + selectionName, operationType.getField(field.getName()), field, jsonValue);
+                                            return buildFetchItems(operationType, "/" + selectionName, operationType.getFieldOrError(field.getName()), field, jsonValue);
                                         }
                                 )
                                 .collect(
@@ -170,9 +170,6 @@ public class QueryAfterFetchHandler implements OperationAfterHandler, FetchAfter
     }
 
     public Stream<FetchItem> buildFetchItems(ObjectType objectType, String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
-        if (fieldDefinition == null) {
-            return Stream.empty();
-        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (documentManager.isQueryOperationType(objectType) && !packageManager.isLocalPackage(fieldDefinition)) {
             String protocol = fieldDefinition.getFetchProtocol().map(EnumValue::getValue)
@@ -352,7 +349,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler, FetchAfter
                                         .flatMap(Collection::stream)
                                         .flatMap(subField -> {
                                                     String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
-                                                    return buildFetchItems(fieldTypeDefinition.asObject(), path + "/" + index + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonObject().get(selectionName).asJsonArray().get(index));
+                                                    return buildFetchItems(fieldTypeDefinition.asObject(), path + "/" + index + "/" + subSelectionName, fieldTypeDefinition.asObject().getFieldOrError(subField.getName()), subField, jsonValue.asJsonObject().get(selectionName).asJsonArray().get(index));
                                                 }
                                         )
                         )
@@ -362,7 +359,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler, FetchAfter
                         .flatMap(Collection::stream)
                         .flatMap(subField -> {
                                     String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
-                                    return buildFetchItems(fieldTypeDefinition.asObject(), path + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonObject().get(selectionName));
+                                    return buildFetchItems(fieldTypeDefinition.asObject(), path + "/" + subSelectionName, fieldTypeDefinition.asObject().getFieldOrError(subField.getName()), subField, jsonValue.asJsonObject().get(selectionName));
                                 }
                         );
             }

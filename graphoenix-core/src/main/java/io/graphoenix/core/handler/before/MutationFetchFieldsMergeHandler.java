@@ -48,16 +48,13 @@ public class MutationFetchFieldsMergeHandler implements OperationBeforeHandler, 
                 operation
                         .mergeSelection(
                                 operation.getFields().stream()
-                                        .flatMap(field -> buildFetch(operationType.getField(field.getName()), field))
+                                        .flatMap(field -> buildFetch(operationType.getFieldOrError(field.getName()), field))
                                         .collect(Collectors.toList())
                         )
         );
     }
 
     private Stream<Field> buildFetch(FieldDefinition fieldDefinition, Field field) {
-        if (fieldDefinition == null) {
-            return Stream.empty();
-        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject()) {
             return Stream.of(

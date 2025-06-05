@@ -96,7 +96,7 @@ public class OperationInterfaceImplementer {
                             try {
                                 buildImplementClass(packageName, simpleName, operationList).writeTo(filer);
                                 for (Operation operation : operationList.stream()
-                                        .filter(operation -> packageManager.isLocalPackage(documentManager.getOperationTypeOrError(operation).getField(operation.getSelection(0).asField().getName())))
+                                        .filter(operation -> packageManager.isLocalPackage(documentManager.getOperationTypeOrError(operation).getFieldOrError(operation.getSelection(0).asField().getName())))
                                         .collect(Collectors.toList())) {
                                     Map.Entry<String, String> sqlFileEntry = buildSQLFile(simpleName, operation);
                                     FileObject fileObject = filer.createResource(
@@ -205,7 +205,7 @@ public class OperationInterfaceImplementer {
     private List<FieldSpec> buildSQLFields(List<Operation> operationList) {
         return operationList.stream()
                 .sorted(Comparator.comparingInt(Operation::getInvokeMethodIndexOrError))
-                .filter(operation -> packageManager.isLocalPackage(documentManager.getOperationTypeOrError(operation).getField(operation.getSelection(0).asField().getName())))
+                .filter(operation -> packageManager.isLocalPackage(documentManager.getOperationTypeOrError(operation).getFieldOrError(operation.getSelection(0).asField().getName())))
                 .map(this::buildSQLField)
                 .collect(Collectors.toList());
     }
@@ -226,7 +226,7 @@ public class OperationInterfaceImplementer {
         ClassName typeClassName = ClassName.get(packageName, "SQL" + simpleName + "Impl");
         CodeBlock.Builder builder = CodeBlock.builder();
         operationList.stream()
-                .filter(operation -> packageManager.isLocalPackage(documentManager.getOperationTypeOrError(operation).getField(operation.getSelection(0).asField().getName())))
+                .filter(operation -> packageManager.isLocalPackage(documentManager.getOperationTypeOrError(operation).getFieldOrError(operation.getSelection(0).asField().getName())))
                 .sorted(Comparator.comparingInt(Operation::getInvokeMethodIndexOrError))
                 .forEach(operation ->
                         builder.addStatement(
@@ -262,7 +262,7 @@ public class OperationInterfaceImplementer {
         TypeName typeName = toTypeName(operation.getInvokeReturnClassNameOrError());
         List<Map.Entry<String, String>> parameters = operation.getInvokeParametersList();
         Field field = operation.getSelection(0).asField();
-        FieldDefinition fieldDefinition = documentManager.getOperationTypeOrError(operation).getField(field.getName());
+        FieldDefinition fieldDefinition = documentManager.getOperationTypeOrError(operation).getFieldOrError(field.getName());
 
         MethodSpec.Builder builder = MethodSpec.methodBuilder(operation.getInvokeMethodNameOrError())
                 .addModifiers(Modifier.PUBLIC)
@@ -378,7 +378,7 @@ public class OperationInterfaceImplementer {
     private CodeBlock getCodeBlock(Operation operation, CodeBlock parameterMapCodeBlock) {
         ObjectType operationType = documentManager.getOperationTypeOrError(operation);
         Field field = operation.getSelection(0).asField();
-        FieldDefinition fieldDefinition = operationType.getField(field.getName());
+        FieldDefinition fieldDefinition = operationType.getFieldOrError(field.getName());
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
 
         ClassName operationTypeClassName = ClassName.get(fieldTypeDefinition.getPackageNameOrError() + ".dto.objectType", operationType.getName());

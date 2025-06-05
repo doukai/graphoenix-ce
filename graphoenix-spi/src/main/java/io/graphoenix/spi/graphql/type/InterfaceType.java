@@ -2,6 +2,7 @@ package io.graphoenix.spi.graphql.type;
 
 import com.google.common.collect.Iterators;
 import graphql.parser.antlr.GraphqlParser;
+import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.FieldsType;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_CONTAINER_NAME;
+import static io.graphoenix.spi.error.GraphQLErrorType.FIELD_DEFINITION_NOT_EXIST;
 import static io.graphoenix.spi.utils.DocumentUtil.getImplementsInterfaces;
 import static io.graphoenix.spi.utils.ElementUtil.getNameFromElement;
 import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
@@ -154,6 +156,15 @@ public class InterfaceType extends AbstractDefinition implements Definition, Fie
     @Override
     public FieldDefinition getField(String name) {
         return fieldDefinitionMap.get(name);
+    }
+
+    @Override
+    public FieldDefinition getFieldOrError(String name) {
+        FieldDefinition fieldDefinition = getField(name);
+        if (fieldDefinition == null) {
+            throw new GraphQLErrors(FIELD_DEFINITION_NOT_EXIST.bind(getName(), name));
+        }
+        return fieldDefinition;
     }
 
     public FieldDefinition getField(int index) {

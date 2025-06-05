@@ -15,5 +15,7 @@ public interface FieldsType extends Definition {
 
     FieldDefinition getField(String name);
 
+    FieldDefinition getFieldOrError(String name);
+
     Collection<FieldDefinition> getFields();
 }

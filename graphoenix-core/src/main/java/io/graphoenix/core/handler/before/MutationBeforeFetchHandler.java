@@ -56,7 +56,7 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
         return Flux
                 .fromIterable(
                         operation.getFields().stream()
-                                .flatMap(field -> buildFetchItems(operationType.getField(field.getName()), field))
+                                .flatMap(field -> buildFetchItems(operationType.getFieldOrError(field.getName()), field))
                                 .collect(
                                         Collectors.groupingBy(
                                                 FetchItem::getPackageName,
@@ -135,9 +135,6 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
     }
 
     public Stream<FetchItem> buildFetchItems(FieldDefinition fieldDefinition, Field field) {
-        if (fieldDefinition == null) {
-            return Stream.empty();
-        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
             return Streams

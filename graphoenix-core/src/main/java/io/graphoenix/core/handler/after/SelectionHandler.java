@@ -63,8 +63,8 @@ public class SelectionHandler implements OperationAfterHandler {
                                                     String selectionName = Optional.ofNullable(field.getAlias()).orElseGet(field::getName);
                                                     return Stream
                                                             .concat(
-                                                                    buildFormat("/" + selectionName, operationType.getField(field.getName()), field, jsonValue.asJsonObject().get(selectionName)),
-                                                                    hideField("/" + selectionName, operationType.getField(field.getName()), field, jsonValue.asJsonObject().get(selectionName))
+                                                                    buildFormat("/" + selectionName, operationType.getFieldOrError(field.getName()), field, jsonValue.asJsonObject().get(selectionName)),
+                                                                    hideField("/" + selectionName, operationType.getFieldOrError(field.getName()), field, jsonValue.asJsonObject().get(selectionName))
                                                             );
                                                 }
                                         )
@@ -77,7 +77,7 @@ public class SelectionHandler implements OperationAfterHandler {
     }
 
     public Stream<JsonObject> buildFormat(String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
-        if (fieldDefinition == null || jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
+        if (jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
             return Stream.empty();
         }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
@@ -89,7 +89,7 @@ public class SelectionHandler implements OperationAfterHandler {
                                         .flatMap(Collection::stream)
                                         .flatMap(subField -> {
                                                     String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
-                                                    return buildFormat(path + "/" + index + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonArray().get(index).asJsonObject().get(subSelectionName));
+                                                    return buildFormat(path + "/" + index + "/" + subSelectionName, fieldTypeDefinition.asObject().getFieldOrError(subField.getName()), subField, jsonValue.asJsonArray().get(index).asJsonObject().get(subSelectionName));
                                                 }
                                         )
                         )
@@ -99,7 +99,7 @@ public class SelectionHandler implements OperationAfterHandler {
                         .flatMap(Collection::stream)
                         .flatMap(subField -> {
                                     String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
-                                    return buildFormat(path + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonObject().get(subSelectionName));
+                                    return buildFormat(path + "/" + subSelectionName, fieldTypeDefinition.asObject().getFieldOrError(subField.getName()), subField, jsonValue.asJsonObject().get(subSelectionName));
                                 }
                         );
             }
@@ -176,7 +176,7 @@ public class SelectionHandler implements OperationAfterHandler {
     }
 
     public Stream<JsonObject> hideField(String path, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue) {
-        if (fieldDefinition == null || jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
+        if (jsonValue.getValueType().equals(JsonValue.ValueType.NULL)) {
             return Stream.empty();
         }
         if (field.isHide()) {
@@ -214,7 +214,7 @@ public class SelectionHandler implements OperationAfterHandler {
                                                             .flatMap(Collection::stream)
                                                             .flatMap(subField -> {
                                                                         String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
-                                                                        return hideField(path + "/" + index + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonArray().get(index).asJsonObject().get(subSelectionName));
+                                                                        return hideField(path + "/" + index + "/" + subSelectionName, fieldTypeDefinition.asObject().getFieldOrError(subField.getName()), subField, jsonValue.asJsonArray().get(index).asJsonObject().get(subSelectionName));
                                                                     }
                                                             )
                                             )
@@ -239,7 +239,7 @@ public class SelectionHandler implements OperationAfterHandler {
                                             .flatMap(Collection::stream)
                                             .flatMap(subField -> {
                                                         String subSelectionName = Optional.ofNullable(subField.getAlias()).orElse(subField.getName());
-                                                        return hideField(path + "/" + subSelectionName, fieldTypeDefinition.asObject().getField(subField.getName()), subField, jsonValue.asJsonObject().get(subSelectionName));
+                                                        return hideField(path + "/" + subSelectionName, fieldTypeDefinition.asObject().getFieldOrError(subField.getName()), subField, jsonValue.asJsonObject().get(subSelectionName));
                                                     }
                                             )
                             );
