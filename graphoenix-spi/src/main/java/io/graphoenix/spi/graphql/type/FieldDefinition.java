@@ -558,7 +558,7 @@ public class FieldDefinition extends AbstractDefinition {
     @Override
     public String toString() {
         ST st = stGroupFile.getInstanceOf("fieldDefinitionDefinition");
-        st.add("filedDefinition", this);
+        st.add("fieldDefinition", this);
         return st.render();
     }
 }

@@ -424,7 +424,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                         }
                     }
                 } else {
-                    String protocol = fieldDefinition.getFetchProtocolOrError().getValue();
+                    String protocol = fieldDefinition.getFetchProtocol().orElseGet(() -> new EnumValue(ENUM_PROTOCOL_ENUM_VALUE_LOCAL)).getValue();
                     String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
                     String fetchTo = fieldDefinition.getFetchToOrError();
 

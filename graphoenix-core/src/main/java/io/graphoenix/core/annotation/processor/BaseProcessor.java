@@ -449,12 +449,12 @@ public abstract class BaseProcessor extends AbstractProcessor {
     public Operation buildOperation(ExecutableElement executableElement, AnnotationMirror annotationMirror) {
         TypeElement typeElement = (TypeElement) executableElement.getEnclosingElement();
         int index = typeElement.getEnclosedElements().indexOf(executableElement);
-        Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> filedEntry = annotationMirror.getElementValues().entrySet().stream()
+        Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> fieldEntry = annotationMirror.getElementValues().entrySet().stream()
                 .findFirst()
                 .orElseThrow(() -> new GraphQLErrors(FIELD_DEFINITION_NOT_EXIST.bind(annotationMirror.toString())));
-        AnnotationMirror fieldAnnotationMirror = (AnnotationMirror) filedEntry.getValue();
+        AnnotationMirror fieldAnnotationMirror = (AnnotationMirror) fieldEntry.getValue();
 
-        Field field = new Field(executableElement, filedEntry.getKey(), fieldAnnotationMirror);
+        Field field = new Field(executableElement, fieldEntry.getKey(), fieldAnnotationMirror);
         Operation operation = new Operation(
                 typeElement.getQualifiedName().toString().replaceAll("\\.", "_") +
                         "_" +

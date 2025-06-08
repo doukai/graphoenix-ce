@@ -290,7 +290,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler, FetchBef
     public Stream<FetchItem> buildFetchItems(String fieldPath, Field field, String path, FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldDefinition.isFetchField()) {
-            String protocol = fieldDefinition.getFetchProtocolOrError().getValue();
+            String protocol = fieldDefinition.getFetchProtocol().orElseGet(() -> new EnumValue(ENUM_PROTOCOL_ENUM_VALUE_LOCAL)).getValue();
             String fetchFrom = fieldDefinition.getFetchFromOrError();
             Field fetchField = new Field();
             if (fieldDefinition.hasFetchWith()) {
@@ -299,7 +299,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler, FetchBef
                 String fetchWithFrom = fieldDefinition.getFetchWithFromOrError();
                 String fetchWithTo = fieldDefinition.getFetchWithToOrError();
                 fetchField
-                        .setAlias(getAliasFromPath(fieldPath) + "__" + getAliasFromPath(path + "/" + fetchFrom))
+                        .setAlias(getAliasFromPath(fieldPath) + "_" + getAliasFromPath(path + "/" + fetchFrom))
                         .setArguments(
                                 Map.of(
                                         fetchWithType.getFields().stream()
@@ -328,7 +328,7 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler, FetchBef
                 String fetchTo = fieldDefinition.getFetchToOrError();
                 valueWithVariable.asObject().put(INPUT_VALUE_GROUP_BY_NAME, Collections.singletonList(fetchTo));
                 fetchField
-                        .setAlias(getAliasFromPath(fieldPath) + "__" + getAliasFromPath(path + "/" + fetchFrom))
+                        .setAlias(getAliasFromPath(fieldPath) + "_" + getAliasFromPath(path + "/" + fetchFrom))
                         .setArguments(valueWithVariable.asObject())
                         .addSelection(new Field(fetchTo))
                         .setName(typeNameToFieldName(fieldTypeDefinition.getName()) + SUFFIX_LIST);

@@ -1,4 +1,4 @@
-fieldDefinitionDefinition(filedDefinition) ::= <<
-<if(filedDefinition.description)>"<filedDefinition.description>"<endif>
-<filedDefinition.name><if(filedDefinition.arguments)>(<filedDefinition.arguments:{argument|<argument>};separator=", ">)<endif>: <filedDefinition.type><if(filedDefinition.directives)> <filedDefinition.directives:{directive|<directive>};separator=" "><endif>
+fieldDefinitionDefinition(fieldDefinition) ::= <<
+<if(fieldDefinition.description)>"<fieldDefinition.description>"<endif>
+<fieldDefinition.name><if(fieldDefinition.arguments)>(<fieldDefinition.arguments:{argument|<argument>};separator=", ">)<endif>: <fieldDefinition.type><if(fieldDefinition.directives)> <fieldDefinition.directives:{directive|<directive>};separator=" "><endif>
 >>

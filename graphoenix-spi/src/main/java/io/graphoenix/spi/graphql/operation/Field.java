@@ -23,7 +23,7 @@ public class Field extends AbstractDefinition implements Selection {
     private final STGroupFile stGroupFile = new STGroupFile("stg/operation/Field.stg");
     private String alias;
     private Arguments arguments;
-    private Collection<Selection> selections;
+    private Collection<Selection> selections = new LinkedHashSet<>();
 
     public Field() {
         super();
@@ -223,32 +223,21 @@ public class Field extends AbstractDefinition implements Selection {
     }
 
     public Collection<Selection> getSelections() {
-        if (selections != null) {
-            return selections.stream().filter(Selection::isInclude).collect(Collectors.toList());
-        }
-        return null;
+        return selections.stream().filter(Selection::isInclude).collect(Collectors.toList());
     }
 
     public Collection<Field> getFields() {
-        return Optional.ofNullable(getSelections())
-                .map(fields ->
-                        fields.stream()
-                                .filter(Selection::isField)
-                                .map(Selection::asField)
-                                .collect(Collectors.toList())
-                )
-                .orElse(null);
+        return getSelections().stream()
+                .filter(Selection::isField)
+                .map(Selection::asField)
+                .collect(Collectors.toList());
     }
 
     public Collection<Fragment> getFragments() {
-        return Optional.ofNullable(getSelections())
-                .map(fragments ->
-                        fragments.stream()
-                                .filter(Selection::isFragment)
-                                .map(Selection::asFragment)
-                                .collect(Collectors.toList())
-                )
-                .orElse(null);
+        return getSelections().stream()
+                .filter(Selection::isFragment)
+                .map(Selection::asFragment)
+                .collect(Collectors.toList());
     }
 
     public Field getField(String name) {
@@ -280,7 +269,6 @@ public class Field extends AbstractDefinition implements Selection {
         this.selections.addAll(selections);
         return this;
     }
-
 
     public Field setSelections(String selectionSet) {
         if (selectionSet != null) {
@@ -360,7 +348,7 @@ public class Field extends AbstractDefinition implements Selection {
     @Override
     public String toString() {
         ST st = stGroupFile.getInstanceOf("fieldDefinition");
-        st.add("filed", this);
+        st.add("field", this);
         return st.render();
     }
 }

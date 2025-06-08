@@ -137,6 +137,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler, FetchAfter
                                                                                                             fieldJsonValue.asJsonArray().stream()
                                                                                                                     .filter(item -> item.getValueType().equals(JsonValue.ValueType.OBJECT))
                                                                                                                     .map(item -> item.asJsonObject().get(fetchItem.getTarget()))
+                                                                                                                    .filter(item -> !item.getValueType().equals(JsonValue.ValueType.NULL))
                                                                                                                     .collect(JsonCollectors.toJsonArray())
                                                                                                     )
                                                                                                     .build();
@@ -298,7 +299,7 @@ public class QueryAfterFetchHandler implements OperationAfterHandler, FetchAfter
 
                 return Stream.of(new FetchItem(packageName, packageManager.isLocalPackage(fetchWithType) ? ENUM_PROTOCOL_ENUM_VALUE_LOCAL : packageConfig.getDefaultFetchProtocol(), path, fetchField, target));
             } else {
-                String protocol = fieldDefinition.getFetchProtocolOrError().getValue();
+                String protocol = fieldDefinition.getFetchProtocol().orElseGet(() -> new EnumValue(ENUM_PROTOCOL_ENUM_VALUE_LOCAL)).getValue();
                 String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
                 if (jsonValue.asJsonObject().isNull(fetchFrom)) {
                     return Stream.of(new FetchItem(packageName, protocol, path));

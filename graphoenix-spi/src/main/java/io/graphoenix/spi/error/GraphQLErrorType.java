@@ -57,10 +57,10 @@ public enum GraphQLErrorType {
     METHOD_NAME_ARGUMENT_NOT_EXIST(-75, "methodName not exist in @invoke directive: %s"),
     RETURN_CLASS_NAME_ARGUMENT_NOT_EXIST(-76, "returnClassName not exist in @invoke directive: %s"),
 
-    FUNC_NAME_NOT_EXIST(-81, "@func name argument not exist in function filed: %s"),
-    FUNC_FIELD_NOT_EXIST(-82, "@func field argument not exist in function filed: %s"),
-    CONNECTION_FIELD_NOT_EXIST(-83, "@connection field argument not exist in connection filed: %s"),
-    CONNECTION_AGG_FIELD_NOT_EXIST(-84, "@connection agg argument not exist in connection filed: %s"),
+    FUNC_NAME_NOT_EXIST(-81, "@func name argument not exist in function field: %s"),
+    FUNC_FIELD_NOT_EXIST(-82, "@func field argument not exist in function field: %s"),
+    CONNECTION_FIELD_NOT_EXIST(-83, "@connection field argument not exist in connection field: %s"),
+    CONNECTION_AGG_FIELD_NOT_EXIST(-84, "@connection agg argument not exist in connection field: %s"),
 
     RESOURCE_HAS_BEEN_UPDATED(-40900, "resource has been updated"),
     EXISTED_UNIQUE_VALUES(-40901, "existed unique values"),

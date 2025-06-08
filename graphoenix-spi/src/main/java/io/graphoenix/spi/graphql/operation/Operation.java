@@ -117,21 +117,14 @@ public class Operation extends AbstractDefinition implements Definition {
     }
 
     public Collection<Selection> getSelections() {
-        if (selections != null) {
-            return selections.stream().filter(Selection::isInclude).collect(Collectors.toList());
-        }
-        return null;
+        return selections.stream().filter(Selection::isInclude).collect(Collectors.toList());
     }
 
     public Collection<Field> getFields() {
-        return Optional.ofNullable(getSelections())
-                .map(fields ->
-                        fields.stream()
-                                .filter(Selection::isField)
-                                .map(Selection::asField)
-                                .collect(Collectors.toList())
-                )
-                .orElse(null);
+        return getSelections().stream()
+                .filter(Selection::isField)
+                .map(Selection::asField)
+                .collect(Collectors.toList());
     }
 
     public Selection getSelection(int index) {
@@ -139,14 +132,10 @@ public class Operation extends AbstractDefinition implements Definition {
     }
 
     public Collection<Fragment> getFragments() {
-        return Optional.ofNullable(getSelections())
-                .map(fragments ->
-                        fragments.stream()
-                                .filter(Selection::isFragment)
-                                .map(Selection::asFragment)
-                                .collect(Collectors.toList())
-                )
-                .orElse(null);
+        return getSelections().stream()
+                .filter(Selection::isFragment)
+                .map(Selection::asFragment)
+                .collect(Collectors.toList());
     }
 
     public Operation setSelections(Collection<? extends Selection> selections) {

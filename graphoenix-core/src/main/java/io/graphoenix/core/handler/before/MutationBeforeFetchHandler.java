@@ -4,6 +4,7 @@ import com.google.common.collect.Streams;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.fetch.FetchItem;
 import io.graphoenix.spi.graphql.Definition;
+import io.graphoenix.spi.graphql.common.EnumValue;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Operation;
@@ -237,7 +238,7 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (fieldDefinition.isFetchField()) {
             if (!fieldDefinition.getType().hasList() && !fieldDefinition.hasFetchWith() && documentManager.isFetchAnchor(objectType, fieldDefinition)) {
-                String protocol = fieldDefinition.getFetchProtocolOrError().getValue();
+                String protocol = fieldDefinition.getFetchProtocol().orElseGet(() -> new EnumValue(ENUM_PROTOCOL_ENUM_VALUE_LOCAL)).getValue();
                 String fetchFrom = fieldDefinition.getFetchFromOrError();
                 String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
                 String fetchTo = fieldDefinition.getFetchToOrError();

@@ -1,5 +1,5 @@
-fieldDefinition(filed) ::= <<
-<if(filed.alias)><filed.alias>: <endif><filed.name><if(filed.arguments)><filed.arguments><endif><if(filed.directives)> <filed.directives:{directive|<directive>};separator=" "><endif><if(filed.selections)> {
-    <filed.selections:{selection|<selection>};separator="\n">
+fieldDefinition(field) ::= <<
+<if(field.alias)><field.alias>: <endif><field.name><if(field.arguments)><field.arguments><endif><if(field.directives)> <field.directives:{directive|<directive>};separator=" "><endif><if(field.selections)> {
+    <field.selections:{selection|<selection>};separator="\n">
 }<endif>
 >>
