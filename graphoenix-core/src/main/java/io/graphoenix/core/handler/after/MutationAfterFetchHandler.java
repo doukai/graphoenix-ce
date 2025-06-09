@@ -423,7 +423,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                             return Stream.of(removeRelationFetchItem, fetchItem);
                         }
                     }
-                } else {
+                } else if (!documentManager.isFetchAnchor(objectType, fieldDefinition)) {
                     String protocol = fieldDefinition.getFetchProtocol().orElseGet(() -> new EnumValue(ENUM_PROTOCOL_ENUM_VALUE_LOCAL)).getValue();
                     String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
                     String fetchTo = fieldDefinition.getFetchToOrError();
@@ -484,7 +484,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                             fetchItemStream
                                     );
                         }
-                    } else if (!documentManager.isFetchAnchor(objectType, fieldDefinition)) {
+                    } else {
                         String id;
                         if (valueWithVariable.asJsonObject().containsKey(idField.getName())) {
                             id = getId(valueWithVariable.asJsonObject().get(idField.getName()));
