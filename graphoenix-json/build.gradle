@@ -12,12 +12,12 @@ repositories {
 }
 
 dependencies {
-    api 'org.eclipse.parsson:jakarta.json:1.1.1'
+    api 'org.eclipse.parsson:jakarta.json:1.1.7'
     api 'com.dslplatform:dsl-json-java8:1.10.0'
 
     implementation project(':graphoenix-spi')
     implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    implementation 'com.google.auto.service:auto-service:1.0.1'
+    implementation 'com.google.auto.service:auto-service:1.1.1'
 
     annotationProcessor project(':graphoenix-spi')
     annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
