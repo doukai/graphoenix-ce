@@ -1,0 +1,48 @@
+plugins {
+    id 'java-platform'
+    id 'maven-publish'
+}
+
+group 'org.graphoenix'
+version '0.1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    constraints {
+        api 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
+        api 'org.graphoenix:nozdormu-interceptor:0.1.0-SNAPSHOT'
+        api 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
+
+        api "io.javalin:javalin:6.1.3"
+        api 'org.eclipse.jetty:jetty-proxy:11.0.20'
+        api 'com.google.guava:guava:31.1-jre'
+        api 'com.google.auto.service:auto-service:1.0.1'
+        api 'com.aventrix.jnanoid:jnanoid:2.0.0'
+        api 'com.github.ben-manes.caffeine:caffeine:3.1.1'
+
+        api 'org.tinylog:tinylog-impl:2.4.1'
+        api 'org.tinylog:slf4j-tinylog:2.4.1'
+        api 'org.tinylog:jcl-tinylog:2.4.1'
+
+        runtime 'io.grpc:grpc-netty-shaded:1.52.1'
+        api 'io.grpc:grpc-protobuf:1.52.1'
+        api 'io.grpc:grpc-stub:1.52.1'
+        api 'com.salesforce.servicelibs:reactor-grpc-stub:1.2.3'
+        api 'org.apache.tomcat:annotations-api:6.0.53' // necessary for Java 9+
+
+        api 'org.junit.jupiter:junit-jupiter:5.13.1'
+        runtime 'org.junit.platform:junit-platform-launcher:1.13.1'
+    }
+}
+
+publishing {
+    publications {
+        platform(MavenPublication) {
+            from components.javaPlatform
+        }
+    }
+}

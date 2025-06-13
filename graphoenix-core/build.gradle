@@ -61,36 +61,38 @@ repositories {
 }
 
 dependencies {
+    implementation platform(project(':graphoenix-platform'))
+
     api project(':graphoenix-spi')
     api project(':graphoenix-json')
-    api 'com.google.auto.service:auto-service:1.0.1'
-    api 'com.github.ben-manes.caffeine:caffeine:3.1.1'
+    api 'com.google.auto.service:auto-service'
+    api 'com.github.ben-manes.caffeine:caffeine'
 
-    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-interceptor:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
-    implementation 'com.google.guava:guava:31.1-jre'
-    implementation 'com.aventrix.jnanoid:jnanoid:2.0.0'
-    implementation 'org.tinylog:tinylog-impl:2.4.1'
-    implementation 'org.tinylog:slf4j-tinylog:2.4.1'
-    implementation 'org.tinylog:jcl-tinylog:2.4.1'
+    implementation 'org.graphoenix:nozdormu-inject'
+    implementation 'org.graphoenix:nozdormu-interceptor'
+    implementation 'org.graphoenix:nozdormu-config'
+    implementation 'com.google.guava:guava'
+    implementation 'com.aventrix.jnanoid:jnanoid'
+    implementation 'org.tinylog:tinylog-impl'
+    implementation 'org.tinylog:slf4j-tinylog'
+    implementation 'org.tinylog:jcl-tinylog'
 
-    runtimeOnly 'io.grpc:grpc-netty-shaded:1.52.1'
-    implementation 'io.grpc:grpc-protobuf:1.52.1'
-    implementation 'io.grpc:grpc-stub:1.52.1'
-    implementation 'com.salesforce.servicelibs:reactor-grpc-stub:1.2.3'
+    runtimeOnly 'io.grpc:grpc-netty-shaded'
+    implementation 'io.grpc:grpc-protobuf'
+    implementation 'io.grpc:grpc-stub'
+    implementation 'com.salesforce.servicelibs:reactor-grpc-stub'
 
-    compileOnly 'org.apache.tomcat:annotations-api:6.0.53' // necessary for Java 9+
+    compileOnly 'org.apache.tomcat:annotations-api' // necessary for Java 9+
 
     annotationProcessor project(':graphoenix-spi')
     annotationProcessor project(':graphoenix-json')
-    annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    annotationProcessor 'org.graphoenix:nozdormu-interceptor:0.1.0-SNAPSHOT'
-    annotationProcessor 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
-    annotationProcessor 'com.google.auto.service:auto-service:1.0.1'
+    annotationProcessor 'org.graphoenix:nozdormu-inject'
+    annotationProcessor 'org.graphoenix:nozdormu-interceptor'
+    annotationProcessor 'org.graphoenix:nozdormu-config'
+    annotationProcessor 'com.google.auto.service:auto-service'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {

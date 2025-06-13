@@ -13,21 +13,22 @@ repositories {
 }
 
 dependencies {
+    implementation platform(project(':graphoenix-platform'))
+
     implementation project(':graphoenix-spi')
-    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
-    implementation "io.javalin:javalin:6.1.3"
-    implementation 'org.eclipse.jetty:jetty-proxy:11.0.20'
-    implementation 'com.google.auto.service:auto-service:1.0.1'
+    implementation 'org.graphoenix:nozdormu-inject'
+    implementation 'org.graphoenix:nozdormu-config'
+    implementation "io.javalin:javalin"
+    implementation 'org.eclipse.jetty:jetty-proxy'
+    implementation 'com.google.auto.service:auto-service'
 
     annotationProcessor project(':graphoenix-spi')
-    annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    annotationProcessor 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
-    annotationProcessor 'com.google.auto.service:auto-service:1.0.1'
+    annotationProcessor 'org.graphoenix:nozdormu-inject'
+    annotationProcessor 'org.graphoenix:nozdormu-config'
+    annotationProcessor 'com.google.auto.service:auto-service'
 
-    testImplementation 'junit:junit:4.11'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {
