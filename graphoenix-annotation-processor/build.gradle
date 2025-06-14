@@ -21,6 +21,7 @@ dependencies {
     implementation 'org.graphoenix:nozdormu-config'
     implementation 'com.google.auto.service:auto-service'
 
+    annotationProcessor platform(project(':graphoenix-platform'))
     annotationProcessor "com.google.auto.service:auto-service"
 
     testImplementation 'org.junit.jupiter:junit-jupiter'

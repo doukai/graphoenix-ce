@@ -12,29 +12,31 @@ repositories {
 }
 
 dependencies {
+    implementation platform(project(':graphoenix-platform'))
+
     implementation project(':graphoenix-core')
     implementation project(':graphoenix-json')
     implementation project(':graphoenix-sql')
-    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-async:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-interceptor:0.1.0-SNAPSHOT'
-    implementation 'io.r2dbc:r2dbc-spi:1.0.0.RELEASE'
-    implementation 'io.r2dbc:r2dbc-pool:1.0.1.RELEASE'
-    implementation 'com.aventrix.jnanoid:jnanoid:2.0.0'
+    implementation 'org.graphoenix:nozdormu-inject'
+    implementation 'org.graphoenix:nozdormu-async'
+    implementation 'org.graphoenix:nozdormu-config'
+    implementation 'org.graphoenix:nozdormu-interceptor'
+    implementation 'io.r2dbc:r2dbc-spi'
+    implementation 'io.r2dbc:r2dbc-pool'
+    implementation 'com.aventrix.jnanoid:jnanoid'
 
     annotationProcessor project(':graphoenix-core')
     annotationProcessor project(':graphoenix-json')
     annotationProcessor project(':graphoenix-sql')
-    annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    annotationProcessor 'org.graphoenix:nozdormu-async:0.1.0-SNAPSHOT'
-    annotationProcessor 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
-    annotationProcessor 'org.graphoenix:nozdormu-interceptor:0.1.0-SNAPSHOT'
-    annotationProcessor 'io.r2dbc:r2dbc-spi:1.0.0.RELEASE'
-    annotationProcessor 'io.r2dbc:r2dbc-pool:1.0.1.RELEASE'
+    annotationProcessor 'org.graphoenix:nozdormu-inject'
+    annotationProcessor 'org.graphoenix:nozdormu-async'
+    annotationProcessor 'org.graphoenix:nozdormu-config'
+    annotationProcessor 'org.graphoenix:nozdormu-interceptor'
+    annotationProcessor 'io.r2dbc:r2dbc-spi'
+    annotationProcessor 'io.r2dbc:r2dbc-pool'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {

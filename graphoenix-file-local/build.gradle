@@ -12,17 +12,19 @@ repositories {
 }
 
 dependencies {
+    implementation platform(project(':graphoenix-platform'))
+
     api project(':graphoenix-file')
 
     implementation project(':graphoenix-core')
-    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
+    implementation 'org.graphoenix:nozdormu-inject'
 
     annotationProcessor project(':graphoenix-annotation-processor')
     annotationProcessor project(':graphoenix-file')
-    annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
+    annotationProcessor 'org.graphoenix:nozdormu-inject'
 
-    testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {

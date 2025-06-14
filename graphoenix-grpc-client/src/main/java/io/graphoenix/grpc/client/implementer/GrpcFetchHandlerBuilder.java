@@ -12,12 +12,14 @@ import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.handler.PackageFetchHandler;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.NameResolverRegistry;
+import io.grpc.stub.StreamObserver;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
 import org.tinylog.Logger;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.processing.Filer;
@@ -77,7 +79,7 @@ public class GrpcFetchHandlerBuilder {
                 builder.addField(
                         FieldSpec
                                 .builder(
-                                        ClassName.get(packageName + ".grpc", "ReactorGraphQLServiceGrpc", "ReactorGraphQLServiceStub"),
+                                        ClassName.get(packageName + ".grpc", "GraphQLServiceGrpc", "GraphQLServiceStub"),
                                         packageNameToUnderline(packageName) + "_GraphQLServiceStub",
                                         Modifier.PRIVATE,
                                         Modifier.FINAL
@@ -98,9 +100,9 @@ public class GrpcFetchHandlerBuilder {
                 .addStatement("$T.getDefaultRegistry().register(packageNameResolverProvider)", ClassName.get(NameResolverRegistry.class));
 
         packageNameSet.forEach(packageName ->
-                builder.addStatement("this.$L = $T.newReactorStub($T.forTarget($S).defaultLoadBalancingPolicy($S).usePlaintext().build())",
+                builder.addStatement("this.$L = $T.newStub($T.forTarget($S).defaultLoadBalancingPolicy($S).usePlaintext().build())",
                         packageNameToUnderline(packageName) + "_GraphQLServiceStub",
-                        ClassName.get(packageName + ".grpc", "ReactorGraphQLServiceGrpc"),
+                        ClassName.get(packageName + ".grpc", "GraphQLServiceGrpc"),
                         ClassName.get(ManagedChannelBuilder.class),
                         "package://" + packageName,
                         CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, packageConfig.getPackageLoadBalance())
@@ -124,9 +126,34 @@ public class GrpcFetchHandlerBuilder {
                                 CodeBlock.builder()
                                         .add("case $S:\n", packageName)
                                         .indent()
-                                        .add("return this.$L.request($T.newBuilder().setRequest(operation.toString()).build()).map(response -> jsonProvider.createReader(new $T(response.getResponse())).readValue())",
+                                        .add("return $T.<$T>create(fluxSink ->\n",
+                                                ClassName.get(Flux.class),
+                                                ClassName.get(packageName + ".grpc", "GraphQLResponse")
+                                        )
+                                        .indent()
+                                        .add("this.$L.request($T.newBuilder().setRequest(operation.toString()).build(), new $T<$T>() {\n",
                                                 packageNameToUnderline(packageName) + "_GraphQLServiceStub",
                                                 ClassName.get(packageName + ".grpc", "GraphQLRequest"),
+                                                ClassName.get(StreamObserver.class),
+                                                ClassName.get(packageName + ".grpc", "GraphQLResponse")
+                                        )
+                                        .indent()
+                                        .add("@$T\n", ClassName.get(Override.class))
+                                        .add("public void onNext($T value) { fluxSink.next(value); }\n",
+                                                ClassName.get(packageName + ".grpc", "GraphQLResponse")
+                                        )
+                                        .add("@$T\n", ClassName.get(Override.class))
+                                        .add("public void onError($T t) { fluxSink.error(t); }\n",
+                                                ClassName.get(Throwable.class)
+                                        )
+                                        .add("@$T\n", ClassName.get(Override.class))
+                                        .add("public void onCompleted() { fluxSink.complete(); }\n")
+                                        .unindent()
+                                        .add("})\n")
+                                        .unindent()
+                                        .add(")\n")
+                                        .add(".last()\n")
+                                        .add(".map(response -> jsonProvider.createReader(new $T(response.getResponse())).readValue())",
                                                 ClassName.get(StringReader.class)
                                         )
                                         .unindent()

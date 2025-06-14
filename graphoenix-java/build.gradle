@@ -12,19 +12,21 @@ repositories {
 }
 
 dependencies {
-    implementation project(':graphoenix-core')
-    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
-    implementation 'com.google.guava:guava:31.1-jre'
+    implementation platform(project(':graphoenix-platform'))
 
-    api 'com.squareup:javapoet:1.13.0'
+    implementation project(':graphoenix-core')
+    implementation 'org.graphoenix:nozdormu-inject'
+    implementation 'org.graphoenix:nozdormu-config'
+    implementation 'com.google.guava:guava'
+
+    api 'com.squareup:javapoet'
 
     annotationProcessor project(':graphoenix-core')
-    annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    annotationProcessor 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
+    annotationProcessor 'org.graphoenix:nozdormu-inject'
+    annotationProcessor 'org.graphoenix:nozdormu-config'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {

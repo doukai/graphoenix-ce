@@ -13,25 +13,28 @@ repositories {
 }
 
 dependencies {
-    antlr('org.antlr:antlr4:4.9.3') {
+    antlr platform(project(':graphoenix-platform'))
+    antlr('org.antlr:antlr4') {
         exclude group: 'org.glassfish', module: 'javax.json'
     }
 
-    api 'io.projectreactor:reactor-core:3.4.16'
-    api 'com.dslplatform:dsl-json:1.10.0'
-    api 'org.eclipse.microprofile.graphql:microprofile-graphql-api:1.1.0'
-    api 'jakarta.json:jakarta.json-api:2.1.1'
-    api 'jakarta.json.bind:jakarta.json.bind-api:3.0.0'
-    api 'jakarta.validation:jakarta.validation-api:3.0.1'
-    api 'org.tinylog:tinylog-api:2.4.1'
-    api 'org.antlr:antlr4-runtime:4.9.3'
+    implementation platform(project(':graphoenix-platform'))
 
-    implementation 'org.graphoenix:nozdormu-spi:0.1.0-SNAPSHOT'
-    implementation 'org.antlr:ST4:4.3.2'
-    implementation 'com.google.guava:guava:31.1-jre'
+    api 'io.projectreactor:reactor-core'
+    api 'com.dslplatform:dsl-json'
+    api 'org.eclipse.microprofile.graphql:microprofile-graphql-api'
+    api 'jakarta.json:jakarta.json-api'
+    api 'jakarta.json.bind:jakarta.json.bind-api'
+    api 'jakarta.validation:jakarta.validation-api'
+    api 'org.tinylog:tinylog-api'
+    api 'org.antlr:antlr4-runtime'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    implementation 'org.graphoenix:nozdormu-spi'
+    implementation 'org.antlr:ST4'
+    implementation 'com.google.guava:guava'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {

@@ -12,20 +12,22 @@ repositories {
 }
 
 dependencies {
+    implementation platform(project(':graphoenix-platform'))
+
     implementation project(':graphoenix-core')
     implementation project(':graphoenix-java')
-    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
+    implementation 'org.graphoenix:nozdormu-inject'
+    implementation 'org.graphoenix:nozdormu-config'
 
-    api 'io.grpc:grpc-protobuf:1.48.0'
-    api 'io.grpc:grpc-stub:1.48.0'
+    api 'io.grpc:grpc-protobuf'
+    api 'io.grpc:grpc-stub'
 
     annotationProcessor project(':graphoenix-core')
-    annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    annotationProcessor 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
+    annotationProcessor 'org.graphoenix:nozdormu-inject'
+    annotationProcessor 'org.graphoenix:nozdormu-config'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {

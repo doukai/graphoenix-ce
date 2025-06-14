@@ -12,19 +12,21 @@ repositories {
 }
 
 dependencies {
-    implementation project(':graphoenix-core')
-    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
+    implementation platform(project(':graphoenix-platform'))
 
-    api 'com.jayway.jsonpath:json-path:2.8.0'
+    implementation project(':graphoenix-core')
+    implementation 'org.graphoenix:nozdormu-inject'
+    implementation 'org.graphoenix:nozdormu-config'
+
+    api 'com.jayway.jsonpath:json-path'
 
     annotationProcessor project(':graphoenix-core')
-    annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    annotationProcessor 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
-    implementation 'com.jayway.jsonpath:json-path:2.8.0'
+    annotationProcessor 'org.graphoenix:nozdormu-inject'
+    annotationProcessor 'org.graphoenix:nozdormu-config'
+    implementation 'com.jayway.jsonpath:json-path'
 
-    testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {

@@ -12,18 +12,20 @@ repositories {
 }
 
 dependencies {
-    api 'org.eclipse.parsson:jakarta.json:1.1.7'
-    api 'com.dslplatform:dsl-json-java8:1.10.0'
+    implementation platform(project(':graphoenix-platform'))
+
+    api 'org.eclipse.parsson:jakarta.json'
+    api 'com.dslplatform:dsl-json-java8'
 
     implementation project(':graphoenix-spi')
-    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    implementation 'com.google.auto.service:auto-service:1.1.1'
+    implementation 'org.graphoenix:nozdormu-inject'
+    implementation 'com.google.auto.service:auto-service'
 
     annotationProcessor project(':graphoenix-spi')
-    annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
+    annotationProcessor 'org.graphoenix:nozdormu-inject'
 
-    testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {

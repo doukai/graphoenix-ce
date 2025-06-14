@@ -7,7 +7,6 @@ import io.graphoenix.core.handler.DocumentBuilder;
 import io.graphoenix.core.handler.GraphQLConfigRegister;
 import io.graphoenix.grpc.server.implementer.GrpcServerProducerBuilder;
 import io.graphoenix.grpc.server.implementer.GrpcServiceImplementer;
-import io.graphoenix.grpc.server.implementer.ReactorGrpcServiceImplementer;
 import io.nozdormu.spi.context.BeanContext;
 import org.tinylog.Logger;
 
@@ -50,8 +49,6 @@ public class ApplicationProcessor extends BaseProcessor {
             if (graphQLConfig.getMapToLocalFetch()) {
                 documentBuilder.mapToLocalFetch();
             }
-            ReactorGrpcServiceImplementer reactorGrpcServiceImplementer = BeanContext.get(ReactorGrpcServiceImplementer.class);
-            reactorGrpcServiceImplementer.writeToFiler(filer);
             GrpcServiceImplementer grpcServiceImplementer = BeanContext.get(GrpcServiceImplementer.class);
             grpcServiceImplementer.writeToFiler(filer);
             GrpcServerProducerBuilder grpcServerProducerBuilder = BeanContext.get(GrpcServerProducerBuilder.class);

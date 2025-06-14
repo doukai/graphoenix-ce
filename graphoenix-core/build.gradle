@@ -18,26 +18,16 @@ apply plugin: 'io.graphoenix'
 
 protobuf {
     protoc {
-        // artifact = "com.google.protobuf:protoc:3.21.7"
-        // for apple m1, please add protoc_platform=osx-x86_64 in $HOME/.gradle/gradle.properties
-        if (project.hasProperty('protoc_platform')) {
-            artifact = "com.google.protobuf:protoc:3.21.7:${protoc_platform}"
-        } else {
-            artifact = "com.google.protobuf:protoc:3.21.7"
-        }
+        artifact = "com.google.protobuf:protoc:3.21.7"
     }
     plugins {
         grpc {
             artifact = 'io.grpc:protoc-gen-grpc-java:1.52.1'
         }
-        reactor {
-            artifact = "com.salesforce.servicelibs:reactor-grpc:1.2.3"
-        }
     }
     generateProtoTasks {
         all()*.plugins {
             grpc {}
-            reactor {}
         }
     }
 }
@@ -47,7 +37,6 @@ sourceSets {
         java {
             srcDirs 'build/generated/source/proto/main/java'
             srcDirs 'build/generated/source/proto/main/grpc'
-            srcDirs 'build/generated/source/proto/main/reactor'
         }
     }
 }
@@ -80,7 +69,6 @@ dependencies {
     runtimeOnly 'io.grpc:grpc-netty-shaded'
     implementation 'io.grpc:grpc-protobuf'
     implementation 'io.grpc:grpc-stub'
-    implementation 'com.salesforce.servicelibs:reactor-grpc-stub'
 
     compileOnly 'org.apache.tomcat:annotations-api' // necessary for Java 9+
 

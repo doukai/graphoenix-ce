@@ -18,26 +18,16 @@ apply plugin: 'io.graphoenix'
 
 protobuf {
     protoc {
-        // artifact = "com.google.protobuf:protoc:3.21.7"
-        // for apple m1, please add protoc_platform=osx-x86_64 in $HOME/.gradle/gradle.properties
-        if (project.hasProperty('protoc_platform')) {
-            artifact = "com.google.protobuf:protoc:3.21.7:${protoc_platform}"
-        } else {
-            artifact = "com.google.protobuf:protoc:3.21.7"
-        }
+        artifact = "com.google.protobuf:protoc:3.21.7"
     }
     plugins {
         grpc {
             artifact = 'io.grpc:protoc-gen-grpc-java:1.52.1'
         }
-        reactor {
-            artifact = "com.salesforce.servicelibs:reactor-grpc:1.2.3"
-        }
     }
     generateProtoTasks {
         all()*.plugins {
             grpc {}
-            reactor {}
         }
     }
 }
@@ -47,7 +37,6 @@ sourceSets {
         java {
             srcDirs 'build/generated/source/proto/main/java'
             srcDirs 'build/generated/source/proto/main/grpc'
-            srcDirs 'build/generated/source/proto/main/reactor'
         }
     }
 }
@@ -61,26 +50,27 @@ repositories {
 }
 
 dependencies {
+    implementation platform(project(':graphoenix-platform'))
+
     implementation project(':graphoenix-core')
-    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-interceptor:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
-    implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'org.graphoenix:nozdormu-inject'
+    implementation 'org.graphoenix:nozdormu-interceptor'
+    implementation 'org.graphoenix:nozdormu-config'
+    implementation 'com.google.guava:guava'
 
-    runtimeOnly 'io.grpc:grpc-netty-shaded:1.52.1'
-    implementation 'io.grpc:grpc-protobuf:1.52.1'
-    implementation 'io.grpc:grpc-stub:1.52.1'
-    implementation 'com.salesforce.servicelibs:reactor-grpc-stub:1.2.3'
+    runtimeOnly 'io.grpc:grpc-netty-shaded'
+    implementation 'io.grpc:grpc-protobuf'
+    implementation 'io.grpc:grpc-stub'
 
-    compileOnly 'org.apache.tomcat:annotations-api:6.0.53' // necessary for Java 9+
+    compileOnly 'org.apache.tomcat:annotations-api' // necessary for Java 9+
 
     annotationProcessor project(':graphoenix-annotation-processor')
-    annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    annotationProcessor 'org.graphoenix:nozdormu-interceptor:0.1.0-SNAPSHOT'
-    annotationProcessor 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
+    annotationProcessor 'org.graphoenix:nozdormu-inject'
+    annotationProcessor 'org.graphoenix:nozdormu-interceptor'
+    annotationProcessor 'org.graphoenix:nozdormu-config'
 
-    testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {

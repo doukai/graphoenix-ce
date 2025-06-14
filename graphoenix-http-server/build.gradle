@@ -12,26 +12,28 @@ repositories {
 }
 
 dependencies {
-    api 'io.projectreactor.netty:reactor-netty-http:1.1.13'
+    implementation platform(project(':graphoenix-platform'))
+
+    api 'io.projectreactor.netty:reactor-netty-http'
 
     implementation project(':graphoenix-core')
     implementation project(':graphoenix-json')
-    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-interceptor:0.1.0-SNAPSHOT'
-    implementation 'io.projectreactor.netty:reactor-netty-core:1.0.24'
-    implementation 'com.aventrix.jnanoid:jnanoid:2.0.0'
+    implementation 'org.graphoenix:nozdormu-inject'
+    implementation 'org.graphoenix:nozdormu-config'
+    implementation 'org.graphoenix:nozdormu-interceptor'
+    implementation 'io.projectreactor.netty:reactor-netty-core'
+    implementation 'com.aventrix.jnanoid:jnanoid'
 
     annotationProcessor project(':graphoenix-core')
     annotationProcessor project(':graphoenix-json')
-    annotationProcessor 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    annotationProcessor 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
-    annotationProcessor 'org.graphoenix:nozdormu-interceptor:0.1.0-SNAPSHOT'
-    annotationProcessor 'io.projectreactor.netty:reactor-netty-core:1.0.24'
-    annotationProcessor 'io.projectreactor.netty:reactor-netty-http:1.1.13'
+    annotationProcessor 'org.graphoenix:nozdormu-inject'
+    annotationProcessor 'org.graphoenix:nozdormu-config'
+    annotationProcessor 'org.graphoenix:nozdormu-interceptor'
+    annotationProcessor 'io.projectreactor.netty:reactor-netty-core'
+    annotationProcessor 'io.projectreactor.netty:reactor-netty-http'
 
-    testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {
