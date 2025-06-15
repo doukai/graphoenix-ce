@@ -225,14 +225,15 @@ public class GrpcServiceImplementer {
                                 .add(
                                         fieldTypeDefinition.isObject() ?
                                                 CodeBlock.of(
-                                                        "$T.just($L).map(messageOrBuilder -> new $T().setOperationType($S).addSelection(new $T($S).setArguments(protobufConverter.toJsonValue(messageOrBuilder, fieldDefinition).asJsonObject()).setSelections($T.ofNullable(messageOrBuilder.getSelectionSet()).orElse($S))))\n",
+                                                        "$T.from(operationHandler.handle(new $T().setOperationType($S).addSelection(new $T($S).setArguments(protobufConverter.toJsonValue($L, fieldDefinition).asJsonObject()).setSelections($T.ofNullable($L.getSelectionSet()).orElse($S)))))\n",
                                                         ClassName.get(Mono.class),
-                                                        requestParameterName,
                                                         ClassName.get(Operation.class),
                                                         operationType,
                                                         ClassName.get(Field.class),
                                                         fieldDefinition.getName(),
+                                                        requestParameterName,
                                                         ClassName.get(Optional.class),
+                                                        requestParameterName,
                                                         fieldDefinition.isConnectionField() ?
                                                                 documentManager
                                                                         .getFieldTypeDefinition(
@@ -254,19 +255,16 @@ public class GrpcServiceImplementer {
                                                                         .collect(Collectors.joining(" ", "{", "}"))
                                                 ) :
                                                 CodeBlock.of(
-                                                        "$T.just($L).map(messageOrBuilder -> new $T().setOperationType($S).addSelection(new $T($S).setArguments(protobufConverter.toJsonValue(messageOrBuilder, fieldDefinition).asJsonObject())))\n",
+                                                        "$T.from(operationHandler.handle(new $T().setOperationType($S).addSelection(new $T($S).setArguments(protobufConverter.toJsonValue($L, fieldDefinition).asJsonObject()))))\n",
                                                         ClassName.get(Mono.class),
-                                                        requestParameterName,
                                                         ClassName.get(Operation.class),
                                                         operationType,
                                                         ClassName.get(Field.class),
-                                                        fieldDefinition.getName()
+                                                        fieldDefinition.getName(),
+                                                        requestParameterName
                                                 )
                                 )
                                 .indent()
-                                .add(".flatMap(operation -> $T.from(operationHandler.handle(operation)))\n",
-                                        ClassName.get(Mono.class)
-                                )
                                 .add(".map(jsonValue -> ($T) protobufConverter.fromJsonValue(jsonValue.asJsonObject().get($S), $T.newBuilder(), fieldDefinition))\n",
                                         ClassName.get(grpcPackageName, grpcResponseClassName),
                                         fieldDefinition.getName(),
@@ -322,16 +320,11 @@ public class GrpcServiceImplementer {
                 .addParameter(responseClassName, responseObserverParameterName)
                 .addStatement(
                         CodeBlock.builder()
-                                .add("$T.just($L).map($T::getRequest)\n",
-                                        ClassName.get(Mono.class),
-                                        requestParameterName,
-                                        ClassName.get(grpcPackageName, "GraphQLRequest")
+                                .add("fetchHandler.request($T.fromString($L.getRequest()))\n",
+                                        ClassName.get(Operation.class),
+                                        requestParameterName
                                 )
                                 .indent()
-                                .add(".flatMap(operation -> $T.from(fetchHandler.request($T.fromString(operation))))\n",
-                                        ClassName.get(Mono.class),
-                                        ClassName.get(Operation.class)
-                                )
                                 .add(".map(jsonValue -> $T.newBuilder().setResponse(jsonValue.toString()).build())\n",
                                         ClassName.get(grpcPackageName, "GraphQLResponse")
                                 )
