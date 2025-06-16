@@ -45,6 +45,7 @@ group 'org.graphoenix'
 
 dependencies {
     implementation platform(project(':graphoenix-platform'))
+    implementation platform("org.graphoenix:nozdormu-platform:$nozdormuVersion")
 
     api project(':graphoenix-spi')
     api project(':graphoenix-json')

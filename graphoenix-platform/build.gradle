@@ -7,16 +7,6 @@ group 'org.graphoenix'
 
 dependencies {
     constraints {
-        api "org.graphoenix:nozdormu-spi:$nozdormuVersion"
-        api "org.graphoenix:nozdormu-common:$nozdormuVersion"
-        api "org.graphoenix:nozdormu-inject:$nozdormuVersion"
-        api "org.graphoenix:nozdormu-interceptor:$nozdormuVersion"
-        api "org.graphoenix:nozdormu-config:$nozdormuVersion"
-        api "org.graphoenix:nozdormu-async:$nozdormuVersion"
-        api "org.graphoenix:nozdormu-decompiler:$nozdormuVersion"
-        api "org.graphoenix:nozdormu-decompiler-cfr:$nozdormuVersion"
-        api "org.graphoenix:nozdormu-decompiler-vineflower:$nozdormuVersion"
-
         api "org.graphoenix:graphoenix-spi:$graphoenixVersion"
         api "org.graphoenix:graphoenix-core:$graphoenixVersion"
         api "org.graphoenix:graphoenix-java:$graphoenixVersion"

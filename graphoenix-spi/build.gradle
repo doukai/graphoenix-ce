@@ -13,6 +13,7 @@ dependencies {
     }
 
     implementation platform(project(':graphoenix-platform'))
+    implementation platform("org.graphoenix:nozdormu-platform:$nozdormuVersion")
 
     api 'io.projectreactor:reactor-core'
     api 'com.dslplatform:dsl-json'
