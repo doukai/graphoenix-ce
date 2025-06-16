@@ -1,16 +1,10 @@
 plugins {
     id 'java-library'
-    id "com.github.node-gradle.node" version "7.0.2"
+    id "com.github.node-gradle.node" version "$nodeGradlePluginVersion"
     id 'maven-publish'
 }
 
 group 'org.graphoenix'
-version '0.1.0-SNAPSHOT'
-
-repositories {
-    mavenCentral()
-    mavenLocal()
-}
 
 dependencies {
     implementation platform(project(':graphoenix-platform'))

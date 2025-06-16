@@ -4,42 +4,40 @@ plugins {
 }
 
 group 'org.graphoenix'
-version '0.1.0-SNAPSHOT'
-
-repositories {
-    mavenCentral()
-    mavenLocal()
-}
 
 dependencies {
     constraints {
-        api 'org.graphoenix:nozdormu-spi:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:nozdormu-interceptor:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:nozdormu-async:0.1.0-SNAPSHOT'
+        api "org.graphoenix:nozdormu-spi:$nozdormuVersion"
+        api "org.graphoenix:nozdormu-common:$nozdormuVersion"
+        api "org.graphoenix:nozdormu-inject:$nozdormuVersion"
+        api "org.graphoenix:nozdormu-interceptor:$nozdormuVersion"
+        api "org.graphoenix:nozdormu-config:$nozdormuVersion"
+        api "org.graphoenix:nozdormu-async:$nozdormuVersion"
+        api "org.graphoenix:nozdormu-decompiler:$nozdormuVersion"
+        api "org.graphoenix:nozdormu-decompiler-cfr:$nozdormuVersion"
+        api "org.graphoenix:nozdormu-decompiler-vineflower:$nozdormuVersion"
 
-        api 'org.graphoenix:graphoenix-spi:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:graphoenix-core:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:graphoenix-java:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:graphoenix-json:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:graphoenix-json-path:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:graphoenix-json-schema:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:graphoenix-annotation-processor:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:graphoenix-sql:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:graphoenix-r2dbc:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:graphoenix-http-server:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:graphoenix-subscription:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:graphoenix-rabbitmq:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:graphoenix-gossip:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:graphoenix-protobuf:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:graphoenix-grpc-server:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:graphoenix-grpc-client:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:graphoenix-introspection:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:graphoenix-structure:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:graphoenix-admin:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:graphoenix-file:0.1.0-SNAPSHOT'
-        api 'org.graphoenix:graphoenix-file-local:0.1.0-SNAPSHOT'
+        api "org.graphoenix:graphoenix-spi:$graphoenixVersion"
+        api "org.graphoenix:graphoenix-core:$graphoenixVersion"
+        api "org.graphoenix:graphoenix-java:$graphoenixVersion"
+        api "org.graphoenix:graphoenix-json:$graphoenixVersion"
+        api "org.graphoenix:graphoenix-json-path:$graphoenixVersion"
+        api "org.graphoenix:graphoenix-json-schema:$graphoenixVersion"
+        api "org.graphoenix:graphoenix-annotation-processor:$graphoenixVersion"
+        api "org.graphoenix:graphoenix-sql:$graphoenixVersion"
+        api "org.graphoenix:graphoenix-r2dbc:$graphoenixVersion"
+        api "org.graphoenix:graphoenix-http-server:$graphoenixVersion"
+        api "org.graphoenix:graphoenix-subscription:$graphoenixVersion"
+        api "org.graphoenix:graphoenix-rabbitmq:$graphoenixVersion"
+        api "org.graphoenix:graphoenix-gossip:$graphoenixVersion"
+        api "org.graphoenix:graphoenix-protobuf:$graphoenixVersion"
+        api "org.graphoenix:graphoenix-grpc-server:$graphoenixVersion"
+        api "org.graphoenix:graphoenix-grpc-client:$graphoenixVersion"
+        api "org.graphoenix:graphoenix-introspection:$graphoenixVersion"
+        api "org.graphoenix:graphoenix-structure:$graphoenixVersion"
+        api "org.graphoenix:graphoenix-admin:$graphoenixVersion"
+        api "org.graphoenix:graphoenix-file:$graphoenixVersion"
+        api "org.graphoenix:graphoenix-file-local:$graphoenixVersion"
 
         api 'com.google.guava:guava:33.4.8-jre'
         api 'com.google.auto.service:auto-service:1.1.1'

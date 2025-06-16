@@ -4,13 +4,13 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.graphoenix:graphoenix-gradle-plugin:0.1.0-SNAPSHOT'
+        classpath "org.graphoenix:graphoenix-gradle-plugin:$graphoenixVersion"
     }
 }
 
 plugins {
     id 'java-library'
-    id 'com.google.protobuf' version '0.9.1'
+    id 'com.google.protobuf' version "$protobufPluginVersion"
     id 'maven-publish'
 }
 
@@ -18,11 +18,11 @@ apply plugin: 'io.graphoenix'
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.21.7"
+        artifact = "com.google.protobuf:protoc:$protocVersion"
     }
     plugins {
         grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:1.52.1'
+            artifact = "io.grpc:protoc-gen-grpc-java:$protocGenGrpcJavaVersion"
         }
     }
     generateProtoTasks {
@@ -42,12 +42,6 @@ sourceSets {
 }
 
 group 'org.graphoenix'
-version '0.1.0-SNAPSHOT'
-
-repositories {
-    mavenCentral()
-    mavenLocal()
-}
 
 dependencies {
     implementation platform(project(':graphoenix-platform'))
