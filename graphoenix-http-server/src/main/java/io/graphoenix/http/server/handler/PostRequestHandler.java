@@ -12,6 +12,7 @@ import io.graphoenix.spi.handler.FileHandler;
 import io.graphoenix.spi.handler.OperationHandler;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.multipart.FileUpload;
@@ -62,8 +63,9 @@ public class PostRequestHandler extends BaseHandler {
             String token = Optional.ofNullable(request.requestHeaders().get("X-GraphQL-Event-Stream-Token")).orElseGet(() -> decoder.parameters().containsKey("token") ? decoder.parameters().get("token").get(0) : null);
             String operationId = decoder.parameters().containsKey("operationId") ? decoder.parameters().get("operationId").get(0) : null;
             return response.sse()
-                    .addHeader(HttpHeaderNames.CACHE_CONTROL, "no-cache")
-                    .addHeader(HttpHeaderNames.CONNECTION, "keep-alive")
+                    .addHeader(HttpHeaderNames.CACHE_CONTROL, HttpHeaderValues.NO_CACHE)
+                    .addHeader(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE)
+                    .addHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.TEXT_EVENT_STREAM + "; charset=utf-8")
                     .status(HttpResponseStatus.ACCEPTED)
                     .send(
                             request.receive().aggregate().asString()

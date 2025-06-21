@@ -10,6 +10,7 @@ import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.handler.OperationHandler;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.nozdormu.spi.context.PublisherBeanContext;
@@ -69,8 +70,9 @@ public class GetRequestHandler extends BaseHandler {
                     .orElseGet(() -> decoder.parameters().containsKey("token") ? decoder.parameters().get("token").get(0) : null);
             String operationId = decoder.parameters().containsKey("operationId") ? decoder.parameters().get("operationId").get(0) : null;
             return response.sse()
-                    .addHeader(HttpHeaderNames.CACHE_CONTROL, "no-cache")
-                    .addHeader(HttpHeaderNames.CONNECTION, "keep-alive")
+                    .addHeader(HttpHeaderNames.CACHE_CONTROL, HttpHeaderValues.NO_CACHE)
+                    .addHeader(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE)
+                    .addHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.TEXT_EVENT_STREAM + "; charset=utf-8")
                     .status(HttpResponseStatus.ACCEPTED)
                     .send(
                             ScopeEventResolver.initialized(Maps.newHashMap(Map.of(REQUEST, request, RESPONSE, response, OPERATION, document.getOperationOrError())), RequestScoped.class)
