@@ -109,7 +109,7 @@ public class DocumentBuilder {
                 .forEach(this::buildDirectiveDefinition);
 
         document
-                .addDefinitions(buildInputObjects(document))
+                .addDefinitions(buildInputObjects(document).stream().map(document::merge).collect(Collectors.toList()))
                 .addDefinitions(buildContainerTypeObjects(document));
 
         if (document.getObjectTypes().anyMatch(objectType -> !objectType.isContainer())) {
@@ -151,9 +151,9 @@ public class DocumentBuilder {
             );
 
             document
-                    .addDefinitions(buildQueryTypeFieldArguments(document))
-                    .addDefinitions(buildMutationTypeFieldsArguments(document))
-                    .addDefinitions(buildSubscriptionTypeFieldsArguments(document));
+                    .addDefinitions(buildQueryTypeFieldArguments(document).stream().map(document::merge).collect(Collectors.toList()))
+                    .addDefinitions(buildMutationTypeFieldsArguments(document).stream().map(document::merge).collect(Collectors.toList()))
+                    .addDefinitions(buildSubscriptionTypeFieldsArguments(document).stream().map(document::merge).collect(Collectors.toList()));
         }
         return document;
     }
