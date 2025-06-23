@@ -87,7 +87,7 @@ public class GraphQLHttpServer implements Runner {
                                     .post(httpServerConfig.getGraphqlContextPath(), postRequestHandler::handle)
                                     .get(httpServerConfig.getDownloadContextPath() + "/{" + FILE_PARAM_ID + "}", downloadRequestHandler::handle);
                             getHandlerList.forEach(getHandler -> httpServerRoutes.get(getHandler.path(), getHandler::handle));
-                            postHandlerList.forEach(postHandler -> httpServerRoutes.get(postHandler.path(), postHandler::handle));
+                            postHandlerList.forEach(postHandler -> httpServerRoutes.post(postHandler.path(), postHandler::handle));
                         }
                 )
                 .childObserve((connection, newState) -> {
