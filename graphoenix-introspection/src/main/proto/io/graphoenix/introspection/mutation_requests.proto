@@ -9,7 +9,6 @@ import "io/graphoenix/introspection/enums.proto";
 import "io/graphoenix/introspection/objects.proto";
 import "io/graphoenix/introspection/interfaces.proto";
 import "io/graphoenix/introspection/input_objects.proto";
-import "io/graphoenix/core/enums.proto";
 import "google/protobuf/timestamp.proto";
 
 message MutationIntroSchemaRequest {
@@ -65,7 +64,7 @@ message MutationIntroTypeRequest {
     optional string arguments = 2;
     string name = 3; /* name */
     IntroSchemaInput of_schema = 4; /* ofSchema */
-    io.graphoenix.core.IntroTypeKind kind = 5; /* kind */
+    IntroTypeKind kind = 5; /* kind */
     string description = 6; /* description */
     repeated IntroFieldInput fields = 7; /* fields */
     repeated IntroTypeInput interfaces = 8; /* interfaces */
@@ -94,7 +93,7 @@ message MutationIntroTypeListRequest {
     optional string arguments = 2;
     string name = 3; /* name */
     IntroSchemaInput of_schema = 4; /* ofSchema */
-    io.graphoenix.core.IntroTypeKind kind = 5; /* kind */
+    IntroTypeKind kind = 5; /* kind */
     string description = 6; /* description */
     repeated IntroFieldInput fields = 7; /* fields */
     repeated IntroTypeInput interfaces = 8; /* interfaces */
@@ -264,7 +263,7 @@ message MutationIntroDirectiveRequest {
     string name = 3; /* name */
     IntroSchemaInput of_schema = 4; /* ofSchema */
     string description = 5; /* description */
-    repeated io.graphoenix.core.IntroDirectiveLocation locations = 6; /* locations */
+    repeated IntroDirectiveLocation locations = 6; /* locations */
     repeated IntroInputValueInput args = 7; /* args */
     bool is_repeatable = 8; /* isRepeatable */
     bool is_deprecated = 9; /* Is Deprecated */
@@ -287,7 +286,7 @@ message MutationIntroDirectiveListRequest {
     string name = 3; /* name */
     IntroSchemaInput of_schema = 4; /* ofSchema */
     string description = 5; /* description */
-    repeated io.graphoenix.core.IntroDirectiveLocation locations = 6; /* locations */
+    repeated IntroDirectiveLocation locations = 6; /* locations */
     repeated IntroInputValueInput args = 7; /* args */
     bool is_repeatable = 8; /* isRepeatable */
     bool is_deprecated = 9; /* Is Deprecated */
@@ -390,7 +389,7 @@ message MutationIntroDirectiveLocationsRelationRequest {
     string id = 3; /* ID */
     string intro_directive_ref = 4; /* __Directive Reference */
     IntroDirectiveInput intro_directive = 5; /* __Directive */
-    io.graphoenix.core.IntroDirectiveLocation locations_ref = 6; /* locations Reference */
+    IntroDirectiveLocation locations_ref = 6; /* locations Reference */
     bool is_deprecated = 7; /* Is Deprecated */
     int32 version = 8; /* Version */
     int32 realm_id = 9; /* Realm ID */
@@ -409,7 +408,7 @@ message MutationIntroDirectiveLocationsRelationListRequest {
     string id = 3; /* ID */
     string intro_directive_ref = 4; /* __Directive Reference */
     IntroDirectiveInput intro_directive = 5; /* __Directive */
-    io.graphoenix.core.IntroDirectiveLocation locations_ref = 6; /* locations Reference */
+    IntroDirectiveLocation locations_ref = 6; /* locations Reference */
     bool is_deprecated = 7; /* Is Deprecated */
     int32 version = 8; /* Version */
     int32 realm_id = 9; /* Realm ID */

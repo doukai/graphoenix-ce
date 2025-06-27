@@ -1,8 +1,8 @@
 package io.graphoenix.introspection.dto.objectType;
 
 import com.dslplatform.json.CompiledJson;
-import io.graphoenix.core.dto.enumType.__DirectiveLocation;
 import io.graphoenix.core.dto.interfaceType.Meta;
+import io.graphoenix.introspection.dto.enumType.__DirectiveLocation;
 import io.graphoenix.introspection.dto.inputObjectType.__DirectiveInput;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;

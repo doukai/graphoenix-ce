@@ -51,36 +51,6 @@ enum Protocol {
     HTTP
     RSOCKET
 }
-enum __TypeKind {
-    SCALAR
-    OBJECT
-    INTERFACE
-    UNION
-    ENUM
-    INPUT_OBJECT
-    LIST
-    NON_NULL
-}
-enum __DirectiveLocation {
-    QUERY
-    MUTATION
-    SUBSCRIPTION
-    FIELD
-    FRAGMENT_DEFINITION
-    FRAGMENT_SPREAD
-    INLINE_FRAGMENT
-    SCHEMA
-    SCALAR
-    OBJECT
-    FIELD_DEFINITION
-    ARGUMENT_DEFINITION
-    INTERFACE
-    UNION
-    ENUM
-    ENUM_VALUE
-    INPUT_OBJECT
-    INPUT_FIELD_DEFINITION
-}
 interface Meta {
     isDeprecated: Boolean @options(default: "false")
     version: Int
@@ -189,21 +159,6 @@ input ProtocolExpression {
     opr: Operator = EQ
     val: Protocol
     arr: [Protocol]
-}
-input __TypeKindExpression {
-    opr: Operator = EQ
-    val: __TypeKind
-    arr: [__TypeKind]
-}
-input __DirectiveLocationExpression {
-    opr: Operator = EQ
-    val: __DirectiveLocation
-    arr: [__DirectiveLocation]
-}
-input __DirectiveLocationExpression {
-    opr: Operator = EQ
-    val: __DirectiveLocation
-    arr: [__DirectiveLocation]
 }
 directive @options(type: String default: String length: Int decimals: Int unique: Boolean autoIncrement: Boolean protocol: Protocol = GRPC) on FIELD_DEFINITION
 directive @map(from: String! with: With to: String anchor: Boolean) on FIELD_DEFINITION

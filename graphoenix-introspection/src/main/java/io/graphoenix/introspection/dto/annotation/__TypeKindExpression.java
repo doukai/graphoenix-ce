@@ -1,7 +1,7 @@
-package io.graphoenix.core.dto.annotation;
+package io.graphoenix.introspection.dto.annotation;
 
 import io.graphoenix.core.dto.enumType.Operator;
-import io.graphoenix.core.dto.enumType.__DirectiveLocation;
+import io.graphoenix.introspection.dto.enumType.__TypeKind;
 import jakarta.annotation.Generated;
 import java.lang.String;
 import java.lang.annotation.Documented;
@@ -12,14 +12,14 @@ import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
 /**
- * Query Expression Input for __DirectiveLocation
+ * Query Expression Input for __TypeKind
  */
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-@Description("Query Expression Input for __DirectiveLocation")
-public @interface __DirectiveLocationExpression {
+@Description("Query Expression Input for __TypeKind")
+public @interface __TypeKindExpression {
   /**
    * Operators
    */
@@ -30,13 +30,13 @@ public @interface __DirectiveLocationExpression {
    * Value
    */
   @Description("Value")
-  __DirectiveLocation val() default __DirectiveLocation.QUERY;
+  __TypeKind val() default __TypeKind.SCALAR;
 
   /**
    * Array
    */
   @Description("Array")
-  __DirectiveLocation[] arr() default {};
+  __TypeKind[] arr() default {};
 
   String $opr() default "";
 

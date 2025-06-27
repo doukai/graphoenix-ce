@@ -76,59 +76,28 @@ message InvokeParameter {
     string name = 1;
     string class_name = 2;
 }
-/**
-* Query Expression Input for Operator
-*/
 message OperatorExpression {
-    Operator opr = 1; /* Operators */
-    Operator val = 2; /* Value */
-    repeated Operator arr = 3; /* Array */
+    Operator opr = 1;
+    Operator val = 2;
+    repeated Operator arr = 3;
 }
-/**
-* Query Expression Input for Conditional
-*/
 message ConditionalExpression {
-    Operator opr = 1; /* Operators */
-    Conditional val = 2; /* Value */
-    repeated Conditional arr = 3; /* Array */
+    Operator opr = 1;
+    Conditional val = 2;
+    repeated Conditional arr = 3;
 }
-/**
-* Query Expression Input for Sort
-*/
 message SortExpression {
-    Operator opr = 1; /* Operators */
-    Sort val = 2; /* Value */
-    repeated Sort arr = 3; /* Array */
+    Operator opr = 1;
+    Sort val = 2;
+    repeated Sort arr = 3;
 }
-/**
-* Query Expression Input for Func
-*/
 message FuncExpression {
-    Operator opr = 1; /* Operators */
-    Func val = 2; /* Value */
-    repeated Func arr = 3; /* Array */
+    Operator opr = 1;
+    Func val = 2;
+    repeated Func arr = 3;
 }
-/**
-* Query Expression Input for Protocol
-*/
 message ProtocolExpression {
-    Operator opr = 1; /* Operators */
-    Protocol val = 2; /* Value */
-    repeated Protocol arr = 3; /* Array */
-}
-/**
-* Query Expression Input for __TypeKind
-*/
-message IntroTypeKindExpression {
-    Operator opr = 1; /* Operators */
-    IntroTypeKind val = 2; /* Value */
-    repeated IntroTypeKind arr = 3; /* Array */
-}
-/**
-* Query Expression Input for __DirectiveLocation
-*/
-message IntroDirectiveLocationExpression {
-    Operator opr = 1; /* Operators */
-    IntroDirectiveLocation val = 2; /* Value */
-    repeated IntroDirectiveLocation arr = 3; /* Array */
+    Operator opr = 1;
+    Protocol val = 2;
+    repeated Protocol arr = 3;
 }

@@ -2,7 +2,6 @@ package io.graphoenix.introspection.dto.annotation;
 
 import io.graphoenix.core.dto.annotation.IntExpression;
 import io.graphoenix.core.dto.annotation.StringExpression;
-import io.graphoenix.core.dto.annotation.__TypeKindExpression;
 import io.graphoenix.core.dto.enumType.Conditional;
 import jakarta.annotation.Generated;
 import java.lang.String;

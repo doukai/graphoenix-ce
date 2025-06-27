@@ -1,6 +1,6 @@
 package io.graphoenix.introspection.dto.annotation;
 
-import io.graphoenix.core.dto.enumType.__DirectiveLocation;
+import io.graphoenix.introspection.dto.enumType.__DirectiveLocation;
 import jakarta.annotation.Generated;
 import java.lang.String;
 import java.lang.annotation.Documented;

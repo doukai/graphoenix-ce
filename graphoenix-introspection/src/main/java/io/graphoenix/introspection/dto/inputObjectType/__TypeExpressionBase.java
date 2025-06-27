@@ -4,7 +4,6 @@ import io.graphoenix.core.dto.enumType.Conditional;
 import io.graphoenix.core.dto.inputObjectType.IntExpression;
 import io.graphoenix.core.dto.inputObjectType.MetaExpression;
 import io.graphoenix.core.dto.inputObjectType.StringExpression;
-import io.graphoenix.core.dto.inputObjectType.__TypeKindExpression;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
 import java.util.Collection;

@@ -1,6 +1,6 @@
 package io.graphoenix.introspection.dto.annotation;
 
-import io.graphoenix.core.dto.enumType.__TypeKind;
+import io.graphoenix.introspection.dto.enumType.__TypeKind;
 import jakarta.annotation.Generated;
 import java.lang.String;
 import java.lang.annotation.Documented;

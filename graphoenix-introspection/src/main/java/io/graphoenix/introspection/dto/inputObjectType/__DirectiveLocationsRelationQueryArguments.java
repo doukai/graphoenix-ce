@@ -5,7 +5,6 @@ import io.graphoenix.core.dto.enumType.Conditional;
 import io.graphoenix.core.dto.inputObjectType.IntExpression;
 import io.graphoenix.core.dto.inputObjectType.MetaExpression;
 import io.graphoenix.core.dto.inputObjectType.StringExpression;
-import io.graphoenix.core.dto.inputObjectType.__DirectiveLocationExpression;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
 import java.lang.Override;

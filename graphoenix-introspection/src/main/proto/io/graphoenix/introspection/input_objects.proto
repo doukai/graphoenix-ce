@@ -153,7 +153,7 @@ message IntroSchemaOrderBy {
 message IntroTypeExpressionBase {
     io.graphoenix.core.StringExpression name = 1; /* name */
     IntroSchemaExpression of_schema = 2; /* ofSchema */
-    io.graphoenix.core.IntroTypeKindExpression kind = 3; /* kind */
+    IntroTypeKindExpression kind = 3; /* kind */
     io.graphoenix.core.StringExpression description = 4; /* description */
     IntroFieldExpression fields = 5; /* fields */
     IntroTypeExpression interfaces = 6; /* interfaces */
@@ -184,7 +184,7 @@ message IntroTypeExpressionBase {
 message IntroTypeInputBase {
     string name = 1; /* name */
     IntroSchemaInput of_schema = 2; /* ofSchema */
-    io.graphoenix.core.IntroTypeKind kind = 3; /* kind */
+    IntroTypeKind kind = 3; /* kind */
     string description = 4; /* description */
     repeated IntroFieldInput fields = 5; /* fields */
     repeated IntroTypeInput interfaces = 6; /* interfaces */
@@ -213,7 +213,7 @@ message IntroTypeInputBase {
 message IntroTypeExpression {
     io.graphoenix.core.StringExpression name = 1; /* name */
     IntroSchemaExpression of_schema = 2; /* ofSchema */
-    io.graphoenix.core.IntroTypeKindExpression kind = 3; /* kind */
+    IntroTypeKindExpression kind = 3; /* kind */
     io.graphoenix.core.StringExpression description = 4; /* description */
     IntroFieldExpression fields = 5; /* fields */
     IntroTypeExpression interfaces = 6; /* interfaces */
@@ -244,7 +244,7 @@ message IntroTypeExpression {
 message IntroTypeInput {
     string name = 1; /* name */
     IntroSchemaInput of_schema = 2; /* ofSchema */
-    io.graphoenix.core.IntroTypeKind kind = 3; /* kind */
+    IntroTypeKind kind = 3; /* kind */
     string description = 4; /* description */
     repeated IntroFieldInput fields = 5; /* fields */
     repeated IntroTypeInput interfaces = 6; /* interfaces */
@@ -745,7 +745,7 @@ message IntroDirectiveExpressionBase {
     io.graphoenix.core.StringExpression name = 1; /* name */
     IntroSchemaExpression of_schema = 2; /* ofSchema */
     io.graphoenix.core.StringExpression description = 3; /* description */
-    io.graphoenix.core.IntroDirectiveLocationExpression locations = 4; /* locations */
+    IntroDirectiveLocationExpression locations = 4; /* locations */
     IntroInputValueExpression args = 5; /* args */
     io.graphoenix.core.BooleanExpression is_repeatable = 6; /* isRepeatable */
     bool include_deprecated = 7; /* Include Deprecated */
@@ -770,7 +770,7 @@ message IntroDirectiveInputBase {
     string name = 1; /* name */
     IntroSchemaInput of_schema = 2; /* ofSchema */
     string description = 3; /* description */
-    repeated io.graphoenix.core.IntroDirectiveLocation locations = 4; /* locations */
+    repeated IntroDirectiveLocation locations = 4; /* locations */
     repeated IntroInputValueInput args = 5; /* args */
     bool is_repeatable = 6; /* isRepeatable */
     bool is_deprecated = 7; /* Is Deprecated */
@@ -793,7 +793,7 @@ message IntroDirectiveExpression {
     io.graphoenix.core.StringExpression name = 1; /* name */
     IntroSchemaExpression of_schema = 2; /* ofSchema */
     io.graphoenix.core.StringExpression description = 3; /* description */
-    io.graphoenix.core.IntroDirectiveLocationExpression locations = 4; /* locations */
+    IntroDirectiveLocationExpression locations = 4; /* locations */
     IntroInputValueExpression args = 5; /* args */
     io.graphoenix.core.BooleanExpression is_repeatable = 6; /* isRepeatable */
     bool include_deprecated = 7; /* Include Deprecated */
@@ -818,7 +818,7 @@ message IntroDirectiveInput {
     string name = 1; /* name */
     IntroSchemaInput of_schema = 2; /* ofSchema */
     string description = 3; /* description */
-    repeated io.graphoenix.core.IntroDirectiveLocation locations = 4; /* locations */
+    repeated IntroDirectiveLocation locations = 4; /* locations */
     repeated IntroInputValueInput args = 5; /* args */
     bool is_repeatable = 6; /* isRepeatable */
     bool is_deprecated = 7; /* Is Deprecated */
@@ -1100,7 +1100,7 @@ message IntroDirectiveLocationsRelationExpressionBase {
     io.graphoenix.core.StringExpression id = 1; /* ID */
     io.graphoenix.core.StringExpression intro_directive_ref = 2; /* __Directive Reference */
     IntroDirectiveExpression intro_directive = 3; /* __Directive */
-    io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4; /* locations Reference */
+    IntroDirectiveLocationExpression locations_ref = 4; /* locations Reference */
     bool include_deprecated = 5; /* Include Deprecated */
     io.graphoenix.core.IntExpression version = 6; /* Version */
     io.graphoenix.core.IntExpression realm_id = 7; /* Realm ID */
@@ -1121,7 +1121,7 @@ message IntroDirectiveLocationsRelationInputBase {
     string id = 1; /* ID */
     string intro_directive_ref = 2; /* __Directive Reference */
     IntroDirectiveInput intro_directive = 3; /* __Directive */
-    io.graphoenix.core.IntroDirectiveLocation locations_ref = 4; /* locations Reference */
+    IntroDirectiveLocation locations_ref = 4; /* locations Reference */
     bool is_deprecated = 5; /* Is Deprecated */
     int32 version = 6; /* Version */
     int32 realm_id = 7; /* Realm ID */
@@ -1140,7 +1140,7 @@ message IntroDirectiveLocationsRelationExpression {
     io.graphoenix.core.StringExpression id = 1; /* ID */
     io.graphoenix.core.StringExpression intro_directive_ref = 2; /* __Directive Reference */
     IntroDirectiveExpression intro_directive = 3; /* __Directive */
-    io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4; /* locations Reference */
+    IntroDirectiveLocationExpression locations_ref = 4; /* locations Reference */
     bool include_deprecated = 5; /* Include Deprecated */
     io.graphoenix.core.IntExpression version = 6; /* Version */
     io.graphoenix.core.IntExpression realm_id = 7; /* Realm ID */
@@ -1161,7 +1161,7 @@ message IntroDirectiveLocationsRelationInput {
     string id = 1; /* ID */
     string intro_directive_ref = 2; /* __Directive Reference */
     IntroDirectiveInput intro_directive = 3; /* __Directive */
-    io.graphoenix.core.IntroDirectiveLocation locations_ref = 4; /* locations Reference */
+    IntroDirectiveLocation locations_ref = 4; /* locations Reference */
     bool is_deprecated = 5; /* Is Deprecated */
     int32 version = 6; /* Version */
     int32 realm_id = 7; /* Realm ID */
@@ -1199,6 +1199,22 @@ message IntroDirectiveLocationsRelationOrderBy {
     io.graphoenix.core.Sort locations_ref_count = 20; /* Count of locations Reference */
     io.graphoenix.core.Sort locations_ref_max = 21; /* Max of locations Reference */
     io.graphoenix.core.Sort locations_ref_min = 22; /* Min of locations Reference */
+}
+/**
+* Query Expression Input for __TypeKind
+*/
+message IntroTypeKindExpression {
+    io.graphoenix.core.Operator opr = 1; /* Operators */
+    IntroTypeKind val = 2; /* Value */
+    repeated IntroTypeKind arr = 3; /* Array */
+}
+/**
+* Query Expression Input for __DirectiveLocation
+*/
+message IntroDirectiveLocationExpression {
+    io.graphoenix.core.Operator opr = 1; /* Operators */
+    IntroDirectiveLocation val = 2; /* Value */
+    repeated IntroDirectiveLocation arr = 3; /* Array */
 }
 /**
 * Query Arguments for __Schema
@@ -1299,7 +1315,7 @@ message IntroSchemaConnectionQueryArguments {
 message IntroTypeQueryArguments {
     io.graphoenix.core.StringExpression name = 1; /* name */
     IntroSchemaExpression of_schema = 2; /* ofSchema */
-    io.graphoenix.core.IntroTypeKindExpression kind = 3; /* kind */
+    IntroTypeKindExpression kind = 3; /* kind */
     io.graphoenix.core.StringExpression description = 4; /* description */
     IntroFieldExpression fields = 5; /* fields */
     IntroTypeExpression interfaces = 6; /* interfaces */
@@ -1331,7 +1347,7 @@ message IntroTypeQueryArguments {
 message IntroTypeListQueryArguments {
     io.graphoenix.core.StringExpression name = 1; /* name */
     IntroSchemaExpression of_schema = 2; /* ofSchema */
-    io.graphoenix.core.IntroTypeKindExpression kind = 3; /* kind */
+    IntroTypeKindExpression kind = 3; /* kind */
     io.graphoenix.core.StringExpression description = 4; /* description */
     IntroFieldExpression fields = 5; /* fields */
     IntroTypeExpression interfaces = 6; /* interfaces */
@@ -1369,7 +1385,7 @@ message IntroTypeListQueryArguments {
 message IntroTypeConnectionQueryArguments {
     io.graphoenix.core.StringExpression name = 1; /* name */
     IntroSchemaExpression of_schema = 2; /* ofSchema */
-    io.graphoenix.core.IntroTypeKindExpression kind = 3; /* kind */
+    IntroTypeKindExpression kind = 3; /* kind */
     io.graphoenix.core.StringExpression description = 4; /* description */
     IntroFieldExpression fields = 5; /* fields */
     IntroTypeExpression interfaces = 6; /* interfaces */
@@ -1681,7 +1697,7 @@ message IntroDirectiveQueryArguments {
     io.graphoenix.core.StringExpression name = 1; /* name */
     IntroSchemaExpression of_schema = 2; /* ofSchema */
     io.graphoenix.core.StringExpression description = 3; /* description */
-    io.graphoenix.core.IntroDirectiveLocationExpression locations = 4; /* locations */
+    IntroDirectiveLocationExpression locations = 4; /* locations */
     IntroInputValueExpression args = 5; /* args */
     io.graphoenix.core.BooleanExpression is_repeatable = 6; /* isRepeatable */
     bool include_deprecated = 7; /* Include Deprecated */
@@ -1707,7 +1723,7 @@ message IntroDirectiveListQueryArguments {
     io.graphoenix.core.StringExpression name = 1; /* name */
     IntroSchemaExpression of_schema = 2; /* ofSchema */
     io.graphoenix.core.StringExpression description = 3; /* description */
-    io.graphoenix.core.IntroDirectiveLocationExpression locations = 4; /* locations */
+    IntroDirectiveLocationExpression locations = 4; /* locations */
     IntroInputValueExpression args = 5; /* args */
     io.graphoenix.core.BooleanExpression is_repeatable = 6; /* isRepeatable */
     bool include_deprecated = 7; /* Include Deprecated */
@@ -1739,7 +1755,7 @@ message IntroDirectiveConnectionQueryArguments {
     io.graphoenix.core.StringExpression name = 1; /* name */
     IntroSchemaExpression of_schema = 2; /* ofSchema */
     io.graphoenix.core.StringExpression description = 3; /* description */
-    io.graphoenix.core.IntroDirectiveLocationExpression locations = 4; /* locations */
+    IntroDirectiveLocationExpression locations = 4; /* locations */
     IntroInputValueExpression args = 5; /* args */
     io.graphoenix.core.BooleanExpression is_repeatable = 6; /* isRepeatable */
     bool include_deprecated = 7; /* Include Deprecated */
@@ -1933,7 +1949,7 @@ message IntroDirectiveLocationsRelationQueryArguments {
     io.graphoenix.core.StringExpression id = 1; /* ID */
     io.graphoenix.core.StringExpression intro_directive_ref = 2; /* __Directive Reference */
     IntroDirectiveExpression intro_directive = 3; /* __Directive */
-    io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4; /* locations Reference */
+    IntroDirectiveLocationExpression locations_ref = 4; /* locations Reference */
     bool include_deprecated = 5; /* Include Deprecated */
     io.graphoenix.core.IntExpression version = 6; /* Version */
     io.graphoenix.core.IntExpression realm_id = 7; /* Realm ID */
@@ -1955,7 +1971,7 @@ message IntroDirectiveLocationsRelationListQueryArguments {
     io.graphoenix.core.StringExpression id = 1; /* ID */
     io.graphoenix.core.StringExpression intro_directive_ref = 2; /* __Directive Reference */
     IntroDirectiveExpression intro_directive = 3; /* __Directive */
-    io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4; /* locations Reference */
+    IntroDirectiveLocationExpression locations_ref = 4; /* locations Reference */
     bool include_deprecated = 5; /* Include Deprecated */
     io.graphoenix.core.IntExpression version = 6; /* Version */
     io.graphoenix.core.IntExpression realm_id = 7; /* Realm ID */
@@ -1983,7 +1999,7 @@ message IntroDirectiveLocationsRelationConnectionQueryArguments {
     io.graphoenix.core.StringExpression id = 1; /* ID */
     io.graphoenix.core.StringExpression intro_directive_ref = 2; /* __Directive Reference */
     IntroDirectiveExpression intro_directive = 3; /* __Directive */
-    io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4; /* locations Reference */
+    IntroDirectiveLocationExpression locations_ref = 4; /* locations Reference */
     bool include_deprecated = 5; /* Include Deprecated */
     io.graphoenix.core.IntExpression version = 6; /* Version */
     io.graphoenix.core.IntExpression realm_id = 7; /* Realm ID */
@@ -2060,7 +2076,7 @@ message IntroSchemaListMutationArguments {
 message IntroTypeMutationArguments {
     string name = 1; /* name */
     IntroSchemaInput of_schema = 2; /* ofSchema */
-    io.graphoenix.core.IntroTypeKind kind = 3; /* kind */
+    IntroTypeKind kind = 3; /* kind */
     string description = 4; /* description */
     repeated IntroFieldInput fields = 5; /* fields */
     repeated IntroTypeInput interfaces = 6; /* interfaces */
@@ -2090,7 +2106,7 @@ message IntroTypeMutationArguments {
 message IntroTypeListMutationArguments {
     string name = 1; /* name */
     IntroSchemaInput of_schema = 2; /* ofSchema */
-    io.graphoenix.core.IntroTypeKind kind = 3; /* kind */
+    IntroTypeKind kind = 3; /* kind */
     string description = 4; /* description */
     repeated IntroFieldInput fields = 5; /* fields */
     repeated IntroTypeInput interfaces = 6; /* interfaces */
@@ -2267,7 +2283,7 @@ message IntroDirectiveMutationArguments {
     string name = 1; /* name */
     IntroSchemaInput of_schema = 2; /* ofSchema */
     string description = 3; /* description */
-    repeated io.graphoenix.core.IntroDirectiveLocation locations = 4; /* locations */
+    repeated IntroDirectiveLocation locations = 4; /* locations */
     repeated IntroInputValueInput args = 5; /* args */
     bool is_repeatable = 6; /* isRepeatable */
     bool is_deprecated = 7; /* Is Deprecated */
@@ -2291,7 +2307,7 @@ message IntroDirectiveListMutationArguments {
     string name = 1; /* name */
     IntroSchemaInput of_schema = 2; /* ofSchema */
     string description = 3; /* description */
-    repeated io.graphoenix.core.IntroDirectiveLocation locations = 4; /* locations */
+    repeated IntroDirectiveLocation locations = 4; /* locations */
     repeated IntroInputValueInput args = 5; /* args */
     bool is_repeatable = 6; /* isRepeatable */
     bool is_deprecated = 7; /* Is Deprecated */
@@ -2399,7 +2415,7 @@ message IntroDirectiveLocationsRelationMutationArguments {
     string id = 1; /* ID */
     string intro_directive_ref = 2; /* __Directive Reference */
     IntroDirectiveInput intro_directive = 3; /* __Directive */
-    io.graphoenix.core.IntroDirectiveLocation locations_ref = 4; /* locations Reference */
+    IntroDirectiveLocation locations_ref = 4; /* locations Reference */
     bool is_deprecated = 5; /* Is Deprecated */
     int32 version = 6; /* Version */
     int32 realm_id = 7; /* Realm ID */
@@ -2419,7 +2435,7 @@ message IntroDirectiveLocationsRelationListMutationArguments {
     string id = 1; /* ID */
     string intro_directive_ref = 2; /* __Directive Reference */
     IntroDirectiveInput intro_directive = 3; /* __Directive */
-    io.graphoenix.core.IntroDirectiveLocation locations_ref = 4; /* locations Reference */
+    IntroDirectiveLocation locations_ref = 4; /* locations Reference */
     bool is_deprecated = 5; /* Is Deprecated */
     int32 version = 6; /* Version */
     int32 realm_id = 7; /* Realm ID */
@@ -2531,7 +2547,7 @@ message IntroSchemaConnectionSubscriptionArguments {
 message IntroTypeSubscriptionArguments {
     io.graphoenix.core.StringExpression name = 1; /* name */
     IntroSchemaExpression of_schema = 2; /* ofSchema */
-    io.graphoenix.core.IntroTypeKindExpression kind = 3; /* kind */
+    IntroTypeKindExpression kind = 3; /* kind */
     io.graphoenix.core.StringExpression description = 4; /* description */
     IntroFieldExpression fields = 5; /* fields */
     IntroTypeExpression interfaces = 6; /* interfaces */
@@ -2563,7 +2579,7 @@ message IntroTypeSubscriptionArguments {
 message IntroTypeListSubscriptionArguments {
     io.graphoenix.core.StringExpression name = 1; /* name */
     IntroSchemaExpression of_schema = 2; /* ofSchema */
-    io.graphoenix.core.IntroTypeKindExpression kind = 3; /* kind */
+    IntroTypeKindExpression kind = 3; /* kind */
     io.graphoenix.core.StringExpression description = 4; /* description */
     IntroFieldExpression fields = 5; /* fields */
     IntroTypeExpression interfaces = 6; /* interfaces */
@@ -2601,7 +2617,7 @@ message IntroTypeListSubscriptionArguments {
 message IntroTypeConnectionSubscriptionArguments {
     io.graphoenix.core.StringExpression name = 1; /* name */
     IntroSchemaExpression of_schema = 2; /* ofSchema */
-    io.graphoenix.core.IntroTypeKindExpression kind = 3; /* kind */
+    IntroTypeKindExpression kind = 3; /* kind */
     io.graphoenix.core.StringExpression description = 4; /* description */
     IntroFieldExpression fields = 5; /* fields */
     IntroTypeExpression interfaces = 6; /* interfaces */
@@ -2913,7 +2929,7 @@ message IntroDirectiveSubscriptionArguments {
     io.graphoenix.core.StringExpression name = 1; /* name */
     IntroSchemaExpression of_schema = 2; /* ofSchema */
     io.graphoenix.core.StringExpression description = 3; /* description */
-    io.graphoenix.core.IntroDirectiveLocationExpression locations = 4; /* locations */
+    IntroDirectiveLocationExpression locations = 4; /* locations */
     IntroInputValueExpression args = 5; /* args */
     io.graphoenix.core.BooleanExpression is_repeatable = 6; /* isRepeatable */
     bool include_deprecated = 7; /* Include Deprecated */
@@ -2939,7 +2955,7 @@ message IntroDirectiveListSubscriptionArguments {
     io.graphoenix.core.StringExpression name = 1; /* name */
     IntroSchemaExpression of_schema = 2; /* ofSchema */
     io.graphoenix.core.StringExpression description = 3; /* description */
-    io.graphoenix.core.IntroDirectiveLocationExpression locations = 4; /* locations */
+    IntroDirectiveLocationExpression locations = 4; /* locations */
     IntroInputValueExpression args = 5; /* args */
     io.graphoenix.core.BooleanExpression is_repeatable = 6; /* isRepeatable */
     bool include_deprecated = 7; /* Include Deprecated */
@@ -2971,7 +2987,7 @@ message IntroDirectiveConnectionSubscriptionArguments {
     io.graphoenix.core.StringExpression name = 1; /* name */
     IntroSchemaExpression of_schema = 2; /* ofSchema */
     io.graphoenix.core.StringExpression description = 3; /* description */
-    io.graphoenix.core.IntroDirectiveLocationExpression locations = 4; /* locations */
+    IntroDirectiveLocationExpression locations = 4; /* locations */
     IntroInputValueExpression args = 5; /* args */
     io.graphoenix.core.BooleanExpression is_repeatable = 6; /* isRepeatable */
     bool include_deprecated = 7; /* Include Deprecated */
@@ -3165,7 +3181,7 @@ message IntroDirectiveLocationsRelationSubscriptionArguments {
     io.graphoenix.core.StringExpression id = 1; /* ID */
     io.graphoenix.core.StringExpression intro_directive_ref = 2; /* __Directive Reference */
     IntroDirectiveExpression intro_directive = 3; /* __Directive */
-    io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4; /* locations Reference */
+    IntroDirectiveLocationExpression locations_ref = 4; /* locations Reference */
     bool include_deprecated = 5; /* Include Deprecated */
     io.graphoenix.core.IntExpression version = 6; /* Version */
     io.graphoenix.core.IntExpression realm_id = 7; /* Realm ID */
@@ -3187,7 +3203,7 @@ message IntroDirectiveLocationsRelationListSubscriptionArguments {
     io.graphoenix.core.StringExpression id = 1; /* ID */
     io.graphoenix.core.StringExpression intro_directive_ref = 2; /* __Directive Reference */
     IntroDirectiveExpression intro_directive = 3; /* __Directive */
-    io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4; /* locations Reference */
+    IntroDirectiveLocationExpression locations_ref = 4; /* locations Reference */
     bool include_deprecated = 5; /* Include Deprecated */
     io.graphoenix.core.IntExpression version = 6; /* Version */
     io.graphoenix.core.IntExpression realm_id = 7; /* Realm ID */
@@ -3215,7 +3231,7 @@ message IntroDirectiveLocationsRelationConnectionSubscriptionArguments {
     io.graphoenix.core.StringExpression id = 1; /* ID */
     io.graphoenix.core.StringExpression intro_directive_ref = 2; /* __Directive Reference */
     IntroDirectiveExpression intro_directive = 3; /* __Directive */
-    io.graphoenix.core.IntroDirectiveLocationExpression locations_ref = 4; /* locations Reference */
+    IntroDirectiveLocationExpression locations_ref = 4; /* locations Reference */
     bool include_deprecated = 5; /* Include Deprecated */
     io.graphoenix.core.IntExpression version = 6; /* Version */
     io.graphoenix.core.IntExpression realm_id = 7; /* Realm ID */

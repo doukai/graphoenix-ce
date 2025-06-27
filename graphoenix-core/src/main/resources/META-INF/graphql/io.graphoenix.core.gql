@@ -51,36 +51,6 @@ enum Protocol @package(name: "io.graphoenix.core") @class(name: "io.graphoenix.c
     HTTP
     RSOCKET
 }
-enum __TypeKind @package(name: "io.graphoenix.core") @class(name: "io.graphoenix.core.dto.enumType.__TypeKind") @grpc(name: "io.graphoenix.core.dto.enumType.grpc.IntroTypeKind") {
-    SCALAR
-    OBJECT
-    INTERFACE
-    UNION
-    ENUM
-    INPUT_OBJECT
-    LIST
-    NON_NULL
-}
-enum __DirectiveLocation @package(name: "io.graphoenix.core") @class(name: "io.graphoenix.core.dto.enumType.__DirectiveLocation") @grpc(name: "io.graphoenix.core.dto.enumType.grpc.IntroDirectiveLocation") {
-    QUERY
-    MUTATION
-    SUBSCRIPTION
-    FIELD
-    FRAGMENT_DEFINITION
-    FRAGMENT_SPREAD
-    INLINE_FRAGMENT
-    SCHEMA
-    SCALAR
-    OBJECT
-    FIELD_DEFINITION
-    ARGUMENT_DEFINITION
-    INTERFACE
-    UNION
-    ENUM
-    ENUM_VALUE
-    INPUT_OBJECT
-    INPUT_FIELD_DEFINITION
-}
 interface Meta @package(name: "io.graphoenix.core") @class(name: "io.graphoenix.core.dto.interfaceType.Meta") @grpc(name: "io.graphoenix.core.dto.interfaceType.grpc.Meta") {
     isDeprecated: Boolean @options(default: "false")
     version: Int
@@ -189,16 +159,6 @@ input ProtocolExpression @package(name: "io.graphoenix.core") @class(name: "io.g
     opr: Operator = EQ
     val: Protocol
     arr: [Protocol]
-}
-input __TypeKindExpression @package(name: "io.graphoenix.core") @class(name: "io.graphoenix.core.dto.inputObjectType.__TypeKindExpression") @grpc(name: "io.graphoenix.core.dto.inputObjectType.grpc.IntroTypeKindExpression") @annotation(name: "io.graphoenix.core.dto.annotation.__TypeKindExpression")  {
-    opr: Operator = EQ
-    val: __TypeKind
-    arr: [__TypeKind]
-}
-input __DirectiveLocationExpression @package(name: "io.graphoenix.core") @class(name: "io.graphoenix.core.dto.inputObjectType.__DirectiveLocationExpression") @grpc(name: "io.graphoenix.core.dto.inputObjectType.grpc.IntroDirectiveLocationExpression") @annotation(name: "io.graphoenix.core.dto.annotation.__DirectiveLocationExpression")  {
-    opr: Operator = EQ
-    val: __DirectiveLocation
-    arr: [__DirectiveLocation]
 }
 directive @options(package: String = "io.graphoenix.core" type: String default: String length: Int decimals: Int unique: Boolean autoIncrement: Boolean protocol: Protocol = GRPC) on FIELD_DEFINITION
 directive @map(package: String = "io.graphoenix.core" from: String! with: With to: String anchor: Boolean) on FIELD_DEFINITION

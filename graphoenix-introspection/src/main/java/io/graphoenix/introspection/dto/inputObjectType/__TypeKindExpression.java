@@ -1,8 +1,8 @@
-package io.graphoenix.core.dto.inputObjectType;
+package io.graphoenix.introspection.dto.inputObjectType;
 
 import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.enumType.Operator;
-import io.graphoenix.core.dto.enumType.__TypeKind;
+import io.graphoenix.introspection.dto.enumType.__TypeKind;
 import jakarta.annotation.Generated;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;

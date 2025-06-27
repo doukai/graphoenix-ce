@@ -1,4 +1,4 @@
-package io.graphoenix.core.dto.enumType;
+package io.graphoenix.introspection.dto.enumType;
 
 import jakarta.annotation.Generated;
 import org.eclipse.microprofile.graphql.Enum;

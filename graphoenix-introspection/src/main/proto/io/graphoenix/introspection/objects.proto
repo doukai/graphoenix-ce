@@ -6,7 +6,6 @@ option java_package = "io.graphoenix.introspection.dto.objectType.grpc";
 package io.graphoenix.introspection;
 
 import "io/graphoenix/introspection/enums.proto";
-import "io/graphoenix/core/enums.proto";
 import "io/graphoenix/core/objects.proto";
 import "google/protobuf/timestamp.proto";
 
@@ -49,7 +48,7 @@ message IntroSchema {
 message IntroType {
     optional string name = 1;
     IntroSchema of_schema = 2;
-    optional io.graphoenix.core.IntroTypeKind kind = 3;
+    optional IntroTypeKind kind = 3;
     string description = 4;
     repeated IntroField fields = 5;
     repeated IntroType interfaces = 6;
@@ -88,8 +87,8 @@ message IntroType {
     string name_max = 39; /* Max of name */
     string name_min = 40; /* Min of name */
     int32 kind_count = 41; /* Count of kind */
-    io.graphoenix.core.IntroTypeKind kind_max = 42; /* Max of kind */
-    io.graphoenix.core.IntroTypeKind kind_min = 43; /* Min of kind */
+    IntroTypeKind kind_max = 42; /* Max of kind */
+    IntroTypeKind kind_min = 43; /* Min of kind */
     int32 description_count = 44; /* Count of description */
     string description_max = 45; /* Max of description */
     string description_min = 46; /* Min of description */
@@ -225,7 +224,7 @@ message IntroDirective {
     optional string name = 1;
     IntroSchema of_schema = 2;
     string description = 3;
-    repeated io.graphoenix.core.IntroDirectiveLocation locations = 4;
+    repeated IntroDirectiveLocation locations = 4;
     repeated IntroInputValue args = 5;
     optional bool is_repeatable = 6;
     bool is_deprecated = 7; /* Is Deprecated */
@@ -318,7 +317,7 @@ message IntroDirectiveLocationsRelation {
     string id = 1; /* ID */
     string intro_directive_ref = 2; /* __Directive Reference */
     IntroDirective intro_directive = 3; /* __Directive */
-    io.graphoenix.core.IntroDirectiveLocation locations_ref = 4; /* locations Reference */
+    IntroDirectiveLocation locations_ref = 4; /* locations Reference */
     bool is_deprecated = 5; /* Is Deprecated */
     int32 version = 6; /* Version */
     int32 realm_id = 7; /* Realm ID */
@@ -335,8 +334,8 @@ message IntroDirectiveLocationsRelation {
     string intro_directive_ref_max = 18; /* Max of __Directive Reference */
     string intro_directive_ref_min = 19; /* Min of __Directive Reference */
     int32 locations_ref_count = 20; /* Count of locations Reference */
-    io.graphoenix.core.IntroDirectiveLocation locations_ref_max = 21; /* Max of locations Reference */
-    io.graphoenix.core.IntroDirectiveLocation locations_ref_min = 22; /* Min of locations Reference */
+    IntroDirectiveLocation locations_ref_max = 21; /* Max of locations Reference */
+    IntroDirectiveLocation locations_ref_min = 22; /* Min of locations Reference */
 }
 /**
 * Connection Object for __Schema

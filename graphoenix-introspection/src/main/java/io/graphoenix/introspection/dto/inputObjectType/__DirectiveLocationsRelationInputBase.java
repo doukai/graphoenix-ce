@@ -1,7 +1,7 @@
 package io.graphoenix.introspection.dto.inputObjectType;
 
-import io.graphoenix.core.dto.enumType.__DirectiveLocation;
 import io.graphoenix.core.dto.inputObjectType.MetaInput;
+import io.graphoenix.introspection.dto.enumType.__DirectiveLocation;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
 import java.lang.Integer;
