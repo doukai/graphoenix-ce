@@ -218,6 +218,8 @@ public class Hammurabi {
     public static final String DIRECTIVE_SKIP_NAME = "skip";
     public static final String DIRECTIVE_SKIP_ARGUMENT_IF_NAME = "if";
 
+    public static final String DIRECTIVE_JSON_SCHEMA_NAME = "jsonSchema";
+
 
     public static final String DIRECTIVE_PERMIT_ALL = "permitAll";
     public static final String DIRECTIVE_DENY_ALL = "denyAll";

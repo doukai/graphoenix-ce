@@ -3,7 +3,7 @@ package io.graphoenix.jsonschema.handler;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.common.Directive;
-import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
+import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.type.InputObjectType;
 import io.graphoenix.spi.graphql.type.ObjectType;
 import io.graphoenix.spi.graphql.type.Type;
@@ -26,8 +26,6 @@ import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static io.graphoenix.jsonschema.utils.ValidationUtil.getJsonSchemaDirective;
-import static io.graphoenix.jsonschema.utils.ValidationUtil.getJsonSchemaObjectArgument;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 import static jakarta.json.JsonValue.TRUE;
@@ -203,7 +201,7 @@ public class JsonSchemaTranslator {
     protected JsonObject inputObjectToProperties(InputObjectType inputObjectType) {
         return inputObjectType.getInputValues().stream()
                 .map(inputValue ->
-                        new AbstractMap.SimpleEntry<>(inputValue.getName(), (JsonValue) fieldToProperty(inputValue.getType(), getJsonSchemaDirective(inputValue).orElse(null)).build())
+                        new AbstractMap.SimpleEntry<>(inputValue.getName(), (JsonValue) fieldToProperty(inputValue.getType(), inputValue.getDirective(DIRECTIVE_JSON_SCHEMA_NAME)).build())
                 )
                 .collect(JsonCollectors.toJsonObject());
     }
@@ -217,9 +215,9 @@ public class JsonSchemaTranslator {
                                 return new AbstractMap.SimpleEntry<>(inputValue.getName(), (JsonValue) buildType(inputValue.getType(), buildJsonSchemaBuilder(inputValue)).build());
                             } else {
                                 return Optional.ofNullable(objectType.getField(inputValue.getName()))
-                                        .map(fieldDefinition -> new AbstractMap.SimpleEntry<>(fieldDefinition.getName(), (JsonValue) fieldToProperty(fieldDefinition.getType(), getJsonSchemaDirective(fieldDefinition).orElse(null)).build()))
+                                        .map(fieldDefinition -> new AbstractMap.SimpleEntry<>(fieldDefinition.getName(), (JsonValue) fieldToProperty(fieldDefinition.getType(), fieldDefinition.getDirective(DIRECTIVE_JSON_SCHEMA_NAME)).build()))
                                         .orElseGet(() ->
-                                                new AbstractMap.SimpleEntry<>(inputValue.getName(), fieldToProperty(inputValue.getType(), getJsonSchemaDirective(inputValue).orElse(null)).build())
+                                                new AbstractMap.SimpleEntry<>(inputValue.getName(), fieldToProperty(inputValue.getType(), inputValue.getDirective(DIRECTIVE_JSON_SCHEMA_NAME)).build())
                                         );
                             }
                         }
@@ -231,7 +229,7 @@ public class JsonSchemaTranslator {
         return inputObjectType.getInputValues().stream()
                 .filter(inputValue -> inputValue.getName().equals(INPUT_VALUE_LIST_NAME))
                 .map(inputValue ->
-                        new AbstractMap.SimpleEntry<>(inputValue.getName(), (JsonValue) fieldToProperty(inputValue.getType(), getJsonSchemaDirective(inputValue).orElse(null)).build())
+                        new AbstractMap.SimpleEntry<>(inputValue.getName(), (JsonValue) fieldToProperty(inputValue.getType(), inputValue.getDirective(DIRECTIVE_JSON_SCHEMA_NAME)).build())
                 )
                 .collect(JsonCollectors.toJsonObject());
     }
@@ -240,7 +238,7 @@ public class JsonSchemaTranslator {
         return inputObjectType.getInputValues().stream()
                 .filter(inputValue -> inputValue.getName().equals(INPUT_VALUE_INPUT_NAME))
                 .map(inputValue ->
-                        new AbstractMap.SimpleEntry<>(inputValue.getName(), (JsonValue) fieldToProperty(inputValue.getType(), getJsonSchemaDirective(inputValue).orElse(null)).build())
+                        new AbstractMap.SimpleEntry<>(inputValue.getName(), (JsonValue) fieldToProperty(inputValue.getType(), inputValue.getDirective(DIRECTIVE_JSON_SCHEMA_NAME)).build())
                 )
                 .collect(JsonCollectors.toJsonObject());
     }
@@ -252,9 +250,9 @@ public class JsonSchemaTranslator {
                 .filter(inputValue -> !inputValue.getName().equals(INPUT_VALUE_INPUT_NAME))
                 .map(inputValue ->
                         Optional.ofNullable(objectType.getField(inputValue.getName()))
-                                .map(fieldDefinition -> new AbstractMap.SimpleEntry<>(fieldDefinition.getName(), (JsonValue) fieldToProperty(fieldDefinition.getType(), getJsonSchemaDirective(fieldDefinition).orElse(null)).build()))
+                                .map(fieldDefinition -> new AbstractMap.SimpleEntry<>(fieldDefinition.getName(), (JsonValue) fieldToProperty(fieldDefinition.getType(), fieldDefinition.getDirective(DIRECTIVE_JSON_SCHEMA_NAME)).build()))
                                 .orElseGet(() ->
-                                        new AbstractMap.SimpleEntry<>(inputValue.getName(), fieldToProperty(inputValue.getType(), getJsonSchemaDirective(inputValue).orElse(null)).build())
+                                        new AbstractMap.SimpleEntry<>(inputValue.getName(), fieldToProperty(inputValue.getType(), inputValue.getDirective(DIRECTIVE_JSON_SCHEMA_NAME)).build())
                                 )
                 )
                 .collect(JsonCollectors.toJsonObject());
@@ -270,7 +268,7 @@ public class JsonSchemaTranslator {
                                 "items",
                                 fieldToProperty(
                                         type.asNonNullType().getType().asListType().getType(),
-                                        getJsonSchemaObjectArgument(directive, "items").orElse(null)
+                                        directive.getArgument("items")
                                 )
                         );
             } else {
@@ -285,7 +283,7 @@ public class JsonSchemaTranslator {
                                         "items",
                                         fieldToProperty(
                                                 type.asListType().getType(),
-                                                getJsonSchemaObjectArgument(directive, "items").orElse(null)
+                                                directive.getArgument("items")
                                         )
                                 )
                 );
@@ -295,8 +293,8 @@ public class JsonSchemaTranslator {
         }
     }
 
-    protected JsonObjectBuilder fieldToProperty(Type type, ObjectValueWithVariable objectValueWithVariable) {
-        JsonObjectBuilder propertyBuilder = buildJsonSchemaBuilder(objectValueWithVariable);
+    protected JsonObjectBuilder fieldToProperty(Type type, ValueWithVariable valueWithVariable) {
+        JsonObjectBuilder propertyBuilder = buildJsonSchemaBuilder(valueWithVariable);
         if (type.isNonNull()) {
             if (type.asNonNullType().getType().isList()) {
                 return propertyBuilder
@@ -305,7 +303,7 @@ public class JsonSchemaTranslator {
                                 "items",
                                 fieldToProperty(
                                         type.asNonNullType().getType().asListType().getType(),
-                                        getJsonSchemaObjectArgument(objectValueWithVariable, "items").orElse(null)
+                                        valueWithVariable.asObject().getValueWithVariable("items")
                                 )
                         );
             } else {
@@ -320,7 +318,7 @@ public class JsonSchemaTranslator {
                                         "items",
                                         fieldToProperty(
                                                 type.asListType().getType(),
-                                                getJsonSchemaObjectArgument(objectValueWithVariable, "items").orElse(null)
+                                                valueWithVariable.asObject().getValueWithVariable("items")
                                         )
                                 )
                 );
@@ -382,20 +380,20 @@ public class JsonSchemaTranslator {
     }
 
     protected JsonObjectBuilder buildJsonSchemaBuilder(Definition definition) {
-        return getJsonSchemaDirective(definition)
+        return Optional.ofNullable(definition.getDirective(DIRECTIVE_JSON_SCHEMA_NAME))
                 .map(this::buildJsonSchemaBuilder)
                 .orElseGet(jsonProvider::createObjectBuilder);
     }
 
     protected JsonObjectBuilder buildJsonSchemaBuilder(Directive directive) {
         return Optional.ofNullable(directive)
-                .map(jsonSchemaDirective -> jsonProvider.createObjectBuilder(jsonSchemaDirective.getArguments().asJsonObject()))
+                .map(jsonSchema -> jsonProvider.createObjectBuilder(jsonSchema.getArguments().asJsonObject()))
                 .orElseGet(jsonProvider::createObjectBuilder);
     }
 
-    protected JsonObjectBuilder buildJsonSchemaBuilder(ObjectValueWithVariable objectValueWithVariable) {
-        return Optional.ofNullable(objectValueWithVariable)
-                .map(jsonSchemaObjectValueWithVariable -> jsonProvider.createObjectBuilder(jsonSchemaObjectValueWithVariable.asJsonObject()))
+    protected JsonObjectBuilder buildJsonSchemaBuilder(ValueWithVariable valueWithVariable) {
+        return Optional.ofNullable(valueWithVariable)
+                .map(jsonSchema -> jsonProvider.createObjectBuilder(jsonSchema.asJsonObject()))
                 .orElseGet(jsonProvider::createObjectBuilder);
     }
 }
