@@ -268,7 +268,7 @@ public class JsonSchemaTranslator {
                                 "items",
                                 fieldToProperty(
                                         type.asNonNullType().getType().asListType().getType(),
-                                        directive.getArgument("items")
+                                        directive != null ? directive.getArgument("items") : null
                                 )
                         );
             } else {
@@ -283,7 +283,7 @@ public class JsonSchemaTranslator {
                                         "items",
                                         fieldToProperty(
                                                 type.asListType().getType(),
-                                                directive.getArgument("items")
+                                                directive != null ? directive.getArgument("items") : null
                                         )
                                 )
                 );
@@ -303,7 +303,7 @@ public class JsonSchemaTranslator {
                                 "items",
                                 fieldToProperty(
                                         type.asNonNullType().getType().asListType().getType(),
-                                        valueWithVariable.asObject().getValueWithVariable("items")
+                                        valueWithVariable != null ? valueWithVariable.asObject().getValueWithVariable("items") : null
                                 )
                         );
             } else {
@@ -318,7 +318,7 @@ public class JsonSchemaTranslator {
                                         "items",
                                         fieldToProperty(
                                                 type.asListType().getType(),
-                                                valueWithVariable.asObject().getValueWithVariable("items")
+                                                valueWithVariable != null ? valueWithVariable.asObject().getValueWithVariable("items") : null
                                         )
                                 )
                 );
