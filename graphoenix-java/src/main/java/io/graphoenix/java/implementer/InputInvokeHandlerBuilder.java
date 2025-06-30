@@ -67,13 +67,196 @@ public class InputInvokeHandlerBuilder {
                                 .map(objectValueWithVariable -> objectValueWithVariable.getString(INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME))
                 )
                 .collect(Collectors.toSet());
-        this.buildClass().writeTo(filer);
+        this.buildClasses().forEach(javaFile -> {
+                    try {
+                        javaFile.writeTo(filer);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
         Logger.info("InputInvokeHandler build success");
     }
 
-    private JavaFile buildClass() {
-        TypeSpec typeSpec = buildInvokeHandler();
-        return JavaFile.builder(packageConfig.getHandlerPackageName(), typeSpec).build();
+    private Stream<JavaFile> buildClasses() {
+        return Stream.of(
+                JavaFile.builder(packageConfig.getHandlerPackageName(), buildQueryArgumentsInvokeHandler()).build(),
+                JavaFile.builder(packageConfig.getHandlerPackageName(), buildListQueryArgumentsInvokeHandler()).build(),
+                JavaFile.builder(packageConfig.getHandlerPackageName(), buildConnectionQueryArgumentsInvokeHandler()).build(),
+                JavaFile.builder(packageConfig.getHandlerPackageName(), buildMutationArgumentsInvokeHandler()).build(),
+                JavaFile.builder(packageConfig.getHandlerPackageName(), buildListMutationArgumentsInvokeHandler()).build(),
+                JavaFile.builder(packageConfig.getHandlerPackageName(), buildInvokeHandler()).build()
+        );
+    }
+
+    private TypeSpec buildQueryArgumentsInvokeHandler() {
+        return TypeSpec.classBuilder("QueryArgumentsInvokeHandler")
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(ApplicationScoped.class)
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(DocumentManager.class),
+                                "documentManager",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(Jsonb.class),
+                                "jsonb",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(packageConfig.getHandlerPackageName(), "InputInvokeHandler"),
+                                "inputInvokeHandler",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addFields(buildFields())
+                .addMethod(buildConstructor(true))
+                .addMethods(buildQueryArgumentsInvokeMethods())
+                .build();
+    }
+
+    private TypeSpec buildListQueryArgumentsInvokeHandler() {
+        return TypeSpec.classBuilder("ListQueryArgumentsInvokeHandler")
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(ApplicationScoped.class)
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(DocumentManager.class),
+                                "documentManager",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(Jsonb.class),
+                                "jsonb",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(packageConfig.getHandlerPackageName(), "InputInvokeHandler"),
+                                "inputInvokeHandler",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addFields(buildFields())
+                .addMethod(buildConstructor(true))
+                .addMethods(buildListQueryArgumentsInvokeMethods())
+                .build();
+    }
+
+    private TypeSpec buildConnectionQueryArgumentsInvokeHandler() {
+        return TypeSpec.classBuilder("ConnectionQueryArgumentsInvokeHandler")
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(ApplicationScoped.class)
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(DocumentManager.class),
+                                "documentManager",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(Jsonb.class),
+                                "jsonb",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(packageConfig.getHandlerPackageName(), "InputInvokeHandler"),
+                                "inputInvokeHandler",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addFields(buildFields())
+                .addMethod(buildConstructor(true))
+                .addMethods(buildConnectionQueryArgumentsInvokeMethods())
+                .build();
+    }
+
+    private TypeSpec buildMutationArgumentsInvokeHandler() {
+        return TypeSpec.classBuilder("MutationArgumentsInvokeHandler")
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(ApplicationScoped.class)
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(DocumentManager.class),
+                                "documentManager",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(Jsonb.class),
+                                "jsonb",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(packageConfig.getHandlerPackageName(), "InputInvokeHandler"),
+                                "inputInvokeHandler",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addFields(buildFields())
+                .addMethod(buildConstructor(true))
+                .addMethods(buildMutationArgumentsInvokeMethods())
+                .build();
+    }
+
+    private TypeSpec buildListMutationArgumentsInvokeHandler() {
+        return TypeSpec.classBuilder("ListMutationArgumentsInvokeHandler")
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(ApplicationScoped.class)
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(DocumentManager.class),
+                                "documentManager",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(Jsonb.class),
+                                "jsonb",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(packageConfig.getHandlerPackageName(), "InputInvokeHandler"),
+                                "inputInvokeHandler",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addFields(buildFields())
+                .addMethod(buildConstructor(true))
+                .addMethods(buildListMutationArgumentsInvokeMethods())
+                .build();
     }
 
     private TypeSpec buildInvokeHandler() {
@@ -98,7 +281,7 @@ public class InputInvokeHandlerBuilder {
                 )
                 .addFields(buildFields())
                 .addMethod(buildConstructor())
-                .addMethods(buildTypeInvokeMethods())
+                .addMethods(buildInputTypeInvokeMethods())
                 .build();
     }
 
@@ -114,6 +297,10 @@ public class InputInvokeHandlerBuilder {
     }
 
     private MethodSpec buildConstructor() {
+        return buildConstructor(false);
+    }
+
+    private MethodSpec buildConstructor(boolean arguments) {
         MethodSpec.Builder builder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Inject.class)
@@ -135,6 +322,12 @@ public class InputInvokeHandlerBuilder {
                 .addStatement("this.documentManager = documentManager")
                 .addStatement("this.jsonb = jsonb");
 
+        if (arguments) {
+            builder
+                    .addParameter(ClassName.get(packageConfig.getHandlerPackageName(), "InputInvokeHandler"), "inputInvokeHandler")
+                    .addStatement("this.inputInvokeHandler = inputInvokeHandler");
+        }
+
         invokeClassSet.stream()
                 .map(TypeNameUtil::toClassName)
                 .forEach(className ->
@@ -147,21 +340,72 @@ public class InputInvokeHandlerBuilder {
         return builder.build();
     }
 
-    private List<MethodSpec> buildTypeInvokeMethods() {
-        return Stream
-                .concat(
-                        documentManager.getDocument().getInputObjectTypes()
-                                .filter(inputObjectType -> inputObjectType.getName().endsWith(SUFFIX_ARGUMENTS))
-                                .filter(inputObjectType -> documentManager.getInputObjectBelong(inputObjectType) != null)
-                                .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, true)),
-                        documentManager.getDocument().getInputObjectTypes()
-                                .filter(inputObjectType ->
-                                        inputObjectType.getName().endsWith(SUFFIX_INPUT) ||
-                                                inputObjectType.getName().endsWith(SUFFIX_EXPRESSION)
-                                )
-                                .filter(inputObjectType -> documentManager.getInputObjectBelong(inputObjectType) != null)
-                                .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, false))
+    private List<MethodSpec> buildQueryArgumentsInvokeMethods() {
+        return
+                documentManager.getDocument().getInputObjectTypes()
+                        .filter(inputObjectType ->
+                                inputObjectType.getName().endsWith(TYPE_QUERY_NAME + SUFFIX_ARGUMENTS) &&
+                                        !inputObjectType.getName().endsWith(SUFFIX_LIST + TYPE_QUERY_NAME + SUFFIX_ARGUMENTS) &&
+                                        !inputObjectType.getName().endsWith(SUFFIX_CONNECTION + TYPE_QUERY_NAME + SUFFIX_ARGUMENTS)
+                        )
+                        .filter(inputObjectType -> documentManager.getInputObjectBelong(inputObjectType) != null)
+                        .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, true))
+                        .collect(Collectors.toList());
+    }
+
+    private List<MethodSpec> buildListQueryArgumentsInvokeMethods() {
+        return
+                documentManager.getDocument().getInputObjectTypes()
+                        .filter(inputObjectType ->
+                                inputObjectType.getName().endsWith(SUFFIX_LIST + TYPE_QUERY_NAME + SUFFIX_ARGUMENTS)
+                        )
+                        .filter(inputObjectType -> documentManager.getInputObjectBelong(inputObjectType) != null)
+                        .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, true))
+                        .collect(Collectors.toList());
+    }
+
+    private List<MethodSpec> buildConnectionQueryArgumentsInvokeMethods() {
+        return
+                documentManager.getDocument().getInputObjectTypes()
+                        .filter(inputObjectType ->
+                                inputObjectType.getName().endsWith(SUFFIX_CONNECTION + TYPE_QUERY_NAME + SUFFIX_ARGUMENTS)
+                        )
+                        .filter(inputObjectType -> documentManager.getInputObjectBelong(inputObjectType) != null)
+                        .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, true))
+                        .collect(Collectors.toList());
+    }
+
+    private List<MethodSpec> buildMutationArgumentsInvokeMethods() {
+        return
+                documentManager.getDocument().getInputObjectTypes()
+                        .filter(inputObjectType ->
+                                inputObjectType.getName().endsWith(TYPE_MUTATION_NAME + SUFFIX_ARGUMENTS) &&
+                                        !inputObjectType.getName().endsWith(SUFFIX_LIST + TYPE_MUTATION_NAME + SUFFIX_ARGUMENTS)
+                        )
+                        .filter(inputObjectType -> documentManager.getInputObjectBelong(inputObjectType) != null)
+                        .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, true))
+                        .collect(Collectors.toList());
+    }
+
+    private List<MethodSpec> buildListMutationArgumentsInvokeMethods() {
+        return
+                documentManager.getDocument().getInputObjectTypes()
+                        .filter(inputObjectType ->
+                                inputObjectType.getName().endsWith(SUFFIX_LIST + TYPE_MUTATION_NAME + SUFFIX_ARGUMENTS)
+                        )
+                        .filter(inputObjectType -> documentManager.getInputObjectBelong(inputObjectType) != null)
+                        .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, true))
+                        .collect(Collectors.toList());
+    }
+
+    private List<MethodSpec> buildInputTypeInvokeMethods() {
+        return documentManager.getDocument().getInputObjectTypes()
+                .filter(inputObjectType ->
+                        inputObjectType.getName().endsWith(SUFFIX_INPUT) ||
+                                inputObjectType.getName().endsWith(SUFFIX_EXPRESSION)
                 )
+                .filter(inputObjectType -> documentManager.getInputObjectBelong(inputObjectType) != null)
+                .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, false))
                 .collect(Collectors.toList());
     }
 
@@ -432,12 +676,16 @@ public class InputInvokeHandlerBuilder {
                                                                 .filter(inputValue -> !inputValue.getType().hasList())
                                                                 .map(inputValue -> {
                                                                             InputObjectType inputValueType = documentManager.getInputValueTypeDefinition(inputValue).asInputObject();
+                                                                            String methodName = typeNameToFieldName(inputValueType.getName());
+                                                                            if (arguments) {
+                                                                                methodName = "inputInvokeHandler." + methodName;
+                                                                            }
                                                                             CodeBlock caseCodeBlock = CodeBlock.of("case $S:\n", inputValue.getName());
                                                                             CodeBlock invokeCodeBlock = CodeBlock.of("return $T.justOrEmpty($L.$L()).flatMap(field -> $L(field, entry.getValue().asObject())).doOnNext($L -> $L.$L($L));",
                                                                                     ClassName.get(Mono.class),
                                                                                     resultParameterName,
                                                                                     getFieldGetterMethodName(inputValue.getName()),
-                                                                                    typeNameToFieldName(inputValueType.getName()),
+                                                                                    methodName,
                                                                                     getFieldName(inputValue.getName()),
                                                                                     resultParameterName,
                                                                                     getFieldSetterMethodName(inputValue.getName()),
@@ -452,6 +700,10 @@ public class InputInvokeHandlerBuilder {
                                                                 .filter(inputValue -> inputValue.getType().hasList())
                                                                 .map(inputValue -> {
                                                                             InputObjectType inputValueType = documentManager.getInputValueTypeDefinition(inputValue).asInputObject();
+                                                                            String methodName = typeNameToFieldName(inputValueType.getName());
+                                                                            if (arguments) {
+                                                                                methodName = "inputInvokeHandler." + methodName;
+                                                                            }
                                                                             CodeBlock caseCodeBlock = CodeBlock.of("case $S:\n", inputValue.getName());
                                                                             CodeBlock invokeCodeBlock = CodeBlock.of("return $T.justOrEmpty($L.$L()).map($T::size).flatMapMany(size -> $T.range(0, size)).flatMap(index -> $L(new $T<>($L.$L()).get(index), entry.getValue().asArray().getValueWithVariables().get(index).asObject())).collectList().doOnNext($L -> $L.$L($L));",
                                                                                     ClassName.get(Mono.class),
@@ -459,7 +711,7 @@ public class InputInvokeHandlerBuilder {
                                                                                     getFieldGetterMethodName(inputValue.getName()),
                                                                                     ClassName.get(Collection.class),
                                                                                     ClassName.get(Flux.class),
-                                                                                    typeNameToFieldName(inputValueType.getName()),
+                                                                                    methodName,
                                                                                     ClassName.get(ArrayList.class),
                                                                                     resultParameterName,
                                                                                     getFieldGetterMethodName(inputValue.getName()),

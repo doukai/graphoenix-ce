@@ -87,6 +87,46 @@ public class ArgumentsInvokeHandlerBuilder {
                 )
                 .addField(
                         FieldSpec.builder(
+                                ClassName.get(packageConfig.getHandlerPackageName(), "QueryArgumentsInvokeHandler"),
+                                "queryArgumentsInvokeHandler",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(packageConfig.getHandlerPackageName(), "ListQueryArgumentsInvokeHandler"),
+                                "listQueryArgumentsInvokeHandler",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(packageConfig.getHandlerPackageName(), "ConnectionQueryArgumentsInvokeHandler"),
+                                "connectionQueryArgumentsInvokeHandler",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(packageConfig.getHandlerPackageName(), "MutationArgumentsInvokeHandler"),
+                                "mutationArgumentsInvokeHandler",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addField(
+                        FieldSpec.builder(
+                                ClassName.get(packageConfig.getHandlerPackageName(), "ListMutationArgumentsInvokeHandler"),
+                                "listMutationArgumentsInvokeHandler",
+                                Modifier.PRIVATE,
+                                Modifier.FINAL
+                        ).build()
+                )
+                .addField(
+                        FieldSpec.builder(
                                 ClassName.get(packageConfig.getHandlerPackageName(), "InputInvokeHandler"),
                                 "inputInvokeHandler",
                                 Modifier.PRIVATE,
@@ -106,7 +146,17 @@ public class ArgumentsInvokeHandlerBuilder {
                 .addParameter(ClassName.get(OperationBuilder.class), "operationBuilder")
                 .addParameter(ClassName.get(Jsonb.class), "jsonb")
                 .addParameter(ClassName.get(JsonProvider.class), "jsonProvider")
+                .addParameter(ClassName.get(packageConfig.getHandlerPackageName(), "QueryArgumentsInvokeHandler"), "queryArgumentsInvokeHandler")
+                .addParameter(ClassName.get(packageConfig.getHandlerPackageName(), "ListQueryArgumentsInvokeHandler"), "listQueryArgumentsInvokeHandler")
+                .addParameter(ClassName.get(packageConfig.getHandlerPackageName(), "ConnectionQueryArgumentsInvokeHandler"), "connectionQueryArgumentsInvokeHandler")
+                .addParameter(ClassName.get(packageConfig.getHandlerPackageName(), "MutationArgumentsInvokeHandler"), "mutationArgumentsInvokeHandler")
+                .addParameter(ClassName.get(packageConfig.getHandlerPackageName(), "ListMutationArgumentsInvokeHandler"), "listMutationArgumentsInvokeHandler")
                 .addParameter(ClassName.get(packageConfig.getHandlerPackageName(), "InputInvokeHandler"), "inputInvokeHandler")
+                .addStatement("this.queryArgumentsInvokeHandler = queryArgumentsInvokeHandler")
+                .addStatement("this.listQueryArgumentsInvokeHandler = listQueryArgumentsInvokeHandler")
+                .addStatement("this.connectionQueryArgumentsInvokeHandler = connectionQueryArgumentsInvokeHandler")
+                .addStatement("this.mutationArgumentsInvokeHandler = mutationArgumentsInvokeHandler")
+                .addStatement("this.listMutationArgumentsInvokeHandler = listMutationArgumentsInvokeHandler")
                 .addStatement("this.operationBuilder = operationBuilder")
                 .addStatement("this.jsonb = jsonb")
                 .addStatement("this.jsonProvider = jsonProvider")
@@ -132,7 +182,7 @@ public class ArgumentsInvokeHandlerBuilder {
             operationTypeName = documentManager.getDocument().getMutationOperationTypeOrError().getName();
             typeParameterName = OPERATION_MUTATION_NAME;
         } else if (documentManager.isSubscriptionOperationType(objectType)) {
-            operationTypeName = documentManager.getDocument().getSubscriptionOperationTypeOrError().getName();
+            operationTypeName = documentManager.getDocument().getQueryOperationTypeOrError().getName();
             typeParameterName = OPERATION_SUBSCRIPTION_NAME;
         } else {
             operationTypeName = documentManager.getDocument().getQueryOperationTypeOrError().getName();
@@ -181,6 +231,16 @@ public class ArgumentsInvokeHandlerBuilder {
                                                                                                     String methodName = typeNameToFieldName(fieldTypeName) + operationTypeName + SUFFIX_ARGUMENTS;
                                                                                                     String argumentInputName = fieldTypeName + operationTypeName + SUFFIX_ARGUMENTS;
                                                                                                     ClassName className = toClassName(documentManager.getDocument().getInputObjectTypeOrError(argumentInputName).getClassNameOrError());
+                                                                                                    String handlerName;
+                                                                                                    if (documentManager.isMutationOperationType(objectType)) {
+                                                                                                        handlerName = "mutationArgumentsInvokeHandler";
+                                                                                                    } else {
+                                                                                                        if (fieldDefinition.isConnectionField()) {
+                                                                                                            handlerName = "connectionQueryArgumentsInvokeHandler";
+                                                                                                        } else {
+                                                                                                            handlerName = "queryArgumentsInvokeHandler";
+                                                                                                        }
+                                                                                                    }
                                                                                                     return CodeBlock.builder().add("case $S:\n", fieldDefinition.getName())
                                                                                                             .indent()
                                                                                                             .add("return $T.justOrEmpty(field.getArguments())\n", ClassName.get(Mono.class))
@@ -188,11 +248,13 @@ public class ArgumentsInvokeHandlerBuilder {
                                                                                                             .add(".map(arguments -> jsonb.fromJson(arguments.toJson(), $T.class))\n",
                                                                                                                     className
                                                                                                             )
-                                                                                                            .add(".flatMap(arguments -> inputInvokeHandler.$L(arguments, field.getArguments()))\n",
+                                                                                                            .add(".flatMap(arguments -> $L.$L(arguments, field.getArguments()))\n",
+                                                                                                                    handlerName,
                                                                                                                     methodName
                                                                                                             )
-                                                                                                            .add(".switchIfEmpty($T.defer(() -> inputInvokeHandler.$L(new $T(), field.getArguments())))\n",
+                                                                                                            .add(".switchIfEmpty($T.defer(() -> $L.$L(new $T(), field.getArguments())))\n",
                                                                                                                     ClassName.get(Mono.class),
+                                                                                                                    handlerName,
                                                                                                                     methodName,
                                                                                                                     className
                                                                                                             )
@@ -221,6 +283,12 @@ public class ArgumentsInvokeHandlerBuilder {
                                                                                                     String methodName = typeNameToFieldName(fieldTypeName) + SUFFIX_LIST + operationTypeName + SUFFIX_ARGUMENTS;
                                                                                                     String argumentInputName = fieldTypeName + SUFFIX_LIST + operationTypeName + SUFFIX_ARGUMENTS;
                                                                                                     ClassName className = toClassName(documentManager.getDocument().getInputObjectTypeOrError(argumentInputName).getClassNameOrError());
+                                                                                                    String handlerName;
+                                                                                                    if (documentManager.isMutationOperationType(objectType)) {
+                                                                                                        handlerName = "listMutationArgumentsInvokeHandler";
+                                                                                                    } else {
+                                                                                                        handlerName = "listQueryArgumentsInvokeHandler";
+                                                                                                    }
                                                                                                     return CodeBlock.builder().add("case $S:\n", fieldDefinition.getName())
                                                                                                             .indent()
                                                                                                             .add("return $T.justOrEmpty(field.getArguments())\n", ClassName.get(Mono.class))
@@ -228,11 +296,13 @@ public class ArgumentsInvokeHandlerBuilder {
                                                                                                             .add(".map(arguments -> jsonb.fromJson(arguments.toJson(), $T.class))\n",
                                                                                                                     className
                                                                                                             )
-                                                                                                            .add(".flatMap(arguments -> inputInvokeHandler.$L(arguments, field.getArguments()))\n",
+                                                                                                            .add(".flatMap(arguments -> $L.$L(arguments, field.getArguments()))\n",
+                                                                                                                    handlerName,
                                                                                                                     methodName
                                                                                                             )
-                                                                                                            .add(".switchIfEmpty($T.defer(() -> inputInvokeHandler.$L(new $T(), field.getArguments())))\n",
+                                                                                                            .add(".switchIfEmpty($T.defer(() -> $L.$L(new $T(), field.getArguments())))\n",
                                                                                                                     ClassName.get(Mono.class),
+                                                                                                                    handlerName,
                                                                                                                     methodName,
                                                                                                                     className
                                                                                                             )
