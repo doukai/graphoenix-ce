@@ -39,7 +39,7 @@ public class InputInvokeHandlerBuilder {
     private final DocumentManager documentManager;
     private final PackageManager packageManager;
     private final PackageConfig packageConfig;
-    private Set<String> invokeClassSet;
+    private Set<String> directiveInvokeClassSet;
 
     @Inject
     public InputInvokeHandlerBuilder(DocumentManager documentManager, PackageManager packageManager, PackageConfig packageConfig) {
@@ -49,24 +49,18 @@ public class InputInvokeHandlerBuilder {
     }
 
     public void writeToFiler(Filer filer) throws IOException {
-        this.invokeClassSet = Stream.concat(
-                        documentManager.getDocument().getInputObjectTypes()
-                                .filter(packageManager::isLocalPackage)
-//                              .filter(InputObjectType::isInvokesInput)
-                                .flatMap(this::getInvokes)
-                                .map(objectValueWithVariable -> objectValueWithVariable.getString(INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME)),
-                        documentManager.getDocument().getObjectTypes()
-                                .filter(packageManager::isLocalPackage)
-                                .flatMap(objectType -> objectType.getFields().stream())
-                                .flatMap(fieldDefinition -> documentManager.getDirectiveInvokes(fieldDefinition).stream())
-                                .filter(objectValueWithVariable -> packageManager.isLocalPackage(objectValueWithVariable.getString(INPUT_INVOKE_INPUT_VALUE_PACKAGE_NAME_NAME)))
-                                .filter(objectValueWithVariable ->
-                                        objectValueWithVariable.getBoolean(INPUT_INVOKE_INPUT_VALUE_ON_EXPRESSION_NAME, false) ||
-                                                objectValueWithVariable.getBoolean(INPUT_INVOKE_INPUT_VALUE_ON_INPUT_VALUE_NAME, false)
-                                )
-                                .map(objectValueWithVariable -> objectValueWithVariable.getString(INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME))
+        this.directiveInvokeClassSet = documentManager.getDocument().getObjectTypes()
+                .filter(packageManager::isLocalPackage)
+                .flatMap(objectType -> objectType.getFields().stream())
+                .flatMap(fieldDefinition -> documentManager.getDirectiveInvokes(fieldDefinition).stream())
+                .filter(objectValueWithVariable -> packageManager.isLocalPackage(objectValueWithVariable.getString(INPUT_INVOKE_INPUT_VALUE_PACKAGE_NAME_NAME)))
+                .filter(objectValueWithVariable ->
+                        objectValueWithVariable.getBoolean(INPUT_INVOKE_INPUT_VALUE_ON_EXPRESSION_NAME, false) ||
+                                objectValueWithVariable.getBoolean(INPUT_INVOKE_INPUT_VALUE_ON_INPUT_VALUE_NAME, false)
                 )
+                .map(objectValueWithVariable -> objectValueWithVariable.getString(INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME))
                 .collect(Collectors.toSet());
+
         this.buildClasses().forEach(javaFile -> {
                     try {
                         javaFile.writeTo(filer);
@@ -90,6 +84,15 @@ public class InputInvokeHandlerBuilder {
     }
 
     private TypeSpec buildQueryArgumentsInvokeHandler() {
+        List<InputObjectType> inputObjectTypes = documentManager.getDocument().getInputObjectTypes()
+                .filter(inputObjectType ->
+                        inputObjectType.getName().endsWith(TYPE_QUERY_NAME + SUFFIX_ARGUMENTS) &&
+                                !inputObjectType.getName().endsWith(SUFFIX_LIST + TYPE_QUERY_NAME + SUFFIX_ARGUMENTS) &&
+                                !inputObjectType.getName().endsWith(SUFFIX_CONNECTION + TYPE_QUERY_NAME + SUFFIX_ARGUMENTS)
+                )
+                .filter(inputObjectType -> documentManager.getInputObjectBelong(inputObjectType) != null)
+                .collect(Collectors.toList());
+
         return TypeSpec.classBuilder("QueryArgumentsInvokeHandler")
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(ApplicationScoped.class)
@@ -117,13 +120,24 @@ public class InputInvokeHandlerBuilder {
                                 Modifier.FINAL
                         ).build()
                 )
-                .addFields(buildFields())
-                .addMethod(buildConstructor(true))
-                .addMethods(buildQueryArgumentsInvokeMethods())
+                .addFields(buildFields(inputObjectTypes))
+                .addMethod(buildConstructor(inputObjectTypes, true))
+                .addMethods(
+                        inputObjectTypes.stream()
+                                .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, true))
+                                .collect(Collectors.toList())
+                )
                 .build();
     }
 
     private TypeSpec buildListQueryArgumentsInvokeHandler() {
+        List<InputObjectType> inputObjectTypes = documentManager.getDocument().getInputObjectTypes()
+                .filter(inputObjectType ->
+                        inputObjectType.getName().endsWith(SUFFIX_LIST + TYPE_QUERY_NAME + SUFFIX_ARGUMENTS)
+                )
+                .filter(inputObjectType -> documentManager.getInputObjectBelong(inputObjectType) != null)
+                .collect(Collectors.toList());
+
         return TypeSpec.classBuilder("ListQueryArgumentsInvokeHandler")
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(ApplicationScoped.class)
@@ -151,13 +165,24 @@ public class InputInvokeHandlerBuilder {
                                 Modifier.FINAL
                         ).build()
                 )
-                .addFields(buildFields())
-                .addMethod(buildConstructor(true))
-                .addMethods(buildListQueryArgumentsInvokeMethods())
+                .addFields(buildFields(inputObjectTypes))
+                .addMethod(buildConstructor(inputObjectTypes, true))
+                .addMethods(
+                        inputObjectTypes.stream()
+                                .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, true))
+                                .collect(Collectors.toList())
+                )
                 .build();
     }
 
     private TypeSpec buildConnectionQueryArgumentsInvokeHandler() {
+        List<InputObjectType> inputObjectTypes = documentManager.getDocument().getInputObjectTypes()
+                .filter(inputObjectType ->
+                        inputObjectType.getName().endsWith(SUFFIX_CONNECTION + TYPE_QUERY_NAME + SUFFIX_ARGUMENTS)
+                )
+                .filter(inputObjectType -> documentManager.getInputObjectBelong(inputObjectType) != null)
+                .collect(Collectors.toList());
+
         return TypeSpec.classBuilder("ConnectionQueryArgumentsInvokeHandler")
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(ApplicationScoped.class)
@@ -185,13 +210,25 @@ public class InputInvokeHandlerBuilder {
                                 Modifier.FINAL
                         ).build()
                 )
-                .addFields(buildFields())
-                .addMethod(buildConstructor(true))
-                .addMethods(buildConnectionQueryArgumentsInvokeMethods())
+                .addFields(buildFields(inputObjectTypes))
+                .addMethod(buildConstructor(inputObjectTypes, true))
+                .addMethods(
+                        inputObjectTypes.stream()
+                                .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, true))
+                                .collect(Collectors.toList())
+                )
                 .build();
     }
 
     private TypeSpec buildMutationArgumentsInvokeHandler() {
+        List<InputObjectType> inputObjectTypes = documentManager.getDocument().getInputObjectTypes()
+                .filter(inputObjectType ->
+                        inputObjectType.getName().endsWith(TYPE_MUTATION_NAME + SUFFIX_ARGUMENTS) &&
+                                !inputObjectType.getName().endsWith(SUFFIX_LIST + TYPE_MUTATION_NAME + SUFFIX_ARGUMENTS)
+                )
+                .filter(inputObjectType -> documentManager.getInputObjectBelong(inputObjectType) != null)
+                .collect(Collectors.toList());
+
         return TypeSpec.classBuilder("MutationArgumentsInvokeHandler")
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(ApplicationScoped.class)
@@ -219,13 +256,24 @@ public class InputInvokeHandlerBuilder {
                                 Modifier.FINAL
                         ).build()
                 )
-                .addFields(buildFields())
-                .addMethod(buildConstructor(true))
-                .addMethods(buildMutationArgumentsInvokeMethods())
+                .addFields(buildFields(inputObjectTypes))
+                .addMethod(buildConstructor(inputObjectTypes, true))
+                .addMethods(
+                        inputObjectTypes.stream()
+                                .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, true))
+                                .collect(Collectors.toList())
+                )
                 .build();
     }
 
     private TypeSpec buildListMutationArgumentsInvokeHandler() {
+        List<InputObjectType> inputObjectTypes = documentManager.getDocument().getInputObjectTypes()
+                .filter(inputObjectType ->
+                        inputObjectType.getName().endsWith(SUFFIX_LIST + TYPE_MUTATION_NAME + SUFFIX_ARGUMENTS)
+                )
+                .filter(inputObjectType -> documentManager.getInputObjectBelong(inputObjectType) != null)
+                .collect(Collectors.toList());
+
         return TypeSpec.classBuilder("ListMutationArgumentsInvokeHandler")
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(ApplicationScoped.class)
@@ -253,13 +301,25 @@ public class InputInvokeHandlerBuilder {
                                 Modifier.FINAL
                         ).build()
                 )
-                .addFields(buildFields())
-                .addMethod(buildConstructor(true))
-                .addMethods(buildListMutationArgumentsInvokeMethods())
+                .addFields(buildFields(inputObjectTypes))
+                .addMethod(buildConstructor(inputObjectTypes, true))
+                .addMethods(
+                        inputObjectTypes.stream()
+                                .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, true))
+                                .collect(Collectors.toList())
+                )
                 .build();
     }
 
     private TypeSpec buildInvokeHandler() {
+        List<InputObjectType> inputObjectTypes = documentManager.getDocument().getInputObjectTypes()
+                .filter(inputObjectType ->
+                        inputObjectType.getName().endsWith(SUFFIX_INPUT) ||
+                                inputObjectType.getName().endsWith(SUFFIX_EXPRESSION)
+                )
+                .filter(inputObjectType -> documentManager.getInputObjectBelong(inputObjectType) != null)
+                .collect(Collectors.toList());
+
         return TypeSpec.classBuilder("InputInvokeHandler")
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(ApplicationScoped.class)
@@ -279,14 +339,25 @@ public class InputInvokeHandlerBuilder {
                                 Modifier.FINAL
                         ).build()
                 )
-                .addFields(buildFields())
-                .addMethod(buildConstructor())
-                .addMethods(buildInputTypeInvokeMethods())
+                .addFields(buildFields(inputObjectTypes))
+                .addMethod(buildConstructor(inputObjectTypes))
+                .addMethods(
+                        inputObjectTypes.stream()
+                                .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, false))
+                                .collect(Collectors.toList())
+                )
                 .build();
     }
 
-    private Set<FieldSpec> buildFields() {
-        return invokeClassSet.stream()
+    private Set<FieldSpec> buildFields(List<InputObjectType> inputObjectTypes) {
+        return Stream
+                .concat(
+                        inputObjectTypes.stream()
+                                .flatMap(this::getInvokes)
+                                .map(objectValueWithVariable -> objectValueWithVariable.getString(INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME)),
+                        directiveInvokeClassSet.stream()
+                )
+                .collect(Collectors.toSet()).stream()
                 .map(TypeNameUtil::toClassName)
                 .map(className ->
                         FieldSpec.builder(ParameterizedTypeName.get(ClassName.get(Provider.class), className), typeNameToFieldName(className.simpleName()))
@@ -296,18 +367,25 @@ public class InputInvokeHandlerBuilder {
                 .collect(Collectors.toSet());
     }
 
-    private MethodSpec buildConstructor() {
-        return buildConstructor(false);
+    private MethodSpec buildConstructor(List<InputObjectType> inputObjectTypes) {
+        return buildConstructor(inputObjectTypes, false);
     }
 
-    private MethodSpec buildConstructor(boolean arguments) {
+    private MethodSpec buildConstructor(List<InputObjectType> inputObjectTypes, boolean arguments) {
         MethodSpec.Builder builder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Inject.class)
                 .addParameter(ClassName.get(DocumentManager.class), "documentManager")
                 .addParameter(ClassName.get(Jsonb.class), "jsonb")
                 .addParameters(
-                        invokeClassSet.stream()
+                        Stream
+                                .concat(
+                                        inputObjectTypes.stream()
+                                                .flatMap(this::getInvokes)
+                                                .map(objectValueWithVariable -> objectValueWithVariable.getString(INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME)),
+                                        directiveInvokeClassSet.stream()
+                                )
+                                .collect(Collectors.toSet()).stream()
                                 .map(TypeNameUtil::toClassName)
                                 .map(className ->
                                         ParameterSpec
@@ -317,7 +395,7 @@ public class InputInvokeHandlerBuilder {
                                                 )
                                                 .build()
                                 )
-                                .collect(Collectors.toList())
+                                .collect(Collectors.toSet())
                 )
                 .addStatement("this.documentManager = documentManager")
                 .addStatement("this.jsonb = jsonb");
@@ -328,7 +406,14 @@ public class InputInvokeHandlerBuilder {
                     .addStatement("this.inputInvokeHandler = inputInvokeHandler");
         }
 
-        invokeClassSet.stream()
+        Stream
+                .concat(
+                        inputObjectTypes.stream()
+                                .flatMap(this::getInvokes)
+                                .map(objectValueWithVariable -> objectValueWithVariable.getString(INPUT_INVOKE_INPUT_VALUE_CLASS_NAME_NAME)),
+                        directiveInvokeClassSet.stream()
+                )
+                .collect(Collectors.toSet()).stream()
                 .map(TypeNameUtil::toClassName)
                 .forEach(className ->
                         builder.addStatement("this.$L = $L",
@@ -351,62 +436,6 @@ public class InputInvokeHandlerBuilder {
                         .filter(inputObjectType -> documentManager.getInputObjectBelong(inputObjectType) != null)
                         .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, true))
                         .collect(Collectors.toList());
-    }
-
-    private List<MethodSpec> buildListQueryArgumentsInvokeMethods() {
-        return
-                documentManager.getDocument().getInputObjectTypes()
-                        .filter(inputObjectType ->
-                                inputObjectType.getName().endsWith(SUFFIX_LIST + TYPE_QUERY_NAME + SUFFIX_ARGUMENTS)
-                        )
-                        .filter(inputObjectType -> documentManager.getInputObjectBelong(inputObjectType) != null)
-                        .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, true))
-                        .collect(Collectors.toList());
-    }
-
-    private List<MethodSpec> buildConnectionQueryArgumentsInvokeMethods() {
-        return
-                documentManager.getDocument().getInputObjectTypes()
-                        .filter(inputObjectType ->
-                                inputObjectType.getName().endsWith(SUFFIX_CONNECTION + TYPE_QUERY_NAME + SUFFIX_ARGUMENTS)
-                        )
-                        .filter(inputObjectType -> documentManager.getInputObjectBelong(inputObjectType) != null)
-                        .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, true))
-                        .collect(Collectors.toList());
-    }
-
-    private List<MethodSpec> buildMutationArgumentsInvokeMethods() {
-        return
-                documentManager.getDocument().getInputObjectTypes()
-                        .filter(inputObjectType ->
-                                inputObjectType.getName().endsWith(TYPE_MUTATION_NAME + SUFFIX_ARGUMENTS) &&
-                                        !inputObjectType.getName().endsWith(SUFFIX_LIST + TYPE_MUTATION_NAME + SUFFIX_ARGUMENTS)
-                        )
-                        .filter(inputObjectType -> documentManager.getInputObjectBelong(inputObjectType) != null)
-                        .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, true))
-                        .collect(Collectors.toList());
-    }
-
-    private List<MethodSpec> buildListMutationArgumentsInvokeMethods() {
-        return
-                documentManager.getDocument().getInputObjectTypes()
-                        .filter(inputObjectType ->
-                                inputObjectType.getName().endsWith(SUFFIX_LIST + TYPE_MUTATION_NAME + SUFFIX_ARGUMENTS)
-                        )
-                        .filter(inputObjectType -> documentManager.getInputObjectBelong(inputObjectType) != null)
-                        .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, true))
-                        .collect(Collectors.toList());
-    }
-
-    private List<MethodSpec> buildInputTypeInvokeMethods() {
-        return documentManager.getDocument().getInputObjectTypes()
-                .filter(inputObjectType ->
-                        inputObjectType.getName().endsWith(SUFFIX_INPUT) ||
-                                inputObjectType.getName().endsWith(SUFFIX_EXPRESSION)
-                )
-                .filter(inputObjectType -> documentManager.getInputObjectBelong(inputObjectType) != null)
-                .map(inputObjectType -> buildInputTypeInvokeMethod(inputObjectType, false))
-                .collect(Collectors.toList());
     }
 
     private MethodSpec buildInputTypeInvokeMethod(InputObjectType inputObjectType, boolean arguments) {

@@ -125,14 +125,6 @@ public class ArgumentsInvokeHandlerBuilder {
                                 Modifier.FINAL
                         ).build()
                 )
-                .addField(
-                        FieldSpec.builder(
-                                ClassName.get(packageConfig.getHandlerPackageName(), "InputInvokeHandler"),
-                                "inputInvokeHandler",
-                                Modifier.PRIVATE,
-                                Modifier.FINAL
-                        ).build()
-                )
                 .addMethod(buildConstructor())
                 .addMethods(buildTypeInvokeMethods())
                 .build();
@@ -151,7 +143,6 @@ public class ArgumentsInvokeHandlerBuilder {
                 .addParameter(ClassName.get(packageConfig.getHandlerPackageName(), "ConnectionQueryArgumentsInvokeHandler"), "connectionQueryArgumentsInvokeHandler")
                 .addParameter(ClassName.get(packageConfig.getHandlerPackageName(), "MutationArgumentsInvokeHandler"), "mutationArgumentsInvokeHandler")
                 .addParameter(ClassName.get(packageConfig.getHandlerPackageName(), "ListMutationArgumentsInvokeHandler"), "listMutationArgumentsInvokeHandler")
-                .addParameter(ClassName.get(packageConfig.getHandlerPackageName(), "InputInvokeHandler"), "inputInvokeHandler")
                 .addStatement("this.queryArgumentsInvokeHandler = queryArgumentsInvokeHandler")
                 .addStatement("this.listQueryArgumentsInvokeHandler = listQueryArgumentsInvokeHandler")
                 .addStatement("this.connectionQueryArgumentsInvokeHandler = connectionQueryArgumentsInvokeHandler")
@@ -159,8 +150,7 @@ public class ArgumentsInvokeHandlerBuilder {
                 .addStatement("this.listMutationArgumentsInvokeHandler = listMutationArgumentsInvokeHandler")
                 .addStatement("this.operationBuilder = operationBuilder")
                 .addStatement("this.jsonb = jsonb")
-                .addStatement("this.jsonProvider = jsonProvider")
-                .addStatement("this.inputInvokeHandler = inputInvokeHandler");
+                .addStatement("this.jsonProvider = jsonProvider");
 
         return builder.build();
     }
