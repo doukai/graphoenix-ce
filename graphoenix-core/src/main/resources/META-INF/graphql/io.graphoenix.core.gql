@@ -184,3 +184,4 @@ directive @implements(package: String = "io.graphoenix.core" interfaces: [String
 directive @interface(package: String = "io.graphoenix.core") on OBJECT | INPUT_OBJECT
 directive @include(package: String = "io.graphoenix.core" if: Boolean = true) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
 directive @skip(package: String = "io.graphoenix.core" if: Boolean = true) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+directive @tool(package: String = "io.graphoenix.core" name: String description: String) on INTERFACE | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_OBJECT | INPUT_FIELD_DEFINITION | ENUM | ENUM_VALUE

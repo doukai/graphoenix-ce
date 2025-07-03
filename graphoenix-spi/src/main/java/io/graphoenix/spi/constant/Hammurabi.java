@@ -220,6 +220,9 @@ public class Hammurabi {
 
     public static final String DIRECTIVE_JSON_SCHEMA_NAME = "jsonSchema";
 
+    public static final String DIRECTIVE_TOOL_NAME = "tool";
+    public static final String DIRECTIVE_TOOL_ARGUMENT_NAME_NAME = "name";
+    public static final String DIRECTIVE_TOOL_ARGUMENT_DESCRIPTION_NAME = "description";
 
     public static final String DIRECTIVE_PERMIT_ALL = "permitAll";
     public static final String DIRECTIVE_DENY_ALL = "denyAll";

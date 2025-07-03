@@ -285,6 +285,28 @@ public abstract class AbstractDefinition implements Definition {
         return getGrpcName().orElseThrow(() -> new GraphQLErrors(GRPC_CLASS_NAME_ARGUMENT_NOT_EXIST));
     }
 
+    @Override
+    public String getToolName() {
+        return Optional.ofNullable(directiveMap)
+                .map(map -> map.get(DIRECTIVE_TOOL_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_TOOL_ARGUMENT_NAME_NAME)))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> (StringValue) valueWithVariable)
+                .map(StringValue::getString)
+                .orElseGet(() -> getName());
+    }
+
+    @Override
+    public String getToolDescription() {
+        return Optional.ofNullable(directiveMap)
+                .map(map -> map.get(DIRECTIVE_TOOL_NAME))
+                .flatMap(directive -> Optional.ofNullable(directive.getArgument(DIRECTIVE_TOOL_ARGUMENT_DESCRIPTION_NAME)))
+                .filter(ValueWithVariable::isString)
+                .map(valueWithVariable -> (StringValue) valueWithVariable)
+                .map(StringValue::getString)
+                .orElseGet(() -> getDescription());
+    }
+
     public boolean isContainer() {
         return hasDirective(DIRECTIVE_CONTAINER_NAME);
     }

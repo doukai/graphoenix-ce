@@ -10,19 +10,15 @@ scalar Time
 scalar DateTime
 scalar Timestamp
 scalar Upload
-enum Operator {
+enum Operator @tool(description: "EQ: Equal to, NEQ: Not equal to, LK: Like, NLK: Not like, GT: Greater than, GTE: Greater than or equal to, LT: Less than, LTE: Less than or equal to, NIL: Is null, NNIL: Not null, IN: In, NIN: Not in, BT: Between, NBT: Not between") {
     EQ
     NEQ
     LK
     NLK
     GT
-    NLTE
     GTE
-    NLT
     LT
-    NGTE
     LTE
-    NGT
     NIL
     NNIL
     IN
@@ -30,11 +26,11 @@ enum Operator {
     BT
     NBT
 }
-enum Conditional{
+enum Conditional @tool(description: "AND: And, OR: Or") {
     AND
     OR
 }
-enum Sort {
+enum Sort @tool(description: "ASC: Ascending, DESC: Descending") {
     ASC
     DESC
 }
@@ -84,35 +80,35 @@ type PageInfo @container {
     startCursor: String!
     endCursor: String!
 }
-input IDExpression {
-    opr: Operator = EQ
-    val: ID
-    arr: [ID]
-    skipNull: Boolean = false
+input IDExpression @tool(description: "Query id") {
+    opr: Operator = EQ @tool(description: "Operator")
+    val: ID @tool(description: "Value for operator")
+    arr: [ID] @tool(description: "Array for operator")
+    skipNull: Boolean = false @tool(description: "Skip null value")
 }
-input StringExpression {
-    opr: Operator = EQ
-    val: String
-    arr: [String]
-    skipNull: Boolean = false
+input StringExpression @tool(description: "Query string") {
+    opr: Operator = EQ @tool(description: "Operator")
+    val: String @tool(description: "Value for operator")
+    arr: [String] @tool(description: "Array for operator")
+    skipNull: Boolean = false @tool(description: "Skip null value")
 }
-input BooleanExpression {
-    opr: Operator = EQ
-    val: Boolean
-    arr: [Boolean]
-    skipNull: Boolean = false
+input BooleanExpression @tool(description: "Query boolean") {
+    opr: Operator = EQ @tool(description: "Operator")
+    val: Boolean @tool(description: "Value for operator")
+    arr: [Boolean] @tool(description: "Array for operator")
+    skipNull: Boolean = false @tool(description: "Skip null value")
 }
-input IntExpression {
-    opr: Operator = EQ
-    val: Int
-    arr: [Int]
-    skipNull: Boolean = false
+input IntExpression @tool(description: "Query number") {
+    opr: Operator = EQ @tool(description: "Operator")
+    val: Int @tool(description: "Value for operator")
+    arr: [Int] @tool(description: "Array for operator")
+    skipNull: Boolean = false @tool(description: "Skip null value")
 }
-input FloatExpression {
-    opr: Operator = EQ
-    val: Float
-    arr: [Float]
-    skipNull: Boolean = false
+input FloatExpression @tool(description: "Query decimal") {
+    opr: Operator = EQ @tool(description: "Operator")
+    val: Float @tool(description: "Value for operator")
+    arr: [Float] @tool(description: "Array for operator")
+    skipNull: Boolean = false @tool(description: "Skip null value")
 }
 input With {
     type: String
@@ -184,3 +180,4 @@ directive @implements(interfaces: [String]) on OBJECT | INPUT_OBJECT
 directive @interface on OBJECT | INPUT_OBJECT
 directive @include(if: Boolean = true) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
 directive @skip(if: Boolean = true) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+directive @tool(name: String description: String) on INTERFACE | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_OBJECT | INPUT_FIELD_DEFINITION | ENUM | ENUM_VALUE

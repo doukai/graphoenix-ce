@@ -119,6 +119,10 @@ public interface Definition {
 
     String getGrpcNameOrError();
 
+    String getToolName();
+
+    String getToolDescription();
+
     String toString();
 
     static Definition of(GraphqlParser.DefinitionContext definitionContext) {
