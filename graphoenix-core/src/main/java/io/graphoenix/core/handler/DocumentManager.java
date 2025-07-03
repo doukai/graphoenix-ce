@@ -69,6 +69,20 @@ public class DocumentManager {
                 .anyMatch(interfaceFieldDefinition -> interfaceFieldDefinition.getName().equals(fieldDefinition.getName()));
     }
 
+    public boolean isMetaExpressInputValue(InputValue inputValue) {
+        return Optional.ofNullable(document.getDefinition(INTERFACE_META_NAME + SUFFIX_EXPRESSION))
+                .map(definition -> (InputObjectType) definition).stream()
+                .flatMap(interfaceType -> interfaceType.getInputValues().stream())
+                .anyMatch(subInputValue -> subInputValue.getName().equals(inputValue.getName()));
+    }
+
+    public boolean isMetaInputInputValue(InputValue inputValue) {
+        return Optional.ofNullable(document.getDefinition(INTERFACE_META_NAME + SUFFIX_INPUT))
+                .map(definition -> (InputObjectType) definition).stream()
+                .flatMap(interfaceType -> interfaceType.getInputValues().stream())
+                .anyMatch(subInputValue -> subInputValue.getName().equals(inputValue.getName()));
+    }
+
     public Definition getFieldTypeDefinition(FieldDefinition fieldDefinition) {
         return document.getDefinition(fieldDefinition.getType().getTypeName().getName());
     }
