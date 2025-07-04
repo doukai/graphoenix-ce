@@ -16,19 +16,11 @@ public enum Operator {
 
   GT,
 
-  NLTE,
-
   GTE,
-
-  NLT,
 
   LT,
 
-  NGTE,
-
   LTE,
-
-  NGT,
 
   NIL,
 

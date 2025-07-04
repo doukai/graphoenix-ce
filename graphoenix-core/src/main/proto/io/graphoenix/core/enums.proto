@@ -11,19 +11,15 @@ enum Operator {
     LK_OPERATOR = 2;
     NLK_OPERATOR = 3;
     GT_OPERATOR = 4;
-    NLTE_OPERATOR = 5;
-    GTE_OPERATOR = 6;
-    NLT_OPERATOR = 7;
-    LT_OPERATOR = 8;
-    NGTE_OPERATOR = 9;
-    LTE_OPERATOR = 10;
-    NGT_OPERATOR = 11;
-    NIL_OPERATOR = 12;
-    NNIL_OPERATOR = 13;
-    IN_OPERATOR = 14;
-    NIN_OPERATOR = 15;
-    BT_OPERATOR = 16;
-    NBT_OPERATOR = 17;
+    GTE_OPERATOR = 5;
+    LT_OPERATOR = 6;
+    LTE_OPERATOR = 7;
+    NIL_OPERATOR = 8;
+    NNIL_OPERATOR = 9;
+    IN_OPERATOR = 10;
+    NIN_OPERATOR = 11;
+    BT_OPERATOR = 12;
+    NBT_OPERATOR = 13;
 }
 enum Conditional {
     AND_CONDITIONAL = 0;

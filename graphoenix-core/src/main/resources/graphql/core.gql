@@ -10,7 +10,7 @@ scalar Time
 scalar DateTime
 scalar Timestamp
 scalar Upload
-enum Operator @tool(description: "EQ: Equal to, NEQ: Not equal to, LK: Like, NLK: Not like, GT: Greater than, GTE: Greater than or equal to, LT: Less than, LTE: Less than or equal to, NIL: Is null, NNIL: Not null, IN: In, NIN: Not in, BT: Between, NBT: Not between") {
+enum Operator @tool(description: "Comparison Operators. EQ: Equal to, NEQ: Not equal to, LK: Like, NLK: Not like, GT: Greater than, GTE: Greater than or equal to, LT: Less than, LTE: Less than or equal to, NIL: Is null, NNIL: Not null, IN: In, NIN: Not in, BT: Between, NBT: Not between") {
     EQ
     NEQ
     LK
@@ -26,11 +26,11 @@ enum Operator @tool(description: "EQ: Equal to, NEQ: Not equal to, LK: Like, NLK
     BT
     NBT
 }
-enum Conditional @tool(description: "AND: And, OR: Or") {
+enum Conditional @tool(description: "Logical Operators. AND: And, OR: Or") {
     AND
     OR
 }
-enum Sort @tool(description: "ASC: Ascending, DESC: Descending") {
+enum Sort @tool(description: "Sort Type. ASC: Ascending, DESC: Descending") {
     ASC
     DESC
 }
@@ -81,33 +81,33 @@ type PageInfo @container {
     endCursor: String!
 }
 input IDExpression @tool(description: "Query id") {
-    opr: Operator = EQ @tool(description: "Operator")
-    val: ID @tool(description: "Value for operator")
-    arr: [ID] @tool(description: "Array for operator")
+    opr: Operator = EQ
+    val: ID @tool(description: "Value of id")
+    arr: [ID] @tool(description: "Array of id")
     skipNull: Boolean = false @tool(description: "Skip null value")
 }
-input StringExpression @tool(description: "Query string") {
-    opr: Operator = EQ @tool(description: "Operator")
-    val: String @tool(description: "Value for operator")
-    arr: [String] @tool(description: "Array for operator")
+input StringExpression @tool(description: "Query string or date or time or datetime") {
+    opr: Operator = EQ
+    val: String @tool(description: "Value of string or date or time or datetime")
+    arr: [String] @tool(description: "Array of string or date or time or datetime")
     skipNull: Boolean = false @tool(description: "Skip null value")
 }
 input BooleanExpression @tool(description: "Query boolean") {
-    opr: Operator = EQ @tool(description: "Operator")
-    val: Boolean @tool(description: "Value for operator")
-    arr: [Boolean] @tool(description: "Array for operator")
+    opr: Operator = EQ
+    val: Boolean @tool(description: "Value of boolean")
+    arr: [Boolean] @tool(description: "Array of boolean")
     skipNull: Boolean = false @tool(description: "Skip null value")
 }
 input IntExpression @tool(description: "Query number") {
-    opr: Operator = EQ @tool(description: "Operator")
-    val: Int @tool(description: "Value for operator")
-    arr: [Int] @tool(description: "Array for operator")
+    opr: Operator = EQ
+    val: Int @tool(description: "Value of number")
+    arr: [Int] @tool(description: "Array of number")
     skipNull: Boolean = false @tool(description: "Skip null value")
 }
 input FloatExpression @tool(description: "Query decimal") {
-    opr: Operator = EQ @tool(description: "Operator")
-    val: Float @tool(description: "Value for operator")
-    arr: [Float] @tool(description: "Array for operator")
+    opr: Operator = EQ
+    val: Float @tool(description: "Value of decimal")
+    arr: [Float] @tool(description: "Array of decimal")
     skipNull: Boolean = false @tool(description: "Skip null value")
 }
 input With {
