@@ -10,11 +10,11 @@ import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.java.config.GeneratorConfig;
 import io.graphoenix.spi.error.GraphQLErrors;
-import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.type.*;
 import jakarta.annotation.Generated;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.graphql.Enum;
 import org.eclipse.microprofile.graphql.Type;
@@ -51,13 +51,15 @@ public class TypeSpecBuilder {
     private final PackageManager packageManager;
     private final PackageConfig packageConfig;
     private final GeneratorConfig generatorConfig;
+    private final List<TypeBuilder> typeBuilderList;
 
     @Inject
-    public TypeSpecBuilder(DocumentManager documentManager, PackageManager packageManager, PackageConfig packageConfig, GeneratorConfig generatorConfig) {
+    public TypeSpecBuilder(DocumentManager documentManager, PackageManager packageManager, PackageConfig packageConfig, GeneratorConfig generatorConfig, Instance<TypeBuilder> typeBuilderInstance) {
         this.documentManager = documentManager;
         this.packageManager = packageManager;
         this.packageConfig = packageConfig;
         this.generatorConfig = generatorConfig;
+        this.typeBuilderList = typeBuilderInstance.stream().collect(Collectors.toList());
     }
 
     private AnnotationSpec getGeneratedAnnotationSpec() {
@@ -154,6 +156,7 @@ public class TypeSpecBuilder {
             toInput.addStatement("return input");
             builder.addMethod(toInput.build());
         }
+        typeBuilderList.forEach(typeBuilder -> typeBuilder.buildObjectType(builder, objectType));
         Logger.info("class {} build success", objectType.getName());
         return builder.build();
     }
@@ -216,6 +219,7 @@ public class TypeSpecBuilder {
                                     .build()
                     );
         }
+        typeBuilderList.forEach(typeBuilder -> typeBuilder.buildInputObjectType(builder, inputObjectType));
         Logger.info("input class {} build success", inputObjectType.getName());
         return builder.build();
     }
@@ -356,9 +360,8 @@ public class TypeSpecBuilder {
                 .addAnnotation(Enum.class)
                 .addAnnotation(getGeneratedAnnotationSpec());
 
-        enumType.getEnumValues().stream()
-                .map(AbstractDefinition::getName)
-                .forEach(builder::addEnumConstant);
+        enumType.getEnumValues()
+                .forEach(enumValueDefinition -> builder.addEnumConstant(enumValueDefinition.getName(), buildEnumValue(enumValueDefinition)));
 
         if (enumType.getDescription() != null) {
             builder
@@ -369,6 +372,7 @@ public class TypeSpecBuilder {
                                     .build()
                     );
         }
+        typeBuilderList.forEach(typeBuilder -> typeBuilder.buildEnumType(builder, enumType));
         Logger.info("enum {} build success", enumType.getName());
         return builder.build();
     }
@@ -414,6 +418,7 @@ public class TypeSpecBuilder {
                                     .build()
                     );
         }
+        typeBuilderList.forEach(typeBuilder -> typeBuilder.buildInterfaceType(builder, interfaceType));
         Logger.info("interface {} build success", interfaceType.getName());
         return builder.build();
     }
@@ -538,7 +543,24 @@ public class TypeSpecBuilder {
                                     .build()
                     );
         }
+        typeBuilderList.forEach(typeBuilder -> typeBuilder.buildFieldDefinition(builder, fieldDefinition));
         Logger.info("class field {} build success", fieldDefinition.getName());
+        return builder.build();
+    }
+
+    public TypeSpec buildEnumValue(EnumValueDefinition enumValueDefinition) {
+        TypeSpec.Builder builder = TypeSpec.anonymousClassBuilder("");
+        if (enumValueDefinition.getDescription() != null) {
+            builder
+                    .addJavadoc("$L", enumValueDefinition.getDescription())
+                    .addAnnotation(
+                            AnnotationSpec.builder(Description.class)
+                                    .addMember("value", "$S", enumValueDefinition.getDescription())
+                                    .build()
+                    );
+        }
+        typeBuilderList.forEach(typeBuilder -> typeBuilder.buildEnumValueDefinition(builder, enumValueDefinition));
+        Logger.info("enum const {} build success", enumValueDefinition.getName());
         return builder.build();
     }
 
@@ -570,6 +592,7 @@ public class TypeSpecBuilder {
                                     .build()
                     );
         }
+        typeBuilderList.forEach(typeBuilder -> typeBuilder.buildFieldDefinition(builder, fieldDefinition));
         Logger.info("class field {} build success", fieldDefinition.getName());
         return builder.build();
     }
@@ -611,6 +634,7 @@ public class TypeSpecBuilder {
                                     .build()
                     );
         }
+        typeBuilderList.forEach(typeBuilder -> typeBuilder.buildInputValue(builder, inputValue));
         Logger.info("input class field {} build success", inputValue.getName());
         return builder.build();
     }
@@ -642,6 +666,7 @@ public class TypeSpecBuilder {
                                     .build()
                     );
         }
+        typeBuilderList.forEach(typeBuilder -> typeBuilder.buildInputValue(builder, inputValue));
         Logger.info("interface field {}.{} build success", inputValue.getName());
         return builder.build();
     }
