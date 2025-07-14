@@ -174,6 +174,7 @@ public class Hammurabi {
     public static final String ENUM_PROTOCOL_ENUM_VALUE_GRPC = "GRPC";
     public static final String ENUM_PROTOCOL_ENUM_VALUE_HTTP = "HTTP";
     public static final String ENUM_PROTOCOL_ENUM_VALUE_RSOCKET = "RSOCKET";
+    public static final String ENUM_PROTOCOL_ENUM_VALUE_MCP = "MCP";
 
 
     public static final String DIRECTIVE_CONTAINER_NAME = "container";
