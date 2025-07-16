@@ -1,7 +1,9 @@
 package io.graphoenix.http.server.handler;
 
 import com.google.common.collect.Maps;
+import io.graphoenix.http.server.config.HttpServerConfig;
 import io.graphoenix.http.server.context.RequestScopeInstanceFactory;
+import io.graphoenix.http.server.http.GetHandler;
 import io.graphoenix.spi.handler.FileHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -26,17 +28,24 @@ import static io.graphoenix.http.server.context.RequestScopeInstanceFactory.REQU
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 
 @ApplicationScoped
-public class DownloadRequestHandler extends BaseHandler {
+public class DownloadRequestHandler extends BaseHandler implements GetHandler {
 
     public static final String FILE_PARAM_ID = "id";
 
     private final FileHandler fileHandler;
     private final RequestScopeInstanceFactory requestScopeInstanceFactory;
+    private final HttpServerConfig httpServerConfig;
 
     @Inject
-    public DownloadRequestHandler(FileHandler fileHandler, RequestScopeInstanceFactory requestScopeInstanceFactory) {
+    public DownloadRequestHandler(FileHandler fileHandler, RequestScopeInstanceFactory requestScopeInstanceFactory, HttpServerConfig httpServerConfig) {
         this.fileHandler = fileHandler;
         this.requestScopeInstanceFactory = requestScopeInstanceFactory;
+        this.httpServerConfig = httpServerConfig;
+    }
+
+    @Override
+    public String path() {
+        return httpServerConfig.getDownloadContextPath() + "/{" + FILE_PARAM_ID + "}";
     }
 
     public Publisher<Void> handle(HttpServerRequest request, HttpServerResponse response) {

@@ -3,7 +3,9 @@ package io.graphoenix.http.server.handler;
 import com.google.common.collect.Maps;
 import io.graphoenix.core.dto.GraphQLRequest;
 import io.graphoenix.http.server.codec.MimeType;
+import io.graphoenix.http.server.config.HttpServerConfig;
 import io.graphoenix.http.server.context.RequestScopeInstanceFactory;
+import io.graphoenix.http.server.http.GetHandler;
 import io.graphoenix.http.server.utils.ResponseUtil;
 import io.graphoenix.spi.graphql.Document;
 import io.graphoenix.spi.graphql.operation.Operation;
@@ -39,17 +41,24 @@ import static io.netty.handler.codec.http.HttpHeaderNames.ACCEPT;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 
 @ApplicationScoped
-public class GetRequestHandler extends BaseHandler {
+public class GraphQLGetHandler extends BaseHandler implements GetHandler {
 
     private final OperationHandler operationHandler;
     private final RequestScopeInstanceFactory requestScopeInstanceFactory;
     private final JsonProvider jsonProvider;
+    private final HttpServerConfig httpServerConfig;
 
     @Inject
-    public GetRequestHandler(OperationHandler operationHandler, RequestScopeInstanceFactory requestScopeInstanceFactory, JsonProvider jsonProvider) {
+    public GraphQLGetHandler(OperationHandler operationHandler, RequestScopeInstanceFactory requestScopeInstanceFactory, JsonProvider jsonProvider, HttpServerConfig httpServerConfig) {
         this.operationHandler = operationHandler;
         this.requestScopeInstanceFactory = requestScopeInstanceFactory;
         this.jsonProvider = jsonProvider;
+        this.httpServerConfig = httpServerConfig;
+    }
+
+    @Override
+    public String path() {
+        return httpServerConfig.getGraphqlContextPath();
     }
 
     public Publisher<Void> handle(HttpServerRequest request, HttpServerResponse response) {

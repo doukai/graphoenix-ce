@@ -2,7 +2,8 @@ package io.graphoenix.http.server;
 
 import io.graphoenix.http.server.config.HttpServerConfig;
 import io.graphoenix.http.server.context.RequestScopeInstanceFactory;
-import io.graphoenix.http.server.handler.*;
+import io.graphoenix.http.server.http.GetHandler;
+import io.graphoenix.http.server.http.PostHandler;
 import io.graphoenix.spi.bootstrap.Runner;
 import io.graphoenix.spi.constant.Hammurabi;
 import io.netty.channel.ChannelOption;
@@ -23,16 +24,11 @@ import reactor.netty.http.server.HttpServer;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static io.graphoenix.http.server.handler.DownloadRequestHandler.FILE_PARAM_ID;
-
 @ApplicationScoped
 @Named(Hammurabi.ENUM_PROTOCOL_ENUM_VALUE_HTTP)
 public class GraphQLHttpServer implements Runner {
 
     private final HttpServerConfig httpServerConfig;
-    private final GetRequestHandler getRequestHandler;
-    private final PostRequestHandler postRequestHandler;
-    private final DownloadRequestHandler downloadRequestHandler;
     private final List<GetHandler> getHandlerList;
     private final List<PostHandler> postHandlerList;
     private final RequestScopeInstanceFactory requestScopeInstanceFactory;
@@ -40,17 +36,11 @@ public class GraphQLHttpServer implements Runner {
     @Inject
     public GraphQLHttpServer(
             HttpServerConfig httpServerConfig,
-            GetRequestHandler getRequestHandler,
-            PostRequestHandler postRequestHandler,
-            DownloadRequestHandler downloadRequestHandler,
             Instance<GetHandler> getHandlerInstance,
             Instance<PostHandler> postHandlerInstance,
             RequestScopeInstanceFactory requestScopeInstanceFactory
     ) {
         this.httpServerConfig = httpServerConfig;
-        this.getRequestHandler = getRequestHandler;
-        this.postRequestHandler = postRequestHandler;
-        this.downloadRequestHandler = downloadRequestHandler;
         this.getHandlerList = getHandlerInstance.stream().collect(Collectors.toList());
         this.postHandlerList = postHandlerInstance.stream().collect(Collectors.toList());
         this.requestScopeInstanceFactory = requestScopeInstanceFactory;
@@ -82,10 +72,6 @@ public class GraphQLHttpServer implements Runner {
                 .childOption(ChannelOption.SO_KEEPALIVE, httpServerConfig.getSoKeepAlive())
                 .doOnConnection(connection -> connection.addHandlerLast(new CorsHandler(corsConfig)))
                 .route(httpServerRoutes -> {
-                            httpServerRoutes
-                                    .get(httpServerConfig.getGraphqlContextPath(), getRequestHandler::handle)
-                                    .post(httpServerConfig.getGraphqlContextPath(), postRequestHandler::handle)
-                                    .get(httpServerConfig.getDownloadContextPath() + "/{" + FILE_PARAM_ID + "}", downloadRequestHandler::handle);
                             getHandlerList.forEach(getHandler -> httpServerRoutes.get(getHandler.path(), getHandler::handle));
                             postHandlerList.forEach(postHandler -> httpServerRoutes.post(postHandler.path(), postHandler::handle));
                         }
