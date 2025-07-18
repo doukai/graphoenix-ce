@@ -20,6 +20,12 @@ import org.eclipse.microprofile.graphql.Description;
 @Description("Mutation Input for __Type")
 public @interface __TypeInputBase2 {
   /**
+   * id
+   */
+  @Description("id")
+  String id() default "";
+
+  /**
    * name
    */
   @Description("name")
@@ -102,6 +108,8 @@ public @interface __TypeInputBase2 {
    */
   @Description("ofType Reference")
   String ofTypeName() default "";
+
+  String $id() default "";
 
   String $name() default "";
 

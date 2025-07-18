@@ -24,6 +24,12 @@ import org.eclipse.microprofile.graphql.Input;
 @Description("Query Arguments for __Type Connection")
 public class __TypeConnectionQueryArguments implements MetaExpression, __TypeExpressionBase {
   /**
+   * id
+   */
+  @Description("id")
+  private StringExpression id;
+
+  /**
    * name
    */
   @Description("name")
@@ -223,6 +229,16 @@ public class __TypeConnectionQueryArguments implements MetaExpression, __TypeExp
    */
   @Description("Before")
   private String before;
+
+  @Override
+  public StringExpression getId() {
+    return this.id;
+  }
+
+  @Override
+  public void setId(StringExpression id) {
+    this.id = (StringExpression)id;
+  }
 
   @Override
   public StringExpression getName() {

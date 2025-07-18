@@ -22,6 +22,12 @@ import org.eclipse.microprofile.graphql.Description;
 @Description("Subscription Arguments for __Type List")
 public @interface __TypeListSubscriptionArguments {
   /**
+   * id
+   */
+  @Description("id")
+  StringExpression id() default @StringExpression;
+
+  /**
    * name
    */
   @Description("name")
@@ -218,6 +224,8 @@ public @interface __TypeListSubscriptionArguments {
    */
   @Description("Before")
   String before() default "";
+
+  String $id() default "";
 
   String $name() default "";
 

@@ -28,8 +28,8 @@ message File {
     string create_group_id = 13; /* Create Group ID */
     string intro_typename = 14; /* Type Name */
     int32 id_count = 15; /* Count of 文件 */
-    string id_max = 16; /* Max of ID */
-    string id_min = 17; /* Min of ID */
+    int32 id_max = 16; /* Max of ID */
+    int32 id_min = 17; /* Min of ID */
     int32 name_count = 18; /* Count of 文件名 */
     string name_max = 19; /* Max of 文件名 */
     string name_min = 20; /* Min of 文件名 */

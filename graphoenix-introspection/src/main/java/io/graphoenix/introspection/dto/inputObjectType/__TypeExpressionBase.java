@@ -18,6 +18,12 @@ import org.eclipse.microprofile.graphql.Input;
 @Description("Query Expression Input for __Type")
 public interface __TypeExpressionBase extends MetaExpression {
   /**
+   * id
+   */
+  @Description("id")
+  StringExpression id = null;
+
+  /**
    * name
    */
   @Description("name")
@@ -172,6 +178,12 @@ public interface __TypeExpressionBase extends MetaExpression {
    */
   @Description("Expressions")
   Collection<__TypeExpression> exs = null;
+
+  default StringExpression getId() {
+    return id;
+  }
+
+  void setId(StringExpression id);
 
   default StringExpression getName() {
     return name;

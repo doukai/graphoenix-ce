@@ -20,6 +20,12 @@ import org.eclipse.microprofile.graphql.Description;
 @Description("Mutation Arguments for __Type List")
 public @interface __TypeListMutationArguments {
   /**
+   * id
+   */
+  @Description("id")
+  String id() default "";
+
+  /**
    * name
    */
   @Description("name")
@@ -168,6 +174,8 @@ public @interface __TypeListMutationArguments {
    */
   @Description("Where")
   __TypeExpression where() default @__TypeExpression;
+
+  String $id() default "";
 
   String $name() default "";
 

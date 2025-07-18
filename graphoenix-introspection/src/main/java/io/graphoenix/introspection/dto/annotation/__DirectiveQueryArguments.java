@@ -23,6 +23,12 @@ import org.eclipse.microprofile.graphql.Description;
 @Description("Query Arguments for __Directive")
 public @interface __DirectiveQueryArguments {
   /**
+   * id
+   */
+  @Description("id")
+  StringExpression id() default @StringExpression;
+
+  /**
    * name
    */
   @Description("name")
@@ -148,6 +154,8 @@ public @interface __DirectiveQueryArguments {
    */
   @Description("Expressions")
   __DirectiveExpression[] exs() default {};
+
+  String $id() default "";
 
   String $name() default "";
 

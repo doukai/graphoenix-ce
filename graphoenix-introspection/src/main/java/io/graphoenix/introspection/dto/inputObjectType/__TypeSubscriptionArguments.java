@@ -23,6 +23,12 @@ import org.eclipse.microprofile.graphql.Input;
 @Description("Subscription Arguments for __Type")
 public class __TypeSubscriptionArguments implements MetaExpression, __TypeExpressionBase {
   /**
+   * id
+   */
+  @Description("id")
+  private StringExpression id;
+
+  /**
    * name
    */
   @Description("name")
@@ -186,6 +192,16 @@ public class __TypeSubscriptionArguments implements MetaExpression, __TypeExpres
    */
   @Description("Expressions")
   private Collection<__TypeExpression> exs;
+
+  @Override
+  public StringExpression getId() {
+    return this.id;
+  }
+
+  @Override
+  public void setId(StringExpression id) {
+    this.id = (StringExpression)id;
+  }
 
   @Override
   public StringExpression getName() {

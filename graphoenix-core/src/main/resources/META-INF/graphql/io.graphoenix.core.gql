@@ -52,6 +52,7 @@ enum Protocol @package(name: "io.graphoenix.core") @class(name: "io.graphoenix.c
     RSOCKET
 }
 interface Meta @package(name: "io.graphoenix.core") @class(name: "io.graphoenix.core.dto.interfaceType.Meta") @grpc(name: "io.graphoenix.core.dto.interfaceType.grpc.Meta") {
+    id: ID
     isDeprecated: Boolean @options(default: "false")
     version: Int
     realmId: Int
@@ -61,7 +62,8 @@ interface Meta @package(name: "io.graphoenix.core") @class(name: "io.graphoenix.
     updateTime: Timestamp
     createGroupId: String
 }
-input MetaInput @interface @package(name: "io.graphoenix.core") @class(name: "io.graphoenix.core.dto.inputObjectType.MetaInput") @grpc(name: "io.graphoenix.core.dto.inputObjectType.grpc.MetaInput") @annotation(name: "io.graphoenix.core.dto.annotation.MetaInput") @invokes(methods: [{package: "io.graphoenix.core", className: "io.graphoenix.core.api.MetaInputApi", methodName: "invokeMetaInput", returnClassName: "io.graphoenix.core.dto.inputObjectType.MetaInput", parameters: [{name: "metaInput", className: "io.graphoenix.core.dto.inputObjectType.MetaInput"}]}]) {
+input MetaInput @interface @package(name: "io.graphoenix.core") @class(name: "io.graphoenix.core.dto.inputObjectType.MetaInput") @grpc(name: "io.graphoenix.core.dto.inputObjectType.grpc.MetaInput") @annotation(name: "io.graphoenix.core.dto.annotation.MetaInput") @invokes(methods: [{ package: "io.graphoenix.core", className: "io.graphoenix.core.api.MetaInputApi", methodName: "invokeMetaInput", returnClassName: "io.graphoenix.core.dto.inputObjectType.MetaInput", parameters: [{ name: "metaInput", className: "io.graphoenix.core.dto.inputObjectType.MetaInput" }] }]) {
+    id: ID
     version: Int
     realmId: Int
     createUserId: String
@@ -71,6 +73,7 @@ input MetaInput @interface @package(name: "io.graphoenix.core") @class(name: "io
     createGroupId: String
 }
 input MetaExpression @interface @package(name: "io.graphoenix.core") @class(name: "io.graphoenix.core.dto.inputObjectType.MetaExpression") @grpc(name: "io.graphoenix.core.dto.inputObjectType.grpc.MetaExpression") @annotation(name: "io.graphoenix.core.dto.annotation.MetaExpression") {
+    id: StringExpression
     realmId: IntExpression
     createUserId: StringExpression
     createTime: StringExpression
@@ -120,6 +123,7 @@ input With @package(name: "io.graphoenix.core") @class(name: "io.graphoenix.core
     to: String
 }
 input Invoke @package(name: "io.graphoenix.core") @class(name: "io.graphoenix.core.dto.inputObjectType.Invoke") @grpc(name: "io.graphoenix.core.dto.inputObjectType.grpc.Invoke") @annotation(name: "io.graphoenix.core.dto.annotation.Invoke") {
+    package: String
     className: String
     methodName: String
     parameters: [InvokeParameter]

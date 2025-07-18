@@ -20,6 +20,12 @@ import org.eclipse.microprofile.graphql.Description;
 @Description("Order Input for __Type")
 public @interface __TypeOrderBy {
   /**
+   * id
+   */
+  @Description("id")
+  Sort id() default Sort.ASC;
+
+  /**
    * name
    */
   @Description("name")
@@ -203,6 +209,24 @@ public @interface __TypeOrderBy {
    * Count of __Type
    */
   @Description("Count of __Type")
+  Sort idCount() default Sort.ASC;
+
+  /**
+   * Max of id
+   */
+  @Description("Max of id")
+  Sort idMax() default Sort.ASC;
+
+  /**
+   * Min of id
+   */
+  @Description("Min of id")
+  Sort idMin() default Sort.ASC;
+
+  /**
+   * Count of name
+   */
+  @Description("Count of name")
   Sort nameCount() default Sort.ASC;
 
   /**
@@ -301,6 +325,8 @@ public @interface __TypeOrderBy {
   @Description("Min of ofSchema Reference")
   Sort schemaIdMin() default Sort.ASC;
 
+  String $id() default "";
+
   String $name() default "";
 
   String $ofSchema() default "";
@@ -360,6 +386,12 @@ public @interface __TypeOrderBy {
   String $__typeInterfacesAggregate() default "";
 
   String $__typePossibleTypesAggregate() default "";
+
+  String $idCount() default "";
+
+  String $idMax() default "";
+
+  String $idMin() default "";
 
   String $nameCount() default "";
 

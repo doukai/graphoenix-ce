@@ -48,6 +48,7 @@ enum Protocol {
     RSOCKET
 }
 interface Meta {
+    id: ID
     isDeprecated: Boolean @options(default: "false")
     version: Int
     realmId: Int
@@ -58,6 +59,7 @@ interface Meta {
     createGroupId: String
 }
 input MetaInput @interface {
+    id: ID
     version: Int
     realmId: Int
     createUserId: String
@@ -67,6 +69,7 @@ input MetaInput @interface {
     createGroupId: String
 }
 input MetaExpression @interface {
+    id: StringExpression
     realmId: IntExpression
     createUserId: StringExpression
     createTime: StringExpression
@@ -116,6 +119,7 @@ input With {
     to: String
 }
 input Invoke {
+    package: String
     className: String
     methodName: String
     parameters: [InvokeParameter]

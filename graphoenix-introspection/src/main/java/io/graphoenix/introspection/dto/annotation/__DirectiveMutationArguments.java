@@ -20,6 +20,12 @@ import org.eclipse.microprofile.graphql.Description;
 @Description("Mutation Arguments for __Directive")
 public @interface __DirectiveMutationArguments {
   /**
+   * id
+   */
+  @Description("id")
+  String id() default "";
+
+  /**
    * name
    */
   @Description("name")
@@ -132,6 +138,8 @@ public @interface __DirectiveMutationArguments {
    */
   @Description("Where")
   __DirectiveExpression where() default @__DirectiveExpression;
+
+  String $id() default "";
 
   String $name() default "";
 

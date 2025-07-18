@@ -14,7 +14,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.UUID;
 
 @ApplicationScoped
 public class LocalFileHandler implements FileHandler {
@@ -37,23 +36,24 @@ public class LocalFileHandler implements FileHandler {
 
     @Override
     public Mono<String> save(byte[] data, FileInfo fileInfo) {
-        String id = UUID.randomUUID().toString();
-        try {
-            Path filePath = Files.createFile(path.resolve(id));
-            try (FileOutputStream outputStream = new FileOutputStream(filePath.toFile())) {
-                outputStream.write(data);
-                FileInput fileInput = new FileInput();
-                fileInput.setId(id);
-                fileInput.setName(fileInfo.getFilename());
-                fileInput.setContentType(fileInfo.getContentType());
-                return fileRepository.insertFile(fileInput)
-                        .map(File::getId);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        FileInput fileInput = new FileInput();
+        fileInput.setName(fileInfo.getFilename());
+        fileInput.setContentType(fileInfo.getContentType());
+        return fileRepository.insertFile(fileInput)
+                .doOnSuccess(file -> {
+                            try {
+                                Path filePath = Files.createFile(path.resolve(file.getId()));
+                                try (FileOutputStream outputStream = new FileOutputStream(filePath.toFile())) {
+                                    outputStream.write(data);
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                )
+                .map(File::getId);
     }
 
     @Override

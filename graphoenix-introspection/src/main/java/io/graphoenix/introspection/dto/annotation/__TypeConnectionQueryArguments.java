@@ -22,6 +22,12 @@ import org.eclipse.microprofile.graphql.Description;
 @Description("Query Arguments for __Type Connection")
 public @interface __TypeConnectionQueryArguments {
   /**
+   * id
+   */
+  @Description("id")
+  StringExpression id() default @StringExpression;
+
+  /**
    * name
    */
   @Description("name")
@@ -218,6 +224,8 @@ public @interface __TypeConnectionQueryArguments {
    */
   @Description("Before")
   String before() default "";
+
+  String $id() default "";
 
   String $name() default "";
 

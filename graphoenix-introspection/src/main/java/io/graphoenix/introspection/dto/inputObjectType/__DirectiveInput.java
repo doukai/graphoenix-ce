@@ -23,6 +23,12 @@ import org.eclipse.microprofile.graphql.Input;
 @Description("Mutation Input for __Directive")
 public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
   /**
+   * id
+   */
+  @Description("id")
+  private String id;
+
+  /**
    * name
    */
   @Description("name")
@@ -131,6 +137,16 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
    */
   @Description("Where")
   private __DirectiveExpression where;
+
+  @Override
+  public String getId() {
+    return this.id;
+  }
+
+  @Override
+  public void setId(String id) {
+    this.id = (String)id;
+  }
 
   @Override
   public String getName() {

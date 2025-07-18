@@ -19,6 +19,12 @@ import org.eclipse.microprofile.graphql.Input;
 @Description("Mutation Input for __Type")
 public interface __TypeInputBase extends MetaInput {
   /**
+   * id
+   */
+  @Description("id")
+  String id = null;
+
+  /**
    * name
    */
   @Description("name")
@@ -161,6 +167,12 @@ public interface __TypeInputBase extends MetaInput {
    */
   @Description("Where")
   __TypeExpression where = null;
+
+  default String getId() {
+    return id;
+  }
+
+  void setId(String id);
 
   default String getName() {
     return name;

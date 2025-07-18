@@ -7,11 +7,15 @@ import java.lang.String;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Input;
+import org.eclipse.microprofile.graphql.Name;
 
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 public class Invoke {
+  @Name("package")
+  private String _package;
+
   private String className;
 
   private String methodName;
@@ -35,6 +39,14 @@ public class Invoke {
 
   @DefaultValue("false")
   private Boolean onExpression = false;
+
+  public String get_package() {
+    return this._package;
+  }
+
+  public void set_package(String _package) {
+    this._package = _package;
+  }
 
   public String getClassName() {
     return this.className;

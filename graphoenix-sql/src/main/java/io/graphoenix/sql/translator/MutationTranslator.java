@@ -325,16 +325,40 @@ public class MutationTranslator {
                         )
                         .orElseGet(() -> {
                                     Table table = typeToTable(fieldTypeDefinition.asObject());
-                                    return insertExpression(
-                                            table,
-                                            leafValueWithVariableMap.keySet().stream()
-                                                    .map(name -> graphqlFieldToColumn(table, name))
-                                                    .collect(Collectors.toList()),
-                                            leafValueWithVariableMap.values().stream()
-                                                    .map(DBValueUtil::leafValueToDBValue)
-                                                    .collect(Collectors.toList()),
-                                            true
-                                    );
+                                    return inputValueValueWithVariableMap.entrySet().stream()
+                                            .filter(entry -> entry.getKey().getName().equals(idName))
+                                            .map(Map.Entry::getValue)
+                                            .filter(valueWithVariable -> !valueWithVariable.isNull())
+                                            .findFirst()
+                                            .flatMap(DBValueUtil::idValueToDBValue)
+                                            .map(expression -> new EqualsTo()
+                                                    .withLeftExpression(graphqlFieldToColumn(table, idName))
+                                                    .withRightExpression(expression)
+                                            )
+                                            .map(equalsTo ->
+                                                    (Statement) updateExpression(
+                                                            table,
+                                                            leafValueWithVariableMap.entrySet().stream()
+                                                                    .map(entry ->
+                                                                            new UpdateSet(
+                                                                                    graphqlFieldToColumn(table, entry.getKey()),
+                                                                                    leafValueToDBValue(entry.getValue()))
+                                                                    )
+                                                                    .collect(Collectors.toList()),
+                                                            equalsTo
+                                                    )
+                                            )
+                                            .orElseGet(() ->
+                                                    insertExpression(
+                                                            table,
+                                                            leafValueWithVariableMap.keySet().stream()
+                                                                    .map(name -> graphqlFieldToColumn(table, name))
+                                                                    .collect(Collectors.toList()),
+                                                            leafValueWithVariableMap.values().stream()
+                                                                    .map(DBValueUtil::leafValueToDBValue)
+                                                                    .collect(Collectors.toList())
+                                                    )
+                                            );
                                 }
                         )
         );

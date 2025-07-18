@@ -22,6 +22,8 @@ import org.eclipse.microprofile.graphql.Type;
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 public class __Type implements Meta {
   @Id
+  private String id;
+
   @NonNull
   private String name;
 
@@ -210,6 +212,24 @@ public class __Type implements Meta {
    * Count of __Type
    */
   @Description("Count of __Type")
+  private Integer idCount;
+
+  /**
+   * Max of id
+   */
+  @Description("Max of id")
+  private Integer idMax;
+
+  /**
+   * Min of id
+   */
+  @Description("Min of id")
+  private Integer idMin;
+
+  /**
+   * Count of name
+   */
+  @Description("Count of name")
   private Integer nameCount;
 
   /**
@@ -307,6 +327,14 @@ public class __Type implements Meta {
    */
   @Description("Min of ofSchema Reference")
   private Integer schemaIdMin;
+
+  public String getId() {
+    return this.id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
 
   public String getName() {
     return this.name;
@@ -621,6 +649,30 @@ public class __Type implements Meta {
     this.__typePossibleTypesConnection = __typePossibleTypesConnection;
   }
 
+  public Integer getIdCount() {
+    return this.idCount;
+  }
+
+  public void setIdCount(Integer idCount) {
+    this.idCount = idCount;
+  }
+
+  public Integer getIdMax() {
+    return this.idMax;
+  }
+
+  public void setIdMax(Integer idMax) {
+    this.idMax = idMax;
+  }
+
+  public Integer getIdMin() {
+    return this.idMin;
+  }
+
+  public void setIdMin(Integer idMin) {
+    this.idMin = idMin;
+  }
+
   public Integer getNameCount() {
     return this.nameCount;
   }
@@ -759,6 +811,7 @@ public class __Type implements Meta {
 
   public __TypeInput toInput() {
     __TypeInput input = new __TypeInput();
+    input.setId(this.getId());
     input.setName(this.getName());
     if(getOfSchema() != null) {
       input.setOfSchema(this.getOfSchema().toInput());

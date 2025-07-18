@@ -8,7 +8,8 @@ type __Schema {
 }
 
 type __Type {
-    name: ID! @options(type: "String")
+    id: ID
+    name: String!
     ofSchema: __Schema @map(from: "schemaId" to: "id" anchor: true)
     kind: __TypeKind!
     description: String
@@ -62,7 +63,8 @@ type __EnumValue {
 }
 
 type __Directive {
-    name: ID! @options(type: "String")
+    id: ID
+    name: String!
     ofSchema: __Schema @map(from: "schemaId" to: "id" anchor: true)
     description: String
     locations: [__DirectiveLocation!]!

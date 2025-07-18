@@ -6,6 +6,8 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 public interface MetaExpression {
+  StringExpression id = null;
+
   IntExpression realmId = null;
 
   StringExpression createUserId = null;
@@ -17,6 +19,12 @@ public interface MetaExpression {
   StringExpression updateTime = null;
 
   StringExpression createGroupId = null;
+
+  default StringExpression getId() {
+    return id;
+  }
+
+  void setId(StringExpression id);
 
   default IntExpression getRealmId() {
     return realmId;

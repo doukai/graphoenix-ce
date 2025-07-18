@@ -9,6 +9,8 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 public interface MetaInput {
+  String id = null;
+
   Integer version = null;
 
   Integer realmId = null;
@@ -22,6 +24,12 @@ public interface MetaInput {
   LocalDateTime updateTime = null;
 
   String createGroupId = null;
+
+  default String getId() {
+    return id;
+  }
+
+  void setId(String id);
 
   default Integer getVersion() {
     return version;

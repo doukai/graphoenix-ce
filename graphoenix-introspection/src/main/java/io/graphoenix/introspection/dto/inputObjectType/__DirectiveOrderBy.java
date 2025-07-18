@@ -15,6 +15,12 @@ import org.eclipse.microprofile.graphql.Input;
 @Description("Order Input for __Directive")
 public class __DirectiveOrderBy {
   /**
+   * id
+   */
+  @Description("id")
+  private Sort id;
+
+  /**
    * name
    */
   @Description("name")
@@ -132,6 +138,24 @@ public class __DirectiveOrderBy {
    * Count of __Directive
    */
   @Description("Count of __Directive")
+  private Sort idCount;
+
+  /**
+   * Max of id
+   */
+  @Description("Max of id")
+  private Sort idMax;
+
+  /**
+   * Min of id
+   */
+  @Description("Min of id")
+  private Sort idMin;
+
+  /**
+   * Count of name
+   */
+  @Description("Count of name")
   private Sort nameCount;
 
   /**
@@ -193,6 +217,14 @@ public class __DirectiveOrderBy {
    */
   @Description("Min of ofSchema Reference")
   private Sort schemaIdMin;
+
+  public Sort getId() {
+    return this.id;
+  }
+
+  public void setId(Sort id) {
+    this.id = id;
+  }
 
   public Sort getName() {
     return this.name;
@@ -346,6 +378,30 @@ public class __DirectiveOrderBy {
   public void set__directiveLocationsRelationAggregate(
       __DirectiveLocationsRelationOrderBy __directiveLocationsRelationAggregate) {
     this.__directiveLocationsRelationAggregate = __directiveLocationsRelationAggregate;
+  }
+
+  public Sort getIdCount() {
+    return this.idCount;
+  }
+
+  public void setIdCount(Sort idCount) {
+    this.idCount = idCount;
+  }
+
+  public Sort getIdMax() {
+    return this.idMax;
+  }
+
+  public void setIdMax(Sort idMax) {
+    this.idMax = idMax;
+  }
+
+  public Sort getIdMin() {
+    return this.idMin;
+  }
+
+  public void setIdMin(Sort idMin) {
+    this.idMin = idMin;
   }
 
   public Sort getNameCount() {

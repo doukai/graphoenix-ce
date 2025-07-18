@@ -13,6 +13,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface MetaExpression1 {
+  StringExpression id() default @StringExpression;
+
   IntExpression realmId() default @IntExpression;
 
   StringExpression createUserId() default @StringExpression;
@@ -24,6 +26,8 @@ public @interface MetaExpression1 {
   StringExpression updateTime() default @StringExpression;
 
   StringExpression createGroupId() default @StringExpression;
+
+  String $id() default "";
 
   String $realmId() default "";
 

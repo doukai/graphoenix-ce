@@ -15,6 +15,12 @@ import org.eclipse.microprofile.graphql.Input;
 @Description("Order Input for __Type")
 public class __TypeOrderBy {
   /**
+   * id
+   */
+  @Description("id")
+  private Sort id;
+
+  /**
    * name
    */
   @Description("name")
@@ -198,6 +204,24 @@ public class __TypeOrderBy {
    * Count of __Type
    */
   @Description("Count of __Type")
+  private Sort idCount;
+
+  /**
+   * Max of id
+   */
+  @Description("Max of id")
+  private Sort idMax;
+
+  /**
+   * Min of id
+   */
+  @Description("Min of id")
+  private Sort idMin;
+
+  /**
+   * Count of name
+   */
+  @Description("Count of name")
   private Sort nameCount;
 
   /**
@@ -295,6 +319,14 @@ public class __TypeOrderBy {
    */
   @Description("Min of ofSchema Reference")
   private Sort schemaIdMin;
+
+  public Sort getId() {
+    return this.id;
+  }
+
+  public void setId(Sort id) {
+    this.id = id;
+  }
 
   public Sort getName() {
     return this.name;
@@ -535,6 +567,30 @@ public class __TypeOrderBy {
   public void set__typePossibleTypesAggregate(
       __TypePossibleTypesOrderBy __typePossibleTypesAggregate) {
     this.__typePossibleTypesAggregate = __typePossibleTypesAggregate;
+  }
+
+  public Sort getIdCount() {
+    return this.idCount;
+  }
+
+  public void setIdCount(Sort idCount) {
+    this.idCount = idCount;
+  }
+
+  public Sort getIdMax() {
+    return this.idMax;
+  }
+
+  public void setIdMax(Sort idMax) {
+    this.idMax = idMax;
+  }
+
+  public Sort getIdMin() {
+    return this.idMin;
+  }
+
+  public void setIdMin(Sort idMin) {
+    this.idMin = idMin;
   }
 
   public Sort getNameCount() {

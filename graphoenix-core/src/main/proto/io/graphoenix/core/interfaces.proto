@@ -9,12 +9,13 @@ import "io/graphoenix/core/enums.proto";
 import "google/protobuf/timestamp.proto";
 
 message Meta {
-    bool is_deprecated = 1;
-    int32 version = 2;
-    int32 realm_id = 3;
-    string create_user_id = 4;
-    google.protobuf.Timestamp create_time = 5;
-    string update_user_id = 6;
-    google.protobuf.Timestamp update_time = 7;
-    string create_group_id = 8;
+    string id = 1;
+    bool is_deprecated = 2;
+    int32 version = 3;
+    int32 realm_id = 4;
+    string create_user_id = 5;
+    google.protobuf.Timestamp create_time = 6;
+    string update_user_id = 7;
+    google.protobuf.Timestamp update_time = 8;
+    string create_group_id = 9;
 }

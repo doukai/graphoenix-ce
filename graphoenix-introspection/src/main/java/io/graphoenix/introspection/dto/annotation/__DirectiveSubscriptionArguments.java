@@ -23,6 +23,12 @@ import org.eclipse.microprofile.graphql.Description;
 @Description("Subscription Arguments for __Directive")
 public @interface __DirectiveSubscriptionArguments {
   /**
+   * id
+   */
+  @Description("id")
+  StringExpression id() default @StringExpression;
+
+  /**
    * name
    */
   @Description("name")
@@ -148,6 +154,8 @@ public @interface __DirectiveSubscriptionArguments {
    */
   @Description("Expressions")
   __DirectiveExpression[] exs() default {};
+
+  String $id() default "";
 
   String $name() default "";
 

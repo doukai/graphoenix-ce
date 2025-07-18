@@ -9,21 +9,23 @@ import "io/graphoenix/core/enums.proto";
 import "google/protobuf/timestamp.proto";
 
 message MetaInput {
-    int32 version = 1;
-    int32 realm_id = 2;
-    string create_user_id = 3;
-    google.protobuf.Timestamp create_time = 4;
-    string update_user_id = 5;
-    google.protobuf.Timestamp update_time = 6;
-    string create_group_id = 7;
+    string id = 1;
+    int32 version = 2;
+    int32 realm_id = 3;
+    string create_user_id = 4;
+    google.protobuf.Timestamp create_time = 5;
+    string update_user_id = 6;
+    google.protobuf.Timestamp update_time = 7;
+    string create_group_id = 8;
 }
 message MetaExpression {
-    IntExpression realm_id = 1;
-    StringExpression create_user_id = 2;
-    StringExpression create_time = 3;
-    StringExpression update_user_id = 4;
-    StringExpression update_time = 5;
-    StringExpression create_group_id = 6;
+    StringExpression id = 1;
+    IntExpression realm_id = 2;
+    StringExpression create_user_id = 3;
+    StringExpression create_time = 4;
+    StringExpression update_user_id = 5;
+    StringExpression update_time = 6;
+    StringExpression create_group_id = 7;
 }
 message IDExpression {
     Operator opr = 1;
@@ -61,16 +63,17 @@ message With {
     string to = 3;
 }
 message Invoke {
-    string class_name = 1;
-    string method_name = 2;
-    repeated InvokeParameter parameters = 3;
-    string return_class_name = 4;
-    repeated string thrown_types = 5;
-    bool async = 6;
-    string directive_name = 7;
-    bool on_field = 8;
-    bool on_input_value = 9;
-    bool on_expression = 10;
+    string package = 1;
+    string class_name = 2;
+    string method_name = 3;
+    repeated InvokeParameter parameters = 4;
+    string return_class_name = 5;
+    repeated string thrown_types = 6;
+    bool async = 7;
+    string directive_name = 8;
+    bool on_field = 9;
+    bool on_input_value = 10;
+    bool on_expression = 11;
 }
 message InvokeParameter {
     string name = 1;

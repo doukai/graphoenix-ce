@@ -7,12 +7,16 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.eclipse.microprofile.graphql.Name;
 
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface Invoke {
+  @Name("package")
+  String _package() default "";
+
   String className() default "";
 
   String methodName() default "";
@@ -32,6 +36,8 @@ public @interface Invoke {
   boolean onInputValue() default false;
 
   boolean onExpression() default false;
+
+  String $package() default "";
 
   String $className() default "";
 

@@ -19,6 +19,12 @@ import org.eclipse.microprofile.graphql.Input;
 @Description("Query Expression Input for __Directive")
 public interface __DirectiveExpressionBase extends MetaExpression {
   /**
+   * id
+   */
+  @Description("id")
+  StringExpression id = null;
+
+  /**
    * name
    */
   @Description("name")
@@ -137,6 +143,12 @@ public interface __DirectiveExpressionBase extends MetaExpression {
    */
   @Description("Expressions")
   Collection<__DirectiveExpression> exs = null;
+
+  default StringExpression getId() {
+    return id;
+  }
+
+  void setId(StringExpression id);
 
   default StringExpression getName() {
     return name;

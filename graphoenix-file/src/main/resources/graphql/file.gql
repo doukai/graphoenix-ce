@@ -1,7 +1,7 @@
 "文件"
 type File {
     "ID"
-    id: ID @options(type: "String")
+    id: ID
     "文件名"
     name: String
     "类型"

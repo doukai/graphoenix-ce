@@ -5,6 +5,7 @@ import io.graphoenix.core.config.DescriptionConfig;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.spi.error.GraphQLErrorType;
 import io.graphoenix.spi.error.GraphQLErrors;
+import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.Document;
 import io.graphoenix.spi.graphql.FieldsType;
@@ -85,17 +86,20 @@ public class DocumentBuilder {
 
         document.getObjectTypes()
                 .filter(packageManager::isOwnPackage)
+                .filter(objectType -> !objectType.isExtension())
                 .filter(objectType -> !objectType.isContainer())
                 .filter(objectType -> !documentManager.isOperationType(objectType))
                 .forEach(this::buildObject);
 
         document.getInterfaceTypes()
                 .filter(packageManager::isOwnPackage)
+                .filter(interfaceType -> !interfaceType.isExtension())
                 .filter(interfaceType -> !interfaceType.isContainer())
                 .forEach(this::buildInterface);
 
         document.getInputObjectTypes()
                 .filter(packageManager::isOwnPackage)
+                .filter(inputObjectType -> !inputObjectType.isExtension())
                 .filter(inputObjectType -> !inputObjectType.isContainer())
                 .forEach(this::buildInputObject);
 
@@ -109,7 +113,7 @@ public class DocumentBuilder {
                 .forEach(this::buildDirectiveDefinition);
 
         document
-                .addDefinitions(buildInputObjects(document).stream().map(document::merge).collect(Collectors.toList()))
+                .addDefinitions(buildInputObjects(document))
                 .addDefinitions(buildContainerTypeObjects(document));
 
         if (document.getObjectTypes().anyMatch(objectType -> !objectType.isContainer())) {
@@ -151,10 +155,36 @@ public class DocumentBuilder {
             );
 
             document
-                    .addDefinitions(buildQueryTypeFieldArguments(document).stream().map(document::merge).collect(Collectors.toList()))
-                    .addDefinitions(buildMutationTypeFieldsArguments(document).stream().map(document::merge).collect(Collectors.toList()))
-                    .addDefinitions(buildSubscriptionTypeFieldsArguments(document).stream().map(document::merge).collect(Collectors.toList()));
+                    .addDefinitions(buildQueryTypeFieldArguments(document))
+                    .addDefinitions(buildMutationTypeFieldsArguments(document))
+                    .addDefinitions(buildSubscriptionTypeFieldsArguments(document));
         }
+
+        document.getScalarTypes()
+                .filter(packageManager::isOwnPackage)
+                .filter(AbstractDefinition::isExtension)
+                .forEach(ext -> document.getScalarType(ext.getName()).ifPresent(scalarType -> scalarType.merge(ext)));
+
+        document.getEnums()
+                .filter(packageManager::isOwnPackage)
+                .filter(AbstractDefinition::isExtension)
+                .forEach(ext -> document.getEnumType(ext.getName()).ifPresent(enumType -> enumType.merge(ext)));
+
+        document.getObjectTypes()
+                .filter(packageManager::isOwnPackage)
+                .filter(AbstractDefinition::isExtension)
+                .forEach(ext -> document.getObjectType(ext.getName()).ifPresent(objectType -> objectType.merge(ext)));
+
+        document.getInterfaceTypes()
+                .filter(packageManager::isOwnPackage)
+                .filter(AbstractDefinition::isExtension)
+                .forEach(ext -> document.getInterfaceType(ext.getName()).ifPresent(interfaceType -> interfaceType.merge(ext)));
+
+        document.getInputObjectTypes()
+                .filter(packageManager::isOwnPackage)
+                .filter(AbstractDefinition::isExtension)
+                .forEach(ext -> document.getInputObjectType(ext.getName()).ifPresent(inputObjectType -> inputObjectType.merge(ext)));
+
         return document;
     }
 

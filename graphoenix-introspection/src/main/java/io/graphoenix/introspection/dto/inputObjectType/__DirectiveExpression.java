@@ -23,6 +23,12 @@ import org.eclipse.microprofile.graphql.Input;
 @Description("Query Expression Input for __Directive")
 public class __DirectiveExpression implements MetaExpression, __DirectiveExpressionBase {
   /**
+   * id
+   */
+  @Description("id")
+  private StringExpression id;
+
+  /**
    * name
    */
   @Description("name")
@@ -144,6 +150,16 @@ public class __DirectiveExpression implements MetaExpression, __DirectiveExpress
    */
   @Description("Expressions")
   private Collection<__DirectiveExpression> exs;
+
+  @Override
+  public StringExpression getId() {
+    return this.id;
+  }
+
+  @Override
+  public void setId(StringExpression id) {
+    this.id = (StringExpression)id;
+  }
 
   @Override
   public StringExpression getName() {

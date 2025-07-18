@@ -20,6 +20,12 @@ import org.eclipse.microprofile.graphql.Description;
 @Description("Mutation Input for __Directive")
 public @interface __DirectiveInputBase2 {
   /**
+   * id
+   */
+  @Description("id")
+  String id() default "";
+
+  /**
    * name
    */
   @Description("name")
@@ -102,6 +108,8 @@ public @interface __DirectiveInputBase2 {
    */
   @Description("ofSchema Reference")
   int schemaId() default 0;
+
+  String $id() default "";
 
   String $name() default "";
 

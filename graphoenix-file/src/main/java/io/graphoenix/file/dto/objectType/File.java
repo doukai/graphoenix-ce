@@ -116,13 +116,13 @@ public class File implements Meta {
    * Max of ID
    */
   @Description("Max of ID")
-  private String idMax;
+  private Integer idMax;
 
   /**
    * Min of ID
    */
   @Description("Min of ID")
-  private String idMin;
+  private Integer idMin;
 
   /**
    * Count of 文件名
@@ -332,19 +332,19 @@ public class File implements Meta {
     this.idCount = idCount;
   }
 
-  public String getIdMax() {
+  public Integer getIdMax() {
     return this.idMax;
   }
 
-  public void setIdMax(String idMax) {
+  public void setIdMax(Integer idMax) {
     this.idMax = idMax;
   }
 
-  public String getIdMin() {
+  public Integer getIdMin() {
     return this.idMin;
   }
 
-  public void setIdMin(String idMin) {
+  public void setIdMin(Integer idMin) {
     this.idMin = idMin;
   }
 

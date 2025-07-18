@@ -20,6 +20,12 @@ import org.eclipse.microprofile.graphql.Description;
 @Description("Order Input for __Directive")
 public @interface __DirectiveOrderBy1 {
   /**
+   * id
+   */
+  @Description("id")
+  Sort id() default Sort.ASC;
+
+  /**
    * name
    */
   @Description("name")
@@ -139,6 +145,24 @@ public @interface __DirectiveOrderBy1 {
    * Count of __Directive
    */
   @Description("Count of __Directive")
+  Sort idCount() default Sort.ASC;
+
+  /**
+   * Max of id
+   */
+  @Description("Max of id")
+  Sort idMax() default Sort.ASC;
+
+  /**
+   * Min of id
+   */
+  @Description("Min of id")
+  Sort idMin() default Sort.ASC;
+
+  /**
+   * Count of name
+   */
+  @Description("Count of name")
   Sort nameCount() default Sort.ASC;
 
   /**
@@ -201,6 +225,8 @@ public @interface __DirectiveOrderBy1 {
   @Description("Min of ofSchema Reference")
   Sort schemaIdMin() default Sort.ASC;
 
+  String $id() default "";
+
   String $name() default "";
 
   String $ofSchema() default "";
@@ -238,6 +264,12 @@ public @interface __DirectiveOrderBy1 {
   String $argsAggregate() default "";
 
   String $__directiveLocationsRelationAggregate() default "";
+
+  String $idCount() default "";
+
+  String $idMax() default "";
+
+  String $idMin() default "";
 
   String $nameCount() default "";
 

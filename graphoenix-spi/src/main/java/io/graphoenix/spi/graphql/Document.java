@@ -47,6 +47,7 @@ public class Document {
         setDefinitions(
                 documentContext.definition().stream()
                         .map(Definition::of)
+                        .map(this::mergeExtension)
                         .collect(Collectors.toList())
         );
     }
@@ -71,6 +72,7 @@ public class Document {
         return addDefinitions(
                 graphqlToDocument(graphql).definition().stream()
                         .map(Definition::of)
+                        .map(this::mergeExtension)
                         .collect(Collectors.toList())
         );
     }
@@ -79,6 +81,7 @@ public class Document {
         return addDefinitions(
                 graphqlToDocument(inputStream).definition().stream()
                         .map(Definition::of)
+                        .map(this::mergeExtension)
                         .collect(Collectors.toList())
         );
     }
@@ -87,6 +90,7 @@ public class Document {
         return addDefinitions(
                 graphqlToDocument(file).definition().stream()
                         .map(Definition::of)
+                        .map(this::mergeExtension)
                         .collect(Collectors.toList())
         );
     }
@@ -95,6 +99,7 @@ public class Document {
         return addDefinitions(
                 graphqlToDocument(path).definition().stream()
                         .map(Definition::of)
+                        .map(this::mergeExtension)
                         .collect(Collectors.toList())
         );
     }
@@ -203,13 +208,14 @@ public class Document {
     }
 
     public Document addDefinition(Definition definition) {
-        this.definitionMap.put(definition.getName(), definition);
+        this.definitionMap.put(definition.getName(), mergeExtension(definition));
         return this;
     }
 
     public Document addDefinitions(Collection<? extends Definition> definitions) {
         this.definitionMap.putAll(
                 (Map<? extends String, ? extends Definition>) definitions.stream()
+                        .map(this::mergeExtension)
                         .collect(
                                 Collectors.toMap(
                                         Definition::getName,
@@ -454,6 +460,45 @@ public class Document {
 
     public void clear() {
         this.definitionMap.clear();
+    }
+
+    private Definition mergeExtension(Definition definition) {
+        if (definition.isExtension()) {
+            Definition existsDefinition = getDefinition(definition.getName());
+            if (existsDefinition != null && !existsDefinition.isExtension()) {
+                if (existsDefinition.isSchema()) {
+                    return existsDefinition.asSchema().merge(definition.asSchema());
+                } else if (existsDefinition.isObject()) {
+                    return existsDefinition.asObject().merge(definition.asObject());
+                } else if (existsDefinition.isInterface()) {
+                    return existsDefinition.asInterface().merge(definition.asInterface());
+                } else if (existsDefinition.isInputObject()) {
+                    return existsDefinition.asInputObject().merge(definition.asInputObject());
+                } else if (existsDefinition.isEnum()) {
+                    return existsDefinition.asEnum().merge(definition.asEnum());
+                } else if (existsDefinition.isScalar()) {
+                    return existsDefinition.asScalar().merge(definition.asScalar());
+                }
+            }
+        } else {
+            Definition existsExtension = getDefinition(definition.getName());
+            if (existsExtension != null && existsExtension.isExtension()) {
+                if (existsExtension.isSchema()) {
+                    return definition.asSchema().merge(existsExtension.asSchema());
+                } else if (existsExtension.isObject()) {
+                    return definition.asObject().merge(existsExtension.asObject());
+                } else if (existsExtension.isInterface()) {
+                    return definition.asInterface().merge(existsExtension.asInterface());
+                } else if (existsExtension.isInputObject()) {
+                    return definition.asInputObject().merge(existsExtension.asInputObject());
+                } else if (existsExtension.isEnum()) {
+                    return definition.asEnum().merge(existsExtension.asEnum());
+                } else if (existsExtension.isScalar()) {
+                    return definition.asScalar().merge(existsExtension.asScalar());
+                }
+            }
+        }
+        return definition;
     }
 
     @Override

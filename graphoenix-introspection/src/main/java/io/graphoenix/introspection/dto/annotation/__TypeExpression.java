@@ -22,6 +22,12 @@ import org.eclipse.microprofile.graphql.Description;
 @Description("Query Expression Input for __Type")
 public @interface __TypeExpression {
   /**
+   * id
+   */
+  @Description("id")
+  StringExpression id() default @StringExpression;
+
+  /**
    * name
    */
   @Description("name")
@@ -176,6 +182,8 @@ public @interface __TypeExpression {
    */
   @Description("Expressions")
   __TypeExpression1[] exs() default {};
+
+  String $id() default "";
 
   String $name() default "";
 

@@ -13,6 +13,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface MetaInput {
+  String id() default "";
+
   int version() default 0;
 
   int realmId() default 0;
@@ -26,6 +28,8 @@ public @interface MetaInput {
   String updateTime() default "";
 
   String createGroupId() default "";
+
+  String $id() default "";
 
   String $version() default "";
 
