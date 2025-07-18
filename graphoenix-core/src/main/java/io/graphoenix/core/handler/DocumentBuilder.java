@@ -105,6 +105,7 @@ public class DocumentBuilder {
 
         document.getEnums()
                 .filter(packageManager::isOwnPackage)
+                .filter(enumType -> !enumType.isExtension())
                 .filter(enumType -> !enumType.isContainer())
                 .forEach(this::buildEnum);
 
