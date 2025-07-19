@@ -89,22 +89,24 @@ public class DocumentManager {
 
     public boolean isMapAnchor(ObjectType objectType, FieldDefinition fieldDefinition) {
         return fieldDefinition.isMapAnchor() ||
-                objectType.getIDField()
-                        .flatMap(idFieldDefinition ->
-                                fieldDefinition.getMapFrom()
-                                        .map(mapFrom -> !idFieldDefinition.getName().equals(mapFrom))
-                        )
-                        .orElse(false);
+                !fieldDefinition.hasMapAnchor() &&
+                        objectType.getIDField()
+                                .flatMap(idFieldDefinition ->
+                                        fieldDefinition.getMapFrom()
+                                                .map(mapFrom -> !idFieldDefinition.getName().equals(mapFrom))
+                                )
+                                .orElse(false);
     }
 
     public boolean isFetchAnchor(ObjectType objectType, FieldDefinition fieldDefinition) {
         return fieldDefinition.isFetchAnchor() ||
-                objectType.getIDField()
-                        .flatMap(idFieldDefinition ->
-                                fieldDefinition.getFetchFrom()
-                                        .map(mapFrom -> !idFieldDefinition.getName().equals(mapFrom))
-                        )
-                        .orElse(false);
+                !fieldDefinition.hasFetchAnchor() &&
+                        objectType.getIDField()
+                                .flatMap(idFieldDefinition ->
+                                        fieldDefinition.getFetchFrom()
+                                                .map(fetchFrom -> !idFieldDefinition.getName().equals(fetchFrom))
+                                )
+                                .orElse(false);
     }
 
     public ObjectType getFieldMapWithTypeDefinition(FieldDefinition fieldDefinition) {

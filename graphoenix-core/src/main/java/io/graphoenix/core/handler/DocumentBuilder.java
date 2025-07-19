@@ -523,7 +523,11 @@ public class DocumentBuilder {
 
         objectType
                 .addInterface(INTERFACE_META_NAME)
-                .addFields(getMetaInterfaceFields())
+                .addFields(
+                        getMetaInterfaceFields().stream()
+                                .filter(fieldDefinition -> objectType.getField(fieldDefinition.getName()) == null)
+                                .collect(Collectors.toList())
+                )
                 .setFields(
                         objectType.getFields().stream()
                                 .map(fieldDefinition ->

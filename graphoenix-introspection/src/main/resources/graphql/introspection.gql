@@ -15,19 +15,19 @@ type __Type {
     description: String
 
     # OBJECT and INTERFACE only
-    fields: [__Field!] @map(from: "name" to: "ofTypeName")
+    fields: [__Field!] @map(from: "name" to: "ofTypeName" anchor: false)
 
     # OBJECT only
-    interfaces: [__Type!] @map(from: "name" with: {type: "__TypeInterfaces" from: "typeRef" to: "interfaceRef"} to: "name")
+    interfaces: [__Type!] @map(from: "name" with: { type: "__TypeInterfaces" from: "typeRef" to: "interfaceRef" } to: "name")
 
     # INTERFACE and UNION only
-    possibleTypes: [__Type!] @map(from: "name" with: {type: "__TypePossibleTypes" from: "typeRef" to: "possibleTypeRef"} to: "name")
+    possibleTypes: [__Type!] @map(from: "name" with: { type: "__TypePossibleTypes" from: "typeRef" to: "possibleTypeRef" } to: "name")
 
     # ENUM only
-    enumValues: [__EnumValue!] @map(from: "name" to: "ofTypeName")
+    enumValues: [__EnumValue!] @map(from: "name" to: "ofTypeName" anchor: false)
 
     # INPUT_OBJECT only
-    inputFields: [__InputValue!] @map(from: "name" to: "ofTypeName")
+    inputFields: [__InputValue!] @map(from: "name" to: "ofTypeName" anchor: false)
 
     # NON_NULL and LIST only
     ofType: __Type @map(from: "ofTypeName" to: "name" anchor: true)
@@ -68,7 +68,7 @@ type __Directive {
     ofSchema: __Schema @map(from: "schemaId" to: "id" anchor: true)
     description: String
     locations: [__DirectiveLocation!]!
-    args: [__InputValue!]! @map(from: "name" to: "directiveName")
+    args: [__InputValue!]! @map(from: "name" to: "directiveName" anchor: false)
     isRepeatable: Boolean!
 }
 

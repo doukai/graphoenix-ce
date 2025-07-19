@@ -369,8 +369,16 @@ public class FieldDefinition extends AbstractDefinition {
         return hasDirective(DIRECTIVE_MAP_NAME);
     }
 
+    public boolean hasMapAnchor() {
+        return hasDirective(DIRECTIVE_MAP_NAME) &&
+                getDirective(DIRECTIVE_MAP_NAME).hasArgument(DIRECTIVE_MAP_ARGUMENT_ANCHOR_NAME);
+    }
+
     public boolean isMapAnchor() {
-        return hasDirective(DIRECTIVE_MAP_NAME) && getDirective(DIRECTIVE_MAP_NAME).hasArgument(DIRECTIVE_MAP_ARGUMENT_ANCHOR_NAME);
+        return hasDirective(DIRECTIVE_MAP_NAME) &&
+                getDirective(DIRECTIVE_MAP_NAME).hasArgument(DIRECTIVE_MAP_ARGUMENT_ANCHOR_NAME) &&
+                getDirective(DIRECTIVE_MAP_NAME).getArgument(DIRECTIVE_MAP_ARGUMENT_ANCHOR_NAME).isBoolean() &&
+                getDirective(DIRECTIVE_MAP_NAME).getArgument(DIRECTIVE_MAP_ARGUMENT_ANCHOR_NAME).asBoolean().getValue();
     }
 
     public boolean hasMapWith() {
@@ -442,8 +450,16 @@ public class FieldDefinition extends AbstractDefinition {
         return hasDirective(DIRECTIVE_FETCH_NAME);
     }
 
+    public boolean hasFetchAnchor() {
+        return hasDirective(DIRECTIVE_FETCH_NAME) &&
+                getDirective(DIRECTIVE_FETCH_NAME).hasArgument(DIRECTIVE_FETCH_ARGUMENT_ANCHOR_NAME);
+    }
+
     public boolean isFetchAnchor() {
-        return hasDirective(DIRECTIVE_FETCH_NAME) && getDirective(DIRECTIVE_FETCH_NAME).hasArgument(DIRECTIVE_FETCH_ARGUMENT_ANCHOR_NAME);
+        return hasDirective(DIRECTIVE_FETCH_NAME) &&
+                getDirective(DIRECTIVE_FETCH_NAME).hasArgument(DIRECTIVE_FETCH_ARGUMENT_ANCHOR_NAME) &&
+                getDirective(DIRECTIVE_FETCH_NAME).getArgument(DIRECTIVE_FETCH_ARGUMENT_ANCHOR_NAME).isBoolean() &&
+                getDirective(DIRECTIVE_FETCH_NAME).getArgument(DIRECTIVE_FETCH_ARGUMENT_ANCHOR_NAME).asBoolean().getValue();
     }
 
     public boolean hasFetchWith() {
