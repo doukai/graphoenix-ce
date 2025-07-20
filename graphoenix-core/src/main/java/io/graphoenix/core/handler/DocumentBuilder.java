@@ -1342,7 +1342,7 @@ public class DocumentBuilder {
                 .filter(fieldDefinition -> !fieldDefinition.isConnectionField())
                 .filter(fieldDefinition -> !fieldDefinition.isAggregateField())
                 .filter(fieldDefinition -> !fieldDefinition.getName().equals(FIELD_TYPENAME_NAME))
-                .filter(fieldDefinition -> !documentManager.isMetaInterfaceField(fieldDefinition))
+                .filter(fieldDefinition -> fieldDefinition.getName().equals(FIELD_ID_NAME) || !documentManager.isMetaInterfaceField(fieldDefinition))
                 .filter(fieldDefinition -> !fieldDefinition.getType().hasList())
                 .collect(Collectors.toList());
 
