@@ -229,7 +229,7 @@ public class ObjectValueWithVariable extends AbstractMap<String, JsonValue> impl
 
     @Override
     public boolean isNull(String name) {
-        return get(name).equals(JsonValue.NULL);
+        return get(name).equals(JsonValue.NULL) || getValueWithVariable(name).isNull();
     }
 
     @Override

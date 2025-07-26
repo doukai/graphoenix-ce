@@ -250,7 +250,7 @@ public class Arguments extends AbstractMap<String, JsonValue> implements ValueWi
 
     @Override
     public boolean isNull(String name) {
-        return get(name).equals(JsonValue.NULL);
+        return get(name).equals(JsonValue.NULL) || getArgument(name).isNull();
     }
 
     @Override
