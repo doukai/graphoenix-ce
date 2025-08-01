@@ -414,32 +414,32 @@ public class Document {
     public Definition merge(Definition definition) {
         if (definition.isSchema()) {
             return getSchema()
-                    .filter(schema -> schema.isExtension() == definition.isExtension())
+//                    .filter(schema -> schema.isExtension() == definition.isExtension())
                     .map(schema -> (Schema) schema.merge(definition.asSchema()))
                     .orElse(definition.asSchema());
         } else if (definition.isObject()) {
             return getObjectType(definition.getName())
-                    .filter(objectType -> objectType.isExtension() == definition.isExtension())
+//                    .filter(objectType -> objectType.isExtension() == definition.isExtension())
                     .map(objectType -> objectType.merge(definition.asObject()))
                     .orElse(definition.asObject());
         } else if (definition.isInterface()) {
             return getInterfaceType(definition.getName())
-                    .filter(interfaceType -> interfaceType.isExtension() == definition.isExtension())
+//                    .filter(interfaceType -> interfaceType.isExtension() == definition.isExtension())
                     .map(interfaceType -> interfaceType.merge(definition.asInterface()))
                     .orElse(definition.asInterface());
         } else if (definition.isInputObject()) {
             return getInputObjectType(definition.getName())
-                    .filter(inputObjectType -> inputObjectType.isExtension() == definition.isExtension())
+//                    .filter(inputObjectType -> inputObjectType.isExtension() == definition.isExtension())
                     .map(inputObjectType -> inputObjectType.merge(definition.asInputObject()))
                     .orElse(definition.asInputObject());
         } else if (definition.isEnum()) {
             return getEnumType(definition.getName())
-                    .filter(enumType -> enumType.isExtension() == definition.isExtension())
+//                    .filter(enumType -> enumType.isExtension() == definition.isExtension())
                     .map(enumType -> enumType.merge(definition.asEnum()))
                     .orElse(definition.asEnum());
         } else if (definition.isScalar()) {
             return getScalarType(definition.getName())
-                    .filter(scalarType -> scalarType.isExtension() == definition.isExtension())
+//                    .filter(scalarType -> scalarType.isExtension() == definition.isExtension())
                     .map(scalarType -> (ScalarType) scalarType.merge(definition.asScalar()))
                     .orElse(definition.asScalar());
         }

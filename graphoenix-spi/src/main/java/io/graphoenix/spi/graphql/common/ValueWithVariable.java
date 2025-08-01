@@ -225,4 +225,8 @@ public interface ValueWithVariable extends JsonValue {
     default String toJson() {
         return toString();
     }
+
+    default <T extends ValueWithVariable> ValueWithVariable merge(T valueWithVariable) {
+        return valueWithVariable;
+    }
 }

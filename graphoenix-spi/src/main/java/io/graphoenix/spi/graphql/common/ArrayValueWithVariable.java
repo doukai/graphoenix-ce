@@ -163,6 +163,15 @@ public class ArrayValueWithVariable extends AbstractList<JsonValue> implements V
     }
 
     @Override
+    public <T extends ValueWithVariable> ValueWithVariable merge(T arrayValueWithVariable) {
+        if (arrayValueWithVariable == null || arrayValueWithVariable.isNull()) {
+            return this;
+        }
+        this.valueWithVariables.addAll(((ArrayValueWithVariable) arrayValueWithVariable).getValueWithVariables());
+        return this;
+    }
+
+    @Override
     public String toString() {
         ST st = stGroupFile.getInstanceOf("arrayValueWithVariableDefinition");
         st.add("valueWithVariables", valueWithVariables);

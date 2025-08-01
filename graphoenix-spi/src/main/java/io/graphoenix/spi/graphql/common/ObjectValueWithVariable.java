@@ -268,6 +268,19 @@ public class ObjectValueWithVariable extends AbstractMap<String, JsonValue> impl
         return true;
     }
 
+    @Override
+    public <T extends ValueWithVariable> ValueWithVariable merge(T objectValueWithVariable) {
+        if (objectValueWithVariable == null || objectValueWithVariable.isNull()) {
+            return this;
+        }
+        ((ObjectValueWithVariable) objectValueWithVariable).getObjectValueWithVariable().forEach(
+                (key, value) -> {
+                    this.objectValueWithVariable.merge(key, value, ValueWithVariable::merge);
+                }
+        );
+        return this;
+    }
+
     public static <K, V> ObjectValueWithVariable of(K k1, V v1) {
         return new ObjectValueWithVariable(Map.of(k1, v1));
     }

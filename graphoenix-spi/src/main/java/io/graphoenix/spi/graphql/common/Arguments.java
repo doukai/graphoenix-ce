@@ -289,6 +289,19 @@ public class Arguments extends AbstractMap<String, JsonValue> implements ValueWi
         return true;
     }
 
+    @Override
+    public <T extends ValueWithVariable> ValueWithVariable merge(T arguments) {
+        if (arguments == null || arguments.isNull()) {
+            return this;
+        }
+        ((Arguments) arguments).getArguments().forEach(
+                (key, value) -> {
+                    this.arguments.merge(key, value, ValueWithVariable::merge);
+                }
+        );
+        return this;
+    }
+
     public static <K, V> Arguments of(K k1, V v1) {
         return new Arguments(Map.of(k1, v1));
     }

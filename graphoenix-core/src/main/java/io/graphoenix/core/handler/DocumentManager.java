@@ -38,7 +38,9 @@ public class DocumentManager {
         return document
                 .setDefinitions(
                         document.getDefinitions().stream()
-                                .filter(packageManager::isOwnPackage)
+                                .filter(definition ->
+                                        packageManager.isOwnPackage(definition) || definition.isInputObject()
+                                )
                                 .collect(Collectors.toList())
                 );
     }
