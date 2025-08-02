@@ -367,12 +367,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                         .build()
                                 )
                                 .map(item -> {
-                                            String id;
-                                            if (item.asJsonObject().containsKey(idField.getName())) {
-                                                id = getId(item.asJsonObject().get(idField.getName()));
-                                            } else {
-                                                id = UUID.randomUUID().toString();
-                                            }
+                                            String id = UUID.randomUUID().toString();
                                             return new FetchItem(packageName, packageManager.isLocalPackage(fetchWithType) ? ENUM_PROTOCOL_ENUM_VALUE_LOCAL : packageConfig.getDefaultFetchProtocol(), path, fetchWithType.getName(), item, id, fetchWithType.getIDFieldOrError().getName());
                                         }
                                 );
@@ -386,12 +381,6 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                     );
                         }
                     } else {
-                        String id;
-                        if (valueWithVariable.asJsonObject().containsKey(idField.getName())) {
-                            id = getId(valueWithVariable.asJsonObject().get(idField.getName()));
-                        } else {
-                            id = UUID.randomUUID().toString();
-                        }
                         JsonValue mutationJsonValue =
                                 valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME) && valueWithVariable.asObject().keySet().size() == 1 ?
                                         jsonProvider.createObjectBuilder()
@@ -416,6 +405,7 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                         valueWithVariable
                                                 )
                                                 .build();
+                        String id = UUID.randomUUID().toString();
                         FetchItem fetchItem = new FetchItem(packageName, packageManager.isLocalPackage(fetchWithType) ? ENUM_PROTOCOL_ENUM_VALUE_LOCAL : packageConfig.getDefaultFetchProtocol(), path, fetchWithType.getName(), mutationJsonValue, id, fetchWithType.getIDFieldOrError().getName());
                         if (merge) {
                             return Stream.of(fetchItem);
