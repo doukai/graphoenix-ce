@@ -39,7 +39,10 @@ public class DocumentManager {
                 .setDefinitions(
                         document.getDefinitions().stream()
                                 .filter(definition ->
-                                        packageManager.isOwnPackage(definition) || definition.isInputObject()
+                                        packageManager.isOwnPackage(definition) ||
+                                                definition.isInputObject() &&
+                                                        definition.asInputObject().getInputInvokes().stream()
+                                                                .anyMatch(invoke -> packageManager.isOwnPackage(invoke.getString(INPUT_INVOKE_INPUT_VALUE_PACKAGE_NAME_NAME)))
                                 )
                                 .collect(Collectors.toList())
                 );

@@ -2,7 +2,10 @@ package io.graphoenix.spi.graphql;
 
 import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.error.GraphQLErrors;
-import io.graphoenix.spi.graphql.common.*;
+import io.graphoenix.spi.graphql.common.BooleanValue;
+import io.graphoenix.spi.graphql.common.Directive;
+import io.graphoenix.spi.graphql.common.StringValue;
+import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import org.eclipse.microprofile.graphql.Source;
 
 import javax.lang.model.element.ExecutableElement;
@@ -16,6 +19,7 @@ import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.*;
 import static io.graphoenix.spi.utils.DocumentUtil.getStringValue;
 import static io.graphoenix.spi.utils.ElementUtil.*;
+import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
 @SuppressWarnings("ALL")
 public abstract class AbstractDefinition implements Definition {
@@ -100,24 +104,19 @@ public abstract class AbstractDefinition implements Definition {
     }
 
     public <T extends AbstractDefinition> T merge(AbstractDefinition... abstractDefinitions) {
-        Stream.of(abstractDefinitions)
-                .flatMap(item -> Stream.ofNullable(item.getDirectiveMap()))
-                .forEach(map ->
-                        map.forEach((key, directive) -> {
-                                    if (directive != null && this.directiveMap == null) {
-                                        this.directiveMap = new LinkedHashMap<>();
-                                    }
-                                    if (this.directiveMap.containsKey(key)) {
-                                        Directive original = this.directiveMap.get(key);
-                                        if (original.getArguments() != null) {
-                                            original.setArguments((Arguments) original.getArguments().merge(directive.getArguments()));
-                                        } else if (directive.getArguments() != null) {
-                                            original.setArguments(directive.getArguments());
-                                        }
-                                    } else {
-                                        directiveMap.put(key, directive);
-                                    }
-                                }
+        this.directiveMap = Stream
+                .concat(
+                        Stream.ofNullable(directiveMap).map(Map::values),
+                        Stream.of(abstractDefinitions).flatMap(item -> Stream.ofNullable(item.getDirectives()))
+                )
+                .flatMap(Collection::stream)
+                .filter(distinctByKey(Directive::getName))
+                .collect(
+                        Collectors.toMap(
+                                Directive::getName,
+                                directive -> directive,
+                                (x, y) -> y,
+                                LinkedHashMap::new
                         )
                 );
         return (T) this;

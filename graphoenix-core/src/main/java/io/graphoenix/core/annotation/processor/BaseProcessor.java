@@ -307,37 +307,8 @@ public abstract class BaseProcessor extends AbstractProcessor {
                                                                         .getInputObjectTypeOrError(inputName)
                                                         )
                                         )
-                                        .filter(inputObjectType -> !inputObjectType.isInputInterface())
                                         .findFirst()
                                         .ifPresent(inputObjectType ->
-                                                Optional.ofNullable(inputObjectType.getDirective(DIRECTIVE_INVOKES_NAME))
-                                                        .ifPresentOrElse(
-                                                                directive -> directive.getArgument(DIRECTIVE_INVOKES_METHODS_NAME).asArray().add(invoke),
-                                                                () -> inputObjectType
-                                                                        .addDirective(
-                                                                                new Directive(DIRECTIVE_INVOKES_NAME)
-                                                                                        .addArgument(DIRECTIVE_INVOKES_METHODS_NAME, new ArrayValueWithVariable(invoke))
-                                                                        )
-                                                        )
-                                        );
-
-                                executableElement.getParameters().stream()
-                                        .filter(variableElement ->
-                                                variableElement.getAnnotation(Source.class) != null &&
-                                                        types.asElement(variableElement.asType()).getAnnotation(Input.class) != null
-                                        )
-                                        .map(variableElement -> getNameFromElement(types.asElement(variableElement.asType())))
-                                        .map(inputName ->
-                                                documentManager.getDocument().getInputObjectType(inputName)
-                                                        .orElseGet(() ->
-                                                                documentManager.getDocument()
-                                                                        .addDefinition(new InputObjectType(inputName).addDirective(new Directive(DIRECTIVE_INTERFACE_NAME)))
-                                                                        .getInputObjectTypeOrError(inputName)
-                                                        )
-                                        )
-                                        .filter(InputObjectType::isInputInterface)
-                                        .flatMap(inputObjectType -> documentManager.getDocument().getImplementsInputObject(inputObjectType.getName()))
-                                        .forEach(inputObjectType ->
                                                 Optional.ofNullable(inputObjectType.getDirective(DIRECTIVE_INVOKES_NAME))
                                                         .ifPresentOrElse(
                                                                 directive -> directive.getArgument(DIRECTIVE_INVOKES_METHODS_NAME).asArray().add(invoke),
