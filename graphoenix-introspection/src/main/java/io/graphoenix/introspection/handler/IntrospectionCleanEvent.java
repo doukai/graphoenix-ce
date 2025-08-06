@@ -1,8 +1,9 @@
-package io.graphoenix.r2dbc.event;
+package io.graphoenix.introspection.handler;
 
 import io.graphoenix.core.config.GraphQLConfig;
-import io.graphoenix.r2dbc.executor.TableCreator;
-import io.graphoenix.sql.translator.TypeTranslator;
+import io.graphoenix.core.handler.DocumentManager;
+import io.graphoenix.spi.graphql.AbstractDefinition;
+import io.graphoenix.spi.handler.TypeEmptyHandler;
 import io.nozdormu.spi.event.ScopeEvent;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -25,31 +26,29 @@ public class IntrospectionCleanEvent implements ScopeEvent {
     public static final int INTROSPECTION_CLEAN_SCOPE_EVENT_PRIORITY = DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY + 199;
 
     private final GraphQLConfig graphQLConfig;
-    private final TypeTranslator typeTranslator;
-    private final TableCreator tableCreator;
+    private final DocumentManager documentManager;
+    private final TypeEmptyHandler typeEmptyHandler;
 
     @Inject
-    public IntrospectionCleanEvent(GraphQLConfig graphQLConfig, TypeTranslator typeTranslator, TableCreator tableCreator) {
+    public IntrospectionCleanEvent(GraphQLConfig graphQLConfig, DocumentManager documentManager, TypeEmptyHandler typeEmptyHandler) {
         this.graphQLConfig = graphQLConfig;
-        this.typeTranslator = typeTranslator;
-        this.tableCreator = tableCreator;
+        this.documentManager = documentManager;
+        this.typeEmptyHandler = typeEmptyHandler;
     }
+
 
     @Override
     public Mono<Void> fireAsync(Map<String, Object> context) {
         if (graphQLConfig.getBuildIntrospection()) {
             Logger.info("introspection clean started");
-            return tableCreator.selectTables(typeTranslator.selectTablesSQL())
-                    .flatMap(existsTableNameList ->
-                            tableCreator.mergeTable(
-                                    existsTableNameList.stream()
-                                            .filter(tableName -> tableName.startsWith(PREFIX_INTROSPECTION))
-                                            .map(typeTranslator::truncateTableSQL)
-                                            .collect(Collectors.joining(";"))
-                            )
+            return typeEmptyHandler
+                    .empty(
+                            documentManager.getDocument().getObjectTypes()
+                                    .map(AbstractDefinition::getName)
+                                    .filter(name -> name.startsWith(PREFIX_INTROSPECTION))
+                                    .collect(Collectors.toSet())
                     )
-                    .doOnSuccess((jsonValue) -> Logger.info("introspection clean success"))
-                    .then();
+                    .doOnSuccess((v) -> Logger.info("introspection clean success"));
         }
         return Mono.empty();
     }

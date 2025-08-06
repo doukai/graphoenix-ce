@@ -1,7 +1,7 @@
 package io.graphoenix.r2dbc.event;
 
 import io.graphoenix.r2dbc.config.R2DBCConfig;
-import io.graphoenix.r2dbc.executor.TableCreator;
+import io.graphoenix.r2dbc.executor.TableManager;
 import io.graphoenix.sql.translator.TypeTranslator;
 import io.nozdormu.spi.event.ScopeEvent;
 import jakarta.annotation.Priority;
@@ -25,22 +25,22 @@ public class TableInitializedEvent implements ScopeEvent {
 
     private final R2DBCConfig r2DBCConfig;
     private final TypeTranslator typeTranslator;
-    private final TableCreator tableCreator;
+    private final TableManager tableManager;
 
     @Inject
-    public TableInitializedEvent(R2DBCConfig r2DBCConfig, TypeTranslator typeTranslator, TableCreator tableCreator) {
+    public TableInitializedEvent(R2DBCConfig r2DBCConfig, TypeTranslator typeTranslator, TableManager tableManager) {
         this.r2DBCConfig = r2DBCConfig;
         this.typeTranslator = typeTranslator;
-        this.tableCreator = tableCreator;
+        this.tableManager = tableManager;
     }
 
     @Override
     public Mono<Void> fireAsync(Map<String, Object> context) {
         if (r2DBCConfig.getCreateTables()) {
             Logger.info("table initialized starting");
-            return tableCreator.selectColumns(typeTranslator.selectColumnsSQL())
+            return tableManager.selectColumns(typeTranslator.selectColumnsSQL())
                     .flatMap(existsColumnNameList ->
-                            tableCreator.mergeTable(
+                            tableManager.mergeTable(
                                     typeTranslator.mergeTablesSQL(existsColumnNameList)
                                             .collect(Collectors.joining(";"))
                             )

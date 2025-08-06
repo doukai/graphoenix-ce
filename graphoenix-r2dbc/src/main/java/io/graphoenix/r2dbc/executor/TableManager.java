@@ -16,12 +16,12 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 @ApplicationScoped
-public class TableCreator {
+public class TableManager {
 
     private final ConnectionProvider connectionProvider;
 
     @Inject
-    public TableCreator(ConnectionProvider connectionProvider) {
+    public TableManager(ConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
     }
 

@@ -154,7 +154,7 @@ public class TypeTranslator {
                                     fieldTypeName.equals(SCALA_DATE_NAME) ||
                                     fieldTypeName.equals(SCALA_TIME_NAME) ||
                                     fieldTypeName.equals(SCALA_DATE_TIME_NAME) ||
-                                    fieldTypeName.equals(SCALA_TIMESTAMP_NAME)||
+                                    fieldTypeName.equals(SCALA_TIMESTAMP_NAME) ||
                                     fieldTypeName.equals(SCALA_UPLOAD_NAME)) {
                                 columnSpecs.add("DEFAULT  " + stringValueToDBVarchar(defaultValue));
                             } else {
@@ -306,11 +306,11 @@ public class TypeTranslator {
                 );
     }
 
-    public String truncateTableSQL(String tableName) {
-        return truncateTable(tableName).toString();
+    public String truncateTableSQL(String typeName) {
+        return truncateTable(graphqlTypeNameToTableName(typeName)).toString();
     }
 
-    public Truncate truncateTable(String tableName) {
-        return new Truncate().withTable(new Table(tableName));
+    public Truncate truncateTable(String typeName) {
+        return new Truncate().withTable(new Table(graphqlTypeNameToTableName(typeName)));
     }
 }
