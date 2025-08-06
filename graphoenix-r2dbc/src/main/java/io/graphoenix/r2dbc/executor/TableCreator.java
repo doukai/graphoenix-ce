@@ -33,7 +33,7 @@ public class TableCreator {
                 .usingWhen(
                         connectionProvider.get(),
                         connection -> {
-                            Logger.info("create table:\r\n{}", sql);
+                            Logger.info("merge table:\r\n{}", sql);
                             return Mono.from(connection.createStatement(sql).execute());
                         },
                         connectionProvider::close
@@ -48,7 +48,7 @@ public class TableCreator {
                         connection -> {
                             Batch batch = connection.createBatch();
                             sqlStream.forEach(sql -> {
-                                        Logger.info("create table:\r\n{}", sql);
+                                        Logger.info("merge table:\r\n{}", sql);
                                         batch.add(sql);
                                     }
                             );
