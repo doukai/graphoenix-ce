@@ -1,4 +1,4 @@
-package io.graphoenix.introspection.handler;
+package io.graphoenix.introspection.event;
 
 import io.graphoenix.core.config.GraphQLConfig;
 import io.graphoenix.core.handler.DocumentManager;
@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static io.graphoenix.core.event.DocumentInitializedEvent.DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY;
+import static io.graphoenix.introspection.event.IntrospectionBuildEvent.INTROSPECTION_BUILD_SCOPE_EVENT_PRIORITY;
 import static io.graphoenix.spi.constant.Hammurabi.PREFIX_INTROSPECTION;
 
 @ApplicationScoped
@@ -23,7 +23,7 @@ import static io.graphoenix.spi.constant.Hammurabi.PREFIX_INTROSPECTION;
 @Priority(IntrospectionCleanEvent.INTROSPECTION_CLEAN_SCOPE_EVENT_PRIORITY)
 public class IntrospectionCleanEvent implements ScopeEvent {
 
-    public static final int INTROSPECTION_CLEAN_SCOPE_EVENT_PRIORITY = DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY + 199;
+    public static final int INTROSPECTION_CLEAN_SCOPE_EVENT_PRIORITY = INTROSPECTION_BUILD_SCOPE_EVENT_PRIORITY - 1;
 
     private final GraphQLConfig graphQLConfig;
     private final DocumentManager documentManager;
@@ -44,6 +44,7 @@ public class IntrospectionCleanEvent implements ScopeEvent {
             return typeEmptyHandler
                     .empty(
                             documentManager.getDocument().getObjectTypes()
+                                    .filter(objectType -> !objectType.isContainer())
                                     .map(AbstractDefinition::getName)
                                     .filter(name -> name.startsWith(PREFIX_INTROSPECTION))
                                     .collect(Collectors.toSet())

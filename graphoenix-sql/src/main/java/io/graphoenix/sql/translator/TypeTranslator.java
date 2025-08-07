@@ -307,7 +307,7 @@ public class TypeTranslator {
     }
 
     public String truncateTableSQL(String typeName) {
-        return truncateTable(graphqlTypeNameToTableName(typeName)).toString();
+        return truncateTable(typeName).toString();
     }
 
     public Truncate truncateTable(String typeName) {

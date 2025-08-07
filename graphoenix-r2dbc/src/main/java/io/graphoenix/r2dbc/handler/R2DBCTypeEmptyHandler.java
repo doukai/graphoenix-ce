@@ -5,9 +5,9 @@ import io.graphoenix.spi.handler.TypeEmptyHandler;
 import io.graphoenix.sql.translator.TypeTranslator;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 @ApplicationScoped
@@ -24,17 +24,11 @@ public class R2DBCTypeEmptyHandler implements TypeEmptyHandler {
 
     @Override
     public Mono<Void> empty(String... typeNames) {
-        return Flux.fromArray(typeNames)
-                .map(typeTranslator::truncateTableSQL)
-                .flatMap(tableManager::mergeTable)
-                .then();
+        return tableManager.mergeTable(Arrays.stream(typeNames).map(typeTranslator::truncateTableSQL));
     }
 
     @Override
     public Mono<Void> empty(Collection<String> typeNames) {
-        return Flux.fromIterable(typeNames)
-                .map(typeTranslator::truncateTableSQL)
-                .flatMap(tableManager::mergeTable)
-                .then();
+        return tableManager.mergeTable(typeNames.stream().map(typeTranslator::truncateTableSQL));
     }
 }
