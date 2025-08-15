@@ -277,6 +277,18 @@ public class Operation extends AbstractDefinition implements Definition {
                 .map(valueWithVariable -> valueWithVariable.asString().getValue());
     }
 
+    public boolean isQuery() {
+        return OPERATION_QUERY_NAME.equals(operationType);
+    }
+
+    public boolean isMutation() {
+        return OPERATION_MUTATION_NAME.equals(operationType);
+    }
+
+    public boolean isSubscription() {
+        return OPERATION_SUBSCRIPTION_NAME.equals(operationType);
+    }
+
     @Override
     public boolean isOperation() {
         return true;

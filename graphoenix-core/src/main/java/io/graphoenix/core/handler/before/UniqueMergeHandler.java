@@ -344,6 +344,9 @@ public class UniqueMergeHandler implements OperationBeforeHandler {
     }
 
     private boolean hasIDValueWithVariable(String idFieldName, ObjectValueWithVariable objectValueWithVariable) {
+        if (objectValueWithVariable == null) {
+            return false;
+        }
         return objectValueWithVariable.containsKey(idFieldName) ||
                 objectValueWithVariable.containsKey(INPUT_VALUE_WHERE_NAME) &&
                         objectValueWithVariable.getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject().containsKey(idFieldName) &&
@@ -351,6 +354,9 @@ public class UniqueMergeHandler implements OperationBeforeHandler {
     }
 
     private boolean hasIDValueWithVariable(String idFieldName, Arguments arguments) {
+        if (arguments == null) {
+            return false;
+        }
         return arguments.containsKey(idFieldName) ||
                 arguments.containsKey(INPUT_VALUE_WHERE_NAME) &&
                         arguments.getArgument(INPUT_VALUE_WHERE_NAME).asObject().containsKey(idFieldName) &&

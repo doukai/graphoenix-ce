@@ -313,33 +313,35 @@ public class VersionValidationHandler implements OperationBeforeHandler {
     }
 
     private Optional<ValueWithVariable> getIDValueWithVariable(String idFieldName, ObjectValueWithVariable objectValueWithVariable) {
-        if (objectValueWithVariable != null && objectValueWithVariable.containsKey(idFieldName)) {
-            return Optional.of(objectValueWithVariable.getValueWithVariable(idFieldName));
-        } else if (objectValueWithVariable != null &&
-                objectValueWithVariable.containsKey(INPUT_VALUE_WHERE_NAME) &&
-                objectValueWithVariable.getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject().containsKey(idFieldName) &&
-                objectValueWithVariable.getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject().getValueWithVariable(idFieldName).asObject().containsKey(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)) {
-            return Optional.of(
-                    objectValueWithVariable.getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject()
-                            .getValueWithVariable(idFieldName).asObject()
-                            .getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
-            );
+        if (objectValueWithVariable != null) {
+            if (objectValueWithVariable.containsKey(idFieldName)) {
+                return Optional.of(objectValueWithVariable.getValueWithVariable(idFieldName));
+            } else if (objectValueWithVariable.containsKey(INPUT_VALUE_WHERE_NAME) &&
+                    objectValueWithVariable.getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject().containsKey(idFieldName) &&
+                    objectValueWithVariable.getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject().getValueWithVariable(idFieldName).asObject().containsKey(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)) {
+                return Optional.of(
+                        objectValueWithVariable.getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject()
+                                .getValueWithVariable(idFieldName).asObject()
+                                .getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                );
+            }
         }
         return Optional.empty();
     }
 
     private Optional<ValueWithVariable> getIDValueWithVariable(String idFieldName, Arguments arguments) {
-        if (arguments != null && arguments.containsKey(idFieldName)) {
-            return Optional.of(arguments.getArgument(idFieldName));
-        } else if (arguments != null &&
-                arguments.containsKey(INPUT_VALUE_WHERE_NAME) &&
-                arguments.getArgument(INPUT_VALUE_WHERE_NAME).asObject().containsKey(idFieldName) &&
-                arguments.getArgument(INPUT_VALUE_WHERE_NAME).asObject().getValueWithVariable(idFieldName).asObject().containsKey(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)) {
-            return Optional.of(
-                    arguments.getArgument(INPUT_VALUE_WHERE_NAME).asObject()
-                            .getValueWithVariable(idFieldName).asObject()
-                            .getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
-            );
+        if (arguments != null) {
+            if (arguments.containsKey(idFieldName)) {
+                return Optional.of(arguments.getArgument(idFieldName));
+            } else if (arguments.containsKey(INPUT_VALUE_WHERE_NAME) &&
+                    arguments.getArgument(INPUT_VALUE_WHERE_NAME).asObject().containsKey(idFieldName) &&
+                    arguments.getArgument(INPUT_VALUE_WHERE_NAME).asObject().getValueWithVariable(idFieldName).asObject().containsKey(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)) {
+                return Optional.of(
+                        arguments.getArgument(INPUT_VALUE_WHERE_NAME).asObject()
+                                .getValueWithVariable(idFieldName).asObject()
+                                .getValueWithVariable(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
+                );
+            }
         }
         return Optional.empty();
     }
