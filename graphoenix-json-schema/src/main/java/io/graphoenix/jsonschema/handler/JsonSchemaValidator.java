@@ -2,6 +2,7 @@ package io.graphoenix.jsonschema.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.networknt.schema.Format;
 import com.networknt.schema.JsonMetaSchema;
 import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.ValidationMessage;
@@ -13,6 +14,7 @@ import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.handler.OperationBeforeHandler;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.json.JsonValue;
 import reactor.core.publisher.Flux;
@@ -39,11 +41,20 @@ public class JsonSchemaValidator implements OperationBeforeHandler {
     private final JsonSchemaFactory factory;
 
     @Inject
-    public JsonSchemaValidator(JsonSchemaManager jsonSchemaManager, DocumentManager documentManager, JsonSchemaResourceURNFactory jsonSchemaResourceURNFactory) {
+    public JsonSchemaValidator(JsonSchemaManager jsonSchemaManager, DocumentManager documentManager, JsonSchemaResourceURNFactory jsonSchemaResourceURNFactory, Instance<Format> formatInstance) {
         this.documentManager = documentManager;
         this.jsonSchemaManager = jsonSchemaManager;
-        JsonMetaSchema jsonMetaSchema = JsonMetaSchema.getV201909();
-        this.factory = new JsonSchemaFactory.Builder().defaultMetaSchemaURI(jsonMetaSchema.getUri()).addMetaSchema(jsonMetaSchema).addUrnFactory(jsonSchemaResourceURNFactory).build();
+        JsonMetaSchema v201909 = JsonMetaSchema.getV201909();
+        JsonMetaSchema.Builder builder = JsonMetaSchema.builder(v201909.getUri(), v201909);
+        if (formatInstance != null) {
+            formatInstance.forEach(builder::addFormat);
+        }
+        JsonMetaSchema jsonMetaSchema = builder.build();
+        this.factory = new JsonSchemaFactory.Builder()
+                .defaultMetaSchemaURI(jsonMetaSchema.getUri())
+                .addMetaSchema(jsonMetaSchema)
+                .addUrnFactory(jsonSchemaResourceURNFactory)
+                .build();
     }
 
     public Set<ValidationMessage> validate(String jsonSchemaName, String json) throws JsonProcessingException {
