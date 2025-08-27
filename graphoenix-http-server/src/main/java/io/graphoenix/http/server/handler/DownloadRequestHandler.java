@@ -7,7 +7,6 @@ import io.graphoenix.http.server.http.GetHandler;
 import io.graphoenix.spi.handler.FileHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import io.nozdormu.spi.event.ScopeEventResolver;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
@@ -85,8 +84,7 @@ public class DownloadRequestHandler extends BaseHandler implements GetHandler {
                                                     }
                                                 }
                                         );
-                                return response.send(byteBufFlux)
-                                        .then(response.status(HttpResponseStatus.OK));
+                                return response.send(byteBufFlux);
                             } catch (Exception e) {
                                 throw new RuntimeException(e);
                             }
