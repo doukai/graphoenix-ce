@@ -29,6 +29,12 @@ public interface TreeStructInput extends MetaInput {
   String name = null;
 
   /**
+   * id
+   */
+  @Description("id")
+  String id = null;
+
+  /**
    * Is Deprecated
    */
   @Description("Is Deprecated")
@@ -87,6 +93,12 @@ public interface TreeStructInput extends MetaInput {
   }
 
   void setName(String name);
+
+  default String getId() {
+    return id;
+  }
+
+  void setId(String id);
 
   default Boolean getIsDeprecated() {
     return isDeprecated;

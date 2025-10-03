@@ -32,12 +32,6 @@ public @interface __DirectiveOrderBy {
   Sort name() default Sort.ASC;
 
   /**
-   * ofSchema
-   */
-  @Description("ofSchema")
-  __SchemaOrderBy1 ofSchema() default @__SchemaOrderBy1;
-
-  /**
    * description
    */
   @Description("description")
@@ -48,12 +42,6 @@ public @interface __DirectiveOrderBy {
    */
   @Description("locations")
   Sort locations() default Sort.ASC;
-
-  /**
-   * args
-   */
-  @Description("args")
-  __InputValueOrderBy1 args() default @__InputValueOrderBy1;
 
   /**
    * isRepeatable
@@ -120,26 +108,6 @@ public @interface __DirectiveOrderBy {
    */
   @Description("ofSchema Reference")
   Sort schemaId() default Sort.ASC;
-
-  /**
-   * Relationship Object between __Directive and locations
-   */
-  @Description("Relationship Object between __Directive and locations")
-  __DirectiveLocationsRelationOrderBy1 __directiveLocationsRelation(
-      ) default @__DirectiveLocationsRelationOrderBy1;
-
-  /**
-   * Aggregate Field for args
-   */
-  @Description("Aggregate Field for args")
-  __InputValueOrderBy1 argsAggregate() default @__InputValueOrderBy1;
-
-  /**
-   * Aggregate Field for Relationship Object between __Directive and locations
-   */
-  @Description("Aggregate Field for Relationship Object between __Directive and locations")
-  __DirectiveLocationsRelationOrderBy1 __directiveLocationsRelationAggregate(
-      ) default @__DirectiveLocationsRelationOrderBy1;
 
   /**
    * Count of __Directive
@@ -229,13 +197,9 @@ public @interface __DirectiveOrderBy {
 
   String $name() default "";
 
-  String $ofSchema() default "";
-
   String $description() default "";
 
   String $locations() default "";
-
-  String $args() default "";
 
   String $isRepeatable() default "";
 
@@ -258,12 +222,6 @@ public @interface __DirectiveOrderBy {
   String $__typename() default "";
 
   String $schemaId() default "";
-
-  String $__directiveLocationsRelation() default "";
-
-  String $argsAggregate() default "";
-
-  String $__directiveLocationsRelationAggregate() default "";
 
   String $idCount() default "";
 

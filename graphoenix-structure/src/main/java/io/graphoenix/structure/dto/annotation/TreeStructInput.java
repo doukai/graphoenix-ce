@@ -31,6 +31,12 @@ public @interface TreeStructInput {
   String name() default "";
 
   /**
+   * id
+   */
+  @Description("id")
+  String id() default "";
+
+  /**
    * Is Deprecated
    */
   @Description("Is Deprecated")
@@ -81,6 +87,8 @@ public @interface TreeStructInput {
   String $parentId() default "";
 
   String $name() default "";
+
+  String $id() default "";
 
   String $isDeprecated() default "";
 

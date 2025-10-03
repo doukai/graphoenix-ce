@@ -32,12 +32,6 @@ public @interface __EnumValueOrderBy {
   Sort name() default Sort.ASC;
 
   /**
-   * ofType
-   */
-  @Description("ofType")
-  __TypeOrderBy1 ofType() default @__TypeOrderBy1;
-
-  /**
    * description
    */
   @Description("description")
@@ -202,8 +196,6 @@ public @interface __EnumValueOrderBy {
   String $id() default "";
 
   String $name() default "";
-
-  String $ofType() default "";
 
   String $description() default "";
 

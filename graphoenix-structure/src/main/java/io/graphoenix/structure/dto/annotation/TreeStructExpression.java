@@ -34,6 +34,12 @@ public @interface TreeStructExpression {
   StringExpression name() default @StringExpression;
 
   /**
+   * id
+   */
+  @Description("id")
+  StringExpression id() default @StringExpression;
+
+  /**
    * Include Deprecated
    */
   @Description("Include Deprecated")
@@ -96,6 +102,8 @@ public @interface TreeStructExpression {
   String $parentId() default "";
 
   String $name() default "";
+
+  String $id() default "";
 
   String $includeDeprecated() default "";
 

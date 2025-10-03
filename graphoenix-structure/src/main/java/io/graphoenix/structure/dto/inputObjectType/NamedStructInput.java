@@ -29,6 +29,12 @@ public interface NamedStructInput extends MetaInput {
   String description = null;
 
   /**
+   * id
+   */
+  @Description("id")
+  String id = null;
+
+  /**
    * Is Deprecated
    */
   @Description("Is Deprecated")
@@ -87,6 +93,12 @@ public interface NamedStructInput extends MetaInput {
   }
 
   void setDescription(String description);
+
+  default String getId() {
+    return id;
+  }
+
+  void setId(String id);
 
   default Boolean getIsDeprecated() {
     return isDeprecated;

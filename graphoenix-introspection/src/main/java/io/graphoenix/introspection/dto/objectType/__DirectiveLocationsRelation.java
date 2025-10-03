@@ -155,12 +155,14 @@ public class __DirectiveLocationsRelation implements Meta {
   @Description("Min of locations Reference")
   private __DirectiveLocation locationsRefMin;
 
+  @Override
   public String getId() {
     return this.id;
   }
 
+  @Override
   public void setId(String id) {
-    this.id = id;
+    this.id = (String)id;
   }
 
   public String get__directiveRef() {

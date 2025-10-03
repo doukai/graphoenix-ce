@@ -204,12 +204,14 @@ public class __Schema implements Meta {
   @Description("Min of subscriptionType Reference")
   private String subscriptionTypeNameMin;
 
+  @Override
   public String getId() {
     return this.id;
   }
 
+  @Override
   public void setId(String id) {
-    this.id = id;
+    this.id = (String)id;
   }
 
   public Collection<__Type> getTypes() {

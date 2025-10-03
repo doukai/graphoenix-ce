@@ -160,12 +160,14 @@ public class __TypePossibleTypes implements Meta {
   @Description("Min of __Type Reference")
   private String possibleTypeRefMin;
 
+  @Override
   public String getId() {
     return this.id;
   }
 
+  @Override
   public void setId(String id) {
-    this.id = id;
+    this.id = (String)id;
   }
 
   public String getTypeRef() {

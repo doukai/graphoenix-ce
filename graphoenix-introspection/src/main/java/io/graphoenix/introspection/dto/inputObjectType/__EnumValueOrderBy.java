@@ -27,12 +27,6 @@ public class __EnumValueOrderBy {
   private Sort name;
 
   /**
-   * ofType
-   */
-  @Description("ofType")
-  private __TypeOrderBy ofType;
-
-  /**
    * description
    */
   @Description("description")
@@ -208,14 +202,6 @@ public class __EnumValueOrderBy {
 
   public void setName(Sort name) {
     this.name = name;
-  }
-
-  public __TypeOrderBy getOfType() {
-    return this.ofType;
-  }
-
-  public void setOfType(__TypeOrderBy ofType) {
-    this.ofType = ofType;
   }
 
   public Sort getDescription() {

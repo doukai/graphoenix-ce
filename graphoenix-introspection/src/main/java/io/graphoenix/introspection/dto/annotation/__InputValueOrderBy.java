@@ -32,12 +32,6 @@ public @interface __InputValueOrderBy {
   Sort name() default Sort.ASC;
 
   /**
-   * ofType
-   */
-  @Description("ofType")
-  __TypeOrderBy1 ofType() default @__TypeOrderBy1;
-
-  /**
    * fieldId
    */
   @Description("fieldId")
@@ -54,12 +48,6 @@ public @interface __InputValueOrderBy {
    */
   @Description("description")
   Sort description() default Sort.ASC;
-
-  /**
-   * type
-   */
-  @Description("type")
-  __TypeOrderBy1 type() default @__TypeOrderBy1;
 
   /**
    * defaultValue
@@ -293,15 +281,11 @@ public @interface __InputValueOrderBy {
 
   String $name() default "";
 
-  String $ofType() default "";
-
   String $fieldId() default "";
 
   String $directiveName() default "";
 
   String $description() default "";
-
-  String $type() default "";
 
   String $defaultValue() default "";
 

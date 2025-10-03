@@ -32,22 +32,10 @@ public @interface __TypePossibleTypesOrderBy {
   Sort typeRef() default Sort.ASC;
 
   /**
-   * __Type
-   */
-  @Description("__Type")
-  __TypeOrderBy1 type() default @__TypeOrderBy1;
-
-  /**
    * __Type Reference
    */
   @Description("__Type Reference")
   Sort possibleTypeRef() default Sort.ASC;
-
-  /**
-   * __Type
-   */
-  @Description("__Type")
-  __TypeOrderBy1 possibleType() default @__TypeOrderBy1;
 
   /**
    * Is Deprecated
@@ -161,11 +149,7 @@ public @interface __TypePossibleTypesOrderBy {
 
   String $typeRef() default "";
 
-  String $type() default "";
-
   String $possibleTypeRef() default "";
-
-  String $possibleType() default "";
 
   String $isDeprecated() default "";
 

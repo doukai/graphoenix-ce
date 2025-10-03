@@ -34,6 +34,12 @@ public @interface NamedStructExpression {
   StringExpression description() default @StringExpression;
 
   /**
+   * id
+   */
+  @Description("id")
+  StringExpression id() default @StringExpression;
+
+  /**
    * Include Deprecated
    */
   @Description("Include Deprecated")
@@ -96,6 +102,8 @@ public @interface NamedStructExpression {
   String $name() default "";
 
   String $description() default "";
+
+  String $id() default "";
 
   String $includeDeprecated() default "";
 

@@ -26,36 +26,6 @@ public @interface __SchemaOrderBy {
   Sort id() default Sort.ASC;
 
   /**
-   * types
-   */
-  @Description("types")
-  __TypeOrderBy1 types() default @__TypeOrderBy1;
-
-  /**
-   * queryType
-   */
-  @Description("queryType")
-  __TypeOrderBy1 queryType() default @__TypeOrderBy1;
-
-  /**
-   * mutationType
-   */
-  @Description("mutationType")
-  __TypeOrderBy1 mutationType() default @__TypeOrderBy1;
-
-  /**
-   * subscriptionType
-   */
-  @Description("subscriptionType")
-  __TypeOrderBy1 subscriptionType() default @__TypeOrderBy1;
-
-  /**
-   * directives
-   */
-  @Description("directives")
-  __DirectiveOrderBy1 directives() default @__DirectiveOrderBy1;
-
-  /**
    * Is Deprecated
    */
   @Description("Is Deprecated")
@@ -126,18 +96,6 @@ public @interface __SchemaOrderBy {
    */
   @Description("subscriptionType Reference")
   Sort subscriptionTypeName() default Sort.ASC;
-
-  /**
-   * Aggregate Field for types
-   */
-  @Description("Aggregate Field for types")
-  __TypeOrderBy1 typesAggregate() default @__TypeOrderBy1;
-
-  /**
-   * Aggregate Field for directives
-   */
-  @Description("Aggregate Field for directives")
-  __DirectiveOrderBy1 directivesAggregate() default @__DirectiveOrderBy1;
 
   /**
    * Count of __Schema
@@ -213,16 +171,6 @@ public @interface __SchemaOrderBy {
 
   String $id() default "";
 
-  String $types() default "";
-
-  String $queryType() default "";
-
-  String $mutationType() default "";
-
-  String $subscriptionType() default "";
-
-  String $directives() default "";
-
   String $isDeprecated() default "";
 
   String $version() default "";
@@ -246,10 +194,6 @@ public @interface __SchemaOrderBy {
   String $mutationTypeName() default "";
 
   String $subscriptionTypeName() default "";
-
-  String $typesAggregate() default "";
-
-  String $directivesAggregate() default "";
 
   String $idCount() default "";
 

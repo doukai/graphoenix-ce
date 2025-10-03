@@ -27,12 +27,6 @@ public class __InputValueOrderBy {
   private Sort name;
 
   /**
-   * ofType
-   */
-  @Description("ofType")
-  private __TypeOrderBy ofType;
-
-  /**
    * fieldId
    */
   @Description("fieldId")
@@ -49,12 +43,6 @@ public class __InputValueOrderBy {
    */
   @Description("description")
   private Sort description;
-
-  /**
-   * type
-   */
-  @Description("type")
-  private __TypeOrderBy type;
 
   /**
    * defaultValue
@@ -300,14 +288,6 @@ public class __InputValueOrderBy {
     this.name = name;
   }
 
-  public __TypeOrderBy getOfType() {
-    return this.ofType;
-  }
-
-  public void setOfType(__TypeOrderBy ofType) {
-    this.ofType = ofType;
-  }
-
   public Sort getFieldId() {
     return this.fieldId;
   }
@@ -330,14 +310,6 @@ public class __InputValueOrderBy {
 
   public void setDescription(Sort description) {
     this.description = description;
-  }
-
-  public __TypeOrderBy getType() {
-    return this.type;
-  }
-
-  public void setType(__TypeOrderBy type) {
-    this.type = type;
   }
 
   public Sort getDefaultValue() {

@@ -328,12 +328,14 @@ public class __Type implements Meta {
   @Description("Min of ofSchema Reference")
   private Integer schemaIdMin;
 
+  @Override
   public String getId() {
     return this.id;
   }
 
+  @Override
   public void setId(String id) {
-    this.id = id;
+    this.id = (String)id;
   }
 
   public String getName() {

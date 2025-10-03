@@ -21,36 +21,6 @@ public class __SchemaOrderBy {
   private Sort id;
 
   /**
-   * types
-   */
-  @Description("types")
-  private __TypeOrderBy types;
-
-  /**
-   * queryType
-   */
-  @Description("queryType")
-  private __TypeOrderBy queryType;
-
-  /**
-   * mutationType
-   */
-  @Description("mutationType")
-  private __TypeOrderBy mutationType;
-
-  /**
-   * subscriptionType
-   */
-  @Description("subscriptionType")
-  private __TypeOrderBy subscriptionType;
-
-  /**
-   * directives
-   */
-  @Description("directives")
-  private __DirectiveOrderBy directives;
-
-  /**
    * Is Deprecated
    */
   @Description("Is Deprecated")
@@ -121,18 +91,6 @@ public class __SchemaOrderBy {
    */
   @Description("subscriptionType Reference")
   private Sort subscriptionTypeName;
-
-  /**
-   * Aggregate Field for types
-   */
-  @Description("Aggregate Field for types")
-  private __TypeOrderBy typesAggregate;
-
-  /**
-   * Aggregate Field for directives
-   */
-  @Description("Aggregate Field for directives")
-  private __DirectiveOrderBy directivesAggregate;
 
   /**
    * Count of __Schema
@@ -212,46 +170,6 @@ public class __SchemaOrderBy {
 
   public void setId(Sort id) {
     this.id = id;
-  }
-
-  public __TypeOrderBy getTypes() {
-    return this.types;
-  }
-
-  public void setTypes(__TypeOrderBy types) {
-    this.types = types;
-  }
-
-  public __TypeOrderBy getQueryType() {
-    return this.queryType;
-  }
-
-  public void setQueryType(__TypeOrderBy queryType) {
-    this.queryType = queryType;
-  }
-
-  public __TypeOrderBy getMutationType() {
-    return this.mutationType;
-  }
-
-  public void setMutationType(__TypeOrderBy mutationType) {
-    this.mutationType = mutationType;
-  }
-
-  public __TypeOrderBy getSubscriptionType() {
-    return this.subscriptionType;
-  }
-
-  public void setSubscriptionType(__TypeOrderBy subscriptionType) {
-    this.subscriptionType = subscriptionType;
-  }
-
-  public __DirectiveOrderBy getDirectives() {
-    return this.directives;
-  }
-
-  public void setDirectives(__DirectiveOrderBy directives) {
-    this.directives = directives;
   }
 
   public Sort getIsDeprecated() {
@@ -348,22 +266,6 @@ public class __SchemaOrderBy {
 
   public void setSubscriptionTypeName(Sort subscriptionTypeName) {
     this.subscriptionTypeName = subscriptionTypeName;
-  }
-
-  public __TypeOrderBy getTypesAggregate() {
-    return this.typesAggregate;
-  }
-
-  public void setTypesAggregate(__TypeOrderBy typesAggregate) {
-    this.typesAggregate = typesAggregate;
-  }
-
-  public __DirectiveOrderBy getDirectivesAggregate() {
-    return this.directivesAggregate;
-  }
-
-  public void setDirectivesAggregate(__DirectiveOrderBy directivesAggregate) {
-    this.directivesAggregate = directivesAggregate;
   }
 
   public Sort getIdCount() {

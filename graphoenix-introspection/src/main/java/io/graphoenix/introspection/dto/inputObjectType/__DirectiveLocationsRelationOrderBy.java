@@ -27,12 +27,6 @@ public class __DirectiveLocationsRelationOrderBy {
   private Sort __directiveRef;
 
   /**
-   * __Directive
-   */
-  @Description("__Directive")
-  private __DirectiveOrderBy __directive;
-
-  /**
    * locations Reference
    */
   @Description("locations Reference")
@@ -160,14 +154,6 @@ public class __DirectiveLocationsRelationOrderBy {
 
   public void set__directiveRef(Sort __directiveRef) {
     this.__directiveRef = __directiveRef;
-  }
-
-  public __DirectiveOrderBy get__directive() {
-    return this.__directive;
-  }
-
-  public void set__directive(__DirectiveOrderBy __directive) {
-    this.__directive = __directive;
   }
 
   public Sort getLocationsRef() {

@@ -5,7 +5,6 @@ import io.graphoenix.core.dto.enumType.Sort;
 import jakarta.annotation.Generated;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
-import org.eclipse.microprofile.graphql.Name;
 
 /**
  * Order Input for Relationship Object between __Type and __Type
@@ -28,23 +27,10 @@ public class __TypeInterfacesOrderBy {
   private Sort typeRef;
 
   /**
-   * __Type
-   */
-  @Description("__Type")
-  private __TypeOrderBy type;
-
-  /**
    * __Type Reference
    */
   @Description("__Type Reference")
   private Sort interfaceRef;
-
-  /**
-   * __Type
-   */
-  @Name("interface")
-  @Description("__Type")
-  private __TypeOrderBy _interface;
 
   /**
    * Is Deprecated
@@ -170,28 +156,12 @@ public class __TypeInterfacesOrderBy {
     this.typeRef = typeRef;
   }
 
-  public __TypeOrderBy getType() {
-    return this.type;
-  }
-
-  public void setType(__TypeOrderBy type) {
-    this.type = type;
-  }
-
   public Sort getInterfaceRef() {
     return this.interfaceRef;
   }
 
   public void setInterfaceRef(Sort interfaceRef) {
     this.interfaceRef = interfaceRef;
-  }
-
-  public __TypeOrderBy get_interface() {
-    return this._interface;
-  }
-
-  public void set_interface(__TypeOrderBy _interface) {
-    this._interface = _interface;
   }
 
   public Sort getIsDeprecated() {

@@ -27,12 +27,6 @@ public class __DirectiveOrderBy {
   private Sort name;
 
   /**
-   * ofSchema
-   */
-  @Description("ofSchema")
-  private __SchemaOrderBy ofSchema;
-
-  /**
    * description
    */
   @Description("description")
@@ -43,12 +37,6 @@ public class __DirectiveOrderBy {
    */
   @Description("locations")
   private Sort locations;
-
-  /**
-   * args
-   */
-  @Description("args")
-  private __InputValueOrderBy args;
 
   /**
    * isRepeatable
@@ -115,24 +103,6 @@ public class __DirectiveOrderBy {
    */
   @Description("ofSchema Reference")
   private Sort schemaId;
-
-  /**
-   * Relationship Object between __Directive and locations
-   */
-  @Description("Relationship Object between __Directive and locations")
-  private __DirectiveLocationsRelationOrderBy __directiveLocationsRelation;
-
-  /**
-   * Aggregate Field for args
-   */
-  @Description("Aggregate Field for args")
-  private __InputValueOrderBy argsAggregate;
-
-  /**
-   * Aggregate Field for Relationship Object between __Directive and locations
-   */
-  @Description("Aggregate Field for Relationship Object between __Directive and locations")
-  private __DirectiveLocationsRelationOrderBy __directiveLocationsRelationAggregate;
 
   /**
    * Count of __Directive
@@ -234,14 +204,6 @@ public class __DirectiveOrderBy {
     this.name = name;
   }
 
-  public __SchemaOrderBy getOfSchema() {
-    return this.ofSchema;
-  }
-
-  public void setOfSchema(__SchemaOrderBy ofSchema) {
-    this.ofSchema = ofSchema;
-  }
-
   public Sort getDescription() {
     return this.description;
   }
@@ -256,14 +218,6 @@ public class __DirectiveOrderBy {
 
   public void setLocations(Sort locations) {
     this.locations = locations;
-  }
-
-  public __InputValueOrderBy getArgs() {
-    return this.args;
-  }
-
-  public void setArgs(__InputValueOrderBy args) {
-    this.args = args;
   }
 
   public Sort getIsRepeatable() {
@@ -352,32 +306,6 @@ public class __DirectiveOrderBy {
 
   public void setSchemaId(Sort schemaId) {
     this.schemaId = schemaId;
-  }
-
-  public __DirectiveLocationsRelationOrderBy get__directiveLocationsRelation() {
-    return this.__directiveLocationsRelation;
-  }
-
-  public void set__directiveLocationsRelation(
-      __DirectiveLocationsRelationOrderBy __directiveLocationsRelation) {
-    this.__directiveLocationsRelation = __directiveLocationsRelation;
-  }
-
-  public __InputValueOrderBy getArgsAggregate() {
-    return this.argsAggregate;
-  }
-
-  public void setArgsAggregate(__InputValueOrderBy argsAggregate) {
-    this.argsAggregate = argsAggregate;
-  }
-
-  public __DirectiveLocationsRelationOrderBy get__directiveLocationsRelationAggregate() {
-    return this.__directiveLocationsRelationAggregate;
-  }
-
-  public void set__directiveLocationsRelationAggregate(
-      __DirectiveLocationsRelationOrderBy __directiveLocationsRelationAggregate) {
-    this.__directiveLocationsRelationAggregate = __directiveLocationsRelationAggregate;
   }
 
   public Sort getIdCount() {

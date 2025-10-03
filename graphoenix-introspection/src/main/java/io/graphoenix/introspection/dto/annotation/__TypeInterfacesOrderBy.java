@@ -9,7 +9,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
-import org.eclipse.microprofile.graphql.Name;
 
 /**
  * Order Input for Relationship Object between __Type and __Type
@@ -33,23 +32,10 @@ public @interface __TypeInterfacesOrderBy {
   Sort typeRef() default Sort.ASC;
 
   /**
-   * __Type
-   */
-  @Description("__Type")
-  __TypeOrderBy1 type() default @__TypeOrderBy1;
-
-  /**
    * __Type Reference
    */
   @Description("__Type Reference")
   Sort interfaceRef() default Sort.ASC;
-
-  /**
-   * __Type
-   */
-  @Name("interface")
-  @Description("__Type")
-  __TypeOrderBy1 _interface() default @__TypeOrderBy1;
 
   /**
    * Is Deprecated
@@ -163,11 +149,7 @@ public @interface __TypeInterfacesOrderBy {
 
   String $typeRef() default "";
 
-  String $type() default "";
-
   String $interfaceRef() default "";
-
-  String $interface() default "";
 
   String $isDeprecated() default "";
 

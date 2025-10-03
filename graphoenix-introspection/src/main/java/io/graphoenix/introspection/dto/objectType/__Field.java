@@ -223,12 +223,14 @@ public class __Field implements Meta {
   @Description("Min of type Reference")
   private String typeNameMin;
 
+  @Override
   public String getId() {
     return this.id;
   }
 
+  @Override
   public void setId(String id) {
-    this.id = id;
+    this.id = (String)id;
   }
 
   public String getName() {

@@ -31,6 +31,12 @@ public @interface NamedStructInput {
   String description() default "";
 
   /**
+   * id
+   */
+  @Description("id")
+  String id() default "";
+
+  /**
    * Is Deprecated
    */
   @Description("Is Deprecated")
@@ -81,6 +87,8 @@ public @interface NamedStructInput {
   String $name() default "";
 
   String $description() default "";
+
+  String $id() default "";
 
   String $isDeprecated() default "";
 

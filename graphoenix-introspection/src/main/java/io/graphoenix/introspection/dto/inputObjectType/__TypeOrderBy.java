@@ -27,12 +27,6 @@ public class __TypeOrderBy {
   private Sort name;
 
   /**
-   * ofSchema
-   */
-  @Description("ofSchema")
-  private __SchemaOrderBy ofSchema;
-
-  /**
    * kind
    */
   @Description("kind")
@@ -43,42 +37,6 @@ public class __TypeOrderBy {
    */
   @Description("description")
   private Sort description;
-
-  /**
-   * fields
-   */
-  @Description("fields")
-  private __FieldOrderBy fields;
-
-  /**
-   * interfaces
-   */
-  @Description("interfaces")
-  private __TypeOrderBy interfaces;
-
-  /**
-   * possibleTypes
-   */
-  @Description("possibleTypes")
-  private __TypeOrderBy possibleTypes;
-
-  /**
-   * enumValues
-   */
-  @Description("enumValues")
-  private __EnumValueOrderBy enumValues;
-
-  /**
-   * inputFields
-   */
-  @Description("inputFields")
-  private __InputValueOrderBy inputFields;
-
-  /**
-   * ofType
-   */
-  @Description("ofType")
-  private __TypeOrderBy ofType;
 
   /**
    * Is Deprecated
@@ -145,60 +103,6 @@ public class __TypeOrderBy {
    */
   @Description("ofType Reference")
   private Sort ofTypeName;
-
-  /**
-   * Relationship Object between __Type and __Type
-   */
-  @Description("Relationship Object between __Type and __Type")
-  private __TypeInterfacesOrderBy __typeInterfaces;
-
-  /**
-   * Relationship Object between __Type and __Type
-   */
-  @Description("Relationship Object between __Type and __Type")
-  private __TypePossibleTypesOrderBy __typePossibleTypes;
-
-  /**
-   * Aggregate Field for fields
-   */
-  @Description("Aggregate Field for fields")
-  private __FieldOrderBy fieldsAggregate;
-
-  /**
-   * Aggregate Field for interfaces
-   */
-  @Description("Aggregate Field for interfaces")
-  private __TypeOrderBy interfacesAggregate;
-
-  /**
-   * Aggregate Field for possibleTypes
-   */
-  @Description("Aggregate Field for possibleTypes")
-  private __TypeOrderBy possibleTypesAggregate;
-
-  /**
-   * Aggregate Field for enumValues
-   */
-  @Description("Aggregate Field for enumValues")
-  private __EnumValueOrderBy enumValuesAggregate;
-
-  /**
-   * Aggregate Field for inputFields
-   */
-  @Description("Aggregate Field for inputFields")
-  private __InputValueOrderBy inputFieldsAggregate;
-
-  /**
-   * Aggregate Field for Relationship Object between __Type and __Type
-   */
-  @Description("Aggregate Field for Relationship Object between __Type and __Type")
-  private __TypeInterfacesOrderBy __typeInterfacesAggregate;
-
-  /**
-   * Aggregate Field for Relationship Object between __Type and __Type
-   */
-  @Description("Aggregate Field for Relationship Object between __Type and __Type")
-  private __TypePossibleTypesOrderBy __typePossibleTypesAggregate;
 
   /**
    * Count of __Type
@@ -336,14 +240,6 @@ public class __TypeOrderBy {
     this.name = name;
   }
 
-  public __SchemaOrderBy getOfSchema() {
-    return this.ofSchema;
-  }
-
-  public void setOfSchema(__SchemaOrderBy ofSchema) {
-    this.ofSchema = ofSchema;
-  }
-
   public Sort getKind() {
     return this.kind;
   }
@@ -358,54 +254,6 @@ public class __TypeOrderBy {
 
   public void setDescription(Sort description) {
     this.description = description;
-  }
-
-  public __FieldOrderBy getFields() {
-    return this.fields;
-  }
-
-  public void setFields(__FieldOrderBy fields) {
-    this.fields = fields;
-  }
-
-  public __TypeOrderBy getInterfaces() {
-    return this.interfaces;
-  }
-
-  public void setInterfaces(__TypeOrderBy interfaces) {
-    this.interfaces = interfaces;
-  }
-
-  public __TypeOrderBy getPossibleTypes() {
-    return this.possibleTypes;
-  }
-
-  public void setPossibleTypes(__TypeOrderBy possibleTypes) {
-    this.possibleTypes = possibleTypes;
-  }
-
-  public __EnumValueOrderBy getEnumValues() {
-    return this.enumValues;
-  }
-
-  public void setEnumValues(__EnumValueOrderBy enumValues) {
-    this.enumValues = enumValues;
-  }
-
-  public __InputValueOrderBy getInputFields() {
-    return this.inputFields;
-  }
-
-  public void setInputFields(__InputValueOrderBy inputFields) {
-    this.inputFields = inputFields;
-  }
-
-  public __TypeOrderBy getOfType() {
-    return this.ofType;
-  }
-
-  public void setOfType(__TypeOrderBy ofType) {
-    this.ofType = ofType;
   }
 
   public Sort getIsDeprecated() {
@@ -494,79 +342,6 @@ public class __TypeOrderBy {
 
   public void setOfTypeName(Sort ofTypeName) {
     this.ofTypeName = ofTypeName;
-  }
-
-  public __TypeInterfacesOrderBy get__typeInterfaces() {
-    return this.__typeInterfaces;
-  }
-
-  public void set__typeInterfaces(__TypeInterfacesOrderBy __typeInterfaces) {
-    this.__typeInterfaces = __typeInterfaces;
-  }
-
-  public __TypePossibleTypesOrderBy get__typePossibleTypes() {
-    return this.__typePossibleTypes;
-  }
-
-  public void set__typePossibleTypes(__TypePossibleTypesOrderBy __typePossibleTypes) {
-    this.__typePossibleTypes = __typePossibleTypes;
-  }
-
-  public __FieldOrderBy getFieldsAggregate() {
-    return this.fieldsAggregate;
-  }
-
-  public void setFieldsAggregate(__FieldOrderBy fieldsAggregate) {
-    this.fieldsAggregate = fieldsAggregate;
-  }
-
-  public __TypeOrderBy getInterfacesAggregate() {
-    return this.interfacesAggregate;
-  }
-
-  public void setInterfacesAggregate(__TypeOrderBy interfacesAggregate) {
-    this.interfacesAggregate = interfacesAggregate;
-  }
-
-  public __TypeOrderBy getPossibleTypesAggregate() {
-    return this.possibleTypesAggregate;
-  }
-
-  public void setPossibleTypesAggregate(__TypeOrderBy possibleTypesAggregate) {
-    this.possibleTypesAggregate = possibleTypesAggregate;
-  }
-
-  public __EnumValueOrderBy getEnumValuesAggregate() {
-    return this.enumValuesAggregate;
-  }
-
-  public void setEnumValuesAggregate(__EnumValueOrderBy enumValuesAggregate) {
-    this.enumValuesAggregate = enumValuesAggregate;
-  }
-
-  public __InputValueOrderBy getInputFieldsAggregate() {
-    return this.inputFieldsAggregate;
-  }
-
-  public void setInputFieldsAggregate(__InputValueOrderBy inputFieldsAggregate) {
-    this.inputFieldsAggregate = inputFieldsAggregate;
-  }
-
-  public __TypeInterfacesOrderBy get__typeInterfacesAggregate() {
-    return this.__typeInterfacesAggregate;
-  }
-
-  public void set__typeInterfacesAggregate(__TypeInterfacesOrderBy __typeInterfacesAggregate) {
-    this.__typeInterfacesAggregate = __typeInterfacesAggregate;
-  }
-
-  public __TypePossibleTypesOrderBy get__typePossibleTypesAggregate() {
-    return this.__typePossibleTypesAggregate;
-  }
-
-  public void set__typePossibleTypesAggregate(
-      __TypePossibleTypesOrderBy __typePossibleTypesAggregate) {
-    this.__typePossibleTypesAggregate = __typePossibleTypesAggregate;
   }
 
   public Sort getIdCount() {

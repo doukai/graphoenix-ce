@@ -32,12 +32,6 @@ public @interface __DirectiveLocationsRelationOrderBy {
   Sort __directiveRef() default Sort.ASC;
 
   /**
-   * __Directive
-   */
-  @Description("__Directive")
-  __DirectiveOrderBy1 __directive() default @__DirectiveOrderBy1;
-
-  /**
    * locations Reference
    */
   @Description("locations Reference")
@@ -154,8 +148,6 @@ public @interface __DirectiveLocationsRelationOrderBy {
   String $id() default "";
 
   String $__directiveRef() default "";
-
-  String $__directive() default "";
 
   String $locationsRef() default "";
 

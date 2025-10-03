@@ -178,12 +178,14 @@ public class __EnumValue implements Meta {
   @Description("Min of ofType Reference")
   private String ofTypeNameMin;
 
+  @Override
   public String getId() {
     return this.id;
   }
 
+  @Override
   public void setId(String id) {
-    this.id = id;
+    this.id = (String)id;
   }
 
   public String getName() {

@@ -27,28 +27,10 @@ public class __FieldOrderBy {
   private Sort name;
 
   /**
-   * ofType
-   */
-  @Description("ofType")
-  private __TypeOrderBy ofType;
-
-  /**
    * description
    */
   @Description("description")
   private Sort description;
-
-  /**
-   * args
-   */
-  @Description("args")
-  private __InputValueOrderBy args;
-
-  /**
-   * type
-   */
-  @Description("type")
-  private __TypeOrderBy type;
 
   /**
    * deprecationReason
@@ -121,12 +103,6 @@ public class __FieldOrderBy {
    */
   @Description("type Reference")
   private Sort typeName;
-
-  /**
-   * Aggregate Field for args
-   */
-  @Description("Aggregate Field for args")
-  private __InputValueOrderBy argsAggregate;
 
   /**
    * Count of __Field
@@ -252,36 +228,12 @@ public class __FieldOrderBy {
     this.name = name;
   }
 
-  public __TypeOrderBy getOfType() {
-    return this.ofType;
-  }
-
-  public void setOfType(__TypeOrderBy ofType) {
-    this.ofType = ofType;
-  }
-
   public Sort getDescription() {
     return this.description;
   }
 
   public void setDescription(Sort description) {
     this.description = description;
-  }
-
-  public __InputValueOrderBy getArgs() {
-    return this.args;
-  }
-
-  public void setArgs(__InputValueOrderBy args) {
-    this.args = args;
-  }
-
-  public __TypeOrderBy getType() {
-    return this.type;
-  }
-
-  public void setType(__TypeOrderBy type) {
-    this.type = type;
   }
 
   public Sort getDeprecationReason() {
@@ -378,14 +330,6 @@ public class __FieldOrderBy {
 
   public void setTypeName(Sort typeName) {
     this.typeName = typeName;
-  }
-
-  public __InputValueOrderBy getArgsAggregate() {
-    return this.argsAggregate;
-  }
-
-  public void setArgsAggregate(__InputValueOrderBy argsAggregate) {
-    this.argsAggregate = argsAggregate;
   }
 
   public Sort getIdCount() {

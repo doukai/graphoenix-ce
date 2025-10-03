@@ -196,12 +196,14 @@ public class File implements Meta {
   @Description("Min of URL")
   private String urlMin;
 
+  @Override
   public String getId() {
     return this.id;
   }
 
+  @Override
   public void setId(String id) {
-    this.id = id;
+    this.id = (String)id;
   }
 
   public String getName() {

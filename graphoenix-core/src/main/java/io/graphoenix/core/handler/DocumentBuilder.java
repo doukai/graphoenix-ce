@@ -847,6 +847,7 @@ public class DocumentBuilder {
                 .filter(fieldDefinition -> !fieldDefinition.isConnectionField())
                 .filter(fieldDefinition -> inputType.equals(InputType.ORDER_BY) || !fieldDefinition.isFunctionField())
                 .filter(fieldDefinition -> inputType.equals(InputType.ORDER_BY) || !fieldDefinition.isAggregateField())
+                .filter(fieldDefinition -> !inputType.equals(InputType.ORDER_BY) || documentManager.getFieldTypeDefinition(fieldDefinition).isLeaf())
                 .filter(fieldDefinition -> !documentManager.getFieldTypeDefinition(fieldDefinition).isContainer())
                 .map(fieldDefinition -> fieldToInputValue(fieldsType, fieldDefinition, inputType))
                 .collect(Collectors.toCollection(LinkedHashSet::new));

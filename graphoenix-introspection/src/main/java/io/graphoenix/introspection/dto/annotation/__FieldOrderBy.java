@@ -32,28 +32,10 @@ public @interface __FieldOrderBy {
   Sort name() default Sort.ASC;
 
   /**
-   * ofType
-   */
-  @Description("ofType")
-  __TypeOrderBy1 ofType() default @__TypeOrderBy1;
-
-  /**
    * description
    */
   @Description("description")
   Sort description() default Sort.ASC;
-
-  /**
-   * args
-   */
-  @Description("args")
-  __InputValueOrderBy1 args() default @__InputValueOrderBy1;
-
-  /**
-   * type
-   */
-  @Description("type")
-  __TypeOrderBy1 type() default @__TypeOrderBy1;
 
   /**
    * deprecationReason
@@ -126,12 +108,6 @@ public @interface __FieldOrderBy {
    */
   @Description("type Reference")
   Sort typeName() default Sort.ASC;
-
-  /**
-   * Aggregate Field for args
-   */
-  @Description("Aggregate Field for args")
-  __InputValueOrderBy1 argsAggregate() default @__InputValueOrderBy1;
 
   /**
    * Count of __Field
@@ -245,13 +221,7 @@ public @interface __FieldOrderBy {
 
   String $name() default "";
 
-  String $ofType() default "";
-
   String $description() default "";
-
-  String $args() default "";
-
-  String $type() default "";
 
   String $deprecationReason() default "";
 
@@ -276,8 +246,6 @@ public @interface __FieldOrderBy {
   String $ofTypeName() default "";
 
   String $typeName() default "";
-
-  String $argsAggregate() default "";
 
   String $idCount() default "";
 

@@ -32,12 +32,6 @@ public @interface __TypeOrderBy {
   Sort name() default Sort.ASC;
 
   /**
-   * ofSchema
-   */
-  @Description("ofSchema")
-  __SchemaOrderBy1 ofSchema() default @__SchemaOrderBy1;
-
-  /**
    * kind
    */
   @Description("kind")
@@ -48,42 +42,6 @@ public @interface __TypeOrderBy {
    */
   @Description("description")
   Sort description() default Sort.ASC;
-
-  /**
-   * fields
-   */
-  @Description("fields")
-  __FieldOrderBy1 fields() default @__FieldOrderBy1;
-
-  /**
-   * interfaces
-   */
-  @Description("interfaces")
-  __TypeOrderBy1 interfaces() default @__TypeOrderBy1;
-
-  /**
-   * possibleTypes
-   */
-  @Description("possibleTypes")
-  __TypeOrderBy1 possibleTypes() default @__TypeOrderBy1;
-
-  /**
-   * enumValues
-   */
-  @Description("enumValues")
-  __EnumValueOrderBy1 enumValues() default @__EnumValueOrderBy1;
-
-  /**
-   * inputFields
-   */
-  @Description("inputFields")
-  __InputValueOrderBy1 inputFields() default @__InputValueOrderBy1;
-
-  /**
-   * ofType
-   */
-  @Description("ofType")
-  __TypeOrderBy1 ofType() default @__TypeOrderBy1;
 
   /**
    * Is Deprecated
@@ -150,60 +108,6 @@ public @interface __TypeOrderBy {
    */
   @Description("ofType Reference")
   Sort ofTypeName() default Sort.ASC;
-
-  /**
-   * Relationship Object between __Type and __Type
-   */
-  @Description("Relationship Object between __Type and __Type")
-  __TypeInterfacesOrderBy1 __typeInterfaces() default @__TypeInterfacesOrderBy1;
-
-  /**
-   * Relationship Object between __Type and __Type
-   */
-  @Description("Relationship Object between __Type and __Type")
-  __TypePossibleTypesOrderBy1 __typePossibleTypes() default @__TypePossibleTypesOrderBy1;
-
-  /**
-   * Aggregate Field for fields
-   */
-  @Description("Aggregate Field for fields")
-  __FieldOrderBy1 fieldsAggregate() default @__FieldOrderBy1;
-
-  /**
-   * Aggregate Field for interfaces
-   */
-  @Description("Aggregate Field for interfaces")
-  __TypeOrderBy1 interfacesAggregate() default @__TypeOrderBy1;
-
-  /**
-   * Aggregate Field for possibleTypes
-   */
-  @Description("Aggregate Field for possibleTypes")
-  __TypeOrderBy1 possibleTypesAggregate() default @__TypeOrderBy1;
-
-  /**
-   * Aggregate Field for enumValues
-   */
-  @Description("Aggregate Field for enumValues")
-  __EnumValueOrderBy1 enumValuesAggregate() default @__EnumValueOrderBy1;
-
-  /**
-   * Aggregate Field for inputFields
-   */
-  @Description("Aggregate Field for inputFields")
-  __InputValueOrderBy1 inputFieldsAggregate() default @__InputValueOrderBy1;
-
-  /**
-   * Aggregate Field for Relationship Object between __Type and __Type
-   */
-  @Description("Aggregate Field for Relationship Object between __Type and __Type")
-  __TypeInterfacesOrderBy1 __typeInterfacesAggregate() default @__TypeInterfacesOrderBy1;
-
-  /**
-   * Aggregate Field for Relationship Object between __Type and __Type
-   */
-  @Description("Aggregate Field for Relationship Object between __Type and __Type")
-  __TypePossibleTypesOrderBy1 __typePossibleTypesAggregate() default @__TypePossibleTypesOrderBy1;
 
   /**
    * Count of __Type
@@ -329,23 +233,9 @@ public @interface __TypeOrderBy {
 
   String $name() default "";
 
-  String $ofSchema() default "";
-
   String $kind() default "";
 
   String $description() default "";
-
-  String $fields() default "";
-
-  String $interfaces() default "";
-
-  String $possibleTypes() default "";
-
-  String $enumValues() default "";
-
-  String $inputFields() default "";
-
-  String $ofType() default "";
 
   String $isDeprecated() default "";
 
@@ -368,24 +258,6 @@ public @interface __TypeOrderBy {
   String $schemaId() default "";
 
   String $ofTypeName() default "";
-
-  String $__typeInterfaces() default "";
-
-  String $__typePossibleTypes() default "";
-
-  String $fieldsAggregate() default "";
-
-  String $interfacesAggregate() default "";
-
-  String $possibleTypesAggregate() default "";
-
-  String $enumValuesAggregate() default "";
-
-  String $inputFieldsAggregate() default "";
-
-  String $__typeInterfacesAggregate() default "";
-
-  String $__typePossibleTypesAggregate() default "";
 
   String $idCount() default "";
 

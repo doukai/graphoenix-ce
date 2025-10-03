@@ -27,22 +27,10 @@ public class __TypePossibleTypesOrderBy {
   private Sort typeRef;
 
   /**
-   * __Type
-   */
-  @Description("__Type")
-  private __TypeOrderBy type;
-
-  /**
    * __Type Reference
    */
   @Description("__Type Reference")
   private Sort possibleTypeRef;
-
-  /**
-   * __Type
-   */
-  @Description("__Type")
-  private __TypeOrderBy possibleType;
 
   /**
    * Is Deprecated
@@ -168,28 +156,12 @@ public class __TypePossibleTypesOrderBy {
     this.typeRef = typeRef;
   }
 
-  public __TypeOrderBy getType() {
-    return this.type;
-  }
-
-  public void setType(__TypeOrderBy type) {
-    this.type = type;
-  }
-
   public Sort getPossibleTypeRef() {
     return this.possibleTypeRef;
   }
 
   public void setPossibleTypeRef(Sort possibleTypeRef) {
     this.possibleTypeRef = possibleTypeRef;
-  }
-
-  public __TypeOrderBy getPossibleType() {
-    return this.possibleType;
-  }
-
-  public void setPossibleType(__TypeOrderBy possibleType) {
-    this.possibleType = possibleType;
   }
 
   public Sort getIsDeprecated() {

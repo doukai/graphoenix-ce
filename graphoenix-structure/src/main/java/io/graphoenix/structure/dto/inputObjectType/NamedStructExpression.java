@@ -29,6 +29,12 @@ public interface NamedStructExpression extends MetaExpression {
   StringExpression description = null;
 
   /**
+   * id
+   */
+  @Description("id")
+  StringExpression id = null;
+
+  /**
    * Include Deprecated
    */
   @Description("Include Deprecated")
@@ -99,6 +105,12 @@ public interface NamedStructExpression extends MetaExpression {
   }
 
   void setDescription(StringExpression description);
+
+  default StringExpression getId() {
+    return id;
+  }
+
+  void setId(StringExpression id);
 
   default Boolean getIncludeDeprecated() {
     return includeDeprecated;
