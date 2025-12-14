@@ -1,6 +1,8 @@
 package io.graphoenix.core.annotation.processor;
 
+import io.graphoenix.core.config.GraphQLConfig;
 import io.graphoenix.core.config.PackageConfig;
+import io.graphoenix.core.handler.DocumentBuilder;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.GraphQLConfigRegister;
 import io.graphoenix.spi.annotation.*;
@@ -37,7 +39,9 @@ import javax.tools.Diagnostic;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
+import java.nio.file.NoSuchFileException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -50,9 +54,8 @@ import static io.graphoenix.spi.utils.ElementUtil.*;
 
 public abstract class BaseProcessor extends AbstractProcessor {
 
-
-    protected static final String MAIN_GQL_FILE_NAME = "main.gql";
-    protected static final Map<String, Document> DOCUMENT_CACHE = new HashMap<>();
+    public static final String MAIN_GQL_FILE_NAME = "main.gql";
+    private static final Map<String, Document> DOCUMENT_CACHE = new HashMap<>();
 
     static {
         BeanContext.load(BaseProcessor.class.getClassLoader());
@@ -60,7 +63,9 @@ public abstract class BaseProcessor extends AbstractProcessor {
 
     private final Config config = BeanContext.get(Config.class);
     private final PackageConfig packageConfig = BeanContext.get(PackageConfig.class);
+    private final DocumentBuilder documentBuilder = BeanContext.get(DocumentBuilder.class);
     private final DocumentManager documentManager = BeanContext.get(DocumentManager.class);
+    private final GraphQLConfig graphQLConfig = BeanContext.get(GraphQLConfig.class);
     private final GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
 
     private Filer filer;
@@ -97,7 +102,30 @@ public abstract class BaseProcessor extends AbstractProcessor {
 
     public void roundInit(RoundEnvironment roundEnv) {
         if (packageConfig.getPackageName() == null) {
-            getDefaultPackageName(roundEnv).ifPresent(packageName -> packageConfig.setPackageName(packageName));
+            getDefaultPackageName(roundEnv).ifPresent(packageConfig::setPackageName);
+        }
+    }
+
+    public void applicationRoundInit(RoundEnvironment roundEnv) {
+        roundInit(roundEnv);
+        if (DOCUMENT_CACHE.containsKey(MAIN_GQL_FILE_NAME)) {
+            documentManager.setDocument(DOCUMENT_CACHE.get(MAIN_GQL_FILE_NAME));
+        } else {
+            FileObject fileObject = getResource(MAIN_GQL_FILE_NAME);
+            try (InputStream inputStream = fileObject.openInputStream()) {
+                documentManager.getDocument().addDefinitions(inputStream);
+            } catch (NoSuchFileException e) {
+                registerElements(roundEnv);
+                registerOperations(roundEnv);
+                documentBuilder.buildFetchFieldsProtocol();
+                if (graphQLConfig.getMapToLocalFetch()) {
+                    documentBuilder.mapToLocalFetch();
+                }
+                createResource(MAIN_GQL_FILE_NAME, documentManager.getDocument().toString());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            DOCUMENT_CACHE.put(MAIN_GQL_FILE_NAME, documentManager.getDocument());
         }
     }
 
