@@ -2,7 +2,6 @@ package io.graphoenix.core.handler.before;
 
 import com.google.common.collect.Streams;
 import io.graphoenix.core.handler.DocumentManager;
-import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
@@ -38,12 +37,10 @@ public class ConnectionSplitter implements OperationBeforeHandler {
     public static final int CONNECTION_SPLITTER_PRIORITY = ENUM_VALUE_HANDLER_PRIORITY + 100;
 
     private final DocumentManager documentManager;
-    private final PackageManager packageManager;
 
     @Inject
-    public ConnectionSplitter(DocumentManager documentManager, PackageManager packageManager) {
+    public ConnectionSplitter(DocumentManager documentManager) {
         this.documentManager = documentManager;
-        this.packageManager = packageManager;
     }
 
     @Override
@@ -61,9 +58,7 @@ public class ConnectionSplitter implements OperationBeforeHandler {
 
     private Stream<Field> buildConnection(ObjectType objectType, FieldDefinition fieldDefinition, Field field) {
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        if (packageManager.isLocalPackage(fieldDefinition) &&
-                !fieldDefinition.isInvokeField() &&
-                fieldTypeDefinition.isObject()) {
+        if (!fieldDefinition.isInvokeField() && fieldTypeDefinition.isObject()) {
             if (fieldDefinition.isConnectionField()) {
                 return splitConnections(objectType, fieldDefinition, field);
             } else {

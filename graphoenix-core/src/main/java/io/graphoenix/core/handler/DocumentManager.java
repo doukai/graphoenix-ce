@@ -21,7 +21,7 @@ import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_OPERATION_TYP
 
 @ApplicationScoped
 public class DocumentManager {
-    private final Document document = new Document();
+    private Document document = new Document();
 
     private final PackageManager packageManager;
 
@@ -32,6 +32,11 @@ public class DocumentManager {
 
     public Document getDocument() {
         return document;
+    }
+
+    public DocumentManager setDocument(Document document) {
+        this.document = document;
+        return this;
     }
 
     public Document getPackageDocument() {

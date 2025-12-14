@@ -8,6 +8,7 @@ import io.graphoenix.spi.annotation.Package;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
+import io.graphoenix.spi.graphql.Document;
 import io.graphoenix.spi.graphql.common.*;
 import io.graphoenix.spi.graphql.common.Directive;
 import io.graphoenix.spi.graphql.operation.Field;
@@ -31,10 +32,12 @@ import javax.annotation.processing.Filer;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
-import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
+import javax.tools.FileObject;
+import javax.tools.StandardLocation;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -47,27 +50,30 @@ import static io.graphoenix.spi.utils.ElementUtil.*;
 
 public abstract class BaseProcessor extends AbstractProcessor {
 
-    private PackageConfig packageConfig;
-    private DocumentManager documentManager;
+
+    protected static final String MAIN_GQL_FILE_NAME = "main.gql";
+    protected static final Map<String, Document> DOCUMENT_CACHE = new HashMap<>();
+
+    static {
+        BeanContext.load(BaseProcessor.class.getClassLoader());
+    }
+
+    private final Config config = BeanContext.get(Config.class);
+    private final PackageConfig packageConfig = BeanContext.get(PackageConfig.class);
+    private final DocumentManager documentManager = BeanContext.get(DocumentManager.class);
+    private final GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
+
+    private Filer filer;
     private Types types;
-    private Elements elements;
 
     @Override
     public void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
-        types = processingEnv.getTypeUtils();
-        elements = processingEnv.getElementUtils();
-        Filer filer = processingEnv.getFiler();
-        BeanContext.load(BaseProcessor.class.getClassLoader());
-        Config config = BeanContext.get(Config.class);
-        ((TypesafeConfig) config).load(filer);
-        packageConfig = BeanContext.get(PackageConfig.class);
-        documentManager = BeanContext.get(DocumentManager.class);
-        GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
-
+        this.filer = processingEnv.getFiler();
+        this.types = processingEnv.getTypeUtils();
+        ((TypesafeConfig) config).load(this.filer);
         try {
-            documentManager.getDocument().clear();
-            configRegister.registerConfig(filer);
+            configRegister.registerConfig(this.filer);
         } catch (IOException e) {
             Logger.error(e);
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
@@ -551,5 +557,26 @@ public abstract class BaseProcessor extends AbstractProcessor {
                 )
                 .filter(StreamUtil.distinctByKey(AbstractDefinition::getName))
                 .collect(Collectors.toList());
+    }
+
+    public void createResource(String fileName, String content) {
+        try {
+            Writer writer = filer.createResource(StandardLocation.CLASS_OUTPUT, "", fileName).openWriter();
+            writer.write(content);
+            writer.close();
+            Logger.info("{} build success", fileName);
+        } catch (IOException e) {
+            Logger.error(e);
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "resource file create failed");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public FileObject getResource(String fileName) {
+        try {
+            return processingEnv.getFiler().getResource(StandardLocation.CLASS_OUTPUT, "", fileName);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

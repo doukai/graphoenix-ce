@@ -16,9 +16,6 @@ public class GraphQLConfig {
     private String graphQLPath = "graphql";
 
     @Optional
-    private Boolean build = true;
-
-    @Optional
     private Boolean buildIntrospection = false;
 
     @Optional
@@ -49,14 +46,6 @@ public class GraphQLConfig {
 
     public void setGraphQLPath(String graphQLPath) {
         this.graphQLPath = graphQLPath;
-    }
-
-    public Boolean getBuild() {
-        return build;
-    }
-
-    public void setBuild(Boolean build) {
-        this.build = build;
     }
 
     public Boolean getBuildIntrospection() {

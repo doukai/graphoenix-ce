@@ -627,7 +627,7 @@ public class DocumentBuilder {
                 .addFields(
                         objectType.getFields().stream()
                                 .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
-                                .filter(fieldDefinition -> !fieldDefinition.isFetchField())
+//                                .filter(fieldDefinition -> !fieldDefinition.isFetchField())
                                 .filter(fieldDefinition -> !fieldDefinition.isFunctionField())
                                 .filter(fieldDefinition -> !fieldDefinition.isConnectionField())
                                 .filter(fieldDefinition -> !fieldDefinition.isAggregateField())

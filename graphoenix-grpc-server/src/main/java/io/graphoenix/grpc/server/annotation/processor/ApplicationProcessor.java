@@ -4,6 +4,7 @@ import com.google.auto.service.AutoService;
 import io.graphoenix.core.annotation.processor.BaseProcessor;
 import io.graphoenix.core.config.GraphQLConfig;
 import io.graphoenix.core.handler.DocumentBuilder;
+import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.GraphQLConfigRegister;
 import io.graphoenix.grpc.server.implementer.GrpcServerProducerBuilder;
 import io.graphoenix.grpc.server.implementer.GrpcServiceImplementer;
@@ -11,20 +12,32 @@ import io.nozdormu.spi.context.BeanContext;
 import org.tinylog.Logger;
 
 import javax.annotation.processing.*;
+import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
+import javax.tools.FileObject;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.nio.file.NoSuchFileException;
 import java.util.Set;
 
-import static javax.lang.model.SourceVersion.RELEASE_11;
-
 @SupportedAnnotationTypes("io.graphoenix.spi.annotation.Application")
-@SupportedSourceVersion(RELEASE_11)
 @AutoService(Processor.class)
 public class ApplicationProcessor extends BaseProcessor {
 
+    private final DocumentBuilder documentBuilder = BeanContext.get(DocumentBuilder.class);
+    private final DocumentManager documentManager = BeanContext.get(DocumentManager.class);
+    private final GraphQLConfig graphQLConfig = BeanContext.get(GraphQLConfig.class);
+    private final GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
+    private final GrpcServiceImplementer grpcServiceImplementer = BeanContext.get(GrpcServiceImplementer.class);
+    private final GrpcServerProducerBuilder grpcServerProducerBuilder = BeanContext.get(GrpcServerProducerBuilder.class);
     private Filer filer;
+
+    @Override
+    public SourceVersion getSupportedSourceVersion() {
+        return SourceVersion.latestSupported();
+    }
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -37,21 +50,30 @@ public class ApplicationProcessor extends BaseProcessor {
         if (annotations.isEmpty()) {
             return false;
         }
-        DocumentBuilder documentBuilder = BeanContext.get(DocumentBuilder.class);
         roundInit(roundEnv);
 
         try {
-            GraphQLConfig graphQLConfig = BeanContext.get(GraphQLConfig.class);
-            GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
-            configRegister.registerApplication(ApplicationProcessor.class.getClassLoader());
-            registerElements(roundEnv);
-            registerOperations(roundEnv);
-            if (graphQLConfig.getMapToLocalFetch()) {
-                documentBuilder.mapToLocalFetch();
+            if (DOCUMENT_CACHE.containsKey(MAIN_GQL_FILE_NAME)) {
+                documentManager.setDocument(DOCUMENT_CACHE.get(MAIN_GQL_FILE_NAME));
+            } else {
+                FileObject fileObject = getResource(MAIN_GQL_FILE_NAME);
+                try (InputStream inputStream = fileObject.openInputStream()) {
+                    documentManager.getDocument().addDefinitions(inputStream);
+                } catch (NoSuchFileException e) {
+                    configRegister.registerApplication(ApplicationProcessor.class.getClassLoader());
+                    registerElements(roundEnv);
+                    registerOperations(roundEnv);
+                    documentBuilder.buildFetchFieldsProtocol();
+                    if (graphQLConfig.getMapToLocalFetch()) {
+                        documentBuilder.mapToLocalFetch();
+                    }
+                    createResource(MAIN_GQL_FILE_NAME, documentManager.getDocument().toString());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                DOCUMENT_CACHE.put(MAIN_GQL_FILE_NAME, documentManager.getDocument());
             }
-            GrpcServiceImplementer grpcServiceImplementer = BeanContext.get(GrpcServiceImplementer.class);
             grpcServiceImplementer.writeToFiler(filer);
-            GrpcServerProducerBuilder grpcServerProducerBuilder = BeanContext.get(GrpcServerProducerBuilder.class);
             grpcServerProducerBuilder.writeToFiler(filer);
         } catch (IOException | URISyntaxException e) {
             Logger.error(e);
