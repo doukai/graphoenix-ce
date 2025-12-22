@@ -24,10 +24,6 @@ import java.util.Set;
 @AutoService(Processor.class)
 public class PackageProcessor extends BaseProcessor {
 
-    private final PackageConfig packageConfig = BeanContext.get(PackageConfig.class);
-    private final DocumentManager documentManager = BeanContext.get(DocumentManager.class);
-    private final DocumentBuilder documentBuilder = BeanContext.get(DocumentBuilder.class);
-    private final GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
     private Filer filer;
 
     @Override
@@ -38,7 +34,7 @@ public class PackageProcessor extends BaseProcessor {
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
-        this.filer = processingEnv.getFiler();
+        filer = processingEnv.getFiler();
     }
 
     @Override
@@ -46,8 +42,12 @@ public class PackageProcessor extends BaseProcessor {
         if (annotations.isEmpty()) {
             return false;
         }
+        PackageConfig packageConfig = BeanContext.get(PackageConfig.class);
+        DocumentManager documentManager = BeanContext.get(DocumentManager.class);
+        DocumentBuilder documentBuilder = BeanContext.get(DocumentBuilder.class);
         roundInit(roundEnv);
         try {
+            GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
             configRegister.registerPackage(PackageProcessor.class.getClassLoader());
             documentBuilder.build();
             registerElements(roundEnv);
@@ -57,6 +57,7 @@ public class PackageProcessor extends BaseProcessor {
             Writer writer = packageGraphQL.openWriter();
             writer.write(documentManager.getPackageDocument().toString());
             writer.close();
+
         } catch (IOException | URISyntaxException e) {
             Logger.error(e);
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());

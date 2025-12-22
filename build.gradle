@@ -13,5 +13,11 @@ subprojects {
         mavenLocal()
     }
 
+    tasks.withType(JavaCompile).configureEach {
+        options.compilerArgs += [
+                "-AdecompileCacheDir=${rootProject.buildDir}/decompile-cache"
+        ]
+    }
+
     version "$graphoenixVersion"
 }

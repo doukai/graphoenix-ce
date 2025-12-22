@@ -2,6 +2,9 @@ package io.graphoenix.grpc.server.annotation.processor;
 
 import com.google.auto.service.AutoService;
 import io.graphoenix.core.annotation.processor.BaseProcessor;
+import io.graphoenix.core.config.GraphQLConfig;
+import io.graphoenix.core.handler.DocumentBuilder;
+import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.GraphQLConfigRegister;
 import io.graphoenix.grpc.server.implementer.GrpcServerProducerBuilder;
 import io.graphoenix.grpc.server.implementer.GrpcServiceImplementer;
@@ -20,9 +23,6 @@ import java.util.Set;
 @AutoService(Processor.class)
 public class ApplicationProcessor extends BaseProcessor {
 
-    private final GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
-    private final GrpcServiceImplementer grpcServiceImplementer = BeanContext.get(GrpcServiceImplementer.class);
-    private final GrpcServerProducerBuilder grpcServerProducerBuilder = BeanContext.get(GrpcServerProducerBuilder.class);
     private Filer filer;
 
     @Override
@@ -41,11 +41,27 @@ public class ApplicationProcessor extends BaseProcessor {
         if (annotations.isEmpty()) {
             return false;
         }
-        applicationRoundInit(roundEnv);
+        DocumentBuilder documentBuilder = BeanContext.get(DocumentBuilder.class);
+        DocumentManager documentManager = BeanContext.get(DocumentManager.class);
+        roundInit(roundEnv);
 
         try {
-            configRegister.registerApplication(ApplicationProcessor.class.getClassLoader());
+            if (DOCUMENT_CACHE.getDefinitions().isEmpty()) {
+                GraphQLConfig graphQLConfig = BeanContext.get(GraphQLConfig.class);
+                GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
+                configRegister.registerApplication(ApplicationProcessor.class.getClassLoader());
+                registerElements(roundEnv);
+                registerOperations(roundEnv);
+                if (graphQLConfig.getMapToLocalFetch()) {
+                    documentBuilder.mapToLocalFetch();
+                }
+                DOCUMENT_CACHE.setDefinitions(documentManager.getDocument().getDefinitions());
+            } else {
+                documentManager.getDocument().setDefinitions(DOCUMENT_CACHE.getDefinitions());
+            }
+            GrpcServiceImplementer grpcServiceImplementer = BeanContext.get(GrpcServiceImplementer.class);
             grpcServiceImplementer.writeToFiler(filer);
+            GrpcServerProducerBuilder grpcServerProducerBuilder = BeanContext.get(GrpcServerProducerBuilder.class);
             grpcServerProducerBuilder.writeToFiler(filer);
         } catch (IOException | URISyntaxException e) {
             Logger.error(e);

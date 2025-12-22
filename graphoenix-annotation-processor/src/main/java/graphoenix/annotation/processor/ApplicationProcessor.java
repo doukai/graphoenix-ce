@@ -2,6 +2,8 @@ package graphoenix.annotation.processor;
 
 import com.google.auto.service.AutoService;
 import io.graphoenix.core.annotation.processor.BaseProcessor;
+import io.graphoenix.core.config.GraphQLConfig;
+import io.graphoenix.core.handler.DocumentBuilder;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.GraphQLConfigRegister;
 import io.graphoenix.core.handler.PackageManager;
@@ -28,12 +30,6 @@ import java.util.Set;
 @AutoService(Processor.class)
 public class ApplicationProcessor extends BaseProcessor {
 
-    private final PackageManager packageManager = BeanContext.get(PackageManager.class);
-    private final DocumentManager documentManager = BeanContext.get(DocumentManager.class);
-    private final GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
-    private final InvokeHandlerBuilder invokeHandlerBuilder = BeanContext.get(InvokeHandlerBuilder.class);
-    private final InputInvokeHandlerBuilder inputInvokeHandlerBuilder = BeanContext.get(InputInvokeHandlerBuilder.class);
-    private final ArgumentsInvokeHandlerBuilder argumentsInvokeHandlerBuilder = BeanContext.get(ArgumentsInvokeHandlerBuilder.class);
     private Filer filer;
 
     @Override
@@ -52,11 +48,26 @@ public class ApplicationProcessor extends BaseProcessor {
         if (annotations.isEmpty()) {
             return false;
         }
-        applicationRoundInit(roundEnv);
+        PackageManager packageManager = BeanContext.get(PackageManager.class);
+        DocumentBuilder documentBuilder = BeanContext.get(DocumentBuilder.class);
+        DocumentManager documentManager = BeanContext.get(DocumentManager.class);
+        roundInit(roundEnv);
 
         try {
-            configRegister.registerApplication(ApplicationProcessor.class.getClassLoader());
-            FileObject mainGraphQL = filer.createResource(StandardLocation.CLASS_OUTPUT, "", "META-INF/graphql/" + MAIN_GQL_FILE_NAME);
+            if (DOCUMENT_CACHE.getDefinitions().isEmpty()) {
+                GraphQLConfig graphQLConfig = BeanContext.get(GraphQLConfig.class);
+                GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
+                configRegister.registerApplication(ApplicationProcessor.class.getClassLoader());
+                registerElements(roundEnv);
+                registerOperations(roundEnv);
+                if (graphQLConfig.getMapToLocalFetch()) {
+                    documentBuilder.mapToLocalFetch();
+                }
+                DOCUMENT_CACHE.setDefinitions(documentManager.getDocument().getDefinitions());
+            } else {
+                documentManager.getDocument().setDefinitions(DOCUMENT_CACHE.getDefinitions());
+            }
+            FileObject mainGraphQL = filer.createResource(StandardLocation.CLASS_OUTPUT, "", "META-INF/graphql/main.gql");
             Writer writer = mainGraphQL.openWriter();
             writer.write(documentManager.getDocument().toString());
             writer.close();
@@ -65,12 +76,15 @@ public class ApplicationProcessor extends BaseProcessor {
                     .filter(packageManager::isLocalPackage)
                     .anyMatch(FieldDefinition::isInvokeField)
             ) {
+                InvokeHandlerBuilder invokeHandlerBuilder = BeanContext.get(InvokeHandlerBuilder.class);
                 invokeHandlerBuilder.writeToFiler(filer);
             }
             if (documentManager.getDocument().getInputObjectTypes()
                     .filter(packageManager::isLocalPackage)
                     .anyMatch(InputObjectType::isInvokesInput)
             ) {
+                InputInvokeHandlerBuilder inputInvokeHandlerBuilder = BeanContext.get(InputInvokeHandlerBuilder.class);
+                ArgumentsInvokeHandlerBuilder argumentsInvokeHandlerBuilder = BeanContext.get(ArgumentsInvokeHandlerBuilder.class);
                 inputInvokeHandlerBuilder.writeToFiler(filer);
                 argumentsInvokeHandlerBuilder.writeToFiler(filer);
             }

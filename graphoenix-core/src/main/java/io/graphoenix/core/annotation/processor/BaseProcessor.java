@@ -1,8 +1,6 @@
 package io.graphoenix.core.annotation.processor;
 
-import io.graphoenix.core.config.GraphQLConfig;
 import io.graphoenix.core.config.PackageConfig;
-import io.graphoenix.core.handler.DocumentBuilder;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.GraphQLConfigRegister;
 import io.graphoenix.spi.annotation.*;
@@ -36,12 +34,7 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
-import javax.tools.FileObject;
-import javax.tools.StandardLocation;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
-import java.nio.file.NoSuchFileException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -54,31 +47,27 @@ import static io.graphoenix.spi.utils.ElementUtil.*;
 
 public abstract class BaseProcessor extends AbstractProcessor {
 
-    public static final String MAIN_GQL_FILE_NAME = "main.gql";
-    private static final Map<String, Document> DOCUMENT_CACHE = new HashMap<>();
+    protected static final Document DOCUMENT_CACHE = new Document();
 
-    static {
-        BeanContext.load(BaseProcessor.class.getClassLoader());
-    }
-
-    private final Config config = BeanContext.get(Config.class);
-    private final PackageConfig packageConfig = BeanContext.get(PackageConfig.class);
-    private final DocumentBuilder documentBuilder = BeanContext.get(DocumentBuilder.class);
-    private final DocumentManager documentManager = BeanContext.get(DocumentManager.class);
-    private final GraphQLConfig graphQLConfig = BeanContext.get(GraphQLConfig.class);
-    private final GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
-
-    private Filer filer;
+    private PackageConfig packageConfig;
+    private DocumentManager documentManager;
     private Types types;
 
     @Override
     public void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
-        this.filer = processingEnv.getFiler();
-        this.types = processingEnv.getTypeUtils();
-        ((TypesafeConfig) config).load(this.filer);
+        types = processingEnv.getTypeUtils();
+        Filer filer = processingEnv.getFiler();
+        BeanContext.load(BaseProcessor.class.getClassLoader());
+        Config config = BeanContext.get(Config.class);
+        ((TypesafeConfig) config).load(filer);
+        packageConfig = BeanContext.get(PackageConfig.class);
+        documentManager = BeanContext.get(DocumentManager.class);
+        GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
+
         try {
-            configRegister.registerConfig(this.filer);
+            documentManager.getDocument().clear();
+            configRegister.registerConfig(filer);
         } catch (IOException e) {
             Logger.error(e);
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
@@ -102,30 +91,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
 
     public void roundInit(RoundEnvironment roundEnv) {
         if (packageConfig.getPackageName() == null) {
-            getDefaultPackageName(roundEnv).ifPresent(packageConfig::setPackageName);
-        }
-    }
-
-    public void applicationRoundInit(RoundEnvironment roundEnv) {
-        roundInit(roundEnv);
-        if (DOCUMENT_CACHE.containsKey(MAIN_GQL_FILE_NAME)) {
-            documentManager.setDocument(DOCUMENT_CACHE.get(MAIN_GQL_FILE_NAME));
-        } else {
-            FileObject fileObject = getResource(MAIN_GQL_FILE_NAME);
-            try (InputStream inputStream = fileObject.openInputStream()) {
-                documentManager.getDocument().addDefinitions(inputStream);
-            } catch (NoSuchFileException e) {
-                registerElements(roundEnv);
-                registerOperations(roundEnv);
-                documentBuilder.buildFetchFieldsProtocol();
-                if (graphQLConfig.getMapToLocalFetch()) {
-                    documentBuilder.mapToLocalFetch();
-                }
-                createResource(MAIN_GQL_FILE_NAME, documentManager.getDocument().toString());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            DOCUMENT_CACHE.put(MAIN_GQL_FILE_NAME, documentManager.getDocument());
+            getDefaultPackageName(roundEnv).ifPresent(packageName -> packageConfig.setPackageName(packageName));
         }
     }
 
@@ -585,26 +551,5 @@ public abstract class BaseProcessor extends AbstractProcessor {
                 )
                 .filter(StreamUtil.distinctByKey(AbstractDefinition::getName))
                 .collect(Collectors.toList());
-    }
-
-    public void createResource(String fileName, String content) {
-        try {
-            Writer writer = filer.createResource(StandardLocation.CLASS_OUTPUT, "", fileName).openWriter();
-            writer.write(content);
-            writer.close();
-            Logger.info("{} build success", fileName);
-        } catch (IOException e) {
-            Logger.error(e);
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "resource file create failed");
-            throw new RuntimeException(e);
-        }
-    }
-
-    public FileObject getResource(String fileName) {
-        try {
-            return processingEnv.getFiler().getResource(StandardLocation.CLASS_OUTPUT, "", fileName);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
