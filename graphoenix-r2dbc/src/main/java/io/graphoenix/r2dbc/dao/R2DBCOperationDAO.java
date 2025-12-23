@@ -11,7 +11,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.bind.Jsonb;
 import jakarta.transaction.Transactional;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
 import java.lang.reflect.Type;
@@ -21,6 +22,8 @@ import java.util.stream.Stream;
 
 @ApplicationScoped
 public class R2DBCOperationDAO implements OperationDAO, Asyncable {
+
+    private static final Logger logger = LoggerFactory.getLogger(R2DBCOperationDAO.class);
 
     private final R2DBCConfig r2DBCConfig;
 
@@ -86,14 +89,14 @@ public class R2DBCOperationDAO implements OperationDAO, Asyncable {
         Map<String, Object> processedParameters = r2DBCParameterHandler.process(parameters);
         if (r2DBCConfig.getAllowMultiQueries()) {
             return mutationExecutor.executeMutations(Stream.of(mutations), processedParameters)
-                    .doOnSuccess(count -> Logger.info("mutation count: {}", count))
+                    .doOnSuccess(count -> logger.info("mutation count: {}", count))
                     .then(queryExecutor.executeQuery(query, processedParameters))
                     .mapNotNull(json -> jsonb.fromJson(json, beanClass));
         } else {
             return mutationExecutor.executeMutationsFlux(Stream.of(mutations), processedParameters)
-                    .doOnNext(count -> Logger.info("mutation count: {}", count))
+                    .doOnNext(count -> logger.info("mutation count: {}", count))
                     .reduce(Long::sum)
-                    .doOnSuccess(count -> Logger.info("mutation total count: {}", count))
+                    .doOnSuccess(count -> logger.info("mutation total count: {}", count))
                     .then(queryExecutor.executeQuery(query, processedParameters))
                     .mapNotNull(json -> jsonb.fromJson(json, beanClass));
         }
@@ -108,14 +111,14 @@ public class R2DBCOperationDAO implements OperationDAO, Asyncable {
         Map<String, Object> processedParameters = r2DBCParameterHandler.process(parameters);
         if (r2DBCConfig.getAllowMultiQueries()) {
             return mutationExecutor.executeMutations(Stream.of(mutations), processedParameters)
-                    .doOnSuccess(count -> Logger.info("mutation count: {}", count))
+                    .doOnSuccess(count -> logger.info("mutation count: {}", count))
                     .then(queryExecutor.executeQuery(query, processedParameters))
                     .mapNotNull(json -> jsonb.fromJson(json, type));
         } else {
             return mutationExecutor.executeMutationsFlux(Stream.of(mutations), processedParameters)
-                    .doOnNext(count -> Logger.info("mutation count: {}", count))
+                    .doOnNext(count -> logger.info("mutation count: {}", count))
                     .reduce(Long::sum)
-                    .doOnSuccess(count -> Logger.info("mutation total count: {}", count))
+                    .doOnSuccess(count -> logger.info("mutation total count: {}", count))
                     .then(queryExecutor.executeQuery(query, processedParameters))
                     .mapNotNull(json -> jsonb.fromJson(json, type));
         }

@@ -9,7 +9,8 @@ import io.nozdormu.spi.event.ScopeEventResolver;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -24,6 +25,8 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ApplicationLauncher implements Launcher {
+
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationLauncher.class);
 
     private final PackageManager packageManager;
     private final PackageConfig packageConfig;
@@ -68,7 +71,7 @@ public class ApplicationLauncher implements Launcher {
                             try {
                                 latch.await();
                             } catch (InterruptedException e) {
-                                Logger.error(e);
+                                logger.error(e.getMessage(), e);
                             }
                             runner.run();
                         })

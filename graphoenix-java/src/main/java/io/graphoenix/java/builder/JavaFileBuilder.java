@@ -7,7 +7,8 @@ import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.PackageManager;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +17,8 @@ import java.util.stream.Stream;
 
 @ApplicationScoped
 public class JavaFileBuilder {
+
+    private static final Logger logger = LoggerFactory.getLogger(JavaFileBuilder.class.getName());
 
     private final DocumentManager documentManager;
     private final PackageManager packageManager;
@@ -38,7 +41,7 @@ public class JavaFileBuilder {
                 throw new RuntimeException(e);
             }
         }
-        Logger.info("all graphql entity generated");
+        logger.info("all graphql entity generated");
     }
 
     public Stream<JavaFile> buildJavaFileList() {

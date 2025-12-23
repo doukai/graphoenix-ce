@@ -4,7 +4,8 @@ import io.graphoenix.core.config.GraphQLConfig;
 import io.graphoenix.core.config.PackageConfig;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.processing.Filer;
 import java.io.File;
@@ -22,6 +23,8 @@ import static io.graphoenix.core.utils.FilerUtil.*;
 @ApplicationScoped
 public class GraphQLConfigRegister {
 
+    private static final Logger logger = LoggerFactory.getLogger(GraphQLConfigRegister.class);
+
     private final GraphQLConfig graphQLConfig;
     private final PackageConfig packageConfig;
     private final DocumentManager documentManager;
@@ -36,53 +39,53 @@ public class GraphQLConfigRegister {
     public void registerConfig() throws IOException {
         if (graphQLConfig.getGraphQL() != null) {
             documentManager.getDocument().addDefinitions(graphQLConfig.getGraphQL());
-            Logger.info("registered graphql {}", graphQLConfig.getGraphQL());
+            logger.info("registered graphql {}", graphQLConfig.getGraphQL());
         } else if (graphQLConfig.getGraphQLFileName() != null) {
             documentManager.getDocument().addDefinitionsByFileName(graphQLConfig.getGraphQLFileName());
-            Logger.info("registered file {}", graphQLConfig.getGraphQLFileName());
+            logger.info("registered file {}", graphQLConfig.getGraphQLFileName());
         } else if (graphQLConfig.getGraphQLPath() != null) {
             documentManager.getDocument().addDefinitionsByPathName(graphQLConfig.getGraphQLPath());
-            Logger.info("registered path {}", graphQLConfig.getGraphQLPath());
+            logger.info("registered path {}", graphQLConfig.getGraphQLPath());
         }
     }
 
     public void registerConfig(ClassLoader classLoader) throws IOException {
         if (graphQLConfig.getGraphQL() != null) {
             documentManager.getDocument().addDefinitions(graphQLConfig.getGraphQL());
-            Logger.info("registered graphql {}", graphQLConfig.getGraphQL());
+            logger.info("registered graphql {}", graphQLConfig.getGraphQL());
         } else if (graphQLConfig.getGraphQLFileName() != null) {
             documentManager.getDocument().addDefinitionsByFileName(graphQLConfig.getGraphQLFileName(), classLoader);
-            Logger.info("registered file {}", graphQLConfig.getGraphQLFileName());
+            logger.info("registered file {}", graphQLConfig.getGraphQLFileName());
         } else if (graphQLConfig.getGraphQLPath() != null) {
             documentManager.getDocument().addDefinitionsByPathName(graphQLConfig.getGraphQLPath(), classLoader);
-            Logger.info("registered path {}", graphQLConfig.getGraphQLPath());
+            logger.info("registered path {}", graphQLConfig.getGraphQLPath());
         }
     }
 
     public void registerConfig(String resourcePath) throws IOException {
         if (graphQLConfig.getGraphQL() != null) {
             documentManager.getDocument().addDefinitions(graphQLConfig.getGraphQL());
-            Logger.info("registered graphql {}", graphQLConfig.getGraphQL());
+            logger.info("registered graphql {}", graphQLConfig.getGraphQL());
         } else if (graphQLConfig.getGraphQLFileName() != null) {
             documentManager.getDocument().addDefinitions(new FileInputStream(new File(Paths.get(resourcePath).resolve(graphQLConfig.getGraphQLFileName()).toUri())));
-            Logger.info("registered file {}", graphQLConfig.getGraphQLFileName());
+            logger.info("registered file {}", graphQLConfig.getGraphQLFileName());
         } else if (graphQLConfig.getGraphQLPath() != null) {
             documentManager.getDocument().addDefinitionsByPathName(graphQLConfig.getGraphQLPath(), resourcePath);
-            Logger.info("registered path {}", graphQLConfig.getGraphQLPath());
+            logger.info("registered path {}", graphQLConfig.getGraphQLPath());
         }
     }
 
     public void registerConfig(Filer filer) throws IOException {
         if (graphQLConfig.getGraphQL() != null) {
             documentManager.getDocument().addDefinitions(graphQLConfig.getGraphQL());
-            Logger.info("registered graphql {}", graphQLConfig.getGraphQL());
+            logger.info("registered graphql {}", graphQLConfig.getGraphQL());
         } else if (graphQLConfig.getGraphQLFileName() != null) {
             documentManager.getDocument().addDefinitions(getResource(filer, graphQLConfig.getGraphQLFileName()));
-            Logger.info("registered file {}", graphQLConfig.getGraphQLFileName());
+            logger.info("registered file {}", graphQLConfig.getGraphQLFileName());
         } else if (graphQLConfig.getGraphQLPath() != null) {
             documentManager.getDocument().addDefinitionsByPath(graphQLConfig.getGraphQLPath(), getResourcesPath(filer));
             documentManager.getDocument().addDefinitionsByPath(graphQLConfig.getGraphQLPath(), getTestResourcesPath(filer));
-            Logger.info("registered path {}", graphQLConfig.getGraphQLPath());
+            logger.info("registered path {}", graphQLConfig.getGraphQLPath());
         }
     }
 
@@ -122,7 +125,7 @@ public class GraphQLConfigRegister {
                 .forEach(path -> {
                             try {
                                 documentManager.getDocument().merge(path);
-                                Logger.info("registered preset path {}", path);
+                                logger.info("registered preset path {}", path);
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }

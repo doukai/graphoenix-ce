@@ -15,7 +15,8 @@ import jakarta.transaction.NotSupportedException;
 import jakarta.transaction.TransactionRequiredException;
 import jakarta.transaction.Transactional;
 import org.reactivestreams.Publisher;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.context.Context;
@@ -31,6 +32,8 @@ import static io.graphoenix.spi.constant.Hammurabi.*;
 @Priority(0)
 @Interceptor
 public class R2DBCTransactionInterceptor {
+
+    private static final Logger logger = LoggerFactory.getLogger(R2DBCTransactionInterceptor.class);
 
     private final ConnectionProvider connectionProvider;
 
@@ -260,7 +263,7 @@ public class R2DBCTransactionInterceptor {
     }
 
     private Publisher<Void> errorProcess(Connection connection, Throwable throwable, Class<? extends Exception>[] rollbackOn, Class<? extends Exception>[] dontRollbackOn) {
-        Logger.error(throwable);
+        logger.error(throwable.getMessage(), throwable);
         if (dontRollbackOn != null && dontRollbackOn.length > 0) {
             if (Arrays.stream(dontRollbackOn).anyMatch(exception -> exception.equals(throwable.getClass()))) {
                 return connection.commitTransaction();

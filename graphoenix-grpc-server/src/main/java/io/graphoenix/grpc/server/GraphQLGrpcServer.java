@@ -7,7 +7,8 @@ import io.grpc.Server;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -15,6 +16,8 @@ import java.util.concurrent.TimeUnit;
 @ApplicationScoped
 @Named(Hammurabi.ENUM_PROTOCOL_ENUM_VALUE_GRPC)
 public class GraphQLGrpcServer implements Runner {
+
+    private static final Logger logger = LoggerFactory.getLogger(GraphQLGrpcServer.class);
 
     private final Server server;
 
@@ -37,13 +40,13 @@ public class GraphQLGrpcServer implements Runner {
                                 try {
                                     server.shutdown().awaitTermination(30, TimeUnit.SECONDS);
                                 } catch (InterruptedException e) {
-                                    Logger.error(e);
+                                    logger.error(e.getMessage(), e);
                                 }
                             })
                     );
             server.awaitTermination();
         } catch (IOException | InterruptedException e) {
-            Logger.error(e);
+            logger.error(e.getMessage(), e);
         }
     }
 

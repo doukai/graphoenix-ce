@@ -7,7 +7,8 @@ import io.graphoenix.spi.error.GraphQLErrors;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +20,8 @@ import java.util.stream.Stream;
 import static io.graphoenix.spi.error.GraphQLErrorType.SYNTAX_ERROR;
 
 public final class DocumentUtil {
+
+    private static final Logger logger = LoggerFactory.getLogger(DocumentUtil.class);
 
     public static GraphqlParser.DocumentContext graphqlToDocument(String graphql) {
         CodePointCharStream charStream;
@@ -192,7 +195,7 @@ public final class DocumentUtil {
         lexer.addErrorListener(new BaseErrorListener() {
             @Override
             public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
-                Logger.error(e);
+                logger.error(e.getMessage(), e);
                 throw new GraphQLErrors(SYNTAX_ERROR.bind(msg, line, charPositionInLine), line, charPositionInLine);
             }
         });
@@ -206,7 +209,7 @@ public final class DocumentUtil {
         parser.addErrorListener(new BaseErrorListener() {
             @Override
             public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
-                Logger.error(e);
+                logger.error(e.getMessage(), e);
                 throw new GraphQLErrors(SYNTAX_ERROR.bind(msg, line, charPositionInLine), line, charPositionInLine);
             }
         });

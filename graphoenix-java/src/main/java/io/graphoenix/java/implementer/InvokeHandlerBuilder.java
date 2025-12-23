@@ -23,7 +23,8 @@ import jakarta.json.JsonValue;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonCollectors;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -44,6 +45,8 @@ import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 
 @ApplicationScoped
 public class InvokeHandlerBuilder {
+
+    private static final Logger logger = LoggerFactory.getLogger(InvokeHandlerBuilder.class);
 
     private final DocumentManager documentManager;
     private final PackageManager packageManager;
@@ -73,7 +76,7 @@ public class InvokeHandlerBuilder {
                 )
                 .collect(Collectors.toSet());
         this.buildClass().writeTo(filer);
-        Logger.info("InvokeHandler build success");
+        logger.info("InvokeHandler build success");
     }
 
     private JavaFile buildClass() {

@@ -9,7 +9,8 @@ import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.Initialized;
 import jakarta.inject.Inject;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
@@ -20,6 +21,8 @@ import static io.graphoenix.core.event.DocumentInitializedEvent.DOCUMENT_INITIAL
 @Initialized(ApplicationScoped.class)
 @Priority(IntrospectionBuildEvent.INTROSPECTION_BUILD_SCOPE_EVENT_PRIORITY)
 public class IntrospectionBuildEvent implements ScopeEvent {
+
+    private static final Logger logger = LoggerFactory.getLogger(IntrospectionBuildEvent.class);
 
     public static final int INTROSPECTION_BUILD_SCOPE_EVENT_PRIORITY = DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY + 200;
 
@@ -37,10 +40,10 @@ public class IntrospectionBuildEvent implements ScopeEvent {
     @Override
     public Mono<Void> fireAsync(Map<String, Object> context) {
         if (graphQLConfig.getBuildIntrospection()) {
-            Logger.info("introspection build started");
+            logger.info("introspection build started");
             Operation operation = introspectionMutationBuilder.buildIntrospectionSchemaMutation();
             return Mono.from(mutationHandler.mutation(operation, 500))
-                    .doOnSuccess((jsonValue) -> Logger.info("introspection build success"))
+                    .doOnSuccess((jsonValue) -> logger.info("introspection build success"))
                     .then();
         }
         return Mono.empty();

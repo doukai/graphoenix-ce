@@ -9,7 +9,8 @@ import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.Initialized;
 import jakarta.inject.Inject;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
@@ -22,6 +23,8 @@ import static io.graphoenix.spi.constant.Hammurabi.PREFIX_INTROSPECTION;
 @Initialized(ApplicationScoped.class)
 @Priority(IntrospectionCleanEvent.INTROSPECTION_CLEAN_SCOPE_EVENT_PRIORITY)
 public class IntrospectionCleanEvent implements ScopeEvent {
+
+    private static final Logger logger = LoggerFactory.getLogger(IntrospectionCleanEvent.class.getName());
 
     public static final int INTROSPECTION_CLEAN_SCOPE_EVENT_PRIORITY = INTROSPECTION_BUILD_SCOPE_EVENT_PRIORITY - 1;
 
@@ -40,7 +43,7 @@ public class IntrospectionCleanEvent implements ScopeEvent {
     @Override
     public Mono<Void> fireAsync(Map<String, Object> context) {
         if (graphQLConfig.getBuildIntrospection()) {
-            Logger.info("introspection clean started");
+            logger.info("introspection clean started");
             return typeEmptyHandler
                     .empty(
                             documentManager.getDocument().getObjectTypes()
@@ -49,7 +52,7 @@ public class IntrospectionCleanEvent implements ScopeEvent {
                                     .filter(name -> name.startsWith(PREFIX_INTROSPECTION))
                                     .collect(Collectors.toSet())
                     )
-                    .doOnSuccess((v) -> Logger.info("introspection clean success"));
+                    .doOnSuccess((v) -> logger.info("introspection clean success"));
         }
         return Mono.empty();
     }

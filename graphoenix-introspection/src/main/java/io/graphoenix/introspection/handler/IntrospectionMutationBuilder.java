@@ -11,7 +11,8 @@ import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -26,6 +27,8 @@ import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_FIELD_TYPE;
 
 @ApplicationScoped
 public class IntrospectionMutationBuilder {
+
+    private static final Logger logger = LoggerFactory.getLogger(IntrospectionMutationBuilder.class);
 
     private final DocumentManager documentManager;
 
@@ -109,7 +112,7 @@ public class IntrospectionMutationBuilder {
             );
         }
 
-        Logger.info("introspection schema mutation build success");
+        logger.info("introspection schema mutation build success");
         return operation;
     }
 
@@ -152,7 +155,7 @@ public class IntrospectionMutationBuilder {
                         .collect(Collectors.toCollection(LinkedHashSet::new))
         );
 
-        Logger.info("introspection schema build success");
+        logger.info("introspection schema build success");
         return schema;
     }
 

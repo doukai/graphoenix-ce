@@ -12,7 +12,8 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
 import java.io.StringReader;
@@ -20,6 +21,8 @@ import java.io.StringReader;
 @ApplicationScoped
 @Named("r2dbc")
 public class R2DBCMutationHandler implements MutationHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(R2DBCMutationHandler.class.getName());
 
     private final R2DBCConfig r2DBCConfig;
 
@@ -48,9 +51,9 @@ public class R2DBCMutationHandler implements MutationHandler {
         if (r2DBCConfig.getAllowMultiQueries()) {
             if (groupSize != null) {
                 return mutationExecutor.executeMutationsInBatchByGroup(mutationTranslator.operationToStatementSQLStream(operation), groupSize)
-                        .doOnNext(count -> Logger.info("group mutation count: {}", count))
+                        .doOnNext(count -> logger.info("group mutation count: {}", count))
                         .reduce(Long::sum)
-                        .doOnSuccess(count -> Logger.info("group mutation total count: {}", count))
+                        .doOnSuccess(count -> logger.info("group mutation total count: {}", count))
                         .then(
                                 Mono.justOrEmpty(queryTranslator.operationToSelectSQL(operation))
                                         .flatMap(queryExecutor::executeQuery)
@@ -59,7 +62,7 @@ public class R2DBCMutationHandler implements MutationHandler {
                         .defaultIfEmpty(JsonValue.EMPTY_JSON_OBJECT);
             } else {
                 return mutationExecutor.executeMutations(mutationTranslator.operationToStatementSQLStream(operation))
-                        .doOnSuccess(count -> Logger.info("mutation count: {}", count))
+                        .doOnSuccess(count -> logger.info("mutation count: {}", count))
                         .then(
                                 Mono.justOrEmpty(queryTranslator.operationToSelectSQL(operation))
                                         .flatMap(queryExecutor::executeQuery)
@@ -69,9 +72,9 @@ public class R2DBCMutationHandler implements MutationHandler {
             }
         } else {
             return mutationExecutor.executeMutationsFlux(mutationTranslator.operationToStatementSQLStream(operation))
-                    .doOnNext(count -> Logger.info("mutation count: {}", count))
+                    .doOnNext(count -> logger.info("mutation count: {}", count))
                     .reduce(Long::sum)
-                    .doOnSuccess(count -> Logger.info("mutation total count: {}", count))
+                    .doOnSuccess(count -> logger.info("mutation total count: {}", count))
                     .then(
                             Mono.justOrEmpty(queryTranslator.operationToSelectSQL(operation))
                                     .flatMap(queryExecutor::executeQuery)

@@ -7,7 +7,8 @@ import io.r2dbc.spi.Batch;
 import io.r2dbc.spi.Statement;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -16,6 +17,8 @@ import java.util.stream.Stream;
 
 @ApplicationScoped
 public class MutationExecutor {
+
+    private static final Logger logger = LoggerFactory.getLogger(MutationExecutor.class);
 
     private final ConnectionProvider connectionProvider;
     private final ParameterBinder parameterBinder;
@@ -36,7 +39,7 @@ public class MutationExecutor {
                                         connectionProvider.get(),
                                         connection -> {
                                             Batch batch = connection.createBatch();
-                                            Logger.info("execute statement count:\r\n{}", sqlList.size());
+                                            logger.info("execute statement count:\r\n{}", sqlList.size());
                                             sqlList.forEach(batch::add);
                                             return Flux.from(batch.execute())
                                                     .flatMap(ResultUtil::getUpdateCountFromResult);
@@ -58,7 +61,7 @@ public class MutationExecutor {
                                                         .filter(sqlList -> !sqlList.isEmpty())
                                                         .flatMapMany(sqlList -> {
                                                                     Batch batch = connection.createBatch();
-                                                                    Logger.info("execute statement count:\r\n{}", sqlList.size());
+                                                                    logger.info("execute statement count:\r\n{}", sqlList.size());
                                                                     sqlList.forEach(batch::add);
                                                                     return Flux.from(batch.execute())
                                                                             .concatMap(ResultUtil::getUpdateCountFromResult);
@@ -83,8 +86,8 @@ public class MutationExecutor {
                                         connectionProvider.get(),
                                         connection -> {
                                             String mutation = String.join(";", sqlList);
-                                            Logger.info("execute mutation:\r\n{}", mutation);
-                                            Logger.info("sql parameters:\r\n{}", parameters);
+                                            logger.info("execute mutation:\r\n{}", mutation);
+                                            logger.info("sql parameters:\r\n{}", parameters);
                                             Statement mutationStatement = connection.createStatement(mutation);
                                             parameterBinder.bindParameters(mutation, mutationStatement, parameters);
                                             return Mono.from(mutationStatement.execute())
@@ -105,8 +108,8 @@ public class MutationExecutor {
                         connectionProvider.get(),
                         connection -> Flux.fromStream(mutationSqlStream)
                                 .concatMap(sql -> {
-                                            Logger.info("execute mutation:\r\n{}", sql);
-                                            Logger.info("sql parameters:\r\n{}", parameters);
+                                            logger.info("execute mutation:\r\n{}", sql);
+                                            logger.info("sql parameters:\r\n{}", parameters);
                                             Statement mutationStatement = connection.createStatement(sql);
                                             parameterBinder.bindParameters(sql, mutationStatement, parameters);
                                             return Flux.from(mutationStatement.execute())
@@ -129,8 +132,8 @@ public class MutationExecutor {
                 .usingWhen(
                         connectionProvider.get(),
                         connection -> {
-                            Logger.info("execute mutation:\r\n{}", sql);
-                            Logger.info("sql parameters:\r\n{}", parameters);
+                            logger.info("execute mutation:\r\n{}", sql);
+                            logger.info("sql parameters:\r\n{}", parameters);
                             Statement mutationStatement = connection.createStatement(sql);
                             parameterBinder.bindParameters(sql, mutationStatement, parameters);
                             return Mono.from(mutationStatement.execute())

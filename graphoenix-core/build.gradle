@@ -57,9 +57,6 @@ dependencies {
     implementation 'org.graphoenix:nozdormu-config'
     implementation 'com.google.guava:guava'
     implementation 'com.aventrix.jnanoid:jnanoid'
-    implementation 'org.tinylog:tinylog-impl'
-    implementation 'org.tinylog:slf4j-tinylog'
-    implementation 'org.tinylog:jcl-tinylog'
 
     runtimeOnly 'io.grpc:grpc-netty-shaded'
     implementation 'io.grpc:grpc-protobuf'

@@ -13,7 +13,8 @@ import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.inject.literal.NamedLiteral;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
@@ -22,6 +23,8 @@ import java.util.stream.Stream;
 
 @ApplicationScoped
 public class PackageManager {
+
+    private final static Logger logger = LoggerFactory.getLogger(PackageManager.class);
 
     public static final String LOAD_BALANCE_ROUND_ROBIN = "roundRobin";
     public static final String LOAD_BALANCE_PICK_FIRST = "pickFirst";
@@ -79,7 +82,7 @@ public class PackageManager {
                     )
                     .map(ClassPath.ClassInfo::getPackageName);
         } catch (IOException e) {
-            Logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         return Optional.empty();
     }

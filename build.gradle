@@ -15,7 +15,8 @@ subprojects {
 
     tasks.withType(JavaCompile).configureEach {
         options.compilerArgs += [
-                "-AdecompileCacheDir=${rootProject.buildDir}/decompile-cache"
+                "-AdecompileCacheDir=${rootProject.buildDir}/decompile-cache",
+                "-ArootProjectDir=${rootProject.rootDir}"
         ]
     }
 

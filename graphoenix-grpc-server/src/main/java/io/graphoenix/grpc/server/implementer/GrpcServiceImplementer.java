@@ -17,7 +17,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import jakarta.json.spi.JsonProvider;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.processing.Filer;
@@ -37,6 +38,8 @@ import static io.graphoenix.spi.utils.NameUtil.getGrpcServiceRpcName;
 
 @ApplicationScoped
 public class GrpcServiceImplementer {
+
+    private static final Logger logger = LoggerFactory.getLogger(GrpcServiceImplementer.class.getName());
 
     private final DocumentManager documentManager;
     private final PackageManager packageManager;
@@ -66,9 +69,9 @@ public class GrpcServiceImplementer {
                 .forEach((packageName, fieldDefinitionList) -> {
                             try {
                                 this.buildTypeServiceImplClass(packageName, TYPE_QUERY_NAME, fieldDefinitionList).writeTo(filer);
-                                Logger.info("{}.Grpc" + TYPE_QUERY_NAME + "ServiceImpl build success", packageName);
+                                logger.info("{}.Grpc" + TYPE_QUERY_NAME + "ServiceImpl build success", packageName);
                             } catch (IOException e) {
-                                Logger.error(e);
+                                logger.error(e.getMessage(), e);
                             }
                         }
                 );
@@ -89,9 +92,9 @@ public class GrpcServiceImplementer {
                 .forEach((packageName, fieldDefinitionList) -> {
                             try {
                                 this.buildTypeServiceImplClass(packageName, TYPE_MUTATION_NAME, fieldDefinitionList).writeTo(filer);
-                                Logger.info("{}.Grpc" + TYPE_MUTATION_NAME + "ServiceImpl build success", packageName);
+                                logger.info("{}.Grpc" + TYPE_MUTATION_NAME + "ServiceImpl build success", packageName);
                             } catch (IOException e) {
-                                Logger.error(e);
+                                logger.error(e.getMessage(), e);
                             }
                         }
                 );
@@ -104,9 +107,9 @@ public class GrpcServiceImplementer {
                 .forEach(packageName -> {
                             try {
                                 this.buildGraphQLServiceImplClass(packageName).writeTo(filer);
-                                Logger.info("{}.GrpcGraphQLServiceImpl build success", packageName);
+                                logger.info("{}.GrpcGraphQLServiceImpl build success", packageName);
                             } catch (IOException e) {
-                                Logger.error(e);
+                                logger.error(e.getMessage(), e);
                             }
                         }
                 );

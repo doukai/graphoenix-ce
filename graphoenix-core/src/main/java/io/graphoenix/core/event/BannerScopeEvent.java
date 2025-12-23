@@ -4,7 +4,8 @@ import io.nozdormu.spi.event.ScopeEvent;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.Initialized;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +19,8 @@ import static io.graphoenix.core.event.DocumentInitializedEvent.DOCUMENT_INITIAL
 @Priority(BannerScopeEvent.BANNER_SCOPE_EVENT_PRIORITY)
 public class BannerScopeEvent implements ScopeEvent {
 
+    private static final Logger logger = LoggerFactory.getLogger(BannerScopeEvent.class);
+
     public static final int BANNER_SCOPE_EVENT_PRIORITY = DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY - 1;
 
     public static final String BANNER_FILE_NAME = "banner.txt";
@@ -26,7 +29,7 @@ public class BannerScopeEvent implements ScopeEvent {
     public void fire(Map<String, Object> context) {
         try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(BANNER_FILE_NAME)) {
             if (inputStream != null) {
-                Logger.info(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
+                logger.info(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
             }
         } catch (IOException ignored) {
         }

@@ -28,7 +28,8 @@ import io.nozdormu.spi.async.Asyncable;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.bind.Jsonb;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -52,6 +53,8 @@ import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 
 @ApplicationScoped
 public class OperationInterfaceImplementer {
+
+    private static final Logger logger = LoggerFactory.getLogger(OperationInterfaceImplementer.class);
 
     private final DocumentManager documentManager;
     private final PackageManager packageManager;
@@ -107,7 +110,7 @@ public class OperationInterfaceImplementer {
                                     Writer writer = fileObject.openWriter();
                                     writer.write(sqlFileEntry.getValue());
                                     writer.close();
-                                    Logger.info("{} build success", sqlFileEntry.getKey());
+                                    logger.info("{} build success", sqlFileEntry.getKey());
                                 }
                             } catch (IOException e) {
                                 throw new RuntimeException(e);

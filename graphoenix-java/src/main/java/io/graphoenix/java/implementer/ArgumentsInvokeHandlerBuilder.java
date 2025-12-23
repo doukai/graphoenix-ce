@@ -16,7 +16,8 @@ import jakarta.inject.Inject;
 import jakarta.json.JsonValue;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.spi.JsonProvider;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -36,6 +37,8 @@ import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 @ApplicationScoped
 public class ArgumentsInvokeHandlerBuilder {
 
+    private static final Logger logger = LoggerFactory.getLogger(ArgumentsInvokeHandlerBuilder.class.getName());
+
     private final DocumentManager documentManager;
     private final PackageConfig packageConfig;
 
@@ -47,7 +50,7 @@ public class ArgumentsInvokeHandlerBuilder {
 
     public void writeToFiler(Filer filer) throws IOException {
         this.buildClass().writeTo(filer);
-        Logger.info("ArgumentsInvokeHandler build success");
+        logger.info("ArgumentsInvokeHandler build success");
     }
 
     private JavaFile buildClass() {

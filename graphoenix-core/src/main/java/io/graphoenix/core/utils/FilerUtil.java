@@ -1,6 +1,7 @@
 package io.graphoenix.core.utils;
 
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.processing.Filer;
 import javax.tools.FileObject;
@@ -16,6 +17,8 @@ import java.util.UUID;
 
 public final class FilerUtil {
 
+    private static final Logger logger = LoggerFactory.getLogger(FilerUtil.class);
+
     public static Path getGeneratedSourcePath(Filer filer) {
         try {
             FileObject tmp = filer.createResource(StandardLocation.SOURCE_OUTPUT, "", UUID.randomUUID().toString());
@@ -25,23 +28,23 @@ public final class FilerUtil {
             Path path = Paths.get(tmp.toUri());
             Files.deleteIfExists(path);
             Path generatedSourcePath = path.getParent();
-            Logger.info("generated source path: {}", generatedSourcePath.toString());
+            logger.info("generated source path: {}", generatedSourcePath.toString());
             return generatedSourcePath;
         } catch (IOException e) {
-            Logger.error(e);
+            logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
 
     public static Path getResourcesPath(Filer filer) {
         Path sourcePath = Objects.requireNonNull(getGeneratedSourcePath(filer)).getParent().getParent().getParent().getParent().getParent().getParent().resolve("src/main/resources");
-        Logger.info("resources path: {}", sourcePath.toString());
+        logger.info("resources path: {}", sourcePath);
         return sourcePath;
     }
 
     public static Path getTestResourcesPath(Filer filer) {
         Path sourcePath = Objects.requireNonNull(getGeneratedSourcePath(filer)).getParent().getParent().getParent().getParent().getParent().getParent().resolve("src/test/resources");
-        Logger.info("test resources path: {}", sourcePath.toString());
+        logger.info("test resources path: {}", sourcePath);
         return sourcePath;
     }
 

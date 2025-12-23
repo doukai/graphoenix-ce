@@ -19,7 +19,8 @@ import jakarta.inject.Inject;
 import org.eclipse.microprofile.graphql.Enum;
 import org.eclipse.microprofile.graphql.Type;
 import org.eclipse.microprofile.graphql.*;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Modifier;
@@ -46,6 +47,8 @@ import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
 @ApplicationScoped
 public class TypeSpecBuilder {
+
+    private static final Logger logger = LoggerFactory.getLogger(TypeSpecBuilder.class.getName());
 
     private final DocumentManager documentManager;
     private final PackageManager packageManager;
@@ -157,7 +160,7 @@ public class TypeSpecBuilder {
             builder.addMethod(toInput.build());
         }
         typeBuilderList.forEach(typeBuilder -> typeBuilder.buildObjectType(builder, objectType));
-        Logger.info("class {} build success", objectType.getName());
+        logger.info("class {} build success", objectType.getName());
         return builder.build();
     }
 
@@ -220,7 +223,7 @@ public class TypeSpecBuilder {
                     );
         }
         typeBuilderList.forEach(typeBuilder -> typeBuilder.buildInputObjectType(builder, inputObjectType));
-        Logger.info("input class {} build success", inputObjectType.getName());
+        logger.info("input class {} build success", inputObjectType.getName());
         return builder.build();
     }
 
@@ -279,7 +282,7 @@ public class TypeSpecBuilder {
                                     .build()
                     );
         }
-        Logger.info("operation type annotation {} build success", objectType.getName());
+        logger.info("operation type annotation {} build success", objectType.getName());
         return builder.build();
     }
 
@@ -350,7 +353,7 @@ public class TypeSpecBuilder {
                                     .build()
                     );
         }
-        Logger.info("annotation class {} build success", inputObjectType.getName());
+        logger.info("annotation class {} build success", inputObjectType.getName());
         return builder.build();
     }
 
@@ -373,7 +376,7 @@ public class TypeSpecBuilder {
                     );
         }
         typeBuilderList.forEach(typeBuilder -> typeBuilder.buildEnumType(builder, enumType));
-        Logger.info("enum {} build success", enumType.getName());
+        logger.info("enum {} build success", enumType.getName());
         return builder.build();
     }
 
@@ -419,7 +422,7 @@ public class TypeSpecBuilder {
                     );
         }
         typeBuilderList.forEach(typeBuilder -> typeBuilder.buildInterfaceType(builder, interfaceType));
-        Logger.info("interface {} build success", interfaceType.getName());
+        logger.info("interface {} build success", interfaceType.getName());
         return builder.build();
     }
 
@@ -479,7 +482,7 @@ public class TypeSpecBuilder {
                                     .build()
                     );
         }
-        Logger.info("directive annotation {} build success", directiveDefinition.getName());
+        logger.info("directive annotation {} build success", directiveDefinition.getName());
         return builder.build();
     }
 
@@ -544,7 +547,7 @@ public class TypeSpecBuilder {
                     );
         }
         typeBuilderList.forEach(typeBuilder -> typeBuilder.buildFieldDefinition(builder, fieldDefinition));
-        Logger.info("class field {} build success", fieldDefinition.getName());
+        logger.info("class field {} build success", fieldDefinition.getName());
         return builder.build();
     }
 
@@ -560,7 +563,7 @@ public class TypeSpecBuilder {
                     );
         }
         typeBuilderList.forEach(typeBuilder -> typeBuilder.buildEnumValueDefinition(builder, enumValueDefinition));
-        Logger.info("enum const {} build success", enumValueDefinition.getName());
+        logger.info("enum const {} build success", enumValueDefinition.getName());
         return builder.build();
     }
 
@@ -593,7 +596,7 @@ public class TypeSpecBuilder {
                     );
         }
         typeBuilderList.forEach(typeBuilder -> typeBuilder.buildFieldDefinition(builder, fieldDefinition));
-        Logger.info("class field {} build success", fieldDefinition.getName());
+        logger.info("class field {} build success", fieldDefinition.getName());
         return builder.build();
     }
 
@@ -635,7 +638,7 @@ public class TypeSpecBuilder {
                     );
         }
         typeBuilderList.forEach(typeBuilder -> typeBuilder.buildInputValue(builder, inputValue));
-        Logger.info("input class field {} build success", inputValue.getName());
+        logger.info("input class field {} build success", inputValue.getName());
         return builder.build();
     }
 
@@ -667,7 +670,7 @@ public class TypeSpecBuilder {
                     );
         }
         typeBuilderList.forEach(typeBuilder -> typeBuilder.buildInputValue(builder, inputValue));
-        Logger.info("interface field {}.{} build success", inputValue.getName());
+        logger.info("interface field {} build success", inputValue.getName());
         return builder.build();
     }
 
@@ -701,7 +704,7 @@ public class TypeSpecBuilder {
                                     .build()
                     );
         }
-        Logger.info("input annotation field {}.{} build success", inputValue.getName());
+        logger.info("input annotation field {} build success", inputValue.getName());
         return builder.build();
     }
 

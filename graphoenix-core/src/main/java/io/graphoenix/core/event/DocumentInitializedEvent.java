@@ -6,7 +6,8 @@ import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.Initialized;
 import jakarta.inject.Inject;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Map;
@@ -15,6 +16,8 @@ import java.util.Map;
 @Initialized(ApplicationScoped.class)
 @Priority(DocumentInitializedEvent.DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY)
 public class DocumentInitializedEvent implements ScopeEvent {
+
+    private static final Logger logger = LoggerFactory.getLogger(DocumentInitializedEvent.class);
 
     public static final int DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY = 0;
 
@@ -29,10 +32,9 @@ public class DocumentInitializedEvent implements ScopeEvent {
     public void fire(Map<String, Object> context) {
         try {
             documentManager.getDocument().addDefinitions(getClass().getClassLoader().getResourceAsStream("META-INF/graphql/main.gql"));
-            Logger.info("document initialized success");
+            logger.info("document initialized success");
         } catch (IOException e) {
-            Logger.error(e);
-            Logger.info("document initialized failed");
+            logger.error(e.getMessage(), e);
         }
     }
 }

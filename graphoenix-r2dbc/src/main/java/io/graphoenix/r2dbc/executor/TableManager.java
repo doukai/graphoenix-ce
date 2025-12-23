@@ -5,7 +5,8 @@ import io.r2dbc.spi.Batch;
 import io.r2dbc.spi.Statement;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
@@ -17,6 +18,8 @@ import java.util.stream.Stream;
 
 @ApplicationScoped
 public class TableManager {
+
+    private static final Logger logger = LoggerFactory.getLogger(TableManager.class.getName());
 
     private final ConnectionProvider connectionProvider;
 
@@ -33,7 +36,7 @@ public class TableManager {
                 .usingWhen(
                         connectionProvider.get(),
                         connection -> {
-                            Logger.info("merge table:\r\n{}", sql);
+                            logger.info("merge table:\r\n{}", sql);
                             return Mono.from(connection.createStatement(sql).execute());
                         },
                         connectionProvider::close
@@ -48,7 +51,7 @@ public class TableManager {
                         connection -> {
                             Batch batch = connection.createBatch();
                             sqlStream.forEach(sql -> {
-                                        Logger.info("merge table:\r\n{}", sql);
+                                        logger.info("merge table:\r\n{}", sql);
                                         batch.add(sql);
                                     }
                             );
@@ -64,8 +67,8 @@ public class TableManager {
                 .usingWhen(
                         connectionProvider.get(),
                         connection -> {
-                            Logger.info("execute select:\r\n{}", sql);
-                            Logger.info("sql parameters:\r\n{}");
+                            logger.info("execute select:\r\n{}", sql);
+                            logger.info("sql parameters:\r\n{}");
                             Statement statement = connection.createStatement(sql);
                             return Flux.from(statement.execute());
                         },
@@ -89,8 +92,8 @@ public class TableManager {
                 .usingWhen(
                         connectionProvider.get(),
                         connection -> {
-                            Logger.info("execute select:\r\n{}", sql);
-                            Logger.info("sql parameters:\r\n{}");
+                            logger.info("execute select:\r\n{}", sql);
+                            logger.info("sql parameters:\r\n{}");
                             Statement statement = connection.createStatement(sql);
                             return Flux.from(statement.execute());
                         },

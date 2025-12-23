@@ -25,7 +25,8 @@ import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.graphql.Enum;
 import org.eclipse.microprofile.graphql.Type;
 import org.eclipse.microprofile.graphql.*;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
@@ -46,6 +47,8 @@ import static io.graphoenix.spi.utils.DocumentUtil.graphqlToSelectionSet;
 import static io.graphoenix.spi.utils.ElementUtil.*;
 
 public abstract class BaseProcessor extends AbstractProcessor {
+
+    private final static Logger logger = LoggerFactory.getLogger(BaseProcessor.class);
 
     protected static final Document DOCUMENT_CACHE = new Document();
 
@@ -69,7 +72,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
             documentManager.getDocument().clear();
             configRegister.registerConfig(filer);
         } catch (IOException e) {
-            Logger.error(e);
+            logger.error(e.getMessage());
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
         }
     }

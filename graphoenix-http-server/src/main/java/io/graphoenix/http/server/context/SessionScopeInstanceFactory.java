@@ -9,7 +9,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.Map;
@@ -17,6 +18,9 @@ import java.util.Map;
 @ApplicationScoped
 @Named("jakarta.enterprise.context.SessionScoped")
 public class SessionScopeInstanceFactory extends CacheScopeInstanceFactory {
+
+    private static final Logger logger = LoggerFactory.getLogger(SessionScopeInstanceFactory.class);
+
     public static final String SESSION_ID = "sessionId";
 
     private final LoadingCache<String, ScopeInstances> CACHE;
@@ -38,7 +42,7 @@ public class SessionScopeInstanceFactory extends CacheScopeInstanceFactory {
 
     @Override
     protected void onBuild(String key) {
-        Logger.info("session : " + key + " build");
+        logger.info("session : {} build", key);
     }
 
     @Override

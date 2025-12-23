@@ -11,7 +11,8 @@ import io.scalecube.transport.netty.tcp.TcpTransportFactory;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.List;
@@ -23,6 +24,8 @@ import static io.graphoenix.spi.dto.PackageURL.*;
 
 @ApplicationScoped
 public class GossipPackageCluster implements Runner {
+
+    private static final Logger logger = LoggerFactory.getLogger(GossipPackageCluster.class.getName());
 
     public static final String URLS_NAME = "urls";
 
@@ -68,17 +71,17 @@ public class GossipPackageCluster implements Runner {
                                                 .ifPresent(metadata ->
                                                         gossipPackageProvider.mergeMemberURLs(event.member(), (List<Map<String, Object>>) ((Map<String, ?>) metadata).get(URLS_NAME))
                                                 );
-                                        Logger.debug(event.member().toString() + " merged");
+                                        logger.debug("{} merged", event.member().toString());
                                         break;
                                     case LEAVING:
                                         cluster.metadata(event.member())
                                                 .ifPresent(metadata ->
                                                         gossipPackageProvider.removeMemberURLs(event.member(), (List<Map<String, Object>>) ((Map<String, ?>) metadata).get(URLS_NAME))
                                                 );
-                                        Logger.debug(event.member().toString() + " leaving");
+                                        logger.debug("{} leaving", event.member().toString());
                                         break;
                                     case REMOVED:
-                                        Logger.debug(event.member().toString() + " removed");
+                                        logger.debug("{} removed", event.member().toString());
                                         break;
                                 }
                             }

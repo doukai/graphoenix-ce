@@ -18,7 +18,8 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -33,6 +34,8 @@ import static io.graphoenix.spi.utils.NameUtil.packageNameToUnderline;
 
 @ApplicationScoped
 public class GrpcFetchHandlerBuilder {
+
+    private static final Logger logger = LoggerFactory.getLogger(GrpcFetchHandlerBuilder.class);
 
     private final PackageConfig packageConfig;
     private final Set<String> packageNameSet;
@@ -49,7 +52,7 @@ public class GrpcFetchHandlerBuilder {
 
     public void writeToFiler(Filer filer) throws IOException {
         this.buildClass().writeTo(filer);
-        Logger.info("GrpcFetchHandler build success");
+        logger.info("GrpcFetchHandler build success");
     }
 
     private JavaFile buildClass() {

@@ -13,7 +13,8 @@ import io.graphoenix.java.implementer.InvokeHandlerBuilder;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.InputObjectType;
 import io.nozdormu.spi.context.BeanContext;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -29,6 +30,8 @@ import java.util.Set;
 @SupportedAnnotationTypes("io.graphoenix.spi.annotation.Application")
 @AutoService(Processor.class)
 public class ApplicationProcessor extends BaseProcessor {
+
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationProcessor.class);
 
     private Filer filer;
 
@@ -89,7 +92,7 @@ public class ApplicationProcessor extends BaseProcessor {
                 argumentsInvokeHandlerBuilder.writeToFiler(filer);
             }
         } catch (IOException | URISyntaxException e) {
-            Logger.error(e);
+            logger.error(e.getMessage(), e);
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
         }
         return false;

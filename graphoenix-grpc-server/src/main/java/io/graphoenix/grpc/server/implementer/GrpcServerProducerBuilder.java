@@ -10,7 +10,8 @@ import io.grpc.ServerBuilder;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.Modifier;
@@ -23,6 +24,8 @@ import static io.graphoenix.spi.constant.Hammurabi.TYPE_QUERY_NAME;
 
 @ApplicationScoped
 public class GrpcServerProducerBuilder {
+
+    private static final Logger logger = LoggerFactory.getLogger(GrpcServerProducerBuilder.class);
 
     private final DocumentManager documentManager;
     private final PackageManager packageManager;
@@ -44,9 +47,9 @@ public class GrpcServerProducerBuilder {
                     .distinct()
                     .collect(Collectors.toList());
             this.buildGrpcServerProducerClass(packageConfig.getGrpcPackageName(), packageNameList).writeTo(filer);
-            Logger.info("{}.GrpcServerProducer build success", packageConfig.getGrpcPackageName());
+            logger.info("{}.GrpcServerProducer build success", packageConfig.getGrpcPackageName());
         } catch (IOException e) {
-            Logger.error(e);
+            logger.error(e.getMessage(), e);
         }
     }
 

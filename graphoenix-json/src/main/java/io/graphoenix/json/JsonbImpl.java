@@ -5,13 +5,16 @@ import com.dslplatform.json.JsonWriter;
 import com.dslplatform.json.runtime.Settings;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbException;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 
 public class JsonbImpl implements Jsonb {
+
+    private static final Logger logger = LoggerFactory.getLogger(JsonbImpl.class.getName());
 
     private final DslJson<Object> dslJson;
 
@@ -25,7 +28,7 @@ public class JsonbImpl implements Jsonb {
             byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
             return dslJson.deserialize(type, bytes, bytes.length);
         } catch (IOException e) {
-            Logger.error(e);
+            logger.error(e.getMessage(), e);
             throw new JsonbException(e.getMessage(), e);
         }
     }
@@ -37,7 +40,7 @@ public class JsonbImpl implements Jsonb {
             byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
             return (T) dslJson.deserialize(runtimeType, bytes, bytes.length);
         } catch (IOException e) {
-            Logger.error(e);
+            logger.error(e.getMessage(), e);
             throw new JsonbException(e.getMessage(), e);
         }
     }
@@ -48,7 +51,7 @@ public class JsonbImpl implements Jsonb {
             byte[] bytes = readBytes(reader);
             return dslJson.deserialize(type, bytes, bytes.length);
         } catch (IOException e) {
-            Logger.error(e);
+            logger.error(e.getMessage(), e);
             throw new JsonbException(e.getMessage(), e);
         }
     }
@@ -60,7 +63,7 @@ public class JsonbImpl implements Jsonb {
             byte[] bytes = readBytes(reader);
             return (T) dslJson.deserialize(runtimeType, bytes, bytes.length);
         } catch (IOException e) {
-            Logger.error(e);
+            logger.error(e.getMessage(), e);
             throw new JsonbException(e.getMessage(), e);
         }
     }
@@ -76,7 +79,7 @@ public class JsonbImpl implements Jsonb {
             reader.close();
             return builder.toString().getBytes(StandardCharsets.UTF_8);
         } catch (IOException e) {
-            Logger.error(e);
+            logger.error(e.getMessage(), e);
             throw new JsonbException(e.getMessage(), e);
         }
     }
@@ -86,7 +89,7 @@ public class JsonbImpl implements Jsonb {
         try {
             return dslJson.deserialize(type, stream);
         } catch (IOException e) {
-            Logger.error(e);
+            logger.error(e.getMessage(), e);
             throw new JsonbException(e.getMessage(), e);
         }
     }
@@ -97,7 +100,7 @@ public class JsonbImpl implements Jsonb {
         try {
             return (T) dslJson.deserialize(runtimeType, stream);
         } catch (IOException e) {
-            Logger.error(e);
+            logger.error(e.getMessage(), e);
             throw new JsonbException(e.getMessage(), e);
         }
     }
@@ -109,7 +112,7 @@ public class JsonbImpl implements Jsonb {
             dslJson.serialize(jsonWriter, object);
             return jsonWriter.toString();
         } catch (IOException e) {
-            Logger.error(e);
+            logger.error(e.getMessage(), e);
             throw new JsonbException(e.getMessage(), e);
         }
     }
@@ -128,7 +131,7 @@ public class JsonbImpl implements Jsonb {
             dslJson.serialize(jsonWriter, object);
             writer.write(jsonWriter.toString());
         } catch (IOException e) {
-            Logger.error(e);
+            logger.error(e.getMessage(), e);
             throw new JsonbException(e.getMessage(), e);
         }
     }
@@ -140,7 +143,7 @@ public class JsonbImpl implements Jsonb {
             dslJson.serialize(jsonWriter, runtimeType, object);
             writer.write(jsonWriter.toString());
         } catch (IOException e) {
-            Logger.error(e);
+            logger.error(e.getMessage(), e);
             throw new JsonbException(e.getMessage(), e);
         }
 
@@ -151,7 +154,7 @@ public class JsonbImpl implements Jsonb {
         try {
             dslJson.serialize(object, stream);
         } catch (IOException e) {
-            Logger.error(e);
+            logger.error(e.getMessage(), e);
             throw new JsonbException(e.getMessage(), e);
         }
     }
@@ -161,13 +164,12 @@ public class JsonbImpl implements Jsonb {
         try {
             dslJson.serialize(object, stream);
         } catch (IOException e) {
-            Logger.error(e);
+            logger.error(e.getMessage(), e);
             throw new JsonbException(e.getMessage(), e);
         }
     }
 
     @Override
     public void close() {
-
     }
 }

@@ -15,7 +15,8 @@ import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonCollectors;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.processing.Filer;
 import javax.tools.FileObject;
@@ -32,6 +33,8 @@ import static jakarta.json.JsonValue.TRUE;
 
 @ApplicationScoped
 public class JsonSchemaTranslator {
+
+    private static final Logger logger = LoggerFactory.getLogger(JsonSchemaTranslator.class);
 
     private final DocumentManager documentManager;
     private final JsonProvider jsonProvider;
@@ -53,7 +56,7 @@ public class JsonSchemaTranslator {
                                 writer.write(entry.getValue().toString());
                                 writer.close();
                             } catch (IOException e) {
-                                Logger.error(e);
+                                logger.error(e.getMessage(), e);
                             }
                         }
                 );

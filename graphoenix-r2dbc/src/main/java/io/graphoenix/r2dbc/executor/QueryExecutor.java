@@ -6,13 +6,16 @@ import io.graphoenix.r2dbc.utils.ResultUtil;
 import io.r2dbc.spi.Statement;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
 @ApplicationScoped
 public class QueryExecutor {
+
+    private static final Logger logger = LoggerFactory.getLogger(QueryExecutor.class);
 
     private final ConnectionProvider connectionProvider;
     private final ParameterBinder parameterBinder;
@@ -32,8 +35,8 @@ public class QueryExecutor {
                 .usingWhen(
                         connectionProvider.get(),
                         connection -> {
-                            Logger.info("execute select:\r\n{}", sql);
-                            Logger.info("sql parameters:\r\n{}", parameters);
+                            logger.info("execute select:\r\n{}", sql);
+                            logger.info("sql parameters:\r\n{}", parameters);
                             Statement statement = connection.createStatement(sql);
                             parameterBinder.bindParameters(sql, statement, parameters);
                             return Mono.from(statement.execute())
