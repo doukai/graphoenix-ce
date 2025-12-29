@@ -108,4 +108,29 @@ public class TableManager {
                 )
                 .collectList();
     }
+
+    public Mono<List<Tuple2<String, String>>> selectIndexes(String sql) {
+        return Flux
+                .usingWhen(
+                        connectionProvider.get(),
+                        connection -> {
+                            logger.info("execute select:\r\n{}", sql);
+                            logger.info("sql parameters:\r\n{}");
+                            Statement statement = connection.createStatement(sql);
+                            return Flux.from(statement.execute());
+                        },
+                        connectionProvider::close
+                )
+                .flatMap(result ->
+                        Flux.from(
+                                result.map((row, rowMetadata) ->
+                                        Tuples.of(
+                                                Objects.requireNonNull(row.get(0, String.class)),
+                                                Objects.requireNonNull(row.get(1, String.class))
+                                        )
+                                )
+                        )
+                )
+                .collectList();
+    }
 }

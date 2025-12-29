@@ -6,6 +6,7 @@ import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.ObjectType;
+import io.graphoenix.spi.utils.StreamUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import net.sf.jsqlparser.expression.Function;
@@ -15,13 +16,16 @@ import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.alter.Alter;
 import net.sf.jsqlparser.statement.alter.AlterExpression;
 import net.sf.jsqlparser.statement.alter.AlterOperation;
+import net.sf.jsqlparser.statement.create.index.CreateIndex;
 import net.sf.jsqlparser.statement.create.table.ColDataType;
 import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
+import net.sf.jsqlparser.statement.create.table.Index;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.truncate.Truncate;
 import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -72,6 +76,49 @@ public class TypeTranslator {
                             }
                         }
                 );
+    }
+
+    public Stream<String> createIndexesSQL(List<Tuple2<String, String>> existsIndexNameList) {
+        return Stream
+                .concat(
+                        documentManager.getDocument().getObjectTypes()
+                                .filter(packageManager::isLocalPackage)
+                                .filter(objectType -> !documentManager.isOperationType(objectType))
+                                .filter(objectType -> !objectType.isContainer())
+                                .flatMap(objectType ->
+                                        objectType.getFields().stream()
+                                                .filter(fieldDefinition -> fieldDefinition.getMapFrom().isPresent())
+                                                .map(fieldDefinition ->
+                                                        Tuples.of(
+                                                                objectType.getName(),
+                                                                fieldDefinition.getMapFromOrError()
+                                                        )
+                                                )
+                                ),
+                        documentManager.getDocument().getObjectTypes()
+                                .filter(objectType -> !documentManager.isOperationType(objectType))
+                                .filter(objectType -> !objectType.isContainer())
+                                .flatMap(objectType ->
+                                        objectType.getFields().stream()
+                                                .filter(fieldDefinition -> fieldDefinition.getMapTo().isPresent())
+                                                .filter(fieldDefinition -> packageManager.isLocalPackage(documentManager.getFieldTypeDefinition(fieldDefinition)))
+                                                .map(fieldDefinition ->
+                                                        Tuples.of(
+                                                                documentManager.getFieldTypeDefinition(fieldDefinition).getName(),
+                                                                fieldDefinition.getMapToOrError()
+                                                        )
+                                                )
+                                )
+                )
+                .filter(StreamUtil.distinctByKey(Tuple2::toString))
+                .filter(typeMapFromTuple2 ->
+                        existsIndexNameList.stream()
+                                .noneMatch(tableIndexTuple2 ->
+                                        nameToDBEscape(tableIndexTuple2.getT1()).equals(graphqlTypeNameToTableName(typeMapFromTuple2.getT1())) &&
+                                                nameToDBEscape(tableIndexTuple2.getT2()).equals(graphqlFieldNameToColumnName(typeMapFromTuple2.getT2()))
+                                )
+                )
+                .map(typeMapFromTuple2 -> createIndex(typeMapFromTuple2.getT1(), typeMapFromTuple2.getT2()).toString());
     }
 
     protected CreateTable createTable(ObjectType objectType) {
@@ -271,6 +318,16 @@ public class TypeTranslator {
         return tableOptionsList;
     }
 
+    protected CreateIndex createIndex(String typename, String mapFrom) {
+        return new CreateIndex()
+                .withTable(graphqlTypeToTable(typename))
+                .withIndex(
+                        new Index()
+                                .withName(graphqlFieldNameToColumnName(mapFrom))
+                                .withColumnsNames(Collections.singletonList(graphqlFieldNameToColumnName(mapFrom)))
+                );
+    }
+
     public String selectColumnsSQL() {
         return selectColumns().toString();
     }
@@ -299,6 +356,24 @@ public class TypeTranslator {
                         new Column("table_name")
                 )
                 .withFromItem(new Table("TABLES").withSchemaName("information_schema"))
+                .withWhere(
+                        new EqualsTo()
+                                .withLeftExpression(new Column("table_schema"))
+                                .withRightExpression(new Function().withName("DATABASE"))
+                );
+    }
+
+    public String selectIndexesSQL() {
+        return selectIndexes().toString();
+    }
+
+    public Select selectIndexes() {
+        return new PlainSelect()
+                .addSelectItems(
+                        new Column("table_name"),
+                        new Column("column_name")
+                )
+                .withFromItem(new Table("STATISTICS").withSchemaName("information_schema"))
                 .withWhere(
                         new EqualsTo()
                                 .withLeftExpression(new Column("table_schema"))

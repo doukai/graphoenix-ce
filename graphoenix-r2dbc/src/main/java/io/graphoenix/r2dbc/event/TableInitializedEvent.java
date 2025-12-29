@@ -48,7 +48,16 @@ public class TableInitializedEvent implements ScopeEvent {
                             )
                     )
                     .doOnSuccess((v) -> logger.info("table initialized success"))
-                    .then();
+                    .then(
+                            tableManager.selectIndexes(typeTranslator.selectIndexesSQL())
+                                    .flatMap(existsIndexNameList ->
+                                            tableManager.mergeTable(
+                                                    typeTranslator.createIndexesSQL(existsIndexNameList)
+                                                            .collect(Collectors.joining(";"))
+                                            )
+                                    )
+                                    .doOnSuccess((v) -> logger.info("index initialized success"))
+                    );
         }
         return Mono.empty();
     }
