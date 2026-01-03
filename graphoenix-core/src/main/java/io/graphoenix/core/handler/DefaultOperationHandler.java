@@ -40,14 +40,19 @@ public class DefaultOperationHandler implements OperationHandler {
 
     private final SubscriptionHandler subscriptionHandler;
 
-    private final SubscriptionDataListener subscriptionDataListener;
+    private final Provider<SubscriptionDataListener> subscriptionDataListenerProvider;
 
     private final Provider<Mono<TransactionCompensator>> transactionCompensatorProvider;
 
     private final Provider<FetchHandler> fetchHandlerProvider;
 
     @Inject
-    public DefaultOperationHandler(GraphQLConfig graphQLConfig, Instance<OperationBeforeHandler> operationBeforeHandlerInstance, Instance<OperationAfterHandler> operationAfterHandlerInstance, SubscriptionDataListener subscriptionDataListener, Provider<Mono<TransactionCompensator>> transactionCompensatorProvider, Provider<FetchHandler> fetchHandlerProvider) {
+    public DefaultOperationHandler(GraphQLConfig graphQLConfig,
+                                   Instance<OperationBeforeHandler> operationBeforeHandlerInstance,
+                                   Instance<OperationAfterHandler> operationAfterHandlerInstance,
+                                   Provider<SubscriptionDataListener> subscriptionDataListenerProvider,
+                                   Provider<Mono<TransactionCompensator>> transactionCompensatorProvider,
+                                   Provider<FetchHandler> fetchHandlerProvider) {
         this.operationBeforeHandlerList = operationBeforeHandlerInstance.stream().collect(Collectors.toList());
         this.operationAfterHandlerList = operationAfterHandlerInstance.stream().collect(Collectors.toList());
         this.queryHandler = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
@@ -59,7 +64,7 @@ public class DefaultOperationHandler implements OperationHandler {
         this.subscriptionHandler = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
                 .map(name -> CDI.current().select(SubscriptionHandler.class, NamedLiteral.of(name)).get())
                 .orElseGet(() -> CDI.current().select(SubscriptionHandler.class).get());
-        this.subscriptionDataListener = subscriptionDataListener;
+        this.subscriptionDataListenerProvider = subscriptionDataListenerProvider;
         this.transactionCompensatorProvider = transactionCompensatorProvider;
         this.fetchHandlerProvider = fetchHandlerProvider;
     }
@@ -151,6 +156,6 @@ public class DefaultOperationHandler implements OperationHandler {
                                 )
                 )
                 .defaultIfEmpty(JsonValue.EMPTY_JSON_OBJECT)
-                .contextWrite(PublisherBeanContext.of(SubscriptionDataListener.class, subscriptionDataListener));
+                .contextWrite(PublisherBeanContext.of(SubscriptionDataListener.class, subscriptionDataListenerProvider.get()));
     }
 }

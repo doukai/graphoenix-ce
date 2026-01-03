@@ -35,7 +35,9 @@ public class DefaultFetchHandler implements FetchHandler {
     private final MutationHandler mutationHandler;
 
     @Inject
-    public DefaultFetchHandler(GraphQLConfig graphQLConfig, Instance<FetchBeforeHandler> operationBeforeHandlerInstance, Instance<FetchAfterHandler> operationAfterHandlerInstance, SubscriptionDataListener subscriptionDataListener) {
+    public DefaultFetchHandler(GraphQLConfig graphQLConfig,
+                               Instance<FetchBeforeHandler> operationBeforeHandlerInstance,
+                               Instance<FetchAfterHandler> operationAfterHandlerInstance) {
         this.fetchBeforeHandlerList = operationBeforeHandlerInstance.stream().collect(Collectors.toList());
         this.fetchAfterHandlerList = operationAfterHandlerInstance.stream().collect(Collectors.toList());
         this.queryHandler = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
