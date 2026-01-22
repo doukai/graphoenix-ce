@@ -2,13 +2,11 @@ package io.graphoenix.core.handler.before;
 
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.spi.error.GraphQLErrors;
-import io.graphoenix.spi.graphql.Document;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Fragment;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.operation.Selection;
 import io.graphoenix.spi.handler.OperationBeforeHandler;
-import io.nozdormu.spi.context.PublisherBeanContext;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -62,11 +60,7 @@ public class FragmentHandler implements OperationBeforeHandler {
     }
 
     public Flux<Selection> fragmentToFields(Fragment fragment) {
-        return PublisherBeanContext.get(Document.class)
-                .map(document ->
-                        document.getFragmentDefinition(fragment.getFragmentName())
-                                .orElseGet(() -> documentManager.getDocument().getFragmentDefinitionOrError(fragment.getFragmentName()))
-                )
+        return Mono.just(documentManager.getDocument().getFragmentDefinitionOrError(fragment.getFragmentName()))
                 .flatMapMany(fragmentDefinition -> Flux.fromIterable(fragmentDefinition.getSelections()));
     }
 }

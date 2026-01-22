@@ -3,9 +3,9 @@ package io.graphoenix.subscription.handler.after;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.handler.OperationAfterHandler;
 import io.graphoenix.spi.handler.SubscriptionDataListener;
-import io.nozdormu.spi.context.PublisherBeanContext;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Provider;
 import jakarta.json.JsonValue;
 import reactor.core.publisher.Mono;
 
@@ -17,9 +17,15 @@ public class SubscriptionAfterDataListener implements OperationAfterHandler {
 
     public static final int SUBSCRIPTION_AFTER_DATA_LISTENER_PRIORITY = SELECTION_HANDLER_PRIORITY - 125;
 
+    private final Provider<Mono<SubscriptionDataListener>> subscriptionDataListenerProvider;
+
+    public SubscriptionAfterDataListener(Provider<Mono<SubscriptionDataListener>> subscriptionDataListenerProvider) {
+        this.subscriptionDataListenerProvider = subscriptionDataListenerProvider;
+    }
+
     @Override
     public Mono<JsonValue> subscription(Operation operation, JsonValue jsonValue) {
-        return PublisherBeanContext.get(SubscriptionDataListener.class)
+        return subscriptionDataListenerProvider.get()
                 .map(subscriptionDataListener -> subscriptionDataListener.afterSubscription(operation, jsonValue))
                 .thenReturn(jsonValue);
     }

@@ -158,6 +158,15 @@ public class Operation extends AbstractDefinition implements Definition {
                 .orElse(null);
     }
 
+    public Fragment getFragment(String name) {
+        return getSelections().stream()
+                .filter(Selection::isFragment)
+                .map(selection -> (Fragment) selection)
+                .filter(fragment ->fragment.getFragmentName().equals(name))
+                .findFirst()
+                .orElse(null);
+    }
+
     public Operation addSelection(Selection selection) {
         this.selections.add(selection);
         return this;

@@ -4,7 +4,6 @@ import io.graphoenix.core.config.GraphQLConfig;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.handler.*;
-import io.nozdormu.spi.context.PublisherBeanContext;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.inject.Instance;
@@ -40,8 +39,6 @@ public class DefaultOperationHandler implements OperationHandler {
 
     private final SubscriptionHandler subscriptionHandler;
 
-    private final Provider<SubscriptionDataListener> subscriptionDataListenerProvider;
-
     private final Provider<Mono<TransactionCompensator>> transactionCompensatorProvider;
 
     private final Provider<FetchHandler> fetchHandlerProvider;
@@ -50,7 +47,6 @@ public class DefaultOperationHandler implements OperationHandler {
     public DefaultOperationHandler(GraphQLConfig graphQLConfig,
                                    Instance<OperationBeforeHandler> operationBeforeHandlerInstance,
                                    Instance<OperationAfterHandler> operationAfterHandlerInstance,
-                                   Provider<SubscriptionDataListener> subscriptionDataListenerProvider,
                                    Provider<Mono<TransactionCompensator>> transactionCompensatorProvider,
                                    Provider<FetchHandler> fetchHandlerProvider) {
         this.operationBeforeHandlerList = operationBeforeHandlerInstance.stream().collect(Collectors.toList());
@@ -64,7 +60,6 @@ public class DefaultOperationHandler implements OperationHandler {
         this.subscriptionHandler = Optional.ofNullable(graphQLConfig.getDefaultOperationHandlerName())
                 .map(name -> CDI.current().select(SubscriptionHandler.class, NamedLiteral.of(name)).get())
                 .orElseGet(() -> CDI.current().select(SubscriptionHandler.class).get());
-        this.subscriptionDataListenerProvider = subscriptionDataListenerProvider;
         this.transactionCompensatorProvider = transactionCompensatorProvider;
         this.fetchHandlerProvider = fetchHandlerProvider;
     }
@@ -155,7 +150,6 @@ public class DefaultOperationHandler implements OperationHandler {
                                                 .flatMap(operationMono -> operationMono)
                                 )
                 )
-                .defaultIfEmpty(JsonValue.EMPTY_JSON_OBJECT)
-                .contextWrite(PublisherBeanContext.of(SubscriptionDataListener.class, subscriptionDataListenerProvider.get()));
+                .defaultIfEmpty(JsonValue.EMPTY_JSON_OBJECT);
     }
 }

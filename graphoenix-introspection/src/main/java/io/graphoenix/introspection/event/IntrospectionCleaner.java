@@ -4,27 +4,24 @@ import io.graphoenix.core.config.GraphQLConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.handler.TypeEmptyHandler;
-import io.nozdormu.spi.event.ScopeEvent;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.Initialized;
+import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
 import java.util.stream.Collectors;
 
-import static io.graphoenix.introspection.event.IntrospectionBuildEvent.INTROSPECTION_BUILD_SCOPE_EVENT_PRIORITY;
+import static io.graphoenix.introspection.event.IntrospectionBuilder.INTROSPECTION_BUILD_SCOPE_EVENT_PRIORITY;
 import static io.graphoenix.spi.constant.Hammurabi.PREFIX_INTROSPECTION;
 
 @ApplicationScoped
-@Initialized(ApplicationScoped.class)
-@Priority(IntrospectionCleanEvent.INTROSPECTION_CLEAN_SCOPE_EVENT_PRIORITY)
-public class IntrospectionCleanEvent implements ScopeEvent {
+public class IntrospectionCleaner {
 
-    private static final Logger logger = LoggerFactory.getLogger(IntrospectionCleanEvent.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(IntrospectionCleaner.class.getName());
 
     public static final int INTROSPECTION_CLEAN_SCOPE_EVENT_PRIORITY = INTROSPECTION_BUILD_SCOPE_EVENT_PRIORITY - 1;
 
@@ -33,15 +30,13 @@ public class IntrospectionCleanEvent implements ScopeEvent {
     private final TypeEmptyHandler typeEmptyHandler;
 
     @Inject
-    public IntrospectionCleanEvent(GraphQLConfig graphQLConfig, DocumentManager documentManager, TypeEmptyHandler typeEmptyHandler) {
+    public IntrospectionCleaner(GraphQLConfig graphQLConfig, DocumentManager documentManager, TypeEmptyHandler typeEmptyHandler) {
         this.graphQLConfig = graphQLConfig;
         this.documentManager = documentManager;
         this.typeEmptyHandler = typeEmptyHandler;
     }
 
-
-    @Override
-    public Mono<Void> fireAsync(Map<String, Object> context) {
+    public Mono<Void> cleanIntrospection(@Observes @Initialized(ApplicationScoped.class) @Priority(IntrospectionCleaner.INTROSPECTION_CLEAN_SCOPE_EVENT_PRIORITY) Object event) {
         if (graphQLConfig.getBuildIntrospection()) {
             logger.info("introspection clean started");
             return typeEmptyHandler

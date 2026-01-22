@@ -61,7 +61,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
         super.init(processingEnv);
         types = processingEnv.getTypeUtils();
         Filer filer = processingEnv.getFiler();
-        BeanContext.load(BaseProcessor.class.getClassLoader());
+        BeanContext.setClassLoader(BaseProcessor.class.getClassLoader());
         Config config = BeanContext.get(Config.class);
         ((TypesafeConfig) config).load(filer);
         packageConfig = BeanContext.get(PackageConfig.class);

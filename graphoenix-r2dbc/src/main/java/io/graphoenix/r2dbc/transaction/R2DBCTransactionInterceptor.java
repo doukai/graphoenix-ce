@@ -23,7 +23,7 @@ import reactor.util.context.Context;
 
 import java.util.Arrays;
 
-import static io.graphoenix.r2dbc.context.TransactionScopeInstanceFactory.TRANSACTION_ID;
+import static io.graphoenix.r2dbc.context.TransactionBeanScoped.TRANSACTION_ID;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 
 @ApplicationScoped

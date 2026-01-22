@@ -5,13 +5,12 @@ import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.PackageManager;
 import io.graphoenix.spi.bootstrap.Launcher;
 import io.graphoenix.spi.bootstrap.Runner;
-import io.nozdormu.spi.event.ScopeEventResolver;
+import io.nozdormu.spi.event.ScopeEventPublisher;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -80,17 +79,13 @@ public class ApplicationLauncher implements Launcher {
 
             Runtime.getRuntime().addShutdownHook(
                     new Thread(() ->
-                            Flux
-                                    .concat(
-                                            ScopeEventResolver.beforeDestroyed(ApplicationScoped.class),
-                                            ScopeEventResolver.destroyed(ApplicationScoped.class)
-                                    )
+                            ScopeEventPublisher.destroyed(ApplicationScoped.class)
                                     .then()
                                     .block()
                     )
             );
 
-            ScopeEventResolver.initialized(Maps.newHashMap(Map.of("args", args)), ApplicationScoped.class)
+            ScopeEventPublisher.initialized(Maps.newHashMap(Map.of("args", args)), ApplicationScoped.class)
                     .then(Mono.fromRunnable(latch::countDown))
                     .block();
 

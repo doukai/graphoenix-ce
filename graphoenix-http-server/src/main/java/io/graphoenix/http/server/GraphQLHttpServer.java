@@ -1,7 +1,7 @@
 package io.graphoenix.http.server;
 
 import io.graphoenix.http.server.config.HttpServerConfig;
-import io.graphoenix.http.server.context.RequestScopeInstanceFactory;
+import io.graphoenix.http.server.context.RequestBeanScoped;
 import io.graphoenix.http.server.http.GetHandler;
 import io.graphoenix.http.server.http.PostHandler;
 import io.graphoenix.spi.bootstrap.Runner;
@@ -31,19 +31,19 @@ public class GraphQLHttpServer implements Runner {
     private final HttpServerConfig httpServerConfig;
     private final List<GetHandler> getHandlerList;
     private final List<PostHandler> postHandlerList;
-    private final RequestScopeInstanceFactory requestScopeInstanceFactory;
+    private final RequestBeanScoped requestBeanScoped;
 
     @Inject
     public GraphQLHttpServer(
             HttpServerConfig httpServerConfig,
             Instance<GetHandler> getHandlerInstance,
             Instance<PostHandler> postHandlerInstance,
-            RequestScopeInstanceFactory requestScopeInstanceFactory
+            RequestBeanScoped requestBeanScoped
     ) {
         this.httpServerConfig = httpServerConfig;
         this.getHandlerList = getHandlerInstance.stream().collect(Collectors.toList());
         this.postHandlerList = postHandlerInstance.stream().collect(Collectors.toList());
-        this.requestScopeInstanceFactory = requestScopeInstanceFactory;
+        this.requestBeanScoped = requestBeanScoped;
     }
 
     @Override
@@ -72,17 +72,15 @@ public class GraphQLHttpServer implements Runner {
                 .childOption(ChannelOption.SO_KEEPALIVE, httpServerConfig.getSoKeepAlive())
                 .doOnConnection(connection -> connection.addHandlerLast(new CorsHandler(corsConfig)))
                 .route(httpServerRoutes -> {
-                            getHandlerList.forEach(getHandler -> httpServerRoutes.get(getHandler.path(), getHandler::handle));
-                            postHandlerList.forEach(postHandler -> httpServerRoutes.post(postHandler.path(), postHandler::handle));
-                        }
-                )
+                    getHandlerList.forEach(getHandler -> httpServerRoutes.get(getHandler.path(), getHandler::handle));
+                    postHandlerList.forEach(postHandler -> httpServerRoutes.post(postHandler.path(), postHandler::handle));
+                })
                 .childObserve((connection, newState) -> {
-                            if (connection instanceof HttpOperations<?, ?> && newState.equals(ConnectionObserver.State.DISCONNECTING)) {
-                                String requestId = ((HttpOperations<?, ?>) connection).requestId();
-                                requestScopeInstanceFactory.invalidate(requestId);
-                            }
-                        }
-                )
+                    if (connection instanceof HttpOperations<?, ?> && newState.equals(ConnectionObserver.State.DISCONNECTING)) {
+                        String requestId = ((HttpOperations<?, ?>) connection).requestId();
+                        requestBeanScoped.destroy(requestId);
+                    }
+                })
                 .port(httpServerConfig.getPort())
                 .bindNow();
 

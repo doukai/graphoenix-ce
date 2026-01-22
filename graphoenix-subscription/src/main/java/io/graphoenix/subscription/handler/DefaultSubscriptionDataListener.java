@@ -13,7 +13,7 @@ import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
 import io.graphoenix.spi.graphql.type.ObjectType;
 import io.graphoenix.spi.handler.SubscriptionDataListener;
-import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 import static io.graphoenix.spi.constant.Hammurabi.INPUT_OPERATOR_INPUT_VALUE_VAL_NAME;
 import static io.graphoenix.spi.constant.Hammurabi.INPUT_VALUE_WHERE_NAME;
 
-@Dependent
+@RequestScoped
 public class DefaultSubscriptionDataListener implements SubscriptionDataListener {
 
     private final DocumentManager documentManager;

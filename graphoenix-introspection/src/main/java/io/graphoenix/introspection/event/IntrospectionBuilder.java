@@ -4,25 +4,21 @@ import io.graphoenix.core.config.GraphQLConfig;
 import io.graphoenix.introspection.handler.IntrospectionMutationBuilder;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.handler.MutationHandler;
-import io.nozdormu.spi.event.ScopeEvent;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.Initialized;
+import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
-
-import static io.graphoenix.core.event.DocumentInitializedEvent.DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY;
+import static io.graphoenix.core.event.DocumentInitializer.DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY;
 
 @ApplicationScoped
-@Initialized(ApplicationScoped.class)
-@Priority(IntrospectionBuildEvent.INTROSPECTION_BUILD_SCOPE_EVENT_PRIORITY)
-public class IntrospectionBuildEvent implements ScopeEvent {
+public class IntrospectionBuilder {
 
-    private static final Logger logger = LoggerFactory.getLogger(IntrospectionBuildEvent.class);
+    private static final Logger logger = LoggerFactory.getLogger(IntrospectionBuilder.class);
 
     public static final int INTROSPECTION_BUILD_SCOPE_EVENT_PRIORITY = DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY + 200;
 
@@ -31,14 +27,13 @@ public class IntrospectionBuildEvent implements ScopeEvent {
     private final MutationHandler mutationHandler;
 
     @Inject
-    public IntrospectionBuildEvent(GraphQLConfig graphQLConfig, IntrospectionMutationBuilder introspectionMutationBuilder, MutationHandler mutationHandler) {
+    public IntrospectionBuilder(GraphQLConfig graphQLConfig, IntrospectionMutationBuilder introspectionMutationBuilder, MutationHandler mutationHandler) {
         this.graphQLConfig = graphQLConfig;
         this.introspectionMutationBuilder = introspectionMutationBuilder;
         this.mutationHandler = mutationHandler;
     }
 
-    @Override
-    public Mono<Void> fireAsync(Map<String, Object> context) {
+    public Mono<Void> buildIntrospection(@Observes @Initialized(ApplicationScoped.class) @Priority(IntrospectionBuilder.INTROSPECTION_BUILD_SCOPE_EVENT_PRIORITY) Object event) {
         if (graphQLConfig.getBuildIntrospection()) {
             logger.info("introspection build started");
             Operation operation = introspectionMutationBuilder.buildIntrospectionSchemaMutation();

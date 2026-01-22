@@ -1,9 +1,9 @@
 package io.graphoenix.r2dbc.connection;
 
-import io.graphoenix.r2dbc.context.TransactionScopeInstanceFactory;
 import io.r2dbc.spi.Connection;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import reactor.core.publisher.Mono;
 
 import static io.graphoenix.spi.constant.Hammurabi.IN_TRANSACTION;
@@ -13,19 +13,19 @@ public class ConnectionProvider {
 
     private final ConnectionCreator connectionCreator;
 
-    private final TransactionScopeInstanceFactory transactionScopeInstanceFactory;
+    private final Provider<Mono<Connection>> connectionMonoProvider;
 
     @Inject
-    public ConnectionProvider(ConnectionCreator connectionCreator, TransactionScopeInstanceFactory transactionScopeInstanceFactory) {
+    public ConnectionProvider(ConnectionCreator connectionCreator, Provider<Mono<Connection>> connectionMonoProvider) {
         this.connectionCreator = connectionCreator;
-        this.transactionScopeInstanceFactory = transactionScopeInstanceFactory;
+        this.connectionMonoProvider = connectionMonoProvider;
     }
 
     public Mono<Connection> get() {
         return inTransaction()
                 .flatMap(inTransaction ->
                         inTransaction ?
-                                transactionScopeInstanceFactory.get(Connection.class, connectionCreator::createConnection) :
+                                connectionMonoProvider.get() :
                                 connectionCreator.createConnection()
                 );
     }

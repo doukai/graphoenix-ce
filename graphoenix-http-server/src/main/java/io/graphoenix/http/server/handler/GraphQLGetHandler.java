@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 import io.graphoenix.core.dto.GraphQLRequest;
 import io.graphoenix.http.server.codec.MimeType;
 import io.graphoenix.http.server.config.HttpServerConfig;
-import io.graphoenix.http.server.context.RequestScopeInstanceFactory;
+import io.graphoenix.http.server.context.RequestBeanScoped;
 import io.graphoenix.http.server.http.GetHandler;
 import io.graphoenix.http.server.utils.ResponseUtil;
 import io.graphoenix.spi.graphql.Document;
@@ -15,8 +15,7 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.QueryStringDecoder;
-import io.nozdormu.spi.context.PublisherBeanContext;
-import io.nozdormu.spi.event.ScopeEventResolver;
+import io.nozdormu.spi.event.ScopeEventPublisher;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -35,7 +34,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import static io.graphoenix.http.server.context.RequestScopeInstanceFactory.REQUEST_ID;
+import static io.graphoenix.http.server.context.RequestBeanScoped.REQUEST_ID;
 import static io.graphoenix.http.server.utils.ResponseUtil.next;
 import static io.netty.handler.codec.http.HttpHeaderNames.ACCEPT;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
@@ -44,14 +43,14 @@ import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 public class GraphQLGetHandler extends BaseHandler implements GetHandler {
 
     private final OperationHandler operationHandler;
-    private final RequestScopeInstanceFactory requestScopeInstanceFactory;
+    private final RequestBeanScoped requestBeanScoped;
     private final JsonProvider jsonProvider;
     private final HttpServerConfig httpServerConfig;
 
     @Inject
-    public GraphQLGetHandler(OperationHandler operationHandler, RequestScopeInstanceFactory requestScopeInstanceFactory, JsonProvider jsonProvider, HttpServerConfig httpServerConfig) {
+    public GraphQLGetHandler(OperationHandler operationHandler, RequestBeanScoped requestBeanScoped, JsonProvider jsonProvider, HttpServerConfig httpServerConfig) {
         this.operationHandler = operationHandler;
-        this.requestScopeInstanceFactory = requestScopeInstanceFactory;
+        this.requestBeanScoped = requestBeanScoped;
         this.jsonProvider = jsonProvider;
         this.httpServerConfig = httpServerConfig;
     }
@@ -84,14 +83,11 @@ public class GraphQLGetHandler extends BaseHandler implements GetHandler {
                     .addHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.TEXT_EVENT_STREAM + "; charset=utf-8")
                     .status(HttpResponseStatus.ACCEPTED)
                     .send(
-                            ScopeEventResolver.initialized(Maps.newHashMap(Map.of(REQUEST, request, RESPONSE, response, OPERATION, document.getOperationOrError())), RequestScoped.class)
-                                    .then(requestScopeInstanceFactory.compute(requestId, HttpServerRequest.class, request))
-                                    .then(requestScopeInstanceFactory.compute(requestId, HttpServerResponse.class, response))
-                                    .then(requestScopeInstanceFactory.compute(requestId, Operation.class, operation))
-                                    .thenMany(
-                                            Flux.from(operationHandler.handle(operation, graphQLRequest.getVariables(), token, operationId))
-                                                    .contextWrite(PublisherBeanContext.of(Document.class, document))
-                                    )
+                            ScopeEventPublisher.initialized(Maps.newHashMap(Map.of(REQUEST, request, RESPONSE, response, OPERATION, document.getOperationOrError())), RequestScoped.class)
+                                    .doOnSuccess(v -> requestBeanScoped.put(requestId, HttpServerRequest.class, request))
+                                    .doOnSuccess(v -> requestBeanScoped.put(requestId, HttpServerResponse.class, response))
+                                    .doOnSuccess(v -> requestBeanScoped.put(requestId, Operation.class, operation))
+                                    .thenMany(Flux.from(operationHandler.handle(operation, graphQLRequest.getVariables(), token, operationId)))
                                     .map(jsonValue -> next(jsonValue, operationId))
                                     .onErrorResume(throwable -> this.errorSSEHandler(throwable, response, operationId))
                                     .map(eventString -> ByteBufAllocator.DEFAULT.buffer().writeBytes(eventString.getBytes(StandardCharsets.UTF_8)))
@@ -102,14 +98,11 @@ public class GraphQLGetHandler extends BaseHandler implements GetHandler {
             return response
                     .addHeader(CONTENT_TYPE, MimeType.Application.JSON)
                     .sendString(
-                            ScopeEventResolver.initialized(Maps.newHashMap(Map.of(REQUEST, request, RESPONSE, response, OPERATION, document.getOperationOrError())), RequestScoped.class)
-                                    .then(requestScopeInstanceFactory.compute(requestId, HttpServerRequest.class, request))
-                                    .then(requestScopeInstanceFactory.compute(requestId, HttpServerResponse.class, response))
-                                    .then(requestScopeInstanceFactory.compute(requestId, Operation.class, operation))
-                                    .then(
-                                            Mono.from(operationHandler.handle(operation, graphQLRequest.getVariables()))
-                                                    .contextWrite(PublisherBeanContext.of(Document.class, document))
-                                    )
+                            ScopeEventPublisher.initialized(Maps.newHashMap(Map.of(REQUEST, request, RESPONSE, response, OPERATION, document.getOperationOrError())), RequestScoped.class)
+                                    .doOnSuccess(v -> requestBeanScoped.put(requestId, HttpServerRequest.class, request))
+                                    .doOnSuccess(v -> requestBeanScoped.put(requestId, HttpServerResponse.class, response))
+                                    .doOnSuccess(v -> requestBeanScoped.put(requestId, Operation.class, operation))
+                                    .then(Mono.from(operationHandler.handle(operation, graphQLRequest.getVariables())))
                                     .map(ResponseUtil::success)
                                     .doOnSuccess(jsonString -> response.status(HttpResponseStatus.OK))
                                     .onErrorResume(throwable -> this.errorHandler(throwable, response))
