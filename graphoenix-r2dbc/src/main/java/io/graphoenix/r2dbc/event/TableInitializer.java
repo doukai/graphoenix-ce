@@ -8,9 +8,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.Initialized;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static io.graphoenix.core.event.DocumentInitializer.DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY;
@@ -18,7 +19,7 @@ import static io.graphoenix.core.event.DocumentInitializer.DOCUMENT_INITIALIZED_
 @ApplicationScoped
 public class TableInitializer {
 
-    private static final Logger logger = Logger.getLogger(TableInitializer.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(TableInitializer.class.getName());
 
     public static final int TABLE_INITIALIZED_SCOPE_EVENT_PRIORITY = DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY + 100;
 
