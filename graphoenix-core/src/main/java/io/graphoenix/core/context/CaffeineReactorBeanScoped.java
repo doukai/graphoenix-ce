@@ -54,6 +54,22 @@ public abstract class CaffeineReactorBeanScoped implements ReactorBeanScoped {
 
     @SuppressWarnings("unchecked")
     @Override
+    public <T> Mono<T> get(Class<T> beanClass) {
+        return getScopedKey()
+                .mapNotNull(key -> {
+                    if (key == null) {
+                        return null;
+                    }
+                    Map<String, Object> scopedMap = getCache().get(key);
+                    if (scopedMap == null) {
+                        return null;
+                    }
+                    return (T) scopedMap.get(beanClass.getName());
+                });
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
     public <T, R extends T> Mono<T> get(Class<T> beanClass, Supplier<R> supplier) {
         return getScopedKey()
                 .mapNotNull(key -> {
