@@ -263,7 +263,7 @@ public final class ElementUtil {
         } else if (typeMirror.getKind().equals(TypeKind.DECLARED)) {
             DeclaredType declaredType = (DeclaredType) typeMirror;
             if (declaredType.getTypeArguments() != null && !declaredType.getTypeArguments().isEmpty()) {
-                return ((TypeElement) types.asElement(declaredType)).getQualifiedName().toString() +
+                return ((TypeElement) types.asElement(declaredType)).getQualifiedName() +
                         "<" +
                         declaredType.getTypeArguments().stream().map(argumentTypeMirror -> getTypeWithArgumentsName(argumentTypeMirror, types))
                                 .collect(Collectors.joining(", ")) +
@@ -277,9 +277,13 @@ public final class ElementUtil {
     public static String getAsyncMethodName(ExecutableElement executableElement, Types types) {
         return Stream
                 .concat(
-                        Stream.of(executableElement.getSimpleName().toString() + "Async"),
+                        Stream.of(executableElement.getSimpleName() + "Async"),
                         executableElement.getParameters().stream()
-                                .map(parameter -> types.asElement(parameter.asType()).getSimpleName().toString())
+                                .map(parameter ->
+                                        types.asElement(parameter.asType()) == null ?
+                                                parameter.asType().toString() :
+                                                types.asElement(parameter.asType()).getSimpleName().toString()
+                                )
                 )
                 .collect(Collectors.joining("_"));
     }

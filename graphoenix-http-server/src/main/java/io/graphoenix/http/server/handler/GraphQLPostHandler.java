@@ -79,9 +79,10 @@ public class GraphQLPostHandler extends BaseHandler implements PostHandler {
                             request.receive().aggregate().asString()
                                     .map(requestString -> contentType.contains(MimeType.Application.GRAPHQL) ? new GraphQLRequest(requestString) : GraphQLRequest.fromJson(requestString))
                                     .flatMapMany(graphQLRequest ->
-                                            Flux.just(new Document(graphQLRequest.getQuery()))
+                                            Mono.just(new Document(graphQLRequest.getQuery()))
+                                                    .doOnSuccess(document -> requestBeanScoped.put(requestId, Document.class, document))
                                                     .map(Document::getOperationOrError)
-                                                    .flatMap(operation ->
+                                                    .flatMapMany(operation ->
                                                             ScopeEventPublisher.initialized(Maps.newHashMap(Map.of(REQUEST, request, RESPONSE, response, OPERATION, operation)), RequestScoped.class)
                                                                     .doOnSuccess(v -> requestBeanScoped.put(requestId, HttpServerRequest.class, request))
                                                                     .doOnSuccess(v -> requestBeanScoped.put(requestId, HttpServerResponse.class, response))
@@ -152,6 +153,7 @@ public class GraphQLPostHandler extends BaseHandler implements PostHandler {
                             )
                                     .flatMap(graphQLRequest ->
                                             Mono.just(new Document(graphQLRequest.getQuery()))
+                                                    .doOnSuccess(document -> requestBeanScoped.put(requestId, Document.class, document))
                                                     .map(Document::getOperationOrError)
                                                     .flatMap(operation ->
                                                             ScopeEventPublisher.initialized(Maps.newHashMap(Map.of(REQUEST, request, RESPONSE, response, OPERATION, operation)), RequestScoped.class)

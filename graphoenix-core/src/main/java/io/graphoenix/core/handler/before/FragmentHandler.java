@@ -2,14 +2,17 @@ package io.graphoenix.core.handler.before;
 
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.spi.error.GraphQLErrors;
+import io.graphoenix.spi.graphql.Document;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Fragment;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.operation.Selection;
 import io.graphoenix.spi.handler.OperationBeforeHandler;
+import io.nozdormu.spi.context.ReactorBeanScoped;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.json.JsonValue;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -28,9 +31,13 @@ public class FragmentHandler implements OperationBeforeHandler {
 
     private final DocumentManager documentManager;
 
+    private final ReactorBeanScoped reactorBeanScoped;
+
     @Inject
-    public FragmentHandler(DocumentManager documentManager) {
+    public FragmentHandler(DocumentManager documentManager,
+                           @Named("jakarta.enterprise.context.RequestScoped") ReactorBeanScoped reactorBeanScoped) {
         this.documentManager = documentManager;
+        this.reactorBeanScoped = reactorBeanScoped;
     }
 
     @Override
@@ -60,7 +67,12 @@ public class FragmentHandler implements OperationBeforeHandler {
     }
 
     public Flux<Selection> fragmentToFields(Fragment fragment) {
-        return Mono.just(documentManager.getDocument().getFragmentDefinitionOrError(fragment.getFragmentName()))
+        return reactorBeanScoped.get(Document.class)
+                .map(document ->
+                        document.getFragmentDefinition(fragment.getFragmentName())
+                                .orElseGet(() -> documentManager.getDocument().getFragmentDefinitionOrError(fragment.getFragmentName()))
+                )
                 .flatMapMany(fragmentDefinition -> Flux.fromIterable(fragmentDefinition.getSelections()));
+
     }
 }
