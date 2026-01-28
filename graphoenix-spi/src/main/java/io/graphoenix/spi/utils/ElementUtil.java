@@ -17,10 +17,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.ArrayType;
-import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
+import javax.lang.model.type.*;
 import javax.lang.model.util.Types;
 import java.io.StringReader;
 import java.math.BigDecimal;
@@ -280,8 +277,8 @@ public final class ElementUtil {
                         Stream.of(executableElement.getSimpleName() + "Async"),
                         executableElement.getParameters().stream()
                                 .map(parameter ->
-                                        types.asElement(parameter.asType()) == null ?
-                                                parameter.asType().toString() :
+                                        parameter.asType().getKind().isPrimitive() ?
+                                                types.boxedClass((PrimitiveType) parameter.asType()).getSimpleName().toString() :
                                                 types.asElement(parameter.asType()).getSimpleName().toString()
                                 )
                 )
