@@ -90,7 +90,10 @@ public abstract class CaffeineReactorBeanScoped implements ReactorBeanScoped {
                         return Mono.empty();
                     }
                     Map<String, Object> scopedMap = getCache().get(key, k -> new ConcurrentHashMap<>());
-                    return supplier.get().map(bean -> (T) scopedMap.computeIfAbsent(beanClass.getName(), k -> bean));
+                    if(scopedMap.containsKey(beanClass.getName())) {
+                        return Mono.just((T) scopedMap.get(beanClass.getName()));
+                    }
+                    return supplier.get().map(bean -> (T) scopedMap.compute(beanClass.getName(), (k, v) -> bean));
                 });
     }
 
