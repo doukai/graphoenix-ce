@@ -143,6 +143,9 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
     }
 
     public Stream<FetchItem> buildFetchItems(ObjectType objectType, FieldDefinition fieldDefinition, Field field, JsonValue jsonValue, boolean merge) {
+        if (fieldDefinition.isInvokeField()) {
+            return Stream.empty();
+        }
         Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
         if (documentManager.isMutationOperationType(objectType) && !packageManager.isLocalPackage(fieldDefinition)) {
             String protocol = fieldDefinition.getFetchProtocol().map(EnumValue::getValue)
