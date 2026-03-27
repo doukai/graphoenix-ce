@@ -48,1031 +48,1097 @@ import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 @ApplicationScoped
 public class TypeSpecBuilder {
 
-    private static final Logger logger = LoggerFactory.getLogger(TypeSpecBuilder.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(TypeSpecBuilder.class.getName());
 
-    private final DocumentManager documentManager;
-    private final PackageManager packageManager;
-    private final PackageConfig packageConfig;
-    private final GeneratorConfig generatorConfig;
-    private final List<TypeBuilder> typeBuilderList;
+  private final DocumentManager documentManager;
+  private final PackageManager packageManager;
+  private final PackageConfig packageConfig;
+  private final GeneratorConfig generatorConfig;
+  private final List<TypeBuilder> typeBuilderList;
 
-    @Inject
-    public TypeSpecBuilder(DocumentManager documentManager, PackageManager packageManager, PackageConfig packageConfig, GeneratorConfig generatorConfig, Instance<TypeBuilder> typeBuilderInstance) {
-        this.documentManager = documentManager;
-        this.packageManager = packageManager;
-        this.packageConfig = packageConfig;
-        this.generatorConfig = generatorConfig;
-        this.typeBuilderList = typeBuilderInstance.stream().collect(Collectors.toList());
+  @Inject
+  public TypeSpecBuilder(
+      DocumentManager documentManager,
+      PackageManager packageManager,
+      PackageConfig packageConfig,
+      GeneratorConfig generatorConfig,
+      Instance<TypeBuilder> typeBuilderInstance) {
+    this.documentManager = documentManager;
+    this.packageManager = packageManager;
+    this.packageConfig = packageConfig;
+    this.generatorConfig = generatorConfig;
+    this.typeBuilderList = typeBuilderInstance.stream().collect(Collectors.toList());
+  }
+
+  private AnnotationSpec getGeneratedAnnotationSpec() {
+    return AnnotationSpec.builder(Generated.class)
+        .addMember("value", "$S", getClass().getName())
+        .build();
+  }
+
+  public TypeSpec buildType(ObjectType objectType) {
+    TypeSpec.Builder builder =
+        TypeSpec.classBuilder(objectType.getName())
+            .addModifiers(Modifier.PUBLIC)
+            .addAnnotation(Type.class)
+            .addAnnotation(CompiledJson.class)
+            .addAnnotation(getGeneratedAnnotationSpec());
+
+    List<FieldSpec> fieldSpecs =
+        objectType.getFields().stream().map(this::buildField).collect(Collectors.toList());
+
+    List<MethodSpec> methodSpecs =
+        fieldSpecs.stream()
+            .flatMap(
+                fieldSpec ->
+                    Stream.concat(
+                        Stream.of(buildGetter(fieldSpec, objectType.getInterfaces())),
+                        buildSetterList(fieldSpec, objectType.getInterfaces()).stream()))
+            .collect(Collectors.toList());
+
+    builder.addFields(fieldSpecs).addMethods(methodSpecs);
+
+    if (objectType.getInterfaces() != null && !objectType.getInterfaces().isEmpty()) {
+      builder.addSuperinterfaces(
+          objectType.getInterfaces().stream()
+              .map(name -> documentManager.getDocument().getInterfaceTypeOrError(name))
+              .map(interfaceType -> toClassName(interfaceType.getClassNameOrError()))
+              .collect(Collectors.toList()));
     }
-
-    private AnnotationSpec getGeneratedAnnotationSpec() {
-        return AnnotationSpec.builder(Generated.class)
-                .addMember("value", "$S", getClass().getName())
-                .build();
+    if (objectType.getDescription() != null) {
+      builder
+          .addJavadoc("$L", objectType.getDescription())
+          .addAnnotation(
+              AnnotationSpec.builder(Description.class)
+                  .addMember("value", "$S", objectType.getDescription())
+                  .build());
     }
+    if (!objectType.isContainer() && !documentManager.isOperationType(objectType)) {
+      ClassName className =
+          ClassName.get(
+              packageConfig.getInputObjectTypePackageName(), objectType.getName() + SUFFIX_INPUT);
+      MethodSpec.Builder toInput =
+          MethodSpec.methodBuilder("toInput")
+              .addModifiers(Modifier.PUBLIC)
+              .returns(className)
+              .addStatement("$T input = new $T()", className, className);
 
-    public TypeSpec buildType(ObjectType objectType) {
-        TypeSpec.Builder builder = TypeSpec.classBuilder(objectType.getName())
-                .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(Type.class)
-                .addAnnotation(CompiledJson.class)
-                .addAnnotation(getGeneratedAnnotationSpec());
-
-        List<FieldSpec> fieldSpecs = objectType.getFields().stream()
-                .map(this::buildField)
-                .collect(Collectors.toList());
-
-        List<MethodSpec> methodSpecs = fieldSpecs.stream()
-                .flatMap(fieldSpec ->
-                        Stream
-                                .concat(
-                                        Stream.of(buildGetter(fieldSpec, objectType.getInterfaces())),
-                                        buildSetterList(fieldSpec, objectType.getInterfaces()).stream()
-                                )
-                )
-                .collect(Collectors.toList());
-
-        builder
-                .addFields(fieldSpecs)
-                .addMethods(methodSpecs);
-
-        if (objectType.getInterfaces() != null && !objectType.getInterfaces().isEmpty()) {
-            builder.addSuperinterfaces(
-                    objectType.getInterfaces().stream()
-                            .map(name -> documentManager.getDocument().getInterfaceTypeOrError(name))
-                            .map(interfaceType -> toClassName(interfaceType.getClassNameOrError()))
-                            .collect(Collectors.toList())
-            );
-        }
-        if (objectType.getDescription() != null) {
-            builder
-                    .addJavadoc("$L", objectType.getDescription())
-                    .addAnnotation(
-                            AnnotationSpec.builder(Description.class)
-                                    .addMember("value", "$S", objectType.getDescription())
-                                    .build()
-                    );
-        }
-        if (!objectType.isContainer() && !documentManager.isOperationType(objectType)) {
-            ClassName className = ClassName.get(packageConfig.getInputObjectTypePackageName(), objectType.getName() + SUFFIX_INPUT);
-            MethodSpec.Builder toInput = MethodSpec.methodBuilder("toInput")
-                    .addModifiers(Modifier.PUBLIC)
-                    .returns(className)
-                    .addStatement("$T input = new $T()", className, className);
-
-            objectType.getFields().stream()
-                    .filter(fieldDefinition -> !fieldDefinition.isFunctionField())
-                    .filter(fieldDefinition -> !fieldDefinition.isAggregateField())
-                    .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
-                    .filter(fieldDefinition -> !fieldDefinition.isFetchField())
-                    .filter(fieldDefinition -> !fieldDefinition.isConnectionField())
-                    .forEach(fieldDefinition -> {
-                                Definition definition = documentManager.getFieldTypeDefinition(fieldDefinition);
-                                if (definition.isLeaf()) {
-                                    toInput.addStatement(
-                                            "input.$L(this.$L())",
-                                            getFieldSetterMethodName(fieldDefinition.getName()),
-                                            getFieldGetterMethodName(fieldDefinition.getName())
-                                    );
-                                } else {
-                                    if (fieldDefinition.getType().hasList()) {
-                                        toInput.beginControlFlow("if($L() != null)", getFieldGetterMethodName(fieldDefinition.getName()))
-                                                .addStatement(
-                                                        "input.$L(this.$L().stream().map(item -> item.toInput()).collect($T.toList()))",
-                                                        getFieldSetterMethodName(fieldDefinition.getName()),
-                                                        getFieldGetterMethodName(fieldDefinition.getName()),
-                                                        ClassName.get(Collectors.class)
-                                                )
-                                                .endControlFlow();
-                                    } else {
-                                        toInput.beginControlFlow("if($L() != null)", getFieldGetterMethodName(fieldDefinition.getName()))
-                                                .addStatement(
-                                                        "input.$L(this.$L().toInput())",
-                                                        getFieldSetterMethodName(fieldDefinition.getName()),
-                                                        getFieldGetterMethodName(fieldDefinition.getName())
-                                                )
-                                                .endControlFlow();
-                                    }
-                                }
-                            }
-                    );
-            toInput.addStatement("return input");
-            builder.addMethod(toInput.build());
-        }
-        typeBuilderList.forEach(typeBuilder -> typeBuilder.buildObjectType(builder, objectType));
-        logger.info("class {} build success", objectType.getName());
-        return builder.build();
+      objectType.getFields().stream()
+          .filter(fieldDefinition -> !fieldDefinition.isFunctionField())
+          .filter(fieldDefinition -> !fieldDefinition.isAggregateField())
+          .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
+          .filter(fieldDefinition -> !fieldDefinition.isFetchField())
+          .filter(fieldDefinition -> !fieldDefinition.isConnectionField())
+          .forEach(
+              fieldDefinition -> {
+                Definition definition = documentManager.getFieldTypeDefinition(fieldDefinition);
+                if (definition.isLeaf()) {
+                  toInput.addStatement(
+                      "input.$L(this.$L())",
+                      getFieldSetterMethodName(fieldDefinition.getName()),
+                      getFieldGetterMethodName(fieldDefinition.getName()));
+                } else {
+                  if (fieldDefinition.getType().hasList()) {
+                    toInput
+                        .beginControlFlow(
+                            "if($L() != null)", getFieldGetterMethodName(fieldDefinition.getName()))
+                        .addStatement(
+                            "input.$L(this.$L().stream().map(item -> item.toInput()).collect($T.toList()))",
+                            getFieldSetterMethodName(fieldDefinition.getName()),
+                            getFieldGetterMethodName(fieldDefinition.getName()),
+                            ClassName.get(Collectors.class))
+                        .endControlFlow();
+                  } else {
+                    toInput
+                        .beginControlFlow(
+                            "if($L() != null)", getFieldGetterMethodName(fieldDefinition.getName()))
+                        .addStatement(
+                            "input.$L(this.$L().toInput())",
+                            getFieldSetterMethodName(fieldDefinition.getName()),
+                            getFieldGetterMethodName(fieldDefinition.getName()))
+                        .endControlFlow();
+                  }
+                }
+              });
+      toInput.addStatement("return input");
+      builder.addMethod(toInput.build());
     }
+    typeBuilderList.forEach(typeBuilder -> typeBuilder.buildObjectType(builder, objectType));
+    logger.info("class {} build success", objectType.getName());
+    return builder.build();
+  }
 
-    public TypeSpec buildType(InputObjectType inputObjectType) {
-        TypeSpec.Builder builder;
-        if (inputObjectType.isInputInterface()) {
-            builder = TypeSpec.interfaceBuilder(inputObjectType.getName());
-            List<FieldSpec> fieldSpecs = inputObjectType.getInputValues().stream()
-                    .map(this::buildInterfaceField)
-                    .collect(Collectors.toList());
-            List<MethodSpec> methodSpecs = fieldSpecs.stream()
-                    .flatMap(fieldSpec ->
-                            Stream.of(
-                                    buildInterfaceGetter(fieldSpec),
-                                    buildInputObjectInterfaceSetter(fieldSpec, inputObjectType.getInterfaces())
-                            )
-                    )
-                    .collect(Collectors.toList());
-            builder
-                    .addFields(fieldSpecs)
-                    .addMethods(methodSpecs);
-        } else {
-            builder = TypeSpec.classBuilder(inputObjectType.getName())
-                    .addAnnotation(CompiledJson.class);
-            List<FieldSpec> fieldSpecs = inputObjectType.getInputValues().stream()
-                    .map(this::buildField)
-                    .collect(Collectors.toList());
-            List<MethodSpec> methodSpecs = fieldSpecs.stream()
-                    .flatMap(fieldSpec ->
-                            Stream
-                                    .concat(
-                                            Stream.of(buildInputValueGetter(fieldSpec, inputObjectType.getInterfaces())),
-                                            buildInputValueSetterList(fieldSpec, inputObjectType.getInterfaces()).stream()
-                                    )
-                    )
-                    .collect(Collectors.toList());
-            builder
-                    .addFields(fieldSpecs)
-                    .addMethods(methodSpecs);
-        }
-        builder.addModifiers(Modifier.PUBLIC)
-                .addAnnotation(Input.class)
-                .addAnnotation(getGeneratedAnnotationSpec());
-
-        if (inputObjectType.getInterfaces() != null && !inputObjectType.getInterfaces().isEmpty()) {
-            builder.addSuperinterfaces(
-                    inputObjectType.getInterfaces().stream()
-                            .map(name -> documentManager.getDocument().getInputObjectTypeOrError(name))
-                            .map(inputInterfaceType -> toClassName(inputInterfaceType.getClassNameOrError()))
-                            .collect(Collectors.toList())
-            );
-        }
-        if (inputObjectType.getDescription() != null) {
-            builder
-                    .addJavadoc("$L", inputObjectType.getDescription())
-                    .addAnnotation(
-                            AnnotationSpec.builder(Description.class)
-                                    .addMember("value", "$S", inputObjectType.getDescription())
-                                    .build()
-                    );
-        }
-        typeBuilderList.forEach(typeBuilder -> typeBuilder.buildInputObjectType(builder, inputObjectType));
-        logger.info("input class {} build success", inputObjectType.getName());
-        return builder.build();
+  public TypeSpec buildType(InputObjectType inputObjectType) {
+    TypeSpec.Builder builder;
+    if (inputObjectType.isInputInterface()) {
+      builder = TypeSpec.interfaceBuilder(inputObjectType.getName());
+      List<FieldSpec> fieldSpecs =
+          inputObjectType.getInputValues().stream()
+              .map(this::buildInterfaceField)
+              .collect(Collectors.toList());
+      List<MethodSpec> methodSpecs =
+          fieldSpecs.stream()
+              .flatMap(
+                  fieldSpec ->
+                      Stream.of(
+                          buildInterfaceGetter(fieldSpec),
+                          buildInputObjectInterfaceSetter(
+                              fieldSpec, inputObjectType.getInterfaces())))
+              .collect(Collectors.toList());
+      builder.addFields(fieldSpecs).addMethods(methodSpecs);
+    } else {
+      builder = TypeSpec.classBuilder(inputObjectType.getName()).addAnnotation(CompiledJson.class);
+      List<FieldSpec> fieldSpecs =
+          inputObjectType.getInputValues().stream()
+              .map(this::buildField)
+              .collect(Collectors.toList());
+      List<MethodSpec> methodSpecs =
+          fieldSpecs.stream()
+              .flatMap(
+                  fieldSpec ->
+                      Stream.concat(
+                          Stream.of(
+                              buildInputValueGetter(fieldSpec, inputObjectType.getInterfaces())),
+                          buildInputValueSetterList(fieldSpec, inputObjectType.getInterfaces())
+                              .stream()))
+              .collect(Collectors.toList());
+      builder.addFields(fieldSpecs).addMethods(methodSpecs);
     }
+    builder
+        .addModifiers(Modifier.PUBLIC)
+        .addAnnotation(Input.class)
+        .addAnnotation(getGeneratedAnnotationSpec());
 
-    public Stream<TypeSpec> buildOperationTypeAnnotations() {
-        return Streams.concat(
-                documentManager.getDocument().getQueryOperationType().map(this::buildOperationTypeAnnotation).stream(),
-                documentManager.getDocument().getMutationOperationType().map(this::buildOperationTypeAnnotation).stream(),
-                documentManager.getDocument().getSubscriptionOperationType().map(this::buildOperationTypeAnnotation).stream()
-        );
+    if (inputObjectType.getInterfaces() != null && !inputObjectType.getInterfaces().isEmpty()) {
+      builder.addSuperinterfaces(
+          inputObjectType.getInterfaces().stream()
+              .map(name -> documentManager.getDocument().getInputObjectTypeOrError(name))
+              .map(inputInterfaceType -> toClassName(inputInterfaceType.getClassNameOrError()))
+              .collect(Collectors.toList()));
     }
-
-    public TypeSpec buildOperationTypeAnnotation(ObjectType objectType) {
-        TypeSpec.Builder builder = TypeSpec.annotationBuilder(objectType.getName())
-                .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(getGeneratedAnnotationSpec());
-
-        List<FieldDefinition> fieldDefinitions = objectType.getFields().stream()
-                .filter(packageManager::isLocalPackage)
-                .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
-                .collect(Collectors.toList());
-
-        if (!fieldDefinitions.isEmpty()) {
-            builder.addMethods(
-                    fieldDefinitions.stream()
-                            .map(fieldDefinition -> {
-                                        InputObjectType argumentInput = getArgumentInput(objectType, fieldDefinition);
-                                        return MethodSpec.methodBuilder(fieldDefinition.getName())
-                                                .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                                                .returns(toClassName(argumentInput.getAnnotationNameOrError()))
-                                                .defaultValue(CodeBlock.of("@$T", toClassName(argumentInput.getAnnotationNameOrError())))
-                                                .build();
-                                    }
-                            )
-                            .collect(Collectors.toList())
-            );
-        }
-        builder
-                .addAnnotation(AnnotationSpec.builder(Documented.class).build())
-                .addAnnotation(
-                        AnnotationSpec.builder(Retention.class)
-                                .addMember("value", "$T.$L", RetentionPolicy.class, RetentionPolicy.SOURCE)
-                                .build()
-                )
-                .addAnnotation(
-                        AnnotationSpec.builder(Target.class)
-                                .addMember("value", "$T.$L", ElementType.class, ElementType.METHOD)
-                                .build()
-                );
-
-        if (objectType.getDescription() != null) {
-            builder
-                    .addJavadoc("$L", objectType.getDescription())
-                    .addAnnotation(
-                            AnnotationSpec.builder(Description.class)
-                                    .addMember("value", "$S", objectType.getDescription())
-                                    .build()
-                    );
-        }
-        logger.info("operation type annotation {} build success", objectType.getName());
-        return builder.build();
+    if (inputObjectType.getDescription() != null) {
+      builder
+          .addJavadoc("$L", inputObjectType.getDescription())
+          .addAnnotation(
+              AnnotationSpec.builder(Description.class)
+                  .addMember("value", "$S", inputObjectType.getDescription())
+                  .build());
     }
+    typeBuilderList.forEach(
+        typeBuilder -> typeBuilder.buildInputObjectType(builder, inputObjectType));
+    logger.info("input class {} build success", inputObjectType.getName());
+    return builder.build();
+  }
 
-    public InputObjectType getArgumentInput(ObjectType objectType, FieldDefinition fieldDefinition) {
-        ObjectType fieldType = documentManager.getFieldTypeDefinition(fieldDefinition).asObject();
-        if (fieldDefinition.getType().hasList()) {
-            return documentManager.getDocument().getInputObjectTypeOrError(fieldType.getName() + SUFFIX_LIST + objectType.getName() + SUFFIX_ARGUMENTS);
-        } else {
-            return documentManager.getDocument().getInputObjectTypeOrError(fieldType.getName() + objectType.getName() + SUFFIX_ARGUMENTS);
-        }
+  public Stream<TypeSpec> buildOperationTypeAnnotations() {
+    return Streams.concat(
+        documentManager
+            .getDocument()
+            .getQueryOperationType()
+            .map(this::buildOperationTypeAnnotation)
+            .stream(),
+        documentManager
+            .getDocument()
+            .getMutationOperationType()
+            .map(this::buildOperationTypeAnnotation)
+            .stream(),
+        documentManager
+            .getDocument()
+            .getSubscriptionOperationType()
+            .map(this::buildOperationTypeAnnotation)
+            .stream());
+  }
+
+  public TypeSpec buildOperationTypeAnnotation(ObjectType objectType) {
+    TypeSpec.Builder builder =
+        TypeSpec.annotationBuilder(objectType.getName())
+            .addModifiers(Modifier.PUBLIC)
+            .addAnnotation(getGeneratedAnnotationSpec());
+
+    List<FieldDefinition> fieldDefinitions =
+        objectType.getFields().stream()
+            .filter(packageManager::isLocalPackage)
+            .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
+            .collect(Collectors.toList());
+
+    if (!fieldDefinitions.isEmpty()) {
+      builder.addMethods(
+          fieldDefinitions.stream()
+              .map(
+                  fieldDefinition -> {
+                    InputObjectType argumentInput = getArgumentInput(objectType, fieldDefinition);
+                    return MethodSpec.methodBuilder(fieldDefinition.getName())
+                        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                        .returns(toClassName(argumentInput.getAnnotationNameOrError()))
+                        .defaultValue(
+                            CodeBlock.of(
+                                "@$T", toClassName(argumentInput.getAnnotationNameOrError())))
+                        .build();
+                  })
+              .collect(Collectors.toList()));
     }
+    builder
+        .addAnnotation(AnnotationSpec.builder(Documented.class).build())
+        .addAnnotation(
+            AnnotationSpec.builder(Retention.class)
+                .addMember("value", "$T.$L", RetentionPolicy.class, RetentionPolicy.SOURCE)
+                .build())
+        .addAnnotation(
+            AnnotationSpec.builder(Target.class)
+                .addMember("value", "$T.$L", ElementType.class, ElementType.METHOD)
+                .build());
 
-    public Stream<TypeSpec> buildAnnotations(InputObjectType inputObjectType) {
-        if (inputObjectType.getName().endsWith(SUFFIX_ARGUMENTS)) {
-            return Stream.of(buildAnnotation(inputObjectType, 0));
-        } else {
-            if (inputObjectType.getInputValues().stream()
-                    .allMatch(inputValue -> documentManager.getInputValueTypeDefinition(inputValue).isLeaf())) {
-                return Stream.of(buildAnnotation(inputObjectType, 0));
-            }
-            return IntStream.range(0, generatorConfig.getAnnotationLevel())
-                    .mapToObj(level -> buildAnnotation(inputObjectType, level));
-        }
+    if (objectType.getDescription() != null) {
+      builder
+          .addJavadoc("$L", objectType.getDescription())
+          .addAnnotation(
+              AnnotationSpec.builder(Description.class)
+                  .addMember("value", "$S", objectType.getDescription())
+                  .build());
     }
+    logger.info("operation type annotation {} build success", objectType.getName());
+    return builder.build();
+  }
 
-    public TypeSpec buildAnnotation(InputObjectType inputObjectType, int level) {
-        TypeSpec.Builder builder = TypeSpec.annotationBuilder(inputObjectType.getName() + (level == 0 ? "" : "" + level))
-                .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(getGeneratedAnnotationSpec())
-                .addAnnotation(AnnotationSpec.builder(Documented.class).build())
-                .addAnnotation(
-                        AnnotationSpec.builder(Retention.class)
-                                .addMember("value", "$T.$L", RetentionPolicy.class, RetentionPolicy.SOURCE)
-                                .build()
-                )
-                .addAnnotation(
-                        AnnotationSpec.builder(Target.class)
-                                .addMember("value", "$T.$L", ElementType.class, ElementType.METHOD)
-                                .build()
-                );
-
-        List<MethodSpec> methodSpecs = inputObjectType.getInputValues().stream()
-                .filter(inputValue -> documentManager.getInputValueTypeDefinition(inputValue).isLeaf() || level < generatorConfig.getAnnotationLevel() - 1)
-                .map(inputValue -> buildAnnotationMethod(inputValue, level, inputObjectType.getName().endsWith(SUFFIX_ARGUMENTS)))
-                .collect(Collectors.toList());
-
-        builder.addMethods(methodSpecs);
-
-        List<MethodSpec> variableMethodSpecs = inputObjectType.getInputValues().stream()
-                .filter(inputValue -> documentManager.getInputValueTypeDefinition(inputValue).isLeaf() || level < generatorConfig.getAnnotationLevel() - 1)
-                .map(inputValue ->
-                        MethodSpec.methodBuilder("$" + inputValue.getName())
-                                .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
-                                .returns(String.class)
-                                .defaultValue("$S", "")
-                                .build()
-                )
-                .collect(Collectors.toList());
-
-        builder.addMethods(variableMethodSpecs);
-
-        if (inputObjectType.getDescription() != null) {
-            builder
-                    .addJavadoc("$L", inputObjectType.getDescription())
-                    .addAnnotation(
-                            AnnotationSpec.builder(Description.class)
-                                    .addMember("value", "$S", inputObjectType.getDescription())
-                                    .build()
-                    );
-        }
-        logger.info("annotation class {} build success", inputObjectType.getName());
-        return builder.build();
+  public InputObjectType getArgumentInput(ObjectType objectType, FieldDefinition fieldDefinition) {
+    ObjectType fieldType = documentManager.getFieldTypeDefinition(fieldDefinition).asObject();
+    if (fieldDefinition.getType().hasList()) {
+      return documentManager
+          .getDocument()
+          .getInputObjectTypeOrError(
+              fieldType.getName() + SUFFIX_LIST + objectType.getName() + SUFFIX_ARGUMENTS);
+    } else {
+      return documentManager
+          .getDocument()
+          .getInputObjectTypeOrError(fieldType.getName() + objectType.getName() + SUFFIX_ARGUMENTS);
     }
+  }
 
-    public TypeSpec buildType(EnumType enumType) {
-        TypeSpec.Builder builder = TypeSpec.enumBuilder(enumType.getName())
-                .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(Enum.class)
-                .addAnnotation(getGeneratedAnnotationSpec());
-
-        enumType.getEnumValues()
-                .forEach(enumValueDefinition -> builder.addEnumConstant(enumValueDefinition.getName(), buildEnumValue(enumValueDefinition)));
-
-        if (enumType.getDescription() != null) {
-            builder
-                    .addJavadoc("$L", enumType.getDescription())
-                    .addAnnotation(
-                            AnnotationSpec.builder(Description.class)
-                                    .addMember("value", "$S", enumType.getDescription())
-                                    .build()
-                    );
-        }
-        typeBuilderList.forEach(typeBuilder -> typeBuilder.buildEnumType(builder, enumType));
-        logger.info("enum {} build success", enumType.getName());
-        return builder.build();
+  public Stream<TypeSpec> buildAnnotations(InputObjectType inputObjectType) {
+    if (inputObjectType.getName().endsWith(SUFFIX_ARGUMENTS)) {
+      return Stream.of(buildAnnotation(inputObjectType, 0));
+    } else {
+      if (inputObjectType.getInputValues().stream()
+          .allMatch(
+              inputValue -> documentManager.getInputValueTypeDefinition(inputValue).isLeaf())) {
+        return Stream.of(buildAnnotation(inputObjectType, 0));
+      }
+      return IntStream.range(0, generatorConfig.getAnnotationLevel())
+          .mapToObj(level -> buildAnnotation(inputObjectType, level));
     }
+  }
 
-    public TypeSpec buildType(InterfaceType interfaceType) {
-        TypeSpec.Builder builder = TypeSpec.interfaceBuilder(interfaceType.getName())
-                .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(Interface.class)
-//                .addAnnotation(CompiledJson.class)
-                .addAnnotation(getGeneratedAnnotationSpec());
-
-        List<FieldSpec> fieldSpecs = interfaceType.getFields().stream()
-                .map(this::buildInterfaceField)
-                .collect(Collectors.toList());
-
-        List<MethodSpec> methodSpecs = fieldSpecs.stream()
-                .flatMap(fieldSpec ->
-                        Stream.of(
-                                buildInterfaceGetter(fieldSpec),
-                                buildInterfaceSetter(fieldSpec, interfaceType.getInterfaces())
-                        )
-                )
-                .collect(Collectors.toList());
-
-        builder
-                .addFields(fieldSpecs)
-                .addMethods(methodSpecs);
-
-        if (interfaceType.getInterfaces() != null && !interfaceType.getInterfaces().isEmpty()) {
-            builder.addSuperinterfaces(
-                    interfaceType.getInterfaces().stream()
-                            .map(name -> documentManager.getDocument().getInterfaceTypeOrError(name))
-                            .map(implementInterfaceType -> toClassName(implementInterfaceType.getClassNameOrError()))
-                            .collect(Collectors.toList())
-            );
-        }
-        if (interfaceType.getDescription() != null) {
-            builder
-                    .addJavadoc("$L", interfaceType.getDescription())
-                    .addAnnotation(
-                            AnnotationSpec.builder(Description.class)
-                                    .addMember("value", "$S", interfaceType.getDescription())
-                                    .build()
-                    );
-        }
-        typeBuilderList.forEach(typeBuilder -> typeBuilder.buildInterfaceType(builder, interfaceType));
-        logger.info("interface {} build success", interfaceType.getName());
-        return builder.build();
-    }
-
-    public TypeSpec buildType(DirectiveDefinition directiveDefinition) {
-        TypeSpec.Builder builder = TypeSpec.annotationBuilder(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, directiveDefinition.getName()))
-                .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(getGeneratedAnnotationSpec());
-
-        if (directiveDefinition.getArguments() != null && !directiveDefinition.getArguments().isEmpty()) {
-            builder.addMethods(
-                    directiveDefinition.getArguments().stream()
-                            .map(inputValue -> buildAnnotationMethod(inputValue, -1))
-                            .collect(Collectors.toList())
-            );
-        }
-        builder
-                .addAnnotation(AnnotationSpec.builder(Documented.class).build())
-                .addAnnotation(
-                        AnnotationSpec.builder(Retention.class)
-                                .addMember("value", "$T.$L", RetentionPolicy.class, RetentionPolicy.SOURCE)
-                                .build()
-                )
-                .addAnnotation(
-                        AnnotationSpec.builder(io.graphoenix.spi.annotation.Directive.class)
-                                .addMember("value", "$S", directiveDefinition.getName())
-                                .build()
-                );
-
-        CodeBlock.Builder codeBuilder = CodeBlock.builder()
-                .add("{")
-                .add(
-                        CodeBlock.join(
-                                Stream
-                                        .concat(
-                                                directiveDefinition.getDirectiveLocations().stream()
-                                                        .map(this::buildElementType),
-                                                Stream.of((ElementType.PARAMETER))
-                                        )
-                                        .distinct()
-                                        .map(elementType -> CodeBlock.of("$T.$L", ElementType.class, elementType))
-                                        .collect(Collectors.toList()),
-                                ","
-                        )
-                )
-                .add("}");
-        builder.addAnnotation(
+  public TypeSpec buildAnnotation(InputObjectType inputObjectType, int level) {
+    TypeSpec.Builder builder =
+        TypeSpec.annotationBuilder(inputObjectType.getName() + (level == 0 ? "" : "" + level))
+            .addModifiers(Modifier.PUBLIC)
+            .addAnnotation(getGeneratedAnnotationSpec())
+            .addAnnotation(AnnotationSpec.builder(Documented.class).build())
+            .addAnnotation(
+                AnnotationSpec.builder(Retention.class)
+                    .addMember("value", "$T.$L", RetentionPolicy.class, RetentionPolicy.SOURCE)
+                    .build())
+            .addAnnotation(
                 AnnotationSpec.builder(Target.class)
-                        .addMember("value", codeBuilder.build())
-                        .build()
-        );
-        if (directiveDefinition.getDescription() != null) {
-            builder
-                    .addJavadoc("$L", directiveDefinition.getDescription())
-                    .addAnnotation(
-                            AnnotationSpec.builder(Description.class)
-                                    .addMember("value", "$S", directiveDefinition.getDescription())
-                                    .build()
-                    );
-        }
-        logger.info("directive annotation {} build success", directiveDefinition.getName());
-        return builder.build();
-    }
+                    .addMember("value", "$T.$L", ElementType.class, ElementType.METHOD)
+                    .build());
 
-    public ElementType buildElementType(String locationName) {
-        switch (locationName) {
-            case "QUERY":
-            case "MUTATION":
-            case "SUBSCRIPTION":
-            case "FRAGMENT_SPREAD":
-            case "INLINE_FRAGMENT":
-                return ElementType.CONSTRUCTOR;
-            case "FIELD":
-                return ElementType.METHOD;
-            case "SCHEMA":
-            case "SCALAR":
-            case "OBJECT":
-            case "INTERFACE":
-            case "ENUM":
-            case "UNION":
-            case "INPUT_OBJECT":
-            case "FRAGMENT_DEFINITION":
-                return ElementType.TYPE;
-            case "FIELD_DEFINITION":
-            case "ENUM_VALUE":
-            case "INPUT_FIELD_DEFINITION":
-                return ElementType.FIELD;
-            case "ARGUMENT_DEFINITION":
-                return ElementType.PARAMETER;
-            default:
-                throw new GraphQLErrors(UNSUPPORTED_LOCATION_NAME.bind(locationName));
-        }
-    }
+    List<MethodSpec> methodSpecs =
+        inputObjectType.getInputValues().stream()
+            .filter(
+                inputValue ->
+                    documentManager.getInputValueTypeDefinition(inputValue).isLeaf()
+                        || level < generatorConfig.getAnnotationLevel() - 1)
+            .map(
+                inputValue ->
+                    buildAnnotationMethod(
+                        inputValue, level, inputObjectType.getName().endsWith(SUFFIX_ARGUMENTS)))
+            .collect(Collectors.toList());
 
-    public FieldSpec buildField(FieldDefinition fieldDefinition) {
-        boolean isKeyword = SourceVersion.isKeyword(fieldDefinition.getName());
-        FieldSpec.Builder builder = FieldSpec.builder(buildType(fieldDefinition.getType()), isKeyword ? "_" + fieldDefinition.getName() : fieldDefinition.getName(), Modifier.PRIVATE);
-        if (isKeyword) {
-            builder.addAnnotation(
-                    AnnotationSpec
-                            .builder(Name.class)
-                            .addMember("value", "$S", fieldDefinition.getName())
-                            .build()
-            );
-        }
-        fieldDefinition.getDefault()
-                .ifPresent(defaultValue ->
-                        builder.initializer(buildDefaultValue(fieldDefinition, defaultValue))
-                );
-        if (fieldDefinition.getType().getTypeName().getName().equals(SCALA_ID_NAME)) {
-            builder.addAnnotation(Id.class);
-        }
-        if (fieldDefinition.getType().isNonNull()) {
-            builder.addAnnotation(NonNull.class);
-        }
-        if (fieldDefinition.getDescription() != null) {
-            builder
-                    .addJavadoc("$L", fieldDefinition.getDescription())
-                    .addAnnotation(
-                            AnnotationSpec.builder(Description.class)
-                                    .addMember("value", "$S", fieldDefinition.getDescription())
-                                    .build()
-                    );
-        }
-        typeBuilderList.forEach(typeBuilder -> typeBuilder.buildFieldDefinition(builder, fieldDefinition));
-        logger.info("class field {} build success", fieldDefinition.getName());
-        return builder.build();
-    }
+    builder.addMethods(methodSpecs);
 
-    public TypeSpec buildEnumValue(EnumValueDefinition enumValueDefinition) {
-        TypeSpec.Builder builder = TypeSpec.anonymousClassBuilder("");
-        if (enumValueDefinition.getDescription() != null) {
-            builder
-                    .addJavadoc("$L", enumValueDefinition.getDescription())
-                    .addAnnotation(
-                            AnnotationSpec.builder(Description.class)
-                                    .addMember("value", "$S", enumValueDefinition.getDescription())
-                                    .build()
-                    );
-        }
-        typeBuilderList.forEach(typeBuilder -> typeBuilder.buildEnumValueDefinition(builder, enumValueDefinition));
-        logger.info("enum const {} build success", enumValueDefinition.getName());
-        return builder.build();
-    }
+    List<MethodSpec> variableMethodSpecs =
+        inputObjectType.getInputValues().stream()
+            .filter(
+                inputValue ->
+                    documentManager.getInputValueTypeDefinition(inputValue).isLeaf()
+                        || level < generatorConfig.getAnnotationLevel() - 1)
+            .map(
+                inputValue ->
+                    MethodSpec.methodBuilder("$" + inputValue.getName())
+                        .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
+                        .returns(String.class)
+                        .defaultValue("$S", "")
+                        .build())
+            .collect(Collectors.toList());
 
-    public FieldSpec buildInterfaceField(FieldDefinition fieldDefinition) {
-        boolean isKeyword = SourceVersion.isKeyword(fieldDefinition.getName());
-        FieldSpec.Builder builder = FieldSpec.builder(buildType(fieldDefinition.getType()), isKeyword ? "_" + fieldDefinition.getName() : fieldDefinition.getName(), Modifier.STATIC, Modifier.FINAL, Modifier.PUBLIC);
-        if (isKeyword) {
-            builder.addAnnotation(
-                    AnnotationSpec
-                            .builder(Name.class)
-                            .addMember("value", "$S", fieldDefinition.getName())
-                            .build()
-            );
-        }
-        fieldDefinition.getDefault()
-                .ifPresentOrElse(
-                        defaultValue -> builder.initializer(buildDefaultValue(fieldDefinition, defaultValue)),
-                        () -> builder.initializer("null")
-                );
-        if (fieldDefinition.getType().isNonNull()) {
-            builder.addAnnotation(NonNull.class);
-        }
-        if (fieldDefinition.getDescription() != null) {
-            builder
-                    .addJavadoc("$L", fieldDefinition.getDescription())
-                    .addAnnotation(
-                            AnnotationSpec.builder(Description.class)
-                                    .addMember("value", "$S", fieldDefinition.getDescription())
-                                    .build()
-                    );
-        }
-        typeBuilderList.forEach(typeBuilder -> typeBuilder.buildFieldDefinition(builder, fieldDefinition));
-        logger.info("class field {} build success", fieldDefinition.getName());
-        return builder.build();
-    }
+    builder.addMethods(variableMethodSpecs);
 
-    public FieldSpec buildField(InputValue inputValue) {
-        boolean isKeyword = SourceVersion.isKeyword(inputValue.getName());
-        FieldSpec.Builder builder = FieldSpec.builder(buildType(inputValue.getType()), isKeyword ? "_" + inputValue.getName() : inputValue.getName(), Modifier.PRIVATE);
-        if (isKeyword) {
-            builder.addAnnotation(
-                    AnnotationSpec.builder(Name.class)
-                            .addMember("value", "$S", inputValue.getName())
-                            .build()
-            );
-        }
-        if (inputValue.getDefaultValue() != null) {
-            builder.initializer(buildDefaultValue(inputValue, inputValue.getDefaultValue().toString()));
-            builder.addAnnotation(
-                    AnnotationSpec.builder(DefaultValue.class)
-                            .addMember(
-                                    "value",
-                                    CodeBlock.of("$S",
-                                            inputValue.getDefaultValue().isString() ?
-                                                    inputValue.getDefaultValue().asString().getString() :
-                                                    inputValue.getDefaultValue().toString()
-                                    )
-                            )
-                            .build()
-            );
-        }
-        if (inputValue.getType().isNonNull()) {
-            builder.addAnnotation(NonNull.class);
-        }
-        if (inputValue.getDescription() != null) {
-            builder
-                    .addJavadoc("$L", inputValue.getDescription())
-                    .addAnnotation(
-                            AnnotationSpec.builder(Description.class)
-                                    .addMember("value", "$S", inputValue.getDescription())
-                                    .build()
-                    );
-        }
-        typeBuilderList.forEach(typeBuilder -> typeBuilder.buildInputValue(builder, inputValue));
-        logger.info("input class field {} build success", inputValue.getName());
-        return builder.build();
+    if (inputObjectType.getDescription() != null) {
+      builder
+          .addJavadoc("$L", inputObjectType.getDescription())
+          .addAnnotation(
+              AnnotationSpec.builder(Description.class)
+                  .addMember("value", "$S", inputObjectType.getDescription())
+                  .build());
     }
+    logger.info("annotation class {} build success", inputObjectType.getName());
+    return builder.build();
+  }
 
-    public FieldSpec buildInterfaceField(InputValue inputValue) {
-        boolean isKeyword = SourceVersion.isKeyword(inputValue.getName());
-        FieldSpec.Builder builder = FieldSpec.builder(buildType(inputValue.getType()), isKeyword ? "_" + inputValue.getName() : inputValue.getName(), Modifier.STATIC, Modifier.FINAL, Modifier.PUBLIC);
-        if (isKeyword) {
-            builder.addAnnotation(
-                    AnnotationSpec.builder(Name.class)
-                            .addMember("value", "$S", inputValue.getName())
-                            .build()
-            );
-        }
-        if (inputValue.getDefaultValue() != null) {
-            builder.initializer(buildDefaultValue(inputValue, inputValue.getDefaultValue().toString()));
-        } else {
-            builder.initializer("null");
-        }
-        if (inputValue.getType().isNonNull()) {
-            builder.addAnnotation(NonNull.class);
-        }
-        if (inputValue.getDescription() != null) {
-            builder
-                    .addJavadoc("$L", inputValue.getDescription())
-                    .addAnnotation(
-                            AnnotationSpec.builder(Description.class)
-                                    .addMember("value", "$S", inputValue.getDescription())
-                                    .build()
-                    );
-        }
-        typeBuilderList.forEach(typeBuilder -> typeBuilder.buildInputValue(builder, inputValue));
-        logger.info("interface field {} build success", inputValue.getName());
-        return builder.build();
+  public TypeSpec buildType(EnumType enumType) {
+    TypeSpec.Builder builder =
+        TypeSpec.enumBuilder(enumType.getName())
+            .addModifiers(Modifier.PUBLIC)
+            .addAnnotation(Enum.class)
+            .addAnnotation(getGeneratedAnnotationSpec());
+
+    enumType
+        .getEnumValues()
+        .forEach(
+            enumValueDefinition ->
+                builder.addEnumConstant(
+                    enumValueDefinition.getName(), buildEnumValue(enumValueDefinition)));
+
+    if (enumType.getDescription() != null) {
+      builder
+          .addJavadoc("$L", enumType.getDescription())
+          .addAnnotation(
+              AnnotationSpec.builder(Description.class)
+                  .addMember("value", "$S", enumType.getDescription())
+                  .build());
     }
+    typeBuilderList.forEach(typeBuilder -> typeBuilder.buildEnumType(builder, enumType));
+    logger.info("enum {} build success", enumType.getName());
+    return builder.build();
+  }
 
-    public MethodSpec buildAnnotationMethod(InputValue inputValue, int level) {
-        return buildAnnotationMethod(inputValue, level, false);
+  public TypeSpec buildType(InterfaceType interfaceType) {
+    TypeSpec.Builder builder =
+        TypeSpec.interfaceBuilder(interfaceType.getName())
+            .addModifiers(Modifier.PUBLIC)
+            .addAnnotation(Interface.class)
+            //                .addAnnotation(CompiledJson.class)
+            .addAnnotation(getGeneratedAnnotationSpec());
+
+    List<FieldSpec> fieldSpecs =
+        interfaceType.getFields().stream()
+            .map(this::buildInterfaceField)
+            .collect(Collectors.toList());
+
+    List<MethodSpec> methodSpecs =
+        fieldSpecs.stream()
+            .flatMap(
+                fieldSpec ->
+                    Stream.of(
+                        buildInterfaceGetter(fieldSpec),
+                        buildInterfaceSetter(fieldSpec, interfaceType.getInterfaces())))
+            .collect(Collectors.toList());
+
+    builder.addFields(fieldSpecs).addMethods(methodSpecs);
+
+    if (interfaceType.getInterfaces() != null && !interfaceType.getInterfaces().isEmpty()) {
+      builder.addSuperinterfaces(
+          interfaceType.getInterfaces().stream()
+              .map(name -> documentManager.getDocument().getInterfaceTypeOrError(name))
+              .map(
+                  implementInterfaceType ->
+                      toClassName(implementInterfaceType.getClassNameOrError()))
+              .collect(Collectors.toList()));
     }
-
-    public MethodSpec buildAnnotationMethod(InputValue inputValue, int level, boolean fromArguments) {
-        boolean isKeyword = SourceVersion.isKeyword(inputValue.getName());
-        MethodSpec.Builder builder = MethodSpec.methodBuilder(isKeyword ? "_" + inputValue.getName() : inputValue.getName())
-                .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                .returns(buildAnnotationType(inputValue.getType(), level, fromArguments));
-        if (isKeyword) {
-            builder.addAnnotation(
-                    AnnotationSpec.builder(Name.class)
-                            .addMember("value", "$S", inputValue.getName())
-                            .build()
-            );
-        }
-        if (inputValue.getDefaultValue() != null) {
-            builder.defaultValue(buildDefaultValue(inputValue, inputValue.getDefaultValue().toString()));
-        } else {
-            builder.defaultValue(buildAnnotationDefaultValue(inputValue, level, fromArguments));
-        }
-        if (inputValue.getDescription() != null) {
-            builder
-                    .addJavadoc("$L", inputValue.getDescription())
-                    .addAnnotation(
-                            AnnotationSpec.builder(Description.class)
-                                    .addMember("value", "$S", inputValue.getDescription())
-                                    .build()
-                    );
-        }
-        logger.info("input annotation field {} build success", inputValue.getName());
-        return builder.build();
+    if (interfaceType.getDescription() != null) {
+      builder
+          .addJavadoc("$L", interfaceType.getDescription())
+          .addAnnotation(
+              AnnotationSpec.builder(Description.class)
+                  .addMember("value", "$S", interfaceType.getDescription())
+                  .build());
     }
+    typeBuilderList.forEach(typeBuilder -> typeBuilder.buildInterfaceType(builder, interfaceType));
+    logger.info("interface {} build success", interfaceType.getName());
+    return builder.build();
+  }
 
-    private CodeBlock buildDefaultValue(FieldDefinition fieldDefinition, String defaultValue) {
-        Definition inputValueTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        if (inputValueTypeDefinition.isScalar()) {
-            if (inputValueTypeDefinition.getName().equals("String")) {
-                return CodeBlock.of("$S", defaultValue);
-            } else if (inputValueTypeDefinition.getName().equals("BigInteger")) {
-                return CodeBlock.of("$T.valueOf($L)", ClassName.get(BigInteger.class), defaultValue);
-            } else if (inputValueTypeDefinition.getName().equals("BigDecimal")) {
-                return CodeBlock.of("$T.valueOf($L)", ClassName.get(BigDecimal.class), defaultValue);
-            } else if (inputValueTypeDefinition.getName().equals("Date")) {
-                return CodeBlock.of("$T.parse($S)", ClassName.get(LocalDate.class), defaultValue);
-            } else if (inputValueTypeDefinition.getName().equals("Time")) {
-                return CodeBlock.of("$T.parse($S)", ClassName.get(LocalTime.class), defaultValue);
-            } else if (inputValueTypeDefinition.getName().equals("DateTime")) {
-                return CodeBlock.of("$T.parse($S)", ClassName.get(LocalDateTime.class), defaultValue);
-            } else if (inputValueTypeDefinition.getName().equals("Timestamp")) {
-                return CodeBlock.of("$T.parse($S)", ClassName.get(LocalDateTime.class), defaultValue);
-            } else {
-                return CodeBlock.of("$L", defaultValue);
-            }
-        } else if (inputValueTypeDefinition.isEnum()) {
-            return CodeBlock.of(
-                    "$T.$L",
-                    toClassName(inputValueTypeDefinition.getClassNameOrError()),
-                    defaultValue
-            );
-        } else {
-            throw new GraphQLErrors(UNSUPPORTED_DEFAULT_VALUE.bind(defaultValue));
-        }
+  public TypeSpec buildType(DirectiveDefinition directiveDefinition) {
+    TypeSpec.Builder builder =
+        TypeSpec.annotationBuilder(
+                CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, directiveDefinition.getName()))
+            .addModifiers(Modifier.PUBLIC)
+            .addAnnotation(getGeneratedAnnotationSpec());
+
+    if (directiveDefinition.getArguments() != null
+        && !directiveDefinition.getArguments().isEmpty()) {
+      builder.addMethods(
+          directiveDefinition.getArguments().stream()
+              .map(inputValue -> buildAnnotationMethod(inputValue, -1))
+              .collect(Collectors.toList()));
     }
+    builder
+        .addAnnotation(AnnotationSpec.builder(Documented.class).build())
+        .addAnnotation(
+            AnnotationSpec.builder(Retention.class)
+                .addMember("value", "$T.$L", RetentionPolicy.class, RetentionPolicy.SOURCE)
+                .build())
+        .addAnnotation(
+            AnnotationSpec.builder(io.graphoenix.spi.annotation.Directive.class)
+                .addMember("value", "$S", directiveDefinition.getName())
+                .build());
 
-    private CodeBlock buildDefaultValue(InputValue inputValue, String defaultValue) {
-        Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
-        if (inputValueTypeDefinition.isScalar()) {
-            if (inputValueTypeDefinition.getName().equals("BigInteger")) {
-                return CodeBlock.of("$T.valueOf($L)", ClassName.get(BigInteger.class), defaultValue);
-            } else if (inputValueTypeDefinition.getName().equals("BigDecimal")) {
-                return CodeBlock.of("$T.valueOf($L)", ClassName.get(BigDecimal.class), defaultValue);
-            } else if (inputValueTypeDefinition.getName().equals("Date")) {
-                return CodeBlock.of("$T.parse($S)", ClassName.get(LocalDate.class), defaultValue);
-            } else if (inputValueTypeDefinition.getName().equals("Time")) {
-                return CodeBlock.of("$T.parse($S)", ClassName.get(LocalTime.class), defaultValue);
-            } else if (inputValueTypeDefinition.getName().equals("DateTime")) {
-                return CodeBlock.of("$T.parse($S)", ClassName.get(LocalDateTime.class), defaultValue);
-            } else if (inputValueTypeDefinition.getName().equals("Timestamp")) {
-                return CodeBlock.of("$T.parse($S)", ClassName.get(LocalDateTime.class), defaultValue);
-            } else {
-                return CodeBlock.of("$L", defaultValue);
-            }
-        } else if (inputValueTypeDefinition.isEnum()) {
-            return CodeBlock.of(
-                    "$T.$L",
-                    toClassName(inputValueTypeDefinition.getClassNameOrError()),
-                    defaultValue
-            );
-        } else {
-            throw new GraphQLErrors(UNSUPPORTED_DEFAULT_VALUE.bind(defaultValue));
-        }
+    CodeBlock.Builder codeBuilder =
+        CodeBlock.builder()
+            .add("{")
+            .add(
+                CodeBlock.join(
+                    Stream.concat(
+                            directiveDefinition.getDirectiveLocations().stream()
+                                .map(this::buildElementType),
+                            Stream.of((ElementType.PARAMETER)))
+                        .distinct()
+                        .map(elementType -> CodeBlock.of("$T.$L", ElementType.class, elementType))
+                        .collect(Collectors.toList()),
+                    ","))
+            .add("}");
+    builder.addAnnotation(
+        AnnotationSpec.builder(Target.class).addMember("value", codeBuilder.build()).build());
+    if (directiveDefinition.getDescription() != null) {
+      builder
+          .addJavadoc("$L", directiveDefinition.getDescription())
+          .addAnnotation(
+              AnnotationSpec.builder(Description.class)
+                  .addMember("value", "$S", directiveDefinition.getDescription())
+                  .build());
     }
+    logger.info("directive annotation {} build success", directiveDefinition.getName());
+    return builder.build();
+  }
 
-    public CodeBlock buildAnnotationDefaultValue(InputValue inputValue, int level, boolean fromArguments) {
-        if (inputValue.getType().hasList()) {
-            return CodeBlock.of("$L", "{}");
-        }
-        Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
-        if (inputValueTypeDefinition.isScalar()) {
-            return buildAnnotationDefaultValue(inputValueTypeDefinition.asScalar());
-        } else if (inputValueTypeDefinition.isEnum()) {
-            EnumType enumType = inputValueTypeDefinition.asEnum();
-            return CodeBlock.of(
-                    "$T.$L",
-                    toClassName(enumType.getClassNameOrError()),
-                    new ArrayList<>(enumType.getEnumValues()).get(0).getName()
-            );
-        } else if (inputValueTypeDefinition.isInputObject()) {
-            if (inputValueTypeDefinition.asInputObject().getInputValues().stream()
-                    .allMatch(subInputValue -> documentManager.getInputValueTypeDefinition(subInputValue).isLeaf())) {
-                return CodeBlock.of(
-                        "@$T",
-                        toClassName(inputValueTypeDefinition.asInputObject().getAnnotationNameOrError())
-                );
-            }
-            if (fromArguments) {
-                return CodeBlock.of(
-                        "@$T",
-                        toClassName(inputValueTypeDefinition.asInputObject().getAnnotationNameOrError() + (level == 0 ? "" : "" + level))
-                );
-            }
-            return CodeBlock.of(
-                    "@$T",
-                    toClassName(inputValueTypeDefinition.asInputObject().getAnnotationNameOrError() + ((level + 1) == 0 ? "" : "" + (level + 1)))
-            );
-        }
-        throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(inputValue.getType().getTypeName()));
+  public ElementType buildElementType(String locationName) {
+    switch (locationName) {
+      case "QUERY":
+      case "MUTATION":
+      case "SUBSCRIPTION":
+      case "FRAGMENT_SPREAD":
+      case "INLINE_FRAGMENT":
+        return ElementType.CONSTRUCTOR;
+      case "FIELD":
+        return ElementType.METHOD;
+      case "SCHEMA":
+      case "SCALAR":
+      case "OBJECT":
+      case "INTERFACE":
+      case "ENUM":
+      case "UNION":
+      case "INPUT_OBJECT":
+      case "FRAGMENT_DEFINITION":
+        return ElementType.TYPE;
+      case "FIELD_DEFINITION":
+      case "ENUM_VALUE":
+      case "INPUT_FIELD_DEFINITION":
+        return ElementType.FIELD;
+      case "ARGUMENT_DEFINITION":
+        return ElementType.PARAMETER;
+      default:
+        throw new GraphQLErrors(UNSUPPORTED_LOCATION_NAME.bind(locationName));
     }
+  }
 
-    public CodeBlock buildAnnotationDefaultValue(ScalarType scalarType) {
-        switch (scalarType.getName()) {
-            case SCALA_ID_NAME:
-            case SCALA_STRING_NAME:
-            case SCALA_DATE_NAME:
-            case SCALA_TIME_NAME:
-            case SCALA_DATE_TIME_NAME:
-            case SCALA_TIMESTAMP_NAME:
-            case SCALA_UPLOAD_NAME:
-                return CodeBlock.of("$S", "");
-            case SCALA_BOOLEAN_NAME:
-                return CodeBlock.of("$L", false);
-            case SCALA_INT_NAME:
-            case SCALA_BIG_INTEGER_NAME:
-            case SCALA_FLOAT_NAME:
-            case SCALA_BIG_DECIMAL_NAME:
-                return CodeBlock.of("$L", 0);
-        }
+  public FieldSpec buildField(FieldDefinition fieldDefinition) {
+    boolean isKeyword = SourceVersion.isKeyword(fieldDefinition.getName());
+    FieldSpec.Builder builder =
+        FieldSpec.builder(
+            buildType(fieldDefinition.getType()),
+            isKeyword ? "_" + fieldDefinition.getName() : fieldDefinition.getName(),
+            Modifier.PRIVATE);
+    if (isKeyword) {
+      builder.addAnnotation(
+          AnnotationSpec.builder(Name.class)
+              .addMember("value", "$S", fieldDefinition.getName())
+              .build());
+    }
+    fieldDefinition
+        .getDefault()
+        .ifPresent(
+            defaultValue -> builder.initializer(buildDefaultValue(fieldDefinition, defaultValue)));
+    if (fieldDefinition.getType().getTypeName().getName().equals(SCALA_ID_NAME)) {
+      builder.addAnnotation(Id.class);
+    }
+    if (fieldDefinition.getType().isNonNull()) {
+      builder.addAnnotation(NonNull.class);
+    }
+    if (fieldDefinition.getDescription() != null) {
+      builder
+          .addJavadoc("$L", fieldDefinition.getDescription())
+          .addAnnotation(
+              AnnotationSpec.builder(Description.class)
+                  .addMember("value", "$S", fieldDefinition.getDescription())
+                  .build());
+    }
+    typeBuilderList.forEach(
+        typeBuilder -> typeBuilder.buildFieldDefinition(builder, fieldDefinition));
+    logger.info("class field {} build success", fieldDefinition.getName());
+    return builder.build();
+  }
+
+  public TypeSpec buildEnumValue(EnumValueDefinition enumValueDefinition) {
+    TypeSpec.Builder builder = TypeSpec.anonymousClassBuilder("");
+    if (enumValueDefinition.getDescription() != null) {
+      builder
+          .addJavadoc("$L", enumValueDefinition.getDescription())
+          .addAnnotation(
+              AnnotationSpec.builder(Description.class)
+                  .addMember("value", "$S", enumValueDefinition.getDescription())
+                  .build());
+    }
+    typeBuilderList.forEach(
+        typeBuilder -> typeBuilder.buildEnumValueDefinition(builder, enumValueDefinition));
+    logger.info("enum const {} build success", enumValueDefinition.getName());
+    return builder.build();
+  }
+
+  public FieldSpec buildInterfaceField(FieldDefinition fieldDefinition) {
+    boolean isKeyword = SourceVersion.isKeyword(fieldDefinition.getName());
+    FieldSpec.Builder builder =
+        FieldSpec.builder(
+            buildType(fieldDefinition.getType()),
+            isKeyword ? "_" + fieldDefinition.getName() : fieldDefinition.getName(),
+            Modifier.STATIC,
+            Modifier.FINAL,
+            Modifier.PUBLIC);
+    if (isKeyword) {
+      builder.addAnnotation(
+          AnnotationSpec.builder(Name.class)
+              .addMember("value", "$S", fieldDefinition.getName())
+              .build());
+    }
+    fieldDefinition
+        .getDefault()
+        .ifPresentOrElse(
+            defaultValue -> builder.initializer(buildDefaultValue(fieldDefinition, defaultValue)),
+            () -> builder.initializer("null"));
+    if (fieldDefinition.getType().isNonNull()) {
+      builder.addAnnotation(NonNull.class);
+    }
+    if (fieldDefinition.getDescription() != null) {
+      builder
+          .addJavadoc("$L", fieldDefinition.getDescription())
+          .addAnnotation(
+              AnnotationSpec.builder(Description.class)
+                  .addMember("value", "$S", fieldDefinition.getDescription())
+                  .build());
+    }
+    typeBuilderList.forEach(
+        typeBuilder -> typeBuilder.buildFieldDefinition(builder, fieldDefinition));
+    logger.info("class field {} build success", fieldDefinition.getName());
+    return builder.build();
+  }
+
+  public FieldSpec buildField(InputValue inputValue) {
+    boolean isKeyword = SourceVersion.isKeyword(inputValue.getName());
+    FieldSpec.Builder builder =
+        FieldSpec.builder(
+            buildType(inputValue.getType()),
+            isKeyword ? "_" + inputValue.getName() : inputValue.getName(),
+            Modifier.PRIVATE);
+    if (isKeyword) {
+      builder.addAnnotation(
+          AnnotationSpec.builder(Name.class)
+              .addMember("value", "$S", inputValue.getName())
+              .build());
+    }
+    if (inputValue.getDefaultValue() != null) {
+      builder.initializer(buildDefaultValue(inputValue, inputValue.getDefaultValue().toString()));
+      builder.addAnnotation(
+          AnnotationSpec.builder(DefaultValue.class)
+              .addMember(
+                  "value",
+                  CodeBlock.of(
+                      "$S",
+                      inputValue.getDefaultValue().isString()
+                          ? inputValue.getDefaultValue().asString().getString()
+                          : inputValue.getDefaultValue().toString()))
+              .build());
+    }
+    if (inputValue.getType().isNonNull()) {
+      builder.addAnnotation(NonNull.class);
+    }
+    if (inputValue.getDescription() != null) {
+      builder
+          .addJavadoc("$L", inputValue.getDescription())
+          .addAnnotation(
+              AnnotationSpec.builder(Description.class)
+                  .addMember("value", "$S", inputValue.getDescription())
+                  .build());
+    }
+    typeBuilderList.forEach(typeBuilder -> typeBuilder.buildInputValue(builder, inputValue));
+    logger.info("input class field {} build success", inputValue.getName());
+    return builder.build();
+  }
+
+  public FieldSpec buildInterfaceField(InputValue inputValue) {
+    boolean isKeyword = SourceVersion.isKeyword(inputValue.getName());
+    FieldSpec.Builder builder =
+        FieldSpec.builder(
+            buildType(inputValue.getType()),
+            isKeyword ? "_" + inputValue.getName() : inputValue.getName(),
+            Modifier.STATIC,
+            Modifier.FINAL,
+            Modifier.PUBLIC);
+    if (isKeyword) {
+      builder.addAnnotation(
+          AnnotationSpec.builder(Name.class)
+              .addMember("value", "$S", inputValue.getName())
+              .build());
+    }
+    if (inputValue.getDefaultValue() != null) {
+      builder.initializer(buildDefaultValue(inputValue, inputValue.getDefaultValue().toString()));
+    } else {
+      builder.initializer("null");
+    }
+    if (inputValue.getType().isNonNull()) {
+      builder.addAnnotation(NonNull.class);
+    }
+    if (inputValue.getDescription() != null) {
+      builder
+          .addJavadoc("$L", inputValue.getDescription())
+          .addAnnotation(
+              AnnotationSpec.builder(Description.class)
+                  .addMember("value", "$S", inputValue.getDescription())
+                  .build());
+    }
+    typeBuilderList.forEach(typeBuilder -> typeBuilder.buildInputValue(builder, inputValue));
+    logger.info("interface field {} build success", inputValue.getName());
+    return builder.build();
+  }
+
+  public MethodSpec buildAnnotationMethod(InputValue inputValue, int level) {
+    return buildAnnotationMethod(inputValue, level, false);
+  }
+
+  public MethodSpec buildAnnotationMethod(InputValue inputValue, int level, boolean fromArguments) {
+    boolean isKeyword = SourceVersion.isKeyword(inputValue.getName());
+    MethodSpec.Builder builder =
+        MethodSpec.methodBuilder(isKeyword ? "_" + inputValue.getName() : inputValue.getName())
+            .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+            .returns(buildAnnotationType(inputValue.getType(), level, fromArguments));
+    if (isKeyword) {
+      builder.addAnnotation(
+          AnnotationSpec.builder(Name.class)
+              .addMember("value", "$S", inputValue.getName())
+              .build());
+    }
+    if (inputValue.getDefaultValue() != null) {
+      builder.defaultValue(buildDefaultValue(inputValue, inputValue.getDefaultValue().toString()));
+    } else {
+      builder.defaultValue(buildAnnotationDefaultValue(inputValue, level, fromArguments));
+    }
+    if (inputValue.getDescription() != null) {
+      builder
+          .addJavadoc("$L", inputValue.getDescription())
+          .addAnnotation(
+              AnnotationSpec.builder(Description.class)
+                  .addMember("value", "$S", inputValue.getDescription())
+                  .build());
+    }
+    logger.info("input annotation field {} build success", inputValue.getName());
+    return builder.build();
+  }
+
+  private CodeBlock buildDefaultValue(FieldDefinition fieldDefinition, String defaultValue) {
+    Definition inputValueTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+    if (inputValueTypeDefinition.isScalar()) {
+      if (inputValueTypeDefinition.getName().equals("String")) {
+        return CodeBlock.of("$S", defaultValue);
+      } else if (inputValueTypeDefinition.getName().equals("BigInteger")) {
+        return CodeBlock.of("$T.valueOf($L)", ClassName.get(BigInteger.class), defaultValue);
+      } else if (inputValueTypeDefinition.getName().equals("BigDecimal")) {
+        return CodeBlock.of("$T.valueOf($L)", ClassName.get(BigDecimal.class), defaultValue);
+      } else if (inputValueTypeDefinition.getName().equals("Date")) {
+        return CodeBlock.of("$T.parse($S)", ClassName.get(LocalDate.class), defaultValue);
+      } else if (inputValueTypeDefinition.getName().equals("Time")) {
+        return CodeBlock.of("$T.parse($S)", ClassName.get(LocalTime.class), defaultValue);
+      } else if (inputValueTypeDefinition.getName().equals("DateTime")) {
+        return CodeBlock.of("$T.parse($S)", ClassName.get(LocalDateTime.class), defaultValue);
+      } else if (inputValueTypeDefinition.getName().equals("Timestamp")) {
+        return CodeBlock.of("$T.parse($S)", ClassName.get(LocalDateTime.class), defaultValue);
+      } else {
+        return CodeBlock.of("$L", defaultValue);
+      }
+    } else if (inputValueTypeDefinition.isEnum()) {
+      return CodeBlock.of(
+          "$T.$L", toClassName(inputValueTypeDefinition.getClassNameOrError()), defaultValue);
+    } else {
+      throw new GraphQLErrors(UNSUPPORTED_DEFAULT_VALUE.bind(defaultValue));
+    }
+  }
+
+  private CodeBlock buildDefaultValue(InputValue inputValue, String defaultValue) {
+    Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
+    if (inputValueTypeDefinition.isScalar()) {
+      if (inputValueTypeDefinition.getName().equals("BigInteger")) {
+        return CodeBlock.of("$T.valueOf($L)", ClassName.get(BigInteger.class), defaultValue);
+      } else if (inputValueTypeDefinition.getName().equals("BigDecimal")) {
+        return CodeBlock.of("$T.valueOf($L)", ClassName.get(BigDecimal.class), defaultValue);
+      } else if (inputValueTypeDefinition.getName().equals("Date")) {
+        return CodeBlock.of("$T.parse($S)", ClassName.get(LocalDate.class), defaultValue);
+      } else if (inputValueTypeDefinition.getName().equals("Time")) {
+        return CodeBlock.of("$T.parse($S)", ClassName.get(LocalTime.class), defaultValue);
+      } else if (inputValueTypeDefinition.getName().equals("DateTime")) {
+        return CodeBlock.of("$T.parse($S)", ClassName.get(LocalDateTime.class), defaultValue);
+      } else if (inputValueTypeDefinition.getName().equals("Timestamp")) {
+        return CodeBlock.of("$T.parse($S)", ClassName.get(LocalDateTime.class), defaultValue);
+      } else {
+        return CodeBlock.of("$L", defaultValue);
+      }
+    } else if (inputValueTypeDefinition.isEnum()) {
+      return CodeBlock.of(
+          "$T.$L", toClassName(inputValueTypeDefinition.getClassNameOrError()), defaultValue);
+    } else {
+      throw new GraphQLErrors(UNSUPPORTED_DEFAULT_VALUE.bind(defaultValue));
+    }
+  }
+
+  public CodeBlock buildAnnotationDefaultValue(
+      InputValue inputValue, int level, boolean fromArguments) {
+    if (inputValue.getType().hasList()) {
+      return CodeBlock.of("$L", "{}");
+    }
+    Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
+    if (inputValueTypeDefinition.isScalar()) {
+      return buildAnnotationDefaultValue(inputValueTypeDefinition.asScalar());
+    } else if (inputValueTypeDefinition.isEnum()) {
+      EnumType enumType = inputValueTypeDefinition.asEnum();
+      return CodeBlock.of(
+          "$T.$L",
+          toClassName(enumType.getClassNameOrError()),
+          new ArrayList<>(enumType.getEnumValues()).get(0).getName());
+    } else if (inputValueTypeDefinition.isInputObject()) {
+      if (inputValueTypeDefinition.asInputObject().getInputValues().stream()
+          .allMatch(
+              subInputValue ->
+                  documentManager.getInputValueTypeDefinition(subInputValue).isLeaf())) {
+        return CodeBlock.of(
+            "@$T",
+            toClassName(inputValueTypeDefinition.asInputObject().getAnnotationNameOrError()));
+      }
+      if (fromArguments) {
+        return CodeBlock.of(
+            "@$T",
+            toClassName(
+                inputValueTypeDefinition.asInputObject().getAnnotationNameOrError()
+                    + (level == 0 ? "" : "" + level)));
+      }
+      return CodeBlock.of(
+          "@$T",
+          toClassName(
+              inputValueTypeDefinition.asInputObject().getAnnotationNameOrError()
+                  + ((level + 1) == 0 ? "" : "" + (level + 1))));
+    }
+    throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(inputValue.getType().getTypeName()));
+  }
+
+  public CodeBlock buildAnnotationDefaultValue(ScalarType scalarType) {
+    switch (scalarType.getName()) {
+      case SCALA_ID_NAME:
+      case SCALA_STRING_NAME:
+      case SCALA_DATE_NAME:
+      case SCALA_TIME_NAME:
+      case SCALA_DATE_TIME_NAME:
+      case SCALA_TIMESTAMP_NAME:
+      case SCALA_UPLOAD_NAME:
+        return CodeBlock.of("$S", "");
+      case SCALA_BOOLEAN_NAME:
+        return CodeBlock.of("$L", false);
+      case SCALA_INT_NAME:
+      case SCALA_BIG_INTEGER_NAME:
+      case SCALA_FLOAT_NAME:
+      case SCALA_BIG_DECIMAL_NAME:
+        return CodeBlock.of("$L", 0);
+    }
+    throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(scalarType.getName()));
+  }
+
+  public TypeName buildType(io.graphoenix.spi.graphql.type.Type type) {
+    if (type.isList()) {
+      Definition typeDefinition =
+          documentManager.getDocument().getDefinition(type.getTypeName().getName());
+      if (typeDefinition.isInterface()
+          || typeDefinition.isInputObject() && typeDefinition.asInputObject().isInputInterface()) {
+        return ParameterizedTypeName.get(
+            ClassName.get(Collection.class),
+            WildcardTypeName.subtypeOf(buildType(type.asListType().getType())));
+      }
+      return ParameterizedTypeName.get(
+          ClassName.get(Collection.class), buildType(type.asListType().getType()));
+    } else if (type.isNonNull()) {
+      return buildType(type.asNonNullType().getType());
+    } else {
+      return buildType(type.asTypeName());
+    }
+  }
+
+  public TypeName buildAnnotationType(
+      io.graphoenix.spi.graphql.type.Type type, int level, boolean fromArguments) {
+    if (type.isList()) {
+      return ArrayTypeName.of(
+          buildAnnotationType(type.asListType().getType(), level, fromArguments));
+    } else if (type.isNonNull()) {
+      return buildAnnotationType(type.asNonNullType().getType(), level, fromArguments);
+    } else {
+      return buildAnnotationType(type.asTypeName(), level, fromArguments);
+    }
+  }
+
+  public TypeName buildType(io.graphoenix.spi.graphql.type.TypeName typeName) {
+    Definition typeDefinition = documentManager.getDocument().getDefinition(typeName.getName());
+    if (typeDefinition.isScalar()) {
+      return buildType(typeDefinition.asScalar());
+    } else {
+      return toClassName(typeDefinition.getClassNameOrError());
+    }
+  }
+
+  public TypeName buildAnnotationType(
+      io.graphoenix.spi.graphql.type.TypeName typeName, int level, boolean fromArguments) {
+    Definition typeDefinition = documentManager.getDocument().getDefinition(typeName.getName());
+    if (typeDefinition.isScalar()) {
+      return buildAnnotationType(typeDefinition.asScalar());
+    } else if (typeDefinition.isEnum()) {
+      return toClassName(typeDefinition.getClassNameOrError());
+    } else if (typeDefinition.isInputObject()) {
+      if (typeDefinition.asInputObject().getInputValues().stream()
+          .allMatch(
+              inputValue -> documentManager.getInputValueTypeDefinition(inputValue).isLeaf())) {
+        return toClassName(typeDefinition.getAnnotationNameOrError());
+      }
+      if (fromArguments) {
+        return toClassName(
+            typeDefinition.getAnnotationNameOrError() + (level == 0 ? "" : "" + level));
+      }
+      return toClassName(
+          typeDefinition.getAnnotationNameOrError() + ((level + 1) == 0 ? "" : "" + (level + 1)));
+    }
+    throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(typeName));
+  }
+
+  public TypeName buildType(ScalarType scalarType) {
+    switch (scalarType.getName()) {
+      case SCALA_ID_NAME:
+      case SCALA_STRING_NAME:
+      case SCALA_UPLOAD_NAME:
+        return TypeName.get(String.class);
+      case SCALA_BOOLEAN_NAME:
+        return TypeName.get(Boolean.class);
+      case SCALA_INT_NAME:
+        return TypeName.get(Integer.class);
+      case SCALA_FLOAT_NAME:
+        return TypeName.get(Float.class);
+      case SCALA_BIG_INTEGER_NAME:
+        return TypeName.get(BigInteger.class);
+      case SCALA_BIG_DECIMAL_NAME:
+        return TypeName.get(BigDecimal.class);
+      case SCALA_DATE_NAME:
+        return TypeName.get(LocalDate.class);
+      case SCALA_TIME_NAME:
+        return TypeName.get(LocalTime.class);
+      case SCALA_DATE_TIME_NAME:
+      case SCALA_TIMESTAMP_NAME:
+        return TypeName.get(LocalDateTime.class);
+      default:
         throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(scalarType.getName()));
     }
+  }
 
-    public TypeName buildType(io.graphoenix.spi.graphql.type.Type type) {
-        if (type.isList()) {
-            Definition typeDefinition = documentManager.getDocument().getDefinition(type.getTypeName().getName());
-            if (typeDefinition.isInterface() || typeDefinition.isInputObject() && typeDefinition.asInputObject().isInputInterface()) {
-                return ParameterizedTypeName.get(ClassName.get(Collection.class), WildcardTypeName.subtypeOf(buildType(type.asListType().getType())));
-            }
-            return ParameterizedTypeName.get(ClassName.get(Collection.class), buildType(type.asListType().getType()));
-        } else if (type.isNonNull()) {
-            return buildType(type.asNonNullType().getType());
-        } else {
-            return buildType(type.asTypeName());
-        }
+  public TypeName buildAnnotationType(ScalarType scalarType) {
+    switch (scalarType.getName()) {
+      case SCALA_ID_NAME:
+      case SCALA_STRING_NAME:
+      case SCALA_DATE_NAME:
+      case SCALA_TIME_NAME:
+      case SCALA_DATE_TIME_NAME:
+      case SCALA_TIMESTAMP_NAME:
+      case SCALA_UPLOAD_NAME:
+        return TypeName.get(String.class);
+      case SCALA_BOOLEAN_NAME:
+        return BOOLEAN;
+      case SCALA_INT_NAME:
+      case SCALA_BIG_INTEGER_NAME:
+        return INT;
+      case SCALA_FLOAT_NAME:
+      case SCALA_BIG_DECIMAL_NAME:
+        return FLOAT;
+      default:
+        throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(scalarType.getName()));
     }
+  }
 
-    public TypeName buildAnnotationType(io.graphoenix.spi.graphql.type.Type type, int level, boolean fromArguments) {
-        if (type.isList()) {
-            return ArrayTypeName.of(buildAnnotationType(type.asListType().getType(), level, fromArguments));
-        } else if (type.isNonNull()) {
-            return buildAnnotationType(type.asNonNullType().getType(), level, fromArguments);
-        } else {
-            return buildAnnotationType(type.asTypeName(), level, fromArguments);
-        }
+  private List<MethodSpec> buildSetterList(
+      FieldSpec fieldSpec, Collection<String> implementsInterfaces) {
+    List<TypeName> typeNames =
+        getFieldTypeStream(fieldSpec.name, implementsInterfaces)
+            .map(this::buildType)
+            .collect(Collectors.toList());
+
+    List<MethodSpec> methodSpecList =
+        typeNames.stream()
+            .map(
+                typeName -> {
+                  String setterName = getFieldSetterMethodName(fieldSpec.name);
+                  MethodSpec.Builder methodBuilder =
+                      MethodSpec.methodBuilder(setterName).addModifiers(Modifier.PUBLIC);
+                  methodBuilder.addAnnotation(Override.class);
+                  methodBuilder.addParameter(typeName, fieldSpec.name);
+                  methodBuilder.addStatement(
+                      "this." + fieldSpec.name + " = ($T)" + fieldSpec.name, fieldSpec.type);
+                  return methodBuilder.build();
+                })
+            .collect(Collectors.toList());
+
+    if (typeNames.stream()
+        .noneMatch(typeName -> typeName.toString().equals(fieldSpec.type.toString()))) {
+      String setterName = getFieldSetterMethodName(fieldSpec.name);
+      MethodSpec.Builder methodBuilder =
+          MethodSpec.methodBuilder(setterName).addModifiers(Modifier.PUBLIC);
+      methodBuilder.addParameter(fieldSpec.type, fieldSpec.name);
+      methodBuilder.addStatement("this." + fieldSpec.name + " = " + fieldSpec.name);
+      methodSpecList.add(methodBuilder.build());
     }
+    return methodSpecList;
+  }
 
-    public TypeName buildType(io.graphoenix.spi.graphql.type.TypeName typeName) {
-        Definition typeDefinition = documentManager.getDocument().getDefinition(typeName.getName());
-        if (typeDefinition.isScalar()) {
-            return buildType(typeDefinition.asScalar());
-        } else {
-            return toClassName(typeDefinition.getClassNameOrError());
-        }
+  private MethodSpec buildGetter(FieldSpec fieldSpec, Collection<String> implementsInterfaces) {
+    String getterName = getFieldGetterMethodName(fieldSpec.name);
+    MethodSpec.Builder methodBuilder =
+        MethodSpec.methodBuilder(getterName).returns(fieldSpec.type).addModifiers(Modifier.PUBLIC);
+    methodBuilder.addStatement("return this." + fieldSpec.name);
+
+    if (Stream.ofNullable(implementsInterfaces)
+        .flatMap(Collection::stream)
+        .map(name -> documentManager.getDocument().getInterfaceTypeOrError(name))
+        .flatMap(
+            interfaceType ->
+                Stream.ofNullable(interfaceType.getFields()).flatMap(Collection::stream))
+        .anyMatch(fieldDefinition -> fieldSpec.name.equals(fieldDefinition.getName()))) {
+      methodBuilder.addAnnotation(Override.class);
     }
+    return methodBuilder.build();
+  }
 
-    public TypeName buildAnnotationType(io.graphoenix.spi.graphql.type.TypeName typeName, int level, boolean fromArguments) {
-        Definition typeDefinition = documentManager.getDocument().getDefinition(typeName.getName());
-        if (typeDefinition.isScalar()) {
-            return buildAnnotationType(typeDefinition.asScalar());
-        } else if (typeDefinition.isEnum()) {
-            return toClassName(typeDefinition.getClassNameOrError());
-        } else if (typeDefinition.isInputObject()) {
-            if (typeDefinition.asInputObject().getInputValues().stream()
-                    .allMatch(inputValue -> documentManager.getInputValueTypeDefinition(inputValue).isLeaf())) {
-                return toClassName(typeDefinition.getAnnotationNameOrError());
-            }
-            if (fromArguments) {
-                return toClassName(typeDefinition.getAnnotationNameOrError() + (level == 0 ? "" : "" + level));
-            }
-            return toClassName(typeDefinition.getAnnotationNameOrError() + ((level + 1) == 0 ? "" : "" + (level + 1)));
-        }
-        throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(typeName));
+  private List<MethodSpec> buildInputValueSetterList(
+      FieldSpec fieldSpec, Collection<String> implementsInterfaces) {
+    List<TypeName> typeNames =
+        getInputValueTypeStream(fieldSpec.name, implementsInterfaces)
+            .map(this::buildType)
+            .collect(Collectors.toList());
+
+    List<MethodSpec> methodSpecList =
+        typeNames.stream()
+            .map(
+                typeName -> {
+                  String setterName = getFieldSetterMethodName(fieldSpec.name);
+                  MethodSpec.Builder methodBuilder =
+                      MethodSpec.methodBuilder(setterName).addModifiers(Modifier.PUBLIC);
+                  methodBuilder.addAnnotation(Override.class);
+                  methodBuilder.addParameter(typeName, fieldSpec.name);
+                  methodBuilder.addStatement(
+                      "this." + fieldSpec.name + " = ($T)" + fieldSpec.name, fieldSpec.type);
+                  return methodBuilder.build();
+                })
+            .collect(Collectors.toList());
+
+    if (typeNames.stream()
+        .noneMatch(typeName -> typeName.toString().equals(fieldSpec.type.toString()))) {
+      String setterName = getFieldSetterMethodName(fieldSpec.name);
+      MethodSpec.Builder methodBuilder =
+          MethodSpec.methodBuilder(setterName).addModifiers(Modifier.PUBLIC);
+      methodBuilder.addParameter(fieldSpec.type, fieldSpec.name);
+      methodBuilder.addStatement("this." + fieldSpec.name + " = " + fieldSpec.name);
+      methodSpecList.add(methodBuilder.build());
     }
+    return methodSpecList;
+  }
 
-    public TypeName buildType(ScalarType scalarType) {
-        switch (scalarType.getName()) {
-            case SCALA_ID_NAME:
-            case SCALA_STRING_NAME:
-            case SCALA_UPLOAD_NAME:
-                return TypeName.get(String.class);
-            case SCALA_BOOLEAN_NAME:
-                return TypeName.get(Boolean.class);
-            case SCALA_INT_NAME:
-                return TypeName.get(Integer.class);
-            case SCALA_FLOAT_NAME:
-                return TypeName.get(Float.class);
-            case SCALA_BIG_INTEGER_NAME:
-                return TypeName.get(BigInteger.class);
-            case SCALA_BIG_DECIMAL_NAME:
-                return TypeName.get(BigDecimal.class);
-            case SCALA_DATE_NAME:
-                return TypeName.get(LocalDate.class);
-            case SCALA_TIME_NAME:
-                return TypeName.get(LocalTime.class);
-            case SCALA_DATE_TIME_NAME:
-            case SCALA_TIMESTAMP_NAME:
-                return TypeName.get(LocalDateTime.class);
-            default:
-                throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(scalarType.getName()));
-        }
+  private MethodSpec buildInputValueGetter(
+      FieldSpec fieldSpec, Collection<String> implementsInterfaces) {
+    String getterName = getFieldGetterMethodName(fieldSpec.name);
+    MethodSpec.Builder methodBuilder =
+        MethodSpec.methodBuilder(getterName).returns(fieldSpec.type).addModifiers(Modifier.PUBLIC);
+    methodBuilder.addStatement("return this." + fieldSpec.name);
+
+    if (Stream.ofNullable(implementsInterfaces)
+        .flatMap(Collection::stream)
+        .map(name -> documentManager.getDocument().getInputObjectTypeOrError(name))
+        .flatMap(
+            inputObjectType ->
+                Stream.ofNullable(inputObjectType.getInputValues()).flatMap(Collection::stream))
+        .anyMatch(inputValue -> fieldSpec.name.equals(inputValue.getName()))) {
+      methodBuilder.addAnnotation(Override.class);
     }
+    return methodBuilder.build();
+  }
 
-    public TypeName buildAnnotationType(ScalarType scalarType) {
-        switch (scalarType.getName()) {
-            case SCALA_ID_NAME:
-            case SCALA_STRING_NAME:
-            case SCALA_DATE_NAME:
-            case SCALA_TIME_NAME:
-            case SCALA_DATE_TIME_NAME:
-            case SCALA_TIMESTAMP_NAME:
-            case SCALA_UPLOAD_NAME:
-                return TypeName.get(String.class);
-            case SCALA_BOOLEAN_NAME:
-                return BOOLEAN;
-            case SCALA_INT_NAME:
-            case SCALA_BIG_INTEGER_NAME:
-                return INT;
-            case SCALA_FLOAT_NAME:
-            case SCALA_BIG_DECIMAL_NAME:
-                return FLOAT;
-            default:
-                throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(scalarType.getName()));
-        }
-    }
+  private MethodSpec buildInterfaceSetter(
+      FieldSpec fieldSpec, Collection<String> implementsInterfaces) {
+    String setterName = getFieldSetterMethodName(fieldSpec.name);
+    MethodSpec.Builder methodBuilder =
+        MethodSpec.methodBuilder(setterName)
+            .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
+            .addParameter(fieldSpec.type, fieldSpec.name);
+    return methodBuilder.build();
+  }
 
-    private List<MethodSpec> buildSetterList(FieldSpec fieldSpec, Collection<String> implementsInterfaces) {
-        List<TypeName> typeNames = getFieldTypeStream(fieldSpec.name, implementsInterfaces)
-                .map(this::buildType)
-                .collect(Collectors.toList());
+  private MethodSpec buildInputObjectInterfaceSetter(
+      FieldSpec fieldSpec, Collection<String> implementsInterfaces) {
+    String setterName = getFieldSetterMethodName(fieldSpec.name);
+    MethodSpec.Builder methodBuilder =
+        MethodSpec.methodBuilder(setterName)
+            .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
+            .addParameter(fieldSpec.type, fieldSpec.name);
+    return methodBuilder.build();
+  }
 
-        List<MethodSpec> methodSpecList = typeNames.stream()
-                .map(typeName -> {
-                            String setterName = getFieldSetterMethodName(fieldSpec.name);
-                            MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(setterName).addModifiers(Modifier.PUBLIC);
-                            methodBuilder.addAnnotation(Override.class);
-                            methodBuilder.addParameter(typeName, fieldSpec.name);
-                            methodBuilder.addStatement("this." + fieldSpec.name + " = ($T)" + fieldSpec.name, fieldSpec.type);
-                            return methodBuilder.build();
-                        }
-                )
-                .collect(Collectors.toList());
+  public MethodSpec buildInterfaceGetter(FieldSpec fieldSpec) {
+    String getterName = getFieldGetterMethodName(fieldSpec.name);
+    return MethodSpec.methodBuilder(getterName)
+        .returns(fieldSpec.type)
+        .addModifiers(Modifier.DEFAULT, Modifier.PUBLIC)
+        .addStatement("return " + fieldSpec.name)
+        .build();
+  }
 
-        if (typeNames.stream().noneMatch(typeName -> typeName.toString().equals(fieldSpec.type.toString()))) {
-            String setterName = getFieldSetterMethodName(fieldSpec.name);
-            MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(setterName).addModifiers(Modifier.PUBLIC);
-            methodBuilder.addParameter(fieldSpec.type, fieldSpec.name);
-            methodBuilder.addStatement("this." + fieldSpec.name + " = " + fieldSpec.name);
-            methodSpecList.add(methodBuilder.build());
+  private Stream<io.graphoenix.spi.graphql.type.Type> getFieldTypeStream(
+      String fieldName, Collection<String> implementsInterfaces) {
+    return Stream.ofNullable(implementsInterfaces)
+        .flatMap(Collection::stream)
+        .map(name -> documentManager.getDocument().getInterfaceTypeOrError(name))
+        .flatMap(
+            interfaceType ->
+                Stream.ofNullable(interfaceType.getFields())
+                    .flatMap(Collection::stream)
+                    .filter(fieldDefinition -> fieldName.equals(fieldDefinition.getName()))
+                    .flatMap(
+                        fieldDefinition ->
+                            Stream.concat(
+                                Stream.of(fieldDefinition.getType()),
+                                getFieldTypeStream(fieldName, interfaceType.getInterfaces()))))
+        .filter(distinctByKey(Object::toString));
+  }
 
-        }
-        return methodSpecList;
-    }
-
-    private MethodSpec buildGetter(FieldSpec fieldSpec, Collection<String> implementsInterfaces) {
-        String getterName = getFieldGetterMethodName(fieldSpec.name);
-        MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(getterName).returns(fieldSpec.type).addModifiers(Modifier.PUBLIC);
-        methodBuilder.addStatement("return this." + fieldSpec.name);
-
-        if (Stream.ofNullable(implementsInterfaces)
-                .flatMap(Collection::stream)
-                .map(name -> documentManager.getDocument().getInterfaceTypeOrError(name))
-                .flatMap(interfaceType -> Stream.ofNullable(interfaceType.getFields()).flatMap(Collection::stream))
-                .anyMatch(fieldDefinition -> fieldSpec.name.equals(fieldDefinition.getName()))
-        ) {
-            methodBuilder.addAnnotation(Override.class);
-        }
-        return methodBuilder.build();
-    }
-
-    private List<MethodSpec> buildInputValueSetterList(FieldSpec fieldSpec, Collection<String> implementsInterfaces) {
-        List<TypeName> typeNames = getInputValueTypeStream(fieldSpec.name, implementsInterfaces)
-                .map(this::buildType)
-                .collect(Collectors.toList());
-
-        List<MethodSpec> methodSpecList = typeNames.stream()
-                .map(typeName -> {
-                            String setterName = getFieldSetterMethodName(fieldSpec.name);
-                            MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(setterName).addModifiers(Modifier.PUBLIC);
-                            methodBuilder.addAnnotation(Override.class);
-                            methodBuilder.addParameter(typeName, fieldSpec.name);
-                            methodBuilder.addStatement("this." + fieldSpec.name + " = ($T)" + fieldSpec.name, fieldSpec.type);
-                            return methodBuilder.build();
-                        }
-                )
-                .collect(Collectors.toList());
-
-        if (typeNames.stream().noneMatch(typeName -> typeName.toString().equals(fieldSpec.type.toString()))) {
-            String setterName = getFieldSetterMethodName(fieldSpec.name);
-            MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(setterName).addModifiers(Modifier.PUBLIC);
-            methodBuilder.addParameter(fieldSpec.type, fieldSpec.name);
-            methodBuilder.addStatement("this." + fieldSpec.name + " = " + fieldSpec.name);
-            methodSpecList.add(methodBuilder.build());
-        }
-        return methodSpecList;
-    }
-
-    private MethodSpec buildInputValueGetter(FieldSpec fieldSpec, Collection<String> implementsInterfaces) {
-        String getterName = getFieldGetterMethodName(fieldSpec.name);
-        MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(getterName).returns(fieldSpec.type).addModifiers(Modifier.PUBLIC);
-        methodBuilder.addStatement("return this." + fieldSpec.name);
-
-        if (Stream.ofNullable(implementsInterfaces)
-                .flatMap(Collection::stream)
-                .map(name -> documentManager.getDocument().getInputObjectTypeOrError(name))
-                .flatMap(inputObjectType -> Stream.ofNullable(inputObjectType.getInputValues()).flatMap(Collection::stream))
-                .anyMatch(inputValue -> fieldSpec.name.equals(inputValue.getName()))
-        ) {
-            methodBuilder.addAnnotation(Override.class);
-        }
-        return methodBuilder.build();
-    }
-
-    private MethodSpec buildInterfaceSetter(FieldSpec fieldSpec, Collection<String> implementsInterfaces) {
-        String setterName = getFieldSetterMethodName(fieldSpec.name);
-        MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(setterName)
-                .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
-                .addParameter(fieldSpec.type, fieldSpec.name);
-        return methodBuilder.build();
-    }
-
-    private MethodSpec buildInputObjectInterfaceSetter(FieldSpec fieldSpec, Collection<String> implementsInterfaces) {
-        String setterName = getFieldSetterMethodName(fieldSpec.name);
-        MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(setterName)
-                .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
-                .addParameter(fieldSpec.type, fieldSpec.name);
-        return methodBuilder.build();
-    }
-
-    public MethodSpec buildInterfaceGetter(FieldSpec fieldSpec) {
-        String getterName = getFieldGetterMethodName(fieldSpec.name);
-        return MethodSpec.methodBuilder(getterName)
-                .returns(fieldSpec.type)
-                .addModifiers(Modifier.DEFAULT, Modifier.PUBLIC)
-                .addStatement("return " + fieldSpec.name)
-                .build();
-    }
-
-    private Stream<io.graphoenix.spi.graphql.type.Type> getFieldTypeStream(String fieldName, Collection<String> implementsInterfaces) {
-        return Stream.ofNullable(implementsInterfaces)
-                .flatMap(Collection::stream)
-                .map(name -> documentManager.getDocument().getInterfaceTypeOrError(name))
-                .flatMap(interfaceType ->
-                        Stream.ofNullable(interfaceType.getFields())
-                                .flatMap(Collection::stream)
-                                .filter(fieldDefinition -> fieldName.equals(fieldDefinition.getName()))
-                                .flatMap(fieldDefinition ->
-                                        Stream.concat(
-                                                Stream.of(fieldDefinition.getType()),
-                                                getFieldTypeStream(fieldName, interfaceType.getInterfaces())
-                                        )
-                                )
-                )
-                .filter(distinctByKey(Object::toString));
-    }
-
-    private Stream<io.graphoenix.spi.graphql.type.Type> getInputValueTypeStream(String fieldName, Collection<String> implementsInterfaces) {
-        return Stream.ofNullable(implementsInterfaces)
-                .flatMap(Collection::stream)
-                .map(name -> documentManager.getDocument().getInputObjectTypeOrError(name))
-                .flatMap(inputObjectType ->
-                        Stream.ofNullable(inputObjectType.getInputValues())
-                                .flatMap(Collection::stream)
-                                .filter(inputValue -> fieldName.equals(inputValue.getName()))
-                                .flatMap(inputValue ->
-                                        Stream.concat(
-                                                Stream.of(inputValue.getType()),
-                                                getInputValueTypeStream(fieldName, inputObjectType.getInterfaces())
-                                        )
-                                )
-                )
-                .filter(distinctByKey(Object::toString));
-    }
+  private Stream<io.graphoenix.spi.graphql.type.Type> getInputValueTypeStream(
+      String fieldName, Collection<String> implementsInterfaces) {
+    return Stream.ofNullable(implementsInterfaces)
+        .flatMap(Collection::stream)
+        .map(name -> documentManager.getDocument().getInputObjectTypeOrError(name))
+        .flatMap(
+            inputObjectType ->
+                Stream.ofNullable(inputObjectType.getInputValues())
+                    .flatMap(Collection::stream)
+                    .filter(inputValue -> fieldName.equals(inputValue.getName()))
+                    .flatMap(
+                        inputValue ->
+                            Stream.concat(
+                                Stream.of(inputValue.getType()),
+                                getInputValueTypeStream(
+                                    fieldName, inputObjectType.getInterfaces()))))
+        .filter(distinctByKey(Object::toString));
+  }
 }

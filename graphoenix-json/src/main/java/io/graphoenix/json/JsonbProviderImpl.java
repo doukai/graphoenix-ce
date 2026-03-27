@@ -6,8 +6,8 @@ import jakarta.json.bind.spi.JsonbProvider;
 
 @AutoService(JsonbProvider.class)
 public class JsonbProviderImpl extends JsonbProvider {
-    @Override
-    public JsonbBuilder create() {
-        return new JsonbBuilderImpl();
-    }
+  @Override
+  public JsonbBuilder create() {
+    return new JsonbBuilderImpl();
+  }
 }

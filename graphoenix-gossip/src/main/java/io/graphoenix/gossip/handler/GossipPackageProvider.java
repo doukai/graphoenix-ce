@@ -22,115 +22,109 @@ import static io.graphoenix.spi.dto.PackageURL.PORT_NAME;
 @Named(PACKAGE_PROVIDER_GOSSIP_NAME)
 public class GossipPackageProvider implements PackageProvider {
 
-    private final PackageConfig packageConfig;
+  private final PackageConfig packageConfig;
 
-    private final Map<String, Map<String, List<PackageURL>>> packageProtocolURLListMap = new ConcurrentHashMap<>();
+  private final Map<String, Map<String, List<PackageURL>>> packageProtocolURLListMap =
+      new ConcurrentHashMap<>();
 
-    private final Map<String, Map<String, Iterator<PackageURL>>> packageProtocolURLIteratorMap = new ConcurrentHashMap<>();
+  private final Map<String, Map<String, Iterator<PackageURL>>> packageProtocolURLIteratorMap =
+      new ConcurrentHashMap<>();
 
-    @Inject
-    public GossipPackageProvider(PackageConfig packageConfig) {
-        this.packageConfig = packageConfig;
-    }
+  @Inject
+  public GossipPackageProvider(PackageConfig packageConfig) {
+    this.packageConfig = packageConfig;
+  }
 
-    @Override
-    public List<PackageURL> getProtocolURLList(String packageName, String protocol) {
-        return packageProtocolURLListMap.get(packageName).get(protocol);
-    }
+  @Override
+  public List<PackageURL> getProtocolURLList(String packageName, String protocol) {
+    return packageProtocolURLListMap.get(packageName).get(protocol);
+  }
 
-    @Override
-    public Iterator<PackageURL> getProtocolURLIterator(String packageName, String protocol) {
-        return packageProtocolURLIteratorMap.get(packageName).get(protocol);
-    }
+  @Override
+  public Iterator<PackageURL> getProtocolURLIterator(String packageName, String protocol) {
+    return packageProtocolURLIteratorMap.get(packageName).get(protocol);
+  }
 
-    public void mergeMemberURLs(Member member, List<Map<String, Object>> urls) {
-        mergeURLs(
-                Stream
-                        .concat(
-                                packageProtocolURLListMap.values().stream()
-                                        .flatMap(protocolMap -> protocolMap.values().stream())
-                                        .flatMap(Collection::stream)
-                                        .filter(packageURL ->
-                                                urls.stream()
-                                                        .noneMatch(url ->
-                                                                member.address().host().equals(packageURL.getHost()) &&
-                                                                        Objects.equals(url.getOrDefault(PORT_NAME, null), packageURL.getPort())
-                                                        )
-                                        ),
-                                urls.stream()
-                                        .map(PackageURL::new)
-                                        .peek(packageURL -> {
-                                                    if (packageURL.getHost() == null) {
-                                                        packageURL.setHost(member.address().host());
-                                                    }
-                                                }
-                                        )
-                        )
-                        .collect(Collectors.toList())
-        );
-    }
-
-    public void removeMemberURLs(Member member, List<Map<String, Object>> urls) {
-        mergeURLs(
+  public void mergeMemberURLs(Member member, List<Map<String, Object>> urls) {
+    mergeURLs(
+        Stream.concat(
                 packageProtocolURLListMap.values().stream()
-                        .flatMap(protocolMap -> protocolMap.values().stream())
-                        .flatMap(Collection::stream)
-                        .filter(packageURL ->
-                                urls.stream()
-                                        .noneMatch(url ->
-                                                member.address().host().equals(packageURL.getHost()) &&
-                                                        Objects.equals(url.getOrDefault(PORT_NAME, null), packageURL.getPort())
-                                        )
-                        )
-                        .collect(Collectors.toList())
-        );
+                    .flatMap(protocolMap -> protocolMap.values().stream())
+                    .flatMap(Collection::stream)
+                    .filter(
+                        packageURL ->
+                            urls.stream()
+                                .noneMatch(
+                                    url ->
+                                        member.address().host().equals(packageURL.getHost())
+                                            && Objects.equals(
+                                                url.getOrDefault(PORT_NAME, null),
+                                                packageURL.getPort()))),
+                urls.stream()
+                    .map(PackageURL::new)
+                    .peek(
+                        packageURL -> {
+                          if (packageURL.getHost() == null) {
+                            packageURL.setHost(member.address().host());
+                          }
+                        }))
+            .collect(Collectors.toList()));
+  }
+
+  public void removeMemberURLs(Member member, List<Map<String, Object>> urls) {
+    mergeURLs(
+        packageProtocolURLListMap.values().stream()
+            .flatMap(protocolMap -> protocolMap.values().stream())
+            .flatMap(Collection::stream)
+            .filter(
+                packageURL ->
+                    urls.stream()
+                        .noneMatch(
+                            url ->
+                                member.address().host().equals(packageURL.getHost())
+                                    && Objects.equals(
+                                        url.getOrDefault(PORT_NAME, null), packageURL.getPort())))
+            .collect(Collectors.toList()));
+  }
+
+  private void mergeURLs(List<PackageURL> packageURLList) {
+    Map<String, Map<String, List<PackageURL>>> mergedPackageProtocolURLListMap =
+        packageURLList.stream()
+            .collect(
+                Collectors.groupingBy(
+                    PackageURL::getPackageName,
+                    Collectors.mapping(
+                        packageURL -> packageURL,
+                        Collectors.groupingBy(PackageURL::getProtocol, Collectors.toList()))));
+
+    packageProtocolURLListMap.putAll(mergedPackageProtocolURLListMap);
+    packageProtocolURLListMap
+        .keySet()
+        .removeAll(
+            packageProtocolURLListMap.keySet().stream()
+                .filter(key -> !mergedPackageProtocolURLListMap.containsKey(key))
+                .collect(Collectors.toSet()));
+
+    if (packageConfig.getPackageLoadBalance().equals(LOAD_BALANCE_ROUND_ROBIN)) {
+      Map<String, Map<String, Iterator<PackageURL>>> mergedPackageProtocolURLIteratorMap =
+          packageURLList.stream()
+              .collect(
+                  Collectors.groupingBy(
+                      PackageURL::getPackageName,
+                      Collectors.mapping(
+                          packageURL -> packageURL,
+                          Collectors.groupingBy(
+                              PackageURL::getProtocol,
+                              Collectors.collectingAndThen(
+                                  Collectors.toList(), Iterators::cycle)))));
+
+      packageProtocolURLIteratorMap.putAll(mergedPackageProtocolURLIteratorMap);
+      packageProtocolURLIteratorMap
+          .keySet()
+          .removeAll(
+              packageProtocolURLIteratorMap.keySet().stream()
+                  .filter(key -> !mergedPackageProtocolURLIteratorMap.containsKey(key))
+                  .collect(Collectors.toSet()));
     }
-
-    private void mergeURLs(List<PackageURL> packageURLList) {
-        Map<String, Map<String, List<PackageURL>>> mergedPackageProtocolURLListMap = packageURLList.stream()
-                .collect(
-                        Collectors.groupingBy(
-                                PackageURL::getPackageName,
-                                Collectors.mapping(
-                                        packageURL -> packageURL,
-                                        Collectors.groupingBy(
-                                                PackageURL::getProtocol,
-                                                Collectors.toList()
-                                        )
-                                )
-                        )
-                );
-
-        packageProtocolURLListMap.putAll(mergedPackageProtocolURLListMap);
-        packageProtocolURLListMap.keySet()
-                .removeAll(
-                        packageProtocolURLListMap.keySet().stream()
-                                .filter(key -> !mergedPackageProtocolURLListMap.containsKey(key))
-                                .collect(Collectors.toSet())
-                );
-
-        if (packageConfig.getPackageLoadBalance().equals(LOAD_BALANCE_ROUND_ROBIN)) {
-            Map<String, Map<String, Iterator<PackageURL>>> mergedPackageProtocolURLIteratorMap = packageURLList.stream()
-                    .collect(
-                            Collectors.groupingBy(
-                                    PackageURL::getPackageName,
-                                    Collectors.mapping(
-                                            packageURL -> packageURL,
-                                            Collectors.groupingBy(
-                                                    PackageURL::getProtocol,
-                                                    Collectors.collectingAndThen(Collectors.toList(), Iterators::cycle)
-                                            )
-                                    )
-                            )
-                    );
-
-            packageProtocolURLIteratorMap.putAll(mergedPackageProtocolURLIteratorMap);
-            packageProtocolURLIteratorMap.keySet()
-                    .removeAll(
-                            packageProtocolURLIteratorMap.keySet().stream()
-                                    .filter(key -> !mergedPackageProtocolURLIteratorMap.containsKey(key))
-                                    .collect(Collectors.toSet())
-                    );
-        }
-    }
+  }
 }

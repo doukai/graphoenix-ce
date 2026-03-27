@@ -11,151 +11,103 @@ import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Name;
 
-/**
- * Order Input for Relationship Object between __Type and __Type
- */
+/** Order Input for Relationship Object between __Type and __Type */
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Order Input for Relationship Object between __Type and __Type")
 public @interface __TypeInterfacesOrderBy1 {
-  /**
-   * ID
-   */
+  /** ID */
   @Description("ID")
   Sort id() default Sort.ASC;
 
-  /**
-   * __Type Reference
-   */
+  /** __Type Reference */
   @Description("__Type Reference")
   Sort typeRef() default Sort.ASC;
 
-  /**
-   * __Type
-   */
+  /** __Type */
   @Description("__Type")
   __TypeOrderBy2 type() default @__TypeOrderBy2;
 
-  /**
-   * __Type Reference
-   */
+  /** __Type Reference */
   @Description("__Type Reference")
   Sort interfaceRef() default Sort.ASC;
 
-  /**
-   * __Type
-   */
+  /** __Type */
   @Name("interface")
   @Description("__Type")
   __TypeOrderBy2 _interface() default @__TypeOrderBy2;
 
-  /**
-   * Is Deprecated
-   */
+  /** Is Deprecated */
   @Description("Is Deprecated")
   Sort isDeprecated() default Sort.ASC;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   Sort version() default Sort.ASC;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   Sort realmId() default Sort.ASC;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   Sort createUserId() default Sort.ASC;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   Sort createTime() default Sort.ASC;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   Sort updateUserId() default Sort.ASC;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   Sort updateTime() default Sort.ASC;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   Sort createGroupId() default Sort.ASC;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   Sort __typename() default Sort.ASC;
 
-  /**
-   * Count of Relationship Object between __Type and __Type
-   */
+  /** Count of Relationship Object between __Type and __Type */
   @Description("Count of Relationship Object between __Type and __Type")
   Sort idCount() default Sort.ASC;
 
-  /**
-   * Max of ID
-   */
+  /** Max of ID */
   @Description("Max of ID")
   Sort idMax() default Sort.ASC;
 
-  /**
-   * Min of ID
-   */
+  /** Min of ID */
   @Description("Min of ID")
   Sort idMin() default Sort.ASC;
 
-  /**
-   * Count of __Type Reference
-   */
+  /** Count of __Type Reference */
   @Description("Count of __Type Reference")
   Sort typeRefCount() default Sort.ASC;
 
-  /**
-   * Max of __Type Reference
-   */
+  /** Max of __Type Reference */
   @Description("Max of __Type Reference")
   Sort typeRefMax() default Sort.ASC;
 
-  /**
-   * Min of __Type Reference
-   */
+  /** Min of __Type Reference */
   @Description("Min of __Type Reference")
   Sort typeRefMin() default Sort.ASC;
 
-  /**
-   * Count of __Type Reference
-   */
+  /** Count of __Type Reference */
   @Description("Count of __Type Reference")
   Sort interfaceRefCount() default Sort.ASC;
 
-  /**
-   * Max of __Type Reference
-   */
+  /** Max of __Type Reference */
   @Description("Max of __Type Reference")
   Sort interfaceRefMax() default Sort.ASC;
 
-  /**
-   * Min of __Type Reference
-   */
+  /** Min of __Type Reference */
   @Description("Min of __Type Reference")
   Sort interfaceRefMin() default Sort.ASC;
 

@@ -14,13 +14,15 @@ import java.util.List;
 @GraphQLOperation
 public interface FileRepository {
 
-    @Query(file = @FileQueryArguments(id = @StringExpression($val = "id")))
-    Mono<File> getFileById(String id);
+  @Query(file = @FileQueryArguments(id = @StringExpression($val = "id")))
+  Mono<File> getFileById(String id);
 
-    @Query(fileList = @FileListQueryArguments(id = @StringExpression(opr = Operator.IN, $arr = "idList")))
-    Mono<List<File>> selectFileListByIdList(List<String> idList);
+  @Query(
+      fileList =
+          @FileListQueryArguments(id = @StringExpression(opr = Operator.IN, $arr = "idList")))
+  Mono<List<File>> selectFileListByIdList(List<String> idList);
 
-    @Mutation(file = @FileMutationArguments($input = "fileInput"))
-    @SelectionSet("{ id }")
-    Mono<File> insertFile(FileInput fileInput);
+  @Mutation(file = @FileMutationArguments($input = "fileInput"))
+  @SelectionSet("{ id }")
+  Mono<File> insertFile(FileInput fileInput);
 }

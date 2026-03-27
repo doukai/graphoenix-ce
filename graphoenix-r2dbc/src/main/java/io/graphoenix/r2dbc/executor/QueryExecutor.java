@@ -15,34 +15,31 @@ import java.util.Map;
 @ApplicationScoped
 public class QueryExecutor {
 
-    private static final Logger logger = LoggerFactory.getLogger(QueryExecutor.class);
+  private static final Logger logger = LoggerFactory.getLogger(QueryExecutor.class);
 
-    private final ConnectionProvider connectionProvider;
-    private final ParameterBinder parameterBinder;
+  private final ConnectionProvider connectionProvider;
+  private final ParameterBinder parameterBinder;
 
-    @Inject
-    public QueryExecutor(ConnectionProvider connectionProvider, ParameterBinder parameterBinder) {
-        this.connectionProvider = connectionProvider;
-        this.parameterBinder = parameterBinder;
-    }
+  @Inject
+  public QueryExecutor(ConnectionProvider connectionProvider, ParameterBinder parameterBinder) {
+    this.connectionProvider = connectionProvider;
+    this.parameterBinder = parameterBinder;
+  }
 
-    public Mono<String> executeQuery(String sql) {
-        return executeQuery(sql, null);
-    }
+  public Mono<String> executeQuery(String sql) {
+    return executeQuery(sql, null);
+  }
 
-    public Mono<String> executeQuery(String sql, Map<String, Object> parameters) {
-        return Mono
-                .usingWhen(
-                        connectionProvider.get(),
-                        connection -> {
-                            logger.info("execute select:\r\n{}", sql);
-                            logger.info("sql parameters:\r\n{}", parameters);
-                            Statement statement = connection.createStatement(sql);
-                            parameterBinder.bindParameters(sql, statement, parameters);
-                            return Mono.from(statement.execute())
-                                    .flatMap(ResultUtil::getJsonStringFromResult);
-                        },
-                        connectionProvider::close
-                );
-    }
+  public Mono<String> executeQuery(String sql, Map<String, Object> parameters) {
+    return Mono.usingWhen(
+        connectionProvider.get(),
+        connection -> {
+          logger.info("execute select:\r\n{}", sql);
+          logger.info("sql parameters:\r\n{}", parameters);
+          Statement statement = connection.createStatement(sql);
+          parameterBinder.bindParameters(sql, statement, parameters);
+          return Mono.from(statement.execute()).flatMap(ResultUtil::getJsonStringFromResult);
+        },
+        connectionProvider::close);
+  }
 }

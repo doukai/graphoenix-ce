@@ -16,35 +16,34 @@ import java.util.Map;
 @Named("jakarta.enterprise.context.RequestScoped")
 public class RequestBeanScoped extends CaffeineReactorBeanScoped {
 
-    public static final String REQUEST_ID = "requestId";
+  public static final String REQUEST_ID = "requestId";
 
-    private final LoadingCache<String, Map<String, Object>> CACHE;
+  private final LoadingCache<String, Map<String, Object>> CACHE;
 
-    @Inject
-    public RequestBeanScoped(HttpServerConfig httpServerConfig) {
-        CACHE = buildCache(Duration.ofMillis(httpServerConfig.getConnectTimeOutMillis()));
-    }
+  @Inject
+  public RequestBeanScoped(HttpServerConfig httpServerConfig) {
+    CACHE = buildCache(Duration.ofMillis(httpServerConfig.getConnectTimeOutMillis()));
+  }
 
-    @Override
-    protected String getScopedKeyName() {
-        return REQUEST_ID;
-    }
+  @Override
+  protected String getScopedKeyName() {
+    return REQUEST_ID;
+  }
 
-    @Override
-    public LoadingCache<String, Map<String, Object>> getCache() {
-        return CACHE;
-    }
+  @Override
+  public LoadingCache<String, Map<String, Object>> getCache() {
+    return CACHE;
+  }
 
-    @Override
-    protected void onBuild(String key) {
-    }
+  @Override
+  protected void onBuild(String key) {}
 
-    @Override
-    protected void onEviction(Object key, Object value) {
-    }
+  @Override
+  protected void onEviction(Object key, Object value) {}
 
-    @Override
-    protected void onRemoval(Object key, Object value) {
-        ScopeEventPublisher.destroyed(Map.of("key", key, "value", value), RequestScoped.class).subscribe();
-    }
+  @Override
+  protected void onRemoval(Object key, Object value) {
+    ScopeEventPublisher.destroyed(Map.of("key", key, "value", value), RequestScoped.class)
+        .subscribe();
+  }
 }

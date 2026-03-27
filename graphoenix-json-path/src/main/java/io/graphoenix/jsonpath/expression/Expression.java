@@ -1,4 +1,3 @@
 package io.graphoenix.jsonpath.expression;
 
-public interface Expression {
-}
+public interface Expression {}

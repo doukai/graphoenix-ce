@@ -9,30 +9,22 @@ import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/**
- * Query Expression Input for Func
- */
+/** Query Expression Input for Func */
 @CompiledJson
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Query Expression Input for Func")
 public class FuncExpression {
-  /**
-   * Operators
-   */
+  /** Operators */
   @DefaultValue("EQ")
   @Description("Operators")
   private Operator opr = Operator.EQ;
 
-  /**
-   * Value
-   */
+  /** Value */
   @Description("Value")
   private Func val;
 
-  /**
-   * Array
-   */
+  /** Array */
   @Description("Array")
   private Collection<Func> arr;
 

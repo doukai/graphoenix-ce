@@ -15,35 +15,34 @@ import java.util.Map;
 @ApplicationScoped
 @Named("jakarta.transaction.TransactionScoped")
 public class TransactionBeanScoped extends CaffeineReactorBeanScoped {
-    public static final String TRANSACTION_ID = "transactionId";
+  public static final String TRANSACTION_ID = "transactionId";
 
-    private final LoadingCache<String, Map<String, Object>> CACHE;
+  private final LoadingCache<String, Map<String, Object>> CACHE;
 
-    @Inject
-    public TransactionBeanScoped(R2DBCConfig r2DBCConfig) {
-        CACHE = buildCache(Duration.ofMillis(r2DBCConfig.getConnectTimeoutMillis()));
-    }
+  @Inject
+  public TransactionBeanScoped(R2DBCConfig r2DBCConfig) {
+    CACHE = buildCache(Duration.ofMillis(r2DBCConfig.getConnectTimeoutMillis()));
+  }
 
-    @Override
-    protected String getScopedKeyName() {
-        return TRANSACTION_ID;
-    }
+  @Override
+  protected String getScopedKeyName() {
+    return TRANSACTION_ID;
+  }
 
-    @Override
-    public LoadingCache<String, Map<String, Object>> getCache() {
-        return CACHE;
-    }
+  @Override
+  public LoadingCache<String, Map<String, Object>> getCache() {
+    return CACHE;
+  }
 
-    @Override
-    protected void onBuild(String key) {
-    }
+  @Override
+  protected void onBuild(String key) {}
 
-    @Override
-    protected void onEviction(Object key, Object value) {
-    }
+  @Override
+  protected void onEviction(Object key, Object value) {}
 
-    @Override
-    protected void onRemoval(Object key, Object value) {
-        ScopeEventPublisher.destroyed(Map.of("key", key, "value", value), TransactionScoped.class).subscribe();
-    }
+  @Override
+  protected void onRemoval(Object key, Object value) {
+    ScopeEventPublisher.destroyed(Map.of("key", key, "value", value), TransactionScoped.class)
+        .subscribe();
+  }
 }

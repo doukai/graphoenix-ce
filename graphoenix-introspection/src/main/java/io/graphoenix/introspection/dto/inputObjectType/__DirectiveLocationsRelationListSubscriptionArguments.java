@@ -15,152 +15,106 @@ import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/**
- * Subscription Arguments for Relationship Object between __Directive and locations List
- */
+/** Subscription Arguments for Relationship Object between __Directive and locations List */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
-@Description("Subscription Arguments for Relationship Object between __Directive and locations List")
-public class __DirectiveLocationsRelationListSubscriptionArguments implements MetaExpression, __DirectiveLocationsRelationExpressionBase {
-  /**
-   * ID
-   */
+@Description(
+    "Subscription Arguments for Relationship Object between __Directive and locations List")
+public class __DirectiveLocationsRelationListSubscriptionArguments
+    implements MetaExpression, __DirectiveLocationsRelationExpressionBase {
+  /** ID */
   @Description("ID")
   private StringExpression id;
 
-  /**
-   * __Directive Reference
-   */
+  /** __Directive Reference */
   @Description("__Directive Reference")
   private StringExpression __directiveRef;
 
-  /**
-   * __Directive
-   */
+  /** __Directive */
   @Description("__Directive")
   private __DirectiveExpression __directive;
 
-  /**
-   * locations Reference
-   */
+  /** locations Reference */
   @Description("locations Reference")
   private __DirectiveLocationExpression locationsRef;
 
-  /**
-   * Include Deprecated
-   */
+  /** Include Deprecated */
   @DefaultValue("false")
   @Description("Include Deprecated")
   private Boolean includeDeprecated = false;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   private IntExpression version;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   private IntExpression realmId;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   private StringExpression createUserId;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   private StringExpression createTime;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   private StringExpression updateUserId;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   private StringExpression updateTime;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   private StringExpression createGroupId;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   private StringExpression __typename;
 
-  /**
-   * Order By
-   */
+  /** Order By */
   @Description("Order By")
   private __DirectiveLocationsRelationOrderBy orderBy;
 
-  /**
-   * Group By
-   */
+  /** Group By */
   @Description("Group By")
   private Collection<String> groupBy;
 
-  /**
-   * Not
-   */
+  /** Not */
   @DefaultValue("false")
   @Description("Not")
   private Boolean not = false;
 
-  /**
-   * Condition
-   */
+  /** Condition */
   @DefaultValue("AND")
   @Description("Condition")
   private Conditional cond = Conditional.AND;
 
-  /**
-   * Expressions
-   */
+  /** Expressions */
   @Description("Expressions")
   private Collection<__DirectiveLocationsRelationExpression> exs;
 
-  /**
-   * First
-   */
+  /** First */
   @Description("First")
   private Integer first;
 
-  /**
-   * Input List
-   */
+  /** Input List */
   @Description("Input List")
   private Integer last;
 
-  /**
-   * Offset
-   */
+  /** Offset */
   @Description("Offset")
   private Integer offset;
 
-  /**
-   * After
-   */
+  /** After */
   @Description("After")
   private String after;
 
-  /**
-   * Before
-   */
+  /** Before */
   @Description("Before")
   private String before;
 
@@ -171,7 +125,7 @@ public class __DirectiveLocationsRelationListSubscriptionArguments implements Me
 
   @Override
   public void setId(StringExpression id) {
-    this.id = (StringExpression)id;
+    this.id = (StringExpression) id;
   }
 
   @Override
@@ -181,7 +135,7 @@ public class __DirectiveLocationsRelationListSubscriptionArguments implements Me
 
   @Override
   public void set__directiveRef(StringExpression __directiveRef) {
-    this.__directiveRef = (StringExpression)__directiveRef;
+    this.__directiveRef = (StringExpression) __directiveRef;
   }
 
   @Override
@@ -191,7 +145,7 @@ public class __DirectiveLocationsRelationListSubscriptionArguments implements Me
 
   @Override
   public void set__directive(__DirectiveExpression __directive) {
-    this.__directive = (__DirectiveExpression)__directive;
+    this.__directive = (__DirectiveExpression) __directive;
   }
 
   @Override
@@ -201,7 +155,7 @@ public class __DirectiveLocationsRelationListSubscriptionArguments implements Me
 
   @Override
   public void setLocationsRef(__DirectiveLocationExpression locationsRef) {
-    this.locationsRef = (__DirectiveLocationExpression)locationsRef;
+    this.locationsRef = (__DirectiveLocationExpression) locationsRef;
   }
 
   @Override
@@ -211,7 +165,7 @@ public class __DirectiveLocationsRelationListSubscriptionArguments implements Me
 
   @Override
   public void setIncludeDeprecated(Boolean includeDeprecated) {
-    this.includeDeprecated = (Boolean)includeDeprecated;
+    this.includeDeprecated = (Boolean) includeDeprecated;
   }
 
   @Override
@@ -221,7 +175,7 @@ public class __DirectiveLocationsRelationListSubscriptionArguments implements Me
 
   @Override
   public void setVersion(IntExpression version) {
-    this.version = (IntExpression)version;
+    this.version = (IntExpression) version;
   }
 
   @Override
@@ -231,7 +185,7 @@ public class __DirectiveLocationsRelationListSubscriptionArguments implements Me
 
   @Override
   public void setRealmId(IntExpression realmId) {
-    this.realmId = (IntExpression)realmId;
+    this.realmId = (IntExpression) realmId;
   }
 
   @Override
@@ -241,7 +195,7 @@ public class __DirectiveLocationsRelationListSubscriptionArguments implements Me
 
   @Override
   public void setCreateUserId(StringExpression createUserId) {
-    this.createUserId = (StringExpression)createUserId;
+    this.createUserId = (StringExpression) createUserId;
   }
 
   @Override
@@ -251,7 +205,7 @@ public class __DirectiveLocationsRelationListSubscriptionArguments implements Me
 
   @Override
   public void setCreateTime(StringExpression createTime) {
-    this.createTime = (StringExpression)createTime;
+    this.createTime = (StringExpression) createTime;
   }
 
   @Override
@@ -261,7 +215,7 @@ public class __DirectiveLocationsRelationListSubscriptionArguments implements Me
 
   @Override
   public void setUpdateUserId(StringExpression updateUserId) {
-    this.updateUserId = (StringExpression)updateUserId;
+    this.updateUserId = (StringExpression) updateUserId;
   }
 
   @Override
@@ -271,7 +225,7 @@ public class __DirectiveLocationsRelationListSubscriptionArguments implements Me
 
   @Override
   public void setUpdateTime(StringExpression updateTime) {
-    this.updateTime = (StringExpression)updateTime;
+    this.updateTime = (StringExpression) updateTime;
   }
 
   @Override
@@ -281,7 +235,7 @@ public class __DirectiveLocationsRelationListSubscriptionArguments implements Me
 
   @Override
   public void setCreateGroupId(StringExpression createGroupId) {
-    this.createGroupId = (StringExpression)createGroupId;
+    this.createGroupId = (StringExpression) createGroupId;
   }
 
   @Override
@@ -291,7 +245,7 @@ public class __DirectiveLocationsRelationListSubscriptionArguments implements Me
 
   @Override
   public void set__typename(StringExpression __typename) {
-    this.__typename = (StringExpression)__typename;
+    this.__typename = (StringExpression) __typename;
   }
 
   public __DirectiveLocationsRelationOrderBy getOrderBy() {
@@ -317,7 +271,7 @@ public class __DirectiveLocationsRelationListSubscriptionArguments implements Me
 
   @Override
   public void setNot(Boolean not) {
-    this.not = (Boolean)not;
+    this.not = (Boolean) not;
   }
 
   @Override
@@ -327,7 +281,7 @@ public class __DirectiveLocationsRelationListSubscriptionArguments implements Me
 
   @Override
   public void setCond(Conditional cond) {
-    this.cond = (Conditional)cond;
+    this.cond = (Conditional) cond;
   }
 
   @Override
@@ -337,7 +291,7 @@ public class __DirectiveLocationsRelationListSubscriptionArguments implements Me
 
   @Override
   public void setExs(Collection<__DirectiveLocationsRelationExpression> exs) {
-    this.exs = (Collection<__DirectiveLocationsRelationExpression>)exs;
+    this.exs = (Collection<__DirectiveLocationsRelationExpression>) exs;
   }
 
   public Integer getFirst() {

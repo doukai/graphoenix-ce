@@ -7,7 +7,7 @@ import java.lang.annotation.*;
 @Documented
 public @interface SelectionSet {
 
-    String value() default "";
+  String value() default "";
 
-    int layers() default 0;
+  int layers() default 0;
 }

@@ -17,20 +17,20 @@ import static io.graphoenix.spi.constant.Hammurabi.SCALA_UPLOAD_NAME;
 @GraphQLApi
 public class UploadApi {
 
-    private final FileRepository fileRepository;
+  private final FileRepository fileRepository;
 
-    @Inject
-    public UploadApi(FileRepository fileRepository) {
-        this.fileRepository = fileRepository;
-    }
+  @Inject
+  public UploadApi(FileRepository fileRepository) {
+    this.fileRepository = fileRepository;
+  }
 
-    @Mutation
-    public Mono<File> singleUpload(@TypeName(SCALA_UPLOAD_NAME) String file) {
-        return fileRepository.getFileById(file);
-    }
+  @Mutation
+  public Mono<File> singleUpload(@TypeName(SCALA_UPLOAD_NAME) String file) {
+    return fileRepository.getFileById(file);
+  }
 
-    @Mutation
-    public Mono<List<File>> multipleUpload(List<@TypeName(SCALA_UPLOAD_NAME) String> files) {
-        return fileRepository.selectFileListByIdList(files);
-    }
+  @Mutation
+  public Mono<List<File>> multipleUpload(List<@TypeName(SCALA_UPLOAD_NAME) String> files) {
+    return fileRepository.selectFileListByIdList(files);
+  }
 }

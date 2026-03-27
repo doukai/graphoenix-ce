@@ -15,18 +15,23 @@ import static io.graphoenix.core.handler.after.SelectionHandler.SELECTION_HANDLE
 @Priority(SubscriptionAfterDataListener.SUBSCRIPTION_AFTER_DATA_LISTENER_PRIORITY)
 public class SubscriptionAfterDataListener implements OperationAfterHandler {
 
-    public static final int SUBSCRIPTION_AFTER_DATA_LISTENER_PRIORITY = SELECTION_HANDLER_PRIORITY - 125;
+  public static final int SUBSCRIPTION_AFTER_DATA_LISTENER_PRIORITY =
+      SELECTION_HANDLER_PRIORITY - 125;
 
-    private final Provider<Mono<SubscriptionDataListener>> subscriptionDataListenerProvider;
+  private final Provider<Mono<SubscriptionDataListener>> subscriptionDataListenerProvider;
 
-    public SubscriptionAfterDataListener(Provider<Mono<SubscriptionDataListener>> subscriptionDataListenerProvider) {
-        this.subscriptionDataListenerProvider = subscriptionDataListenerProvider;
-    }
+  public SubscriptionAfterDataListener(
+      Provider<Mono<SubscriptionDataListener>> subscriptionDataListenerProvider) {
+    this.subscriptionDataListenerProvider = subscriptionDataListenerProvider;
+  }
 
-    @Override
-    public Mono<JsonValue> subscription(Operation operation, JsonValue jsonValue) {
-        return subscriptionDataListenerProvider.get()
-                .map(subscriptionDataListener -> subscriptionDataListener.afterSubscription(operation, jsonValue))
-                .thenReturn(jsonValue);
-    }
+  @Override
+  public Mono<JsonValue> subscription(Operation operation, JsonValue jsonValue) {
+    return subscriptionDataListenerProvider
+        .get()
+        .map(
+            subscriptionDataListener ->
+                subscriptionDataListener.afterSubscription(operation, jsonValue))
+        .thenReturn(jsonValue);
+  }
 }

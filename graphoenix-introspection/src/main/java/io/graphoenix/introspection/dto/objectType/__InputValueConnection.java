@@ -8,29 +8,21 @@ import java.util.Collection;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Type;
 
-/**
- * Connection Object for __InputValue
- */
+/** Connection Object for __InputValue */
 @Type
 @CompiledJson
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Connection Object for __InputValue")
 public class __InputValueConnection {
-  /**
-   * Total
-   */
+  /** Total */
   @Description("Total")
   private Integer totalCount;
 
-  /**
-   * Page Info
-   */
+  /** Page Info */
   @Description("Page Info")
   private PageInfo pageInfo;
 
-  /**
-   * Edges
-   */
+  /** Edges */
   @Description("Edges")
   private Collection<__InputValueEdge> edges;
 

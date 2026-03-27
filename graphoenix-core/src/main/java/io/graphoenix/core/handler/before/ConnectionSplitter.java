@@ -34,131 +34,159 @@ import static io.graphoenix.spi.error.GraphQLErrorType.OBJECT_SELECTION_NOT_EXIS
 @Priority(ConnectionSplitter.CONNECTION_SPLITTER_PRIORITY)
 public class ConnectionSplitter implements OperationBeforeHandler {
 
-    public static final int CONNECTION_SPLITTER_PRIORITY = ENUM_VALUE_HANDLER_PRIORITY + 100;
+  public static final int CONNECTION_SPLITTER_PRIORITY = ENUM_VALUE_HANDLER_PRIORITY + 100;
 
-    private final DocumentManager documentManager;
+  private final DocumentManager documentManager;
 
-    @Inject
-    public ConnectionSplitter(DocumentManager documentManager) {
-        this.documentManager = documentManager;
+  @Inject
+  public ConnectionSplitter(DocumentManager documentManager) {
+    this.documentManager = documentManager;
+  }
+
+  @Override
+  public Mono<Operation> handle(Operation operation, Map<String, JsonValue> variables) {
+    ObjectType operationType = documentManager.getOperationTypeOrError(operation);
+    return Mono.just(
+        operation.setSelections(
+            operation.getFields().stream()
+                .flatMap(
+                    field ->
+                        buildConnection(
+                            operationType, operationType.getFieldOrError(field.getName()), field))
+                .collect(Collectors.toList())));
+  }
+
+  private Stream<Field> buildConnection(
+      ObjectType objectType, FieldDefinition fieldDefinition, Field field) {
+    Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+    if (!fieldDefinition.isInvokeField() && fieldTypeDefinition.isObject()) {
+      if (fieldDefinition.isConnectionField()) {
+        return splitConnections(objectType, fieldDefinition, field);
+      } else {
+        return Stream.of(
+            field.setSelections(
+                Stream.ofNullable(field.getFields())
+                    .flatMap(Collection::stream)
+                    .flatMap(
+                        subField ->
+                            buildConnection(
+                                fieldTypeDefinition.asObject(),
+                                fieldTypeDefinition.asObject().getFieldOrError(subField.getName()),
+                                subField))
+                    .collect(Collectors.toList())));
+      }
+    } else {
+      return Stream.of(field);
     }
+  }
 
-    @Override
-    public Mono<Operation> handle(Operation operation, Map<String, JsonValue> variables) {
-        ObjectType operationType = documentManager.getOperationTypeOrError(operation);
-        return Mono.just(
-                operation
-                        .setSelections(
-                                operation.getFields().stream()
-                                        .flatMap(field -> buildConnection(operationType, operationType.getFieldOrError(field.getName()), field))
-                                        .collect(Collectors.toList())
-                        )
-        );
+  private Stream<Field> splitConnections(
+      ObjectType objectType, FieldDefinition fieldDefinition, Field field) {
+    return Streams.concat(
+        Stream.of(field),
+        buildListField(objectType, fieldDefinition, field).stream(),
+        buildAggField(objectType, fieldDefinition, field).stream());
+  }
+
+  private Optional<Field> buildListField(
+      ObjectType objectType, FieldDefinition fieldDefinition, Field field) {
+    if (field.getFields() == null || field.getFields().isEmpty()) {
+      throw new GraphQLErrors(OBJECT_SELECTION_NOT_EXIST.bind(field.toString()));
     }
+    return Optional.ofNullable(field.getField(FIELD_EDGES_NAME))
+        .map(
+            edges -> {
+              if (edges.getFields() == null || edges.getFields().isEmpty()) {
+                throw new GraphQLErrors(OBJECT_SELECTION_NOT_EXIST.bind(edges.toString()));
+              }
+              FieldDefinition connectionFieldDefinition =
+                  objectType.getFieldOrError(fieldDefinition.getConnectionFieldOrError());
+              ObjectType fieldTypeDefinition =
+                  documentManager.getFieldTypeDefinition(connectionFieldDefinition).asObject();
+              Stream<Field> fieldStream =
+                  Stream.concat(
+                          Stream.ofNullable(edges.getField(FIELD_CURSOR_NAME))
+                              .map(
+                                  cursor ->
+                                      fieldTypeDefinition
+                                          .getCursorField()
+                                          .orElseGet(fieldTypeDefinition::getIDFieldOrError))
+                              .map(cursorDefinition -> new Field(cursorDefinition.getName())),
+                          Stream.ofNullable(edges.getField(FIELD_NODE_NAME))
+                              .flatMap(
+                                  node -> {
+                                    if (node.getFields() == null || node.getFields().isEmpty()) {
+                                      throw new GraphQLErrors(
+                                          OBJECT_SELECTION_NOT_EXIST.bind(node.toString()));
+                                    }
+                                    return node.getFields().stream()
+                                        .flatMap(
+                                            subField ->
+                                                buildConnection(
+                                                    fieldTypeDefinition.asObject(),
+                                                    fieldTypeDefinition
+                                                        .asObject()
+                                                        .getFieldOrError(subField.getName()),
+                                                    subField));
+                                  }))
+                      .filter(StreamUtil.distinctByKey(AbstractDefinition::getName));
 
-    private Stream<Field> buildConnection(ObjectType objectType, FieldDefinition fieldDefinition, Field field) {
-        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        if (!fieldDefinition.isInvokeField() && fieldTypeDefinition.isObject()) {
-            if (fieldDefinition.isConnectionField()) {
-                return splitConnections(objectType, fieldDefinition, field);
-            } else {
-                return Stream.of(
-                        field.setSelections(
-                                Stream.ofNullable(field.getFields())
-                                        .flatMap(Collection::stream)
-                                        .flatMap(subField -> buildConnection(fieldTypeDefinition.asObject(), fieldTypeDefinition.asObject().getFieldOrError(subField.getName()), subField))
-                                        .collect(Collectors.toList())
-                        )
-                );
-            }
-        } else {
-            return Stream.of(field);
-        }
+              return new Field(connectionFieldDefinition.getName())
+                  .setAlias(
+                      Optional.ofNullable(field.getAlias()).orElseGet(field::getName) + SUFFIX_LIST)
+                  .setSelections(fieldStream.collect(Collectors.toList()))
+                  .setArguments(
+                      Stream.ofNullable(field.getArguments())
+                          .flatMap(arguments -> arguments.getArguments().entrySet().stream())
+                          .map(
+                              entry -> {
+                                if (entry.getKey().equals(INPUT_VALUE_FIRST_NAME)
+                                    || entry.getKey().equals(INPUT_VALUE_LAST_NAME)
+                                        && !entry.getValue().isNull()) {
+                                  return new AbstractMap.SimpleEntry<>(
+                                      entry.getKey(),
+                                      ValueWithVariable.of(
+                                          entry.getValue().asInt().getIntegerValue() + 1));
+                                } else {
+                                  return new AbstractMap.SimpleEntry<>(
+                                      entry.getKey(), entry.getValue());
+                                }
+                              })
+                          .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)))
+                  .addDirective(new Directive(DIRECTIVE_HIDE_NAME));
+            });
+  }
+
+  private Optional<Field> buildAggField(
+      ObjectType objectType, FieldDefinition fieldDefinition, Field field) {
+    if (field.getFields() == null || field.getFields().isEmpty()) {
+      throw new GraphQLErrors(OBJECT_SELECTION_NOT_EXIST.bind(field.toString()));
     }
-
-    private Stream<Field> splitConnections(ObjectType objectType, FieldDefinition fieldDefinition, Field field) {
-        return Streams.concat(
-                Stream.of(field),
-                buildListField(objectType, fieldDefinition, field).stream(),
-                buildAggField(objectType, fieldDefinition, field).stream()
-        );
-    }
-
-    private Optional<Field> buildListField(ObjectType objectType, FieldDefinition fieldDefinition, Field field) {
-        if (field.getFields() == null || field.getFields().isEmpty()) {
-            throw new GraphQLErrors(OBJECT_SELECTION_NOT_EXIST.bind(field.toString()));
-        }
-        return Optional.ofNullable(field.getField(FIELD_EDGES_NAME))
-                .map(edges -> {
-                            if (edges.getFields() == null || edges.getFields().isEmpty()) {
-                                throw new GraphQLErrors(OBJECT_SELECTION_NOT_EXIST.bind(edges.toString()));
-                            }
-                            FieldDefinition connectionFieldDefinition = objectType.getFieldOrError(fieldDefinition.getConnectionFieldOrError());
-                            ObjectType fieldTypeDefinition = documentManager.getFieldTypeDefinition(connectionFieldDefinition).asObject();
-                            Stream<Field> fieldStream = Stream
-                                    .concat(
-                                            Stream.ofNullable(edges.getField(FIELD_CURSOR_NAME))
-                                                    .map(cursor -> fieldTypeDefinition.getCursorField().orElseGet(fieldTypeDefinition::getIDFieldOrError))
-                                                    .map(cursorDefinition -> new Field(cursorDefinition.getName())),
-                                            Stream.ofNullable(edges.getField(FIELD_NODE_NAME))
-                                                    .flatMap(node -> {
-                                                                if (node.getFields() == null || node.getFields().isEmpty()) {
-                                                                    throw new GraphQLErrors(OBJECT_SELECTION_NOT_EXIST.bind(node.toString()));
-                                                                }
-                                                                return node.getFields().stream()
-                                                                        .flatMap(subField ->
-                                                                                buildConnection(
-                                                                                        fieldTypeDefinition.asObject(),
-                                                                                        fieldTypeDefinition.asObject().getFieldOrError(subField.getName()),
-                                                                                        subField
-                                                                                )
-                                                                        );
-                                                            }
-                                                    )
-                                    )
-                                    .filter(StreamUtil.distinctByKey(AbstractDefinition::getName));
-
-                            return new Field(connectionFieldDefinition.getName())
-                                    .setAlias(Optional.ofNullable(field.getAlias()).orElseGet(field::getName) + SUFFIX_LIST)
-                                    .setSelections(fieldStream.collect(Collectors.toList()))
-                                    .setArguments(
-                                            Stream.ofNullable(field.getArguments())
-                                                    .flatMap(arguments -> arguments.getArguments().entrySet().stream())
-                                                    .map(entry -> {
-                                                                if (entry.getKey().equals(INPUT_VALUE_FIRST_NAME) || entry.getKey().equals(INPUT_VALUE_LAST_NAME) && !entry.getValue().isNull()) {
-                                                                    return new AbstractMap.SimpleEntry<>(entry.getKey(), ValueWithVariable.of(entry.getValue().asInt().getIntegerValue() + 1));
-                                                                } else {
-                                                                    return new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue());
-                                                                }
-                                                            }
-                                                    )
-                                                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
-                                    )
-                                    .addDirective(new Directive(DIRECTIVE_HIDE_NAME));
-                        }
-                );
-    }
-
-    private Optional<Field> buildAggField(ObjectType objectType, FieldDefinition fieldDefinition, Field field) {
-        if (field.getFields() == null || field.getFields().isEmpty()) {
-            throw new GraphQLErrors(OBJECT_SELECTION_NOT_EXIST.bind(field.toString()));
-        }
-        return Optional.ofNullable(field.getField(FIELD_TOTAL_COUNT_NAME))
-                .map(totalCount -> {
-                            FieldDefinition connectionAggDefinition = objectType.getFieldOrError(fieldDefinition.getConnectionAggOrError());
-                            ObjectType fieldTypeDefinition = documentManager.getFieldTypeDefinition(connectionAggDefinition).asObject();
-                            return new Field(connectionAggDefinition.getName())
-                                    .setAlias(Optional.ofNullable(field.getAlias()).orElseGet(field::getName) + SUFFIX_AGGREGATE)
-                                    .addSelection(new Field(fieldTypeDefinition.getIDFieldOrError().getName() + SUFFIX_COUNT))
-                                    .setArguments(
-                                            Stream.ofNullable(field.getArguments())
-                                                    .flatMap(arguments -> arguments.getArguments().entrySet().stream())
-                                                    .filter(entry -> !entry.getKey().equals(INPUT_VALUE_FIRST_NAME) && !entry.getKey().equals(INPUT_VALUE_LAST_NAME))
-                                                    .map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue()))
-                                                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
-                                    )
-                                    .addDirective(new Directive(DIRECTIVE_HIDE_NAME));
-                        }
-                );
-    }
+    return Optional.ofNullable(field.getField(FIELD_TOTAL_COUNT_NAME))
+        .map(
+            totalCount -> {
+              FieldDefinition connectionAggDefinition =
+                  objectType.getFieldOrError(fieldDefinition.getConnectionAggOrError());
+              ObjectType fieldTypeDefinition =
+                  documentManager.getFieldTypeDefinition(connectionAggDefinition).asObject();
+              return new Field(connectionAggDefinition.getName())
+                  .setAlias(
+                      Optional.ofNullable(field.getAlias()).orElseGet(field::getName)
+                          + SUFFIX_AGGREGATE)
+                  .addSelection(
+                      new Field(fieldTypeDefinition.getIDFieldOrError().getName() + SUFFIX_COUNT))
+                  .setArguments(
+                      Stream.ofNullable(field.getArguments())
+                          .flatMap(arguments -> arguments.getArguments().entrySet().stream())
+                          .filter(
+                              entry ->
+                                  !entry.getKey().equals(INPUT_VALUE_FIRST_NAME)
+                                      && !entry.getKey().equals(INPUT_VALUE_LAST_NAME))
+                          .map(
+                              entry ->
+                                  new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue()))
+                          .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)))
+                  .addDirective(new Directive(DIRECTIVE_HIDE_NAME));
+            });
+  }
 }

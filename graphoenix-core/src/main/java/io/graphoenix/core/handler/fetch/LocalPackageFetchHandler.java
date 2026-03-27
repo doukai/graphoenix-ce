@@ -15,15 +15,15 @@ import reactor.core.publisher.Mono;
 @Named(Hammurabi.ENUM_PROTOCOL_ENUM_VALUE_LOCAL)
 public class LocalPackageFetchHandler implements PackageFetchHandler {
 
-    private final Provider<FetchHandler> fetchHandlerProvider;
+  private final Provider<FetchHandler> fetchHandlerProvider;
 
-    @Inject
-    public LocalPackageFetchHandler(Provider<FetchHandler> fetchHandlerProvider) {
-        this.fetchHandlerProvider = fetchHandlerProvider;
-    }
+  @Inject
+  public LocalPackageFetchHandler(Provider<FetchHandler> fetchHandlerProvider) {
+    this.fetchHandlerProvider = fetchHandlerProvider;
+  }
 
-    @Override
-    public Mono<JsonValue> request(String packageName, Operation operation) {
-        return Mono.from(fetchHandlerProvider.get().request(operation));
-    }
+  @Override
+  public Mono<JsonValue> request(String packageName, Operation operation) {
+    return Mono.from(fetchHandlerProvider.get().request(operation));
+  }
 }

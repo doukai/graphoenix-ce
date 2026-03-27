@@ -12,14 +12,14 @@ import "io/graphoenix/file/input_objects.proto";
 import "google/protobuf/timestamp.proto";
 
 message MutationFileResponse {
-    File file = 1;
+  File file = 1;
 }
 message MutationFileListResponse {
-    repeated File file_list = 1;
+  repeated File file_list = 1;
 }
 message MutationSingleUploadResponse {
-    File single_upload = 1;
+  File single_upload = 1;
 }
 message MutationMultipleUploadResponse {
-    repeated File multiple_upload = 1;
+  repeated File multiple_upload = 1;
 }

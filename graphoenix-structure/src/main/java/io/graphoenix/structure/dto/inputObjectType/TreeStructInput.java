@@ -9,76 +9,52 @@ import java.time.LocalDateTime;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/**
- * Mutation Input for TreeStruct
- */
+/** Mutation Input for TreeStruct */
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Mutation Input for TreeStruct")
 public interface TreeStructInput extends MetaInput {
-  /**
-   * parentId
-   */
+  /** parentId */
   @Description("parentId")
   String parentId = null;
 
-  /**
-   * name
-   */
+  /** name */
   @Description("name")
   String name = null;
 
-  /**
-   * id
-   */
+  /** id */
   @Description("id")
   String id = null;
 
-  /**
-   * Is Deprecated
-   */
+  /** Is Deprecated */
   @Description("Is Deprecated")
   Boolean isDeprecated = false;
 
-  /**
-   * version
-   */
+  /** version */
   @Description("version")
   Integer version = null;
 
-  /**
-   * realmId
-   */
+  /** realmId */
   @Description("realmId")
   Integer realmId = null;
 
-  /**
-   * createUserId
-   */
+  /** createUserId */
   @Description("createUserId")
   String createUserId = null;
 
-  /**
-   * createTime
-   */
+  /** createTime */
   @Description("createTime")
   LocalDateTime createTime = null;
 
-  /**
-   * updateUserId
-   */
+  /** updateUserId */
   @Description("updateUserId")
   String updateUserId = null;
 
-  /**
-   * updateTime
-   */
+  /** updateTime */
   @Description("updateTime")
   LocalDateTime updateTime = null;
 
-  /**
-   * createGroupId
-   */
+  /** createGroupId */
   @Description("createGroupId")
   String createGroupId = null;
 

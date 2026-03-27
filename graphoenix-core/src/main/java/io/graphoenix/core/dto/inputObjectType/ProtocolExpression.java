@@ -9,30 +9,22 @@ import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/**
- * Query Expression Input for Protocol
- */
+/** Query Expression Input for Protocol */
 @CompiledJson
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Query Expression Input for Protocol")
 public class ProtocolExpression {
-  /**
-   * Operators
-   */
+  /** Operators */
   @DefaultValue("EQ")
   @Description("Operators")
   private Operator opr = Operator.EQ;
 
-  /**
-   * Value
-   */
+  /** Value */
   @Description("Value")
   private Protocol val;
 
-  /**
-   * Array
-   */
+  /** Array */
   @Description("Array")
   private Collection<Protocol> arr;
 

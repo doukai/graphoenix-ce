@@ -21,50 +21,86 @@ import static io.graphoenix.spi.constant.Hammurabi.ENUM_PROTOCOL_ENUM_VALUE_GRPC
 @ApplicationScoped
 public class PackageOperationInterfaceImplementer {
 
-    private final DocumentManager documentManager;
+  private final DocumentManager documentManager;
 
-    @Inject
-    public PackageOperationInterfaceImplementer(DocumentManager documentManager) {
-        this.documentManager = documentManager;
-    }
+  @Inject
+  public PackageOperationInterfaceImplementer(DocumentManager documentManager) {
+    this.documentManager = documentManager;
+  }
 
-    public CodeBlock getCodeBlock(Operation operation, CodeBlock parameterMapCodeBlock) {
-        String packageName = operation.getPackageNameOrError();
-        ObjectType operationType = documentManager.getOperationTypeOrError(operation);
-        Field field = operation.getSelection(0).asField();
-        FieldDefinition fieldDefinition = operationType.getFieldOrError(field.getName());
-        String protocol = fieldDefinition.getFetchProtocol().orElse(new EnumValue(ENUM_PROTOCOL_ENUM_VALUE_GRPC)).getValue();
-        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+  public CodeBlock getCodeBlock(Operation operation, CodeBlock parameterMapCodeBlock) {
+    String packageName = operation.getPackageNameOrError();
+    ObjectType operationType = documentManager.getOperationTypeOrError(operation);
+    Field field = operation.getSelection(0).asField();
+    FieldDefinition fieldDefinition = operationType.getFieldOrError(field.getName());
+    String protocol =
+        fieldDefinition
+            .getFetchProtocol()
+            .orElse(new EnumValue(ENUM_PROTOCOL_ENUM_VALUE_GRPC))
+            .getValue();
+    Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
 
-        ClassName operationTypeClassName = ClassName.get(fieldTypeDefinition.getPackageNameOrError() + ".dto.objectType", operationType.getName());
-        String fieldGetterMethodName = getFieldGetterMethodName(field.getName());
-        String returnTypeName = operation.getInvokeReturnClassNameOrError();
-        String returnClassName = getClassName(returnTypeName);
-        String[] returnTypeArgumentTypeNames = getArgumentTypeNames(returnTypeName);
+    ClassName operationTypeClassName =
+        ClassName.get(
+            fieldTypeDefinition.getPackageNameOrError() + ".dto.objectType",
+            operationType.getName());
+    String fieldGetterMethodName = getFieldGetterMethodName(field.getName());
+    String returnTypeName = operation.getInvokeReturnClassNameOrError();
+    String returnClassName = getClassName(returnTypeName);
+    String[] returnTypeArgumentTypeNames = getArgumentTypeNames(returnTypeName);
 
-        CodeBlock getOperation = CodeBlock.of("documentManager.getDocument().getDefinition($S).toString()", operation.getName());
+    CodeBlock getOperation =
+        CodeBlock.of(
+            "documentManager.getDocument().getDefinition($S).toString()", operation.getName());
 
-        if (returnTypeArgumentTypeNames.length > 0) {
-            String argumentTypeName0 = getArgumentTypeName0(returnTypeName);
-            if (returnClassName.equals(Mono.class.getCanonicalName())) {
-                String[] monoArgumentTypeArgumentNames = getArgumentTypeNames(argumentTypeName0);
-                if (monoArgumentTypeArgumentNames.length > 0) {
-                    Optional<ClassName> collectionImplementationClassName = getCollectionImplementationClassName(argumentTypeName0);
-                    if (collectionImplementationClassName.isPresent()) {
-                        return CodeBlock.of(
-                                "packageOperationDAO.fetchAsync($S, $S, $L, $L, $T.class).mapNotNull($T::$L).mapNotNull($T::new)",
-                                packageName,
-                                protocol,
-                                getOperation,
-                                parameterMapCodeBlock,
-                                operationTypeClassName,
-                                operationTypeClassName,
-                                fieldGetterMethodName,
-                                collectionImplementationClassName.get()
-                        );
-                    }
-                }
-                return CodeBlock.of(
+    if (returnTypeArgumentTypeNames.length > 0) {
+      String argumentTypeName0 = getArgumentTypeName0(returnTypeName);
+      if (returnClassName.equals(Mono.class.getCanonicalName())) {
+        String[] monoArgumentTypeArgumentNames = getArgumentTypeNames(argumentTypeName0);
+        if (monoArgumentTypeArgumentNames.length > 0) {
+          Optional<ClassName> collectionImplementationClassName =
+              getCollectionImplementationClassName(argumentTypeName0);
+          if (collectionImplementationClassName.isPresent()) {
+            return CodeBlock.of(
+                "packageOperationDAO.fetchAsync($S, $S, $L, $L, $T.class).mapNotNull($T::$L).mapNotNull($T::new)",
+                packageName,
+                protocol,
+                getOperation,
+                parameterMapCodeBlock,
+                operationTypeClassName,
+                operationTypeClassName,
+                fieldGetterMethodName,
+                collectionImplementationClassName.get());
+          }
+        }
+        return CodeBlock.of(
+            "packageOperationDAO.fetchAsync($S, $S, $L, $L, $T.class).mapNotNull($T::$L)",
+            packageName,
+            protocol,
+            getOperation,
+            parameterMapCodeBlock,
+            operationTypeClassName,
+            operationTypeClassName,
+            fieldGetterMethodName);
+      } else {
+        Optional<ClassName> collectionImplementationClassName =
+            getCollectionImplementationClassName(returnTypeName);
+        return collectionImplementationClassName
+            .map(
+                collectionClassName ->
+                    CodeBlock.of(
+                        "packageOperationDAO.fetchAsync($S, $S, $L, $L, $T.class).mapNotNull($T::$L).mapNotNull($T::new)",
+                        packageName,
+                        protocol,
+                        getOperation,
+                        parameterMapCodeBlock,
+                        operationTypeClassName,
+                        operationTypeClassName,
+                        fieldGetterMethodName,
+                        collectionClassName))
+            .orElseGet(
+                () ->
+                    CodeBlock.of(
                         "packageOperationDAO.fetchAsync($S, $S, $L, $L, $T.class).mapNotNull($T::$L)",
                         packageName,
                         protocol,
@@ -72,59 +108,29 @@ public class PackageOperationInterfaceImplementer {
                         parameterMapCodeBlock,
                         operationTypeClassName,
                         operationTypeClassName,
-                        fieldGetterMethodName
-                );
-            } else {
-                Optional<ClassName> collectionImplementationClassName = getCollectionImplementationClassName(returnTypeName);
-                return collectionImplementationClassName
-                        .map(collectionClassName ->
-                                CodeBlock.of(
-                                        "packageOperationDAO.fetchAsync($S, $S, $L, $L, $T.class).mapNotNull($T::$L).mapNotNull($T::new)",
-                                        packageName,
-                                        protocol,
-                                        getOperation,
-                                        parameterMapCodeBlock,
-                                        operationTypeClassName,
-                                        operationTypeClassName,
-                                        fieldGetterMethodName,
-                                        collectionClassName
-                                )
-                        )
-                        .orElseGet(() ->
-                                CodeBlock.of(
-                                        "packageOperationDAO.fetchAsync($S, $S, $L, $L, $T.class).mapNotNull($T::$L)",
-                                        packageName,
-                                        protocol,
-                                        getOperation,
-                                        parameterMapCodeBlock,
-                                        operationTypeClassName,
-                                        operationTypeClassName,
-                                        fieldGetterMethodName
-                                )
-                        );
-            }
-        } else {
-            return CodeBlock.of(
-                    "packageOperationDAO.fetchAsync($S, $S, $L, $L, $T.class).mapNotNull($T::$L)",
-                    packageName,
-                    protocol,
-                    getOperation,
-                    parameterMapCodeBlock,
-                    operationTypeClassName,
-                    operationTypeClassName,
-                    fieldGetterMethodName
-            );
-        }
+                        fieldGetterMethodName));
+      }
+    } else {
+      return CodeBlock.of(
+          "packageOperationDAO.fetchAsync($S, $S, $L, $L, $T.class).mapNotNull($T::$L)",
+          packageName,
+          protocol,
+          getOperation,
+          parameterMapCodeBlock,
+          operationTypeClassName,
+          operationTypeClassName,
+          fieldGetterMethodName);
     }
+  }
 
-    private Optional<ClassName> getCollectionImplementationClassName(String typeName) {
-        String className = getClassName(typeName);
-        if (className.equals(List.class.getCanonicalName())) {
-            return Optional.of(ClassName.get(ArrayList.class));
-        } else if (className.equals(Set.class.getCanonicalName())) {
-            return Optional.of(ClassName.get(LinkedHashSet.class));
-        } else {
-            return Optional.empty();
-        }
+  private Optional<ClassName> getCollectionImplementationClassName(String typeName) {
+    String className = getClassName(typeName);
+    if (className.equals(List.class.getCanonicalName())) {
+      return Optional.of(ClassName.get(ArrayList.class));
+    } else if (className.equals(Set.class.getCanonicalName())) {
+      return Optional.of(ClassName.get(LinkedHashSet.class));
+    } else {
+      return Optional.empty();
     }
+  }
 }

@@ -14,127 +14,87 @@ import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/**
- * Mutation Input for __Directive
- */
+/** Mutation Input for __Directive */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Mutation Input for __Directive")
 public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
-  /**
-   * id
-   */
+  /** id */
   @Description("id")
   private String id;
 
-  /**
-   * name
-   */
+  /** name */
   @Description("name")
   private String name;
 
-  /**
-   * ofSchema
-   */
+  /** ofSchema */
   @Description("ofSchema")
   private __SchemaInput ofSchema;
 
-  /**
-   * description
-   */
+  /** description */
   @Description("description")
   private String description;
 
-  /**
-   * locations
-   */
+  /** locations */
   @Description("locations")
   private Collection<__DirectiveLocation> locations;
 
-  /**
-   * args
-   */
+  /** args */
   @Description("args")
   private Collection<__InputValueInput> args;
 
-  /**
-   * isRepeatable
-   */
+  /** isRepeatable */
   @Description("isRepeatable")
   private Boolean isRepeatable;
 
-  /**
-   * Is Deprecated
-   */
+  /** Is Deprecated */
   @DefaultValue("false")
   @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   private Integer version;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   private Integer realmId;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   private String createUserId;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   private LocalDateTime createTime;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   private String updateUserId;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   private LocalDateTime updateTime;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   private String createGroupId;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @DefaultValue("__Directive")
   @Description("Type Name")
   private String __typename = "__Directive";
 
-  /**
-   * ofSchema Reference
-   */
+  /** ofSchema Reference */
   @Description("ofSchema Reference")
   private Integer schemaId;
 
-  /**
-   * Relationship Object between __Directive and locations
-   */
+  /** Relationship Object between __Directive and locations */
   @Description("Relationship Object between __Directive and locations")
   private Collection<__DirectiveLocationsRelationInput> __directiveLocationsRelation;
 
-  /**
-   * Where
-   */
+  /** Where */
   @Description("Where")
   private __DirectiveExpression where;
 
@@ -145,7 +105,7 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
 
   @Override
   public void setId(String id) {
-    this.id = (String)id;
+    this.id = (String) id;
   }
 
   @Override
@@ -155,7 +115,7 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
 
   @Override
   public void setName(String name) {
-    this.name = (String)name;
+    this.name = (String) name;
   }
 
   @Override
@@ -165,7 +125,7 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
 
   @Override
   public void setOfSchema(__SchemaInput ofSchema) {
-    this.ofSchema = (__SchemaInput)ofSchema;
+    this.ofSchema = (__SchemaInput) ofSchema;
   }
 
   @Override
@@ -175,7 +135,7 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
 
   @Override
   public void setDescription(String description) {
-    this.description = (String)description;
+    this.description = (String) description;
   }
 
   @Override
@@ -185,7 +145,7 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
 
   @Override
   public void setLocations(Collection<__DirectiveLocation> locations) {
-    this.locations = (Collection<__DirectiveLocation>)locations;
+    this.locations = (Collection<__DirectiveLocation>) locations;
   }
 
   @Override
@@ -195,7 +155,7 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
 
   @Override
   public void setArgs(Collection<__InputValueInput> args) {
-    this.args = (Collection<__InputValueInput>)args;
+    this.args = (Collection<__InputValueInput>) args;
   }
 
   @Override
@@ -205,7 +165,7 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
 
   @Override
   public void setIsRepeatable(Boolean isRepeatable) {
-    this.isRepeatable = (Boolean)isRepeatable;
+    this.isRepeatable = (Boolean) isRepeatable;
   }
 
   @Override
@@ -215,7 +175,7 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
 
   @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean)isDeprecated;
+    this.isDeprecated = (Boolean) isDeprecated;
   }
 
   @Override
@@ -225,7 +185,7 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
 
   @Override
   public void setVersion(Integer version) {
-    this.version = (Integer)version;
+    this.version = (Integer) version;
   }
 
   @Override
@@ -235,7 +195,7 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
 
   @Override
   public void setRealmId(Integer realmId) {
-    this.realmId = (Integer)realmId;
+    this.realmId = (Integer) realmId;
   }
 
   @Override
@@ -245,7 +205,7 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
 
   @Override
   public void setCreateUserId(String createUserId) {
-    this.createUserId = (String)createUserId;
+    this.createUserId = (String) createUserId;
   }
 
   @Override
@@ -255,7 +215,7 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
 
   @Override
   public void setCreateTime(LocalDateTime createTime) {
-    this.createTime = (LocalDateTime)createTime;
+    this.createTime = (LocalDateTime) createTime;
   }
 
   @Override
@@ -265,7 +225,7 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
 
   @Override
   public void setUpdateUserId(String updateUserId) {
-    this.updateUserId = (String)updateUserId;
+    this.updateUserId = (String) updateUserId;
   }
 
   @Override
@@ -275,7 +235,7 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
 
   @Override
   public void setUpdateTime(LocalDateTime updateTime) {
-    this.updateTime = (LocalDateTime)updateTime;
+    this.updateTime = (LocalDateTime) updateTime;
   }
 
   @Override
@@ -285,7 +245,7 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
 
   @Override
   public void setCreateGroupId(String createGroupId) {
-    this.createGroupId = (String)createGroupId;
+    this.createGroupId = (String) createGroupId;
   }
 
   @Override
@@ -295,7 +255,7 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
 
   @Override
   public void set__typename(String __typename) {
-    this.__typename = (String)__typename;
+    this.__typename = (String) __typename;
   }
 
   @Override
@@ -305,7 +265,7 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
 
   @Override
   public void setSchemaId(Integer schemaId) {
-    this.schemaId = (Integer)schemaId;
+    this.schemaId = (Integer) schemaId;
   }
 
   @Override
@@ -316,7 +276,8 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
   @Override
   public void set__directiveLocationsRelation(
       Collection<__DirectiveLocationsRelationInput> __directiveLocationsRelation) {
-    this.__directiveLocationsRelation = (Collection<__DirectiveLocationsRelationInput>)__directiveLocationsRelation;
+    this.__directiveLocationsRelation =
+        (Collection<__DirectiveLocationsRelationInput>) __directiveLocationsRelation;
   }
 
   @Override
@@ -326,6 +287,6 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
 
   @Override
   public void setWhere(__DirectiveExpression where) {
-    this.where = (__DirectiveExpression)where;
+    this.where = (__DirectiveExpression) where;
   }
 }

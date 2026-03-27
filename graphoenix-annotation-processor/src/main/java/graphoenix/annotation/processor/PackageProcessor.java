@@ -25,46 +25,50 @@ import java.util.Set;
 @AutoService(Processor.class)
 public class PackageProcessor extends BaseProcessor {
 
-    private static final Logger logger = LoggerFactory.getLogger(PackageProcessor.class);
+  private static final Logger logger = LoggerFactory.getLogger(PackageProcessor.class);
 
-    private Filer filer;
+  private Filer filer;
 
-    @Override
-    public SourceVersion getSupportedSourceVersion() {
-        return SourceVersion.latestSupported();
+  @Override
+  public SourceVersion getSupportedSourceVersion() {
+    return SourceVersion.latestSupported();
+  }
+
+  @Override
+  public synchronized void init(ProcessingEnvironment processingEnv) {
+    super.init(processingEnv);
+    filer = processingEnv.getFiler();
+  }
+
+  @Override
+  public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+    if (annotations.isEmpty()) {
+      return false;
     }
+    PackageConfig packageConfig = BeanContext.get(PackageConfig.class);
+    DocumentManager documentManager = BeanContext.get(DocumentManager.class);
+    DocumentBuilder documentBuilder = BeanContext.get(DocumentBuilder.class);
+    roundInit(roundEnv);
+    try {
+      GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
+      configRegister.registerPackage(PackageProcessor.class.getClassLoader());
+      documentBuilder.build();
+      registerElements(roundEnv);
+      documentBuilder.buildInvoker();
+      registerOperations(roundEnv);
+      FileObject packageGraphQL =
+          filer.createResource(
+              StandardLocation.CLASS_OUTPUT,
+              "",
+              "META-INF/graphql/" + packageConfig.getPackageName() + ".gql");
+      Writer writer = packageGraphQL.openWriter();
+      writer.write(documentManager.getPackageDocument().toString());
+      writer.close();
 
-    @Override
-    public synchronized void init(ProcessingEnvironment processingEnv) {
-        super.init(processingEnv);
-        filer = processingEnv.getFiler();
+    } catch (IOException | URISyntaxException e) {
+      logger.error(e.getMessage(), e);
+      processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
     }
-
-    @Override
-    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        if (annotations.isEmpty()) {
-            return false;
-        }
-        PackageConfig packageConfig = BeanContext.get(PackageConfig.class);
-        DocumentManager documentManager = BeanContext.get(DocumentManager.class);
-        DocumentBuilder documentBuilder = BeanContext.get(DocumentBuilder.class);
-        roundInit(roundEnv);
-        try {
-            GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
-            configRegister.registerPackage(PackageProcessor.class.getClassLoader());
-            documentBuilder.build();
-            registerElements(roundEnv);
-            documentBuilder.buildInvoker();
-            registerOperations(roundEnv);
-            FileObject packageGraphQL = filer.createResource(StandardLocation.CLASS_OUTPUT, "", "META-INF/graphql/" + packageConfig.getPackageName() + ".gql");
-            Writer writer = packageGraphQL.openWriter();
-            writer.write(documentManager.getPackageDocument().toString());
-            writer.close();
-
-        } catch (IOException | URISyntaxException e) {
-            logger.error(e.getMessage(), e);
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
-        }
-        return false;
-    }
+    return false;
+  }
 }

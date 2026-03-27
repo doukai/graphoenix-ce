@@ -13,121 +13,83 @@ import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Name;
 
-/**
- * Query Arguments for Relationship Object between __Type and __Type
- */
+/** Query Arguments for Relationship Object between __Type and __Type */
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Query Arguments for Relationship Object between __Type and __Type")
 public @interface __TypeInterfacesQueryArguments {
-  /**
-   * ID
-   */
+  /** ID */
   @Description("ID")
   StringExpression id() default @StringExpression;
 
-  /**
-   * __Type Reference
-   */
+  /** __Type Reference */
   @Description("__Type Reference")
   StringExpression typeRef() default @StringExpression;
 
-  /**
-   * __Type
-   */
+  /** __Type */
   @Description("__Type")
   __TypeExpression type() default @__TypeExpression;
 
-  /**
-   * __Type Reference
-   */
+  /** __Type Reference */
   @Description("__Type Reference")
   StringExpression interfaceRef() default @StringExpression;
 
-  /**
-   * __Type
-   */
+  /** __Type */
   @Name("interface")
   @Description("__Type")
   __TypeExpression _interface() default @__TypeExpression;
 
-  /**
-   * Include Deprecated
-   */
+  /** Include Deprecated */
   @Description("Include Deprecated")
   boolean includeDeprecated() default false;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   IntExpression version() default @IntExpression;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   IntExpression realmId() default @IntExpression;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   StringExpression createUserId() default @StringExpression;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   StringExpression createTime() default @StringExpression;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   StringExpression updateUserId() default @StringExpression;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   StringExpression updateTime() default @StringExpression;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   StringExpression createGroupId() default @StringExpression;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   StringExpression __typename() default @StringExpression;
 
-  /**
-   * Group By
-   */
+  /** Group By */
   @Description("Group By")
   String[] groupBy() default {};
 
-  /**
-   * Not
-   */
+  /** Not */
   @Description("Not")
   boolean not() default false;
 
-  /**
-   * Condition
-   */
+  /** Condition */
   @Description("Condition")
   Conditional cond() default Conditional.AND;
 
-  /**
-   * Expressions
-   */
+  /** Expressions */
   @Description("Expressions")
   __TypeInterfacesExpression[] exs() default {};
 

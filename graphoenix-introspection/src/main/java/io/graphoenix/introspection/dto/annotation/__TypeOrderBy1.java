@@ -10,318 +10,214 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/**
- * Order Input for __Type
- */
+/** Order Input for __Type */
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Order Input for __Type")
 public @interface __TypeOrderBy1 {
-  /**
-   * id
-   */
+  /** id */
   @Description("id")
   Sort id() default Sort.ASC;
 
-  /**
-   * name
-   */
+  /** name */
   @Description("name")
   Sort name() default Sort.ASC;
 
-  /**
-   * ofSchema
-   */
+  /** ofSchema */
   @Description("ofSchema")
   __SchemaOrderBy2 ofSchema() default @__SchemaOrderBy2;
 
-  /**
-   * kind
-   */
+  /** kind */
   @Description("kind")
   Sort kind() default Sort.ASC;
 
-  /**
-   * description
-   */
+  /** description */
   @Description("description")
   Sort description() default Sort.ASC;
 
-  /**
-   * fields
-   */
+  /** fields */
   @Description("fields")
   __FieldOrderBy2 fields() default @__FieldOrderBy2;
 
-  /**
-   * interfaces
-   */
+  /** interfaces */
   @Description("interfaces")
   __TypeOrderBy2 interfaces() default @__TypeOrderBy2;
 
-  /**
-   * possibleTypes
-   */
+  /** possibleTypes */
   @Description("possibleTypes")
   __TypeOrderBy2 possibleTypes() default @__TypeOrderBy2;
 
-  /**
-   * enumValues
-   */
+  /** enumValues */
   @Description("enumValues")
   __EnumValueOrderBy2 enumValues() default @__EnumValueOrderBy2;
 
-  /**
-   * inputFields
-   */
+  /** inputFields */
   @Description("inputFields")
   __InputValueOrderBy2 inputFields() default @__InputValueOrderBy2;
 
-  /**
-   * ofType
-   */
+  /** ofType */
   @Description("ofType")
   __TypeOrderBy2 ofType() default @__TypeOrderBy2;
 
-  /**
-   * Is Deprecated
-   */
+  /** Is Deprecated */
   @Description("Is Deprecated")
   Sort isDeprecated() default Sort.ASC;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   Sort version() default Sort.ASC;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   Sort realmId() default Sort.ASC;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   Sort createUserId() default Sort.ASC;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   Sort createTime() default Sort.ASC;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   Sort updateUserId() default Sort.ASC;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   Sort updateTime() default Sort.ASC;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   Sort createGroupId() default Sort.ASC;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   Sort __typename() default Sort.ASC;
 
-  /**
-   * ofSchema Reference
-   */
+  /** ofSchema Reference */
   @Description("ofSchema Reference")
   Sort schemaId() default Sort.ASC;
 
-  /**
-   * ofType Reference
-   */
+  /** ofType Reference */
   @Description("ofType Reference")
   Sort ofTypeName() default Sort.ASC;
 
-  /**
-   * Relationship Object between __Type and __Type
-   */
+  /** Relationship Object between __Type and __Type */
   @Description("Relationship Object between __Type and __Type")
   __TypeInterfacesOrderBy2 __typeInterfaces() default @__TypeInterfacesOrderBy2;
 
-  /**
-   * Relationship Object between __Type and __Type
-   */
+  /** Relationship Object between __Type and __Type */
   @Description("Relationship Object between __Type and __Type")
   __TypePossibleTypesOrderBy2 __typePossibleTypes() default @__TypePossibleTypesOrderBy2;
 
-  /**
-   * Aggregate Field for fields
-   */
+  /** Aggregate Field for fields */
   @Description("Aggregate Field for fields")
   __FieldOrderBy2 fieldsAggregate() default @__FieldOrderBy2;
 
-  /**
-   * Aggregate Field for interfaces
-   */
+  /** Aggregate Field for interfaces */
   @Description("Aggregate Field for interfaces")
   __TypeOrderBy2 interfacesAggregate() default @__TypeOrderBy2;
 
-  /**
-   * Aggregate Field for possibleTypes
-   */
+  /** Aggregate Field for possibleTypes */
   @Description("Aggregate Field for possibleTypes")
   __TypeOrderBy2 possibleTypesAggregate() default @__TypeOrderBy2;
 
-  /**
-   * Aggregate Field for enumValues
-   */
+  /** Aggregate Field for enumValues */
   @Description("Aggregate Field for enumValues")
   __EnumValueOrderBy2 enumValuesAggregate() default @__EnumValueOrderBy2;
 
-  /**
-   * Aggregate Field for inputFields
-   */
+  /** Aggregate Field for inputFields */
   @Description("Aggregate Field for inputFields")
   __InputValueOrderBy2 inputFieldsAggregate() default @__InputValueOrderBy2;
 
-  /**
-   * Aggregate Field for Relationship Object between __Type and __Type
-   */
+  /** Aggregate Field for Relationship Object between __Type and __Type */
   @Description("Aggregate Field for Relationship Object between __Type and __Type")
   __TypeInterfacesOrderBy2 __typeInterfacesAggregate() default @__TypeInterfacesOrderBy2;
 
-  /**
-   * Aggregate Field for Relationship Object between __Type and __Type
-   */
+  /** Aggregate Field for Relationship Object between __Type and __Type */
   @Description("Aggregate Field for Relationship Object between __Type and __Type")
   __TypePossibleTypesOrderBy2 __typePossibleTypesAggregate() default @__TypePossibleTypesOrderBy2;
 
-  /**
-   * Count of __Type
-   */
+  /** Count of __Type */
   @Description("Count of __Type")
   Sort idCount() default Sort.ASC;
 
-  /**
-   * Max of id
-   */
+  /** Max of id */
   @Description("Max of id")
   Sort idMax() default Sort.ASC;
 
-  /**
-   * Min of id
-   */
+  /** Min of id */
   @Description("Min of id")
   Sort idMin() default Sort.ASC;
 
-  /**
-   * Count of name
-   */
+  /** Count of name */
   @Description("Count of name")
   Sort nameCount() default Sort.ASC;
 
-  /**
-   * Max of name
-   */
+  /** Max of name */
   @Description("Max of name")
   Sort nameMax() default Sort.ASC;
 
-  /**
-   * Min of name
-   */
+  /** Min of name */
   @Description("Min of name")
   Sort nameMin() default Sort.ASC;
 
-  /**
-   * Count of kind
-   */
+  /** Count of kind */
   @Description("Count of kind")
   Sort kindCount() default Sort.ASC;
 
-  /**
-   * Max of kind
-   */
+  /** Max of kind */
   @Description("Max of kind")
   Sort kindMax() default Sort.ASC;
 
-  /**
-   * Min of kind
-   */
+  /** Min of kind */
   @Description("Min of kind")
   Sort kindMin() default Sort.ASC;
 
-  /**
-   * Count of description
-   */
+  /** Count of description */
   @Description("Count of description")
   Sort descriptionCount() default Sort.ASC;
 
-  /**
-   * Max of description
-   */
+  /** Max of description */
   @Description("Max of description")
   Sort descriptionMax() default Sort.ASC;
 
-  /**
-   * Min of description
-   */
+  /** Min of description */
   @Description("Min of description")
   Sort descriptionMin() default Sort.ASC;
 
-  /**
-   * Count of ofType Reference
-   */
+  /** Count of ofType Reference */
   @Description("Count of ofType Reference")
   Sort ofTypeNameCount() default Sort.ASC;
 
-  /**
-   * Max of ofType Reference
-   */
+  /** Max of ofType Reference */
   @Description("Max of ofType Reference")
   Sort ofTypeNameMax() default Sort.ASC;
 
-  /**
-   * Min of ofType Reference
-   */
+  /** Min of ofType Reference */
   @Description("Min of ofType Reference")
   Sort ofTypeNameMin() default Sort.ASC;
 
-  /**
-   * Count of ofSchema Reference
-   */
+  /** Count of ofSchema Reference */
   @Description("Count of ofSchema Reference")
   Sort schemaIdCount() default Sort.ASC;
 
-  /**
-   * Sum of ofSchema Reference
-   */
+  /** Sum of ofSchema Reference */
   @Description("Sum of ofSchema Reference")
   Sort schemaIdSum() default Sort.ASC;
 
-  /**
-   * Avg of ofSchema Reference
-   */
+  /** Avg of ofSchema Reference */
   @Description("Avg of ofSchema Reference")
   Sort schemaIdAvg() default Sort.ASC;
 
-  /**
-   * Max of ofSchema Reference
-   */
+  /** Max of ofSchema Reference */
   @Description("Max of ofSchema Reference")
   Sort schemaIdMax() default Sort.ASC;
 
-  /**
-   * Min of ofSchema Reference
-   */
+  /** Min of ofSchema Reference */
   @Description("Min of ofSchema Reference")
   Sort schemaIdMin() default Sort.ASC;
 

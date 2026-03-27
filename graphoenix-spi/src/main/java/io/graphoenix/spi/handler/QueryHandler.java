@@ -6,5 +6,5 @@ import reactor.core.publisher.Mono;
 
 public interface QueryHandler {
 
-    Mono<JsonValue> query(Operation operation);
+  Mono<JsonValue> query(Operation operation);
 }

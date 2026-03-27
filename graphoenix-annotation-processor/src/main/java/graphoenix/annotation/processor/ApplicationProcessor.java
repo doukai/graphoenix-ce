@@ -31,70 +31,75 @@ import java.util.Set;
 @AutoService(Processor.class)
 public class ApplicationProcessor extends BaseProcessor {
 
-    private static final Logger logger = LoggerFactory.getLogger(ApplicationProcessor.class);
+  private static final Logger logger = LoggerFactory.getLogger(ApplicationProcessor.class);
 
-    private Filer filer;
+  private Filer filer;
 
-    @Override
-    public SourceVersion getSupportedSourceVersion() {
-        return SourceVersion.latestSupported();
+  @Override
+  public SourceVersion getSupportedSourceVersion() {
+    return SourceVersion.latestSupported();
+  }
+
+  @Override
+  public synchronized void init(ProcessingEnvironment processingEnv) {
+    super.init(processingEnv);
+    filer = processingEnv.getFiler();
+  }
+
+  @Override
+  public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+    if (annotations.isEmpty()) {
+      return false;
     }
+    PackageManager packageManager = BeanContext.get(PackageManager.class);
+    DocumentBuilder documentBuilder = BeanContext.get(DocumentBuilder.class);
+    DocumentManager documentManager = BeanContext.get(DocumentManager.class);
+    roundInit(roundEnv);
 
-    @Override
-    public synchronized void init(ProcessingEnvironment processingEnv) {
-        super.init(processingEnv);
-        filer = processingEnv.getFiler();
-    }
-
-    @Override
-    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        if (annotations.isEmpty()) {
-            return false;
+    try {
+      if (DOCUMENT_CACHE.getDefinitions().isEmpty()) {
+        GraphQLConfig graphQLConfig = BeanContext.get(GraphQLConfig.class);
+        GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
+        configRegister.registerApplication(ApplicationProcessor.class.getClassLoader());
+        registerElements(roundEnv);
+        registerOperations(roundEnv);
+        if (graphQLConfig.getMapToLocalFetch()) {
+          documentBuilder.mapToLocalFetch();
         }
-        PackageManager packageManager = BeanContext.get(PackageManager.class);
-        DocumentBuilder documentBuilder = BeanContext.get(DocumentBuilder.class);
-        DocumentManager documentManager = BeanContext.get(DocumentManager.class);
-        roundInit(roundEnv);
-
-        try {
-            if (DOCUMENT_CACHE.getDefinitions().isEmpty()) {
-                GraphQLConfig graphQLConfig = BeanContext.get(GraphQLConfig.class);
-                GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
-                configRegister.registerApplication(ApplicationProcessor.class.getClassLoader());
-                registerElements(roundEnv);
-                registerOperations(roundEnv);
-                if (graphQLConfig.getMapToLocalFetch()) {
-                    documentBuilder.mapToLocalFetch();
-                }
-                DOCUMENT_CACHE.setDefinitions(documentManager.getDocument().getDefinitions());
-            } else {
-                documentManager.getDocument().setDefinitions(DOCUMENT_CACHE.getDefinitions());
-            }
-            FileObject mainGraphQL = filer.createResource(StandardLocation.CLASS_OUTPUT, "", "META-INF/graphql/main.gql");
-            Writer writer = mainGraphQL.openWriter();
-            writer.write(documentManager.getDocument().toString());
-            writer.close();
-            if (documentManager.getDocument().getObjectTypes()
-                    .flatMap(objectType -> objectType.getFields().stream())
-                    .filter(packageManager::isLocalPackage)
-                    .anyMatch(FieldDefinition::isInvokeField)
-            ) {
-                InvokeHandlerBuilder invokeHandlerBuilder = BeanContext.get(InvokeHandlerBuilder.class);
-                invokeHandlerBuilder.writeToFiler(filer);
-            }
-            if (documentManager.getDocument().getInputObjectTypes()
-                    .filter(packageManager::isLocalPackage)
-                    .anyMatch(InputObjectType::isInvokesInput)
-            ) {
-                InputInvokeHandlerBuilder inputInvokeHandlerBuilder = BeanContext.get(InputInvokeHandlerBuilder.class);
-                ArgumentsInvokeHandlerBuilder argumentsInvokeHandlerBuilder = BeanContext.get(ArgumentsInvokeHandlerBuilder.class);
-                inputInvokeHandlerBuilder.writeToFiler(filer);
-                argumentsInvokeHandlerBuilder.writeToFiler(filer);
-            }
-        } catch (IOException | URISyntaxException e) {
-            logger.error(e.getMessage(), e);
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
-        }
-        return false;
+        DOCUMENT_CACHE.setDefinitions(documentManager.getDocument().getDefinitions());
+      } else {
+        documentManager.getDocument().setDefinitions(DOCUMENT_CACHE.getDefinitions());
+      }
+      FileObject mainGraphQL =
+          filer.createResource(StandardLocation.CLASS_OUTPUT, "", "META-INF/graphql/main.gql");
+      Writer writer = mainGraphQL.openWriter();
+      writer.write(documentManager.getDocument().toString());
+      writer.close();
+      if (documentManager
+          .getDocument()
+          .getObjectTypes()
+          .flatMap(objectType -> objectType.getFields().stream())
+          .filter(packageManager::isLocalPackage)
+          .anyMatch(FieldDefinition::isInvokeField)) {
+        InvokeHandlerBuilder invokeHandlerBuilder = BeanContext.get(InvokeHandlerBuilder.class);
+        invokeHandlerBuilder.writeToFiler(filer);
+      }
+      if (documentManager
+          .getDocument()
+          .getInputObjectTypes()
+          .filter(packageManager::isLocalPackage)
+          .anyMatch(InputObjectType::isInvokesInput)) {
+        InputInvokeHandlerBuilder inputInvokeHandlerBuilder =
+            BeanContext.get(InputInvokeHandlerBuilder.class);
+        ArgumentsInvokeHandlerBuilder argumentsInvokeHandlerBuilder =
+            BeanContext.get(ArgumentsInvokeHandlerBuilder.class);
+        inputInvokeHandlerBuilder.writeToFiler(filer);
+        argumentsInvokeHandlerBuilder.writeToFiler(filer);
+      }
+    } catch (IOException | URISyntaxException e) {
+      logger.error(e.getMessage(), e);
+      processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
     }
+    return false;
+  }
 }

@@ -16,18 +16,24 @@ import static io.graphoenix.core.event.DocumentInitializer.DOCUMENT_INITIALIZED_
 @ApplicationScoped
 public class BannerPrinter {
 
-    private static final Logger logger = LoggerFactory.getLogger(BannerPrinter.class);
+  private static final Logger logger = LoggerFactory.getLogger(BannerPrinter.class);
 
-    public static final int BANNER_SCOPE_EVENT_PRIORITY = DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY - 1;
+  public static final int BANNER_SCOPE_EVENT_PRIORITY =
+      DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY - 1;
 
-    public static final String BANNER_FILE_NAME = "banner.txt";
+  public static final String BANNER_FILE_NAME = "banner.txt";
 
-    public void printBanner(@Observes @Initialized(ApplicationScoped.class) @Priority(BannerPrinter.BANNER_SCOPE_EVENT_PRIORITY) Object event) {
-        try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(BANNER_FILE_NAME)) {
-            if (inputStream != null) {
-                logger.info(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
-            }
-        } catch (IOException ignored) {
-        }
+  public void printBanner(
+      @Observes
+          @Initialized(ApplicationScoped.class)
+          @Priority(BannerPrinter.BANNER_SCOPE_EVENT_PRIORITY)
+          Object event) {
+    try (InputStream inputStream =
+        this.getClass().getClassLoader().getResourceAsStream(BANNER_FILE_NAME)) {
+      if (inputStream != null) {
+        logger.info(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
+      }
+    } catch (IOException ignored) {
     }
+  }
 }

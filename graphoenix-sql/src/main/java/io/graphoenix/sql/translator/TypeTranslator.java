@@ -40,352 +40,373 @@ import static io.graphoenix.sql.utils.DBNameUtil.*;
 @ApplicationScoped
 public class TypeTranslator {
 
-    private final DocumentManager documentManager;
-    private final PackageManager packageManager;
+  private final DocumentManager documentManager;
+  private final PackageManager packageManager;
 
-    @Inject
-    public TypeTranslator(DocumentManager documentManager, PackageManager packageManager) {
-        this.documentManager = documentManager;
-        this.packageManager = packageManager;
-    }
+  @Inject
+  public TypeTranslator(DocumentManager documentManager, PackageManager packageManager) {
+    this.documentManager = documentManager;
+    this.packageManager = packageManager;
+  }
 
-    public String createTablesSQL() {
-        return createTablesSQLStream().collect(Collectors.joining(";"));
-    }
+  public String createTablesSQL() {
+    return createTablesSQLStream().collect(Collectors.joining(";"));
+  }
 
-    public Stream<String> createTablesSQLStream() {
-        return documentManager.getDocument().getObjectTypes()
+  public Stream<String> createTablesSQLStream() {
+    return documentManager
+        .getDocument()
+        .getObjectTypes()
+        .filter(packageManager::isLocalPackage)
+        .filter(objectType -> !documentManager.isOperationType(objectType))
+        .filter(objectType -> !objectType.isContainer())
+        .map(this::createTable)
+        .map(CreateTable::toString);
+  }
+
+  public Stream<String> mergeTablesSQL(List<Tuple2<String, String>> existsColumnNameList) {
+    return documentManager
+        .getDocument()
+        .getObjectTypes()
+        .filter(packageManager::isLocalPackage)
+        .filter(objectType -> !documentManager.isOperationType(objectType))
+        .filter(objectType -> !objectType.isContainer())
+        .map(
+            objectType -> {
+              if (existsColumnNameList.stream()
+                  .noneMatch(
+                      tuple2 ->
+                          nameToDBEscape(tuple2.getT1())
+                              .equals(graphqlTypeNameToTableName(objectType.getName())))) {
+                return createTable(objectType).toString();
+              } else {
+                return alterTable(objectType, existsColumnNameList).toString();
+              }
+            });
+  }
+
+  public Stream<String> createIndexesSQL(List<Tuple2<String, String>> existsIndexNameList) {
+    return Stream.concat(
+            documentManager
+                .getDocument()
+                .getObjectTypes()
                 .filter(packageManager::isLocalPackage)
                 .filter(objectType -> !documentManager.isOperationType(objectType))
                 .filter(objectType -> !objectType.isContainer())
-                .map(this::createTable)
-                .map(CreateTable::toString);
-    }
-
-    public Stream<String> mergeTablesSQL(List<Tuple2<String, String>> existsColumnNameList) {
-        return documentManager.getDocument().getObjectTypes()
-                .filter(packageManager::isLocalPackage)
+                .flatMap(
+                    objectType ->
+                        objectType.getFields().stream()
+                            .filter(fieldDefinition -> fieldDefinition.getMapFrom().isPresent())
+                            .map(
+                                fieldDefinition ->
+                                    Tuples.of(
+                                        objectType.getName(),
+                                        fieldDefinition.getMapFromOrError()))),
+            documentManager
+                .getDocument()
+                .getObjectTypes()
                 .filter(objectType -> !documentManager.isOperationType(objectType))
                 .filter(objectType -> !objectType.isContainer())
-                .map(objectType -> {
-                            if (existsColumnNameList.stream()
-                                    .noneMatch(tuple2 -> nameToDBEscape(tuple2.getT1()).equals(graphqlTypeNameToTableName(objectType.getName())))) {
-                                return createTable(objectType).toString();
-                            } else {
-                                return alterTable(objectType, existsColumnNameList).toString();
-                            }
-                        }
-                );
-    }
-
-    public Stream<String> createIndexesSQL(List<Tuple2<String, String>> existsIndexNameList) {
-        return Stream
-                .concat(
-                        documentManager.getDocument().getObjectTypes()
-                                .filter(packageManager::isLocalPackage)
-                                .filter(objectType -> !documentManager.isOperationType(objectType))
-                                .filter(objectType -> !objectType.isContainer())
-                                .flatMap(objectType ->
-                                        objectType.getFields().stream()
-                                                .filter(fieldDefinition -> fieldDefinition.getMapFrom().isPresent())
-                                                .map(fieldDefinition ->
-                                                        Tuples.of(
-                                                                objectType.getName(),
-                                                                fieldDefinition.getMapFromOrError()
-                                                        )
-                                                )
-                                ),
-                        documentManager.getDocument().getObjectTypes()
-                                .filter(objectType -> !documentManager.isOperationType(objectType))
-                                .filter(objectType -> !objectType.isContainer())
-                                .flatMap(objectType ->
-                                        objectType.getFields().stream()
-                                                .filter(fieldDefinition -> fieldDefinition.getMapTo().isPresent())
-                                                .filter(fieldDefinition -> packageManager.isLocalPackage(documentManager.getFieldTypeDefinition(fieldDefinition)))
-                                                .map(fieldDefinition ->
-                                                        Tuples.of(
-                                                                documentManager.getFieldTypeDefinition(fieldDefinition).getName(),
-                                                                fieldDefinition.getMapToOrError()
-                                                        )
-                                                )
-                                )
-                )
-                .filter(StreamUtil.distinctByKey(Tuple2::toString))
-                .filter(typeMapFromTuple2 ->
-                        existsIndexNameList.stream()
-                                .noneMatch(tableIndexTuple2 ->
-                                        nameToDBEscape(tableIndexTuple2.getT1()).equals(graphqlTypeNameToTableName(typeMapFromTuple2.getT1())) &&
-                                                nameToDBEscape(tableIndexTuple2.getT2()).equals(graphqlFieldNameToColumnName(typeMapFromTuple2.getT2()))
-                                )
-                )
-                .map(typeMapFromTuple2 -> createIndex(typeMapFromTuple2.getT1(), typeMapFromTuple2.getT2()).toString());
-    }
-
-    protected CreateTable createTable(ObjectType objectType) {
-        return new CreateTable()
-                .withTable(graphqlTypeToTable(objectType.getName()))
-                .withColumnDefinitions(
+                .flatMap(
+                    objectType ->
                         objectType.getFields().stream()
-                                .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
-                                .filter(fieldDefinition -> !fieldDefinition.isFetchField())
-                                .filter(fieldDefinition -> !fieldDefinition.isFunctionField())
-                                .filter(fieldDefinition -> !documentManager.getFieldTypeDefinition(fieldDefinition).isObject())
-                                .map(this::createColumn)
-                                .collect(Collectors.toList())
-                )
-                .withIfNotExists(true)
-                .withTableOptionsStrings(createTableOption(objectType));
+                            .filter(fieldDefinition -> fieldDefinition.getMapTo().isPresent())
+                            .filter(
+                                fieldDefinition ->
+                                    packageManager.isLocalPackage(
+                                        documentManager.getFieldTypeDefinition(fieldDefinition)))
+                            .map(
+                                fieldDefinition ->
+                                    Tuples.of(
+                                        documentManager
+                                            .getFieldTypeDefinition(fieldDefinition)
+                                            .getName(),
+                                        fieldDefinition.getMapToOrError()))))
+        .filter(StreamUtil.distinctByKey(Tuple2::toString))
+        .filter(
+            typeMapFromTuple2 ->
+                existsIndexNameList.stream()
+                    .noneMatch(
+                        tableIndexTuple2 ->
+                            nameToDBEscape(tableIndexTuple2.getT1())
+                                    .equals(graphqlTypeNameToTableName(typeMapFromTuple2.getT1()))
+                                && nameToDBEscape(tableIndexTuple2.getT2())
+                                    .equals(
+                                        graphqlFieldNameToColumnName(typeMapFromTuple2.getT2()))))
+        .map(
+            typeMapFromTuple2 ->
+                createIndex(typeMapFromTuple2.getT1(), typeMapFromTuple2.getT2()).toString());
+  }
+
+  protected CreateTable createTable(ObjectType objectType) {
+    return new CreateTable()
+        .withTable(graphqlTypeToTable(objectType.getName()))
+        .withColumnDefinitions(
+            objectType.getFields().stream()
+                .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
+                .filter(fieldDefinition -> !fieldDefinition.isFetchField())
+                .filter(fieldDefinition -> !fieldDefinition.isFunctionField())
+                .filter(
+                    fieldDefinition ->
+                        !documentManager.getFieldTypeDefinition(fieldDefinition).isObject())
+                .map(this::createColumn)
+                .collect(Collectors.toList()))
+        .withIfNotExists(true)
+        .withTableOptionsStrings(createTableOption(objectType));
+  }
+
+  protected Alter alterTable(
+      ObjectType objectType, List<Tuple2<String, String>> existsColumnNameList) {
+    Table table = graphqlTypeToTable(objectType.getName());
+    return new Alter()
+        .withTable(table)
+        .withAlterExpressions(
+            objectType.getFields().stream()
+                .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
+                .filter(fieldDefinition -> !fieldDefinition.isFetchField())
+                .filter(fieldDefinition -> !fieldDefinition.isFunctionField())
+                .filter(
+                    fieldDefinition ->
+                        !documentManager.getFieldTypeDefinition(fieldDefinition).isObject())
+                .filter(
+                    fieldDefinition ->
+                        !fieldDefinition.getType().getTypeName().getName().equals(SCALA_ID_NAME))
+                .map(this::createColumn)
+                .map(
+                    columnDefinition ->
+                        alterColumn(
+                            columnDefinition,
+                            existsColumnNameList.stream()
+                                .anyMatch(
+                                    tuple2 ->
+                                        nameToDBEscape(tuple2.getT1()).equals(table.getName())
+                                            && nameToDBEscape(tuple2.getT2())
+                                                .equals(columnDefinition.getColumnName()))))
+                .collect(Collectors.toList()));
+  }
+
+  protected AlterExpression alterColumn(ColumnDefinition columnDefinition, boolean exists) {
+    AlterExpression alterExpression =
+        new AlterExpression().withOperation(exists ? AlterOperation.MODIFY : AlterOperation.ADD);
+    alterExpression.addColDataType(
+        new AlterExpression.ColumnDataType(false)
+            .withColumnName(columnDefinition.getColumnName())
+            .withColDataType(columnDefinition.getColDataType())
+            .withColumnSpecs(columnDefinition.getColumnSpecs()));
+    return alterExpression;
+  }
+
+  protected ColumnDefinition createColumn(FieldDefinition fieldDefinition) {
+    List<String> columnSpecs = new ArrayList<>();
+    String fieldTypeName = fieldDefinition.getType().getTypeName().getName();
+    if (fieldTypeName.equals(SCALA_ID_NAME)) {
+      columnSpecs.add("PRIMARY KEY");
+    }
+    if (fieldDefinition.getType().isNonNull()) {
+      columnSpecs.add("NOT NULL");
+    } else {
+      if (fieldTypeName.equals(SCALA_DATE_NAME)
+          || fieldTypeName.equals(SCALA_TIME_NAME)
+          || fieldTypeName.equals(SCALA_DATE_TIME_NAME)
+          || fieldTypeName.equals(SCALA_TIMESTAMP_NAME)) {
+        columnSpecs.add("NULL");
+      }
     }
 
-    protected Alter alterTable(ObjectType objectType, List<Tuple2<String, String>> existsColumnNameList) {
-        Table table = graphqlTypeToTable(objectType.getName());
-        return new Alter()
-                .withTable(table)
-                .withAlterExpressions(
-                        objectType.getFields().stream()
-                                .filter(fieldDefinition -> !fieldDefinition.isInvokeField())
-                                .filter(fieldDefinition -> !fieldDefinition.isFetchField())
-                                .filter(fieldDefinition -> !fieldDefinition.isFunctionField())
-                                .filter(fieldDefinition -> !documentManager.getFieldTypeDefinition(fieldDefinition).isObject())
-                                .filter(fieldDefinition -> !fieldDefinition.getType().getTypeName().getName().equals(SCALA_ID_NAME))
-                                .map(this::createColumn)
-                                .map(columnDefinition ->
-                                        alterColumn(
-                                                columnDefinition,
-                                                existsColumnNameList.stream()
-                                                        .anyMatch(tuple2 ->
-                                                                nameToDBEscape(tuple2.getT1()).equals(table.getName()) &&
-                                                                        nameToDBEscape(tuple2.getT2()).equals(columnDefinition.getColumnName())
-                                                        )
-                                        )
-                                )
-                                .collect(Collectors.toList())
-                );
+    fieldDefinition
+        .getDefault()
+        .ifPresentOrElse(
+            (defaultValue) -> {
+              if (fieldTypeName.equals(SCALA_ID_NAME)
+                  || fieldTypeName.equals(SCALA_STRING_NAME)
+                  || fieldTypeName.equals(SCALA_DATE_NAME)
+                  || fieldTypeName.equals(SCALA_TIME_NAME)
+                  || fieldTypeName.equals(SCALA_DATE_TIME_NAME)
+                  || fieldTypeName.equals(SCALA_TIMESTAMP_NAME)
+                  || fieldTypeName.equals(SCALA_UPLOAD_NAME)) {
+                columnSpecs.add("DEFAULT  " + stringValueToDBVarchar(defaultValue));
+              } else {
+                columnSpecs.add("DEFAULT  " + defaultValue);
+              }
+            },
+            () -> {
+              if (fieldTypeName.equals(SCALA_DATE_NAME)
+                  || fieldTypeName.equals(SCALA_TIME_NAME)
+                  || fieldTypeName.equals(SCALA_DATE_TIME_NAME)
+                  || fieldTypeName.equals(SCALA_TIMESTAMP_NAME)) {
+                if (!fieldDefinition.getType().isNonNull()) {
+                  columnSpecs.add("DEFAULT NULL");
+                }
+              }
+            });
+
+    if (fieldDefinition.isAutoIncrement()) {
+      columnSpecs.add("AUTO_INCREMENT");
     }
 
-    protected AlterExpression alterColumn(ColumnDefinition columnDefinition, boolean exists) {
-        AlterExpression alterExpression = new AlterExpression()
-                .withOperation(exists ? AlterOperation.MODIFY : AlterOperation.ADD);
-        alterExpression.addColDataType(
-                new AlterExpression
-                        .ColumnDataType(false)
-                        .withColumnName(columnDefinition.getColumnName())
-                        .withColDataType(columnDefinition.getColDataType())
-                        .withColumnSpecs(columnDefinition.getColumnSpecs())
-        );
-        return alterExpression;
+    if (fieldDefinition.getDescription() != null) {
+      columnSpecs.add("COMMENT " + graphqlDescriptionToDBComment(fieldDefinition.getDescription()));
     }
 
-    protected ColumnDefinition createColumn(FieldDefinition fieldDefinition) {
-        List<String> columnSpecs = new ArrayList<>();
-        String fieldTypeName = fieldDefinition.getType().getTypeName().getName();
-        if (fieldTypeName.equals(SCALA_ID_NAME)) {
-            columnSpecs.add("PRIMARY KEY");
-        }
-        if (fieldDefinition.getType().isNonNull()) {
-            columnSpecs.add("NOT NULL");
-        } else {
-            if (fieldTypeName.equals(SCALA_DATE_NAME) ||
-                    fieldTypeName.equals(SCALA_TIME_NAME) ||
-                    fieldTypeName.equals(SCALA_DATE_TIME_NAME) ||
-                    fieldTypeName.equals(SCALA_TIMESTAMP_NAME)) {
-                columnSpecs.add("NULL");
-            }
-        }
+    return new ColumnDefinition()
+        .withColumnName(graphqlFieldNameToColumnName(fieldDefinition.getName()))
+        .withColDataType(createColDataType(fieldDefinition))
+        .withColumnSpecs(columnSpecs);
+  }
 
-        fieldDefinition.getDefault()
-                .ifPresentOrElse(
-                        (defaultValue) -> {
-                            if (fieldTypeName.equals(SCALA_ID_NAME) ||
-                                    fieldTypeName.equals(SCALA_STRING_NAME) ||
-                                    fieldTypeName.equals(SCALA_DATE_NAME) ||
-                                    fieldTypeName.equals(SCALA_TIME_NAME) ||
-                                    fieldTypeName.equals(SCALA_DATE_TIME_NAME) ||
-                                    fieldTypeName.equals(SCALA_TIMESTAMP_NAME) ||
-                                    fieldTypeName.equals(SCALA_UPLOAD_NAME)) {
-                                columnSpecs.add("DEFAULT  " + stringValueToDBVarchar(defaultValue));
-                            } else {
-                                columnSpecs.add("DEFAULT  " + defaultValue);
-                            }
-                        },
-                        () -> {
-                            if (fieldTypeName.equals(SCALA_DATE_NAME) ||
-                                    fieldTypeName.equals(SCALA_TIME_NAME) ||
-                                    fieldTypeName.equals(SCALA_DATE_TIME_NAME) ||
-                                    fieldTypeName.equals(SCALA_TIMESTAMP_NAME)) {
-                                if (!fieldDefinition.getType().isNonNull()) {
-                                    columnSpecs.add("DEFAULT NULL");
-                                }
-                            }
-                        }
-                );
+  protected ColDataType createColDataType(FieldDefinition fieldDefinition) {
+    return createColDataType(fieldDefinition, false);
+  }
 
-        if (fieldDefinition.isAutoIncrement()) {
-            columnSpecs.add("AUTO_INCREMENT");
-        }
-
-        if (fieldDefinition.getDescription() != null) {
-            columnSpecs.add("COMMENT " + graphqlDescriptionToDBComment(fieldDefinition.getDescription()));
-        }
-
-        return new ColumnDefinition()
-                .withColumnName(graphqlFieldNameToColumnName(fieldDefinition.getName()))
-                .withColDataType(createColDataType(fieldDefinition))
-                .withColumnSpecs(columnSpecs);
+  protected ColDataType createColDataType(FieldDefinition fieldDefinition, boolean enumToString) {
+    ColDataType colDataType = new ColDataType();
+    Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+    if (fieldTypeDefinition.isEnum()) {
+      if (enumToString) {
+        return colDataType
+            .withDataType("VARCHAR")
+            .withArgumentsStringList(
+                Collections.singletonList(String.valueOf(fieldDefinition.getLength().orElse(255))));
+      } else {
+        return colDataType
+            .withDataType("ENUM")
+            .withArgumentsStringList(
+                fieldTypeDefinition.asEnum().getEnumValues().stream()
+                    .map(
+                        enumValueDefinition ->
+                            stringValueToDBVarchar(enumValueDefinition.getName()))
+                    .collect(Collectors.toList()));
+      }
+    } else if (fieldTypeDefinition.isScalar()) {
+      List<String> argumentsStringList = new ArrayList<>();
+      String fieldTypeName =
+          fieldDefinition
+              .getTypeName()
+              .orElseGet(() -> fieldDefinition.getType().getTypeName().getName());
+      switch (fieldTypeName) {
+        case SCALA_ID_NAME:
+        case SCALA_STRING_NAME:
+        case SCALA_UPLOAD_NAME:
+          colDataType.setDataType("VARCHAR");
+          argumentsStringList.add(String.valueOf(fieldDefinition.getLength().orElse(255)));
+          break;
+        case SCALA_BOOLEAN_NAME:
+          colDataType.setDataType("BOOL");
+          fieldDefinition
+              .getLength()
+              .ifPresent(length -> argumentsStringList.add(String.valueOf(length)));
+          break;
+        case SCALA_INT_NAME:
+          colDataType.setDataType("INT");
+          fieldDefinition
+              .getLength()
+              .ifPresent(length -> argumentsStringList.add(String.valueOf(length)));
+          break;
+        case SCALA_FLOAT_NAME:
+          colDataType.setDataType("FLOAT");
+          argumentsStringList.add(String.valueOf(fieldDefinition.getLength().orElse(11)));
+          argumentsStringList.add(String.valueOf(fieldDefinition.getDecimals().orElse(2)));
+          break;
+        case SCALA_BIG_INTEGER_NAME:
+          colDataType.setDataType("BIGINT");
+          fieldDefinition
+              .getLength()
+              .ifPresent(length -> argumentsStringList.add(String.valueOf(length)));
+          break;
+        case SCALA_BIG_DECIMAL_NAME:
+          colDataType.setDataType("DECIMAL");
+          argumentsStringList.add(String.valueOf(fieldDefinition.getLength().orElse(11)));
+          argumentsStringList.add(String.valueOf(fieldDefinition.getDecimals().orElse(2)));
+          break;
+        case SCALA_DATE_NAME:
+          colDataType.setDataType("DATE");
+          break;
+        case SCALA_TIME_NAME:
+          colDataType.setDataType("TIME");
+          break;
+        case SCALA_DATE_TIME_NAME:
+          colDataType.setDataType("DATETIME");
+          break;
+        case SCALA_TIMESTAMP_NAME:
+          colDataType.setDataType("TIMESTAMP");
+          break;
+        default:
+          throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(fieldDefinition.toString()));
+      }
+      if (!argumentsStringList.isEmpty()) {
+        colDataType.setArgumentsStringList(argumentsStringList);
+      }
+      return colDataType;
+    } else {
+      throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(fieldDefinition.toString()));
     }
+  }
 
-    protected ColDataType createColDataType(FieldDefinition fieldDefinition) {
-        return createColDataType(fieldDefinition, false);
+  protected List<String> createTableOption(ObjectType objectType) {
+    List<String> tableOptionsList = new ArrayList<>();
+    if (objectType.getDescription() != null) {
+      tableOptionsList.add("COMMENT " + graphqlDescriptionToDBComment(objectType.getDescription()));
     }
+    return tableOptionsList;
+  }
 
-    protected ColDataType createColDataType(FieldDefinition fieldDefinition, boolean enumToString) {
-        ColDataType colDataType = new ColDataType();
-        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        if (fieldTypeDefinition.isEnum()) {
-            if (enumToString) {
-                return colDataType.withDataType("VARCHAR")
-                        .withArgumentsStringList(Collections.singletonList(String.valueOf(fieldDefinition.getLength().orElse(255))));
-            } else {
-                return colDataType
-                        .withDataType("ENUM")
-                        .withArgumentsStringList(
-                                fieldTypeDefinition.asEnum().getEnumValues().stream()
-                                        .map(enumValueDefinition -> stringValueToDBVarchar(enumValueDefinition.getName()))
-                                        .collect(Collectors.toList())
-                        );
-            }
-        } else if (fieldTypeDefinition.isScalar()) {
-            List<String> argumentsStringList = new ArrayList<>();
-            String fieldTypeName = fieldDefinition.getTypeName().orElseGet(() -> fieldDefinition.getType().getTypeName().getName());
-            switch (fieldTypeName) {
-                case SCALA_ID_NAME:
-                case SCALA_STRING_NAME:
-                case SCALA_UPLOAD_NAME:
-                    colDataType.setDataType("VARCHAR");
-                    argumentsStringList.add(String.valueOf(fieldDefinition.getLength().orElse(255)));
-                    break;
-                case SCALA_BOOLEAN_NAME:
-                    colDataType.setDataType("BOOL");
-                    fieldDefinition.getLength().ifPresent(length -> argumentsStringList.add(String.valueOf(length)));
-                    break;
-                case SCALA_INT_NAME:
-                    colDataType.setDataType("INT");
-                    fieldDefinition.getLength().ifPresent(length -> argumentsStringList.add(String.valueOf(length)));
-                    break;
-                case SCALA_FLOAT_NAME:
-                    colDataType.setDataType("FLOAT");
-                    argumentsStringList.add(String.valueOf(fieldDefinition.getLength().orElse(11)));
-                    argumentsStringList.add(String.valueOf(fieldDefinition.getDecimals().orElse(2)));
-                    break;
-                case SCALA_BIG_INTEGER_NAME:
-                    colDataType.setDataType("BIGINT");
-                    fieldDefinition.getLength().ifPresent(length -> argumentsStringList.add(String.valueOf(length)));
-                    break;
-                case SCALA_BIG_DECIMAL_NAME:
-                    colDataType.setDataType("DECIMAL");
-                    argumentsStringList.add(String.valueOf(fieldDefinition.getLength().orElse(11)));
-                    argumentsStringList.add(String.valueOf(fieldDefinition.getDecimals().orElse(2)));
-                    break;
-                case SCALA_DATE_NAME:
-                    colDataType.setDataType("DATE");
-                    break;
-                case SCALA_TIME_NAME:
-                    colDataType.setDataType("TIME");
-                    break;
-                case SCALA_DATE_TIME_NAME:
-                    colDataType.setDataType("DATETIME");
-                    break;
-                case SCALA_TIMESTAMP_NAME:
-                    colDataType.setDataType("TIMESTAMP");
-                    break;
-                default:
-                    throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(fieldDefinition.toString()));
-            }
-            if (!argumentsStringList.isEmpty()) {
-                colDataType.setArgumentsStringList(argumentsStringList);
-            }
-            return colDataType;
-        } else {
-            throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(fieldDefinition.toString()));
-        }
-    }
+  protected CreateIndex createIndex(String typename, String mapFrom) {
+    return new CreateIndex()
+        .withTable(graphqlTypeToTable(typename))
+        .withIndex(
+            new Index()
+                .withName(graphqlFieldNameToColumnName(mapFrom))
+                .withColumnsNames(
+                    Collections.singletonList(graphqlFieldNameToColumnName(mapFrom))));
+  }
 
-    protected List<String> createTableOption(ObjectType objectType) {
-        List<String> tableOptionsList = new ArrayList<>();
-        if (objectType.getDescription() != null) {
-            tableOptionsList.add("COMMENT " + graphqlDescriptionToDBComment(objectType.getDescription()));
-        }
-        return tableOptionsList;
-    }
+  public String selectColumnsSQL() {
+    return selectColumns().toString();
+  }
 
-    protected CreateIndex createIndex(String typename, String mapFrom) {
-        return new CreateIndex()
-                .withTable(graphqlTypeToTable(typename))
-                .withIndex(
-                        new Index()
-                                .withName(graphqlFieldNameToColumnName(mapFrom))
-                                .withColumnsNames(Collections.singletonList(graphqlFieldNameToColumnName(mapFrom)))
-                );
-    }
+  public Select selectColumns() {
+    return new PlainSelect()
+        .addSelectItems(new Column("table_name"), new Column("column_name"))
+        .withFromItem(new Table("COLUMNS").withSchemaName("information_schema"))
+        .withWhere(
+            new EqualsTo()
+                .withLeftExpression(new Column("table_schema"))
+                .withRightExpression(new Function().withName("DATABASE")));
+  }
 
-    public String selectColumnsSQL() {
-        return selectColumns().toString();
-    }
+  public String selectTablesSQL() {
+    return selectTables().toString();
+  }
 
-    public Select selectColumns() {
-        return new PlainSelect()
-                .addSelectItems(
-                        new Column("table_name"),
-                        new Column("column_name")
-                )
-                .withFromItem(new Table("COLUMNS").withSchemaName("information_schema"))
-                .withWhere(
-                        new EqualsTo()
-                                .withLeftExpression(new Column("table_schema"))
-                                .withRightExpression(new Function().withName("DATABASE"))
-                );
-    }
+  public Select selectTables() {
+    return new PlainSelect()
+        .addSelectItems(new Column("table_name"))
+        .withFromItem(new Table("TABLES").withSchemaName("information_schema"))
+        .withWhere(
+            new EqualsTo()
+                .withLeftExpression(new Column("table_schema"))
+                .withRightExpression(new Function().withName("DATABASE")));
+  }
 
-    public String selectTablesSQL() {
-        return selectTables().toString();
-    }
+  public String selectIndexesSQL() {
+    return selectIndexes().toString();
+  }
 
-    public Select selectTables() {
-        return new PlainSelect()
-                .addSelectItems(
-                        new Column("table_name")
-                )
-                .withFromItem(new Table("TABLES").withSchemaName("information_schema"))
-                .withWhere(
-                        new EqualsTo()
-                                .withLeftExpression(new Column("table_schema"))
-                                .withRightExpression(new Function().withName("DATABASE"))
-                );
-    }
+  public Select selectIndexes() {
+    return new PlainSelect()
+        .addSelectItems(new Column("table_name"), new Column("column_name"))
+        .withFromItem(new Table("STATISTICS").withSchemaName("information_schema"))
+        .withWhere(
+            new EqualsTo()
+                .withLeftExpression(new Column("table_schema"))
+                .withRightExpression(new Function().withName("DATABASE")));
+  }
 
-    public String selectIndexesSQL() {
-        return selectIndexes().toString();
-    }
+  public String truncateTableSQL(String typeName) {
+    return truncateTable(typeName).toString();
+  }
 
-    public Select selectIndexes() {
-        return new PlainSelect()
-                .addSelectItems(
-                        new Column("table_name"),
-                        new Column("column_name")
-                )
-                .withFromItem(new Table("STATISTICS").withSchemaName("information_schema"))
-                .withWhere(
-                        new EqualsTo()
-                                .withLeftExpression(new Column("table_schema"))
-                                .withRightExpression(new Function().withName("DATABASE"))
-                );
-    }
-
-    public String truncateTableSQL(String typeName) {
-        return truncateTable(typeName).toString();
-    }
-
-    public Truncate truncateTable(String typeName) {
-        return new Truncate().withTable(new Table(graphqlTypeNameToTableName(typeName)));
-    }
+  public Truncate truncateTable(String typeName) {
+    return new Truncate().withTable(new Table(graphqlTypeNameToTableName(typeName)));
+  }
 }

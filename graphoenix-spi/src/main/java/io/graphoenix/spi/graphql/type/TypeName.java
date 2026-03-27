@@ -2,26 +2,25 @@ package io.graphoenix.spi.graphql.type;
 
 public class TypeName implements Type {
 
-    private String name;
+  private String name;
 
-    public TypeName() {
-    }
+  public TypeName() {}
 
-    public TypeName(String name) {
-        this.name = name;
-    }
+  public TypeName(String name) {
+    this.name = name;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public TypeName setName(String name) {
-        this.name = name;
-        return this;
-    }
+  public TypeName setName(String name) {
+    this.name = name;
+    return this;
+  }
 
-    @Override
-    public String toString() {
-        return name;
-    }
+  @Override
+  public String toString() {
+    return name;
+  }
 }

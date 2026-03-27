@@ -11,7 +11,7 @@ import "io/graphoenix/jsonschema/interfaces.proto";
 import "io/graphoenix/jsonschema/input_objects.proto";
 
 message QueryJsonSchemaRequest {
-    optional string selection_set = 1;
-    optional string arguments = 2;
-    string name = 3;
+  optional string selection_set = 1;
+  optional string arguments = 2;
+  string name = 3;
 }

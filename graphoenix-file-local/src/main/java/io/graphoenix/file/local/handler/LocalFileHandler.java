@@ -18,57 +18,59 @@ import java.nio.file.Paths;
 @ApplicationScoped
 public class LocalFileHandler implements FileHandler {
 
-    private final FileRepository fileRepository;
-    private final Path path;
+  private final FileRepository fileRepository;
+  private final Path path;
 
-    @Inject
-    public LocalFileHandler(FileRepository fileRepository, FileConfig fileConfig) {
-        this.fileRepository = fileRepository;
-        this.path = Paths.get(fileConfig.getPath());
-        if (!Files.exists(this.path)) {
-            try {
-                Files.createDirectories(this.path);
-            } catch (IOException e) {
+  @Inject
+  public LocalFileHandler(FileRepository fileRepository, FileConfig fileConfig) {
+    this.fileRepository = fileRepository;
+    this.path = Paths.get(fileConfig.getPath());
+    if (!Files.exists(this.path)) {
+      try {
+        Files.createDirectories(this.path);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+  }
+
+  @Override
+  public Mono<String> save(byte[] data, FileInfo fileInfo) {
+    FileInput fileInput = new FileInput();
+    fileInput.setName(fileInfo.getFilename());
+    fileInput.setContentType(fileInfo.getContentType());
+    return fileRepository
+        .insertFile(fileInput)
+        .doOnSuccess(
+            file -> {
+              try {
+                Path filePath = Files.createFile(path.resolve(file.getId()));
+                try (FileOutputStream outputStream = new FileOutputStream(filePath.toFile())) {
+                  outputStream.write(data);
+                } catch (IOException e) {
+                  throw new RuntimeException(e);
+                }
+              } catch (IOException e) {
                 throw new RuntimeException(e);
-            }
-        }
-    }
+              }
+            })
+        .map(File::getId);
+  }
 
-    @Override
-    public Mono<String> save(byte[] data, FileInfo fileInfo) {
-        FileInput fileInput = new FileInput();
-        fileInput.setName(fileInfo.getFilename());
-        fileInput.setContentType(fileInfo.getContentType());
-        return fileRepository.insertFile(fileInput)
-                .doOnSuccess(file -> {
-                            try {
-                                Path filePath = Files.createFile(path.resolve(file.getId()));
-                                try (FileOutputStream outputStream = new FileOutputStream(filePath.toFile())) {
-                                    outputStream.write(data);
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                )
-                .map(File::getId);
-    }
+  @Override
+  public Mono<FileInfo> getFileInfo(String id) {
+    return fileRepository
+        .getFileById(id)
+        .map(file -> new FileInfo(file.getName(), file.getContentType()));
+  }
 
-    @Override
-    public Mono<FileInfo> getFileInfo(String id) {
-        return fileRepository.getFileById(id)
-                .map(file -> new FileInfo(file.getName(), file.getContentType()));
+  @Override
+  public InputStream get(String id) {
+    Path filePath = path.resolve(id);
+    try {
+      return new FileInputStream(filePath.toFile());
+    } catch (FileNotFoundException e) {
+      throw new RuntimeException(e);
     }
-
-    @Override
-    public InputStream get(String id) {
-        Path filePath = path.resolve(id);
-        try {
-            return new FileInputStream(filePath.toFile());
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
+  }
 }

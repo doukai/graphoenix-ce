@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import org.eclipse.microprofile.graphql.Input;
 
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 public interface MetaInput {
   String id = null;
 

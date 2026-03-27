@@ -54,580 +54,687 @@ import static io.graphoenix.spi.utils.NameUtil.typeNameToFieldName;
 @ApplicationScoped
 public class OperationInterfaceImplementer {
 
-    private static final Logger logger = LoggerFactory.getLogger(OperationInterfaceImplementer.class);
+  private static final Logger logger = LoggerFactory.getLogger(OperationInterfaceImplementer.class);
 
-    private final DocumentManager documentManager;
-    private final PackageManager packageManager;
-    private final QueryTranslator queryTranslator;
-    private final MutationTranslator mutationTranslator;
-    private final SQLFormatHandler sqlFormatHandler;
-    private final PackageConfig packageConfig;
-    private final PackageOperationInterfaceImplementer packageOperationInterfaceImplementer;
+  private final DocumentManager documentManager;
+  private final PackageManager packageManager;
+  private final QueryTranslator queryTranslator;
+  private final MutationTranslator mutationTranslator;
+  private final SQLFormatHandler sqlFormatHandler;
+  private final PackageConfig packageConfig;
+  private final PackageOperationInterfaceImplementer packageOperationInterfaceImplementer;
 
-    @Inject
-    public OperationInterfaceImplementer(DocumentManager documentManager, PackageManager packageManager, QueryTranslator queryTranslator, MutationTranslator mutationTranslator, SQLFormatHandler sqlFormatHandler, PackageConfig packageConfig, PackageOperationInterfaceImplementer packageOperationInterfaceImplementer) {
-        this.documentManager = documentManager;
-        this.packageManager = packageManager;
-        this.queryTranslator = queryTranslator;
-        this.mutationTranslator = mutationTranslator;
-        this.sqlFormatHandler = sqlFormatHandler;
-        this.packageConfig = packageConfig;
-        this.packageOperationInterfaceImplementer = packageOperationInterfaceImplementer;
+  @Inject
+  public OperationInterfaceImplementer(
+      DocumentManager documentManager,
+      PackageManager packageManager,
+      QueryTranslator queryTranslator,
+      MutationTranslator mutationTranslator,
+      SQLFormatHandler sqlFormatHandler,
+      PackageConfig packageConfig,
+      PackageOperationInterfaceImplementer packageOperationInterfaceImplementer) {
+    this.documentManager = documentManager;
+    this.packageManager = packageManager;
+    this.queryTranslator = queryTranslator;
+    this.mutationTranslator = mutationTranslator;
+    this.sqlFormatHandler = sqlFormatHandler;
+    this.packageConfig = packageConfig;
+    this.packageOperationInterfaceImplementer = packageOperationInterfaceImplementer;
+  }
+
+  public void writeToFiler(Filer filer) throws IOException {
+    documentManager
+        .getDocument()
+        .getOperations()
+        .map(
+            operation ->
+                new AbstractMap.SimpleEntry<>(operation.getInvokeClassNameOrError(), operation))
+        .collect(
+            Collectors.groupingBy(
+                Map.Entry<String, Operation>::getKey,
+                Collectors.mapping(Map.Entry<String, Operation>::getValue, Collectors.toList())))
+        .forEach(
+            (interfaceName, operationList) -> {
+              int index = interfaceName.lastIndexOf(".");
+              String packageName = interfaceName.substring(0, index);
+              String simpleName = interfaceName.substring(index + 1);
+              try {
+                buildImplementClass(packageName, simpleName, operationList).writeTo(filer);
+                for (Operation operation :
+                    operationList.stream()
+                        .filter(
+                            operation ->
+                                packageManager.isLocalPackage(
+                                    documentManager
+                                        .getOperationTypeOrError(operation)
+                                        .getFieldOrError(
+                                            operation.getSelection(0).asField().getName())))
+                        .collect(Collectors.toList())) {
+                  Map.Entry<String, String> sqlFileEntry = buildSQLFile(simpleName, operation);
+                  FileObject fileObject =
+                      filer.createResource(
+                          StandardLocation.CLASS_OUTPUT, packageName, sqlFileEntry.getKey());
+                  Writer writer = fileObject.openWriter();
+                  writer.write(sqlFileEntry.getValue());
+                  writer.close();
+                  logger.info("{} build success", sqlFileEntry.getKey());
+                }
+              } catch (IOException e) {
+                throw new RuntimeException(e);
+              }
+            });
+  }
+
+  private Map.Entry<String, String> buildSQLFile(String simpleName, Operation operation) {
+    String methodName = operation.getInvokeMethodNameOrError();
+    int methodIndex = operation.getInvokeMethodIndexOrError();
+    String sqlFileName = "SQL" + simpleName + "Impl_" + methodName + "_" + methodIndex + ".sql";
+    if (operation.getOperationType() == null
+        || operation.getOperationType().equals(OPERATION_QUERY_NAME)) {
+      return new AbstractMap.SimpleEntry<>(
+          sqlFileName,
+          sqlFormatHandler.query(queryTranslator.operationToSelectSQL(operation).orElse("")));
+    } else if (operation.getOperationType().equals(OPERATION_MUTATION_NAME)) {
+      return new AbstractMap.SimpleEntry<>(
+          sqlFileName,
+          sqlFormatHandler.mutation(
+              Stream.concat(
+                  mutationTranslator.operationToStatementSQLStream(operation),
+                  queryTranslator.operationToSelectSQL(operation).stream())));
+    } else {
+      throw new GraphQLErrors(GraphQLErrorType.UNSUPPORTED_OPERATION_TYPE);
+    }
+  }
+
+  public JavaFile buildImplementClass(
+      String packageName, String simpleName, List<Operation> operationList) {
+    TypeSpec.Builder builder =
+        TypeSpec.classBuilder("SQL" + simpleName + "Impl")
+            .addModifiers(Modifier.PUBLIC)
+            .addAnnotation(ApplicationScoped.class)
+            .addSuperinterface(ClassName.get(packageName, simpleName))
+            .addSuperinterface(Asyncable.class)
+            .addField(
+                FieldSpec.builder(
+                        ClassName.get(OperationDAO.class),
+                        "operationDAO",
+                        Modifier.PRIVATE,
+                        Modifier.FINAL)
+                    .build())
+            .addField(
+                FieldSpec.builder(
+                        ClassName.get(PackageOperationDAO.class),
+                        "packageOperationDAO",
+                        Modifier.PRIVATE,
+                        Modifier.FINAL)
+                    .build())
+            .addField(
+                FieldSpec.builder(
+                        ClassName.get(DocumentManager.class),
+                        "documentManager",
+                        Modifier.PRIVATE,
+                        Modifier.FINAL)
+                    .build())
+            .addField(
+                FieldSpec.builder(
+                        ClassName.get(Jsonb.class), "jsonb", Modifier.PRIVATE, Modifier.FINAL)
+                    .build())
+            .addField(
+                FieldSpec.builder(
+                        ClassName.get(packageConfig.getHandlerPackageName(), "InputInvokeHandler"),
+                        "inputInvokeHandler",
+                        Modifier.PRIVATE,
+                        Modifier.FINAL)
+                    .build())
+            .addFields(buildSQLFields(operationList))
+            .addStaticBlock(
+                buildSQLFieldInitializeCodeBlock(packageName, simpleName, operationList))
+            .addMethod(buildConstructor())
+            .addMethods(
+                operationList.stream()
+                    .sorted(Comparator.comparingInt(Operation::getInvokeMethodIndexOrError))
+                    .map(this::executableElementToMethodSpec)
+                    .collect(Collectors.toList()));
+    return JavaFile.builder(packageName, builder.build()).build();
+  }
+
+  private List<FieldSpec> buildSQLFields(List<Operation> operationList) {
+    return operationList.stream()
+        .sorted(Comparator.comparingInt(Operation::getInvokeMethodIndexOrError))
+        .filter(
+            operation ->
+                packageManager.isLocalPackage(
+                    documentManager
+                        .getOperationTypeOrError(operation)
+                        .getFieldOrError(operation.getSelection(0).asField().getName())))
+        .map(this::buildSQLField)
+        .collect(Collectors.toList());
+  }
+
+  private FieldSpec buildSQLField(Operation operation) {
+    return FieldSpec.builder(
+            TypeName.get(String.class),
+            operation.getInvokeMethodNameOrError() + "_" + operation.getInvokeMethodIndexOrError(),
+            Modifier.PUBLIC,
+            Modifier.STATIC,
+            Modifier.FINAL)
+        .build();
+  }
+
+  private CodeBlock buildSQLFieldInitializeCodeBlock(
+      String packageName, String simpleName, List<Operation> operationList) {
+    ClassName typeClassName = ClassName.get(packageName, "SQL" + simpleName + "Impl");
+    CodeBlock.Builder builder = CodeBlock.builder();
+    operationList.stream()
+        .filter(
+            operation ->
+                packageManager.isLocalPackage(
+                    documentManager
+                        .getOperationTypeOrError(operation)
+                        .getFieldOrError(operation.getSelection(0).asField().getName())))
+        .sorted(Comparator.comparingInt(Operation::getInvokeMethodIndexOrError))
+        .forEach(
+            operation ->
+                builder.addStatement(
+                    "$L = $T.fileToString($T.class, $S)",
+                    operation.getInvokeMethodNameOrError()
+                        + "_"
+                        + operation.getInvokeMethodIndexOrError(),
+                    ClassName.get(FileUtil.class),
+                    typeClassName,
+                    "SQL"
+                        + simpleName
+                        + "Impl_"
+                        + operation.getInvokeMethodNameOrError()
+                        + "_"
+                        + operation.getInvokeMethodIndexOrError()
+                        + ".sql"));
+    return builder.build();
+  }
+
+  private MethodSpec buildConstructor() {
+    MethodSpec.Builder builder =
+        MethodSpec.constructorBuilder()
+            .addModifiers(Modifier.PUBLIC)
+            .addAnnotation(Inject.class)
+            .addParameter(
+                ParameterSpec.builder(ClassName.get(OperationDAO.class), "operationDAO").build())
+            .addParameter(
+                ParameterSpec.builder(
+                        ClassName.get(PackageOperationDAO.class), "packageOperationDAO")
+                    .build())
+            .addParameter(
+                ParameterSpec.builder(ClassName.get(DocumentManager.class), "documentManager")
+                    .build())
+            .addParameter(ClassName.get(Jsonb.class), "jsonb")
+            .addParameter(
+                ClassName.get(packageConfig.getHandlerPackageName(), "InputInvokeHandler"),
+                "inputInvokeHandler")
+            .addStatement("this.operationDAO = operationDAO")
+            .addStatement("this.packageOperationDAO = packageOperationDAO")
+            .addStatement("this.documentManager = documentManager")
+            .addStatement("this.jsonb = jsonb")
+            .addStatement("this.inputInvokeHandler = inputInvokeHandler");
+
+    return builder.build();
+  }
+
+  private MethodSpec executableElementToMethodSpec(Operation operation) {
+    TypeName typeName = toTypeName(operation.getInvokeReturnClassNameOrError());
+    List<Map.Entry<String, String>> parameters = operation.getInvokeParametersList();
+    Field field = operation.getSelection(0).asField();
+    FieldDefinition fieldDefinition =
+        documentManager.getOperationTypeOrError(operation).getFieldOrError(field.getName());
+
+    MethodSpec.Builder builder =
+        MethodSpec.methodBuilder(operation.getInvokeMethodNameOrError())
+            .addModifiers(Modifier.PUBLIC)
+            .addAnnotation(Override.class)
+            .addParameters(
+                parameters.stream()
+                    .map(
+                        entry ->
+                            ParameterSpec.builder(toTypeName(entry.getValue()), entry.getKey())
+                                .build())
+                    .collect(Collectors.toList()))
+            .returns(typeName);
+
+    String returnTypeName = operation.getInvokeReturnClassNameOrError();
+    String returnClassName = getClassName(returnTypeName);
+    String[] returnTypeArgumentTypeNames = getArgumentTypeNames(returnTypeName);
+    if (returnTypeArgumentTypeNames.length == 0
+        || !returnClassName.equals(Mono.class.getCanonicalName())) {
+      builder.addAnnotation(Async.class);
     }
 
-    public void writeToFiler(Filer filer) throws IOException {
-        documentManager.getDocument().getOperations()
-                .map(operation ->
-                        new AbstractMap.SimpleEntry<>(
-                                operation.getInvokeClassNameOrError(),
-                                operation
-                        )
-                )
-                .collect(
-                        Collectors.groupingBy(
-                                Map.Entry<String, Operation>::getKey,
-                                Collectors.mapping(
-                                        Map.Entry<String, Operation>::getValue,
-                                        Collectors.toList()
-                                )
-                        )
-                )
-                .forEach((interfaceName, operationList) -> {
-                            int index = interfaceName.lastIndexOf(".");
-                            String packageName = interfaceName.substring(0, index);
-                            String simpleName = interfaceName.substring(index + 1);
-                            try {
-                                buildImplementClass(packageName, simpleName, operationList).writeTo(filer);
-                                for (Operation operation : operationList.stream()
-                                        .filter(operation -> packageManager.isLocalPackage(documentManager.getOperationTypeOrError(operation).getFieldOrError(operation.getSelection(0).asField().getName())))
-                                        .collect(Collectors.toList())) {
-                                    Map.Entry<String, String> sqlFileEntry = buildSQLFile(simpleName, operation);
-                                    FileObject fileObject = filer.createResource(
-                                            StandardLocation.CLASS_OUTPUT,
-                                            packageName,
-                                            sqlFileEntry.getKey()
-                                    );
-                                    Writer writer = fileObject.openWriter();
-                                    writer.write(sqlFileEntry.getValue());
-                                    writer.close();
-                                    logger.info("{} build success", sqlFileEntry.getKey());
-                                }
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                );
-    }
-
-    private Map.Entry<String, String> buildSQLFile(String simpleName, Operation operation) {
-        String methodName = operation.getInvokeMethodNameOrError();
-        int methodIndex = operation.getInvokeMethodIndexOrError();
-        String sqlFileName = "SQL" + simpleName + "Impl_" + methodName + "_" + methodIndex + ".sql";
-        if (operation.getOperationType() == null || operation.getOperationType().equals(OPERATION_QUERY_NAME)) {
-            return new AbstractMap.SimpleEntry<>(sqlFileName, sqlFormatHandler.query(queryTranslator.operationToSelectSQL(operation).orElse("")));
-        } else if (operation.getOperationType().equals(OPERATION_MUTATION_NAME)) {
-            return new AbstractMap.SimpleEntry<>(
-                    sqlFileName,
-                    sqlFormatHandler.mutation(
-                            Stream
-                                    .concat(
-                                            mutationTranslator.operationToStatementSQLStream(operation),
-                                            queryTranslator.operationToSelectSQL(operation).stream()
-                                    )
-                    )
-            );
-        } else {
-            throw new GraphQLErrors(GraphQLErrorType.UNSUPPORTED_OPERATION_TYPE);
-        }
-    }
-
-    public JavaFile buildImplementClass(String packageName, String simpleName, List<Operation> operationList) {
-        TypeSpec.Builder builder = TypeSpec.classBuilder("SQL" + simpleName + "Impl")
-                .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(ApplicationScoped.class)
-                .addSuperinterface(ClassName.get(packageName, simpleName))
-                .addSuperinterface(Asyncable.class)
-                .addField(
-                        FieldSpec
-                                .builder(
-                                        ClassName.get(OperationDAO.class),
-                                        "operationDAO",
-                                        Modifier.PRIVATE,
-                                        Modifier.FINAL
-                                )
-                                .build()
-                )
-                .addField(
-                        FieldSpec
-                                .builder(
-                                        ClassName.get(PackageOperationDAO.class),
-                                        "packageOperationDAO",
-                                        Modifier.PRIVATE,
-                                        Modifier.FINAL
-                                )
-                                .build()
-                )
-                .addField(
-                        FieldSpec
-                                .builder(
-                                        ClassName.get(DocumentManager.class),
-                                        "documentManager",
-                                        Modifier.PRIVATE,
-                                        Modifier.FINAL
-                                )
-                                .build()
-                )
-                .addField(
-                        FieldSpec.builder(
-                                ClassName.get(Jsonb.class),
-                                "jsonb",
-                                Modifier.PRIVATE,
-                                Modifier.FINAL
-                        ).build()
-                )
-                .addField(
-                        FieldSpec.builder(
-                                ClassName.get(packageConfig.getHandlerPackageName(), "InputInvokeHandler"),
-                                "inputInvokeHandler",
-                                Modifier.PRIVATE,
-                                Modifier.FINAL
-                        ).build()
-                )
-                .addFields(buildSQLFields(operationList))
-                .addStaticBlock(buildSQLFieldInitializeCodeBlock(packageName, simpleName, operationList))
-                .addMethod(buildConstructor())
-                .addMethods(
-                        operationList.stream()
-                                .sorted(Comparator.comparingInt(Operation::getInvokeMethodIndexOrError))
-                                .map(this::executableElementToMethodSpec)
-                                .collect(Collectors.toList())
-                );
-        return JavaFile.builder(packageName, builder.build()).build();
-    }
-
-    private List<FieldSpec> buildSQLFields(List<Operation> operationList) {
-        return operationList.stream()
-                .sorted(Comparator.comparingInt(Operation::getInvokeMethodIndexOrError))
-                .filter(operation -> packageManager.isLocalPackage(documentManager.getOperationTypeOrError(operation).getFieldOrError(operation.getSelection(0).asField().getName())))
-                .map(this::buildSQLField)
-                .collect(Collectors.toList());
-    }
-
-    private FieldSpec buildSQLField(Operation operation) {
-        return FieldSpec
-                .builder(
-                        TypeName.get(String.class),
-                        operation.getInvokeMethodNameOrError() + "_" + operation.getInvokeMethodIndexOrError(),
-                        Modifier.PUBLIC,
-                        Modifier.STATIC,
-                        Modifier.FINAL
-                )
-                .build();
-    }
-
-    private CodeBlock buildSQLFieldInitializeCodeBlock(String packageName, String simpleName, List<Operation> operationList) {
-        ClassName typeClassName = ClassName.get(packageName, "SQL" + simpleName + "Impl");
-        CodeBlock.Builder builder = CodeBlock.builder();
-        operationList.stream()
-                .filter(operation -> packageManager.isLocalPackage(documentManager.getOperationTypeOrError(operation).getFieldOrError(operation.getSelection(0).asField().getName())))
-                .sorted(Comparator.comparingInt(Operation::getInvokeMethodIndexOrError))
-                .forEach(operation ->
-                        builder.addStatement(
-                                "$L = $T.fileToString($T.class, $S)",
-                                operation.getInvokeMethodNameOrError() + "_" + operation.getInvokeMethodIndexOrError(),
-                                ClassName.get(FileUtil.class),
-                                typeClassName,
-                                "SQL" + simpleName + "Impl_" + operation.getInvokeMethodNameOrError() + "_" + operation.getInvokeMethodIndexOrError() + ".sql"
-                        )
-                );
-        return builder.build();
-    }
-
-    private MethodSpec buildConstructor() {
-        MethodSpec.Builder builder = MethodSpec.constructorBuilder()
-                .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(Inject.class)
-                .addParameter(ParameterSpec.builder(ClassName.get(OperationDAO.class), "operationDAO").build())
-                .addParameter(ParameterSpec.builder(ClassName.get(PackageOperationDAO.class), "packageOperationDAO").build())
-                .addParameter(ParameterSpec.builder(ClassName.get(DocumentManager.class), "documentManager").build())
-                .addParameter(ClassName.get(Jsonb.class), "jsonb")
-                .addParameter(ClassName.get(packageConfig.getHandlerPackageName(), "InputInvokeHandler"), "inputInvokeHandler")
-                .addStatement("this.operationDAO = operationDAO")
-                .addStatement("this.packageOperationDAO = packageOperationDAO")
-                .addStatement("this.documentManager = documentManager")
-                .addStatement("this.jsonb = jsonb")
-                .addStatement("this.inputInvokeHandler = inputInvokeHandler");
-
-        return builder.build();
-    }
-
-    private MethodSpec executableElementToMethodSpec(Operation operation) {
-        TypeName typeName = toTypeName(operation.getInvokeReturnClassNameOrError());
-        List<Map.Entry<String, String>> parameters = operation.getInvokeParametersList();
-        Field field = operation.getSelection(0).asField();
-        FieldDefinition fieldDefinition = documentManager.getOperationTypeOrError(operation).getFieldOrError(field.getName());
-
-        MethodSpec.Builder builder = MethodSpec.methodBuilder(operation.getInvokeMethodNameOrError())
-                .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(Override.class)
-                .addParameters(
-                        parameters.stream()
-                                .map(entry -> ParameterSpec.builder(toTypeName(entry.getValue()), entry.getKey()).build())
-                                .collect(Collectors.toList())
-                )
-                .returns(typeName);
-
-
-        String returnTypeName = operation.getInvokeReturnClassNameOrError();
-        String returnClassName = getClassName(returnTypeName);
-        String[] returnTypeArgumentTypeNames = getArgumentTypeNames(returnTypeName);
-        if (returnTypeArgumentTypeNames.length == 0 || !returnClassName.equals(Mono.class.getCanonicalName())) {
-            builder.addAnnotation(Async.class);
-        }
-
-        CodeBlock parameterMapCodeBlock;
-        if (parameters.isEmpty()) {
-            parameterMapCodeBlock = CodeBlock.of("$T.of()", ClassName.get(Map.class));
-        } else {
-            parameterMapCodeBlock = CodeBlock.of(
-                    "$T.of($L)",
-                    ClassName.get(Map.class),
-                    CodeBlock
-                            .join(
-                                    parameters.stream()
-                                            .map(entry -> {
-                                                        InputValue variableInputValue = getVariableInputValue(entry.getKey(), field, fieldDefinition).orElseThrow(() -> new RuntimeException("variable inputValue not found: " + entry.getKey()));
-                                                        Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(variableInputValue);
-                                                        if (inputValueTypeDefinition.isInputObject()) {
-                                                            return CodeBlock.of("$S, (Object)$L", entry.getKey(), entry.getKey() + "Invoked");
-                                                        } else {
-                                                            return CodeBlock.of("$S, (Object)$L", entry.getKey(), entry.getKey());
-                                                        }
-                                                    }
-                                            )
-                                            .collect(Collectors.toList()),
-                                    ", "
-                            )
-            );
-        }
-
-        CodeBlock codeBlock = parameters.stream()
-                .map(entry ->
-                        new AbstractMap.SimpleEntry<>(entry.getKey(), getVariableInputValue(entry.getKey(), field, fieldDefinition).orElseThrow(() -> new RuntimeException("variable inputValue not found: " + entry.getKey())))
-                )
-                .filter(entry -> documentManager.getInputValueTypeDefinition(entry.getValue()).isInputObject())
-                .reduce(packageManager.isLocalPackage(fieldDefinition) ?
-                                getCodeBlock(operation, parameterMapCodeBlock) :
-                                packageOperationInterfaceImplementer.getCodeBlock(operation, parameterMapCodeBlock),
-                        (pre, cur) -> {
-                            InputValue variableInputValue = cur.getValue();
-                            Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(variableInputValue);
-                            String methodName = typeNameToFieldName(inputValueTypeDefinition.getName());
-                            CodeBlock invokeCodeBlock;
-                            if (variableInputValue.getType().hasList()) {
-                                invokeCodeBlock = CodeBlock.of("$T.fromIterable(new $T($L).getValueWithVariables()).flatMap(valueWithVariable -> inputInvokeHandler.$L(jsonb.fromJson(valueWithVariable.asObject().toJson(), $T.class), valueWithVariable.asObject())).collectList().flatMap($LInvoked -> $L)",
-                                        ClassName.get(Flux.class),
-                                        ClassName.get(ArrayValueWithVariable.class),
-                                        cur.getKey(),
-                                        methodName,
-                                        toClassName(documentManager.getDocument().getInputObjectTypeOrError(inputValueTypeDefinition.getName()).getClassNameOrError()),
-                                        cur.getKey(),
-                                        pre
-                                );
+    CodeBlock parameterMapCodeBlock;
+    if (parameters.isEmpty()) {
+      parameterMapCodeBlock = CodeBlock.of("$T.of()", ClassName.get(Map.class));
+    } else {
+      parameterMapCodeBlock =
+          CodeBlock.of(
+              "$T.of($L)",
+              ClassName.get(Map.class),
+              CodeBlock.join(
+                  parameters.stream()
+                      .map(
+                          entry -> {
+                            InputValue variableInputValue =
+                                getVariableInputValue(entry.getKey(), field, fieldDefinition)
+                                    .orElseThrow(
+                                        () ->
+                                            new RuntimeException(
+                                                "variable inputValue not found: "
+                                                    + entry.getKey()));
+                            Definition inputValueTypeDefinition =
+                                documentManager.getInputValueTypeDefinition(variableInputValue);
+                            if (inputValueTypeDefinition.isInputObject()) {
+                              return CodeBlock.of(
+                                  "$S, (Object)$L", entry.getKey(), entry.getKey() + "Invoked");
                             } else {
-                                invokeCodeBlock = CodeBlock.of("$T.just(new $T($L)).flatMap(objectValueWithVariable -> inputInvokeHandler.$L(jsonb.fromJson(objectValueWithVariable.toJson(), $T.class), objectValueWithVariable)).flatMap($LInvoked -> $L)",
-                                        ClassName.get(Mono.class),
-                                        ClassName.get(ObjectValueWithVariable.class),
-                                        cur.getKey(),
-                                        methodName,
-                                        toClassName(documentManager.getDocument().getInputObjectTypeOrError(inputValueTypeDefinition.getName()).getClassNameOrError()),
-                                        cur.getKey(),
-                                        pre
-                                );
+                              return CodeBlock.of("$S, (Object)$L", entry.getKey(), entry.getKey());
                             }
-                            return invokeCodeBlock;
-                        },
-                        (x, y) -> y
-                );
-
-        List<String> thrownTypes = operation.getInvokeThrownTypes().collect(Collectors.toList());
-        if (thrownTypes.isEmpty()) {
-            if (returnTypeArgumentTypeNames.length == 0 || !returnClassName.equals(Mono.class.getCanonicalName())) {
-                builder.beginControlFlow("try")
-                        .addStatement("$T result = $L", ParameterizedTypeName.get(ClassName.get(Mono.class), typeName), codeBlock)
-                        .addStatement("return await(result)")
-                        .nextControlFlow("catch($T e)", Exception.class)
-                        .addStatement("throw new $T(e)", GraphQLErrors.class)
-                        .endControlFlow();
-            } else {
-                builder.beginControlFlow("try")
-                        .addStatement("return $L", codeBlock)
-                        .nextControlFlow("catch($T e)", Exception.class)
-                        .addStatement("throw new $T(e)", GraphQLErrors.class)
-                        .endControlFlow();
-            }
-        } else {
-            if (returnTypeArgumentTypeNames.length == 0 || !returnClassName.equals(Mono.class.getCanonicalName())) {
-                builder
-                        .addStatement("$T result = $L", ParameterizedTypeName.get(ClassName.get(Mono.class), typeName), codeBlock)
-                        .addStatement("return await(result)");
-            } else {
-                builder.addStatement("return $L", codeBlock);
-            }
-        }
-        return builder.build();
+                          })
+                      .collect(Collectors.toList()),
+                  ", "));
     }
 
-    private CodeBlock getCodeBlock(Operation operation, CodeBlock parameterMapCodeBlock) {
-        ObjectType operationType = documentManager.getOperationTypeOrError(operation);
-        Field field = operation.getSelection(0).asField();
-        FieldDefinition fieldDefinition = operationType.getFieldOrError(field.getName());
-        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+    CodeBlock codeBlock =
+        parameters.stream()
+            .map(
+                entry ->
+                    new AbstractMap.SimpleEntry<>(
+                        entry.getKey(),
+                        getVariableInputValue(entry.getKey(), field, fieldDefinition)
+                            .orElseThrow(
+                                () ->
+                                    new RuntimeException(
+                                        "variable inputValue not found: " + entry.getKey()))))
+            .filter(
+                entry ->
+                    documentManager.getInputValueTypeDefinition(entry.getValue()).isInputObject())
+            .reduce(
+                packageManager.isLocalPackage(fieldDefinition)
+                    ? getCodeBlock(operation, parameterMapCodeBlock)
+                    : packageOperationInterfaceImplementer.getCodeBlock(
+                        operation, parameterMapCodeBlock),
+                (pre, cur) -> {
+                  InputValue variableInputValue = cur.getValue();
+                  Definition inputValueTypeDefinition =
+                      documentManager.getInputValueTypeDefinition(variableInputValue);
+                  String methodName = typeNameToFieldName(inputValueTypeDefinition.getName());
+                  CodeBlock invokeCodeBlock;
+                  if (variableInputValue.getType().hasList()) {
+                    invokeCodeBlock =
+                        CodeBlock.of(
+                            "$T.fromIterable(new $T($L).getValueWithVariables()).flatMap(valueWithVariable -> inputInvokeHandler.$L(jsonb.fromJson(valueWithVariable.asObject().toJson(), $T.class), valueWithVariable.asObject())).collectList().flatMap($LInvoked -> $L)",
+                            ClassName.get(Flux.class),
+                            ClassName.get(ArrayValueWithVariable.class),
+                            cur.getKey(),
+                            methodName,
+                            toClassName(
+                                documentManager
+                                    .getDocument()
+                                    .getInputObjectTypeOrError(inputValueTypeDefinition.getName())
+                                    .getClassNameOrError()),
+                            cur.getKey(),
+                            pre);
+                  } else {
+                    invokeCodeBlock =
+                        CodeBlock.of(
+                            "$T.just(new $T($L)).flatMap(objectValueWithVariable -> inputInvokeHandler.$L(jsonb.fromJson(objectValueWithVariable.toJson(), $T.class), objectValueWithVariable)).flatMap($LInvoked -> $L)",
+                            ClassName.get(Mono.class),
+                            ClassName.get(ObjectValueWithVariable.class),
+                            cur.getKey(),
+                            methodName,
+                            toClassName(
+                                documentManager
+                                    .getDocument()
+                                    .getInputObjectTypeOrError(inputValueTypeDefinition.getName())
+                                    .getClassNameOrError()),
+                            cur.getKey(),
+                            pre);
+                  }
+                  return invokeCodeBlock;
+                },
+                (x, y) -> y);
 
-        ClassName operationTypeClassName = ClassName.get(fieldTypeDefinition.getPackageNameOrError() + ".dto.objectType", operationType.getName());
-        String fieldGetterMethodName = getFieldGetterMethodName(field.getName());
-        String returnTypeName = operation.getInvokeReturnClassNameOrError();
-        String returnClassName = getClassName(returnTypeName);
-        String[] returnTypeArgumentTypeNames = getArgumentTypeNames(returnTypeName);
-
-        String methodName = operation.getInvokeMethodNameOrError();
-        int methodIndex = operation.getInvokeMethodIndexOrError();
-        String sqlFieldName = methodName + "_" + methodIndex;
-
-        if (returnTypeArgumentTypeNames.length > 0) {
-            String argumentTypeName0 = getArgumentTypeName0(returnTypeName);
-            if (returnClassName.equals(Mono.class.getCanonicalName())) {
-                String[] monoArgumentTypeArgumentNames = getArgumentTypeNames(argumentTypeName0);
-                if (operation.getOperationType() == null || operation.getOperationType().equals(OPERATION_QUERY_NAME)) {
-                    if (monoArgumentTypeArgumentNames.length > 0) {
-                        Optional<ClassName> collectionImplementationClassName = getCollectionImplementationClassName(argumentTypeName0);
-                        if (collectionImplementationClassName.isPresent()) {
-                            return CodeBlock.of(
-                                    "operationDAO.findAsync($L, $L, $T.class).mapNotNull($T::$L).mapNotNull($T::new)",
-                                    sqlFieldName,
-                                    parameterMapCodeBlock,
-                                    operationTypeClassName,
-                                    operationTypeClassName,
-                                    fieldGetterMethodName,
-                                    collectionImplementationClassName.get()
-                            );
-                        }
-                    }
-                    return CodeBlock.of(
-                            "operationDAO.findAsync($L, $L, $T.class).mapNotNull($T::$L)",
-                            sqlFieldName,
-                            parameterMapCodeBlock,
-                            operationTypeClassName,
-                            operationTypeClassName,
-                            fieldGetterMethodName
-                    );
-                } else if (operation.getOperationType().equals(OPERATION_MUTATION_NAME)) {
-                    if (monoArgumentTypeArgumentNames.length > 0) {
-                        Optional<ClassName> collectionImplementationClassName = getCollectionImplementationClassName(argumentTypeName0);
-                        if (collectionImplementationClassName.isPresent()) {
-                            return CodeBlock.of(
-                                    "operationDAO.saveAsync($L, $L, $T.class).mapNotNull($T::$L).mapNotNull($T::new)",
-                                    sqlFieldName,
-                                    parameterMapCodeBlock,
-                                    operationTypeClassName,
-                                    operationTypeClassName,
-                                    fieldGetterMethodName,
-                                    collectionImplementationClassName.get()
-                            );
-                        }
-                    }
-                    return CodeBlock.of(
-                            "operationDAO.saveAsync($L, $L, $T.class).mapNotNull($T::$L)",
-                            sqlFieldName,
-                            parameterMapCodeBlock,
-                            operationTypeClassName,
-                            operationTypeClassName,
-                            fieldGetterMethodName
-                    );
-                }
-            } else {
-                if (operation.getOperationType() == null || operation.getOperationType().equals(OPERATION_QUERY_NAME)) {
-                    Optional<ClassName> collectionImplementationClassName = getCollectionImplementationClassName(returnTypeName);
-                    return collectionImplementationClassName
-                            .map(collectionClassName ->
-                                    CodeBlock.of(
-                                            "operationDAO.findAsync($L, $L, $T.class).mapNotNull($T::$L).mapNotNull($T::new)",
-                                            sqlFieldName,
-                                            parameterMapCodeBlock,
-                                            operationTypeClassName,
-                                            operationTypeClassName,
-                                            fieldGetterMethodName,
-                                            collectionClassName
-                                    )
-                            )
-                            .orElseGet(() ->
-                                    CodeBlock.of(
-                                            "operationDAO.findAsync($L, $L, $T.class).mapNotNull($T::$L)",
-                                            sqlFieldName,
-                                            parameterMapCodeBlock,
-                                            operationTypeClassName,
-                                            operationTypeClassName,
-                                            fieldGetterMethodName
-                                    )
-                            );
-                } else if (operation.getOperationType().equals(OPERATION_MUTATION_NAME)) {
-                    Optional<ClassName> collectionImplementationClassName = getCollectionImplementationClassName(returnTypeName);
-                    return collectionImplementationClassName
-                            .map(collectionClassName ->
-                                    CodeBlock.of(
-                                            "operationDAO.saveAsync($L, $L, $T.class).mapNotNull($T::$L).mapNotNull($T::new)",
-                                            sqlFieldName,
-                                            parameterMapCodeBlock,
-                                            operationTypeClassName,
-                                            operationTypeClassName,
-                                            fieldGetterMethodName,
-                                            collectionClassName
-                                    )
-                            )
-                            .orElseGet(() ->
-                                    CodeBlock.of(
-                                            "operationDAO.saveAsync($L, $L, $T.class).mapNotNull($T::$L)",
-                                            sqlFieldName,
-                                            parameterMapCodeBlock,
-                                            operationTypeClassName,
-                                            operationTypeClassName,
-                                            fieldGetterMethodName
-                                    )
-                            );
-                }
-            }
-        } else {
-            if (operation.getOperationType() == null || operation.getOperationType().equals(OPERATION_QUERY_NAME)) {
-                return CodeBlock.of(
-                        "operationDAO.findAsync($L, $L, $T.class).mapNotNull($T::$L)",
-                        sqlFieldName,
-                        parameterMapCodeBlock,
-                        operationTypeClassName,
-                        operationTypeClassName,
-                        fieldGetterMethodName
-                );
-            } else if (operation.getOperationType().equals(OPERATION_MUTATION_NAME)) {
-                return CodeBlock.of(
-                        "operationDAO.saveAsync($L, $L, $T.class).mapNotNull($T::$L)",
-                        sqlFieldName,
-                        parameterMapCodeBlock,
-                        operationTypeClassName,
-                        operationTypeClassName,
-                        fieldGetterMethodName
-                );
-            }
-        }
-        throw new RuntimeException("unsupported return class: " + returnTypeName);
+    List<String> thrownTypes = operation.getInvokeThrownTypes().collect(Collectors.toList());
+    if (thrownTypes.isEmpty()) {
+      if (returnTypeArgumentTypeNames.length == 0
+          || !returnClassName.equals(Mono.class.getCanonicalName())) {
+        builder
+            .beginControlFlow("try")
+            .addStatement(
+                "$T result = $L",
+                ParameterizedTypeName.get(ClassName.get(Mono.class), typeName),
+                codeBlock)
+            .addStatement("return await(result)")
+            .nextControlFlow("catch($T e)", Exception.class)
+            .addStatement("throw new $T(e)", GraphQLErrors.class)
+            .endControlFlow();
+      } else {
+        builder
+            .beginControlFlow("try")
+            .addStatement("return $L", codeBlock)
+            .nextControlFlow("catch($T e)", Exception.class)
+            .addStatement("throw new $T(e)", GraphQLErrors.class)
+            .endControlFlow();
+      }
+    } else {
+      if (returnTypeArgumentTypeNames.length == 0
+          || !returnClassName.equals(Mono.class.getCanonicalName())) {
+        builder
+            .addStatement(
+                "$T result = $L",
+                ParameterizedTypeName.get(ClassName.get(Mono.class), typeName),
+                codeBlock)
+            .addStatement("return await(result)");
+      } else {
+        builder.addStatement("return $L", codeBlock);
+      }
     }
+    return builder.build();
+  }
 
-    private Optional<ClassName> getCollectionImplementationClassName(String typeName) {
-        String className = getClassName(typeName);
-        if (className.equals(List.class.getCanonicalName())) {
-            return Optional.of(ClassName.get(ArrayList.class));
-        } else if (className.equals(Set.class.getCanonicalName())) {
-            return Optional.of(ClassName.get(LinkedHashSet.class));
-        } else {
-            return Optional.empty();
+  private CodeBlock getCodeBlock(Operation operation, CodeBlock parameterMapCodeBlock) {
+    ObjectType operationType = documentManager.getOperationTypeOrError(operation);
+    Field field = operation.getSelection(0).asField();
+    FieldDefinition fieldDefinition = operationType.getFieldOrError(field.getName());
+    Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+
+    ClassName operationTypeClassName =
+        ClassName.get(
+            fieldTypeDefinition.getPackageNameOrError() + ".dto.objectType",
+            operationType.getName());
+    String fieldGetterMethodName = getFieldGetterMethodName(field.getName());
+    String returnTypeName = operation.getInvokeReturnClassNameOrError();
+    String returnClassName = getClassName(returnTypeName);
+    String[] returnTypeArgumentTypeNames = getArgumentTypeNames(returnTypeName);
+
+    String methodName = operation.getInvokeMethodNameOrError();
+    int methodIndex = operation.getInvokeMethodIndexOrError();
+    String sqlFieldName = methodName + "_" + methodIndex;
+
+    if (returnTypeArgumentTypeNames.length > 0) {
+      String argumentTypeName0 = getArgumentTypeName0(returnTypeName);
+      if (returnClassName.equals(Mono.class.getCanonicalName())) {
+        String[] monoArgumentTypeArgumentNames = getArgumentTypeNames(argumentTypeName0);
+        if (operation.getOperationType() == null
+            || operation.getOperationType().equals(OPERATION_QUERY_NAME)) {
+          if (monoArgumentTypeArgumentNames.length > 0) {
+            Optional<ClassName> collectionImplementationClassName =
+                getCollectionImplementationClassName(argumentTypeName0);
+            if (collectionImplementationClassName.isPresent()) {
+              return CodeBlock.of(
+                  "operationDAO.findAsync($L, $L, $T.class).mapNotNull($T::$L).mapNotNull($T::new)",
+                  sqlFieldName,
+                  parameterMapCodeBlock,
+                  operationTypeClassName,
+                  operationTypeClassName,
+                  fieldGetterMethodName,
+                  collectionImplementationClassName.get());
+            }
+          }
+          return CodeBlock.of(
+              "operationDAO.findAsync($L, $L, $T.class).mapNotNull($T::$L)",
+              sqlFieldName,
+              parameterMapCodeBlock,
+              operationTypeClassName,
+              operationTypeClassName,
+              fieldGetterMethodName);
+        } else if (operation.getOperationType().equals(OPERATION_MUTATION_NAME)) {
+          if (monoArgumentTypeArgumentNames.length > 0) {
+            Optional<ClassName> collectionImplementationClassName =
+                getCollectionImplementationClassName(argumentTypeName0);
+            if (collectionImplementationClassName.isPresent()) {
+              return CodeBlock.of(
+                  "operationDAO.saveAsync($L, $L, $T.class).mapNotNull($T::$L).mapNotNull($T::new)",
+                  sqlFieldName,
+                  parameterMapCodeBlock,
+                  operationTypeClassName,
+                  operationTypeClassName,
+                  fieldGetterMethodName,
+                  collectionImplementationClassName.get());
+            }
+          }
+          return CodeBlock.of(
+              "operationDAO.saveAsync($L, $L, $T.class).mapNotNull($T::$L)",
+              sqlFieldName,
+              parameterMapCodeBlock,
+              operationTypeClassName,
+              operationTypeClassName,
+              fieldGetterMethodName);
         }
+      } else {
+        if (operation.getOperationType() == null
+            || operation.getOperationType().equals(OPERATION_QUERY_NAME)) {
+          Optional<ClassName> collectionImplementationClassName =
+              getCollectionImplementationClassName(returnTypeName);
+          return collectionImplementationClassName
+              .map(
+                  collectionClassName ->
+                      CodeBlock.of(
+                          "operationDAO.findAsync($L, $L, $T.class).mapNotNull($T::$L).mapNotNull($T::new)",
+                          sqlFieldName,
+                          parameterMapCodeBlock,
+                          operationTypeClassName,
+                          operationTypeClassName,
+                          fieldGetterMethodName,
+                          collectionClassName))
+              .orElseGet(
+                  () ->
+                      CodeBlock.of(
+                          "operationDAO.findAsync($L, $L, $T.class).mapNotNull($T::$L)",
+                          sqlFieldName,
+                          parameterMapCodeBlock,
+                          operationTypeClassName,
+                          operationTypeClassName,
+                          fieldGetterMethodName));
+        } else if (operation.getOperationType().equals(OPERATION_MUTATION_NAME)) {
+          Optional<ClassName> collectionImplementationClassName =
+              getCollectionImplementationClassName(returnTypeName);
+          return collectionImplementationClassName
+              .map(
+                  collectionClassName ->
+                      CodeBlock.of(
+                          "operationDAO.saveAsync($L, $L, $T.class).mapNotNull($T::$L).mapNotNull($T::new)",
+                          sqlFieldName,
+                          parameterMapCodeBlock,
+                          operationTypeClassName,
+                          operationTypeClassName,
+                          fieldGetterMethodName,
+                          collectionClassName))
+              .orElseGet(
+                  () ->
+                      CodeBlock.of(
+                          "operationDAO.saveAsync($L, $L, $T.class).mapNotNull($T::$L)",
+                          sqlFieldName,
+                          parameterMapCodeBlock,
+                          operationTypeClassName,
+                          operationTypeClassName,
+                          fieldGetterMethodName));
+        }
+      }
+    } else {
+      if (operation.getOperationType() == null
+          || operation.getOperationType().equals(OPERATION_QUERY_NAME)) {
+        return CodeBlock.of(
+            "operationDAO.findAsync($L, $L, $T.class).mapNotNull($T::$L)",
+            sqlFieldName,
+            parameterMapCodeBlock,
+            operationTypeClassName,
+            operationTypeClassName,
+            fieldGetterMethodName);
+      } else if (operation.getOperationType().equals(OPERATION_MUTATION_NAME)) {
+        return CodeBlock.of(
+            "operationDAO.saveAsync($L, $L, $T.class).mapNotNull($T::$L)",
+            sqlFieldName,
+            parameterMapCodeBlock,
+            operationTypeClassName,
+            operationTypeClassName,
+            fieldGetterMethodName);
+      }
     }
+    throw new RuntimeException("unsupported return class: " + returnTypeName);
+  }
 
-    private Optional<InputValue> getVariableInputValue(String name, Field field, FieldDefinition fieldDefinition) {
-        return Stream.ofNullable(field.getArguments())
-                .flatMap(arguments -> arguments.getArguments().entrySet().stream())
-                .filter(entry -> entry.getValue().isVariable())
-                .filter(entry -> entry.getValue().asVariable().getName().equals(name))
-                .findFirst()
-                .map(entry -> fieldDefinition.getArgument(entry.getKey()))
-                .or(() ->
-                        Stream.ofNullable(field.getArguments())
+  private Optional<ClassName> getCollectionImplementationClassName(String typeName) {
+    String className = getClassName(typeName);
+    if (className.equals(List.class.getCanonicalName())) {
+      return Optional.of(ClassName.get(ArrayList.class));
+    } else if (className.equals(Set.class.getCanonicalName())) {
+      return Optional.of(ClassName.get(LinkedHashSet.class));
+    } else {
+      return Optional.empty();
+    }
+  }
+
+  private Optional<InputValue> getVariableInputValue(
+      String name, Field field, FieldDefinition fieldDefinition) {
+    return Stream.ofNullable(field.getArguments())
+        .flatMap(arguments -> arguments.getArguments().entrySet().stream())
+        .filter(entry -> entry.getValue().isVariable())
+        .filter(entry -> entry.getValue().asVariable().getName().equals(name))
+        .findFirst()
+        .map(entry -> fieldDefinition.getArgument(entry.getKey()))
+        .or(
+            () ->
+                Stream.ofNullable(field.getArguments())
+                    .flatMap(arguments -> arguments.getArguments().entrySet().stream())
+                    .filter(entry -> entry.getValue().isObject())
+                    .flatMap(
+                        entry ->
+                            getVariableInputValue(
+                                name,
+                                entry.getValue().asObject(),
+                                documentManager
+                                    .getInputValueTypeDefinition(
+                                        fieldDefinition.getArgument(entry.getKey()))
+                                    .asInputObject())
+                                .stream())
+                    .findFirst()
+                    .or(
+                        () ->
+                            Stream.ofNullable(field.getArguments())
                                 .flatMap(arguments -> arguments.getArguments().entrySet().stream())
-                                .filter(entry -> entry.getValue().isObject())
-                                .flatMap(entry ->
-                                        getVariableInputValue(
-                                                name,
-                                                entry.getValue().asObject(),
-                                                documentManager.getInputValueTypeDefinition(fieldDefinition.getArgument(entry.getKey())).asInputObject()
-                                        ).stream()
-                                )
+                                .filter(entry -> entry.getValue().isArray())
+                                .filter(
+                                    entry ->
+                                        entry.getValue().asArray().getValueWithVariables().stream()
+                                            .filter(ValueWithVariable::isVariable)
+                                            .anyMatch(
+                                                valueWithVariable ->
+                                                    valueWithVariable
+                                                        .asVariable()
+                                                        .getName()
+                                                        .equals(name)))
                                 .findFirst()
-                                .or(() ->
+                                .map(entry -> fieldDefinition.getArgument(entry.getKey()))
+                                .or(
+                                    () ->
                                         Stream.ofNullable(field.getArguments())
-                                                .flatMap(arguments -> arguments.getArguments().entrySet().stream())
-                                                .filter(entry -> entry.getValue().isArray())
-                                                .filter(entry ->
-                                                        entry.getValue().asArray().getValueWithVariables().stream()
-                                                                .filter(ValueWithVariable::isVariable)
-                                                                .anyMatch(valueWithVariable -> valueWithVariable.asVariable().getName().equals(name))
-                                                )
-                                                .findFirst()
-                                                .map(entry -> fieldDefinition.getArgument(entry.getKey()))
-                                                .or(() ->
-                                                        Stream.ofNullable(field.getArguments())
-                                                                .flatMap(arguments -> arguments.getArguments().entrySet().stream())
-                                                                .filter(entry -> entry.getValue().isArray())
-                                                                .flatMap(entry ->
-                                                                        entry.getValue().asArray().getValueWithVariables().stream()
-                                                                                .flatMap(valueWithVariable ->
-                                                                                        getVariableInputValue(
-                                                                                                name,
-                                                                                                valueWithVariable.asObject(),
-                                                                                                documentManager.getInputValueTypeDefinition(fieldDefinition.getArgument(entry.getKey())).asInputObject()
-                                                                                        ).stream()
-                                                                                )
-                                                                )
-                                                                .findFirst()
-                                                )
-                                )
-                );
-    }
+                                            .flatMap(
+                                                arguments ->
+                                                    arguments.getArguments().entrySet().stream())
+                                            .filter(entry -> entry.getValue().isArray())
+                                            .flatMap(
+                                                entry ->
+                                                    entry
+                                                        .getValue()
+                                                        .asArray()
+                                                        .getValueWithVariables()
+                                                        .stream()
+                                                        .flatMap(
+                                                            valueWithVariable ->
+                                                                getVariableInputValue(
+                                                                    name,
+                                                                    valueWithVariable.asObject(),
+                                                                    documentManager
+                                                                        .getInputValueTypeDefinition(
+                                                                            fieldDefinition
+                                                                                .getArgument(
+                                                                                    entry.getKey()))
+                                                                        .asInputObject())
+                                                                    .stream()))
+                                            .findFirst())));
+  }
 
-    private Optional<InputValue> getVariableInputValue(String name, ObjectValueWithVariable objectValueWithVariable, InputObjectType inputObjectType) {
-        return Stream.ofNullable(objectValueWithVariable.getObjectValueWithVariable())
-                .flatMap(stringValueWithVariableMap -> stringValueWithVariableMap.entrySet().stream())
-                .filter(entry -> entry.getValue().isVariable())
-                .filter(entry -> entry.getValue().asVariable().getName().equals(name))
-                .findFirst()
-                .map(entry -> inputObjectType.getInputValue(entry.getKey()))
-                .or(() ->
-                        Stream.ofNullable(objectValueWithVariable.getObjectValueWithVariable())
-                                .flatMap(stringValueWithVariableMap -> stringValueWithVariableMap.entrySet().stream())
-                                .filter(entry -> entry.getValue().isObject())
-                                .flatMap(entry ->
-                                        getVariableInputValue(
-                                                name,
-                                                entry.getValue().asObject(),
-                                                documentManager.getInputValueTypeDefinition(inputObjectType.getInputValue(entry.getKey())).asInputObject()
-                                        ).stream()
-                                )
+  private Optional<InputValue> getVariableInputValue(
+      String name,
+      ObjectValueWithVariable objectValueWithVariable,
+      InputObjectType inputObjectType) {
+    return Stream.ofNullable(objectValueWithVariable.getObjectValueWithVariable())
+        .flatMap(stringValueWithVariableMap -> stringValueWithVariableMap.entrySet().stream())
+        .filter(entry -> entry.getValue().isVariable())
+        .filter(entry -> entry.getValue().asVariable().getName().equals(name))
+        .findFirst()
+        .map(entry -> inputObjectType.getInputValue(entry.getKey()))
+        .or(
+            () ->
+                Stream.ofNullable(objectValueWithVariable.getObjectValueWithVariable())
+                    .flatMap(
+                        stringValueWithVariableMap ->
+                            stringValueWithVariableMap.entrySet().stream())
+                    .filter(entry -> entry.getValue().isObject())
+                    .flatMap(
+                        entry ->
+                            getVariableInputValue(
+                                name,
+                                entry.getValue().asObject(),
+                                documentManager
+                                    .getInputValueTypeDefinition(
+                                        inputObjectType.getInputValue(entry.getKey()))
+                                    .asInputObject())
+                                .stream())
+                    .findFirst()
+                    .or(
+                        () ->
+                            Stream.ofNullable(objectValueWithVariable.getObjectValueWithVariable())
+                                .flatMap(
+                                    stringValueWithVariableMap ->
+                                        stringValueWithVariableMap.entrySet().stream())
+                                .filter(entry -> entry.getValue().isArray())
+                                .filter(
+                                    entry ->
+                                        entry.getValue().asArray().getValueWithVariables().stream()
+                                            .filter(ValueWithVariable::isVariable)
+                                            .anyMatch(
+                                                valueWithVariable ->
+                                                    valueWithVariable
+                                                        .asVariable()
+                                                        .getName()
+                                                        .equals(name)))
                                 .findFirst()
-                                .or(() ->
-                                        Stream.ofNullable(objectValueWithVariable.getObjectValueWithVariable())
-                                                .flatMap(stringValueWithVariableMap -> stringValueWithVariableMap.entrySet().stream())
-                                                .filter(entry -> entry.getValue().isArray())
-                                                .filter(entry ->
-                                                        entry.getValue().asArray().getValueWithVariables().stream()
-                                                                .filter(ValueWithVariable::isVariable)
-                                                                .anyMatch(valueWithVariable -> valueWithVariable.asVariable().getName().equals(name))
-                                                )
-                                                .findFirst()
-                                                .map(entry -> inputObjectType.getInputValue(entry.getKey()))
-                                                .or(() ->
-                                                        Stream.ofNullable(objectValueWithVariable.getObjectValueWithVariable())
-                                                                .flatMap(stringValueWithVariableMap -> stringValueWithVariableMap.entrySet().stream())
-                                                                .filter(entry -> entry.getValue().isArray())
-                                                                .flatMap(entry ->
-                                                                        entry.getValue().asArray().getValueWithVariables().stream()
-                                                                                .flatMap(valueWithVariable ->
-                                                                                        getVariableInputValue(
-                                                                                                name,
-                                                                                                valueWithVariable.asObject(),
-                                                                                                documentManager.getInputValueTypeDefinition(inputObjectType.getInputValue(entry.getKey())).asInputObject()
-                                                                                        ).stream()
-                                                                                )
-                                                                )
-                                                                .findFirst()
-                                                )
-                                )
-                );
-    }
+                                .map(entry -> inputObjectType.getInputValue(entry.getKey()))
+                                .or(
+                                    () ->
+                                        Stream.ofNullable(
+                                                objectValueWithVariable
+                                                    .getObjectValueWithVariable())
+                                            .flatMap(
+                                                stringValueWithVariableMap ->
+                                                    stringValueWithVariableMap.entrySet().stream())
+                                            .filter(entry -> entry.getValue().isArray())
+                                            .flatMap(
+                                                entry ->
+                                                    entry
+                                                        .getValue()
+                                                        .asArray()
+                                                        .getValueWithVariables()
+                                                        .stream()
+                                                        .flatMap(
+                                                            valueWithVariable ->
+                                                                getVariableInputValue(
+                                                                    name,
+                                                                    valueWithVariable.asObject(),
+                                                                    documentManager
+                                                                        .getInputValueTypeDefinition(
+                                                                            inputObjectType
+                                                                                .getInputValue(
+                                                                                    entry.getKey()))
+                                                                        .asInputObject())
+                                                                    .stream()))
+                                            .findFirst())));
+  }
 }

@@ -10,112 +10,76 @@ import java.util.Collection;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/**
- * Query Expression Input for 文件
- */
+/** Query Expression Input for 文件 */
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Query Expression Input for 文件")
 public interface FileExpressionBase extends MetaExpression {
-  /**
-   * ID
-   */
+  /** ID */
   @Description("ID")
   StringExpression id = null;
 
-  /**
-   * 文件名
-   */
+  /** 文件名 */
   @Description("文件名")
   StringExpression name = null;
 
-  /**
-   * 类型
-   */
+  /** 类型 */
   @Description("类型")
   StringExpression contentType = null;
 
-  /**
-   * 内容
-   */
+  /** 内容 */
   @Description("内容")
   StringExpression content = null;
 
-  /**
-   * URL
-   */
+  /** URL */
   @Description("URL")
   StringExpression url = null;
 
-  /**
-   * Include Deprecated
-   */
+  /** Include Deprecated */
   @Description("Include Deprecated")
   Boolean includeDeprecated = false;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   IntExpression version = null;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   IntExpression realmId = null;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   StringExpression createUserId = null;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   StringExpression createTime = null;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   StringExpression updateUserId = null;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   StringExpression updateTime = null;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   StringExpression createGroupId = null;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   StringExpression __typename = null;
 
-  /**
-   * Not
-   */
+  /** Not */
   @Description("Not")
   Boolean not = false;
 
-  /**
-   * Condition
-   */
+  /** Condition */
   @Description("Condition")
   Conditional cond = Conditional.AND;
 
-  /**
-   * Expressions
-   */
+  /** Expressions */
   @Description("Expressions")
   Collection<FileExpression> exs = null;
 

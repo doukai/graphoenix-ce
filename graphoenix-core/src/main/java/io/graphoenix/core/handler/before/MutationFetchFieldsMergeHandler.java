@@ -32,83 +32,114 @@ import static io.graphoenix.spi.constant.Hammurabi.SUFFIX_INPUT;
 @Priority(MutationFetchFieldsMergeHandler.MUTATION_FETCH_FIELDS_MERGE_HANDLER_PRIORITY)
 public class MutationFetchFieldsMergeHandler implements OperationBeforeHandler, FetchBeforeHandler {
 
-    public static final int MUTATION_FETCH_FIELDS_MERGE_HANDLER_PRIORITY = CONNECTION_SPLITTER_PRIORITY + 150;
+  public static final int MUTATION_FETCH_FIELDS_MERGE_HANDLER_PRIORITY =
+      CONNECTION_SPLITTER_PRIORITY + 150;
 
-    private final DocumentManager documentManager;
+  private final DocumentManager documentManager;
 
-    @Inject
-    public MutationFetchFieldsMergeHandler(DocumentManager documentManager) {
-        this.documentManager = documentManager;
+  @Inject
+  public MutationFetchFieldsMergeHandler(DocumentManager documentManager) {
+    this.documentManager = documentManager;
+  }
+
+  @Override
+  public Mono<Operation> mutation(Operation operation, Map<String, JsonValue> variables) {
+    ObjectType operationType = documentManager.getOperationTypeOrError(operation);
+    return Mono.just(
+        operation.mergeSelection(
+            operation.getFields().stream()
+                .flatMap(field -> buildFetch(operationType.getFieldOrError(field.getName()), field))
+                .collect(Collectors.toList())));
+  }
+
+  private Stream<Field> buildFetch(FieldDefinition fieldDefinition, Field field) {
+    Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+    if (fieldTypeDefinition.isObject()) {
+      return Stream.of(
+          field.mergeSelection(
+              Stream.ofNullable(fieldDefinition.getArguments())
+                  .flatMap(Collection::stream)
+                  .filter(
+                      inputValue ->
+                          inputValue.getType().getTypeName().getName().endsWith(SUFFIX_INPUT))
+                  .flatMap(
+                      inputValue ->
+                          Stream.ofNullable(
+                                  fieldTypeDefinition.asObject().getField(inputValue.getName()))
+                              .flatMap(
+                                  subFieldDefinition ->
+                                      Stream.ofNullable(field.getArguments())
+                                          .flatMap(
+                                              arguments ->
+                                                  arguments
+                                                      .getArgumentOrEmpty(inputValue.getName())
+                                                      .or(
+                                                          () ->
+                                                              Optional.ofNullable(
+                                                                  inputValue.getDefaultValue()))
+                                                      .stream())
+                                          .flatMap(
+                                              valueWithVariable ->
+                                                  buildFetch(
+                                                      subFieldDefinition,
+                                                      inputValue,
+                                                      valueWithVariable))))
+                  .collect(Collectors.toList())));
+    } else {
+      return Stream.of(field);
     }
+  }
 
-    @Override
-    public Mono<Operation> mutation(Operation operation, Map<String, JsonValue> variables) {
-        ObjectType operationType = documentManager.getOperationTypeOrError(operation);
-        return Mono.just(
-                operation
-                        .mergeSelection(
-                                operation.getFields().stream()
-                                        .flatMap(field -> buildFetch(operationType.getFieldOrError(field.getName()), field))
-                                        .collect(Collectors.toList())
-                        )
-        );
-    }
-
-    private Stream<Field> buildFetch(FieldDefinition fieldDefinition, Field field) {
-        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        if (fieldTypeDefinition.isObject()) {
-            return Stream.of(
-                    field.mergeSelection(
-                            Stream.ofNullable(fieldDefinition.getArguments())
-                                    .flatMap(Collection::stream)
-                                    .filter(inputValue -> inputValue.getType().getTypeName().getName().endsWith(SUFFIX_INPUT))
-                                    .flatMap(inputValue ->
-                                            Stream.ofNullable(fieldTypeDefinition.asObject().getField(inputValue.getName()))
-                                                    .flatMap(subFieldDefinition ->
-                                                            Stream.ofNullable(field.getArguments())
-                                                                    .flatMap(arguments ->
-                                                                            arguments.getArgumentOrEmpty(inputValue.getName())
-                                                                                    .or(() -> Optional.ofNullable(inputValue.getDefaultValue())).stream()
-                                                                    )
-                                                                    .flatMap(valueWithVariable -> buildFetch(subFieldDefinition, inputValue, valueWithVariable))
-                                                    )
-                                    )
-                                    .collect(Collectors.toList())
-                    )
-            );
+  private Stream<Field> buildFetch(
+      FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable) {
+    if (fieldDefinition.isFetchField()) {
+      return Stream.of(
+          new Field(fieldDefinition.getFetchFromOrError())
+              .addDirective(new Directive(DIRECTIVE_HIDE_NAME)));
+    } else {
+      Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+      if (fieldTypeDefinition.isObject()) {
+        List<Field> fieldList =
+            documentManager
+                .getInputValueTypeDefinition(inputValue)
+                .asInputObject()
+                .getInputValues()
+                .stream()
+                .filter(
+                    subInputValue ->
+                        subInputValue.getType().getTypeName().getName().endsWith(SUFFIX_INPUT))
+                .flatMap(
+                    subInputValue ->
+                        Stream.ofNullable(
+                                fieldTypeDefinition.asObject().getField(subInputValue.getName()))
+                            .flatMap(
+                                subFieldDefinition ->
+                                    Stream.ofNullable(valueWithVariable)
+                                        .filter(ValueWithVariable::isObject)
+                                        .map(ValueWithVariable::asObject)
+                                        .flatMap(
+                                            objectValueWithVariable ->
+                                                objectValueWithVariable
+                                                    .getValueWithVariableOrEmpty(
+                                                        subFieldDefinition.getName())
+                                                    .stream()
+                                                    .flatMap(
+                                                        subValueWithVariable ->
+                                                            buildFetch(
+                                                                subFieldDefinition,
+                                                                subInputValue,
+                                                                subValueWithVariable)))))
+                .collect(Collectors.toList());
+        if (fieldList.isEmpty()) {
+          return Stream.empty();
         } else {
-            return Stream.of(field);
+          return Stream.of(
+              new Field(fieldDefinition.getName())
+                  .setSelections(fieldList)
+                  .addDirective(new Directive(DIRECTIVE_HIDE_NAME)));
         }
+      }
     }
-
-    private Stream<Field> buildFetch(FieldDefinition fieldDefinition, InputValue inputValue, ValueWithVariable valueWithVariable) {
-        if (fieldDefinition.isFetchField()) {
-            return Stream.of(new Field(fieldDefinition.getFetchFromOrError()).addDirective(new Directive(DIRECTIVE_HIDE_NAME)));
-        } else {
-            Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-            if (fieldTypeDefinition.isObject()) {
-                List<Field> fieldList = documentManager.getInputValueTypeDefinition(inputValue).asInputObject().getInputValues().stream()
-                        .filter(subInputValue -> subInputValue.getType().getTypeName().getName().endsWith(SUFFIX_INPUT))
-                        .flatMap(subInputValue ->
-                                Stream.ofNullable(fieldTypeDefinition.asObject().getField(subInputValue.getName()))
-                                        .flatMap(subFieldDefinition ->
-                                                Stream.ofNullable(valueWithVariable)
-                                                        .filter(ValueWithVariable::isObject)
-                                                        .map(ValueWithVariable::asObject)
-                                                        .flatMap(objectValueWithVariable ->
-                                                                objectValueWithVariable.getValueWithVariableOrEmpty(subFieldDefinition.getName()).stream()
-                                                                        .flatMap(subValueWithVariable -> buildFetch(subFieldDefinition, subInputValue, subValueWithVariable))
-                                                        )
-                                        )
-                        )
-                        .collect(Collectors.toList());
-                if (fieldList.isEmpty()) {
-                    return Stream.empty();
-                } else {
-                    return Stream.of(new Field(fieldDefinition.getName()).setSelections(fieldList).addDirective(new Directive(DIRECTIVE_HIDE_NAME)));
-                }
-            }
-        }
-        return Stream.empty();
-    }
+    return Stream.empty();
+  }
 }

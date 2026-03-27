@@ -11,16 +11,16 @@ import reactor.core.publisher.Mono;
 @ApplicationScoped
 public class ConnectionProducer {
 
-    private final ConnectionCreator connectionCreator;
+  private final ConnectionCreator connectionCreator;
 
-    @Inject
-    public ConnectionProducer(ConnectionCreator connectionCreator) {
-        this.connectionCreator = connectionCreator;
-    }
+  @Inject
+  public ConnectionProducer(ConnectionCreator connectionCreator) {
+    this.connectionCreator = connectionCreator;
+  }
 
-    @TransactionScoped
-    @Produces
-    public Mono<Connection> connection() {
-        return connectionCreator.createConnection();
-    }
+  @TransactionScoped
+  @Produces
+  public Mono<Connection> connection() {
+    return connectionCreator.createConnection();
+  }
 }

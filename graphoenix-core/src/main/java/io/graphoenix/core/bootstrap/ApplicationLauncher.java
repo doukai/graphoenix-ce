@@ -25,71 +25,72 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class ApplicationLauncher implements Launcher {
 
-    private static final Logger logger = LoggerFactory.getLogger(ApplicationLauncher.class);
+  private static final Logger logger = LoggerFactory.getLogger(ApplicationLauncher.class);
 
-    private final PackageManager packageManager;
-    private final PackageConfig packageConfig;
-    private final List<Runnable> runnerList;
+  private final PackageManager packageManager;
+  private final PackageConfig packageConfig;
+  private final List<Runnable> runnerList;
 
-    @Inject
-    public ApplicationLauncher(PackageManager packageManager, PackageConfig packageConfig) {
-        this.packageManager = packageManager;
-        this.packageConfig = packageConfig;
-        this.runnerList = new ArrayList<>();
+  @Inject
+  public ApplicationLauncher(PackageManager packageManager, PackageConfig packageConfig) {
+    this.packageManager = packageManager;
+    this.packageConfig = packageConfig;
+    this.runnerList = new ArrayList<>();
+  }
+
+  public ApplicationLauncher addServers(Runner... servers) {
+    this.runnerList.addAll(List.of(servers));
+    return this;
+  }
+
+  public ApplicationLauncher with(Runner... servers) {
+    return addServers(servers);
+  }
+
+  @SafeVarargs
+  public final ApplicationLauncher with(Class<? extends Runner>... classes) {
+    return addServers(
+        Arrays.stream(classes)
+            .map(beanClass -> CDI.current().select(beanClass).get())
+            .toArray(Runner[]::new));
+  }
+
+  public void run(String... args) {
+    if (packageConfig.getPackageName() == null) {
+      packageManager.getDefaultPackageName().ifPresent(packageConfig::setPackageName);
     }
 
-    public ApplicationLauncher addServers(Runner... servers) {
-        this.runnerList.addAll(List.of(servers));
-        return this;
+    if (runnerList.isEmpty()) {
+      runnerList.addAll(CDI.current().select(Runner.class).stream().collect(Collectors.toList()));
     }
 
-    public ApplicationLauncher with(Runner... servers) {
-        return addServers(servers);
+    if (!runnerList.isEmpty()) {
+      ExecutorService executorService = Executors.newCachedThreadPool();
+      CountDownLatch latch = new CountDownLatch(1);
+      for (Runnable runner : runnerList) {
+        executorService.execute(
+            new Thread(
+                () -> {
+                  try {
+                    latch.await();
+                  } catch (InterruptedException e) {
+                    logger.error(e.getMessage(), e);
+                  }
+                  runner.run();
+                }));
+      }
+
+      Runtime.getRuntime()
+          .addShutdownHook(
+              new Thread(
+                  () -> ScopeEventPublisher.destroyed(ApplicationScoped.class).then().block()));
+
+      ScopeEventPublisher.initialized(
+              Maps.newHashMap(Map.of("args", args)), ApplicationScoped.class)
+          .then(Mono.fromRunnable(latch::countDown))
+          .block();
+
+      executorService.shutdown();
     }
-
-    @SafeVarargs
-    public final ApplicationLauncher with(Class<? extends Runner>... classes) {
-        return addServers(Arrays.stream(classes).map(beanClass -> CDI.current().select(beanClass).get()).toArray(Runner[]::new));
-    }
-
-    public void run(String... args) {
-        if (packageConfig.getPackageName() == null) {
-            packageManager.getDefaultPackageName().ifPresent(packageConfig::setPackageName);
-        }
-
-        if (runnerList.isEmpty()) {
-            runnerList.addAll(CDI.current().select(Runner.class).stream().collect(Collectors.toList()));
-        }
-
-        if (!runnerList.isEmpty()) {
-            ExecutorService executorService = Executors.newCachedThreadPool();
-            CountDownLatch latch = new CountDownLatch(1);
-            for (Runnable runner : runnerList) {
-                executorService.execute(
-                        new Thread(() -> {
-                            try {
-                                latch.await();
-                            } catch (InterruptedException e) {
-                                logger.error(e.getMessage(), e);
-                            }
-                            runner.run();
-                        })
-                );
-            }
-
-            Runtime.getRuntime().addShutdownHook(
-                    new Thread(() ->
-                            ScopeEventPublisher.destroyed(ApplicationScoped.class)
-                                    .then()
-                                    .block()
-                    )
-            );
-
-            ScopeEventPublisher.initialized(Maps.newHashMap(Map.of("args", args)), ApplicationScoped.class)
-                    .then(Mono.fromRunnable(latch::countDown))
-                    .block();
-
-            executorService.shutdown();
-        }
-    }
+  }
 }

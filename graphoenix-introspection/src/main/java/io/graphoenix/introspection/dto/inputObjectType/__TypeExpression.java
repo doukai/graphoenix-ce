@@ -13,176 +13,120 @@ import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/**
- * Query Expression Input for __Type
- */
+/** Query Expression Input for __Type */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Query Expression Input for __Type")
 public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
-  /**
-   * id
-   */
+  /** id */
   @Description("id")
   private StringExpression id;
 
-  /**
-   * name
-   */
+  /** name */
   @Description("name")
   private StringExpression name;
 
-  /**
-   * ofSchema
-   */
+  /** ofSchema */
   @Description("ofSchema")
   private __SchemaExpression ofSchema;
 
-  /**
-   * kind
-   */
+  /** kind */
   @Description("kind")
   private __TypeKindExpression kind;
 
-  /**
-   * description
-   */
+  /** description */
   @Description("description")
   private StringExpression description;
 
-  /**
-   * fields
-   */
+  /** fields */
   @Description("fields")
   private __FieldExpression fields;
 
-  /**
-   * interfaces
-   */
+  /** interfaces */
   @Description("interfaces")
   private __TypeExpression interfaces;
 
-  /**
-   * possibleTypes
-   */
+  /** possibleTypes */
   @Description("possibleTypes")
   private __TypeExpression possibleTypes;
 
-  /**
-   * enumValues
-   */
+  /** enumValues */
   @Description("enumValues")
   private __EnumValueExpression enumValues;
 
-  /**
-   * inputFields
-   */
+  /** inputFields */
   @Description("inputFields")
   private __InputValueExpression inputFields;
 
-  /**
-   * ofType
-   */
+  /** ofType */
   @Description("ofType")
   private __TypeExpression ofType;
 
-  /**
-   * Include Deprecated
-   */
+  /** Include Deprecated */
   @DefaultValue("false")
   @Description("Include Deprecated")
   private Boolean includeDeprecated = false;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   private IntExpression version;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   private IntExpression realmId;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   private StringExpression createUserId;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   private StringExpression createTime;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   private StringExpression updateUserId;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   private StringExpression updateTime;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   private StringExpression createGroupId;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   private StringExpression __typename;
 
-  /**
-   * ofSchema Reference
-   */
+  /** ofSchema Reference */
   @Description("ofSchema Reference")
   private IntExpression schemaId;
 
-  /**
-   * ofType Reference
-   */
+  /** ofType Reference */
   @Description("ofType Reference")
   private StringExpression ofTypeName;
 
-  /**
-   * Relationship Object between __Type and __Type
-   */
+  /** Relationship Object between __Type and __Type */
   @Description("Relationship Object between __Type and __Type")
   private __TypeInterfacesExpression __typeInterfaces;
 
-  /**
-   * Relationship Object between __Type and __Type
-   */
+  /** Relationship Object between __Type and __Type */
   @Description("Relationship Object between __Type and __Type")
   private __TypePossibleTypesExpression __typePossibleTypes;
 
-  /**
-   * Not
-   */
+  /** Not */
   @DefaultValue("false")
   @Description("Not")
   private Boolean not = false;
 
-  /**
-   * Condition
-   */
+  /** Condition */
   @DefaultValue("AND")
   @Description("Condition")
   private Conditional cond = Conditional.AND;
 
-  /**
-   * Expressions
-   */
+  /** Expressions */
   @Description("Expressions")
   private Collection<__TypeExpression> exs;
 
@@ -193,7 +137,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setId(StringExpression id) {
-    this.id = (StringExpression)id;
+    this.id = (StringExpression) id;
   }
 
   @Override
@@ -203,7 +147,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setName(StringExpression name) {
-    this.name = (StringExpression)name;
+    this.name = (StringExpression) name;
   }
 
   @Override
@@ -213,7 +157,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setOfSchema(__SchemaExpression ofSchema) {
-    this.ofSchema = (__SchemaExpression)ofSchema;
+    this.ofSchema = (__SchemaExpression) ofSchema;
   }
 
   @Override
@@ -223,7 +167,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setKind(__TypeKindExpression kind) {
-    this.kind = (__TypeKindExpression)kind;
+    this.kind = (__TypeKindExpression) kind;
   }
 
   @Override
@@ -233,7 +177,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setDescription(StringExpression description) {
-    this.description = (StringExpression)description;
+    this.description = (StringExpression) description;
   }
 
   @Override
@@ -243,7 +187,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setFields(__FieldExpression fields) {
-    this.fields = (__FieldExpression)fields;
+    this.fields = (__FieldExpression) fields;
   }
 
   @Override
@@ -253,7 +197,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setInterfaces(__TypeExpression interfaces) {
-    this.interfaces = (__TypeExpression)interfaces;
+    this.interfaces = (__TypeExpression) interfaces;
   }
 
   @Override
@@ -263,7 +207,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setPossibleTypes(__TypeExpression possibleTypes) {
-    this.possibleTypes = (__TypeExpression)possibleTypes;
+    this.possibleTypes = (__TypeExpression) possibleTypes;
   }
 
   @Override
@@ -273,7 +217,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setEnumValues(__EnumValueExpression enumValues) {
-    this.enumValues = (__EnumValueExpression)enumValues;
+    this.enumValues = (__EnumValueExpression) enumValues;
   }
 
   @Override
@@ -283,7 +227,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setInputFields(__InputValueExpression inputFields) {
-    this.inputFields = (__InputValueExpression)inputFields;
+    this.inputFields = (__InputValueExpression) inputFields;
   }
 
   @Override
@@ -293,7 +237,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setOfType(__TypeExpression ofType) {
-    this.ofType = (__TypeExpression)ofType;
+    this.ofType = (__TypeExpression) ofType;
   }
 
   @Override
@@ -303,7 +247,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setIncludeDeprecated(Boolean includeDeprecated) {
-    this.includeDeprecated = (Boolean)includeDeprecated;
+    this.includeDeprecated = (Boolean) includeDeprecated;
   }
 
   @Override
@@ -313,7 +257,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setVersion(IntExpression version) {
-    this.version = (IntExpression)version;
+    this.version = (IntExpression) version;
   }
 
   @Override
@@ -323,7 +267,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setRealmId(IntExpression realmId) {
-    this.realmId = (IntExpression)realmId;
+    this.realmId = (IntExpression) realmId;
   }
 
   @Override
@@ -333,7 +277,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setCreateUserId(StringExpression createUserId) {
-    this.createUserId = (StringExpression)createUserId;
+    this.createUserId = (StringExpression) createUserId;
   }
 
   @Override
@@ -343,7 +287,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setCreateTime(StringExpression createTime) {
-    this.createTime = (StringExpression)createTime;
+    this.createTime = (StringExpression) createTime;
   }
 
   @Override
@@ -353,7 +297,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setUpdateUserId(StringExpression updateUserId) {
-    this.updateUserId = (StringExpression)updateUserId;
+    this.updateUserId = (StringExpression) updateUserId;
   }
 
   @Override
@@ -363,7 +307,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setUpdateTime(StringExpression updateTime) {
-    this.updateTime = (StringExpression)updateTime;
+    this.updateTime = (StringExpression) updateTime;
   }
 
   @Override
@@ -373,7 +317,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setCreateGroupId(StringExpression createGroupId) {
-    this.createGroupId = (StringExpression)createGroupId;
+    this.createGroupId = (StringExpression) createGroupId;
   }
 
   @Override
@@ -383,7 +327,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void set__typename(StringExpression __typename) {
-    this.__typename = (StringExpression)__typename;
+    this.__typename = (StringExpression) __typename;
   }
 
   @Override
@@ -393,7 +337,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setSchemaId(IntExpression schemaId) {
-    this.schemaId = (IntExpression)schemaId;
+    this.schemaId = (IntExpression) schemaId;
   }
 
   @Override
@@ -403,7 +347,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setOfTypeName(StringExpression ofTypeName) {
-    this.ofTypeName = (StringExpression)ofTypeName;
+    this.ofTypeName = (StringExpression) ofTypeName;
   }
 
   @Override
@@ -413,7 +357,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void set__typeInterfaces(__TypeInterfacesExpression __typeInterfaces) {
-    this.__typeInterfaces = (__TypeInterfacesExpression)__typeInterfaces;
+    this.__typeInterfaces = (__TypeInterfacesExpression) __typeInterfaces;
   }
 
   @Override
@@ -423,7 +367,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void set__typePossibleTypes(__TypePossibleTypesExpression __typePossibleTypes) {
-    this.__typePossibleTypes = (__TypePossibleTypesExpression)__typePossibleTypes;
+    this.__typePossibleTypes = (__TypePossibleTypesExpression) __typePossibleTypes;
   }
 
   @Override
@@ -433,7 +377,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setNot(Boolean not) {
-    this.not = (Boolean)not;
+    this.not = (Boolean) not;
   }
 
   @Override
@@ -443,7 +387,7 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setCond(Conditional cond) {
-    this.cond = (Conditional)cond;
+    this.cond = (Conditional) cond;
   }
 
   @Override
@@ -453,6 +397,6 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
 
   @Override
   public void setExs(Collection<__TypeExpression> exs) {
-    this.exs = (Collection<__TypeExpression>)exs;
+    this.exs = (Collection<__TypeExpression>) exs;
   }
 }

@@ -26,49 +26,53 @@ import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_HIDE_NAME;
 @Priority(SubscriptionIDFieldsMergeHandler.SUBSCRIPTION_ID_FIELDS_MERGE_HANDLER_PRIORITY)
 public class SubscriptionIDFieldsMergeHandler implements OperationBeforeHandler {
 
-    public static final int SUBSCRIPTION_ID_FIELDS_MERGE_HANDLER_PRIORITY = CONNECTION_SPLITTER_PRIORITY + 175;
+  public static final int SUBSCRIPTION_ID_FIELDS_MERGE_HANDLER_PRIORITY =
+      CONNECTION_SPLITTER_PRIORITY + 175;
 
-    private final DocumentManager documentManager;
+  private final DocumentManager documentManager;
 
-    @Inject
-    public SubscriptionIDFieldsMergeHandler(DocumentManager documentManager) {
-        this.documentManager = documentManager;
+  @Inject
+  public SubscriptionIDFieldsMergeHandler(DocumentManager documentManager) {
+    this.documentManager = documentManager;
+  }
+
+  @Override
+  public Mono<Operation> subscription(Operation operation, Map<String, JsonValue> variables) {
+    ObjectType operationType = documentManager.getOperationTypeOrError(operation);
+    return Mono.just(
+        operation.mergeSelection(
+            operation.getFields().stream()
+                .flatMap(
+                    field -> mergeIDField(operationType.getFieldOrError(field.getName()), field))
+                .collect(Collectors.toList())));
+  }
+
+  private Stream<Field> mergeIDField(FieldDefinition fieldDefinition, Field field) {
+    Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+    if (fieldTypeDefinition.isObject() && !fieldDefinition.isConnectionField()) {
+      return Stream.of(
+          field.mergeSelection(
+              Stream.concat(
+                      fieldTypeDefinition
+                          .asObject()
+                          .getIDField()
+                          .map(
+                              idFieldDefinition ->
+                                  (Field)
+                                      new Field(idFieldDefinition.getName())
+                                          .addDirective(new Directive(DIRECTIVE_HIDE_NAME)))
+                          .stream(),
+                      Stream.ofNullable(field.getFields())
+                          .flatMap(Collection::stream)
+                          .flatMap(
+                              subField ->
+                                  mergeIDField(
+                                      fieldTypeDefinition
+                                          .asObject()
+                                          .getFieldOrError(subField.getName()),
+                                      subField)))
+                  .collect(Collectors.toList())));
     }
-
-    @Override
-    public Mono<Operation> subscription(Operation operation, Map<String, JsonValue> variables) {
-        ObjectType operationType = documentManager.getOperationTypeOrError(operation);
-        return Mono.just(
-                operation
-                        .mergeSelection(
-                                operation.getFields().stream()
-                                        .flatMap(field -> mergeIDField(operationType.getFieldOrError(field.getName()), field))
-                                        .collect(Collectors.toList())
-                        )
-        );
-    }
-
-    private Stream<Field> mergeIDField(FieldDefinition fieldDefinition, Field field) {
-        Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-        if (fieldTypeDefinition.isObject() && !fieldDefinition.isConnectionField()) {
-            return Stream.of(
-                    field.mergeSelection(
-                            Stream
-                                    .concat(
-                                            fieldTypeDefinition.asObject().getIDField()
-                                                    .map(idFieldDefinition ->
-                                                            (Field) new Field(idFieldDefinition.getName())
-                                                                    .addDirective(new Directive(DIRECTIVE_HIDE_NAME))
-                                                    )
-                                                    .stream(),
-                                            Stream.ofNullable(field.getFields())
-                                                    .flatMap(Collection::stream)
-                                                    .flatMap(subField -> mergeIDField(fieldTypeDefinition.asObject().getFieldOrError(subField.getName()), subField))
-                                    )
-                                    .collect(Collectors.toList())
-                    )
-            );
-        }
-        return Stream.of(field);
-    }
+    return Stream.of(field);
+  }
 }

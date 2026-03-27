@@ -6,29 +6,21 @@ import java.util.Collection;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Type;
 
-/**
- * Query
- */
+/** Query */
 @Type
 @CompiledJson
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Query")
 public class Query {
-  /**
-   * Query Field for 文件
-   */
+  /** Query Field for 文件 */
   @Description("Query Field for 文件")
   private File file;
 
-  /**
-   * Query Field for 文件 List
-   */
+  /** Query Field for 文件 List */
   @Description("Query Field for 文件 List")
   private Collection<File> fileList;
 
-  /**
-   * Query Field for 文件 Connection
-   */
+  /** Query Field for 文件 Connection */
   @Description("Query Field for 文件 Connection")
   private FileConnection fileConnection;
 

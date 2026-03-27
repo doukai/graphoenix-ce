@@ -7,15 +7,15 @@ import java.util.Collection;
 @SuppressWarnings("ALL")
 public interface FieldsType extends Definition {
 
-    String getName();
+  String getName();
 
-    String getDescription();
+  String getDescription();
 
-    Collection<String> getInterfaces();
+  Collection<String> getInterfaces();
 
-    FieldDefinition getField(String name);
+  FieldDefinition getField(String name);
 
-    FieldDefinition getFieldOrError(String name);
+  FieldDefinition getFieldOrError(String name);
 
-    Collection<FieldDefinition> getFields();
+  Collection<FieldDefinition> getFields();
 }

@@ -9,138 +9,94 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/**
- * Mutation Arguments for __InputValue
- */
+/** Mutation Arguments for __InputValue */
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Mutation Arguments for __InputValue")
 public @interface __InputValueMutationArguments {
-  /**
-   * id
-   */
+  /** id */
   @Description("id")
   String id() default "";
 
-  /**
-   * name
-   */
+  /** name */
   @Description("name")
   String name() default "";
 
-  /**
-   * ofType
-   */
+  /** ofType */
   @Description("ofType")
   __TypeInput ofType() default @__TypeInput;
 
-  /**
-   * fieldId
-   */
+  /** fieldId */
   @Description("fieldId")
   int fieldId() default 0;
 
-  /**
-   * directiveName
-   */
+  /** directiveName */
   @Description("directiveName")
   String directiveName() default "";
 
-  /**
-   * description
-   */
+  /** description */
   @Description("description")
   String description() default "";
 
-  /**
-   * type
-   */
+  /** type */
   @Description("type")
   __TypeInput type() default @__TypeInput;
 
-  /**
-   * defaultValue
-   */
+  /** defaultValue */
   @Description("defaultValue")
   String defaultValue() default "";
 
-  /**
-   * Is Deprecated
-   */
+  /** Is Deprecated */
   @Description("Is Deprecated")
   boolean isDeprecated() default false;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   int version() default 0;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   int realmId() default 0;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   String createUserId() default "";
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   String createTime() default "";
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   String updateUserId() default "";
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   String updateTime() default "";
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   String createGroupId() default "";
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   String __typename() default "__InputValue";
 
-  /**
-   * ofType Reference
-   */
+  /** ofType Reference */
   @Description("ofType Reference")
   String ofTypeName() default "";
 
-  /**
-   * type Reference
-   */
+  /** type Reference */
   @Description("type Reference")
   String typeName() default "";
 
-  /**
-   * Input
-   */
+  /** Input */
   @Description("Input")
   __InputValueInput input() default @__InputValueInput;
 
-  /**
-   * Where
-   */
+  /** Where */
   @Description("Where")
   __InputValueExpression where() default @__InputValueExpression;
 

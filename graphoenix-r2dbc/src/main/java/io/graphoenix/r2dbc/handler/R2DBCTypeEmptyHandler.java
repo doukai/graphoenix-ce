@@ -13,22 +13,22 @@ import java.util.Collection;
 @ApplicationScoped
 public class R2DBCTypeEmptyHandler implements TypeEmptyHandler {
 
-    private final TypeTranslator typeTranslator;
-    private final TableManager tableManager;
+  private final TypeTranslator typeTranslator;
+  private final TableManager tableManager;
 
-    @Inject
-    public R2DBCTypeEmptyHandler(TypeTranslator typeTranslator, TableManager tableManager) {
-        this.typeTranslator = typeTranslator;
-        this.tableManager = tableManager;
-    }
+  @Inject
+  public R2DBCTypeEmptyHandler(TypeTranslator typeTranslator, TableManager tableManager) {
+    this.typeTranslator = typeTranslator;
+    this.tableManager = tableManager;
+  }
 
-    @Override
-    public Mono<Void> empty(String... typeNames) {
-        return tableManager.mergeTable(Arrays.stream(typeNames).map(typeTranslator::truncateTableSQL));
-    }
+  @Override
+  public Mono<Void> empty(String... typeNames) {
+    return tableManager.mergeTable(Arrays.stream(typeNames).map(typeTranslator::truncateTableSQL));
+  }
 
-    @Override
-    public Mono<Void> empty(Collection<String> typeNames) {
-        return tableManager.mergeTable(typeNames.stream().map(typeTranslator::truncateTableSQL));
-    }
+  @Override
+  public Mono<Void> empty(Collection<String> typeNames) {
+    return tableManager.mergeTable(typeNames.stream().map(typeTranslator::truncateTableSQL));
+  }
 }

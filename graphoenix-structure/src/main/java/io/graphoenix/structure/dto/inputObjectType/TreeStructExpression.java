@@ -9,88 +9,60 @@ import java.lang.Boolean;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/**
- * Query Expression Input for TreeStruct
- */
+/** Query Expression Input for TreeStruct */
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Query Expression Input for TreeStruct")
 public interface TreeStructExpression extends MetaExpression {
-  /**
-   * parentId
-   */
+  /** parentId */
   @Description("parentId")
   StringExpression parentId = null;
 
-  /**
-   * name
-   */
+  /** name */
   @Description("name")
   StringExpression name = null;
 
-  /**
-   * id
-   */
+  /** id */
   @Description("id")
   StringExpression id = null;
 
-  /**
-   * Include Deprecated
-   */
+  /** Include Deprecated */
   @Description("Include Deprecated")
   Boolean includeDeprecated = false;
 
-  /**
-   * version
-   */
+  /** version */
   @Description("version")
   IntExpression version = null;
 
-  /**
-   * realmId
-   */
+  /** realmId */
   @Description("realmId")
   IntExpression realmId = null;
 
-  /**
-   * createUserId
-   */
+  /** createUserId */
   @Description("createUserId")
   StringExpression createUserId = null;
 
-  /**
-   * createTime
-   */
+  /** createTime */
   @Description("createTime")
   StringExpression createTime = null;
 
-  /**
-   * updateUserId
-   */
+  /** updateUserId */
   @Description("updateUserId")
   StringExpression updateUserId = null;
 
-  /**
-   * updateTime
-   */
+  /** updateTime */
   @Description("updateTime")
   StringExpression updateTime = null;
 
-  /**
-   * createGroupId
-   */
+  /** createGroupId */
   @Description("createGroupId")
   StringExpression createGroupId = null;
 
-  /**
-   * Not
-   */
+  /** Not */
   @Description("Not")
   Boolean not = false;
 
-  /**
-   * Condition
-   */
+  /** Condition */
   @Description("Condition")
   Conditional cond = Conditional.AND;
 

@@ -9,114 +9,78 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/**
- * Mutation Arguments for __EnumValue List
- */
+/** Mutation Arguments for __EnumValue List */
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Mutation Arguments for __EnumValue List")
 public @interface __EnumValueListMutationArguments {
-  /**
-   * id
-   */
+  /** id */
   @Description("id")
   String id() default "";
 
-  /**
-   * name
-   */
+  /** name */
   @Description("name")
   String name() default "";
 
-  /**
-   * ofType
-   */
+  /** ofType */
   @Description("ofType")
   __TypeInput ofType() default @__TypeInput;
 
-  /**
-   * description
-   */
+  /** description */
   @Description("description")
   String description() default "";
 
-  /**
-   * deprecationReason
-   */
+  /** deprecationReason */
   @Description("deprecationReason")
   String deprecationReason() default "";
 
-  /**
-   * Is Deprecated
-   */
+  /** Is Deprecated */
   @Description("Is Deprecated")
   boolean isDeprecated() default false;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   int version() default 0;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   int realmId() default 0;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   String createUserId() default "";
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   String createTime() default "";
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   String updateUserId() default "";
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   String updateTime() default "";
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   String createGroupId() default "";
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   String __typename() default "__EnumValue";
 
-  /**
-   * ofType Reference
-   */
+  /** ofType Reference */
   @Description("ofType Reference")
   String ofTypeName() default "";
 
-  /**
-   * Input List
-   */
+  /** Input List */
   @Description("Input List")
   __EnumValueInput[] list() default {};
 
-  /**
-   * Where
-   */
+  /** Where */
   @Description("Where")
   __EnumValueExpression where() default @__EnumValueExpression;
 

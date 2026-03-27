@@ -9,23 +9,23 @@ import java.util.Map;
 
 public interface OperationDAO extends Asyncable {
 
-    @Async
-    <T> T find(String sql, Map<String, Object> parameters, Class<T> beanClass);
+  @Async
+  <T> T find(String sql, Map<String, Object> parameters, Class<T> beanClass);
 
-    @Async
-    <T> T find(String sql, Map<String, Object> parameters, Type type);
+  @Async
+  <T> T find(String sql, Map<String, Object> parameters, Type type);
 
-    @Async
-    <T> T save(String sql, Map<String, Object> parameters, Class<T> beanClass);
+  @Async
+  <T> T save(String sql, Map<String, Object> parameters, Class<T> beanClass);
 
-    @Async
-    <T> T save(String sql, Map<String, Object> parameters, Type type);
+  @Async
+  <T> T save(String sql, Map<String, Object> parameters, Type type);
 
-    <T> Mono<T> findAsync(String sql, Map<String, Object> parameters, Class<T> beanClass);
+  <T> Mono<T> findAsync(String sql, Map<String, Object> parameters, Class<T> beanClass);
 
-    <T> Mono<T> findAsync(String sql, Map<String, Object> parameters, Type type);
+  <T> Mono<T> findAsync(String sql, Map<String, Object> parameters, Type type);
 
-    <T> Mono<T> saveAsync(String sql, Map<String, Object> parameters, Class<T> beanClass);
+  <T> Mono<T> saveAsync(String sql, Map<String, Object> parameters, Class<T> beanClass);
 
-    <T> Mono<T> saveAsync(String sql, Map<String, Object> parameters, Type type);
+  <T> Mono<T> saveAsync(String sql, Map<String, Object> parameters, Type type);
 }

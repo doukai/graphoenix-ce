@@ -10,473 +10,473 @@ import "io/graphoenix/core/objects.proto";
 import "google/protobuf/timestamp.proto";
 
 message IntroSchema {
-    string id = 1;
-    repeated IntroType types = 2;
-    optional IntroType query_type = 3;
-    IntroType mutation_type = 4;
-    IntroType subscription_type = 5;
-    repeated IntroDirective directives = 6;
-    bool is_deprecated = 7; /* Is Deprecated */
-    int32 version = 8; /* Version */
-    int32 realm_id = 9; /* Realm ID */
-    string create_user_id = 10; /* Create User ID */
-    google.protobuf.Timestamp create_time = 11; /* Create Time */
-    string update_user_id = 12; /* Update User ID */
-    google.protobuf.Timestamp update_time = 13; /* Update Time */
-    string create_group_id = 14; /* Create Group ID */
-    string intro_typename = 15; /* Type Name */
-    string query_type_name = 16; /* queryType Reference */
-    string mutation_type_name = 17; /* mutationType Reference */
-    string subscription_type_name = 18; /* subscriptionType Reference */
-    IntroType types_aggregate = 19; /* Aggregate Field for types */
-    IntroTypeConnection types_connection = 20; /* Connection Field for types */
-    IntroDirective directives_aggregate = 21; /* Aggregate Field for directives */
-    IntroDirectiveConnection directives_connection = 22; /* Connection Field for directives */
-    int32 id_count = 23; /* Count of __Schema */
-    int32 id_max = 24; /* Max of id */
-    int32 id_min = 25; /* Min of id */
-    int32 query_type_name_count = 26; /* Count of queryType Reference */
-    string query_type_name_max = 27; /* Max of queryType Reference */
-    string query_type_name_min = 28; /* Min of queryType Reference */
-    int32 mutation_type_name_count = 29; /* Count of mutationType Reference */
-    string mutation_type_name_max = 30; /* Max of mutationType Reference */
-    string mutation_type_name_min = 31; /* Min of mutationType Reference */
-    int32 subscription_type_name_count = 32; /* Count of subscriptionType Reference */
-    string subscription_type_name_max = 33; /* Max of subscriptionType Reference */
-    string subscription_type_name_min = 34; /* Min of subscriptionType Reference */
+  string id = 1;
+  repeated IntroType types = 2;
+  optional IntroType query_type = 3;
+  IntroType mutation_type = 4;
+  IntroType subscription_type = 5;
+  repeated IntroDirective directives = 6;
+  bool is_deprecated = 7; /* Is Deprecated */
+  int32 version = 8; /* Version */
+  int32 realm_id = 9; /* Realm ID */
+  string create_user_id = 10; /* Create User ID */
+  google.protobuf.Timestamp create_time = 11; /* Create Time */
+  string update_user_id = 12; /* Update User ID */
+  google.protobuf.Timestamp update_time = 13; /* Update Time */
+  string create_group_id = 14; /* Create Group ID */
+  string intro_typename = 15; /* Type Name */
+  string query_type_name = 16; /* queryType Reference */
+  string mutation_type_name = 17; /* mutationType Reference */
+  string subscription_type_name = 18; /* subscriptionType Reference */
+  IntroType types_aggregate = 19; /* Aggregate Field for types */
+  IntroTypeConnection types_connection = 20; /* Connection Field for types */
+  IntroDirective directives_aggregate = 21; /* Aggregate Field for directives */
+  IntroDirectiveConnection directives_connection = 22; /* Connection Field for directives */
+  int32 id_count = 23; /* Count of __Schema */
+  int32 id_max = 24; /* Max of id */
+  int32 id_min = 25; /* Min of id */
+  int32 query_type_name_count = 26; /* Count of queryType Reference */
+  string query_type_name_max = 27; /* Max of queryType Reference */
+  string query_type_name_min = 28; /* Min of queryType Reference */
+  int32 mutation_type_name_count = 29; /* Count of mutationType Reference */
+  string mutation_type_name_max = 30; /* Max of mutationType Reference */
+  string mutation_type_name_min = 31; /* Min of mutationType Reference */
+  int32 subscription_type_name_count = 32; /* Count of subscriptionType Reference */
+  string subscription_type_name_max = 33; /* Max of subscriptionType Reference */
+  string subscription_type_name_min = 34; /* Min of subscriptionType Reference */
 }
 message IntroType {
-    string id = 1;
-    optional string name = 2;
-    IntroSchema of_schema = 3;
-    optional IntroTypeKind kind = 4;
-    string description = 5;
-    repeated IntroField fields = 6;
-    repeated IntroType interfaces = 7;
-    repeated IntroType possible_types = 8;
-    repeated IntroEnumValue enum_values = 9;
-    repeated IntroInputValue input_fields = 10;
-    IntroType of_type = 11;
-    bool is_deprecated = 12; /* Is Deprecated */
-    int32 version = 13; /* Version */
-    int32 realm_id = 14; /* Realm ID */
-    string create_user_id = 15; /* Create User ID */
-    google.protobuf.Timestamp create_time = 16; /* Create Time */
-    string update_user_id = 17; /* Update User ID */
-    google.protobuf.Timestamp update_time = 18; /* Update Time */
-    string create_group_id = 19; /* Create Group ID */
-    string intro_typename = 20; /* Type Name */
-    int32 schema_id = 21; /* ofSchema Reference */
-    string of_type_name = 22; /* ofType Reference */
-    repeated IntroTypeInterfaces intro_type_interfaces = 23; /* Relationship Object between __Type and __Type */
-    repeated IntroTypePossibleTypes intro_type_possible_types = 24; /* Relationship Object between __Type and __Type */
-    IntroField fields_aggregate = 25; /* Aggregate Field for fields */
-    IntroFieldConnection fields_connection = 26; /* Connection Field for fields */
-    IntroType interfaces_aggregate = 27; /* Aggregate Field for interfaces */
-    IntroTypeConnection interfaces_connection = 28; /* Connection Field for interfaces */
-    IntroType possible_types_aggregate = 29; /* Aggregate Field for possibleTypes */
-    IntroTypeConnection possible_types_connection = 30; /* Connection Field for possibleTypes */
-    IntroEnumValue enum_values_aggregate = 31; /* Aggregate Field for enumValues */
-    IntroEnumValueConnection enum_values_connection = 32; /* Connection Field for enumValues */
-    IntroInputValue input_fields_aggregate = 33; /* Aggregate Field for inputFields */
-    IntroInputValueConnection input_fields_connection = 34; /* Connection Field for inputFields */
-    IntroTypeInterfaces intro_type_interfaces_aggregate = 35; /* Aggregate Field for Relationship Object between __Type and __Type */
-    IntroTypeInterfacesConnection intro_type_interfaces_connection = 36; /* Connection Field for Relationship Object between __Type and __Type */
-    IntroTypePossibleTypes intro_type_possible_types_aggregate = 37; /* Aggregate Field for Relationship Object between __Type and __Type */
-    IntroTypePossibleTypesConnection intro_type_possible_types_connection = 38; /* Connection Field for Relationship Object between __Type and __Type */
-    int32 id_count = 39; /* Count of __Type */
-    int32 id_max = 40; /* Max of id */
-    int32 id_min = 41; /* Min of id */
-    int32 name_count = 42; /* Count of name */
-    string name_max = 43; /* Max of name */
-    string name_min = 44; /* Min of name */
-    int32 kind_count = 45; /* Count of kind */
-    IntroTypeKind kind_max = 46; /* Max of kind */
-    IntroTypeKind kind_min = 47; /* Min of kind */
-    int32 description_count = 48; /* Count of description */
-    string description_max = 49; /* Max of description */
-    string description_min = 50; /* Min of description */
-    int32 of_type_name_count = 51; /* Count of ofType Reference */
-    string of_type_name_max = 52; /* Max of ofType Reference */
-    string of_type_name_min = 53; /* Min of ofType Reference */
-    int32 schema_id_count = 54; /* Count of ofSchema Reference */
-    int32 schema_id_sum = 55; /* Sum of ofSchema Reference */
-    int32 schema_id_avg = 56; /* Avg of ofSchema Reference */
-    int32 schema_id_max = 57; /* Max of ofSchema Reference */
-    int32 schema_id_min = 58; /* Min of ofSchema Reference */
+  string id = 1;
+  optional string name = 2;
+  IntroSchema of_schema = 3;
+  optional IntroTypeKind kind = 4;
+  string description = 5;
+  repeated IntroField fields = 6;
+  repeated IntroType interfaces = 7;
+  repeated IntroType possible_types = 8;
+  repeated IntroEnumValue enum_values = 9;
+  repeated IntroInputValue input_fields = 10;
+  IntroType of_type = 11;
+  bool is_deprecated = 12; /* Is Deprecated */
+  int32 version = 13; /* Version */
+  int32 realm_id = 14; /* Realm ID */
+  string create_user_id = 15; /* Create User ID */
+  google.protobuf.Timestamp create_time = 16; /* Create Time */
+  string update_user_id = 17; /* Update User ID */
+  google.protobuf.Timestamp update_time = 18; /* Update Time */
+  string create_group_id = 19; /* Create Group ID */
+  string intro_typename = 20; /* Type Name */
+  int32 schema_id = 21; /* ofSchema Reference */
+  string of_type_name = 22; /* ofType Reference */
+  repeated IntroTypeInterfaces intro_type_interfaces = 23; /* Relationship Object between __Type and __Type */
+  repeated IntroTypePossibleTypes intro_type_possible_types = 24; /* Relationship Object between __Type and __Type */
+  IntroField fields_aggregate = 25; /* Aggregate Field for fields */
+  IntroFieldConnection fields_connection = 26; /* Connection Field for fields */
+  IntroType interfaces_aggregate = 27; /* Aggregate Field for interfaces */
+  IntroTypeConnection interfaces_connection = 28; /* Connection Field for interfaces */
+  IntroType possible_types_aggregate = 29; /* Aggregate Field for possibleTypes */
+  IntroTypeConnection possible_types_connection = 30; /* Connection Field for possibleTypes */
+  IntroEnumValue enum_values_aggregate = 31; /* Aggregate Field for enumValues */
+  IntroEnumValueConnection enum_values_connection = 32; /* Connection Field for enumValues */
+  IntroInputValue input_fields_aggregate = 33; /* Aggregate Field for inputFields */
+  IntroInputValueConnection input_fields_connection = 34; /* Connection Field for inputFields */
+  IntroTypeInterfaces intro_type_interfaces_aggregate = 35; /* Aggregate Field for Relationship Object between __Type and __Type */
+  IntroTypeInterfacesConnection intro_type_interfaces_connection = 36; /* Connection Field for Relationship Object between __Type and __Type */
+  IntroTypePossibleTypes intro_type_possible_types_aggregate = 37; /* Aggregate Field for Relationship Object between __Type and __Type */
+  IntroTypePossibleTypesConnection intro_type_possible_types_connection = 38; /* Connection Field for Relationship Object between __Type and __Type */
+  int32 id_count = 39; /* Count of __Type */
+  int32 id_max = 40; /* Max of id */
+  int32 id_min = 41; /* Min of id */
+  int32 name_count = 42; /* Count of name */
+  string name_max = 43; /* Max of name */
+  string name_min = 44; /* Min of name */
+  int32 kind_count = 45; /* Count of kind */
+  IntroTypeKind kind_max = 46; /* Max of kind */
+  IntroTypeKind kind_min = 47; /* Min of kind */
+  int32 description_count = 48; /* Count of description */
+  string description_max = 49; /* Max of description */
+  string description_min = 50; /* Min of description */
+  int32 of_type_name_count = 51; /* Count of ofType Reference */
+  string of_type_name_max = 52; /* Max of ofType Reference */
+  string of_type_name_min = 53; /* Min of ofType Reference */
+  int32 schema_id_count = 54; /* Count of ofSchema Reference */
+  int32 schema_id_sum = 55; /* Sum of ofSchema Reference */
+  int32 schema_id_avg = 56; /* Avg of ofSchema Reference */
+  int32 schema_id_max = 57; /* Max of ofSchema Reference */
+  int32 schema_id_min = 58; /* Min of ofSchema Reference */
 }
 message IntroField {
-    string id = 1;
-    string name = 2;
-    IntroType of_type = 3;
-    string description = 4;
-    repeated IntroInputValue args = 5;
-    optional IntroType type = 6;
-    string deprecation_reason = 7;
-    bool is_deprecated = 8; /* Is Deprecated */
-    int32 version = 9; /* Version */
-    int32 realm_id = 10; /* Realm ID */
-    string create_user_id = 11; /* Create User ID */
-    google.protobuf.Timestamp create_time = 12; /* Create Time */
-    string update_user_id = 13; /* Update User ID */
-    google.protobuf.Timestamp update_time = 14; /* Update Time */
-    string create_group_id = 15; /* Create Group ID */
-    string intro_typename = 16; /* Type Name */
-    string of_type_name = 17; /* ofType Reference */
-    string type_name = 18; /* type Reference */
-    IntroInputValue args_aggregate = 19; /* Aggregate Field for args */
-    IntroInputValueConnection args_connection = 20; /* Connection Field for args */
-    int32 id_count = 21; /* Count of __Field */
-    int32 id_max = 22; /* Max of id */
-    int32 id_min = 23; /* Min of id */
-    int32 name_count = 24; /* Count of name */
-    string name_max = 25; /* Max of name */
-    string name_min = 26; /* Min of name */
-    int32 description_count = 27; /* Count of description */
-    string description_max = 28; /* Max of description */
-    string description_min = 29; /* Min of description */
-    int32 deprecation_reason_count = 30; /* Count of deprecationReason */
-    string deprecation_reason_max = 31; /* Max of deprecationReason */
-    string deprecation_reason_min = 32; /* Min of deprecationReason */
-    int32 of_type_name_count = 33; /* Count of ofType Reference */
-    string of_type_name_max = 34; /* Max of ofType Reference */
-    string of_type_name_min = 35; /* Min of ofType Reference */
-    int32 type_name_count = 36; /* Count of type Reference */
-    string type_name_max = 37; /* Max of type Reference */
-    string type_name_min = 38; /* Min of type Reference */
+  string id = 1;
+  string name = 2;
+  IntroType of_type = 3;
+  string description = 4;
+  repeated IntroInputValue args = 5;
+  optional IntroType type = 6;
+  string deprecation_reason = 7;
+  bool is_deprecated = 8; /* Is Deprecated */
+  int32 version = 9; /* Version */
+  int32 realm_id = 10; /* Realm ID */
+  string create_user_id = 11; /* Create User ID */
+  google.protobuf.Timestamp create_time = 12; /* Create Time */
+  string update_user_id = 13; /* Update User ID */
+  google.protobuf.Timestamp update_time = 14; /* Update Time */
+  string create_group_id = 15; /* Create Group ID */
+  string intro_typename = 16; /* Type Name */
+  string of_type_name = 17; /* ofType Reference */
+  string type_name = 18; /* type Reference */
+  IntroInputValue args_aggregate = 19; /* Aggregate Field for args */
+  IntroInputValueConnection args_connection = 20; /* Connection Field for args */
+  int32 id_count = 21; /* Count of __Field */
+  int32 id_max = 22; /* Max of id */
+  int32 id_min = 23; /* Min of id */
+  int32 name_count = 24; /* Count of name */
+  string name_max = 25; /* Max of name */
+  string name_min = 26; /* Min of name */
+  int32 description_count = 27; /* Count of description */
+  string description_max = 28; /* Max of description */
+  string description_min = 29; /* Min of description */
+  int32 deprecation_reason_count = 30; /* Count of deprecationReason */
+  string deprecation_reason_max = 31; /* Max of deprecationReason */
+  string deprecation_reason_min = 32; /* Min of deprecationReason */
+  int32 of_type_name_count = 33; /* Count of ofType Reference */
+  string of_type_name_max = 34; /* Max of ofType Reference */
+  string of_type_name_min = 35; /* Min of ofType Reference */
+  int32 type_name_count = 36; /* Count of type Reference */
+  string type_name_max = 37; /* Max of type Reference */
+  string type_name_min = 38; /* Min of type Reference */
 }
 message IntroInputValue {
-    string id = 1;
-    string name = 2;
-    IntroType of_type = 3;
-    int32 field_id = 4;
-    string directive_name = 5;
-    string description = 6;
-    optional IntroType type = 7;
-    string default_value = 8;
-    bool is_deprecated = 9; /* Is Deprecated */
-    int32 version = 10; /* Version */
-    int32 realm_id = 11; /* Realm ID */
-    string create_user_id = 12; /* Create User ID */
-    google.protobuf.Timestamp create_time = 13; /* Create Time */
-    string update_user_id = 14; /* Update User ID */
-    google.protobuf.Timestamp update_time = 15; /* Update Time */
-    string create_group_id = 16; /* Create Group ID */
-    string intro_typename = 17; /* Type Name */
-    string of_type_name = 18; /* ofType Reference */
-    string type_name = 19; /* type Reference */
-    int32 id_count = 20; /* Count of __InputValue */
-    int32 id_max = 21; /* Max of id */
-    int32 id_min = 22; /* Min of id */
-    int32 name_count = 23; /* Count of name */
-    string name_max = 24; /* Max of name */
-    string name_min = 25; /* Min of name */
-    int32 directive_name_count = 26; /* Count of directiveName */
-    string directive_name_max = 27; /* Max of directiveName */
-    string directive_name_min = 28; /* Min of directiveName */
-    int32 description_count = 29; /* Count of description */
-    string description_max = 30; /* Max of description */
-    string description_min = 31; /* Min of description */
-    int32 default_value_count = 32; /* Count of defaultValue */
-    string default_value_max = 33; /* Max of defaultValue */
-    string default_value_min = 34; /* Min of defaultValue */
-    int32 of_type_name_count = 35; /* Count of ofType Reference */
-    string of_type_name_max = 36; /* Max of ofType Reference */
-    string of_type_name_min = 37; /* Min of ofType Reference */
-    int32 type_name_count = 38; /* Count of type Reference */
-    string type_name_max = 39; /* Max of type Reference */
-    string type_name_min = 40; /* Min of type Reference */
-    int32 field_id_count = 41; /* Count of fieldId */
-    int32 field_id_sum = 42; /* Sum of fieldId */
-    int32 field_id_avg = 43; /* Avg of fieldId */
-    int32 field_id_max = 44; /* Max of fieldId */
-    int32 field_id_min = 45; /* Min of fieldId */
+  string id = 1;
+  string name = 2;
+  IntroType of_type = 3;
+  int32 field_id = 4;
+  string directive_name = 5;
+  string description = 6;
+  optional IntroType type = 7;
+  string default_value = 8;
+  bool is_deprecated = 9; /* Is Deprecated */
+  int32 version = 10; /* Version */
+  int32 realm_id = 11; /* Realm ID */
+  string create_user_id = 12; /* Create User ID */
+  google.protobuf.Timestamp create_time = 13; /* Create Time */
+  string update_user_id = 14; /* Update User ID */
+  google.protobuf.Timestamp update_time = 15; /* Update Time */
+  string create_group_id = 16; /* Create Group ID */
+  string intro_typename = 17; /* Type Name */
+  string of_type_name = 18; /* ofType Reference */
+  string type_name = 19; /* type Reference */
+  int32 id_count = 20; /* Count of __InputValue */
+  int32 id_max = 21; /* Max of id */
+  int32 id_min = 22; /* Min of id */
+  int32 name_count = 23; /* Count of name */
+  string name_max = 24; /* Max of name */
+  string name_min = 25; /* Min of name */
+  int32 directive_name_count = 26; /* Count of directiveName */
+  string directive_name_max = 27; /* Max of directiveName */
+  string directive_name_min = 28; /* Min of directiveName */
+  int32 description_count = 29; /* Count of description */
+  string description_max = 30; /* Max of description */
+  string description_min = 31; /* Min of description */
+  int32 default_value_count = 32; /* Count of defaultValue */
+  string default_value_max = 33; /* Max of defaultValue */
+  string default_value_min = 34; /* Min of defaultValue */
+  int32 of_type_name_count = 35; /* Count of ofType Reference */
+  string of_type_name_max = 36; /* Max of ofType Reference */
+  string of_type_name_min = 37; /* Min of ofType Reference */
+  int32 type_name_count = 38; /* Count of type Reference */
+  string type_name_max = 39; /* Max of type Reference */
+  string type_name_min = 40; /* Min of type Reference */
+  int32 field_id_count = 41; /* Count of fieldId */
+  int32 field_id_sum = 42; /* Sum of fieldId */
+  int32 field_id_avg = 43; /* Avg of fieldId */
+  int32 field_id_max = 44; /* Max of fieldId */
+  int32 field_id_min = 45; /* Min of fieldId */
 }
 message IntroEnumValue {
-    string id = 1;
-    string name = 2;
-    IntroType of_type = 3;
-    string description = 4;
-    string deprecation_reason = 5;
-    bool is_deprecated = 6; /* Is Deprecated */
-    int32 version = 7; /* Version */
-    int32 realm_id = 8; /* Realm ID */
-    string create_user_id = 9; /* Create User ID */
-    google.protobuf.Timestamp create_time = 10; /* Create Time */
-    string update_user_id = 11; /* Update User ID */
-    google.protobuf.Timestamp update_time = 12; /* Update Time */
-    string create_group_id = 13; /* Create Group ID */
-    string intro_typename = 14; /* Type Name */
-    string of_type_name = 15; /* ofType Reference */
-    int32 id_count = 16; /* Count of __EnumValue */
-    int32 id_max = 17; /* Max of id */
-    int32 id_min = 18; /* Min of id */
-    int32 name_count = 19; /* Count of name */
-    string name_max = 20; /* Max of name */
-    string name_min = 21; /* Min of name */
-    int32 description_count = 22; /* Count of description */
-    string description_max = 23; /* Max of description */
-    string description_min = 24; /* Min of description */
-    int32 deprecation_reason_count = 25; /* Count of deprecationReason */
-    string deprecation_reason_max = 26; /* Max of deprecationReason */
-    string deprecation_reason_min = 27; /* Min of deprecationReason */
-    int32 of_type_name_count = 28; /* Count of ofType Reference */
-    string of_type_name_max = 29; /* Max of ofType Reference */
-    string of_type_name_min = 30; /* Min of ofType Reference */
+  string id = 1;
+  string name = 2;
+  IntroType of_type = 3;
+  string description = 4;
+  string deprecation_reason = 5;
+  bool is_deprecated = 6; /* Is Deprecated */
+  int32 version = 7; /* Version */
+  int32 realm_id = 8; /* Realm ID */
+  string create_user_id = 9; /* Create User ID */
+  google.protobuf.Timestamp create_time = 10; /* Create Time */
+  string update_user_id = 11; /* Update User ID */
+  google.protobuf.Timestamp update_time = 12; /* Update Time */
+  string create_group_id = 13; /* Create Group ID */
+  string intro_typename = 14; /* Type Name */
+  string of_type_name = 15; /* ofType Reference */
+  int32 id_count = 16; /* Count of __EnumValue */
+  int32 id_max = 17; /* Max of id */
+  int32 id_min = 18; /* Min of id */
+  int32 name_count = 19; /* Count of name */
+  string name_max = 20; /* Max of name */
+  string name_min = 21; /* Min of name */
+  int32 description_count = 22; /* Count of description */
+  string description_max = 23; /* Max of description */
+  string description_min = 24; /* Min of description */
+  int32 deprecation_reason_count = 25; /* Count of deprecationReason */
+  string deprecation_reason_max = 26; /* Max of deprecationReason */
+  string deprecation_reason_min = 27; /* Min of deprecationReason */
+  int32 of_type_name_count = 28; /* Count of ofType Reference */
+  string of_type_name_max = 29; /* Max of ofType Reference */
+  string of_type_name_min = 30; /* Min of ofType Reference */
 }
 message IntroDirective {
-    string id = 1;
-    optional string name = 2;
-    IntroSchema of_schema = 3;
-    string description = 4;
-    repeated IntroDirectiveLocation locations = 5;
-    repeated IntroInputValue args = 6;
-    optional bool is_repeatable = 7;
-    bool is_deprecated = 8; /* Is Deprecated */
-    int32 version = 9; /* Version */
-    int32 realm_id = 10; /* Realm ID */
-    string create_user_id = 11; /* Create User ID */
-    google.protobuf.Timestamp create_time = 12; /* Create Time */
-    string update_user_id = 13; /* Update User ID */
-    google.protobuf.Timestamp update_time = 14; /* Update Time */
-    string create_group_id = 15; /* Create Group ID */
-    string intro_typename = 16; /* Type Name */
-    int32 schema_id = 17; /* ofSchema Reference */
-    repeated IntroDirectiveLocationsRelation intro_directive_locations_relation = 18; /* Relationship Object between __Directive and locations */
-    IntroInputValue args_aggregate = 19; /* Aggregate Field for args */
-    IntroInputValueConnection args_connection = 20; /* Connection Field for args */
-    IntroDirectiveLocationsRelation intro_directive_locations_relation_aggregate = 21; /* Aggregate Field for Relationship Object between __Directive and locations */
-    IntroDirectiveLocationsRelationConnection intro_directive_locations_relation_connection = 22; /* Connection Field for Relationship Object between __Directive and locations */
-    int32 id_count = 23; /* Count of __Directive */
-    int32 id_max = 24; /* Max of id */
-    int32 id_min = 25; /* Min of id */
-    int32 name_count = 26; /* Count of name */
-    string name_max = 27; /* Max of name */
-    string name_min = 28; /* Min of name */
-    int32 description_count = 29; /* Count of description */
-    string description_max = 30; /* Max of description */
-    string description_min = 31; /* Min of description */
-    int32 schema_id_count = 32; /* Count of ofSchema Reference */
-    int32 schema_id_sum = 33; /* Sum of ofSchema Reference */
-    int32 schema_id_avg = 34; /* Avg of ofSchema Reference */
-    int32 schema_id_max = 35; /* Max of ofSchema Reference */
-    int32 schema_id_min = 36; /* Min of ofSchema Reference */
+  string id = 1;
+  optional string name = 2;
+  IntroSchema of_schema = 3;
+  string description = 4;
+  repeated IntroDirectiveLocation locations = 5;
+  repeated IntroInputValue args = 6;
+  optional bool is_repeatable = 7;
+  bool is_deprecated = 8; /* Is Deprecated */
+  int32 version = 9; /* Version */
+  int32 realm_id = 10; /* Realm ID */
+  string create_user_id = 11; /* Create User ID */
+  google.protobuf.Timestamp create_time = 12; /* Create Time */
+  string update_user_id = 13; /* Update User ID */
+  google.protobuf.Timestamp update_time = 14; /* Update Time */
+  string create_group_id = 15; /* Create Group ID */
+  string intro_typename = 16; /* Type Name */
+  int32 schema_id = 17; /* ofSchema Reference */
+  repeated IntroDirectiveLocationsRelation intro_directive_locations_relation = 18; /* Relationship Object between __Directive and locations */
+  IntroInputValue args_aggregate = 19; /* Aggregate Field for args */
+  IntroInputValueConnection args_connection = 20; /* Connection Field for args */
+  IntroDirectiveLocationsRelation intro_directive_locations_relation_aggregate = 21; /* Aggregate Field for Relationship Object between __Directive and locations */
+  IntroDirectiveLocationsRelationConnection intro_directive_locations_relation_connection = 22; /* Connection Field for Relationship Object between __Directive and locations */
+  int32 id_count = 23; /* Count of __Directive */
+  int32 id_max = 24; /* Max of id */
+  int32 id_min = 25; /* Min of id */
+  int32 name_count = 26; /* Count of name */
+  string name_max = 27; /* Max of name */
+  string name_min = 28; /* Min of name */
+  int32 description_count = 29; /* Count of description */
+  string description_max = 30; /* Max of description */
+  string description_min = 31; /* Min of description */
+  int32 schema_id_count = 32; /* Count of ofSchema Reference */
+  int32 schema_id_sum = 33; /* Sum of ofSchema Reference */
+  int32 schema_id_avg = 34; /* Avg of ofSchema Reference */
+  int32 schema_id_max = 35; /* Max of ofSchema Reference */
+  int32 schema_id_min = 36; /* Min of ofSchema Reference */
 }
 /**
 * Relationship Object between __Type and __Type
 */
 message IntroTypeInterfaces {
-    string id = 1; /* ID */
-    string type_ref = 2; /* __Type Reference */
-    IntroType type = 3; /* __Type */
-    string interface_ref = 4; /* __Type Reference */
-    IntroType interface = 5; /* __Type */
-    bool is_deprecated = 6; /* Is Deprecated */
-    int32 version = 7; /* Version */
-    int32 realm_id = 8; /* Realm ID */
-    string create_user_id = 9; /* Create User ID */
-    google.protobuf.Timestamp create_time = 10; /* Create Time */
-    string update_user_id = 11; /* Update User ID */
-    google.protobuf.Timestamp update_time = 12; /* Update Time */
-    string create_group_id = 13; /* Create Group ID */
-    string intro_typename = 14; /* Type Name */
-    int32 id_count = 15; /* Count of Relationship Object between __Type and __Type */
-    int32 id_max = 16; /* Max of ID */
-    int32 id_min = 17; /* Min of ID */
-    int32 type_ref_count = 18; /* Count of __Type Reference */
-    string type_ref_max = 19; /* Max of __Type Reference */
-    string type_ref_min = 20; /* Min of __Type Reference */
-    int32 interface_ref_count = 21; /* Count of __Type Reference */
-    string interface_ref_max = 22; /* Max of __Type Reference */
-    string interface_ref_min = 23; /* Min of __Type Reference */
+  string id = 1; /* ID */
+  string type_ref = 2; /* __Type Reference */
+  IntroType type = 3; /* __Type */
+  string interface_ref = 4; /* __Type Reference */
+  IntroType interface = 5; /* __Type */
+  bool is_deprecated = 6; /* Is Deprecated */
+  int32 version = 7; /* Version */
+  int32 realm_id = 8; /* Realm ID */
+  string create_user_id = 9; /* Create User ID */
+  google.protobuf.Timestamp create_time = 10; /* Create Time */
+  string update_user_id = 11; /* Update User ID */
+  google.protobuf.Timestamp update_time = 12; /* Update Time */
+  string create_group_id = 13; /* Create Group ID */
+  string intro_typename = 14; /* Type Name */
+  int32 id_count = 15; /* Count of Relationship Object between __Type and __Type */
+  int32 id_max = 16; /* Max of ID */
+  int32 id_min = 17; /* Min of ID */
+  int32 type_ref_count = 18; /* Count of __Type Reference */
+  string type_ref_max = 19; /* Max of __Type Reference */
+  string type_ref_min = 20; /* Min of __Type Reference */
+  int32 interface_ref_count = 21; /* Count of __Type Reference */
+  string interface_ref_max = 22; /* Max of __Type Reference */
+  string interface_ref_min = 23; /* Min of __Type Reference */
 }
 /**
 * Relationship Object between __Type and __Type
 */
 message IntroTypePossibleTypes {
-    string id = 1; /* ID */
-    string type_ref = 2; /* __Type Reference */
-    IntroType type = 3; /* __Type */
-    string possible_type_ref = 4; /* __Type Reference */
-    IntroType possible_type = 5; /* __Type */
-    bool is_deprecated = 6; /* Is Deprecated */
-    int32 version = 7; /* Version */
-    int32 realm_id = 8; /* Realm ID */
-    string create_user_id = 9; /* Create User ID */
-    google.protobuf.Timestamp create_time = 10; /* Create Time */
-    string update_user_id = 11; /* Update User ID */
-    google.protobuf.Timestamp update_time = 12; /* Update Time */
-    string create_group_id = 13; /* Create Group ID */
-    string intro_typename = 14; /* Type Name */
-    int32 id_count = 15; /* Count of Relationship Object between __Type and __Type */
-    int32 id_max = 16; /* Max of ID */
-    int32 id_min = 17; /* Min of ID */
-    int32 type_ref_count = 18; /* Count of __Type Reference */
-    string type_ref_max = 19; /* Max of __Type Reference */
-    string type_ref_min = 20; /* Min of __Type Reference */
-    int32 possible_type_ref_count = 21; /* Count of __Type Reference */
-    string possible_type_ref_max = 22; /* Max of __Type Reference */
-    string possible_type_ref_min = 23; /* Min of __Type Reference */
+  string id = 1; /* ID */
+  string type_ref = 2; /* __Type Reference */
+  IntroType type = 3; /* __Type */
+  string possible_type_ref = 4; /* __Type Reference */
+  IntroType possible_type = 5; /* __Type */
+  bool is_deprecated = 6; /* Is Deprecated */
+  int32 version = 7; /* Version */
+  int32 realm_id = 8; /* Realm ID */
+  string create_user_id = 9; /* Create User ID */
+  google.protobuf.Timestamp create_time = 10; /* Create Time */
+  string update_user_id = 11; /* Update User ID */
+  google.protobuf.Timestamp update_time = 12; /* Update Time */
+  string create_group_id = 13; /* Create Group ID */
+  string intro_typename = 14; /* Type Name */
+  int32 id_count = 15; /* Count of Relationship Object between __Type and __Type */
+  int32 id_max = 16; /* Max of ID */
+  int32 id_min = 17; /* Min of ID */
+  int32 type_ref_count = 18; /* Count of __Type Reference */
+  string type_ref_max = 19; /* Max of __Type Reference */
+  string type_ref_min = 20; /* Min of __Type Reference */
+  int32 possible_type_ref_count = 21; /* Count of __Type Reference */
+  string possible_type_ref_max = 22; /* Max of __Type Reference */
+  string possible_type_ref_min = 23; /* Min of __Type Reference */
 }
 /**
 * Relationship Object between __Directive and locations
 */
 message IntroDirectiveLocationsRelation {
-    string id = 1; /* ID */
-    string intro_directive_ref = 2; /* __Directive Reference */
-    IntroDirective intro_directive = 3; /* __Directive */
-    IntroDirectiveLocation locations_ref = 4; /* locations Reference */
-    bool is_deprecated = 5; /* Is Deprecated */
-    int32 version = 6; /* Version */
-    int32 realm_id = 7; /* Realm ID */
-    string create_user_id = 8; /* Create User ID */
-    google.protobuf.Timestamp create_time = 9; /* Create Time */
-    string update_user_id = 10; /* Update User ID */
-    google.protobuf.Timestamp update_time = 11; /* Update Time */
-    string create_group_id = 12; /* Create Group ID */
-    string intro_typename = 13; /* Type Name */
-    int32 id_count = 14; /* Count of Relationship Object between __Directive and locations */
-    int32 id_max = 15; /* Max of ID */
-    int32 id_min = 16; /* Min of ID */
-    int32 intro_directive_ref_count = 17; /* Count of __Directive Reference */
-    string intro_directive_ref_max = 18; /* Max of __Directive Reference */
-    string intro_directive_ref_min = 19; /* Min of __Directive Reference */
-    int32 locations_ref_count = 20; /* Count of locations Reference */
-    IntroDirectiveLocation locations_ref_max = 21; /* Max of locations Reference */
-    IntroDirectiveLocation locations_ref_min = 22; /* Min of locations Reference */
+  string id = 1; /* ID */
+  string intro_directive_ref = 2; /* __Directive Reference */
+  IntroDirective intro_directive = 3; /* __Directive */
+  IntroDirectiveLocation locations_ref = 4; /* locations Reference */
+  bool is_deprecated = 5; /* Is Deprecated */
+  int32 version = 6; /* Version */
+  int32 realm_id = 7; /* Realm ID */
+  string create_user_id = 8; /* Create User ID */
+  google.protobuf.Timestamp create_time = 9; /* Create Time */
+  string update_user_id = 10; /* Update User ID */
+  google.protobuf.Timestamp update_time = 11; /* Update Time */
+  string create_group_id = 12; /* Create Group ID */
+  string intro_typename = 13; /* Type Name */
+  int32 id_count = 14; /* Count of Relationship Object between __Directive and locations */
+  int32 id_max = 15; /* Max of ID */
+  int32 id_min = 16; /* Min of ID */
+  int32 intro_directive_ref_count = 17; /* Count of __Directive Reference */
+  string intro_directive_ref_max = 18; /* Max of __Directive Reference */
+  string intro_directive_ref_min = 19; /* Min of __Directive Reference */
+  int32 locations_ref_count = 20; /* Count of locations Reference */
+  IntroDirectiveLocation locations_ref_max = 21; /* Max of locations Reference */
+  IntroDirectiveLocation locations_ref_min = 22; /* Min of locations Reference */
 }
 /**
 * Connection Object for __Schema
 */
 message IntroSchemaConnection {
-    int32 total_count = 1; /* Total */
-    io.graphoenix.core.PageInfo page_info = 2; /* Page Info */
-    repeated IntroSchemaEdge edges = 3; /* Edges */
+  int32 total_count = 1; /* Total */
+  io.graphoenix.core.PageInfo page_info = 2; /* Page Info */
+  repeated IntroSchemaEdge edges = 3; /* Edges */
 }
 /**
 * Edge Object for __Schema
 */
 message IntroSchemaEdge {
-    IntroSchema node = 1; /* Node */
-    string cursor = 2; /* Cursor */
+  IntroSchema node = 1; /* Node */
+  string cursor = 2; /* Cursor */
 }
 /**
 * Connection Object for __Type
 */
 message IntroTypeConnection {
-    int32 total_count = 1; /* Total */
-    io.graphoenix.core.PageInfo page_info = 2; /* Page Info */
-    repeated IntroTypeEdge edges = 3; /* Edges */
+  int32 total_count = 1; /* Total */
+  io.graphoenix.core.PageInfo page_info = 2; /* Page Info */
+  repeated IntroTypeEdge edges = 3; /* Edges */
 }
 /**
 * Edge Object for __Type
 */
 message IntroTypeEdge {
-    IntroType node = 1; /* Node */
-    string cursor = 2; /* Cursor */
+  IntroType node = 1; /* Node */
+  string cursor = 2; /* Cursor */
 }
 /**
 * Connection Object for __Field
 */
 message IntroFieldConnection {
-    int32 total_count = 1; /* Total */
-    io.graphoenix.core.PageInfo page_info = 2; /* Page Info */
-    repeated IntroFieldEdge edges = 3; /* Edges */
+  int32 total_count = 1; /* Total */
+  io.graphoenix.core.PageInfo page_info = 2; /* Page Info */
+  repeated IntroFieldEdge edges = 3; /* Edges */
 }
 /**
 * Edge Object for __Field
 */
 message IntroFieldEdge {
-    IntroField node = 1; /* Node */
-    string cursor = 2; /* Cursor */
+  IntroField node = 1; /* Node */
+  string cursor = 2; /* Cursor */
 }
 /**
 * Connection Object for __InputValue
 */
 message IntroInputValueConnection {
-    int32 total_count = 1; /* Total */
-    io.graphoenix.core.PageInfo page_info = 2; /* Page Info */
-    repeated IntroInputValueEdge edges = 3; /* Edges */
+  int32 total_count = 1; /* Total */
+  io.graphoenix.core.PageInfo page_info = 2; /* Page Info */
+  repeated IntroInputValueEdge edges = 3; /* Edges */
 }
 /**
 * Edge Object for __InputValue
 */
 message IntroInputValueEdge {
-    IntroInputValue node = 1; /* Node */
-    string cursor = 2; /* Cursor */
+  IntroInputValue node = 1; /* Node */
+  string cursor = 2; /* Cursor */
 }
 /**
 * Connection Object for __EnumValue
 */
 message IntroEnumValueConnection {
-    int32 total_count = 1; /* Total */
-    io.graphoenix.core.PageInfo page_info = 2; /* Page Info */
-    repeated IntroEnumValueEdge edges = 3; /* Edges */
+  int32 total_count = 1; /* Total */
+  io.graphoenix.core.PageInfo page_info = 2; /* Page Info */
+  repeated IntroEnumValueEdge edges = 3; /* Edges */
 }
 /**
 * Edge Object for __EnumValue
 */
 message IntroEnumValueEdge {
-    IntroEnumValue node = 1; /* Node */
-    string cursor = 2; /* Cursor */
+  IntroEnumValue node = 1; /* Node */
+  string cursor = 2; /* Cursor */
 }
 /**
 * Connection Object for __Directive
 */
 message IntroDirectiveConnection {
-    int32 total_count = 1; /* Total */
-    io.graphoenix.core.PageInfo page_info = 2; /* Page Info */
-    repeated IntroDirectiveEdge edges = 3; /* Edges */
+  int32 total_count = 1; /* Total */
+  io.graphoenix.core.PageInfo page_info = 2; /* Page Info */
+  repeated IntroDirectiveEdge edges = 3; /* Edges */
 }
 /**
 * Edge Object for __Directive
 */
 message IntroDirectiveEdge {
-    IntroDirective node = 1; /* Node */
-    string cursor = 2; /* Cursor */
+  IntroDirective node = 1; /* Node */
+  string cursor = 2; /* Cursor */
 }
 /**
 * Connection Object for Relationship Object between __Type and __Type
 */
 message IntroTypeInterfacesConnection {
-    int32 total_count = 1; /* Total */
-    io.graphoenix.core.PageInfo page_info = 2; /* Page Info */
-    repeated IntroTypeInterfacesEdge edges = 3; /* Edges */
+  int32 total_count = 1; /* Total */
+  io.graphoenix.core.PageInfo page_info = 2; /* Page Info */
+  repeated IntroTypeInterfacesEdge edges = 3; /* Edges */
 }
 /**
 * Edge Object for Relationship Object between __Type and __Type
 */
 message IntroTypeInterfacesEdge {
-    IntroTypeInterfaces node = 1; /* Node */
-    string cursor = 2; /* Cursor */
+  IntroTypeInterfaces node = 1; /* Node */
+  string cursor = 2; /* Cursor */
 }
 /**
 * Connection Object for Relationship Object between __Type and __Type
 */
 message IntroTypePossibleTypesConnection {
-    int32 total_count = 1; /* Total */
-    io.graphoenix.core.PageInfo page_info = 2; /* Page Info */
-    repeated IntroTypePossibleTypesEdge edges = 3; /* Edges */
+  int32 total_count = 1; /* Total */
+  io.graphoenix.core.PageInfo page_info = 2; /* Page Info */
+  repeated IntroTypePossibleTypesEdge edges = 3; /* Edges */
 }
 /**
 * Edge Object for Relationship Object between __Type and __Type
 */
 message IntroTypePossibleTypesEdge {
-    IntroTypePossibleTypes node = 1; /* Node */
-    string cursor = 2; /* Cursor */
+  IntroTypePossibleTypes node = 1; /* Node */
+  string cursor = 2; /* Cursor */
 }
 /**
 * Connection Object for Relationship Object between __Directive and locations
 */
 message IntroDirectiveLocationsRelationConnection {
-    int32 total_count = 1; /* Total */
-    io.graphoenix.core.PageInfo page_info = 2; /* Page Info */
-    repeated IntroDirectiveLocationsRelationEdge edges = 3; /* Edges */
+  int32 total_count = 1; /* Total */
+  io.graphoenix.core.PageInfo page_info = 2; /* Page Info */
+  repeated IntroDirectiveLocationsRelationEdge edges = 3; /* Edges */
 }
 /**
 * Edge Object for Relationship Object between __Directive and locations
 */
 message IntroDirectiveLocationsRelationEdge {
-    IntroDirectiveLocationsRelation node = 1; /* Node */
-    string cursor = 2; /* Cursor */
+  IntroDirectiveLocationsRelation node = 1; /* Node */
+  string cursor = 2; /* Cursor */
 }

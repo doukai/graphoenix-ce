@@ -5,9 +5,9 @@ import jakarta.json.JsonValue;
 import reactor.core.publisher.Mono;
 
 public interface MutationHandler {
-    default Mono<JsonValue> mutation(Operation operation) {
-        return mutation(operation, null);
-    }
+  default Mono<JsonValue> mutation(Operation operation) {
+    return mutation(operation, null);
+  }
 
-    Mono<JsonValue> mutation(Operation operation, Integer groupSize);
+  Mono<JsonValue> mutation(Operation operation, Integer groupSize);
 }

@@ -9,15 +9,15 @@ import org.eclipse.microprofile.graphql.Query;
 @ApplicationScoped
 @GraphQLApi
 public class JsonSchemaApi {
-    private final JsonSchemaManager jsonSchemaManager;
+  private final JsonSchemaManager jsonSchemaManager;
 
-    @Inject
-    public JsonSchemaApi(JsonSchemaManager jsonSchemaManager) {
-        this.jsonSchemaManager = jsonSchemaManager;
-    }
+  @Inject
+  public JsonSchemaApi(JsonSchemaManager jsonSchemaManager) {
+    this.jsonSchemaManager = jsonSchemaManager;
+  }
 
-    @Query
-    public String jsonSchema(String name) {
-        return jsonSchemaManager.getJsonSchema(name);
-    }
+  @Query
+  public String jsonSchema(String name) {
+    return jsonSchemaManager.getJsonSchema(name);
+  }
 }

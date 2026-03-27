@@ -10,115 +10,137 @@ import java.util.stream.Stream;
 
 public class Schema extends AbstractDefinition implements Definition {
 
-    private final STGroupFile stGroupFile = new STGroupFile("stg/type/Schema.stg");
-    private String query;
-    private String mutation;
-    private String subscription;
+  private final STGroupFile stGroupFile = new STGroupFile("stg/type/Schema.stg");
+  private String query;
+  private String mutation;
+  private String subscription;
 
-    public Schema() {
-        super();
-    }
+  public Schema() {
+    super();
+  }
 
-    public Schema(GraphqlParser.SchemaDefinitionContext schemaDefinitionContext) {
-        super(schemaDefinitionContext.description(), schemaDefinitionContext.directives());
-        this.query = schemaDefinitionContext.operationTypeDefinition().stream()
-                .filter(operationTypeDefinitionContext -> operationTypeDefinitionContext.operationType().QUERY() != null)
-                .findFirst()
-                .map(operationTypeDefinitionContext -> operationTypeDefinitionContext.typeName().name().getText())
-                .orElse(null);
+  public Schema(GraphqlParser.SchemaDefinitionContext schemaDefinitionContext) {
+    super(schemaDefinitionContext.description(), schemaDefinitionContext.directives());
+    this.query =
+        schemaDefinitionContext.operationTypeDefinition().stream()
+            .filter(
+                operationTypeDefinitionContext ->
+                    operationTypeDefinitionContext.operationType().QUERY() != null)
+            .findFirst()
+            .map(
+                operationTypeDefinitionContext ->
+                    operationTypeDefinitionContext.typeName().name().getText())
+            .orElse(null);
 
-        this.mutation = schemaDefinitionContext.operationTypeDefinition().stream()
-                .filter(operationTypeDefinitionContext -> operationTypeDefinitionContext.operationType().MUTATION() != null)
-                .findFirst()
-                .map(operationTypeDefinitionContext -> operationTypeDefinitionContext.typeName().name().getText())
-                .orElse(null);
+    this.mutation =
+        schemaDefinitionContext.operationTypeDefinition().stream()
+            .filter(
+                operationTypeDefinitionContext ->
+                    operationTypeDefinitionContext.operationType().MUTATION() != null)
+            .findFirst()
+            .map(
+                operationTypeDefinitionContext ->
+                    operationTypeDefinitionContext.typeName().name().getText())
+            .orElse(null);
 
-        this.subscription = schemaDefinitionContext.operationTypeDefinition().stream()
-                .filter(operationTypeDefinitionContext -> operationTypeDefinitionContext.operationType().SUBSCRIPTION() != null)
-                .findFirst()
-                .map(operationTypeDefinitionContext -> operationTypeDefinitionContext.typeName().name().getText())
-                .orElse(null);
-    }
+    this.subscription =
+        schemaDefinitionContext.operationTypeDefinition().stream()
+            .filter(
+                operationTypeDefinitionContext ->
+                    operationTypeDefinitionContext.operationType().SUBSCRIPTION() != null)
+            .findFirst()
+            .map(
+                operationTypeDefinitionContext ->
+                    operationTypeDefinitionContext.typeName().name().getText())
+            .orElse(null);
+  }
 
-    public Schema(GraphqlParser.SchemaExtensionContext schemaExtensionContext) {
-        super(schemaExtensionContext.directives());
-        setExtension(true);
-        this.query = schemaExtensionContext.operationTypeDefinition().stream()
-                .filter(operationTypeDefinitionContext -> operationTypeDefinitionContext.operationType().QUERY() != null)
-                .findFirst()
-                .map(operationTypeDefinitionContext -> operationTypeDefinitionContext.typeName().name().getText())
-                .orElse(null);
+  public Schema(GraphqlParser.SchemaExtensionContext schemaExtensionContext) {
+    super(schemaExtensionContext.directives());
+    setExtension(true);
+    this.query =
+        schemaExtensionContext.operationTypeDefinition().stream()
+            .filter(
+                operationTypeDefinitionContext ->
+                    operationTypeDefinitionContext.operationType().QUERY() != null)
+            .findFirst()
+            .map(
+                operationTypeDefinitionContext ->
+                    operationTypeDefinitionContext.typeName().name().getText())
+            .orElse(null);
 
-        this.mutation = schemaExtensionContext.operationTypeDefinition().stream()
-                .filter(operationTypeDefinitionContext -> operationTypeDefinitionContext.operationType().MUTATION() != null)
-                .findFirst()
-                .map(operationTypeDefinitionContext -> operationTypeDefinitionContext.typeName().name().getText())
-                .orElse(null);
+    this.mutation =
+        schemaExtensionContext.operationTypeDefinition().stream()
+            .filter(
+                operationTypeDefinitionContext ->
+                    operationTypeDefinitionContext.operationType().MUTATION() != null)
+            .findFirst()
+            .map(
+                operationTypeDefinitionContext ->
+                    operationTypeDefinitionContext.typeName().name().getText())
+            .orElse(null);
 
-        this.subscription = schemaExtensionContext.operationTypeDefinition().stream()
-                .filter(operationTypeDefinitionContext -> operationTypeDefinitionContext.operationType().SUBSCRIPTION() != null)
-                .findFirst()
-                .map(operationTypeDefinitionContext -> operationTypeDefinitionContext.typeName().name().getText())
-                .orElse(null);
-    }
+    this.subscription =
+        schemaExtensionContext.operationTypeDefinition().stream()
+            .filter(
+                operationTypeDefinitionContext ->
+                    operationTypeDefinitionContext.operationType().SUBSCRIPTION() != null)
+            .findFirst()
+            .map(
+                operationTypeDefinitionContext ->
+                    operationTypeDefinitionContext.typeName().name().getText())
+            .orElse(null);
+  }
 
-    public Schema merge(GraphqlParser.SchemaDefinitionContext schemaDefinitionContext) {
-        return merge(
-                Stream.of(schemaDefinitionContext)
-                        .map(Schema::new)
-                        .toArray(Schema[]::new)
-        );
-    }
+  public Schema merge(GraphqlParser.SchemaDefinitionContext schemaDefinitionContext) {
+    return merge(Stream.of(schemaDefinitionContext).map(Schema::new).toArray(Schema[]::new));
+  }
 
-    public Schema merge(GraphqlParser.SchemaExtensionContext schemaExtensionContext) {
-        return merge(
-                Stream.of(schemaExtensionContext)
-                        .map(Schema::new)
-                        .toArray(Schema[]::new)
-        );
-    }
+  public Schema merge(GraphqlParser.SchemaExtensionContext schemaExtensionContext) {
+    return merge(Stream.of(schemaExtensionContext).map(Schema::new).toArray(Schema[]::new));
+  }
 
-    public String getQuery() {
-        return query;
-    }
+  public String getQuery() {
+    return query;
+  }
 
-    public Schema setQuery(String query) {
-        this.query = query;
-        return this;
-    }
+  public Schema setQuery(String query) {
+    this.query = query;
+    return this;
+  }
 
-    public String getMutation() {
-        return mutation;
-    }
+  public String getMutation() {
+    return mutation;
+  }
 
-    public Schema setMutation(String mutation) {
-        this.mutation = mutation;
-        return this;
-    }
+  public Schema setMutation(String mutation) {
+    this.mutation = mutation;
+    return this;
+  }
 
-    public String getSubscription() {
-        return subscription;
-    }
+  public String getSubscription() {
+    return subscription;
+  }
 
-    public Schema setSubscription(String subscription) {
-        this.subscription = subscription;
-        return this;
-    }
+  public Schema setSubscription(String subscription) {
+    this.subscription = subscription;
+    return this;
+  }
 
-    @Override
-    public String getName() {
-        return "schema";
-    }
+  @Override
+  public String getName() {
+    return "schema";
+  }
 
-    @Override
-    public boolean isSchema() {
-        return true;
-    }
+  @Override
+  public boolean isSchema() {
+    return true;
+  }
 
-    @Override
-    public String toString() {
-        ST st = stGroupFile.getInstanceOf("schemaDefinition");
-        st.add("schema", this);
-        return st.render();
-    }
+  @Override
+  public String toString() {
+    ST st = stGroupFile.getInstanceOf("schemaDefinition");
+    st.add("schema", this);
+    return st.render();
+  }
 }

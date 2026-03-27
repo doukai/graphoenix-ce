@@ -6,23 +6,17 @@ import java.lang.String;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Type;
 
-/**
- * Edge Object for __Directive
- */
+/** Edge Object for __Directive */
 @Type
 @CompiledJson
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Edge Object for __Directive")
 public class __DirectiveEdge {
-  /**
-   * Node
-   */
+  /** Node */
   @Description("Node")
   private __Directive node;
 
-  /**
-   * Cursor
-   */
+  /** Cursor */
   @Description("Cursor")
   private String cursor;
 

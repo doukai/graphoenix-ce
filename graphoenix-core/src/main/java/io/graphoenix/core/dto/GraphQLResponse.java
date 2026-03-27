@@ -10,27 +10,26 @@ import java.util.List;
 @CompiledJson
 public class GraphQLResponse {
 
-    @JsonAttribute(converter = ObjectAnalyzer.Runtime.class)
-    private Object data;
+  @JsonAttribute(converter = ObjectAnalyzer.Runtime.class)
+  private Object data;
 
-    public List<GraphQLError> errors;
+  public List<GraphQLError> errors;
 
-    public GraphQLResponse() {
-    }
+  public GraphQLResponse() {}
 
-    public Object getData() {
-        return data;
-    }
+  public Object getData() {
+    return data;
+  }
 
-    public void setData(Object data) {
-        this.data = data;
-    }
+  public void setData(Object data) {
+    this.data = data;
+  }
 
-    public List<GraphQLError> getErrors() {
-        return errors;
-    }
+  public List<GraphQLError> getErrors() {
+    return errors;
+  }
 
-    public void setErrors(List<GraphQLError> errors) {
-        this.errors = errors;
-    }
+  public void setErrors(List<GraphQLError> errors) {
+    this.errors = errors;
+  }
 }

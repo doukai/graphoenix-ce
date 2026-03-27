@@ -21,63 +21,58 @@ import static io.graphoenix.core.handler.PackageManager.SEEDS_MEMBER_KEY;
 @Default
 public class DefaultPackageProvider implements PackageProvider {
 
-    private final Map<String, Map<String, List<PackageURL>>> packageProtocolURLListMap;
+  private final Map<String, Map<String, List<PackageURL>>> packageProtocolURLListMap;
 
-    private final Map<String, Map<String, Iterator<PackageURL>>> packageProtocolURLIteratorMap;
+  private final Map<String, Map<String, Iterator<PackageURL>>> packageProtocolURLIteratorMap;
 
-    @SuppressWarnings("unchecked")
-    @Inject
-    public DefaultPackageProvider(PackageConfig packageConfig) {
-        List<PackageURL> packageURLList = Stream.ofNullable(packageConfig.getMembers())
-                .flatMap(packageMembers -> packageMembers.entrySet().stream())
-                .filter(packageEntry -> !packageEntry.getKey().equals(SEEDS_MEMBER_KEY))
-                .flatMap(packageEntry ->
-                        ((List<Map<String, Object>>) packageEntry.getValue()).stream()
-                                .map(PackageURL::new)
-                                .peek(packageURL -> packageURL.setPackageName(packageEntry.getKey()))
-                )
-                .collect(Collectors.toList());
+  @SuppressWarnings("unchecked")
+  @Inject
+  public DefaultPackageProvider(PackageConfig packageConfig) {
+    List<PackageURL> packageURLList =
+        Stream.ofNullable(packageConfig.getMembers())
+            .flatMap(packageMembers -> packageMembers.entrySet().stream())
+            .filter(packageEntry -> !packageEntry.getKey().equals(SEEDS_MEMBER_KEY))
+            .flatMap(
+                packageEntry ->
+                    ((List<Map<String, Object>>) packageEntry.getValue())
+                        .stream()
+                            .map(PackageURL::new)
+                            .peek(packageURL -> packageURL.setPackageName(packageEntry.getKey())))
+            .collect(Collectors.toList());
 
-        this.packageProtocolURLListMap = packageURLList.stream()
-                .collect(
-                        Collectors.groupingBy(
-                                PackageURL::getPackageName,
-                                Collectors.mapping(
-                                        packageURL -> packageURL,
-                                        Collectors.groupingBy(
-                                                PackageURL::getProtocol,
-                                                Collectors.toList()
-                                        )
-                                )
-                        )
-                );
+    this.packageProtocolURLListMap =
+        packageURLList.stream()
+            .collect(
+                Collectors.groupingBy(
+                    PackageURL::getPackageName,
+                    Collectors.mapping(
+                        packageURL -> packageURL,
+                        Collectors.groupingBy(PackageURL::getProtocol, Collectors.toList()))));
 
-        if (packageConfig.getPackageLoadBalance().equals(LOAD_BALANCE_ROUND_ROBIN)) {
-            this.packageProtocolURLIteratorMap = packageURLList.stream()
-                    .collect(
-                            Collectors.groupingBy(
-                                    PackageURL::getPackageName,
-                                    Collectors.mapping(
-                                            packageURL -> packageURL,
-                                            Collectors.groupingBy(
-                                                    PackageURL::getProtocol,
-                                                    Collectors.collectingAndThen(Collectors.toList(), Iterators::cycle)
-                                            )
-                                    )
-                            )
-                    );
-        } else {
-            this.packageProtocolURLIteratorMap = null;
-        }
+    if (packageConfig.getPackageLoadBalance().equals(LOAD_BALANCE_ROUND_ROBIN)) {
+      this.packageProtocolURLIteratorMap =
+          packageURLList.stream()
+              .collect(
+                  Collectors.groupingBy(
+                      PackageURL::getPackageName,
+                      Collectors.mapping(
+                          packageURL -> packageURL,
+                          Collectors.groupingBy(
+                              PackageURL::getProtocol,
+                              Collectors.collectingAndThen(
+                                  Collectors.toList(), Iterators::cycle)))));
+    } else {
+      this.packageProtocolURLIteratorMap = null;
     }
+  }
 
-    @Override
-    public List<PackageURL> getProtocolURLList(String packageName, String protocol) {
-        return packageProtocolURLListMap.get(packageName).get(protocol);
-    }
+  @Override
+  public List<PackageURL> getProtocolURLList(String packageName, String protocol) {
+    return packageProtocolURLListMap.get(packageName).get(protocol);
+  }
 
-    @Override
-    public Iterator<PackageURL> getProtocolURLIterator(String packageName, String protocol) {
-        return packageProtocolURLIteratorMap.get(packageName).get(protocol);
-    }
+  @Override
+  public Iterator<PackageURL> getProtocolURLIterator(String packageName, String protocol) {
+    return packageProtocolURLIteratorMap.get(packageName).get(protocol);
+  }
 }

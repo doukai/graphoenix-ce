@@ -7,57 +7,57 @@ import java.util.List;
 
 public class Enum {
 
-    private String name;
+  private String name;
 
-    private List<EnumField> fields;
+  private List<EnumField> fields;
 
-    private String description;
+  private String description;
 
-    private List<Option> options;
+  private List<Option> options;
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public Enum setName(String name) {
-        this.name = name;
-        return this;
-    }
+  public Enum setName(String name) {
+    this.name = name;
+    return this;
+  }
 
-    public List<EnumField> getFields() {
-        return fields;
-    }
+  public List<EnumField> getFields() {
+    return fields;
+  }
 
-    public Enum setFields(List<EnumField> fields) {
-        this.fields = fields;
-        return this;
-    }
+  public Enum setFields(List<EnumField> fields) {
+    this.fields = fields;
+    return this;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public Enum setDescription(String description) {
-        this.description = description;
-        return this;
-    }
+  public Enum setDescription(String description) {
+    this.description = description;
+    return this;
+  }
 
-    public List<Option> getOptions() {
-        return options;
-    }
+  public List<Option> getOptions() {
+    return options;
+  }
 
-    public Enum setOptions(List<Option> options) {
-        this.options = options;
-        return this;
-    }
+  public Enum setOptions(List<Option> options) {
+    this.options = options;
+    return this;
+  }
 
-    @Override
-    public String toString() {
-        STGroupFile stGroupFile = new STGroupFile("stg/v3/Enum.stg");
-        ST st = stGroupFile.getInstanceOf("enumDefinition");
-        st.add("enum", this);
-        String render = st.render();
-        stGroupFile.unload();
-        return render;
-    }
+  @Override
+  public String toString() {
+    STGroupFile stGroupFile = new STGroupFile("stg/v3/Enum.stg");
+    ST st = stGroupFile.getInstanceOf("enumDefinition");
+    st.add("enum", this);
+    String render = st.render();
+    stGroupFile.unload();
+    return render;
+  }
 }

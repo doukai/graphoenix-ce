@@ -6,221 +6,149 @@ import jakarta.annotation.Generated;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/**
- * Order Input for __Type
- */
+/** Order Input for __Type */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Order Input for __Type")
 public class __TypeOrderBy {
-  /**
-   * id
-   */
+  /** id */
   @Description("id")
   private Sort id;
 
-  /**
-   * name
-   */
+  /** name */
   @Description("name")
   private Sort name;
 
-  /**
-   * kind
-   */
+  /** kind */
   @Description("kind")
   private Sort kind;
 
-  /**
-   * description
-   */
+  /** description */
   @Description("description")
   private Sort description;
 
-  /**
-   * Is Deprecated
-   */
+  /** Is Deprecated */
   @Description("Is Deprecated")
   private Sort isDeprecated;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   private Sort version;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   private Sort realmId;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   private Sort createUserId;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   private Sort createTime;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   private Sort updateUserId;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   private Sort updateTime;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   private Sort createGroupId;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   private Sort __typename;
 
-  /**
-   * ofSchema Reference
-   */
+  /** ofSchema Reference */
   @Description("ofSchema Reference")
   private Sort schemaId;
 
-  /**
-   * ofType Reference
-   */
+  /** ofType Reference */
   @Description("ofType Reference")
   private Sort ofTypeName;
 
-  /**
-   * Count of __Type
-   */
+  /** Count of __Type */
   @Description("Count of __Type")
   private Sort idCount;
 
-  /**
-   * Max of id
-   */
+  /** Max of id */
   @Description("Max of id")
   private Sort idMax;
 
-  /**
-   * Min of id
-   */
+  /** Min of id */
   @Description("Min of id")
   private Sort idMin;
 
-  /**
-   * Count of name
-   */
+  /** Count of name */
   @Description("Count of name")
   private Sort nameCount;
 
-  /**
-   * Max of name
-   */
+  /** Max of name */
   @Description("Max of name")
   private Sort nameMax;
 
-  /**
-   * Min of name
-   */
+  /** Min of name */
   @Description("Min of name")
   private Sort nameMin;
 
-  /**
-   * Count of kind
-   */
+  /** Count of kind */
   @Description("Count of kind")
   private Sort kindCount;
 
-  /**
-   * Max of kind
-   */
+  /** Max of kind */
   @Description("Max of kind")
   private Sort kindMax;
 
-  /**
-   * Min of kind
-   */
+  /** Min of kind */
   @Description("Min of kind")
   private Sort kindMin;
 
-  /**
-   * Count of description
-   */
+  /** Count of description */
   @Description("Count of description")
   private Sort descriptionCount;
 
-  /**
-   * Max of description
-   */
+  /** Max of description */
   @Description("Max of description")
   private Sort descriptionMax;
 
-  /**
-   * Min of description
-   */
+  /** Min of description */
   @Description("Min of description")
   private Sort descriptionMin;
 
-  /**
-   * Count of ofType Reference
-   */
+  /** Count of ofType Reference */
   @Description("Count of ofType Reference")
   private Sort ofTypeNameCount;
 
-  /**
-   * Max of ofType Reference
-   */
+  /** Max of ofType Reference */
   @Description("Max of ofType Reference")
   private Sort ofTypeNameMax;
 
-  /**
-   * Min of ofType Reference
-   */
+  /** Min of ofType Reference */
   @Description("Min of ofType Reference")
   private Sort ofTypeNameMin;
 
-  /**
-   * Count of ofSchema Reference
-   */
+  /** Count of ofSchema Reference */
   @Description("Count of ofSchema Reference")
   private Sort schemaIdCount;
 
-  /**
-   * Sum of ofSchema Reference
-   */
+  /** Sum of ofSchema Reference */
   @Description("Sum of ofSchema Reference")
   private Sort schemaIdSum;
 
-  /**
-   * Avg of ofSchema Reference
-   */
+  /** Avg of ofSchema Reference */
   @Description("Avg of ofSchema Reference")
   private Sort schemaIdAvg;
 
-  /**
-   * Max of ofSchema Reference
-   */
+  /** Max of ofSchema Reference */
   @Description("Max of ofSchema Reference")
   private Sort schemaIdMax;
 
-  /**
-   * Min of ofSchema Reference
-   */
+  /** Min of ofSchema Reference */
   @Description("Min of ofSchema Reference")
   private Sort schemaIdMin;
 

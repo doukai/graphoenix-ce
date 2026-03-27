@@ -14,146 +14,100 @@ import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/**
- * Subscription Arguments for __Schema
- */
+/** Subscription Arguments for __Schema */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Subscription Arguments for __Schema")
 public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaExpressionBase {
-  /**
-   * id
-   */
+  /** id */
   @Description("id")
   private StringExpression id;
 
-  /**
-   * types
-   */
+  /** types */
   @Description("types")
   private __TypeExpression types;
 
-  /**
-   * queryType
-   */
+  /** queryType */
   @Description("queryType")
   private __TypeExpression queryType;
 
-  /**
-   * mutationType
-   */
+  /** mutationType */
   @Description("mutationType")
   private __TypeExpression mutationType;
 
-  /**
-   * subscriptionType
-   */
+  /** subscriptionType */
   @Description("subscriptionType")
   private __TypeExpression subscriptionType;
 
-  /**
-   * directives
-   */
+  /** directives */
   @Description("directives")
   private __DirectiveExpression directives;
 
-  /**
-   * Include Deprecated
-   */
+  /** Include Deprecated */
   @DefaultValue("false")
   @Description("Include Deprecated")
   private Boolean includeDeprecated = false;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   private IntExpression version;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   private IntExpression realmId;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   private StringExpression createUserId;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   private StringExpression createTime;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   private StringExpression updateUserId;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   private StringExpression updateTime;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   private StringExpression createGroupId;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   private StringExpression __typename;
 
-  /**
-   * queryType Reference
-   */
+  /** queryType Reference */
   @Description("queryType Reference")
   private StringExpression queryTypeName;
 
-  /**
-   * mutationType Reference
-   */
+  /** mutationType Reference */
   @Description("mutationType Reference")
   private StringExpression mutationTypeName;
 
-  /**
-   * subscriptionType Reference
-   */
+  /** subscriptionType Reference */
   @Description("subscriptionType Reference")
   private StringExpression subscriptionTypeName;
 
-  /**
-   * Group By
-   */
+  /** Group By */
   @Description("Group By")
   private Collection<String> groupBy;
 
-  /**
-   * Not
-   */
+  /** Not */
   @DefaultValue("false")
   @Description("Not")
   private Boolean not = false;
 
-  /**
-   * Condition
-   */
+  /** Condition */
   @DefaultValue("AND")
   @Description("Condition")
   private Conditional cond = Conditional.AND;
 
-  /**
-   * Expressions
-   */
+  /** Expressions */
   @Description("Expressions")
   private Collection<__SchemaExpression> exs;
 
@@ -164,7 +118,7 @@ public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaEx
 
   @Override
   public void setId(StringExpression id) {
-    this.id = (StringExpression)id;
+    this.id = (StringExpression) id;
   }
 
   @Override
@@ -174,7 +128,7 @@ public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaEx
 
   @Override
   public void setTypes(__TypeExpression types) {
-    this.types = (__TypeExpression)types;
+    this.types = (__TypeExpression) types;
   }
 
   @Override
@@ -184,7 +138,7 @@ public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaEx
 
   @Override
   public void setQueryType(__TypeExpression queryType) {
-    this.queryType = (__TypeExpression)queryType;
+    this.queryType = (__TypeExpression) queryType;
   }
 
   @Override
@@ -194,7 +148,7 @@ public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaEx
 
   @Override
   public void setMutationType(__TypeExpression mutationType) {
-    this.mutationType = (__TypeExpression)mutationType;
+    this.mutationType = (__TypeExpression) mutationType;
   }
 
   @Override
@@ -204,7 +158,7 @@ public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaEx
 
   @Override
   public void setSubscriptionType(__TypeExpression subscriptionType) {
-    this.subscriptionType = (__TypeExpression)subscriptionType;
+    this.subscriptionType = (__TypeExpression) subscriptionType;
   }
 
   @Override
@@ -214,7 +168,7 @@ public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaEx
 
   @Override
   public void setDirectives(__DirectiveExpression directives) {
-    this.directives = (__DirectiveExpression)directives;
+    this.directives = (__DirectiveExpression) directives;
   }
 
   @Override
@@ -224,7 +178,7 @@ public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaEx
 
   @Override
   public void setIncludeDeprecated(Boolean includeDeprecated) {
-    this.includeDeprecated = (Boolean)includeDeprecated;
+    this.includeDeprecated = (Boolean) includeDeprecated;
   }
 
   @Override
@@ -234,7 +188,7 @@ public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaEx
 
   @Override
   public void setVersion(IntExpression version) {
-    this.version = (IntExpression)version;
+    this.version = (IntExpression) version;
   }
 
   @Override
@@ -244,7 +198,7 @@ public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaEx
 
   @Override
   public void setRealmId(IntExpression realmId) {
-    this.realmId = (IntExpression)realmId;
+    this.realmId = (IntExpression) realmId;
   }
 
   @Override
@@ -254,7 +208,7 @@ public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaEx
 
   @Override
   public void setCreateUserId(StringExpression createUserId) {
-    this.createUserId = (StringExpression)createUserId;
+    this.createUserId = (StringExpression) createUserId;
   }
 
   @Override
@@ -264,7 +218,7 @@ public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaEx
 
   @Override
   public void setCreateTime(StringExpression createTime) {
-    this.createTime = (StringExpression)createTime;
+    this.createTime = (StringExpression) createTime;
   }
 
   @Override
@@ -274,7 +228,7 @@ public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaEx
 
   @Override
   public void setUpdateUserId(StringExpression updateUserId) {
-    this.updateUserId = (StringExpression)updateUserId;
+    this.updateUserId = (StringExpression) updateUserId;
   }
 
   @Override
@@ -284,7 +238,7 @@ public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaEx
 
   @Override
   public void setUpdateTime(StringExpression updateTime) {
-    this.updateTime = (StringExpression)updateTime;
+    this.updateTime = (StringExpression) updateTime;
   }
 
   @Override
@@ -294,7 +248,7 @@ public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaEx
 
   @Override
   public void setCreateGroupId(StringExpression createGroupId) {
-    this.createGroupId = (StringExpression)createGroupId;
+    this.createGroupId = (StringExpression) createGroupId;
   }
 
   @Override
@@ -304,7 +258,7 @@ public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaEx
 
   @Override
   public void set__typename(StringExpression __typename) {
-    this.__typename = (StringExpression)__typename;
+    this.__typename = (StringExpression) __typename;
   }
 
   @Override
@@ -314,7 +268,7 @@ public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaEx
 
   @Override
   public void setQueryTypeName(StringExpression queryTypeName) {
-    this.queryTypeName = (StringExpression)queryTypeName;
+    this.queryTypeName = (StringExpression) queryTypeName;
   }
 
   @Override
@@ -324,7 +278,7 @@ public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaEx
 
   @Override
   public void setMutationTypeName(StringExpression mutationTypeName) {
-    this.mutationTypeName = (StringExpression)mutationTypeName;
+    this.mutationTypeName = (StringExpression) mutationTypeName;
   }
 
   @Override
@@ -334,7 +288,7 @@ public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaEx
 
   @Override
   public void setSubscriptionTypeName(StringExpression subscriptionTypeName) {
-    this.subscriptionTypeName = (StringExpression)subscriptionTypeName;
+    this.subscriptionTypeName = (StringExpression) subscriptionTypeName;
   }
 
   public Collection<String> getGroupBy() {
@@ -352,7 +306,7 @@ public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaEx
 
   @Override
   public void setNot(Boolean not) {
-    this.not = (Boolean)not;
+    this.not = (Boolean) not;
   }
 
   @Override
@@ -362,7 +316,7 @@ public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaEx
 
   @Override
   public void setCond(Conditional cond) {
-    this.cond = (Conditional)cond;
+    this.cond = (Conditional) cond;
   }
 
   @Override
@@ -372,6 +326,6 @@ public class __SchemaSubscriptionArguments implements MetaExpression, __SchemaEx
 
   @Override
   public void setExs(Collection<__SchemaExpression> exs) {
-    this.exs = (Collection<__SchemaExpression>)exs;
+    this.exs = (Collection<__SchemaExpression>) exs;
   }
 }

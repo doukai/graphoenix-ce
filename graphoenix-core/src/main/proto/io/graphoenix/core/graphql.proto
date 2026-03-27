@@ -6,12 +6,12 @@ option java_package = "io.graphoenix.core.grpc";
 package io.graphoenix.core;
 
 service GraphQLService {
-    rpc Request (GraphQLRequest) returns (GraphQLResponse);
+  rpc Request (GraphQLRequest) returns (GraphQLResponse);
 }
 message GraphQLRequest {
-    string request = 1;
-    optional string transaction_id = 2;
+  string request = 1;
+  optional string transaction_id = 2;
 }
 message GraphQLResponse {
-    string response = 1;
+  string response = 1;
 }

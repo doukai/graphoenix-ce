@@ -11,44 +11,44 @@ import static io.graphoenix.spi.utils.DocumentUtil.getBooleanValue;
 
 public class BooleanValue implements ValueWithVariable, JsonValue {
 
-    private final STGroupFile stGroupFile = new STGroupFile("stg/common/BooleanValue.stg");
+  private final STGroupFile stGroupFile = new STGroupFile("stg/common/BooleanValue.stg");
 
-    private Boolean value;
+  private Boolean value;
 
-    public BooleanValue(AnnotationValue value) {
-        this.value = (Boolean) value.getValue();
-    }
+  public BooleanValue(AnnotationValue value) {
+    this.value = (Boolean) value.getValue();
+  }
 
-    public BooleanValue(Boolean value) {
-        this.value = value;
-    }
+  public BooleanValue(Boolean value) {
+    this.value = value;
+  }
 
-    public BooleanValue(TerminalNode value) {
-        this.value = getBooleanValue(value);
-    }
+  public BooleanValue(TerminalNode value) {
+    this.value = getBooleanValue(value);
+  }
 
-    public Boolean getValue() {
-        return value;
-    }
+  public Boolean getValue() {
+    return value;
+  }
 
-    public void setValue(Boolean value) {
-        this.value = value;
-    }
+  public void setValue(Boolean value) {
+    this.value = value;
+  }
 
-    @Override
-    public ValueType getValueType() {
-        return value ? ValueType.TRUE : ValueType.FALSE;
-    }
+  @Override
+  public ValueType getValueType() {
+    return value ? ValueType.TRUE : ValueType.FALSE;
+  }
 
-    @Override
-    public boolean isBoolean() {
-        return true;
-    }
+  @Override
+  public boolean isBoolean() {
+    return true;
+  }
 
-    @Override
-    public String toString() {
-        ST st = stGroupFile.getInstanceOf("booleanValueDefinition");
-        st.add("booleanValue", this);
-        return st.render();
-    }
+  @Override
+  public String toString() {
+    ST st = stGroupFile.getInstanceOf("booleanValueDefinition");
+    st.add("booleanValue", this);
+    return st.render();
+  }
 }

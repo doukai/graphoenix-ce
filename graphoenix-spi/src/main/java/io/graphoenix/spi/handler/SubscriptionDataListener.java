@@ -6,9 +6,9 @@ import jakarta.json.JsonValue;
 
 public interface SubscriptionDataListener {
 
-    SubscriptionDataListener beforeSubscription(Operation operation);
+  SubscriptionDataListener beforeSubscription(Operation operation);
 
-    SubscriptionDataListener afterSubscription(Operation operation, JsonValue jsonValue);
+  SubscriptionDataListener afterSubscription(Operation operation, JsonValue jsonValue);
 
-    boolean changed(String typeName, JsonArray mutations);
+  boolean changed(String typeName, JsonArray mutations);
 }

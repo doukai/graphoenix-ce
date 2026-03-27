@@ -21,241 +21,274 @@ import static io.graphoenix.spi.error.GraphQLErrorType.SYNTAX_ERROR;
 
 public final class DocumentUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(DocumentUtil.class);
+  private static final Logger logger = LoggerFactory.getLogger(DocumentUtil.class);
 
-    public static GraphqlParser.DocumentContext graphqlToDocument(String graphql) {
-        CodePointCharStream charStream;
-        charStream = CharStreams.fromString(graphql);
-        return graphqlToDocument(charStream);
-    }
+  public static GraphqlParser.DocumentContext graphqlToDocument(String graphql) {
+    CodePointCharStream charStream;
+    charStream = CharStreams.fromString(graphql);
+    return graphqlToDocument(charStream);
+  }
 
-    public static GraphqlParser.DocumentContext graphqlToDocument(InputStream inputStream) throws IOException {
-        CharStream charStream;
-        charStream = CharStreams.fromStream(inputStream);
-        return graphqlToDocument(charStream);
-    }
+  public static GraphqlParser.DocumentContext graphqlToDocument(InputStream inputStream)
+      throws IOException {
+    CharStream charStream;
+    charStream = CharStreams.fromStream(inputStream);
+    return graphqlToDocument(charStream);
+  }
 
-    public static GraphqlParser.DocumentContext graphqlToDocument(File graphqlFile) throws IOException {
-        CharStream charStream;
-        charStream = CharStreams.fromFileName(graphqlFile.getPath());
-        return graphqlToDocument(charStream);
-    }
+  public static GraphqlParser.DocumentContext graphqlToDocument(File graphqlFile)
+      throws IOException {
+    CharStream charStream;
+    charStream = CharStreams.fromFileName(graphqlFile.getPath());
+    return graphqlToDocument(charStream);
+  }
 
-    public static GraphqlParser.DocumentContext graphqlToDocument(Path graphqlPath) throws IOException {
-        CharStream charStream;
-        charStream = CharStreams.fromPath(graphqlPath);
-        return graphqlToDocument(charStream);
-    }
+  public static GraphqlParser.DocumentContext graphqlToDocument(Path graphqlPath)
+      throws IOException {
+    CharStream charStream;
+    charStream = CharStreams.fromPath(graphqlPath);
+    return graphqlToDocument(charStream);
+  }
 
-    public static GraphqlParser.OperationDefinitionContext graphqlToOperation(String graphql) {
-        CodePointCharStream charStream;
-        charStream = CharStreams.fromString(graphql);
-        return graphqlToOperation(charStream);
-    }
+  public static GraphqlParser.OperationDefinitionContext graphqlToOperation(String graphql) {
+    CodePointCharStream charStream;
+    charStream = CharStreams.fromString(graphql);
+    return graphqlToOperation(charStream);
+  }
 
-    public static GraphqlParser.OperationDefinitionContext graphqlToOperation(InputStream inputStream) throws IOException {
-        CharStream charStream;
-        charStream = CharStreams.fromStream(inputStream);
-        return graphqlToOperation(charStream);
-    }
+  public static GraphqlParser.OperationDefinitionContext graphqlToOperation(InputStream inputStream)
+      throws IOException {
+    CharStream charStream;
+    charStream = CharStreams.fromStream(inputStream);
+    return graphqlToOperation(charStream);
+  }
 
-    public static GraphqlParser.SelectionSetContext graphqlToSelectionSet(String graphql) {
-        CodePointCharStream charStream;
-        charStream = CharStreams.fromString(graphql);
-        return graphqlToSelectionSet(charStream);
-    }
+  public static GraphqlParser.SelectionSetContext graphqlToSelectionSet(String graphql) {
+    CodePointCharStream charStream;
+    charStream = CharStreams.fromString(graphql);
+    return graphqlToSelectionSet(charStream);
+  }
 
-    public static GraphqlParser.SelectionContext graphqlToSelection(String graphql) {
-        CodePointCharStream charStream;
-        charStream = CharStreams.fromString(graphql);
-        return graphqlToSelection(charStream);
-    }
+  public static GraphqlParser.SelectionContext graphqlToSelection(String graphql) {
+    CodePointCharStream charStream;
+    charStream = CharStreams.fromString(graphql);
+    return graphqlToSelection(charStream);
+  }
 
-    public static GraphqlParser.ObjectTypeDefinitionContext graphqlToObjectTypeDefinition(String graphql) {
-        CodePointCharStream charStream;
-        charStream = CharStreams.fromString(graphql);
-        return graphqlToObjectTypeDefinition(charStream);
-    }
+  public static GraphqlParser.ObjectTypeDefinitionContext graphqlToObjectTypeDefinition(
+      String graphql) {
+    CodePointCharStream charStream;
+    charStream = CharStreams.fromString(graphql);
+    return graphqlToObjectTypeDefinition(charStream);
+  }
 
-    public static GraphqlParser.InterfaceTypeDefinitionContext graphqlToInterfaceTypeDefinition(String graphql) {
-        CodePointCharStream charStream;
-        charStream = CharStreams.fromString(graphql);
-        return graphqlToInterfaceTypeDefinition(charStream);
-    }
+  public static GraphqlParser.InterfaceTypeDefinitionContext graphqlToInterfaceTypeDefinition(
+      String graphql) {
+    CodePointCharStream charStream;
+    charStream = CharStreams.fromString(graphql);
+    return graphqlToInterfaceTypeDefinition(charStream);
+  }
 
-    public static GraphqlParser.EnumTypeDefinitionContext graphqlToEnumTypeDefinition(String graphql) {
-        CodePointCharStream charStream;
-        charStream = CharStreams.fromString(graphql);
-        return graphqlToEnumTypeDefinition(charStream);
-    }
+  public static GraphqlParser.EnumTypeDefinitionContext graphqlToEnumTypeDefinition(
+      String graphql) {
+    CodePointCharStream charStream;
+    charStream = CharStreams.fromString(graphql);
+    return graphqlToEnumTypeDefinition(charStream);
+  }
 
-    public static GraphqlParser.EnumValueContext graphqlToEnumValue(String graphql) {
-        CodePointCharStream charStream;
-        charStream = CharStreams.fromString(graphql);
-        return graphqlToEnumValue(charStream);
-    }
+  public static GraphqlParser.EnumValueContext graphqlToEnumValue(String graphql) {
+    CodePointCharStream charStream;
+    charStream = CharStreams.fromString(graphql);
+    return graphqlToEnumValue(charStream);
+  }
 
-    public static GraphqlParser.InputObjectTypeDefinitionContext graphqlToInputObjectTypeDefinition(String graphql) {
-        CodePointCharStream charStream;
-        charStream = CharStreams.fromString(graphql);
-        return graphqlToInputObjectTypeDefinition(charStream);
-    }
+  public static GraphqlParser.InputObjectTypeDefinitionContext graphqlToInputObjectTypeDefinition(
+      String graphql) {
+    CodePointCharStream charStream;
+    charStream = CharStreams.fromString(graphql);
+    return graphqlToInputObjectTypeDefinition(charStream);
+  }
 
-    public static GraphqlParser.FieldDefinitionContext graphqlToFieldDefinition(String graphql) {
-        CodePointCharStream charStream;
-        charStream = CharStreams.fromString(graphql);
-        return graphqlToFieldDefinition(charStream);
-    }
+  public static GraphqlParser.FieldDefinitionContext graphqlToFieldDefinition(String graphql) {
+    CodePointCharStream charStream;
+    charStream = CharStreams.fromString(graphql);
+    return graphqlToFieldDefinition(charStream);
+  }
 
-    public static GraphqlParser.EnumValueDefinitionContext graphqlToEnumValueDefinition(String graphql) {
-        CodePointCharStream charStream;
-        charStream = CharStreams.fromString(graphql);
-        return graphqlToEnumValueDefinition(charStream);
-    }
+  public static GraphqlParser.EnumValueDefinitionContext graphqlToEnumValueDefinition(
+      String graphql) {
+    CodePointCharStream charStream;
+    charStream = CharStreams.fromString(graphql);
+    return graphqlToEnumValueDefinition(charStream);
+  }
 
-    public static GraphqlParser.InputValueDefinitionContext graphqlToInputValueDefinition(String graphql) {
-        CodePointCharStream charStream;
-        charStream = CharStreams.fromString(graphql);
-        return graphqlToInputValueDefinition(charStream);
-    }
+  public static GraphqlParser.InputValueDefinitionContext graphqlToInputValueDefinition(
+      String graphql) {
+    CodePointCharStream charStream;
+    charStream = CharStreams.fromString(graphql);
+    return graphqlToInputValueDefinition(charStream);
+  }
 
-    public static GraphqlParser.TypeContext graphqlToType(String graphql) {
-        CodePointCharStream charStream;
-        charStream = CharStreams.fromString(graphql);
-        return graphqlToType(charStream);
-    }
+  public static GraphqlParser.TypeContext graphqlToType(String graphql) {
+    CodePointCharStream charStream;
+    charStream = CharStreams.fromString(graphql);
+    return graphqlToType(charStream);
+  }
 
-    public static GraphqlParser.DocumentContext graphqlToDocument(CharStream charStream) {
-        return getGraphqlParser(charStream).document();
-    }
+  public static GraphqlParser.DocumentContext graphqlToDocument(CharStream charStream) {
+    return getGraphqlParser(charStream).document();
+  }
 
-    public static GraphqlParser.OperationDefinitionContext graphqlToOperation(CharStream charStream) {
-        return getGraphqlParser(charStream).operationDefinition();
-    }
+  public static GraphqlParser.OperationDefinitionContext graphqlToOperation(CharStream charStream) {
+    return getGraphqlParser(charStream).operationDefinition();
+  }
 
-    public static GraphqlParser.SelectionSetContext graphqlToSelectionSet(CharStream charStream) {
-        return getGraphqlParser(charStream).selectionSet();
-    }
+  public static GraphqlParser.SelectionSetContext graphqlToSelectionSet(CharStream charStream) {
+    return getGraphqlParser(charStream).selectionSet();
+  }
 
-    public static GraphqlParser.SelectionContext graphqlToSelection(CharStream charStream) {
-        return getGraphqlParser(charStream).selection();
-    }
+  public static GraphqlParser.SelectionContext graphqlToSelection(CharStream charStream) {
+    return getGraphqlParser(charStream).selection();
+  }
 
-    public static GraphqlParser.ObjectTypeDefinitionContext graphqlToObjectTypeDefinition(CharStream charStream) {
-        return getGraphqlParser(charStream).objectTypeDefinition();
-    }
+  public static GraphqlParser.ObjectTypeDefinitionContext graphqlToObjectTypeDefinition(
+      CharStream charStream) {
+    return getGraphqlParser(charStream).objectTypeDefinition();
+  }
 
-    public static GraphqlParser.InterfaceTypeDefinitionContext graphqlToInterfaceTypeDefinition(CharStream charStream) {
-        return getGraphqlParser(charStream).interfaceTypeDefinition();
-    }
+  public static GraphqlParser.InterfaceTypeDefinitionContext graphqlToInterfaceTypeDefinition(
+      CharStream charStream) {
+    return getGraphqlParser(charStream).interfaceTypeDefinition();
+  }
 
-    public static GraphqlParser.EnumTypeDefinitionContext graphqlToEnumTypeDefinition(CharStream charStream) {
-        return getGraphqlParser(charStream).enumTypeDefinition();
-    }
+  public static GraphqlParser.EnumTypeDefinitionContext graphqlToEnumTypeDefinition(
+      CharStream charStream) {
+    return getGraphqlParser(charStream).enumTypeDefinition();
+  }
 
-    public static GraphqlParser.EnumValueContext graphqlToEnumValue(CharStream charStream) {
-        return getGraphqlParser(charStream).enumValue();
-    }
+  public static GraphqlParser.EnumValueContext graphqlToEnumValue(CharStream charStream) {
+    return getGraphqlParser(charStream).enumValue();
+  }
 
-    public static GraphqlParser.InputObjectTypeDefinitionContext graphqlToInputObjectTypeDefinition(CharStream charStream) {
-        return getGraphqlParser(charStream).inputObjectTypeDefinition();
-    }
+  public static GraphqlParser.InputObjectTypeDefinitionContext graphqlToInputObjectTypeDefinition(
+      CharStream charStream) {
+    return getGraphqlParser(charStream).inputObjectTypeDefinition();
+  }
 
-    public static GraphqlParser.FieldDefinitionContext graphqlToFieldDefinition(CharStream charStream) {
-        return getGraphqlParser(charStream).fieldDefinition();
-    }
+  public static GraphqlParser.FieldDefinitionContext graphqlToFieldDefinition(
+      CharStream charStream) {
+    return getGraphqlParser(charStream).fieldDefinition();
+  }
 
-    public static GraphqlParser.EnumValueDefinitionContext graphqlToEnumValueDefinition(CharStream charStream) {
-        return getGraphqlParser(charStream).enumValueDefinition();
-    }
+  public static GraphqlParser.EnumValueDefinitionContext graphqlToEnumValueDefinition(
+      CharStream charStream) {
+    return getGraphqlParser(charStream).enumValueDefinition();
+  }
 
-    public static GraphqlParser.InputValueDefinitionContext graphqlToInputValueDefinition(CharStream charStream) {
-        return getGraphqlParser(charStream).inputValueDefinition();
-    }
+  public static GraphqlParser.InputValueDefinitionContext graphqlToInputValueDefinition(
+      CharStream charStream) {
+    return getGraphqlParser(charStream).inputValueDefinition();
+  }
 
-    public static GraphqlParser.TypeContext graphqlToType(CharStream charStream) {
-        return getGraphqlParser(charStream).type();
-    }
+  public static GraphqlParser.TypeContext graphqlToType(CharStream charStream) {
+    return getGraphqlParser(charStream).type();
+  }
 
-    public static GraphqlParser getGraphqlParser(String graphql) {
-        CodePointCharStream charStream;
-        charStream = CharStreams.fromString(graphql);
-        return getGraphqlParser(charStream);
-    }
+  public static GraphqlParser getGraphqlParser(String graphql) {
+    CodePointCharStream charStream;
+    charStream = CharStreams.fromString(graphql);
+    return getGraphqlParser(charStream);
+  }
 
-    public static GraphqlLexer getGraphqlLexer(String graphql) {
-        CodePointCharStream charStream;
-        charStream = CharStreams.fromString(graphql);
-        return getGraphqlLexer(charStream);
-    }
+  public static GraphqlLexer getGraphqlLexer(String graphql) {
+    CodePointCharStream charStream;
+    charStream = CharStreams.fromString(graphql);
+    return getGraphqlLexer(charStream);
+  }
 
-    private static GraphqlLexer getGraphqlLexer(CharStream charStream) {
-        GraphqlLexer lexer = new GraphqlLexer(charStream);
-        lexer.removeErrorListeners();
-        lexer.addErrorListener(new BaseErrorListener() {
-            @Override
-            public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
-                logger.error(e.getMessage(), e);
-                throw new GraphQLErrors(SYNTAX_ERROR.bind(msg, line, charPositionInLine), line, charPositionInLine);
-            }
+  private static GraphqlLexer getGraphqlLexer(CharStream charStream) {
+    GraphqlLexer lexer = new GraphqlLexer(charStream);
+    lexer.removeErrorListeners();
+    lexer.addErrorListener(
+        new BaseErrorListener() {
+          @Override
+          public void syntaxError(
+              Recognizer<?, ?> recognizer,
+              Object offendingSymbol,
+              int line,
+              int charPositionInLine,
+              String msg,
+              RecognitionException e) {
+            logger.error(e.getMessage(), e);
+            throw new GraphQLErrors(
+                SYNTAX_ERROR.bind(msg, line, charPositionInLine), line, charPositionInLine);
+          }
         });
-        return lexer;
-    }
+    return lexer;
+  }
 
-    private static GraphqlParser getGraphqlParser(CharStream charStream) {
-        CommonTokenStream tokens = new CommonTokenStream(getGraphqlLexer(charStream));
-        GraphqlParser parser = new GraphqlParser(tokens);
-        parser.removeErrorListeners();
-        parser.addErrorListener(new BaseErrorListener() {
-            @Override
-            public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
-                logger.error(e.getMessage(), e);
-                throw new GraphQLErrors(SYNTAX_ERROR.bind(msg, line, charPositionInLine), line, charPositionInLine);
-            }
+  private static GraphqlParser getGraphqlParser(CharStream charStream) {
+    CommonTokenStream tokens = new CommonTokenStream(getGraphqlLexer(charStream));
+    GraphqlParser parser = new GraphqlParser(tokens);
+    parser.removeErrorListeners();
+    parser.addErrorListener(
+        new BaseErrorListener() {
+          @Override
+          public void syntaxError(
+              Recognizer<?, ?> recognizer,
+              Object offendingSymbol,
+              int line,
+              int charPositionInLine,
+              String msg,
+              RecognitionException e) {
+            logger.error(e.getMessage(), e);
+            throw new GraphQLErrors(
+                SYNTAX_ERROR.bind(msg, line, charPositionInLine), line, charPositionInLine);
+          }
         });
-        parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
-        return parser;
-    }
+    parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
+    return parser;
+  }
 
-    public static String getStringValue(TerminalNode terminalNode) {
-        return CharMatcher.is('"').trimFrom(terminalNode.getText());
-    }
+  public static String getStringValue(TerminalNode terminalNode) {
+    return CharMatcher.is('"').trimFrom(terminalNode.getText());
+  }
 
-    public static Integer getIntValue(TerminalNode terminalNode) {
-        if (terminalNode.getText().equals("null")) {
-            return null;
-        }
-        return Integer.parseInt(terminalNode.getText());
+  public static Integer getIntValue(TerminalNode terminalNode) {
+    if (terminalNode.getText().equals("null")) {
+      return null;
     }
+    return Integer.parseInt(terminalNode.getText());
+  }
 
-    public static Float getFloatValue(TerminalNode terminalNode) {
-        if (terminalNode.getText().equals("null")) {
-            return null;
-        }
-        return Float.parseFloat(terminalNode.getText());
+  public static Float getFloatValue(TerminalNode terminalNode) {
+    if (terminalNode.getText().equals("null")) {
+      return null;
     }
+    return Float.parseFloat(terminalNode.getText());
+  }
 
-    public static Double getDoubleValue(TerminalNode terminalNode) {
-        if (terminalNode.getText().equals("null")) {
-            return null;
-        }
-        return Double.parseDouble(terminalNode.getText());
+  public static Double getDoubleValue(TerminalNode terminalNode) {
+    if (terminalNode.getText().equals("null")) {
+      return null;
     }
+    return Double.parseDouble(terminalNode.getText());
+  }
 
-    public static Boolean getBooleanValue(TerminalNode terminalNode) {
-        if (terminalNode.getText().equals("null")) {
-            return null;
-        }
-        return Boolean.parseBoolean(terminalNode.getText());
+  public static Boolean getBooleanValue(TerminalNode terminalNode) {
+    if (terminalNode.getText().equals("null")) {
+      return null;
     }
+    return Boolean.parseBoolean(terminalNode.getText());
+  }
 
-    public static Stream<String> getImplementsInterfaces(GraphqlParser.ImplementsInterfacesContext implementsInterfacesContext) {
-        return Stream.concat(
-                Stream.ofNullable(implementsInterfacesContext.typeName())
-                        .flatMap(Collection::stream)
-                        .map(typeNameContext -> typeNameContext.name().getText()),
-                Stream.ofNullable(implementsInterfacesContext.implementsInterfaces())
-                        .flatMap(DocumentUtil::getImplementsInterfaces)
-        );
-    }
+  public static Stream<String> getImplementsInterfaces(
+      GraphqlParser.ImplementsInterfacesContext implementsInterfacesContext) {
+    return Stream.concat(
+        Stream.ofNullable(implementsInterfacesContext.typeName())
+            .flatMap(Collection::stream)
+            .map(typeNameContext -> typeNameContext.name().getText()),
+        Stream.ofNullable(implementsInterfacesContext.implementsInterfaces())
+            .flatMap(DocumentUtil::getImplementsInterfaces));
+  }
 }

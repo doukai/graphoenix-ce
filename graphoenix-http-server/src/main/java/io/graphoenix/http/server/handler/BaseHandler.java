@@ -11,20 +11,21 @@ import static io.graphoenix.http.server.utils.ResponseUtil.next;
 
 public abstract class BaseHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(BaseHandler.class);
+  private static final Logger logger = LoggerFactory.getLogger(BaseHandler.class);
 
-    public static final String REQUEST = "request";
-    public static final String RESPONSE = "response";
-    public static final String OPERATION = "operation";
+  public static final String REQUEST = "request";
+  public static final String RESPONSE = "response";
+  public static final String OPERATION = "operation";
 
-    protected Mono<String> errorHandler(Throwable throwable, HttpServerResponse response) {
-        logger.error(throwable.getMessage(), throwable);
-        response.status(HttpErrorStatus.getStatus(throwable.getClass()));
-        return Mono.just(error(throwable));
-    }
+  protected Mono<String> errorHandler(Throwable throwable, HttpServerResponse response) {
+    logger.error(throwable.getMessage(), throwable);
+    response.status(HttpErrorStatus.getStatus(throwable.getClass()));
+    return Mono.just(error(throwable));
+  }
 
-    protected Mono<String> errorSSEHandler(Throwable throwable, HttpServerResponse response, String id) {
-        logger.error(throwable.getMessage(), throwable);
-        return Mono.just(next(throwable, id));
-    }
+  protected Mono<String> errorSSEHandler(
+      Throwable throwable, HttpServerResponse response, String id) {
+    logger.error(throwable.getMessage(), throwable);
+    return Mono.just(next(throwable, id));
+  }
 }

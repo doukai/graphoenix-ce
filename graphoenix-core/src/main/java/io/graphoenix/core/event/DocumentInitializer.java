@@ -14,23 +14,30 @@ import java.io.IOException;
 @ApplicationScoped
 public class DocumentInitializer {
 
-    private static final Logger logger = LoggerFactory.getLogger(DocumentInitializer.class);
+  private static final Logger logger = LoggerFactory.getLogger(DocumentInitializer.class);
 
-    public static final int DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY = 0;
+  public static final int DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY = 0;
 
-    private final DocumentManager documentManager;
+  private final DocumentManager documentManager;
 
-    @Inject
-    public DocumentInitializer(DocumentManager documentManager) {
-        this.documentManager = documentManager;
+  @Inject
+  public DocumentInitializer(DocumentManager documentManager) {
+    this.documentManager = documentManager;
+  }
+
+  public void initializeDocument(
+      @Observes
+          @Initialized(ApplicationScoped.class)
+          @Priority(DocumentInitializer.DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY)
+          Object event) {
+    try {
+      documentManager
+          .getDocument()
+          .addDefinitions(
+              getClass().getClassLoader().getResourceAsStream("META-INF/graphql/main.gql"));
+      logger.info("document initialized success");
+    } catch (IOException e) {
+      logger.error(e.getMessage(), e);
     }
-
-    public void initializeDocument(@Observes @Initialized(ApplicationScoped.class) @Priority(DocumentInitializer.DOCUMENT_INITIALIZED_SCOPE_EVENT_PRIORITY) Object event) {
-        try {
-            documentManager.getDocument().addDefinitions(getClass().getClassLoader().getResourceAsStream("META-INF/graphql/main.gql"));
-            logger.info("document initialized success");
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        }
-    }
+  }
 }

@@ -27,44 +27,47 @@ import static io.graphoenix.spi.constant.Hammurabi.DIRECTIVE_HIDE_NAME;
 @Priority(QueryFetchFieldsMergeHandler.QUERY_FETCH_FIELDS_MERGE_HANDLER_PRIORITY)
 public class QueryFetchFieldsMergeHandler implements OperationBeforeHandler, FetchBeforeHandler {
 
-    public static final int QUERY_FETCH_FIELDS_MERGE_HANDLER_PRIORITY = CONNECTION_SPLITTER_PRIORITY + 100;
+  public static final int QUERY_FETCH_FIELDS_MERGE_HANDLER_PRIORITY =
+      CONNECTION_SPLITTER_PRIORITY + 100;
 
-    private final DocumentManager documentManager;
+  private final DocumentManager documentManager;
 
-    @Inject
-    public QueryFetchFieldsMergeHandler(DocumentManager documentManager) {
-        this.documentManager = documentManager;
+  @Inject
+  public QueryFetchFieldsMergeHandler(DocumentManager documentManager) {
+    this.documentManager = documentManager;
+  }
+
+  @Override
+  public Mono<Operation> handle(Operation operation, Map<String, JsonValue> variables) {
+    ObjectType operationType = documentManager.getOperationTypeOrError(operation);
+    return Mono.just(
+        operation.mergeSelection(
+            operation.getFields().stream()
+                .flatMap(field -> buildFetch(operationType.getFieldOrError(field.getName()), field))
+                .collect(Collectors.toList())));
+  }
+
+  private Stream<Field> buildFetch(FieldDefinition fieldDefinition, Field field) {
+    if (fieldDefinition.isFetchField()) {
+      return Stream.of(
+          field,
+          new Field(fieldDefinition.getFetchFromOrError())
+              .addDirective(new Directive(DIRECTIVE_HIDE_NAME)));
+    } else {
+      Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+      if (fieldTypeDefinition.isObject()) {
+        return Stream.of(
+            field.mergeSelection(
+                Stream.ofNullable(field.getFields())
+                    .flatMap(Collection::stream)
+                    .flatMap(
+                        subField ->
+                            buildFetch(
+                                fieldTypeDefinition.asObject().getFieldOrError(subField.getName()),
+                                subField))
+                    .collect(Collectors.toList())));
+      }
     }
-
-    @Override
-    public Mono<Operation> handle(Operation operation, Map<String, JsonValue> variables) {
-        ObjectType operationType = documentManager.getOperationTypeOrError(operation);
-        return Mono.just(
-                operation
-                        .mergeSelection(
-                                operation.getFields().stream()
-                                        .flatMap(field -> buildFetch(operationType.getFieldOrError(field.getName()), field))
-                                        .collect(Collectors.toList())
-                        )
-        );
-    }
-
-    private Stream<Field> buildFetch(FieldDefinition fieldDefinition, Field field) {
-        if (fieldDefinition.isFetchField()) {
-            return Stream.of(field, new Field(fieldDefinition.getFetchFromOrError()).addDirective(new Directive(DIRECTIVE_HIDE_NAME)));
-        } else {
-            Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-            if (fieldTypeDefinition.isObject()) {
-                return Stream.of(
-                        field.mergeSelection(
-                                Stream.ofNullable(field.getFields())
-                                        .flatMap(Collection::stream)
-                                        .flatMap(subField -> buildFetch(fieldTypeDefinition.asObject().getFieldOrError(subField.getName()), subField))
-                                        .collect(Collectors.toList())
-                        )
-                );
-            }
-        }
-        return Stream.of(field);
-    }
+    return Stream.of(field);
+  }
 }

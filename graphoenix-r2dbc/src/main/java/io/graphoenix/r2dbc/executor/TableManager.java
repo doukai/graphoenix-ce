@@ -19,118 +19,98 @@ import java.util.stream.Stream;
 @ApplicationScoped
 public class TableManager {
 
-    private static final Logger logger = LoggerFactory.getLogger(TableManager.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(TableManager.class.getName());
 
-    private final ConnectionProvider connectionProvider;
+  private final ConnectionProvider connectionProvider;
 
-    @Inject
-    public TableManager(ConnectionProvider connectionProvider) {
-        this.connectionProvider = connectionProvider;
+  @Inject
+  public TableManager(ConnectionProvider connectionProvider) {
+    this.connectionProvider = connectionProvider;
+  }
+
+  public Mono<Void> mergeTable(String sql) {
+    if (sql.isBlank()) {
+      return Mono.empty();
     }
+    return Mono.usingWhen(
+            connectionProvider.get(),
+            connection -> {
+              logger.info("merge table:\r\n{}", sql);
+              return Mono.from(connection.createStatement(sql).execute());
+            },
+            connectionProvider::close)
+        .then();
+  }
 
-    public Mono<Void> mergeTable(String sql) {
-        if (sql.isBlank()) {
-            return Mono.empty();
-        }
-        return Mono
-                .usingWhen(
-                        connectionProvider.get(),
-                        connection -> {
-                            logger.info("merge table:\r\n{}", sql);
-                            return Mono.from(connection.createStatement(sql).execute());
-                        },
-                        connectionProvider::close
-                )
-                .then();
-    }
+  public Mono<Void> mergeTable(Stream<String> sqlStream) {
+    return Flux.usingWhen(
+            connectionProvider.get(),
+            connection -> {
+              Batch batch = connection.createBatch();
+              sqlStream.forEach(
+                  sql -> {
+                    logger.info("merge table:\r\n{}", sql);
+                    batch.add(sql);
+                  });
+              return Flux.from(batch.execute());
+            },
+            connectionProvider::close)
+        .then();
+  }
 
-    public Mono<Void> mergeTable(Stream<String> sqlStream) {
-        return Flux
-                .usingWhen(
-                        connectionProvider.get(),
-                        connection -> {
-                            Batch batch = connection.createBatch();
-                            sqlStream.forEach(sql -> {
-                                        logger.info("merge table:\r\n{}", sql);
-                                        batch.add(sql);
-                                    }
-                            );
-                            return Flux.from(batch.execute());
-                        },
-                        connectionProvider::close
-                )
-                .then();
-    }
+  public Mono<List<Tuple2<String, String>>> selectColumns(String sql) {
+    return Flux.usingWhen(
+            connectionProvider.get(),
+            connection -> {
+              logger.info("execute select:\r\n{}", sql);
+              logger.info("sql parameters:\r\n{}");
+              Statement statement = connection.createStatement(sql);
+              return Flux.from(statement.execute());
+            },
+            connectionProvider::close)
+        .flatMap(
+            result ->
+                Flux.from(
+                    result.map(
+                        (row, rowMetadata) ->
+                            Tuples.of(
+                                Objects.requireNonNull(row.get(0, String.class)),
+                                Objects.requireNonNull(row.get(1, String.class))))))
+        .collectList();
+  }
 
-    public Mono<List<Tuple2<String, String>>> selectColumns(String sql) {
-        return Flux
-                .usingWhen(
-                        connectionProvider.get(),
-                        connection -> {
-                            logger.info("execute select:\r\n{}", sql);
-                            logger.info("sql parameters:\r\n{}");
-                            Statement statement = connection.createStatement(sql);
-                            return Flux.from(statement.execute());
-                        },
-                        connectionProvider::close
-                )
-                .flatMap(result ->
-                        Flux.from(
-                                result.map((row, rowMetadata) ->
-                                        Tuples.of(
-                                                Objects.requireNonNull(row.get(0, String.class)),
-                                                Objects.requireNonNull(row.get(1, String.class))
-                                        )
-                                )
-                        )
-                )
-                .collectList();
-    }
+  public Mono<List<String>> selectTables(String sql) {
+    return Flux.usingWhen(
+            connectionProvider.get(),
+            connection -> {
+              logger.info("execute select:\r\n{}", sql);
+              logger.info("sql parameters:\r\n{}");
+              Statement statement = connection.createStatement(sql);
+              return Flux.from(statement.execute());
+            },
+            connectionProvider::close)
+        .flatMap(result -> Flux.from(result.map((row, rowMetadata) -> row.get(0, String.class))))
+        .collectList();
+  }
 
-    public Mono<List<String>> selectTables(String sql) {
-        return Flux
-                .usingWhen(
-                        connectionProvider.get(),
-                        connection -> {
-                            logger.info("execute select:\r\n{}", sql);
-                            logger.info("sql parameters:\r\n{}");
-                            Statement statement = connection.createStatement(sql);
-                            return Flux.from(statement.execute());
-                        },
-                        connectionProvider::close
-                )
-                .flatMap(result ->
-                        Flux.from(
-                                result.map((row, rowMetadata) ->
-                                        row.get(0, String.class)
-                                )
-                        )
-                )
-                .collectList();
-    }
-
-    public Mono<List<Tuple2<String, String>>> selectIndexes(String sql) {
-        return Flux
-                .usingWhen(
-                        connectionProvider.get(),
-                        connection -> {
-                            logger.info("execute select:\r\n{}", sql);
-                            logger.info("sql parameters:\r\n{}");
-                            Statement statement = connection.createStatement(sql);
-                            return Flux.from(statement.execute());
-                        },
-                        connectionProvider::close
-                )
-                .flatMap(result ->
-                        Flux.from(
-                                result.map((row, rowMetadata) ->
-                                        Tuples.of(
-                                                Objects.requireNonNull(row.get(0, String.class)),
-                                                Objects.requireNonNull(row.get(1, String.class))
-                                        )
-                                )
-                        )
-                )
-                .collectList();
-    }
+  public Mono<List<Tuple2<String, String>>> selectIndexes(String sql) {
+    return Flux.usingWhen(
+            connectionProvider.get(),
+            connection -> {
+              logger.info("execute select:\r\n{}", sql);
+              logger.info("sql parameters:\r\n{}");
+              Statement statement = connection.createStatement(sql);
+              return Flux.from(statement.execute());
+            },
+            connectionProvider::close)
+        .flatMap(
+            result ->
+                Flux.from(
+                    result.map(
+                        (row, rowMetadata) ->
+                            Tuples.of(
+                                Objects.requireNonNull(row.get(0, String.class)),
+                                Objects.requireNonNull(row.get(1, String.class))))))
+        .collectList();
+  }
 }

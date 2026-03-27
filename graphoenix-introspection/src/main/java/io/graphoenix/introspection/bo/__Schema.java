@@ -8,93 +8,99 @@ import java.util.stream.Collectors;
 
 public class __Schema {
 
-    private Set<__Type> types;
+  private Set<__Type> types;
 
-    private __Type queryType;
+  private __Type queryType;
 
-    private __Type mutationType;
+  private __Type mutationType;
 
-    private __Type subscriptionType;
+  private __Type subscriptionType;
 
-    private Set<__Directive> directives;
+  private Set<__Directive> directives;
 
-    private String description;
+  private String description;
 
-    public Set<__Type> getTypes() {
-        return types;
+  public Set<__Type> getTypes() {
+    return types;
+  }
+
+  public void setTypes(Set<__Type> types) {
+    this.types = types;
+  }
+
+  public void addTypes(Set<__Type> types) {
+    if (this.types == null) {
+      this.types = new LinkedHashSet<>();
     }
+    this.types.addAll(types);
+  }
 
-    public void setTypes(Set<__Type> types) {
-        this.types = types;
-    }
+  public __Type getQueryType() {
+    return queryType;
+  }
 
-    public void addTypes(Set<__Type> types) {
-        if (this.types == null) {
-            this.types = new LinkedHashSet<>();
-        }
-        this.types.addAll(types);
-    }
+  public void setQueryType(__Type queryType) {
+    this.queryType = queryType;
+  }
 
-    public __Type getQueryType() {
-        return queryType;
-    }
+  public __Type getMutationType() {
+    return mutationType;
+  }
 
-    public void setQueryType(__Type queryType) {
-        this.queryType = queryType;
-    }
+  public void setMutationType(__Type mutationType) {
+    this.mutationType = mutationType;
+  }
 
-    public __Type getMutationType() {
-        return mutationType;
-    }
+  public __Type getSubscriptionType() {
+    return subscriptionType;
+  }
 
-    public void setMutationType(__Type mutationType) {
-        this.mutationType = mutationType;
-    }
+  public void setSubscriptionType(__Type subscriptionType) {
+    this.subscriptionType = subscriptionType;
+  }
 
-    public __Type getSubscriptionType() {
-        return subscriptionType;
-    }
+  public Set<__Directive> getDirectives() {
+    return directives;
+  }
 
-    public void setSubscriptionType(__Type subscriptionType) {
-        this.subscriptionType = subscriptionType;
-    }
+  public void setDirectives(Set<__Directive> directives) {
+    this.directives = directives;
+  }
 
-    public Set<__Directive> getDirectives() {
-        return directives;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public void setDirectives(Set<__Directive> directives) {
-        this.directives = directives;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public String getDescription() {
-        return description;
+  public Arguments toArguments() {
+    Arguments arguments = new Arguments();
+    if (this.getTypes() != null) {
+      arguments.put(
+          "types",
+          this.getTypes().stream().map(__Type::toObjectValue).collect(Collectors.toList()));
     }
-
-    public void setDescription(String description) {
-        this.description = description;
+    if (this.getQueryType() != null) {
+      arguments.put("queryTypeName", this.getQueryType().getName());
     }
-
-    public Arguments toArguments() {
-        Arguments arguments = new Arguments();
-        if (this.getTypes() != null) {
-            arguments.put("types", this.getTypes().stream().map(__Type::toObjectValue).collect(Collectors.toList()));
-        }
-        if (this.getQueryType() != null) {
-            arguments.put("queryTypeName", this.getQueryType().getName());
-        }
-        if (this.getMutationType() != null) {
-            arguments.put("mutationTypeName", this.getMutationType().getName());
-        }
-        if (this.getSubscriptionType() != null) {
-            arguments.put("subscriptionTypeName", this.getSubscriptionType().getName());
-        }
-        if (this.getDirectives() != null) {
-            arguments.put("directives", this.getDirectives().stream().map(__Directive::toObjectValue).collect(Collectors.toList()));
-        }
-        if (this.getDescription() != null) {
-            arguments.put("description", this.getDescription());
-        }
-        return arguments;
+    if (this.getMutationType() != null) {
+      arguments.put("mutationTypeName", this.getMutationType().getName());
     }
+    if (this.getSubscriptionType() != null) {
+      arguments.put("subscriptionTypeName", this.getSubscriptionType().getName());
+    }
+    if (this.getDirectives() != null) {
+      arguments.put(
+          "directives",
+          this.getDirectives().stream()
+              .map(__Directive::toObjectValue)
+              .collect(Collectors.toList()));
+    }
+    if (this.getDescription() != null) {
+      arguments.put("description", this.getDescription());
+    }
+    return arguments;
+  }
 }

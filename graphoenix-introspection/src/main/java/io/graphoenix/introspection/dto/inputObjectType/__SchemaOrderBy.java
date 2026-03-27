@@ -6,161 +6,109 @@ import jakarta.annotation.Generated;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/**
- * Order Input for __Schema
- */
+/** Order Input for __Schema */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Order Input for __Schema")
 public class __SchemaOrderBy {
-  /**
-   * id
-   */
+  /** id */
   @Description("id")
   private Sort id;
 
-  /**
-   * Is Deprecated
-   */
+  /** Is Deprecated */
   @Description("Is Deprecated")
   private Sort isDeprecated;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   private Sort version;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   private Sort realmId;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   private Sort createUserId;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   private Sort createTime;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   private Sort updateUserId;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   private Sort updateTime;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   private Sort createGroupId;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   private Sort __typename;
 
-  /**
-   * queryType Reference
-   */
+  /** queryType Reference */
   @Description("queryType Reference")
   private Sort queryTypeName;
 
-  /**
-   * mutationType Reference
-   */
+  /** mutationType Reference */
   @Description("mutationType Reference")
   private Sort mutationTypeName;
 
-  /**
-   * subscriptionType Reference
-   */
+  /** subscriptionType Reference */
   @Description("subscriptionType Reference")
   private Sort subscriptionTypeName;
 
-  /**
-   * Count of __Schema
-   */
+  /** Count of __Schema */
   @Description("Count of __Schema")
   private Sort idCount;
 
-  /**
-   * Max of id
-   */
+  /** Max of id */
   @Description("Max of id")
   private Sort idMax;
 
-  /**
-   * Min of id
-   */
+  /** Min of id */
   @Description("Min of id")
   private Sort idMin;
 
-  /**
-   * Count of queryType Reference
-   */
+  /** Count of queryType Reference */
   @Description("Count of queryType Reference")
   private Sort queryTypeNameCount;
 
-  /**
-   * Max of queryType Reference
-   */
+  /** Max of queryType Reference */
   @Description("Max of queryType Reference")
   private Sort queryTypeNameMax;
 
-  /**
-   * Min of queryType Reference
-   */
+  /** Min of queryType Reference */
   @Description("Min of queryType Reference")
   private Sort queryTypeNameMin;
 
-  /**
-   * Count of mutationType Reference
-   */
+  /** Count of mutationType Reference */
   @Description("Count of mutationType Reference")
   private Sort mutationTypeNameCount;
 
-  /**
-   * Max of mutationType Reference
-   */
+  /** Max of mutationType Reference */
   @Description("Max of mutationType Reference")
   private Sort mutationTypeNameMax;
 
-  /**
-   * Min of mutationType Reference
-   */
+  /** Min of mutationType Reference */
   @Description("Min of mutationType Reference")
   private Sort mutationTypeNameMin;
 
-  /**
-   * Count of subscriptionType Reference
-   */
+  /** Count of subscriptionType Reference */
   @Description("Count of subscriptionType Reference")
   private Sort subscriptionTypeNameCount;
 
-  /**
-   * Max of subscriptionType Reference
-   */
+  /** Max of subscriptionType Reference */
   @Description("Max of subscriptionType Reference")
   private Sort subscriptionTypeNameMax;
 
-  /**
-   * Min of subscriptionType Reference
-   */
+  /** Min of subscriptionType Reference */
   @Description("Min of subscriptionType Reference")
   private Sort subscriptionTypeNameMin;
 

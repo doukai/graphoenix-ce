@@ -11,7 +11,7 @@ import org.eclipse.microprofile.graphql.Name;
 
 @CompiledJson
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 public class Invoke {
   @Name("package")
   private String _package;

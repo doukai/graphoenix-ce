@@ -12,133 +12,91 @@ import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/**
- * Mutation Input for __InputValue
- */
+/** Mutation Input for __InputValue */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Mutation Input for __InputValue")
 public class __InputValueInput implements MetaInput, __InputValueInputBase {
-  /**
-   * id
-   */
+  /** id */
   @Description("id")
   private String id;
 
-  /**
-   * name
-   */
+  /** name */
   @Description("name")
   private String name;
 
-  /**
-   * ofType
-   */
+  /** ofType */
   @Description("ofType")
   private __TypeInput ofType;
 
-  /**
-   * fieldId
-   */
+  /** fieldId */
   @Description("fieldId")
   private Integer fieldId;
 
-  /**
-   * directiveName
-   */
+  /** directiveName */
   @Description("directiveName")
   private String directiveName;
 
-  /**
-   * description
-   */
+  /** description */
   @Description("description")
   private String description;
 
-  /**
-   * type
-   */
+  /** type */
   @Description("type")
   private __TypeInput type;
 
-  /**
-   * defaultValue
-   */
+  /** defaultValue */
   @Description("defaultValue")
   private String defaultValue;
 
-  /**
-   * Is Deprecated
-   */
+  /** Is Deprecated */
   @DefaultValue("false")
   @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   private Integer version;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   private Integer realmId;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   private String createUserId;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   private LocalDateTime createTime;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   private String updateUserId;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   private LocalDateTime updateTime;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   private String createGroupId;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @DefaultValue("__InputValue")
   @Description("Type Name")
   private String __typename = "__InputValue";
 
-  /**
-   * ofType Reference
-   */
+  /** ofType Reference */
   @Description("ofType Reference")
   private String ofTypeName;
 
-  /**
-   * type Reference
-   */
+  /** type Reference */
   @Description("type Reference")
   private String typeName;
 
-  /**
-   * Where
-   */
+  /** Where */
   @Description("Where")
   private __InputValueExpression where;
 
@@ -149,7 +107,7 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
 
   @Override
   public void setId(String id) {
-    this.id = (String)id;
+    this.id = (String) id;
   }
 
   @Override
@@ -159,7 +117,7 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
 
   @Override
   public void setName(String name) {
-    this.name = (String)name;
+    this.name = (String) name;
   }
 
   @Override
@@ -169,7 +127,7 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
 
   @Override
   public void setOfType(__TypeInput ofType) {
-    this.ofType = (__TypeInput)ofType;
+    this.ofType = (__TypeInput) ofType;
   }
 
   @Override
@@ -179,7 +137,7 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
 
   @Override
   public void setFieldId(Integer fieldId) {
-    this.fieldId = (Integer)fieldId;
+    this.fieldId = (Integer) fieldId;
   }
 
   @Override
@@ -189,7 +147,7 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
 
   @Override
   public void setDirectiveName(String directiveName) {
-    this.directiveName = (String)directiveName;
+    this.directiveName = (String) directiveName;
   }
 
   @Override
@@ -199,7 +157,7 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
 
   @Override
   public void setDescription(String description) {
-    this.description = (String)description;
+    this.description = (String) description;
   }
 
   @Override
@@ -209,7 +167,7 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
 
   @Override
   public void setType(__TypeInput type) {
-    this.type = (__TypeInput)type;
+    this.type = (__TypeInput) type;
   }
 
   @Override
@@ -219,7 +177,7 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
 
   @Override
   public void setDefaultValue(String defaultValue) {
-    this.defaultValue = (String)defaultValue;
+    this.defaultValue = (String) defaultValue;
   }
 
   @Override
@@ -229,7 +187,7 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
 
   @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean)isDeprecated;
+    this.isDeprecated = (Boolean) isDeprecated;
   }
 
   @Override
@@ -239,7 +197,7 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
 
   @Override
   public void setVersion(Integer version) {
-    this.version = (Integer)version;
+    this.version = (Integer) version;
   }
 
   @Override
@@ -249,7 +207,7 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
 
   @Override
   public void setRealmId(Integer realmId) {
-    this.realmId = (Integer)realmId;
+    this.realmId = (Integer) realmId;
   }
 
   @Override
@@ -259,7 +217,7 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
 
   @Override
   public void setCreateUserId(String createUserId) {
-    this.createUserId = (String)createUserId;
+    this.createUserId = (String) createUserId;
   }
 
   @Override
@@ -269,7 +227,7 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
 
   @Override
   public void setCreateTime(LocalDateTime createTime) {
-    this.createTime = (LocalDateTime)createTime;
+    this.createTime = (LocalDateTime) createTime;
   }
 
   @Override
@@ -279,7 +237,7 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
 
   @Override
   public void setUpdateUserId(String updateUserId) {
-    this.updateUserId = (String)updateUserId;
+    this.updateUserId = (String) updateUserId;
   }
 
   @Override
@@ -289,7 +247,7 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
 
   @Override
   public void setUpdateTime(LocalDateTime updateTime) {
-    this.updateTime = (LocalDateTime)updateTime;
+    this.updateTime = (LocalDateTime) updateTime;
   }
 
   @Override
@@ -299,7 +257,7 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
 
   @Override
   public void setCreateGroupId(String createGroupId) {
-    this.createGroupId = (String)createGroupId;
+    this.createGroupId = (String) createGroupId;
   }
 
   @Override
@@ -309,7 +267,7 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
 
   @Override
   public void set__typename(String __typename) {
-    this.__typename = (String)__typename;
+    this.__typename = (String) __typename;
   }
 
   @Override
@@ -319,7 +277,7 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
 
   @Override
   public void setOfTypeName(String ofTypeName) {
-    this.ofTypeName = (String)ofTypeName;
+    this.ofTypeName = (String) ofTypeName;
   }
 
   @Override
@@ -329,7 +287,7 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
 
   @Override
   public void setTypeName(String typeName) {
-    this.typeName = (String)typeName;
+    this.typeName = (String) typeName;
   }
 
   @Override
@@ -339,6 +297,6 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
 
   @Override
   public void setWhere(__InputValueExpression where) {
-    this.where = (__InputValueExpression)where;
+    this.where = (__InputValueExpression) where;
   }
 }

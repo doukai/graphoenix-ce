@@ -8,9 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/**
- * Subscription
- */
+/** Subscription */
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
@@ -21,71 +19,72 @@ public @interface Subscription {
 
   __SchemaListSubscriptionArguments __schemaList() default @__SchemaListSubscriptionArguments;
 
-  __SchemaConnectionSubscriptionArguments __schemaConnection(
-      ) default @__SchemaConnectionSubscriptionArguments;
+  __SchemaConnectionSubscriptionArguments __schemaConnection() default
+      @__SchemaConnectionSubscriptionArguments;
 
   __TypeSubscriptionArguments __type() default @__TypeSubscriptionArguments;
 
   __TypeListSubscriptionArguments __typeList() default @__TypeListSubscriptionArguments;
 
-  __TypeConnectionSubscriptionArguments __typeConnection(
-      ) default @__TypeConnectionSubscriptionArguments;
+  __TypeConnectionSubscriptionArguments __typeConnection() default
+      @__TypeConnectionSubscriptionArguments;
 
   __FieldSubscriptionArguments __field() default @__FieldSubscriptionArguments;
 
   __FieldListSubscriptionArguments __fieldList() default @__FieldListSubscriptionArguments;
 
-  __FieldConnectionSubscriptionArguments __fieldConnection(
-      ) default @__FieldConnectionSubscriptionArguments;
+  __FieldConnectionSubscriptionArguments __fieldConnection() default
+      @__FieldConnectionSubscriptionArguments;
 
   __InputValueSubscriptionArguments __inputValue() default @__InputValueSubscriptionArguments;
 
-  __InputValueListSubscriptionArguments __inputValueList(
-      ) default @__InputValueListSubscriptionArguments;
+  __InputValueListSubscriptionArguments __inputValueList() default
+      @__InputValueListSubscriptionArguments;
 
-  __InputValueConnectionSubscriptionArguments __inputValueConnection(
-      ) default @__InputValueConnectionSubscriptionArguments;
+  __InputValueConnectionSubscriptionArguments __inputValueConnection() default
+      @__InputValueConnectionSubscriptionArguments;
 
   __EnumValueSubscriptionArguments __enumValue() default @__EnumValueSubscriptionArguments;
 
-  __EnumValueListSubscriptionArguments __enumValueList(
-      ) default @__EnumValueListSubscriptionArguments;
+  __EnumValueListSubscriptionArguments __enumValueList() default
+      @__EnumValueListSubscriptionArguments;
 
-  __EnumValueConnectionSubscriptionArguments __enumValueConnection(
-      ) default @__EnumValueConnectionSubscriptionArguments;
+  __EnumValueConnectionSubscriptionArguments __enumValueConnection() default
+      @__EnumValueConnectionSubscriptionArguments;
 
   __DirectiveSubscriptionArguments __directive() default @__DirectiveSubscriptionArguments;
 
-  __DirectiveListSubscriptionArguments __directiveList(
-      ) default @__DirectiveListSubscriptionArguments;
+  __DirectiveListSubscriptionArguments __directiveList() default
+      @__DirectiveListSubscriptionArguments;
 
-  __DirectiveConnectionSubscriptionArguments __directiveConnection(
-      ) default @__DirectiveConnectionSubscriptionArguments;
+  __DirectiveConnectionSubscriptionArguments __directiveConnection() default
+      @__DirectiveConnectionSubscriptionArguments;
 
-  __TypeInterfacesSubscriptionArguments __typeInterfaces(
-      ) default @__TypeInterfacesSubscriptionArguments;
+  __TypeInterfacesSubscriptionArguments __typeInterfaces() default
+      @__TypeInterfacesSubscriptionArguments;
 
-  __TypeInterfacesListSubscriptionArguments __typeInterfacesList(
-      ) default @__TypeInterfacesListSubscriptionArguments;
+  __TypeInterfacesListSubscriptionArguments __typeInterfacesList() default
+      @__TypeInterfacesListSubscriptionArguments;
 
-  __TypeInterfacesConnectionSubscriptionArguments __typeInterfacesConnection(
-      ) default @__TypeInterfacesConnectionSubscriptionArguments;
+  __TypeInterfacesConnectionSubscriptionArguments __typeInterfacesConnection() default
+      @__TypeInterfacesConnectionSubscriptionArguments;
 
-  __TypePossibleTypesSubscriptionArguments __typePossibleTypes(
-      ) default @__TypePossibleTypesSubscriptionArguments;
+  __TypePossibleTypesSubscriptionArguments __typePossibleTypes() default
+      @__TypePossibleTypesSubscriptionArguments;
 
-  __TypePossibleTypesListSubscriptionArguments __typePossibleTypesList(
-      ) default @__TypePossibleTypesListSubscriptionArguments;
+  __TypePossibleTypesListSubscriptionArguments __typePossibleTypesList() default
+      @__TypePossibleTypesListSubscriptionArguments;
 
-  __TypePossibleTypesConnectionSubscriptionArguments __typePossibleTypesConnection(
-      ) default @__TypePossibleTypesConnectionSubscriptionArguments;
+  __TypePossibleTypesConnectionSubscriptionArguments __typePossibleTypesConnection() default
+      @__TypePossibleTypesConnectionSubscriptionArguments;
 
-  __DirectiveLocationsRelationSubscriptionArguments __directiveLocationsRelation(
-      ) default @__DirectiveLocationsRelationSubscriptionArguments;
+  __DirectiveLocationsRelationSubscriptionArguments __directiveLocationsRelation() default
+      @__DirectiveLocationsRelationSubscriptionArguments;
 
-  __DirectiveLocationsRelationListSubscriptionArguments __directiveLocationsRelationList(
-      ) default @__DirectiveLocationsRelationListSubscriptionArguments;
+  __DirectiveLocationsRelationListSubscriptionArguments __directiveLocationsRelationList() default
+      @__DirectiveLocationsRelationListSubscriptionArguments;
 
-  __DirectiveLocationsRelationConnectionSubscriptionArguments __directiveLocationsRelationConnection(
-      ) default @__DirectiveLocationsRelationConnectionSubscriptionArguments;
+  __DirectiveLocationsRelationConnectionSubscriptionArguments
+      __directiveLocationsRelationConnection() default
+          @__DirectiveLocationsRelationConnectionSubscriptionArguments;
 }

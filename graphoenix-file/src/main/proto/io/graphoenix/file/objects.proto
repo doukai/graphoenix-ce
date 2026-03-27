@@ -13,48 +13,48 @@ import "google/protobuf/timestamp.proto";
 * 文件
 */
 message File {
-    string id = 1; /* ID */
-    string name = 2; /* 文件名 */
-    string content_type = 3; /* 类型 */
-    string content = 4; /* 内容 */
-    string url = 5; /* URL */
-    bool is_deprecated = 6; /* Is Deprecated */
-    int32 version = 7; /* Version */
-    int32 realm_id = 8; /* Realm ID */
-    string create_user_id = 9; /* Create User ID */
-    google.protobuf.Timestamp create_time = 10; /* Create Time */
-    string update_user_id = 11; /* Update User ID */
-    google.protobuf.Timestamp update_time = 12; /* Update Time */
-    string create_group_id = 13; /* Create Group ID */
-    string intro_typename = 14; /* Type Name */
-    int32 id_count = 15; /* Count of 文件 */
-    int32 id_max = 16; /* Max of ID */
-    int32 id_min = 17; /* Min of ID */
-    int32 name_count = 18; /* Count of 文件名 */
-    string name_max = 19; /* Max of 文件名 */
-    string name_min = 20; /* Min of 文件名 */
-    int32 content_type_count = 21; /* Count of 类型 */
-    string content_type_max = 22; /* Max of 类型 */
-    string content_type_min = 23; /* Min of 类型 */
-    int32 content_count = 24; /* Count of 内容 */
-    string content_max = 25; /* Max of 内容 */
-    string content_min = 26; /* Min of 内容 */
-    int32 url_count = 27; /* Count of URL */
-    string url_max = 28; /* Max of URL */
-    string url_min = 29; /* Min of URL */
+  string id = 1; /* ID */
+  string name = 2; /* 文件名 */
+  string content_type = 3; /* 类型 */
+  string content = 4; /* 内容 */
+  string url = 5; /* URL */
+  bool is_deprecated = 6; /* Is Deprecated */
+  int32 version = 7; /* Version */
+  int32 realm_id = 8; /* Realm ID */
+  string create_user_id = 9; /* Create User ID */
+  google.protobuf.Timestamp create_time = 10; /* Create Time */
+  string update_user_id = 11; /* Update User ID */
+  google.protobuf.Timestamp update_time = 12; /* Update Time */
+  string create_group_id = 13; /* Create Group ID */
+  string intro_typename = 14; /* Type Name */
+  int32 id_count = 15; /* Count of 文件 */
+  int32 id_max = 16; /* Max of ID */
+  int32 id_min = 17; /* Min of ID */
+  int32 name_count = 18; /* Count of 文件名 */
+  string name_max = 19; /* Max of 文件名 */
+  string name_min = 20; /* Min of 文件名 */
+  int32 content_type_count = 21; /* Count of 类型 */
+  string content_type_max = 22; /* Max of 类型 */
+  string content_type_min = 23; /* Min of 类型 */
+  int32 content_count = 24; /* Count of 内容 */
+  string content_max = 25; /* Max of 内容 */
+  string content_min = 26; /* Min of 内容 */
+  int32 url_count = 27; /* Count of URL */
+  string url_max = 28; /* Max of URL */
+  string url_min = 29; /* Min of URL */
 }
 /**
 * Connection Object for 文件
 */
 message FileConnection {
-    int32 total_count = 1; /* Total */
-    io.graphoenix.core.PageInfo page_info = 2; /* Page Info */
-    repeated FileEdge edges = 3; /* Edges */
+  int32 total_count = 1; /* Total */
+  io.graphoenix.core.PageInfo page_info = 2; /* Page Info */
+  repeated FileEdge edges = 3; /* Edges */
 }
 /**
 * Edge Object for 文件
 */
 message FileEdge {
-    File node = 1; /* Node */
-    string cursor = 2; /* Cursor */
+  File node = 1; /* Node */
+  string cursor = 2; /* Cursor */
 }

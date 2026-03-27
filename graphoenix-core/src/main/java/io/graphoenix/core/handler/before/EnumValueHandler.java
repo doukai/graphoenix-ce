@@ -25,80 +25,78 @@ import static io.graphoenix.core.handler.before.FragmentHandler.FRAGMENT_HANDLER
 @Priority(EnumValueHandler.ENUM_VALUE_HANDLER_PRIORITY)
 public class EnumValueHandler implements OperationBeforeHandler {
 
-    public static final int ENUM_VALUE_HANDLER_PRIORITY = FRAGMENT_HANDLER_PRIORITY + 200;
+  public static final int ENUM_VALUE_HANDLER_PRIORITY = FRAGMENT_HANDLER_PRIORITY + 200;
 
-    private final DocumentManager documentManager;
+  private final DocumentManager documentManager;
 
-    @Inject
-    public EnumValueHandler(DocumentManager documentManager) {
-        this.documentManager = documentManager;
+  @Inject
+  public EnumValueHandler(DocumentManager documentManager) {
+    this.documentManager = documentManager;
+  }
+
+  @Override
+  public Mono<Operation> handle(Operation operation, Map<String, JsonValue> variables) {
+    return Mono.just(
+        operation.setSelections(
+            replaceEnumValue(
+                    documentManager.getOperationTypeOrError(operation), operation.getFields())
+                .collect(Collectors.toList())));
+  }
+
+  public Stream<Field> replaceEnumValue(ObjectType objectType, Collection<Field> fields) {
+    return Stream.ofNullable(fields)
+        .flatMap(Collection::stream)
+        .flatMap(
+            field ->
+                Stream.of(
+                    field.setArguments(
+                        Stream.ofNullable(field.getArguments())
+                            .map(Arguments::getArguments)
+                            .flatMap(jsonValues -> jsonValues.entrySet().stream())
+                            .peek(
+                                valueWithVariableEntry -> {
+                                  InputValue inputValue =
+                                      objectType
+                                          .getFieldOrError(field.getName())
+                                          .getArgument(valueWithVariableEntry.getKey());
+                                  valueWithVariableEntry.setValue(
+                                      replaceEnumValue(
+                                          inputValue, valueWithVariableEntry.getValue()));
+                                })
+                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)))));
+  }
+
+  public ValueWithVariable replaceEnumValue(
+      InputValue inputValue, ValueWithVariable valueWithVariable) {
+    if (valueWithVariable.isArray()) {
+      return new ArrayValueWithVariable(
+          valueWithVariable.asArray().getValueWithVariables().stream()
+              .map(item -> replaceEnumValue(inputValue, item))
+              .collect(Collectors.toList()));
+    } else if (valueWithVariable.isObject()) {
+      return new ObjectValueWithVariable(
+          valueWithVariable.asObject().getObjectValueWithVariable().entrySet().stream()
+              .peek(
+                  valueWithVariableEntry -> {
+                    InputValue fieldInputValue =
+                        documentManager
+                            .getInputValueTypeDefinition(inputValue)
+                            .asInputObject()
+                            .getInputValue(valueWithVariableEntry.getKey());
+                    valueWithVariableEntry.setValue(
+                        replaceEnumValue(fieldInputValue, valueWithVariableEntry.getValue()));
+                  })
+              .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+    } else {
+      Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
+      if (inputValueTypeDefinition.isEnum()
+          && !valueWithVariable.isEnum()
+          && (valueWithVariable.isString()
+              || valueWithVariable.getValueType().equals(JsonValue.ValueType.STRING))) {
+        return new EnumValue(valueWithVariable.asString().getValue());
+      } else {
+        return valueWithVariable;
+      }
     }
-
-    @Override
-    public Mono<Operation> handle(Operation operation, Map<String, JsonValue> variables) {
-        return Mono.just(
-                operation
-                        .setSelections(
-                                replaceEnumValue(documentManager.getOperationTypeOrError(operation), operation.getFields())
-                                        .collect(Collectors.toList())
-                        )
-        );
-    }
-
-    public Stream<Field> replaceEnumValue(ObjectType objectType, Collection<Field> fields) {
-        return Stream.ofNullable(fields)
-                .flatMap(Collection::stream)
-                .flatMap(field ->
-                        Stream.of(
-                                field.setArguments(
-                                        Stream.ofNullable(field.getArguments())
-                                                .map(Arguments::getArguments)
-                                                .flatMap(jsonValues -> jsonValues.entrySet().stream())
-                                                .peek(valueWithVariableEntry -> {
-                                                            InputValue inputValue = objectType.getFieldOrError(field.getName()).getArgument(valueWithVariableEntry.getKey());
-                                                            valueWithVariableEntry.setValue(replaceEnumValue(inputValue, valueWithVariableEntry.getValue()));
-                                                        }
-                                                )
-                                                .collect(
-                                                        Collectors.toMap(
-                                                                Map.Entry::getKey,
-                                                                Map.Entry::getValue
-                                                        )
-                                                )
-                                )
-                        )
-                );
-    }
-
-    public ValueWithVariable replaceEnumValue(InputValue inputValue, ValueWithVariable valueWithVariable) {
-        if (valueWithVariable.isArray()) {
-            return new ArrayValueWithVariable(
-                    valueWithVariable.asArray().getValueWithVariables().stream()
-                            .map(item -> replaceEnumValue(inputValue, item))
-                            .collect(Collectors.toList())
-            );
-        } else if (valueWithVariable.isObject()) {
-            return new ObjectValueWithVariable(
-                    valueWithVariable.asObject().getObjectValueWithVariable().entrySet().stream()
-                            .peek(valueWithVariableEntry -> {
-                                        InputValue fieldInputValue = documentManager.getInputValueTypeDefinition(inputValue).asInputObject().getInputValue(valueWithVariableEntry.getKey());
-                                        valueWithVariableEntry.setValue(replaceEnumValue(fieldInputValue, valueWithVariableEntry.getValue()));
-                                    }
-                            )
-                            .collect(
-                                    Collectors.toMap(
-                                            Map.Entry::getKey,
-                                            Map.Entry::getValue
-                                    )
-                            )
-            );
-        } else {
-            Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
-            if (inputValueTypeDefinition.isEnum() && !valueWithVariable.isEnum() && (valueWithVariable.isString() || valueWithVariable.getValueType().equals(JsonValue.ValueType.STRING))) {
-                return new EnumValue(valueWithVariable.asString().getValue());
-            } else {
-                return valueWithVariable;
-            }
-        }
-    }
+  }
 }

@@ -6,23 +6,17 @@ import java.util.Collection;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Type;
 
-/**
- * Mutation
- */
+/** Mutation */
 @Type
 @CompiledJson
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Mutation")
 public class Mutation {
-  /**
-   * Mutation Field for 文件
-   */
+  /** Mutation Field for 文件 */
   @Description("Mutation Field for 文件")
   private File file;
 
-  /**
-   * Mutation Field for 文件 List
-   */
+  /** Mutation Field for 文件 List */
   @Description("Mutation Field for 文件 List")
   private Collection<File> fileList;
 

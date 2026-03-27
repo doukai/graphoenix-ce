@@ -7,9 +7,9 @@ import java.io.InputStream;
 
 public interface FileHandler {
 
-    Mono<String> save(byte[] data, FileInfo fileInfo);
+  Mono<String> save(byte[] data, FileInfo fileInfo);
 
-    Mono<FileInfo> getFileInfo(String id);
+  Mono<FileInfo> getFileInfo(String id);
 
-    InputStream get(String id);
+  InputStream get(String id);
 }

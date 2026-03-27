@@ -28,62 +28,70 @@ import java.util.stream.Collectors;
 @Named(Hammurabi.ENUM_PROTOCOL_ENUM_VALUE_HTTP)
 public class GraphQLHttpServer implements Runner {
 
-    private final HttpServerConfig httpServerConfig;
-    private final List<GetHandler> getHandlerList;
-    private final List<PostHandler> postHandlerList;
-    private final RequestBeanScoped requestBeanScoped;
+  private final HttpServerConfig httpServerConfig;
+  private final List<GetHandler> getHandlerList;
+  private final List<PostHandler> postHandlerList;
+  private final RequestBeanScoped requestBeanScoped;
 
-    @Inject
-    public GraphQLHttpServer(
-            HttpServerConfig httpServerConfig,
-            Instance<GetHandler> getHandlerInstance,
-            Instance<PostHandler> postHandlerInstance,
-            RequestBeanScoped requestBeanScoped
-    ) {
-        this.httpServerConfig = httpServerConfig;
-        this.getHandlerList = getHandlerInstance.stream().collect(Collectors.toList());
-        this.postHandlerList = postHandlerInstance.stream().collect(Collectors.toList());
-        this.requestBeanScoped = requestBeanScoped;
-    }
+  @Inject
+  public GraphQLHttpServer(
+      HttpServerConfig httpServerConfig,
+      Instance<GetHandler> getHandlerInstance,
+      Instance<PostHandler> postHandlerInstance,
+      RequestBeanScoped requestBeanScoped) {
+    this.httpServerConfig = httpServerConfig;
+    this.getHandlerList = getHandlerInstance.stream().collect(Collectors.toList());
+    this.postHandlerList = postHandlerInstance.stream().collect(Collectors.toList());
+    this.requestBeanScoped = requestBeanScoped;
+  }
 
-    @Override
-    public String protocol() {
-        return Hammurabi.ENUM_PROTOCOL_ENUM_VALUE_HTTP;
-    }
+  @Override
+  public String protocol() {
+    return Hammurabi.ENUM_PROTOCOL_ENUM_VALUE_HTTP;
+  }
 
-    @Override
-    public int port() {
-        return httpServerConfig.getPort();
-    }
+  @Override
+  public int port() {
+    return httpServerConfig.getPort();
+  }
 
-    @Override
-    public void run() {
-        CorsConfig corsConfig = CorsConfigBuilder.forAnyOrigin()
-                .allowedRequestHeaders(HttpHeaderNames.CONTENT_TYPE)
-                .allowedRequestHeaders(HttpHeaderNames.AUTHORIZATION)
-                .allowedRequestMethods(HttpMethod.GET)
-                .allowedRequestMethods(HttpMethod.POST)
-                .build();
+  @Override
+  public void run() {
+    CorsConfig corsConfig =
+        CorsConfigBuilder.forAnyOrigin()
+            .allowedRequestHeaders(HttpHeaderNames.CONTENT_TYPE)
+            .allowedRequestHeaders(HttpHeaderNames.AUTHORIZATION)
+            .allowedRequestMethods(HttpMethod.GET)
+            .allowedRequestMethods(HttpMethod.POST)
+            .build();
 
-        DisposableServer server = HttpServer.create()
-                .option(ChannelOption.SO_BACKLOG, httpServerConfig.getSoBackLog())
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, httpServerConfig.getConnectTimeOutMillis())
-                .childOption(ChannelOption.TCP_NODELAY, httpServerConfig.getTcpNoDelay())
-                .childOption(ChannelOption.SO_KEEPALIVE, httpServerConfig.getSoKeepAlive())
-                .doOnConnection(connection -> connection.addHandlerLast(new CorsHandler(corsConfig)))
-                .route(httpServerRoutes -> {
-                    getHandlerList.forEach(getHandler -> httpServerRoutes.get(getHandler.path(), getHandler::handle));
-                    postHandlerList.forEach(postHandler -> httpServerRoutes.post(postHandler.path(), postHandler::handle));
+    DisposableServer server =
+        HttpServer.create()
+            .option(ChannelOption.SO_BACKLOG, httpServerConfig.getSoBackLog())
+            .option(
+                ChannelOption.CONNECT_TIMEOUT_MILLIS, httpServerConfig.getConnectTimeOutMillis())
+            .childOption(ChannelOption.TCP_NODELAY, httpServerConfig.getTcpNoDelay())
+            .childOption(ChannelOption.SO_KEEPALIVE, httpServerConfig.getSoKeepAlive())
+            .doOnConnection(connection -> connection.addHandlerLast(new CorsHandler(corsConfig)))
+            .route(
+                httpServerRoutes -> {
+                  getHandlerList.forEach(
+                      getHandler -> httpServerRoutes.get(getHandler.path(), getHandler::handle));
+                  postHandlerList.forEach(
+                      postHandler ->
+                          httpServerRoutes.post(postHandler.path(), postHandler::handle));
                 })
-                .childObserve((connection, newState) -> {
-                    if (connection instanceof HttpOperations<?, ?> && newState.equals(ConnectionObserver.State.DISCONNECTING)) {
-                        String requestId = ((HttpOperations<?, ?>) connection).requestId();
-                        requestBeanScoped.destroy(requestId);
-                    }
+            .childObserve(
+                (connection, newState) -> {
+                  if (connection instanceof HttpOperations<?, ?>
+                      && newState.equals(ConnectionObserver.State.DISCONNECTING)) {
+                    String requestId = ((HttpOperations<?, ?>) connection).requestId();
+                    requestBeanScoped.destroy(requestId);
+                  }
                 })
-                .port(httpServerConfig.getPort())
-                .bindNow();
+            .port(httpServerConfig.getPort())
+            .bindNow();
 
-        server.onDispose().block();
-    }
+    server.onDispose().block();
+  }
 }

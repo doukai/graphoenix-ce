@@ -8,29 +8,21 @@ import java.util.Collection;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Type;
 
-/**
- * Connection Object for 文件
- */
+/** Connection Object for 文件 */
 @Type
 @CompiledJson
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Connection Object for 文件")
 public class FileConnection {
-  /**
-   * Total
-   */
+  /** Total */
   @Description("Total")
   private Integer totalCount;
 
-  /**
-   * Page Info
-   */
+  /** Page Info */
   @Description("Page Info")
   private PageInfo pageInfo;
 
-  /**
-   * Edges
-   */
+  /** Edges */
   @Description("Edges")
   private Collection<FileEdge> edges;
 

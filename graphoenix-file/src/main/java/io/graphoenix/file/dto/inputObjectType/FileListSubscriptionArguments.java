@@ -15,158 +15,108 @@ import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/**
- * Subscription Arguments for 文件 List
- */
+/** Subscription Arguments for 文件 List */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Subscription Arguments for 文件 List")
 public class FileListSubscriptionArguments implements MetaExpression, FileExpressionBase {
-  /**
-   * ID
-   */
+  /** ID */
   @Description("ID")
   private StringExpression id;
 
-  /**
-   * 文件名
-   */
+  /** 文件名 */
   @Description("文件名")
   private StringExpression name;
 
-  /**
-   * 类型
-   */
+  /** 类型 */
   @Description("类型")
   private StringExpression contentType;
 
-  /**
-   * 内容
-   */
+  /** 内容 */
   @Description("内容")
   private StringExpression content;
 
-  /**
-   * URL
-   */
+  /** URL */
   @Description("URL")
   private StringExpression url;
 
-  /**
-   * Include Deprecated
-   */
+  /** Include Deprecated */
   @DefaultValue("false")
   @Description("Include Deprecated")
   private Boolean includeDeprecated = false;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   private IntExpression version;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   private IntExpression realmId;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   private StringExpression createUserId;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   private StringExpression createTime;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   private StringExpression updateUserId;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   private StringExpression updateTime;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   private StringExpression createGroupId;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   private StringExpression __typename;
 
-  /**
-   * Order By
-   */
+  /** Order By */
   @Description("Order By")
   private FileOrderBy orderBy;
 
-  /**
-   * Group By
-   */
+  /** Group By */
   @Description("Group By")
   private Collection<String> groupBy;
 
-  /**
-   * Not
-   */
+  /** Not */
   @DefaultValue("false")
   @Description("Not")
   private Boolean not = false;
 
-  /**
-   * Condition
-   */
+  /** Condition */
   @DefaultValue("AND")
   @Description("Condition")
   private Conditional cond = Conditional.AND;
 
-  /**
-   * Expressions
-   */
+  /** Expressions */
   @Description("Expressions")
   private Collection<FileExpression> exs;
 
-  /**
-   * First
-   */
+  /** First */
   @Description("First")
   private Integer first;
 
-  /**
-   * Input List
-   */
+  /** Input List */
   @Description("Input List")
   private Integer last;
 
-  /**
-   * Offset
-   */
+  /** Offset */
   @Description("Offset")
   private Integer offset;
 
-  /**
-   * After
-   */
+  /** After */
   @Description("After")
   private String after;
 
-  /**
-   * Before
-   */
+  /** Before */
   @Description("Before")
   private String before;
 
@@ -177,7 +127,7 @@ public class FileListSubscriptionArguments implements MetaExpression, FileExpres
 
   @Override
   public void setId(StringExpression id) {
-    this.id = (StringExpression)id;
+    this.id = (StringExpression) id;
   }
 
   @Override
@@ -187,7 +137,7 @@ public class FileListSubscriptionArguments implements MetaExpression, FileExpres
 
   @Override
   public void setName(StringExpression name) {
-    this.name = (StringExpression)name;
+    this.name = (StringExpression) name;
   }
 
   @Override
@@ -197,7 +147,7 @@ public class FileListSubscriptionArguments implements MetaExpression, FileExpres
 
   @Override
   public void setContentType(StringExpression contentType) {
-    this.contentType = (StringExpression)contentType;
+    this.contentType = (StringExpression) contentType;
   }
 
   @Override
@@ -207,7 +157,7 @@ public class FileListSubscriptionArguments implements MetaExpression, FileExpres
 
   @Override
   public void setContent(StringExpression content) {
-    this.content = (StringExpression)content;
+    this.content = (StringExpression) content;
   }
 
   @Override
@@ -217,7 +167,7 @@ public class FileListSubscriptionArguments implements MetaExpression, FileExpres
 
   @Override
   public void setUrl(StringExpression url) {
-    this.url = (StringExpression)url;
+    this.url = (StringExpression) url;
   }
 
   @Override
@@ -227,7 +177,7 @@ public class FileListSubscriptionArguments implements MetaExpression, FileExpres
 
   @Override
   public void setIncludeDeprecated(Boolean includeDeprecated) {
-    this.includeDeprecated = (Boolean)includeDeprecated;
+    this.includeDeprecated = (Boolean) includeDeprecated;
   }
 
   @Override
@@ -237,7 +187,7 @@ public class FileListSubscriptionArguments implements MetaExpression, FileExpres
 
   @Override
   public void setVersion(IntExpression version) {
-    this.version = (IntExpression)version;
+    this.version = (IntExpression) version;
   }
 
   @Override
@@ -247,7 +197,7 @@ public class FileListSubscriptionArguments implements MetaExpression, FileExpres
 
   @Override
   public void setRealmId(IntExpression realmId) {
-    this.realmId = (IntExpression)realmId;
+    this.realmId = (IntExpression) realmId;
   }
 
   @Override
@@ -257,7 +207,7 @@ public class FileListSubscriptionArguments implements MetaExpression, FileExpres
 
   @Override
   public void setCreateUserId(StringExpression createUserId) {
-    this.createUserId = (StringExpression)createUserId;
+    this.createUserId = (StringExpression) createUserId;
   }
 
   @Override
@@ -267,7 +217,7 @@ public class FileListSubscriptionArguments implements MetaExpression, FileExpres
 
   @Override
   public void setCreateTime(StringExpression createTime) {
-    this.createTime = (StringExpression)createTime;
+    this.createTime = (StringExpression) createTime;
   }
 
   @Override
@@ -277,7 +227,7 @@ public class FileListSubscriptionArguments implements MetaExpression, FileExpres
 
   @Override
   public void setUpdateUserId(StringExpression updateUserId) {
-    this.updateUserId = (StringExpression)updateUserId;
+    this.updateUserId = (StringExpression) updateUserId;
   }
 
   @Override
@@ -287,7 +237,7 @@ public class FileListSubscriptionArguments implements MetaExpression, FileExpres
 
   @Override
   public void setUpdateTime(StringExpression updateTime) {
-    this.updateTime = (StringExpression)updateTime;
+    this.updateTime = (StringExpression) updateTime;
   }
 
   @Override
@@ -297,7 +247,7 @@ public class FileListSubscriptionArguments implements MetaExpression, FileExpres
 
   @Override
   public void setCreateGroupId(StringExpression createGroupId) {
-    this.createGroupId = (StringExpression)createGroupId;
+    this.createGroupId = (StringExpression) createGroupId;
   }
 
   @Override
@@ -307,7 +257,7 @@ public class FileListSubscriptionArguments implements MetaExpression, FileExpres
 
   @Override
   public void set__typename(StringExpression __typename) {
-    this.__typename = (StringExpression)__typename;
+    this.__typename = (StringExpression) __typename;
   }
 
   public FileOrderBy getOrderBy() {
@@ -333,7 +283,7 @@ public class FileListSubscriptionArguments implements MetaExpression, FileExpres
 
   @Override
   public void setNot(Boolean not) {
-    this.not = (Boolean)not;
+    this.not = (Boolean) not;
   }
 
   @Override
@@ -343,7 +293,7 @@ public class FileListSubscriptionArguments implements MetaExpression, FileExpres
 
   @Override
   public void setCond(Conditional cond) {
-    this.cond = (Conditional)cond;
+    this.cond = (Conditional) cond;
   }
 
   @Override
@@ -353,7 +303,7 @@ public class FileListSubscriptionArguments implements MetaExpression, FileExpres
 
   @Override
   public void setExs(Collection<FileExpression> exs) {
-    this.exs = (Collection<FileExpression>)exs;
+    this.exs = (Collection<FileExpression>) exs;
   }
 
   public Integer getFirst() {

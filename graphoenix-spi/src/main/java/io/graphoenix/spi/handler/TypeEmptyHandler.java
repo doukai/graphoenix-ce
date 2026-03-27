@@ -6,7 +6,7 @@ import java.util.Collection;
 
 public interface TypeEmptyHandler {
 
-    Mono<Void> empty(String... typeNames);
+  Mono<Void> empty(String... typeNames);
 
-    Mono<Void> empty(Collection<String> typeNames);
+  Mono<Void> empty(Collection<String> typeNames);
 }

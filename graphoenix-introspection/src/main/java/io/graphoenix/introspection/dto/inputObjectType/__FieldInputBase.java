@@ -10,124 +10,84 @@ import java.util.Collection;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/**
- * Mutation Input for __Field
- */
+/** Mutation Input for __Field */
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Mutation Input for __Field")
 public interface __FieldInputBase extends MetaInput {
-  /**
-   * id
-   */
+  /** id */
   @Description("id")
   String id = null;
 
-  /**
-   * name
-   */
+  /** name */
   @Description("name")
   String name = null;
 
-  /**
-   * ofType
-   */
+  /** ofType */
   @Description("ofType")
   __TypeInput ofType = null;
 
-  /**
-   * description
-   */
+  /** description */
   @Description("description")
   String description = null;
 
-  /**
-   * args
-   */
+  /** args */
   @Description("args")
   Collection<__InputValueInput> args = null;
 
-  /**
-   * type
-   */
+  /** type */
   @Description("type")
   __TypeInput type = null;
 
-  /**
-   * deprecationReason
-   */
+  /** deprecationReason */
   @Description("deprecationReason")
   String deprecationReason = null;
 
-  /**
-   * Is Deprecated
-   */
+  /** Is Deprecated */
   @Description("Is Deprecated")
   Boolean isDeprecated = false;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   Integer version = null;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   Integer realmId = null;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   String createUserId = null;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   LocalDateTime createTime = null;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   String updateUserId = null;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   LocalDateTime updateTime = null;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   String createGroupId = null;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   String __typename = "__Field";
 
-  /**
-   * ofType Reference
-   */
+  /** ofType Reference */
   @Description("ofType Reference")
   String ofTypeName = null;
 
-  /**
-   * type Reference
-   */
+  /** type Reference */
   @Description("type Reference")
   String typeName = null;
 
-  /**
-   * Where
-   */
+  /** Where */
   @Description("Where")
   __FieldExpression where = null;
 

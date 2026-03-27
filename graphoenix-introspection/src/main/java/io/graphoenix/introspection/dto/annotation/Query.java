@@ -8,9 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/**
- * Query
- */
+/** Query */
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
@@ -39,46 +37,47 @@ public @interface Query {
 
   __InputValueListQueryArguments __inputValueList() default @__InputValueListQueryArguments;
 
-  __InputValueConnectionQueryArguments __inputValueConnection(
-      ) default @__InputValueConnectionQueryArguments;
+  __InputValueConnectionQueryArguments __inputValueConnection() default
+      @__InputValueConnectionQueryArguments;
 
   __EnumValueQueryArguments __enumValue() default @__EnumValueQueryArguments;
 
   __EnumValueListQueryArguments __enumValueList() default @__EnumValueListQueryArguments;
 
-  __EnumValueConnectionQueryArguments __enumValueConnection(
-      ) default @__EnumValueConnectionQueryArguments;
+  __EnumValueConnectionQueryArguments __enumValueConnection() default
+      @__EnumValueConnectionQueryArguments;
 
   __DirectiveQueryArguments __directive() default @__DirectiveQueryArguments;
 
   __DirectiveListQueryArguments __directiveList() default @__DirectiveListQueryArguments;
 
-  __DirectiveConnectionQueryArguments __directiveConnection(
-      ) default @__DirectiveConnectionQueryArguments;
+  __DirectiveConnectionQueryArguments __directiveConnection() default
+      @__DirectiveConnectionQueryArguments;
 
   __TypeInterfacesQueryArguments __typeInterfaces() default @__TypeInterfacesQueryArguments;
 
-  __TypeInterfacesListQueryArguments __typeInterfacesList(
-      ) default @__TypeInterfacesListQueryArguments;
+  __TypeInterfacesListQueryArguments __typeInterfacesList() default
+      @__TypeInterfacesListQueryArguments;
 
-  __TypeInterfacesConnectionQueryArguments __typeInterfacesConnection(
-      ) default @__TypeInterfacesConnectionQueryArguments;
+  __TypeInterfacesConnectionQueryArguments __typeInterfacesConnection() default
+      @__TypeInterfacesConnectionQueryArguments;
 
-  __TypePossibleTypesQueryArguments __typePossibleTypes(
-      ) default @__TypePossibleTypesQueryArguments;
+  __TypePossibleTypesQueryArguments __typePossibleTypes() default
+      @__TypePossibleTypesQueryArguments;
 
-  __TypePossibleTypesListQueryArguments __typePossibleTypesList(
-      ) default @__TypePossibleTypesListQueryArguments;
+  __TypePossibleTypesListQueryArguments __typePossibleTypesList() default
+      @__TypePossibleTypesListQueryArguments;
 
-  __TypePossibleTypesConnectionQueryArguments __typePossibleTypesConnection(
-      ) default @__TypePossibleTypesConnectionQueryArguments;
+  __TypePossibleTypesConnectionQueryArguments __typePossibleTypesConnection() default
+      @__TypePossibleTypesConnectionQueryArguments;
 
-  __DirectiveLocationsRelationQueryArguments __directiveLocationsRelation(
-      ) default @__DirectiveLocationsRelationQueryArguments;
+  __DirectiveLocationsRelationQueryArguments __directiveLocationsRelation() default
+      @__DirectiveLocationsRelationQueryArguments;
 
-  __DirectiveLocationsRelationListQueryArguments __directiveLocationsRelationList(
-      ) default @__DirectiveLocationsRelationListQueryArguments;
+  __DirectiveLocationsRelationListQueryArguments __directiveLocationsRelationList() default
+      @__DirectiveLocationsRelationListQueryArguments;
 
-  __DirectiveLocationsRelationConnectionQueryArguments __directiveLocationsRelationConnection(
-      ) default @__DirectiveLocationsRelationConnectionQueryArguments;
+  __DirectiveLocationsRelationConnectionQueryArguments
+      __directiveLocationsRelationConnection() default
+          @__DirectiveLocationsRelationConnectionQueryArguments;
 }

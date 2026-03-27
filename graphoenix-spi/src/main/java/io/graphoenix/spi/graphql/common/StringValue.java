@@ -13,70 +13,70 @@ import java.time.LocalTime;
 import static io.graphoenix.spi.utils.DocumentUtil.getStringValue;
 
 public class StringValue implements ValueWithVariable, JsonString {
-    private final STGroupFile stGroupFile = new STGroupFile("stg/common/StringValue.stg");
+  private final STGroupFile stGroupFile = new STGroupFile("stg/common/StringValue.stg");
 
-    private String value;
+  private String value;
 
-    public StringValue(AnnotationValue value) {
-        this.value = (String) value.getValue();
-    }
+  public StringValue(AnnotationValue value) {
+    this.value = (String) value.getValue();
+  }
 
-    public StringValue(Character value) {
-        this.value = value.toString();
-    }
+  public StringValue(Character value) {
+    this.value = value.toString();
+  }
 
-    public StringValue(String value) {
-        this.value = value;
-    }
+  public StringValue(String value) {
+    this.value = value;
+  }
 
-    public StringValue(LocalDate localDate) {
-        this.value = localDate.toString();
-    }
+  public StringValue(LocalDate localDate) {
+    this.value = localDate.toString();
+  }
 
-    public StringValue(LocalTime localTime) {
-        this.value = localTime.toString();
-    }
+  public StringValue(LocalTime localTime) {
+    this.value = localTime.toString();
+  }
 
-    public StringValue(LocalDateTime localDateTime) {
-        this.value = localDateTime.toString();
-    }
+  public StringValue(LocalDateTime localDateTime) {
+    this.value = localDateTime.toString();
+  }
 
-    public StringValue(TerminalNode value) {
-        this.value = getStringValue(value);
-    }
+  public StringValue(TerminalNode value) {
+    this.value = getStringValue(value);
+  }
 
-    public String getValue() {
-        return value;
-    }
+  public String getValue() {
+    return value;
+  }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+  public void setValue(String value) {
+    this.value = value;
+  }
 
-    @Override
-    public String getString() {
-        return value;
-    }
+  @Override
+  public String getString() {
+    return value;
+  }
 
-    @Override
-    public CharSequence getChars() {
-        return value;
-    }
+  @Override
+  public CharSequence getChars() {
+    return value;
+  }
 
-    @Override
-    public ValueType getValueType() {
-        return ValueType.STRING;
-    }
+  @Override
+  public ValueType getValueType() {
+    return ValueType.STRING;
+  }
 
-    @Override
-    public boolean isString() {
-        return true;
-    }
+  @Override
+  public boolean isString() {
+    return true;
+  }
 
-    @Override
-    public String toString() {
-        ST st = stGroupFile.getInstanceOf("stringValueDefinition");
-        st.add("stringValue", this);
-        return st.render();
-    }
+  @Override
+  public String toString() {
+    ST st = stGroupFile.getInstanceOf("stringValueDefinition");
+    st.add("stringValue", this);
+    return st.render();
+  }
 }

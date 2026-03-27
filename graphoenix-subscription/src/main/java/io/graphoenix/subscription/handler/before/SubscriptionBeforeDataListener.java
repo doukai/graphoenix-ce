@@ -17,18 +17,21 @@ import static io.graphoenix.subscription.handler.before.SubscriptionIDFieldsMerg
 @Priority(SubscriptionBeforeDataListener.SUBSCRIPTION_DATA_LISTENER_PRIORITY)
 public class SubscriptionBeforeDataListener implements OperationBeforeHandler {
 
-    public static final int SUBSCRIPTION_DATA_LISTENER_PRIORITY = SUBSCRIPTION_ID_FIELDS_MERGE_HANDLER_PRIORITY + 100;
+  public static final int SUBSCRIPTION_DATA_LISTENER_PRIORITY =
+      SUBSCRIPTION_ID_FIELDS_MERGE_HANDLER_PRIORITY + 100;
 
-    private final Provider<Mono<SubscriptionDataListener>> subscriptionDataListenerProvider;
+  private final Provider<Mono<SubscriptionDataListener>> subscriptionDataListenerProvider;
 
-    public SubscriptionBeforeDataListener(Provider<Mono<SubscriptionDataListener>> subscriptionDataListenerProvider) {
-        this.subscriptionDataListenerProvider = subscriptionDataListenerProvider;
-    }
+  public SubscriptionBeforeDataListener(
+      Provider<Mono<SubscriptionDataListener>> subscriptionDataListenerProvider) {
+    this.subscriptionDataListenerProvider = subscriptionDataListenerProvider;
+  }
 
-    @Override
-    public Mono<Operation> subscription(Operation operation, Map<String, JsonValue> variables) {
-        return subscriptionDataListenerProvider.get()
-                .map(subscriptionDataListener -> subscriptionDataListener.beforeSubscription(operation))
-                .thenReturn(operation);
-    }
+  @Override
+  public Mono<Operation> subscription(Operation operation, Map<String, JsonValue> variables) {
+    return subscriptionDataListenerProvider
+        .get()
+        .map(subscriptionDataListener -> subscriptionDataListener.beforeSubscription(operation))
+        .thenReturn(operation);
+  }
 }

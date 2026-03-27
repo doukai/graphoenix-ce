@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import org.eclipse.microprofile.graphql.Interface;
 
 @Interface
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 public interface Meta {
   String id = null;
 

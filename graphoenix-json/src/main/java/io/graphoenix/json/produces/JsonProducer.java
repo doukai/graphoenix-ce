@@ -9,25 +9,25 @@ import jakarta.json.spi.JsonProvider;
 @ApplicationScoped
 public class JsonProducer {
 
-    private static final JsonProvider jsonProvider = JsonProvider.provider();
+  private static final JsonProvider jsonProvider = JsonProvider.provider();
 
-    private static final JsonbProvider jsonbProvider = JsonbProvider.provider();
+  private static final JsonbProvider jsonbProvider = JsonbProvider.provider();
 
-    @Produces
-    @ApplicationScoped
-    public JsonProvider jsonProvider() {
-        return jsonProvider;
-    }
+  @Produces
+  @ApplicationScoped
+  public JsonProvider jsonProvider() {
+    return jsonProvider;
+  }
 
-    @Produces
-    @ApplicationScoped
-    public JsonbProvider jsonbProvider() {
-        return jsonbProvider;
-    }
+  @Produces
+  @ApplicationScoped
+  public JsonbProvider jsonbProvider() {
+    return jsonbProvider;
+  }
 
-    @Produces
-    @ApplicationScoped
-    public Jsonb jsonb() {
-        return jsonbProvider.create().build();
-    }
+  @Produces
+  @ApplicationScoped
+  public Jsonb jsonb() {
+    return jsonbProvider.create().build();
+  }
 }

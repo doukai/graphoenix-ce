@@ -35,253 +35,274 @@ import static javax.lang.model.type.TypeKind.ARRAY;
 
 public final class ElementUtil {
 
-    public static String getNameFromElement(Element element) {
-        Name nameAnnotation = element.getAnnotation(Name.class);
-        if (nameAnnotation != null) {
-            return nameAnnotation.value();
-        } else if (element.getKind().isClass()) {
-            Type typeAnnotation = element.getAnnotation(Type.class);
-            if (typeAnnotation != null && !typeAnnotation.value().isBlank()) {
-                return typeAnnotation.value();
-            }
-            Input inputAnnotation = element.getAnnotation(Input.class);
-            if (inputAnnotation != null && !inputAnnotation.value().isBlank()) {
-                return inputAnnotation.value();
-            }
-        } else if (element.getKind().isInterface()) {
-            Interface interfaceAnnotation = element.getAnnotation(Interface.class);
-            if (interfaceAnnotation != null && !interfaceAnnotation.value().isBlank()) {
-                return interfaceAnnotation.value();
-            }
-        } else if (element.getKind().equals(ENUM)) {
-            Enum enumAnnotation = element.getAnnotation(Enum.class);
-            if (enumAnnotation != null && !enumAnnotation.value().isBlank()) {
-                return enumAnnotation.value();
-            }
-        } else if (element.getKind().equals(METHOD)) {
-            Query queryAnnotation = element.getAnnotation(Query.class);
-            if (queryAnnotation != null && !queryAnnotation.value().isBlank()) {
-                return queryAnnotation.value();
-            }
-            Mutation mutationAnnotation = element.getAnnotation(Mutation.class);
-            if (mutationAnnotation != null && !mutationAnnotation.value().isBlank()) {
-                return mutationAnnotation.value();
-            }
-            if (element.getSimpleName().toString().startsWith("get")) {
-                return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, element.getSimpleName().toString().replaceFirst("get", ""));
-            } else if (element.getSimpleName().toString().startsWith("set")) {
-                return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, element.getSimpleName().toString().replaceFirst("set", ""));
-            }
-        }
-        return element.getSimpleName().toString();
+  public static String getNameFromElement(Element element) {
+    Name nameAnnotation = element.getAnnotation(Name.class);
+    if (nameAnnotation != null) {
+      return nameAnnotation.value();
+    } else if (element.getKind().isClass()) {
+      Type typeAnnotation = element.getAnnotation(Type.class);
+      if (typeAnnotation != null && !typeAnnotation.value().isBlank()) {
+        return typeAnnotation.value();
+      }
+      Input inputAnnotation = element.getAnnotation(Input.class);
+      if (inputAnnotation != null && !inputAnnotation.value().isBlank()) {
+        return inputAnnotation.value();
+      }
+    } else if (element.getKind().isInterface()) {
+      Interface interfaceAnnotation = element.getAnnotation(Interface.class);
+      if (interfaceAnnotation != null && !interfaceAnnotation.value().isBlank()) {
+        return interfaceAnnotation.value();
+      }
+    } else if (element.getKind().equals(ENUM)) {
+      Enum enumAnnotation = element.getAnnotation(Enum.class);
+      if (enumAnnotation != null && !enumAnnotation.value().isBlank()) {
+        return enumAnnotation.value();
+      }
+    } else if (element.getKind().equals(METHOD)) {
+      Query queryAnnotation = element.getAnnotation(Query.class);
+      if (queryAnnotation != null && !queryAnnotation.value().isBlank()) {
+        return queryAnnotation.value();
+      }
+      Mutation mutationAnnotation = element.getAnnotation(Mutation.class);
+      if (mutationAnnotation != null && !mutationAnnotation.value().isBlank()) {
+        return mutationAnnotation.value();
+      }
+      if (element.getSimpleName().toString().startsWith("get")) {
+        return CaseFormat.UPPER_CAMEL.to(
+            CaseFormat.LOWER_CAMEL, element.getSimpleName().toString().replaceFirst("get", ""));
+      } else if (element.getSimpleName().toString().startsWith("set")) {
+        return CaseFormat.UPPER_CAMEL.to(
+            CaseFormat.LOWER_CAMEL, element.getSimpleName().toString().replaceFirst("set", ""));
+      }
     }
+    return element.getSimpleName().toString();
+  }
 
-    public static String getDescriptionFromElement(Element element) {
-        Description description = element.getAnnotation(Description.class);
-        if (description != null) {
-            return description.value();
+  public static String getDescriptionFromElement(Element element) {
+    Description description = element.getAnnotation(Description.class);
+    if (description != null) {
+      return description.value();
+    } else {
+      return null;
+    }
+  }
+
+  public static ValueWithVariable getDefaultValueFromElement(Element element) {
+    DefaultValue defaultValue = element.getAnnotation(DefaultValue.class);
+    if (defaultValue != null) {
+      return ValueWithVariable.of(
+          JsonProvider.provider().createReader(new StringReader(defaultValue.value())).readValue());
+    } else {
+      return null;
+    }
+  }
+
+  public static List<Directive> getDirectivesFromElement(Element element) {
+    return element.getAnnotationMirrors().stream()
+        .filter(
+            annotationMirror ->
+                annotationMirror
+                        .getAnnotationType()
+                        .asElement()
+                        .getAnnotation(io.graphoenix.spi.annotation.Directive.class)
+                    != null)
+        .map(Directive::new)
+        .collect(Collectors.toList());
+  }
+
+  public static io.graphoenix.spi.graphql.type.Type executableElementToTypeName(
+      ExecutableElement executableElement, Types types) {
+    TypeMirror typeMirror;
+    String typeName = getTypeName(executableElement.getReturnType(), types);
+    if (typeName.equals(Flux.class.getCanonicalName())) {
+      typeMirror = ((DeclaredType) (executableElement).getReturnType()).getTypeArguments().get(0);
+      return new ListType(elementToTypeName(executableElement, typeMirror, types));
+    } else if (typeName.equals(Mono.class.getCanonicalName())) {
+      typeMirror = ((DeclaredType) (executableElement).getReturnType()).getTypeArguments().get(0);
+      return elementToTypeName(executableElement, typeMirror, types);
+    } else {
+      typeMirror = executableElement.getReturnType();
+      return elementToTypeName(executableElement, typeMirror, types);
+    }
+  }
+
+  public static io.graphoenix.spi.graphql.type.Type variableElementToTypeName(
+      VariableElement variableElement, Types types) {
+    TypeMirror typeMirror;
+    String typeName = getTypeName(variableElement.asType(), types);
+    if (typeName.equals(Flux.class.getCanonicalName())) {
+      typeMirror = ((DeclaredType) variableElement.asType()).getTypeArguments().get(0);
+      return new ListType(elementToTypeName(variableElement, typeMirror, types));
+    } else if (typeName.equals(Mono.class.getCanonicalName())) {
+      typeMirror = ((DeclaredType) variableElement.asType()).getTypeArguments().get(0);
+      return elementToTypeName(variableElement, typeMirror, types);
+    } else {
+      typeMirror = variableElement.asType();
+      return elementToTypeName(variableElement, typeMirror, types);
+    }
+  }
+
+  public static io.graphoenix.spi.graphql.type.Type elementToTypeName(
+      Element element, TypeMirror typeMirror, Types types) {
+    io.graphoenix.spi.graphql.type.Type elementType;
+    String typeName = getTypeName(typeMirror, types);
+    if (element.getAnnotation(Id.class) != null) {
+      elementType = new TypeName(SCALA_ID_NAME);
+    } else if (element.getAnnotation(io.graphoenix.spi.annotation.TypeName.class) != null) {
+      elementType =
+          new TypeName(element.getAnnotation(io.graphoenix.spi.annotation.TypeName.class).value());
+    } else if (typeMirror.getKind().equals(ARRAY)) {
+      elementType =
+          new ListType(
+              elementToTypeName(element, ((ArrayType) typeMirror).getComponentType(), types));
+    } else if (typeName.equals(int.class.getCanonicalName())
+        || typeName.equals(long.class.getCanonicalName())
+        || typeName.equals(short.class.getCanonicalName())
+        || typeName.equals(byte.class.getCanonicalName())
+        || typeName.equals(Integer.class.getCanonicalName())
+        || typeName.equals(Long.class.getCanonicalName())
+        || typeName.equals(Short.class.getCanonicalName())
+        || typeName.equals(Byte.class.getCanonicalName())) {
+      elementType = new TypeName(SCALA_INT_NAME);
+    } else if (typeName.equals(float.class.getCanonicalName())
+        || typeName.equals(double.class.getCanonicalName())
+        || typeName.equals(Float.class.getCanonicalName())
+        || typeName.equals(Double.class.getCanonicalName())) {
+      elementType = new TypeName(SCALA_FLOAT_NAME);
+    } else if (typeName.equals(char.class.getCanonicalName())
+        || typeName.equals(String.class.getCanonicalName())
+        || typeName.equals(Character.class.getCanonicalName())) {
+      elementType = new TypeName(SCALA_STRING_NAME);
+    } else if (typeName.equals(boolean.class.getCanonicalName())
+        || typeName.equals(Boolean.class.getCanonicalName())) {
+      elementType = new TypeName(SCALA_BOOLEAN_NAME);
+    } else if (typeName.equals(BigInteger.class.getCanonicalName())) {
+      elementType = new TypeName(SCALA_BIG_INTEGER_NAME);
+    } else if (typeName.equals(BigDecimal.class.getCanonicalName())) {
+      elementType = new TypeName(SCALA_BIG_DECIMAL_NAME);
+    } else if (typeName.equals(LocalDate.class.getCanonicalName())) {
+      elementType = new TypeName(SCALA_DATE_NAME);
+    } else if (typeName.equals(LocalTime.class.getCanonicalName())) {
+      elementType = new TypeName(SCALA_TIME_NAME);
+    } else if (typeName.equals(LocalDateTime.class.getCanonicalName())) {
+      elementType = new TypeName(SCALA_DATE_TIME_NAME);
+    } else if (typeName.equals(Collection.class.getCanonicalName())
+        || typeName.equals(List.class.getCanonicalName())
+        || typeName.equals(Set.class.getCanonicalName())) {
+      TypeMirror typeMirror0 = ((DeclaredType) typeMirror).getTypeArguments().get(0);
+      String annotationTypeName =
+          typeMirror0.getAnnotationMirrors().stream()
+              .filter(
+                  annotationMirror ->
+                      annotationMirror
+                          .getAnnotationType()
+                          .toString()
+                          .equals(io.graphoenix.spi.annotation.TypeName.class.getCanonicalName()))
+              .flatMap(annotationMirror -> annotationMirror.getElementValues().values().stream())
+              .map(annotationValue -> (String) annotationValue.getValue())
+              .findFirst()
+              .orElse(null);
+      if (annotationTypeName != null) {
+        elementType = new ListType(new TypeName(annotationTypeName));
+      } else {
+        elementType = new ListType(elementToTypeName(element, typeMirror0, types));
+      }
+    } else {
+      Element typeElement = types.asElement(typeMirror);
+      String elementName = getNameFromElement(typeElement);
+      if (element.getKind().equals(PARAMETER)
+          && (typeElement.getAnnotation(Type.class) != null
+              || typeElement.getAnnotation(Interface.class) != null)) {
+        elementType = new TypeName(elementName + SUFFIX_INPUT);
+      } else {
+        if (Character.isDigit(elementName.charAt(elementName.length() - 1))) {
+          elementType = new TypeName(elementName.substring(0, elementName.length() - 1));
         } else {
-            return null;
+          elementType = new TypeName(elementName);
         }
+      }
     }
 
-    public static ValueWithVariable getDefaultValueFromElement(Element element) {
-        DefaultValue defaultValue = element.getAnnotation(DefaultValue.class);
-        if (defaultValue != null) {
-            return ValueWithVariable.of(JsonProvider.provider().createReader(new StringReader(defaultValue.value())).readValue());
-        } else {
-            return null;
-        }
+    if (element.getAnnotation(NonNull.class) != null || typeMirror.getKind().isPrimitive()) {
+      return new NonNullType(elementType);
+    } else {
+      return elementType;
     }
+  }
 
-    public static List<Directive> getDirectivesFromElement(Element element) {
-        return element.getAnnotationMirrors().stream()
-                .filter(annotationMirror -> annotationMirror.getAnnotationType().asElement().getAnnotation(io.graphoenix.spi.annotation.Directive.class) != null)
-                .map(Directive::new)
-                .collect(Collectors.toList());
+  public static String getTypeName(TypeMirror typeMirror, Types types) {
+    if (typeMirror.getKind().isPrimitive()) {
+      return typeMirror.getKind().toString().toLowerCase();
+    } else if (typeMirror.getKind().equals(ARRAY)) {
+      return getTypeName(((ArrayType) typeMirror).getComponentType(), types) + "[]";
+    } else if (typeMirror.getKind().equals(TypeKind.DECLARED)) {
+      return ((TypeElement) types.asElement(typeMirror)).getQualifiedName().toString();
     }
+    throw new RuntimeException("illegal typeMirror: " + typeMirror);
+  }
 
-    public static io.graphoenix.spi.graphql.type.Type executableElementToTypeName(ExecutableElement executableElement, Types types) {
-        TypeMirror typeMirror;
-        String typeName = getTypeName(executableElement.getReturnType(), types);
-        if (typeName.equals(Flux.class.getCanonicalName())) {
-            typeMirror = ((DeclaredType) (executableElement).getReturnType()).getTypeArguments().get(0);
-            return new ListType(elementToTypeName(executableElement, typeMirror, types));
-        } else if (typeName.equals(Mono.class.getCanonicalName())) {
-            typeMirror = ((DeclaredType) (executableElement).getReturnType()).getTypeArguments().get(0);
-            return elementToTypeName(executableElement, typeMirror, types);
-        } else {
-            typeMirror = executableElement.getReturnType();
-            return elementToTypeName(executableElement, typeMirror, types);
-        }
+  public static Optional<Directive> getFormatDirective(Element element) {
+    NumberFormat numberFormat = element.getAnnotation(NumberFormat.class);
+    if (numberFormat != null) {
+      return Optional.ofNullable(
+          new Directive(DIRECTIVE_FORMAT_NAME)
+              .addArgument(DIRECTIVE_FORMAT_ARGUMENT_VALUE_NAME, numberFormat.value())
+              .addArgument(DIRECTIVE_FORMAT_ARGUMENT_LOCALE_NAME, numberFormat.locale()));
     }
-
-    public static io.graphoenix.spi.graphql.type.Type variableElementToTypeName(VariableElement variableElement, Types types) {
-        TypeMirror typeMirror;
-        String typeName = getTypeName(variableElement.asType(), types);
-        if (typeName.equals(Flux.class.getCanonicalName())) {
-            typeMirror = ((DeclaredType) variableElement.asType()).getTypeArguments().get(0);
-            return new ListType(elementToTypeName(variableElement, typeMirror, types));
-        } else if (typeName.equals(Mono.class.getCanonicalName())) {
-            typeMirror = ((DeclaredType) variableElement.asType()).getTypeArguments().get(0);
-            return elementToTypeName(variableElement, typeMirror, types);
-        } else {
-            typeMirror = variableElement.asType();
-            return elementToTypeName(variableElement, typeMirror, types);
-        }
+    DateFormat dateFormat = element.getAnnotation(DateFormat.class);
+    if (dateFormat != null) {
+      return Optional.ofNullable(
+          new Directive(DIRECTIVE_FORMAT_NAME)
+              .addArgument(DIRECTIVE_FORMAT_ARGUMENT_VALUE_NAME, dateFormat.value())
+              .addArgument(DIRECTIVE_FORMAT_ARGUMENT_LOCALE_NAME, dateFormat.locale()));
     }
+    return Optional.empty();
+  }
 
-    public static io.graphoenix.spi.graphql.type.Type elementToTypeName(Element element, TypeMirror typeMirror, Types types) {
-        io.graphoenix.spi.graphql.type.Type elementType;
-        String typeName = getTypeName(typeMirror, types);
-        if (element.getAnnotation(Id.class) != null) {
-            elementType = new TypeName(SCALA_ID_NAME);
-        } else if (element.getAnnotation(io.graphoenix.spi.annotation.TypeName.class) != null) {
-            elementType = new TypeName(element.getAnnotation(io.graphoenix.spi.annotation.TypeName.class).value());
-        } else if (typeMirror.getKind().equals(ARRAY)) {
-            elementType = new ListType(elementToTypeName(element, ((ArrayType) typeMirror).getComponentType(), types));
-        } else if (typeName.equals(int.class.getCanonicalName()) ||
-                typeName.equals(long.class.getCanonicalName()) ||
-                typeName.equals(short.class.getCanonicalName()) ||
-                typeName.equals(byte.class.getCanonicalName()) ||
-                typeName.equals(Integer.class.getCanonicalName()) ||
-                typeName.equals(Long.class.getCanonicalName()) ||
-                typeName.equals(Short.class.getCanonicalName()) ||
-                typeName.equals(Byte.class.getCanonicalName())) {
-            elementType = new TypeName(SCALA_INT_NAME);
-        } else if (typeName.equals(float.class.getCanonicalName()) ||
-                typeName.equals(double.class.getCanonicalName()) ||
-                typeName.equals(Float.class.getCanonicalName()) ||
-                typeName.equals(Double.class.getCanonicalName())) {
-            elementType = new TypeName(SCALA_FLOAT_NAME);
-        } else if (typeName.equals(char.class.getCanonicalName()) ||
-                typeName.equals(String.class.getCanonicalName()) ||
-                typeName.equals(Character.class.getCanonicalName())) {
-            elementType = new TypeName(SCALA_STRING_NAME);
-        } else if (typeName.equals(boolean.class.getCanonicalName()) ||
-                typeName.equals(Boolean.class.getCanonicalName())) {
-            elementType = new TypeName(SCALA_BOOLEAN_NAME);
-        } else if (typeName.equals(BigInteger.class.getCanonicalName())) {
-            elementType = new TypeName(SCALA_BIG_INTEGER_NAME);
-        } else if (typeName.equals(BigDecimal.class.getCanonicalName())) {
-            elementType = new TypeName(SCALA_BIG_DECIMAL_NAME);
-        } else if (typeName.equals(LocalDate.class.getCanonicalName())) {
-            elementType = new TypeName(SCALA_DATE_NAME);
-        } else if (typeName.equals(LocalTime.class.getCanonicalName())) {
-            elementType = new TypeName(SCALA_TIME_NAME);
-        } else if (typeName.equals(LocalDateTime.class.getCanonicalName())) {
-            elementType = new TypeName(SCALA_DATE_TIME_NAME);
-        } else if (typeName.equals(Collection.class.getCanonicalName()) ||
-                typeName.equals(List.class.getCanonicalName()) ||
-                typeName.equals(Set.class.getCanonicalName())) {
-            TypeMirror typeMirror0 = ((DeclaredType) typeMirror).getTypeArguments().get(0);
-            String annotationTypeName = typeMirror0.getAnnotationMirrors().stream()
-                    .filter(annotationMirror -> annotationMirror.getAnnotationType().toString().equals(io.graphoenix.spi.annotation.TypeName.class.getCanonicalName()))
-                    .flatMap(annotationMirror -> annotationMirror.getElementValues().values().stream())
-                    .map(annotationValue -> (String) annotationValue.getValue())
-                    .findFirst()
-                    .orElse(null);
-            if (annotationTypeName != null) {
-                elementType = new ListType(new TypeName(annotationTypeName));
-            } else {
-                elementType = new ListType(elementToTypeName(element, typeMirror0, types));
-            }
-        } else {
-            Element typeElement = types.asElement(typeMirror);
-            String elementName = getNameFromElement(typeElement);
-            if (element.getKind().equals(PARAMETER) &&
-                    (typeElement.getAnnotation(Type.class) != null ||
-                            typeElement.getAnnotation(Interface.class) != null)
-            ) {
-                elementType = new TypeName(elementName + SUFFIX_INPUT);
-            } else {
-                if (Character.isDigit(elementName.charAt(elementName.length() - 1))) {
-                    elementType = new TypeName(elementName.substring(0, elementName.length() - 1));
-                } else {
-                    elementType = new TypeName(elementName);
-                }
-            }
-        }
-
-        if (element.getAnnotation(NonNull.class) != null || typeMirror.getKind().isPrimitive()) {
-            return new NonNullType(elementType);
-        } else {
-            return elementType;
-        }
+  public static List<InputValue> executableElementParametersToInputValues(
+      ExecutableElement executableElement, Types types) {
+    if (executableElement.getParameters() != null) {
+      return executableElement.getParameters().stream()
+          .filter(variableElement -> variableElement.getAnnotation(Source.class) == null)
+          .map(variableElement -> new InputValue(variableElement, types))
+          .collect(Collectors.toList());
+    } else {
+      return Collections.emptyList();
     }
+  }
 
-    public static String getTypeName(TypeMirror typeMirror, Types types) {
-        if (typeMirror.getKind().isPrimitive()) {
-            return typeMirror.getKind().toString().toLowerCase();
-        } else if (typeMirror.getKind().equals(ARRAY)) {
-            return getTypeName(((ArrayType) typeMirror).getComponentType(), types) + "[]";
-        } else if (typeMirror.getKind().equals(TypeKind.DECLARED)) {
-            return ((TypeElement) types.asElement(typeMirror)).getQualifiedName().toString();
-        }
-        throw new RuntimeException("illegal typeMirror: " + typeMirror);
+  public static String getTypeWithArgumentsName(TypeMirror typeMirror, Types types) {
+    if (typeMirror.getKind().isPrimitive()) {
+      return typeMirror.getKind().toString().toLowerCase();
+    } else if (typeMirror.getKind().equals(ARRAY)) {
+      return getTypeWithArgumentsName(((ArrayType) typeMirror).getComponentType(), types) + "[]";
+    } else if (typeMirror.getKind().equals(TypeKind.DECLARED)) {
+      DeclaredType declaredType = (DeclaredType) typeMirror;
+      if (declaredType.getTypeArguments() != null && !declaredType.getTypeArguments().isEmpty()) {
+        return ((TypeElement) types.asElement(declaredType)).getQualifiedName()
+            + "<"
+            + declaredType.getTypeArguments().stream()
+                .map(argumentTypeMirror -> getTypeWithArgumentsName(argumentTypeMirror, types))
+                .collect(Collectors.joining(", "))
+            + ">";
+      }
+      return ((TypeElement) types.asElement(declaredType)).getQualifiedName().toString();
     }
+    throw new RuntimeException("illegal typeMirror: " + typeMirror);
+  }
 
-    public static Optional<Directive> getFormatDirective(Element element) {
-        NumberFormat numberFormat = element.getAnnotation(NumberFormat.class);
-        if (numberFormat != null) {
-            return Optional.ofNullable(
-                    new Directive(DIRECTIVE_FORMAT_NAME)
-                            .addArgument(DIRECTIVE_FORMAT_ARGUMENT_VALUE_NAME, numberFormat.value())
-                            .addArgument(DIRECTIVE_FORMAT_ARGUMENT_LOCALE_NAME, numberFormat.locale())
-            );
-        }
-        DateFormat dateFormat = element.getAnnotation(DateFormat.class);
-        if (dateFormat != null) {
-            return Optional.ofNullable(
-                    new Directive(DIRECTIVE_FORMAT_NAME)
-                            .addArgument(DIRECTIVE_FORMAT_ARGUMENT_VALUE_NAME, dateFormat.value())
-                            .addArgument(DIRECTIVE_FORMAT_ARGUMENT_LOCALE_NAME, dateFormat.locale())
-            );
-        }
-        return Optional.empty();
-    }
-
-    public static List<InputValue> executableElementParametersToInputValues(ExecutableElement executableElement, Types types) {
-        if (executableElement.getParameters() != null) {
-            return executableElement.getParameters().stream()
-                    .filter(variableElement -> variableElement.getAnnotation(Source.class) == null)
-                    .map(variableElement -> new InputValue(variableElement, types))
-                    .collect(Collectors.toList());
-        } else {
-            return Collections.emptyList();
-        }
-    }
-
-    public static String getTypeWithArgumentsName(TypeMirror typeMirror, Types types) {
-        if (typeMirror.getKind().isPrimitive()) {
-            return typeMirror.getKind().toString().toLowerCase();
-        } else if (typeMirror.getKind().equals(ARRAY)) {
-            return getTypeWithArgumentsName(((ArrayType) typeMirror).getComponentType(), types) + "[]";
-        } else if (typeMirror.getKind().equals(TypeKind.DECLARED)) {
-            DeclaredType declaredType = (DeclaredType) typeMirror;
-            if (declaredType.getTypeArguments() != null && !declaredType.getTypeArguments().isEmpty()) {
-                return ((TypeElement) types.asElement(declaredType)).getQualifiedName() +
-                        "<" +
-                        declaredType.getTypeArguments().stream().map(argumentTypeMirror -> getTypeWithArgumentsName(argumentTypeMirror, types))
-                                .collect(Collectors.joining(", ")) +
-                        ">";
-            }
-            return ((TypeElement) types.asElement(declaredType)).getQualifiedName().toString();
-        }
-        throw new RuntimeException("illegal typeMirror: " + typeMirror);
-    }
-
-    public static String getAsyncMethodName(ExecutableElement executableElement, Types types) {
-        return Stream
-                .concat(
-                        Stream.of(executableElement.getSimpleName() + "Async"),
-                        executableElement.getParameters().stream()
-                                .map(parameter ->
-                                        parameter.asType().getKind().isPrimitive() ?
-                                                types.boxedClass((PrimitiveType) parameter.asType()).getSimpleName().toString() :
-                                                types.asElement(parameter.asType()).getSimpleName().toString()
-                                )
-                )
-                .collect(Collectors.joining("_"));
-    }
+  public static String getAsyncMethodName(ExecutableElement executableElement, Types types) {
+    return Stream.concat(
+            Stream.of(executableElement.getSimpleName() + "Async"),
+            executableElement.getParameters().stream()
+                .map(
+                    parameter ->
+                        parameter.asType().getKind().isPrimitive()
+                            ? types
+                                .boxedClass((PrimitiveType) parameter.asType())
+                                .getSimpleName()
+                                .toString()
+                            : types.asElement(parameter.asType()).getSimpleName().toString()))
+        .collect(Collectors.joining("_"));
+  }
 }

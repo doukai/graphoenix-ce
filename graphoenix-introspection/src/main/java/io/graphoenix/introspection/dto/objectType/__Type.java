@@ -21,16 +21,13 @@ import org.eclipse.microprofile.graphql.Type;
 @CompiledJson
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 public class __Type implements Meta {
-  @Id
-  private String id;
+  @Id private String id;
 
-  @NonNull
-  private String name;
+  @NonNull private String name;
 
   private __Schema ofSchema;
 
-  @NonNull
-  private __TypeKind kind;
+  @NonNull private __TypeKind kind;
 
   private String description;
 
@@ -46,285 +43,191 @@ public class __Type implements Meta {
 
   private __Type ofType;
 
-  /**
-   * Is Deprecated
-   */
+  /** Is Deprecated */
   @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   private Integer version;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   private Integer realmId;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   private String createUserId;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   private LocalDateTime createTime;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   private String updateUserId;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   private LocalDateTime updateTime;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   private String createGroupId;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   private String __typename = "__Type";
 
-  /**
-   * ofSchema Reference
-   */
+  /** ofSchema Reference */
   @Description("ofSchema Reference")
   private Integer schemaId;
 
-  /**
-   * ofType Reference
-   */
+  /** ofType Reference */
   @Description("ofType Reference")
   private String ofTypeName;
 
-  /**
-   * Relationship Object between __Type and __Type
-   */
+  /** Relationship Object between __Type and __Type */
   @Description("Relationship Object between __Type and __Type")
   private Collection<__TypeInterfaces> __typeInterfaces;
 
-  /**
-   * Relationship Object between __Type and __Type
-   */
+  /** Relationship Object between __Type and __Type */
   @Description("Relationship Object between __Type and __Type")
   private Collection<__TypePossibleTypes> __typePossibleTypes;
 
-  /**
-   * Aggregate Field for fields
-   */
+  /** Aggregate Field for fields */
   @Description("Aggregate Field for fields")
   private __Field fieldsAggregate;
 
-  /**
-   * Connection Field for fields
-   */
+  /** Connection Field for fields */
   @Description("Connection Field for fields")
   private __FieldConnection fieldsConnection;
 
-  /**
-   * Aggregate Field for interfaces
-   */
+  /** Aggregate Field for interfaces */
   @Description("Aggregate Field for interfaces")
   private __Type interfacesAggregate;
 
-  /**
-   * Connection Field for interfaces
-   */
+  /** Connection Field for interfaces */
   @Description("Connection Field for interfaces")
   private __TypeConnection interfacesConnection;
 
-  /**
-   * Aggregate Field for possibleTypes
-   */
+  /** Aggregate Field for possibleTypes */
   @Description("Aggregate Field for possibleTypes")
   private __Type possibleTypesAggregate;
 
-  /**
-   * Connection Field for possibleTypes
-   */
+  /** Connection Field for possibleTypes */
   @Description("Connection Field for possibleTypes")
   private __TypeConnection possibleTypesConnection;
 
-  /**
-   * Aggregate Field for enumValues
-   */
+  /** Aggregate Field for enumValues */
   @Description("Aggregate Field for enumValues")
   private __EnumValue enumValuesAggregate;
 
-  /**
-   * Connection Field for enumValues
-   */
+  /** Connection Field for enumValues */
   @Description("Connection Field for enumValues")
   private __EnumValueConnection enumValuesConnection;
 
-  /**
-   * Aggregate Field for inputFields
-   */
+  /** Aggregate Field for inputFields */
   @Description("Aggregate Field for inputFields")
   private __InputValue inputFieldsAggregate;
 
-  /**
-   * Connection Field for inputFields
-   */
+  /** Connection Field for inputFields */
   @Description("Connection Field for inputFields")
   private __InputValueConnection inputFieldsConnection;
 
-  /**
-   * Aggregate Field for Relationship Object between __Type and __Type
-   */
+  /** Aggregate Field for Relationship Object between __Type and __Type */
   @Description("Aggregate Field for Relationship Object between __Type and __Type")
   private __TypeInterfaces __typeInterfacesAggregate;
 
-  /**
-   * Connection Field for Relationship Object between __Type and __Type
-   */
+  /** Connection Field for Relationship Object between __Type and __Type */
   @Description("Connection Field for Relationship Object between __Type and __Type")
   private __TypeInterfacesConnection __typeInterfacesConnection;
 
-  /**
-   * Aggregate Field for Relationship Object between __Type and __Type
-   */
+  /** Aggregate Field for Relationship Object between __Type and __Type */
   @Description("Aggregate Field for Relationship Object between __Type and __Type")
   private __TypePossibleTypes __typePossibleTypesAggregate;
 
-  /**
-   * Connection Field for Relationship Object between __Type and __Type
-   */
+  /** Connection Field for Relationship Object between __Type and __Type */
   @Description("Connection Field for Relationship Object between __Type and __Type")
   private __TypePossibleTypesConnection __typePossibleTypesConnection;
 
-  /**
-   * Count of __Type
-   */
+  /** Count of __Type */
   @Description("Count of __Type")
   private Integer idCount;
 
-  /**
-   * Max of id
-   */
+  /** Max of id */
   @Description("Max of id")
   private Integer idMax;
 
-  /**
-   * Min of id
-   */
+  /** Min of id */
   @Description("Min of id")
   private Integer idMin;
 
-  /**
-   * Count of name
-   */
+  /** Count of name */
   @Description("Count of name")
   private Integer nameCount;
 
-  /**
-   * Max of name
-   */
+  /** Max of name */
   @Description("Max of name")
   private String nameMax;
 
-  /**
-   * Min of name
-   */
+  /** Min of name */
   @Description("Min of name")
   private String nameMin;
 
-  /**
-   * Count of kind
-   */
+  /** Count of kind */
   @Description("Count of kind")
   private Integer kindCount;
 
-  /**
-   * Max of kind
-   */
+  /** Max of kind */
   @Description("Max of kind")
   private __TypeKind kindMax;
 
-  /**
-   * Min of kind
-   */
+  /** Min of kind */
   @Description("Min of kind")
   private __TypeKind kindMin;
 
-  /**
-   * Count of description
-   */
+  /** Count of description */
   @Description("Count of description")
   private Integer descriptionCount;
 
-  /**
-   * Max of description
-   */
+  /** Max of description */
   @Description("Max of description")
   private String descriptionMax;
 
-  /**
-   * Min of description
-   */
+  /** Min of description */
   @Description("Min of description")
   private String descriptionMin;
 
-  /**
-   * Count of ofType Reference
-   */
+  /** Count of ofType Reference */
   @Description("Count of ofType Reference")
   private Integer ofTypeNameCount;
 
-  /**
-   * Max of ofType Reference
-   */
+  /** Max of ofType Reference */
   @Description("Max of ofType Reference")
   private String ofTypeNameMax;
 
-  /**
-   * Min of ofType Reference
-   */
+  /** Min of ofType Reference */
   @Description("Min of ofType Reference")
   private String ofTypeNameMin;
 
-  /**
-   * Count of ofSchema Reference
-   */
+  /** Count of ofSchema Reference */
   @Description("Count of ofSchema Reference")
   private Integer schemaIdCount;
 
-  /**
-   * Sum of ofSchema Reference
-   */
+  /** Sum of ofSchema Reference */
   @Description("Sum of ofSchema Reference")
   private Integer schemaIdSum;
 
-  /**
-   * Avg of ofSchema Reference
-   */
+  /** Avg of ofSchema Reference */
   @Description("Avg of ofSchema Reference")
   private Integer schemaIdAvg;
 
-  /**
-   * Max of ofSchema Reference
-   */
+  /** Max of ofSchema Reference */
   @Description("Max of ofSchema Reference")
   private Integer schemaIdMax;
 
-  /**
-   * Min of ofSchema Reference
-   */
+  /** Min of ofSchema Reference */
   @Description("Min of ofSchema Reference")
   private Integer schemaIdMin;
 
@@ -335,7 +238,7 @@ public class __Type implements Meta {
 
   @Override
   public void setId(String id) {
-    this.id = (String)id;
+    this.id = (String) id;
   }
 
   public String getName() {
@@ -425,7 +328,7 @@ public class __Type implements Meta {
 
   @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean)isDeprecated;
+    this.isDeprecated = (Boolean) isDeprecated;
   }
 
   @Override
@@ -435,7 +338,7 @@ public class __Type implements Meta {
 
   @Override
   public void setVersion(Integer version) {
-    this.version = (Integer)version;
+    this.version = (Integer) version;
   }
 
   @Override
@@ -445,7 +348,7 @@ public class __Type implements Meta {
 
   @Override
   public void setRealmId(Integer realmId) {
-    this.realmId = (Integer)realmId;
+    this.realmId = (Integer) realmId;
   }
 
   @Override
@@ -455,7 +358,7 @@ public class __Type implements Meta {
 
   @Override
   public void setCreateUserId(String createUserId) {
-    this.createUserId = (String)createUserId;
+    this.createUserId = (String) createUserId;
   }
 
   @Override
@@ -465,7 +368,7 @@ public class __Type implements Meta {
 
   @Override
   public void setCreateTime(LocalDateTime createTime) {
-    this.createTime = (LocalDateTime)createTime;
+    this.createTime = (LocalDateTime) createTime;
   }
 
   @Override
@@ -475,7 +378,7 @@ public class __Type implements Meta {
 
   @Override
   public void setUpdateUserId(String updateUserId) {
-    this.updateUserId = (String)updateUserId;
+    this.updateUserId = (String) updateUserId;
   }
 
   @Override
@@ -485,7 +388,7 @@ public class __Type implements Meta {
 
   @Override
   public void setUpdateTime(LocalDateTime updateTime) {
-    this.updateTime = (LocalDateTime)updateTime;
+    this.updateTime = (LocalDateTime) updateTime;
   }
 
   @Override
@@ -495,7 +398,7 @@ public class __Type implements Meta {
 
   @Override
   public void setCreateGroupId(String createGroupId) {
-    this.createGroupId = (String)createGroupId;
+    this.createGroupId = (String) createGroupId;
   }
 
   public String get__typename() {
@@ -815,27 +718,34 @@ public class __Type implements Meta {
     __TypeInput input = new __TypeInput();
     input.setId(this.getId());
     input.setName(this.getName());
-    if(getOfSchema() != null) {
+    if (getOfSchema() != null) {
       input.setOfSchema(this.getOfSchema().toInput());
     }
     input.setKind(this.getKind());
     input.setDescription(this.getDescription());
-    if(getFields() != null) {
-      input.setFields(this.getFields().stream().map(item -> item.toInput()).collect(Collectors.toList()));
+    if (getFields() != null) {
+      input.setFields(
+          this.getFields().stream().map(item -> item.toInput()).collect(Collectors.toList()));
     }
-    if(getInterfaces() != null) {
-      input.setInterfaces(this.getInterfaces().stream().map(item -> item.toInput()).collect(Collectors.toList()));
+    if (getInterfaces() != null) {
+      input.setInterfaces(
+          this.getInterfaces().stream().map(item -> item.toInput()).collect(Collectors.toList()));
     }
-    if(getPossibleTypes() != null) {
-      input.setPossibleTypes(this.getPossibleTypes().stream().map(item -> item.toInput()).collect(Collectors.toList()));
+    if (getPossibleTypes() != null) {
+      input.setPossibleTypes(
+          this.getPossibleTypes().stream()
+              .map(item -> item.toInput())
+              .collect(Collectors.toList()));
     }
-    if(getEnumValues() != null) {
-      input.setEnumValues(this.getEnumValues().stream().map(item -> item.toInput()).collect(Collectors.toList()));
+    if (getEnumValues() != null) {
+      input.setEnumValues(
+          this.getEnumValues().stream().map(item -> item.toInput()).collect(Collectors.toList()));
     }
-    if(getInputFields() != null) {
-      input.setInputFields(this.getInputFields().stream().map(item -> item.toInput()).collect(Collectors.toList()));
+    if (getInputFields() != null) {
+      input.setInputFields(
+          this.getInputFields().stream().map(item -> item.toInput()).collect(Collectors.toList()));
     }
-    if(getOfType() != null) {
+    if (getOfType() != null) {
       input.setOfType(this.getOfType().toInput());
     }
     input.setIsDeprecated(this.getIsDeprecated());
@@ -849,11 +759,17 @@ public class __Type implements Meta {
     input.set__typename(this.get__typename());
     input.setSchemaId(this.getSchemaId());
     input.setOfTypeName(this.getOfTypeName());
-    if(get__typeInterfaces() != null) {
-      input.set__typeInterfaces(this.get__typeInterfaces().stream().map(item -> item.toInput()).collect(Collectors.toList()));
+    if (get__typeInterfaces() != null) {
+      input.set__typeInterfaces(
+          this.get__typeInterfaces().stream()
+              .map(item -> item.toInput())
+              .collect(Collectors.toList()));
     }
-    if(get__typePossibleTypes() != null) {
-      input.set__typePossibleTypes(this.get__typePossibleTypes().stream().map(item -> item.toInput()).collect(Collectors.toList()));
+    if (get__typePossibleTypes() != null) {
+      input.set__typePossibleTypes(
+          this.get__typePossibleTypes().stream()
+              .map(item -> item.toInput())
+              .collect(Collectors.toList()));
     }
     return input;
   }

@@ -6,185 +6,125 @@ import jakarta.annotation.Generated;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/**
- * Order Input for __Directive
- */
+/** Order Input for __Directive */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Order Input for __Directive")
 public class __DirectiveOrderBy {
-  /**
-   * id
-   */
+  /** id */
   @Description("id")
   private Sort id;
 
-  /**
-   * name
-   */
+  /** name */
   @Description("name")
   private Sort name;
 
-  /**
-   * description
-   */
+  /** description */
   @Description("description")
   private Sort description;
 
-  /**
-   * locations
-   */
+  /** locations */
   @Description("locations")
   private Sort locations;
 
-  /**
-   * isRepeatable
-   */
+  /** isRepeatable */
   @Description("isRepeatable")
   private Sort isRepeatable;
 
-  /**
-   * Is Deprecated
-   */
+  /** Is Deprecated */
   @Description("Is Deprecated")
   private Sort isDeprecated;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   private Sort version;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   private Sort realmId;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   private Sort createUserId;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   private Sort createTime;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   private Sort updateUserId;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   private Sort updateTime;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   private Sort createGroupId;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   private Sort __typename;
 
-  /**
-   * ofSchema Reference
-   */
+  /** ofSchema Reference */
   @Description("ofSchema Reference")
   private Sort schemaId;
 
-  /**
-   * Count of __Directive
-   */
+  /** Count of __Directive */
   @Description("Count of __Directive")
   private Sort idCount;
 
-  /**
-   * Max of id
-   */
+  /** Max of id */
   @Description("Max of id")
   private Sort idMax;
 
-  /**
-   * Min of id
-   */
+  /** Min of id */
   @Description("Min of id")
   private Sort idMin;
 
-  /**
-   * Count of name
-   */
+  /** Count of name */
   @Description("Count of name")
   private Sort nameCount;
 
-  /**
-   * Max of name
-   */
+  /** Max of name */
   @Description("Max of name")
   private Sort nameMax;
 
-  /**
-   * Min of name
-   */
+  /** Min of name */
   @Description("Min of name")
   private Sort nameMin;
 
-  /**
-   * Count of description
-   */
+  /** Count of description */
   @Description("Count of description")
   private Sort descriptionCount;
 
-  /**
-   * Max of description
-   */
+  /** Max of description */
   @Description("Max of description")
   private Sort descriptionMax;
 
-  /**
-   * Min of description
-   */
+  /** Min of description */
   @Description("Min of description")
   private Sort descriptionMin;
 
-  /**
-   * Count of ofSchema Reference
-   */
+  /** Count of ofSchema Reference */
   @Description("Count of ofSchema Reference")
   private Sort schemaIdCount;
 
-  /**
-   * Sum of ofSchema Reference
-   */
+  /** Sum of ofSchema Reference */
   @Description("Sum of ofSchema Reference")
   private Sort schemaIdSum;
 
-  /**
-   * Avg of ofSchema Reference
-   */
+  /** Avg of ofSchema Reference */
   @Description("Avg of ofSchema Reference")
   private Sort schemaIdAvg;
 
-  /**
-   * Max of ofSchema Reference
-   */
+  /** Max of ofSchema Reference */
   @Description("Max of ofSchema Reference")
   private Sort schemaIdMax;
 
-  /**
-   * Min of ofSchema Reference
-   */
+  /** Min of ofSchema Reference */
   @Description("Min of ofSchema Reference")
   private Sort schemaIdMin;
 

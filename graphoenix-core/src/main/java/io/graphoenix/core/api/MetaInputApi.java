@@ -13,28 +13,28 @@ import java.time.LocalDateTime;
 @ApplicationScoped
 public class MetaInputApi {
 
-    private final MutationConfig mutationConfig;
+  private final MutationConfig mutationConfig;
 
-    @Inject
-    public MetaInputApi(MutationConfig mutationConfig) {
-        this.mutationConfig = mutationConfig;
+  @Inject
+  public MetaInputApi(MutationConfig mutationConfig) {
+    this.mutationConfig = mutationConfig;
+  }
+
+  public MetaInput invokeMetaInput(@Source MetaInput metaInput) {
+    LocalDateTime now = LocalDateTime.now();
+    if (metaInput.getCreateTime() == null) {
+      metaInput.setCreateTime(now);
+    } else {
+      metaInput.setUpdateTime(now);
     }
 
-    public MetaInput invokeMetaInput(@Source MetaInput metaInput) {
-        LocalDateTime now = LocalDateTime.now();
-        if (metaInput.getCreateTime() == null) {
-            metaInput.setCreateTime(now);
-        } else {
-            metaInput.setUpdateTime(now);
-        }
-
-        if (mutationConfig.getOcc()) {
-            if (metaInput.getVersion() != null) {
-                metaInput.setVersion(metaInput.getVersion() + 1);
-            } else {
-                metaInput.setVersion(0);
-            }
-        }
-        return metaInput;
+    if (mutationConfig.getOcc()) {
+      if (metaInput.getVersion() != null) {
+        metaInput.setVersion(metaInput.getVersion() + 1);
+      } else {
+        metaInput.setVersion(0);
+      }
     }
+    return metaInput;
+  }
 }

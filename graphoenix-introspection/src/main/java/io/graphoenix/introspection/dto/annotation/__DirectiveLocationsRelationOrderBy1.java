@@ -10,144 +10,98 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/**
- * Order Input for Relationship Object between __Directive and locations
- */
+/** Order Input for Relationship Object between __Directive and locations */
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Order Input for Relationship Object between __Directive and locations")
 public @interface __DirectiveLocationsRelationOrderBy1 {
-  /**
-   * ID
-   */
+  /** ID */
   @Description("ID")
   Sort id() default Sort.ASC;
 
-  /**
-   * __Directive Reference
-   */
+  /** __Directive Reference */
   @Description("__Directive Reference")
   Sort __directiveRef() default Sort.ASC;
 
-  /**
-   * __Directive
-   */
+  /** __Directive */
   @Description("__Directive")
   __DirectiveOrderBy2 __directive() default @__DirectiveOrderBy2;
 
-  /**
-   * locations Reference
-   */
+  /** locations Reference */
   @Description("locations Reference")
   Sort locationsRef() default Sort.ASC;
 
-  /**
-   * Is Deprecated
-   */
+  /** Is Deprecated */
   @Description("Is Deprecated")
   Sort isDeprecated() default Sort.ASC;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   Sort version() default Sort.ASC;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   Sort realmId() default Sort.ASC;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   Sort createUserId() default Sort.ASC;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   Sort createTime() default Sort.ASC;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   Sort updateUserId() default Sort.ASC;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   Sort updateTime() default Sort.ASC;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   Sort createGroupId() default Sort.ASC;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   Sort __typename() default Sort.ASC;
 
-  /**
-   * Count of Relationship Object between __Directive and locations
-   */
+  /** Count of Relationship Object between __Directive and locations */
   @Description("Count of Relationship Object between __Directive and locations")
   Sort idCount() default Sort.ASC;
 
-  /**
-   * Max of ID
-   */
+  /** Max of ID */
   @Description("Max of ID")
   Sort idMax() default Sort.ASC;
 
-  /**
-   * Min of ID
-   */
+  /** Min of ID */
   @Description("Min of ID")
   Sort idMin() default Sort.ASC;
 
-  /**
-   * Count of __Directive Reference
-   */
+  /** Count of __Directive Reference */
   @Description("Count of __Directive Reference")
   Sort __directiveRefCount() default Sort.ASC;
 
-  /**
-   * Max of __Directive Reference
-   */
+  /** Max of __Directive Reference */
   @Description("Max of __Directive Reference")
   Sort __directiveRefMax() default Sort.ASC;
 
-  /**
-   * Min of __Directive Reference
-   */
+  /** Min of __Directive Reference */
   @Description("Min of __Directive Reference")
   Sort __directiveRefMin() default Sort.ASC;
 
-  /**
-   * Count of locations Reference
-   */
+  /** Count of locations Reference */
   @Description("Count of locations Reference")
   Sort locationsRefCount() default Sort.ASC;
 
-  /**
-   * Max of locations Reference
-   */
+  /** Max of locations Reference */
   @Description("Max of locations Reference")
   Sort locationsRefMax() default Sort.ASC;
 
-  /**
-   * Min of locations Reference
-   */
+  /** Min of locations Reference */
   @Description("Min of locations Reference")
   Sort locationsRefMin() default Sort.ASC;
 

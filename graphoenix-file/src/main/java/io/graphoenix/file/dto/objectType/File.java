@@ -13,186 +13,126 @@ import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Id;
 import org.eclipse.microprofile.graphql.Type;
 
-/**
- * 文件
- */
+/** 文件 */
 @Type
 @CompiledJson
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("文件")
 public class File implements Meta {
-  /**
-   * ID
-   */
+  /** ID */
   @Id
   @Description("ID")
   private String id;
 
-  /**
-   * 文件名
-   */
+  /** 文件名 */
   @Description("文件名")
   private String name;
 
-  /**
-   * 类型
-   */
+  /** 类型 */
   @Description("类型")
   private String contentType;
 
-  /**
-   * 内容
-   */
+  /** 内容 */
   @Description("内容")
   private String content;
 
-  /**
-   * URL
-   */
+  /** URL */
   @Description("URL")
   private String url;
 
-  /**
-   * Is Deprecated
-   */
+  /** Is Deprecated */
   @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   private Integer version;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   private Integer realmId;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   private String createUserId;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   private LocalDateTime createTime;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   private String updateUserId;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   private LocalDateTime updateTime;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   private String createGroupId;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   private String __typename = "File";
 
-  /**
-   * Count of 文件
-   */
+  /** Count of 文件 */
   @Description("Count of 文件")
   private Integer idCount;
 
-  /**
-   * Max of ID
-   */
+  /** Max of ID */
   @Description("Max of ID")
   private Integer idMax;
 
-  /**
-   * Min of ID
-   */
+  /** Min of ID */
   @Description("Min of ID")
   private Integer idMin;
 
-  /**
-   * Count of 文件名
-   */
+  /** Count of 文件名 */
   @Description("Count of 文件名")
   private Integer nameCount;
 
-  /**
-   * Max of 文件名
-   */
+  /** Max of 文件名 */
   @Description("Max of 文件名")
   private String nameMax;
 
-  /**
-   * Min of 文件名
-   */
+  /** Min of 文件名 */
   @Description("Min of 文件名")
   private String nameMin;
 
-  /**
-   * Count of 类型
-   */
+  /** Count of 类型 */
   @Description("Count of 类型")
   private Integer contentTypeCount;
 
-  /**
-   * Max of 类型
-   */
+  /** Max of 类型 */
   @Description("Max of 类型")
   private String contentTypeMax;
 
-  /**
-   * Min of 类型
-   */
+  /** Min of 类型 */
   @Description("Min of 类型")
   private String contentTypeMin;
 
-  /**
-   * Count of 内容
-   */
+  /** Count of 内容 */
   @Description("Count of 内容")
   private Integer contentCount;
 
-  /**
-   * Max of 内容
-   */
+  /** Max of 内容 */
   @Description("Max of 内容")
   private String contentMax;
 
-  /**
-   * Min of 内容
-   */
+  /** Min of 内容 */
   @Description("Min of 内容")
   private String contentMin;
 
-  /**
-   * Count of URL
-   */
+  /** Count of URL */
   @Description("Count of URL")
   private Integer urlCount;
 
-  /**
-   * Max of URL
-   */
+  /** Max of URL */
   @Description("Max of URL")
   private String urlMax;
 
-  /**
-   * Min of URL
-   */
+  /** Min of URL */
   @Description("Min of URL")
   private String urlMin;
 
@@ -203,7 +143,7 @@ public class File implements Meta {
 
   @Override
   public void setId(String id) {
-    this.id = (String)id;
+    this.id = (String) id;
   }
 
   public String getName() {
@@ -245,7 +185,7 @@ public class File implements Meta {
 
   @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean)isDeprecated;
+    this.isDeprecated = (Boolean) isDeprecated;
   }
 
   @Override
@@ -255,7 +195,7 @@ public class File implements Meta {
 
   @Override
   public void setVersion(Integer version) {
-    this.version = (Integer)version;
+    this.version = (Integer) version;
   }
 
   @Override
@@ -265,7 +205,7 @@ public class File implements Meta {
 
   @Override
   public void setRealmId(Integer realmId) {
-    this.realmId = (Integer)realmId;
+    this.realmId = (Integer) realmId;
   }
 
   @Override
@@ -275,7 +215,7 @@ public class File implements Meta {
 
   @Override
   public void setCreateUserId(String createUserId) {
-    this.createUserId = (String)createUserId;
+    this.createUserId = (String) createUserId;
   }
 
   @Override
@@ -285,7 +225,7 @@ public class File implements Meta {
 
   @Override
   public void setCreateTime(LocalDateTime createTime) {
-    this.createTime = (LocalDateTime)createTime;
+    this.createTime = (LocalDateTime) createTime;
   }
 
   @Override
@@ -295,7 +235,7 @@ public class File implements Meta {
 
   @Override
   public void setUpdateUserId(String updateUserId) {
-    this.updateUserId = (String)updateUserId;
+    this.updateUserId = (String) updateUserId;
   }
 
   @Override
@@ -305,7 +245,7 @@ public class File implements Meta {
 
   @Override
   public void setUpdateTime(LocalDateTime updateTime) {
-    this.updateTime = (LocalDateTime)updateTime;
+    this.updateTime = (LocalDateTime) updateTime;
   }
 
   @Override
@@ -315,7 +255,7 @@ public class File implements Meta {
 
   @Override
   public void setCreateGroupId(String createGroupId) {
-    this.createGroupId = (String)createGroupId;
+    this.createGroupId = (String) createGroupId;
   }
 
   public String get__typename() {

@@ -16,159 +16,110 @@ import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 import org.eclipse.microprofile.graphql.Name;
 
-/**
- * Subscription Arguments for Relationship Object between __Type and __Type List
- */
+/** Subscription Arguments for Relationship Object between __Type and __Type List */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Subscription Arguments for Relationship Object between __Type and __Type List")
-public class __TypeInterfacesConnectionSubscriptionArguments implements MetaExpression, __TypeInterfacesExpressionBase {
-  /**
-   * ID
-   */
+public class __TypeInterfacesConnectionSubscriptionArguments
+    implements MetaExpression, __TypeInterfacesExpressionBase {
+  /** ID */
   @Description("ID")
   private StringExpression id;
 
-  /**
-   * __Type Reference
-   */
+  /** __Type Reference */
   @Description("__Type Reference")
   private StringExpression typeRef;
 
-  /**
-   * __Type
-   */
+  /** __Type */
   @Description("__Type")
   private __TypeExpression type;
 
-  /**
-   * __Type Reference
-   */
+  /** __Type Reference */
   @Description("__Type Reference")
   private StringExpression interfaceRef;
 
-  /**
-   * __Type
-   */
+  /** __Type */
   @Name("interface")
   @Description("__Type")
   private __TypeExpression _interface;
 
-  /**
-   * Include Deprecated
-   */
+  /** Include Deprecated */
   @DefaultValue("false")
   @Description("Include Deprecated")
   private Boolean includeDeprecated = false;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   private IntExpression version;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   private IntExpression realmId;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   private StringExpression createUserId;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   private StringExpression createTime;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   private StringExpression updateUserId;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   private StringExpression updateTime;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   private StringExpression createGroupId;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   private StringExpression __typename;
 
-  /**
-   * Order By
-   */
+  /** Order By */
   @Description("Order By")
   private __TypeInterfacesOrderBy orderBy;
 
-  /**
-   * Order By
-   */
+  /** Order By */
   @Description("Order By")
   private Collection<String> groupBy;
 
-  /**
-   * Not
-   */
+  /** Not */
   @DefaultValue("false")
   @Description("Not")
   private Boolean not = false;
 
-  /**
-   * Condition
-   */
+  /** Condition */
   @DefaultValue("AND")
   @Description("Condition")
   private Conditional cond = Conditional.AND;
 
-  /**
-   * Expressions
-   */
+  /** Expressions */
   @Description("Expressions")
   private Collection<__TypeInterfacesExpression> exs;
 
-  /**
-   * First
-   */
+  /** First */
   @Description("First")
   private Integer first;
 
-  /**
-   * Last
-   */
+  /** Last */
   @Description("Last")
   private Integer last;
 
-  /**
-   * Offset
-   */
+  /** Offset */
   @Description("Offset")
   private Integer offset;
 
-  /**
-   * After
-   */
+  /** After */
   @Description("After")
   private String after;
 
-  /**
-   * Before
-   */
+  /** Before */
   @Description("Before")
   private String before;
 
@@ -179,7 +130,7 @@ public class __TypeInterfacesConnectionSubscriptionArguments implements MetaExpr
 
   @Override
   public void setId(StringExpression id) {
-    this.id = (StringExpression)id;
+    this.id = (StringExpression) id;
   }
 
   @Override
@@ -189,7 +140,7 @@ public class __TypeInterfacesConnectionSubscriptionArguments implements MetaExpr
 
   @Override
   public void setTypeRef(StringExpression typeRef) {
-    this.typeRef = (StringExpression)typeRef;
+    this.typeRef = (StringExpression) typeRef;
   }
 
   @Override
@@ -199,7 +150,7 @@ public class __TypeInterfacesConnectionSubscriptionArguments implements MetaExpr
 
   @Override
   public void setType(__TypeExpression type) {
-    this.type = (__TypeExpression)type;
+    this.type = (__TypeExpression) type;
   }
 
   @Override
@@ -209,7 +160,7 @@ public class __TypeInterfacesConnectionSubscriptionArguments implements MetaExpr
 
   @Override
   public void setInterfaceRef(StringExpression interfaceRef) {
-    this.interfaceRef = (StringExpression)interfaceRef;
+    this.interfaceRef = (StringExpression) interfaceRef;
   }
 
   public __TypeExpression get_interface() {
@@ -227,7 +178,7 @@ public class __TypeInterfacesConnectionSubscriptionArguments implements MetaExpr
 
   @Override
   public void setIncludeDeprecated(Boolean includeDeprecated) {
-    this.includeDeprecated = (Boolean)includeDeprecated;
+    this.includeDeprecated = (Boolean) includeDeprecated;
   }
 
   @Override
@@ -237,7 +188,7 @@ public class __TypeInterfacesConnectionSubscriptionArguments implements MetaExpr
 
   @Override
   public void setVersion(IntExpression version) {
-    this.version = (IntExpression)version;
+    this.version = (IntExpression) version;
   }
 
   @Override
@@ -247,7 +198,7 @@ public class __TypeInterfacesConnectionSubscriptionArguments implements MetaExpr
 
   @Override
   public void setRealmId(IntExpression realmId) {
-    this.realmId = (IntExpression)realmId;
+    this.realmId = (IntExpression) realmId;
   }
 
   @Override
@@ -257,7 +208,7 @@ public class __TypeInterfacesConnectionSubscriptionArguments implements MetaExpr
 
   @Override
   public void setCreateUserId(StringExpression createUserId) {
-    this.createUserId = (StringExpression)createUserId;
+    this.createUserId = (StringExpression) createUserId;
   }
 
   @Override
@@ -267,7 +218,7 @@ public class __TypeInterfacesConnectionSubscriptionArguments implements MetaExpr
 
   @Override
   public void setCreateTime(StringExpression createTime) {
-    this.createTime = (StringExpression)createTime;
+    this.createTime = (StringExpression) createTime;
   }
 
   @Override
@@ -277,7 +228,7 @@ public class __TypeInterfacesConnectionSubscriptionArguments implements MetaExpr
 
   @Override
   public void setUpdateUserId(StringExpression updateUserId) {
-    this.updateUserId = (StringExpression)updateUserId;
+    this.updateUserId = (StringExpression) updateUserId;
   }
 
   @Override
@@ -287,7 +238,7 @@ public class __TypeInterfacesConnectionSubscriptionArguments implements MetaExpr
 
   @Override
   public void setUpdateTime(StringExpression updateTime) {
-    this.updateTime = (StringExpression)updateTime;
+    this.updateTime = (StringExpression) updateTime;
   }
 
   @Override
@@ -297,7 +248,7 @@ public class __TypeInterfacesConnectionSubscriptionArguments implements MetaExpr
 
   @Override
   public void setCreateGroupId(StringExpression createGroupId) {
-    this.createGroupId = (StringExpression)createGroupId;
+    this.createGroupId = (StringExpression) createGroupId;
   }
 
   @Override
@@ -307,7 +258,7 @@ public class __TypeInterfacesConnectionSubscriptionArguments implements MetaExpr
 
   @Override
   public void set__typename(StringExpression __typename) {
-    this.__typename = (StringExpression)__typename;
+    this.__typename = (StringExpression) __typename;
   }
 
   public __TypeInterfacesOrderBy getOrderBy() {
@@ -333,7 +284,7 @@ public class __TypeInterfacesConnectionSubscriptionArguments implements MetaExpr
 
   @Override
   public void setNot(Boolean not) {
-    this.not = (Boolean)not;
+    this.not = (Boolean) not;
   }
 
   @Override
@@ -343,7 +294,7 @@ public class __TypeInterfacesConnectionSubscriptionArguments implements MetaExpr
 
   @Override
   public void setCond(Conditional cond) {
-    this.cond = (Conditional)cond;
+    this.cond = (Conditional) cond;
   }
 
   @Override
@@ -353,7 +304,7 @@ public class __TypeInterfacesConnectionSubscriptionArguments implements MetaExpr
 
   @Override
   public void setExs(Collection<__TypeInterfacesExpression> exs) {
-    this.exs = (Collection<__TypeInterfacesExpression>)exs;
+    this.exs = (Collection<__TypeInterfacesExpression>) exs;
   }
 
   public Integer getFirst() {

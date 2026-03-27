@@ -11,30 +11,22 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/**
- * Query Expression Input for Conditional
- */
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+/** Query Expression Input for Conditional */
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Query Expression Input for Conditional")
 public @interface ConditionalExpression {
-  /**
-   * Operators
-   */
+  /** Operators */
   @Description("Operators")
   Operator opr() default Operator.EQ;
 
-  /**
-   * Value
-   */
+  /** Value */
   @Description("Value")
   Conditional val() default Conditional.AND;
 
-  /**
-   * Array
-   */
+  /** Array */
   @Description("Array")
   Conditional[] arr() default {};
 

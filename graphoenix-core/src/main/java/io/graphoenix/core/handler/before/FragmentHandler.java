@@ -27,52 +27,57 @@ import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_SELECTION;
 @Priority(FragmentHandler.FRAGMENT_HANDLER_PRIORITY)
 public class FragmentHandler implements OperationBeforeHandler {
 
-    public static final int FRAGMENT_HANDLER_PRIORITY = VARIABLE_HANDLER_PRIORITY + 100;
+  public static final int FRAGMENT_HANDLER_PRIORITY = VARIABLE_HANDLER_PRIORITY + 100;
 
-    private final DocumentManager documentManager;
+  private final DocumentManager documentManager;
 
-    private final ReactorBeanScoped reactorBeanScoped;
+  private final ReactorBeanScoped reactorBeanScoped;
 
-    @Inject
-    public FragmentHandler(DocumentManager documentManager,
-                           @Named("jakarta.enterprise.context.RequestScoped") ReactorBeanScoped reactorBeanScoped) {
-        this.documentManager = documentManager;
-        this.reactorBeanScoped = reactorBeanScoped;
-    }
+  @Inject
+  public FragmentHandler(
+      DocumentManager documentManager,
+      @Named("jakarta.enterprise.context.RequestScoped") ReactorBeanScoped reactorBeanScoped) {
+    this.documentManager = documentManager;
+    this.reactorBeanScoped = reactorBeanScoped;
+  }
 
-    @Override
-    public Mono<Operation> handle(Operation operation, Map<String, JsonValue> variables) {
-        return handle(operation.getSelections())
-                .collectList()
-                .map(operation::setSelections);
-    }
+  @Override
+  public Mono<Operation> handle(Operation operation, Map<String, JsonValue> variables) {
+    return handle(operation.getSelections()).collectList().map(operation::setSelections);
+  }
 
-    public Flux<Field> handle(Collection<Selection> selections) {
-        return Mono.justOrEmpty(selections)
-                .flatMapMany(Flux::fromIterable)
-                .flatMap(selection -> {
-                            if (selection.isField()) {
-                                return handle(selection.asField().getSelections())
-                                        .collectList()
-                                        .map(selection.asField()::setSelections);
-                            } else if (selection.isFragment()) {
-                                return fragmentToFields(selection.asFragment())
-                                        .collectList()
-                                        .flatMapMany(this::handle);
-                            } else {
-                                return Flux.error(new GraphQLErrors(UNSUPPORTED_SELECTION.bind(selection.toString())));
-                            }
-                        }
-                );
-    }
+  public Flux<Field> handle(Collection<Selection> selections) {
+    return Mono.justOrEmpty(selections)
+        .flatMapMany(Flux::fromIterable)
+        .flatMap(
+            selection -> {
+              if (selection.isField()) {
+                return handle(selection.asField().getSelections())
+                    .collectList()
+                    .map(selection.asField()::setSelections);
+              } else if (selection.isFragment()) {
+                return fragmentToFields(selection.asFragment())
+                    .collectList()
+                    .flatMapMany(this::handle);
+              } else {
+                return Flux.error(
+                    new GraphQLErrors(UNSUPPORTED_SELECTION.bind(selection.toString())));
+              }
+            });
+  }
 
-    public Flux<Selection> fragmentToFields(Fragment fragment) {
-        return reactorBeanScoped.get(Document.class)
-                .map(document ->
-                        document.getFragmentDefinition(fragment.getFragmentName())
-                                .orElseGet(() -> documentManager.getDocument().getFragmentDefinitionOrError(fragment.getFragmentName()))
-                )
-                .flatMapMany(fragmentDefinition -> Flux.fromIterable(fragmentDefinition.getSelections()));
-
-    }
+  public Flux<Selection> fragmentToFields(Fragment fragment) {
+    return reactorBeanScoped
+        .get(Document.class)
+        .map(
+            document ->
+                document
+                    .getFragmentDefinition(fragment.getFragmentName())
+                    .orElseGet(
+                        () ->
+                            documentManager
+                                .getDocument()
+                                .getFragmentDefinitionOrError(fragment.getFragmentName())))
+        .flatMapMany(fragmentDefinition -> Flux.fromIterable(fragmentDefinition.getSelections()));
+  }
 }

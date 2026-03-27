@@ -9,30 +9,22 @@ import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/**
- * Query Expression Input for Conditional
- */
+/** Query Expression Input for Conditional */
 @CompiledJson
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Query Expression Input for Conditional")
 public class ConditionalExpression {
-  /**
-   * Operators
-   */
+  /** Operators */
   @DefaultValue("EQ")
   @Description("Operators")
   private Operator opr = Operator.EQ;
 
-  /**
-   * Value
-   */
+  /** Value */
   @Description("Value")
   private Conditional val;
 
-  /**
-   * Array
-   */
+  /** Array */
   @Description("Array")
   private Collection<Conditional> arr;
 

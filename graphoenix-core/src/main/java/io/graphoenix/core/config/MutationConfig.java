@@ -6,25 +6,23 @@ import org.eclipse.microprofile.config.inject.ConfigProperties;
 @ConfigProperties(prefix = "mutation")
 public class MutationConfig {
 
-    @Optional
-    private Boolean occ = false;
+  @Optional private Boolean occ = false;
 
-    @Optional
-    private Boolean compensatingTransaction = false;
+  @Optional private Boolean compensatingTransaction = false;
 
-    public Boolean getOcc() {
-        return occ;
-    }
+  public Boolean getOcc() {
+    return occ;
+  }
 
-    public void setOcc(Boolean occ) {
-        this.occ = occ;
-    }
+  public void setOcc(Boolean occ) {
+    this.occ = occ;
+  }
 
-    public Boolean getCompensatingTransaction() {
-        return compensatingTransaction;
-    }
+  public Boolean getCompensatingTransaction() {
+    return compensatingTransaction;
+  }
 
-    public void setCompensatingTransaction(Boolean compensatingTransaction) {
-        this.compensatingTransaction = compensatingTransaction;
-    }
+  public void setCompensatingTransaction(Boolean compensatingTransaction) {
+    this.compensatingTransaction = compensatingTransaction;
+  }
 }

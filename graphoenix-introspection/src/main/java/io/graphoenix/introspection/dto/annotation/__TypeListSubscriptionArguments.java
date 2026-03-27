@@ -12,216 +12,146 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/**
- * Subscription Arguments for __Type List
- */
+/** Subscription Arguments for __Type List */
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Subscription Arguments for __Type List")
 public @interface __TypeListSubscriptionArguments {
-  /**
-   * id
-   */
+  /** id */
   @Description("id")
   StringExpression id() default @StringExpression;
 
-  /**
-   * name
-   */
+  /** name */
   @Description("name")
   StringExpression name() default @StringExpression;
 
-  /**
-   * ofSchema
-   */
+  /** ofSchema */
   @Description("ofSchema")
   __SchemaExpression ofSchema() default @__SchemaExpression;
 
-  /**
-   * kind
-   */
+  /** kind */
   @Description("kind")
   __TypeKindExpression kind() default @__TypeKindExpression;
 
-  /**
-   * description
-   */
+  /** description */
   @Description("description")
   StringExpression description() default @StringExpression;
 
-  /**
-   * fields
-   */
+  /** fields */
   @Description("fields")
   __FieldExpression fields() default @__FieldExpression;
 
-  /**
-   * interfaces
-   */
+  /** interfaces */
   @Description("interfaces")
   __TypeExpression interfaces() default @__TypeExpression;
 
-  /**
-   * possibleTypes
-   */
+  /** possibleTypes */
   @Description("possibleTypes")
   __TypeExpression possibleTypes() default @__TypeExpression;
 
-  /**
-   * enumValues
-   */
+  /** enumValues */
   @Description("enumValues")
   __EnumValueExpression enumValues() default @__EnumValueExpression;
 
-  /**
-   * inputFields
-   */
+  /** inputFields */
   @Description("inputFields")
   __InputValueExpression inputFields() default @__InputValueExpression;
 
-  /**
-   * ofType
-   */
+  /** ofType */
   @Description("ofType")
   __TypeExpression ofType() default @__TypeExpression;
 
-  /**
-   * Include Deprecated
-   */
+  /** Include Deprecated */
   @Description("Include Deprecated")
   boolean includeDeprecated() default false;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   IntExpression version() default @IntExpression;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   IntExpression realmId() default @IntExpression;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   StringExpression createUserId() default @StringExpression;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   StringExpression createTime() default @StringExpression;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   StringExpression updateUserId() default @StringExpression;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   StringExpression updateTime() default @StringExpression;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   StringExpression createGroupId() default @StringExpression;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   StringExpression __typename() default @StringExpression;
 
-  /**
-   * ofSchema Reference
-   */
+  /** ofSchema Reference */
   @Description("ofSchema Reference")
   IntExpression schemaId() default @IntExpression;
 
-  /**
-   * ofType Reference
-   */
+  /** ofType Reference */
   @Description("ofType Reference")
   StringExpression ofTypeName() default @StringExpression;
 
-  /**
-   * Relationship Object between __Type and __Type
-   */
+  /** Relationship Object between __Type and __Type */
   @Description("Relationship Object between __Type and __Type")
   __TypeInterfacesExpression __typeInterfaces() default @__TypeInterfacesExpression;
 
-  /**
-   * Relationship Object between __Type and __Type
-   */
+  /** Relationship Object between __Type and __Type */
   @Description("Relationship Object between __Type and __Type")
   __TypePossibleTypesExpression __typePossibleTypes() default @__TypePossibleTypesExpression;
 
-  /**
-   * Order By
-   */
+  /** Order By */
   @Description("Order By")
   __TypeOrderBy orderBy() default @__TypeOrderBy;
 
-  /**
-   * Group By
-   */
+  /** Group By */
   @Description("Group By")
   String[] groupBy() default {};
 
-  /**
-   * Not
-   */
+  /** Not */
   @Description("Not")
   boolean not() default false;
 
-  /**
-   * Condition
-   */
+  /** Condition */
   @Description("Condition")
   Conditional cond() default Conditional.AND;
 
-  /**
-   * Expressions
-   */
+  /** Expressions */
   @Description("Expressions")
   __TypeExpression[] exs() default {};
 
-  /**
-   * First
-   */
+  /** First */
   @Description("First")
   int first() default 0;
 
-  /**
-   * Input List
-   */
+  /** Input List */
   @Description("Input List")
   int last() default 0;
 
-  /**
-   * Offset
-   */
+  /** Offset */
   @Description("Offset")
   int offset() default 0;
 
-  /**
-   * After
-   */
+  /** After */
   @Description("After")
   String after() default "";
 
-  /**
-   * Before
-   */
+  /** Before */
   @Description("Before")
   String before() default "";
 

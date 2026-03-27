@@ -10,18 +10,21 @@ import reactor.core.publisher.Mono;
 @ApplicationScoped
 public class ConnectionCreator {
 
-    private final ConnectionFactory connectionFactory;
+  private final ConnectionFactory connectionFactory;
 
-    @Inject
-    public ConnectionCreator(ConnectionFactoryCreator connectionFactoryCreator, ConnectionPoolCreator connectionPoolCreator, R2DBCConfig r2DBCConfig) {
-        if (r2DBCConfig.getUsePool()) {
-            this.connectionFactory = connectionPoolCreator.getConnectionPool();
-        } else {
-            this.connectionFactory = connectionFactoryCreator.createFactory();
-        }
+  @Inject
+  public ConnectionCreator(
+      ConnectionFactoryCreator connectionFactoryCreator,
+      ConnectionPoolCreator connectionPoolCreator,
+      R2DBCConfig r2DBCConfig) {
+    if (r2DBCConfig.getUsePool()) {
+      this.connectionFactory = connectionPoolCreator.getConnectionPool();
+    } else {
+      this.connectionFactory = connectionFactoryCreator.createFactory();
     }
+  }
 
-    public Mono<Connection> createConnection() {
-        return Mono.from(connectionFactory.create());
-    }
+  public Mono<Connection> createConnection() {
+    return Mono.from(connectionFactory.create());
+  }
 }

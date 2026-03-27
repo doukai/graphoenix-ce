@@ -4,7 +4,7 @@ import jakarta.annotation.Generated;
 import org.eclipse.microprofile.graphql.Input;
 
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 public interface MetaExpression {
   StringExpression id = null;
 

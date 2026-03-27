@@ -10,234 +10,158 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/**
- * Order Input for __Field
- */
+/** Order Input for __Field */
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Order Input for __Field")
 public @interface __FieldOrderBy1 {
-  /**
-   * id
-   */
+  /** id */
   @Description("id")
   Sort id() default Sort.ASC;
 
-  /**
-   * name
-   */
+  /** name */
   @Description("name")
   Sort name() default Sort.ASC;
 
-  /**
-   * ofType
-   */
+  /** ofType */
   @Description("ofType")
   __TypeOrderBy2 ofType() default @__TypeOrderBy2;
 
-  /**
-   * description
-   */
+  /** description */
   @Description("description")
   Sort description() default Sort.ASC;
 
-  /**
-   * args
-   */
+  /** args */
   @Description("args")
   __InputValueOrderBy2 args() default @__InputValueOrderBy2;
 
-  /**
-   * type
-   */
+  /** type */
   @Description("type")
   __TypeOrderBy2 type() default @__TypeOrderBy2;
 
-  /**
-   * deprecationReason
-   */
+  /** deprecationReason */
   @Description("deprecationReason")
   Sort deprecationReason() default Sort.ASC;
 
-  /**
-   * Is Deprecated
-   */
+  /** Is Deprecated */
   @Description("Is Deprecated")
   Sort isDeprecated() default Sort.ASC;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   Sort version() default Sort.ASC;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   Sort realmId() default Sort.ASC;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   Sort createUserId() default Sort.ASC;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   Sort createTime() default Sort.ASC;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   Sort updateUserId() default Sort.ASC;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   Sort updateTime() default Sort.ASC;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   Sort createGroupId() default Sort.ASC;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   Sort __typename() default Sort.ASC;
 
-  /**
-   * ofType Reference
-   */
+  /** ofType Reference */
   @Description("ofType Reference")
   Sort ofTypeName() default Sort.ASC;
 
-  /**
-   * type Reference
-   */
+  /** type Reference */
   @Description("type Reference")
   Sort typeName() default Sort.ASC;
 
-  /**
-   * Aggregate Field for args
-   */
+  /** Aggregate Field for args */
   @Description("Aggregate Field for args")
   __InputValueOrderBy2 argsAggregate() default @__InputValueOrderBy2;
 
-  /**
-   * Count of __Field
-   */
+  /** Count of __Field */
   @Description("Count of __Field")
   Sort idCount() default Sort.ASC;
 
-  /**
-   * Max of id
-   */
+  /** Max of id */
   @Description("Max of id")
   Sort idMax() default Sort.ASC;
 
-  /**
-   * Min of id
-   */
+  /** Min of id */
   @Description("Min of id")
   Sort idMin() default Sort.ASC;
 
-  /**
-   * Count of name
-   */
+  /** Count of name */
   @Description("Count of name")
   Sort nameCount() default Sort.ASC;
 
-  /**
-   * Max of name
-   */
+  /** Max of name */
   @Description("Max of name")
   Sort nameMax() default Sort.ASC;
 
-  /**
-   * Min of name
-   */
+  /** Min of name */
   @Description("Min of name")
   Sort nameMin() default Sort.ASC;
 
-  /**
-   * Count of description
-   */
+  /** Count of description */
   @Description("Count of description")
   Sort descriptionCount() default Sort.ASC;
 
-  /**
-   * Max of description
-   */
+  /** Max of description */
   @Description("Max of description")
   Sort descriptionMax() default Sort.ASC;
 
-  /**
-   * Min of description
-   */
+  /** Min of description */
   @Description("Min of description")
   Sort descriptionMin() default Sort.ASC;
 
-  /**
-   * Count of deprecationReason
-   */
+  /** Count of deprecationReason */
   @Description("Count of deprecationReason")
   Sort deprecationReasonCount() default Sort.ASC;
 
-  /**
-   * Max of deprecationReason
-   */
+  /** Max of deprecationReason */
   @Description("Max of deprecationReason")
   Sort deprecationReasonMax() default Sort.ASC;
 
-  /**
-   * Min of deprecationReason
-   */
+  /** Min of deprecationReason */
   @Description("Min of deprecationReason")
   Sort deprecationReasonMin() default Sort.ASC;
 
-  /**
-   * Count of ofType Reference
-   */
+  /** Count of ofType Reference */
   @Description("Count of ofType Reference")
   Sort ofTypeNameCount() default Sort.ASC;
 
-  /**
-   * Max of ofType Reference
-   */
+  /** Max of ofType Reference */
   @Description("Max of ofType Reference")
   Sort ofTypeNameMax() default Sort.ASC;
 
-  /**
-   * Min of ofType Reference
-   */
+  /** Min of ofType Reference */
   @Description("Min of ofType Reference")
   Sort ofTypeNameMin() default Sort.ASC;
 
-  /**
-   * Count of type Reference
-   */
+  /** Count of type Reference */
   @Description("Count of type Reference")
   Sort typeNameCount() default Sort.ASC;
 
-  /**
-   * Max of type Reference
-   */
+  /** Max of type Reference */
   @Description("Max of type Reference")
   Sort typeNameMax() default Sort.ASC;
 
-  /**
-   * Min of type Reference
-   */
+  /** Min of type Reference */
   @Description("Min of type Reference")
   Sort typeNameMin() default Sort.ASC;
 

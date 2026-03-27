@@ -11,8 +11,7 @@ import org.eclipse.microprofile.graphql.NonNull;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 public class Property {
-  @NonNull
-  private String name;
+  @NonNull private String name;
 
   private JsonSchema validation;
 

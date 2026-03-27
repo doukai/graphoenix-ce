@@ -10,13 +10,14 @@ import java.util.stream.Stream;
 @ApplicationScoped
 public class SQLFormatHandler {
 
-    private final SqlFormatter.Formatter formatter = SqlFormatter.of(Dialect.MariaDb).extend(cfg -> cfg.plusNamedPlaceholderTypes(":"));
+  private final SqlFormatter.Formatter formatter =
+      SqlFormatter.of(Dialect.MariaDb).extend(cfg -> cfg.plusNamedPlaceholderTypes(":"));
 
-    public String query(String sql) {
-        return formatter.format(sql);
-    }
+  public String query(String sql) {
+    return formatter.format(sql);
+  }
 
-    public String mutation(Stream<String> sqlStream) {
-        return formatter.format(sqlStream.collect(Collectors.joining(";")));
-    }
+  public String mutation(Stream<String> sqlStream) {
+    return formatter.format(sqlStream.collect(Collectors.joining(";")));
+  }
 }

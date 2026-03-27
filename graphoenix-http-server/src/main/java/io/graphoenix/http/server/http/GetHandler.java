@@ -5,7 +5,7 @@ import reactor.netty.http.server.HttpServerRequest;
 import reactor.netty.http.server.HttpServerResponse;
 
 public interface GetHandler {
-    String path();
+  String path();
 
-    Publisher<Void> handle(HttpServerRequest request, HttpServerResponse response);
+  Publisher<Void> handle(HttpServerRequest request, HttpServerResponse response);
 }

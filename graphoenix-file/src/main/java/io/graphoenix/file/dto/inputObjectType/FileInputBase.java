@@ -9,100 +9,68 @@ import java.time.LocalDateTime;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/**
- * Mutation Input for 文件
- */
+/** Mutation Input for 文件 */
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Mutation Input for 文件")
 public interface FileInputBase extends MetaInput {
-  /**
-   * ID
-   */
+  /** ID */
   @Description("ID")
   String id = null;
 
-  /**
-   * 文件名
-   */
+  /** 文件名 */
   @Description("文件名")
   String name = null;
 
-  /**
-   * 类型
-   */
+  /** 类型 */
   @Description("类型")
   String contentType = null;
 
-  /**
-   * 内容
-   */
+  /** 内容 */
   @Description("内容")
   String content = null;
 
-  /**
-   * URL
-   */
+  /** URL */
   @Description("URL")
   String url = null;
 
-  /**
-   * Is Deprecated
-   */
+  /** Is Deprecated */
   @Description("Is Deprecated")
   Boolean isDeprecated = false;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   Integer version = null;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   Integer realmId = null;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   String createUserId = null;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   LocalDateTime createTime = null;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   String updateUserId = null;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   LocalDateTime updateTime = null;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   String createGroupId = null;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   String __typename = "File";
 
-  /**
-   * Where
-   */
+  /** Where */
   @Description("Where")
   FileExpression where = null;
 

@@ -6,5 +6,5 @@ import reactor.core.publisher.Mono;
 
 public interface FetchHandler {
 
-    Mono<JsonValue> request(Operation operation);
+  Mono<JsonValue> request(Operation operation);
 }

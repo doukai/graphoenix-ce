@@ -20,8 +20,7 @@ import org.eclipse.microprofile.graphql.Type;
 @CompiledJson
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 public class __Field implements Meta {
-  @Id
-  private String id;
+  @Id private String id;
 
   private String name;
 
@@ -29,197 +28,133 @@ public class __Field implements Meta {
 
   private String description;
 
-  @NonNull
-  private Collection<__InputValue> args;
+  @NonNull private Collection<__InputValue> args;
 
-  @NonNull
-  private __Type type;
+  @NonNull private __Type type;
 
   private String deprecationReason;
 
-  /**
-   * Is Deprecated
-   */
+  /** Is Deprecated */
   @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   private Integer version;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   private Integer realmId;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   private String createUserId;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   private LocalDateTime createTime;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   private String updateUserId;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   private LocalDateTime updateTime;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   private String createGroupId;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   private String __typename = "__Field";
 
-  /**
-   * ofType Reference
-   */
+  /** ofType Reference */
   @Description("ofType Reference")
   private String ofTypeName;
 
-  /**
-   * type Reference
-   */
+  /** type Reference */
   @Description("type Reference")
   private String typeName;
 
-  /**
-   * Aggregate Field for args
-   */
+  /** Aggregate Field for args */
   @Description("Aggregate Field for args")
   private __InputValue argsAggregate;
 
-  /**
-   * Connection Field for args
-   */
+  /** Connection Field for args */
   @Description("Connection Field for args")
   private __InputValueConnection argsConnection;
 
-  /**
-   * Count of __Field
-   */
+  /** Count of __Field */
   @Description("Count of __Field")
   private Integer idCount;
 
-  /**
-   * Max of id
-   */
+  /** Max of id */
   @Description("Max of id")
   private Integer idMax;
 
-  /**
-   * Min of id
-   */
+  /** Min of id */
   @Description("Min of id")
   private Integer idMin;
 
-  /**
-   * Count of name
-   */
+  /** Count of name */
   @Description("Count of name")
   private Integer nameCount;
 
-  /**
-   * Max of name
-   */
+  /** Max of name */
   @Description("Max of name")
   private String nameMax;
 
-  /**
-   * Min of name
-   */
+  /** Min of name */
   @Description("Min of name")
   private String nameMin;
 
-  /**
-   * Count of description
-   */
+  /** Count of description */
   @Description("Count of description")
   private Integer descriptionCount;
 
-  /**
-   * Max of description
-   */
+  /** Max of description */
   @Description("Max of description")
   private String descriptionMax;
 
-  /**
-   * Min of description
-   */
+  /** Min of description */
   @Description("Min of description")
   private String descriptionMin;
 
-  /**
-   * Count of deprecationReason
-   */
+  /** Count of deprecationReason */
   @Description("Count of deprecationReason")
   private Integer deprecationReasonCount;
 
-  /**
-   * Max of deprecationReason
-   */
+  /** Max of deprecationReason */
   @Description("Max of deprecationReason")
   private String deprecationReasonMax;
 
-  /**
-   * Min of deprecationReason
-   */
+  /** Min of deprecationReason */
   @Description("Min of deprecationReason")
   private String deprecationReasonMin;
 
-  /**
-   * Count of ofType Reference
-   */
+  /** Count of ofType Reference */
   @Description("Count of ofType Reference")
   private Integer ofTypeNameCount;
 
-  /**
-   * Max of ofType Reference
-   */
+  /** Max of ofType Reference */
   @Description("Max of ofType Reference")
   private String ofTypeNameMax;
 
-  /**
-   * Min of ofType Reference
-   */
+  /** Min of ofType Reference */
   @Description("Min of ofType Reference")
   private String ofTypeNameMin;
 
-  /**
-   * Count of type Reference
-   */
+  /** Count of type Reference */
   @Description("Count of type Reference")
   private Integer typeNameCount;
 
-  /**
-   * Max of type Reference
-   */
+  /** Max of type Reference */
   @Description("Max of type Reference")
   private String typeNameMax;
 
-  /**
-   * Min of type Reference
-   */
+  /** Min of type Reference */
   @Description("Min of type Reference")
   private String typeNameMin;
 
@@ -230,7 +165,7 @@ public class __Field implements Meta {
 
   @Override
   public void setId(String id) {
-    this.id = (String)id;
+    this.id = (String) id;
   }
 
   public String getName() {
@@ -288,7 +223,7 @@ public class __Field implements Meta {
 
   @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean)isDeprecated;
+    this.isDeprecated = (Boolean) isDeprecated;
   }
 
   @Override
@@ -298,7 +233,7 @@ public class __Field implements Meta {
 
   @Override
   public void setVersion(Integer version) {
-    this.version = (Integer)version;
+    this.version = (Integer) version;
   }
 
   @Override
@@ -308,7 +243,7 @@ public class __Field implements Meta {
 
   @Override
   public void setRealmId(Integer realmId) {
-    this.realmId = (Integer)realmId;
+    this.realmId = (Integer) realmId;
   }
 
   @Override
@@ -318,7 +253,7 @@ public class __Field implements Meta {
 
   @Override
   public void setCreateUserId(String createUserId) {
-    this.createUserId = (String)createUserId;
+    this.createUserId = (String) createUserId;
   }
 
   @Override
@@ -328,7 +263,7 @@ public class __Field implements Meta {
 
   @Override
   public void setCreateTime(LocalDateTime createTime) {
-    this.createTime = (LocalDateTime)createTime;
+    this.createTime = (LocalDateTime) createTime;
   }
 
   @Override
@@ -338,7 +273,7 @@ public class __Field implements Meta {
 
   @Override
   public void setUpdateUserId(String updateUserId) {
-    this.updateUserId = (String)updateUserId;
+    this.updateUserId = (String) updateUserId;
   }
 
   @Override
@@ -348,7 +283,7 @@ public class __Field implements Meta {
 
   @Override
   public void setUpdateTime(LocalDateTime updateTime) {
-    this.updateTime = (LocalDateTime)updateTime;
+    this.updateTime = (LocalDateTime) updateTime;
   }
 
   @Override
@@ -358,7 +293,7 @@ public class __Field implements Meta {
 
   @Override
   public void setCreateGroupId(String createGroupId) {
-    this.createGroupId = (String)createGroupId;
+    this.createGroupId = (String) createGroupId;
   }
 
   public String get__typename() {
@@ -549,14 +484,15 @@ public class __Field implements Meta {
     __FieldInput input = new __FieldInput();
     input.setId(this.getId());
     input.setName(this.getName());
-    if(getOfType() != null) {
+    if (getOfType() != null) {
       input.setOfType(this.getOfType().toInput());
     }
     input.setDescription(this.getDescription());
-    if(getArgs() != null) {
-      input.setArgs(this.getArgs().stream().map(item -> item.toInput()).collect(Collectors.toList()));
+    if (getArgs() != null) {
+      input.setArgs(
+          this.getArgs().stream().map(item -> item.toInput()).collect(Collectors.toList()));
     }
-    if(getType() != null) {
+    if (getType() != null) {
       input.setType(this.getType().toInput());
     }
     input.setDeprecationReason(this.getDeprecationReason());

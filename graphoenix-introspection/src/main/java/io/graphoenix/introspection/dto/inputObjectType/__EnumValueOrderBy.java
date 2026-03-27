@@ -6,185 +6,125 @@ import jakarta.annotation.Generated;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/**
- * Order Input for __EnumValue
- */
+/** Order Input for __EnumValue */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Order Input for __EnumValue")
 public class __EnumValueOrderBy {
-  /**
-   * id
-   */
+  /** id */
   @Description("id")
   private Sort id;
 
-  /**
-   * name
-   */
+  /** name */
   @Description("name")
   private Sort name;
 
-  /**
-   * description
-   */
+  /** description */
   @Description("description")
   private Sort description;
 
-  /**
-   * deprecationReason
-   */
+  /** deprecationReason */
   @Description("deprecationReason")
   private Sort deprecationReason;
 
-  /**
-   * Is Deprecated
-   */
+  /** Is Deprecated */
   @Description("Is Deprecated")
   private Sort isDeprecated;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   private Sort version;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   private Sort realmId;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   private Sort createUserId;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   private Sort createTime;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   private Sort updateUserId;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   private Sort updateTime;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   private Sort createGroupId;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   private Sort __typename;
 
-  /**
-   * ofType Reference
-   */
+  /** ofType Reference */
   @Description("ofType Reference")
   private Sort ofTypeName;
 
-  /**
-   * Count of __EnumValue
-   */
+  /** Count of __EnumValue */
   @Description("Count of __EnumValue")
   private Sort idCount;
 
-  /**
-   * Max of id
-   */
+  /** Max of id */
   @Description("Max of id")
   private Sort idMax;
 
-  /**
-   * Min of id
-   */
+  /** Min of id */
   @Description("Min of id")
   private Sort idMin;
 
-  /**
-   * Count of name
-   */
+  /** Count of name */
   @Description("Count of name")
   private Sort nameCount;
 
-  /**
-   * Max of name
-   */
+  /** Max of name */
   @Description("Max of name")
   private Sort nameMax;
 
-  /**
-   * Min of name
-   */
+  /** Min of name */
   @Description("Min of name")
   private Sort nameMin;
 
-  /**
-   * Count of description
-   */
+  /** Count of description */
   @Description("Count of description")
   private Sort descriptionCount;
 
-  /**
-   * Max of description
-   */
+  /** Max of description */
   @Description("Max of description")
   private Sort descriptionMax;
 
-  /**
-   * Min of description
-   */
+  /** Min of description */
   @Description("Min of description")
   private Sort descriptionMin;
 
-  /**
-   * Count of deprecationReason
-   */
+  /** Count of deprecationReason */
   @Description("Count of deprecationReason")
   private Sort deprecationReasonCount;
 
-  /**
-   * Max of deprecationReason
-   */
+  /** Max of deprecationReason */
   @Description("Max of deprecationReason")
   private Sort deprecationReasonMax;
 
-  /**
-   * Min of deprecationReason
-   */
+  /** Min of deprecationReason */
   @Description("Min of deprecationReason")
   private Sort deprecationReasonMin;
 
-  /**
-   * Count of ofType Reference
-   */
+  /** Count of ofType Reference */
   @Description("Count of ofType Reference")
   private Sort ofTypeNameCount;
 
-  /**
-   * Max of ofType Reference
-   */
+  /** Max of ofType Reference */
   @Description("Max of ofType Reference")
   private Sort ofTypeNameMax;
 
-  /**
-   * Min of ofType Reference
-   */
+  /** Min of ofType Reference */
   @Description("Min of ofType Reference")
   private Sort ofTypeNameMin;
 

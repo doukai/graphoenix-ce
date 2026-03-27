@@ -13,109 +13,75 @@ import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/**
- * Mutation Arguments for 文件 List
- */
+/** Mutation Arguments for 文件 List */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Mutation Arguments for 文件 List")
 public class FileListMutationArguments implements MetaInput, FileInputBase {
-  /**
-   * ID
-   */
+  /** ID */
   @Description("ID")
   private String id;
 
-  /**
-   * 文件名
-   */
+  /** 文件名 */
   @Description("文件名")
   private String name;
 
-  /**
-   * 类型
-   */
+  /** 类型 */
   @Description("类型")
   private String contentType;
 
-  /**
-   * 内容
-   */
+  /** 内容 */
   @Description("内容")
   private String content;
 
-  /**
-   * URL
-   */
+  /** URL */
   @Description("URL")
   private String url;
 
-  /**
-   * Is Deprecated
-   */
+  /** Is Deprecated */
   @DefaultValue("false")
   @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   private Integer version;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   private Integer realmId;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   private String createUserId;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   private LocalDateTime createTime;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   private String updateUserId;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   private LocalDateTime updateTime;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   private String createGroupId;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @DefaultValue("File")
   @Description("Type Name")
   private String __typename = "File";
 
-  /**
-   * Input List
-   */
+  /** Input List */
   @Description("Input List")
   private Collection<FileInput> list;
 
-  /**
-   * Where
-   */
+  /** Where */
   @Description("Where")
   private FileExpression where;
 
@@ -126,7 +92,7 @@ public class FileListMutationArguments implements MetaInput, FileInputBase {
 
   @Override
   public void setId(String id) {
-    this.id = (String)id;
+    this.id = (String) id;
   }
 
   @Override
@@ -136,7 +102,7 @@ public class FileListMutationArguments implements MetaInput, FileInputBase {
 
   @Override
   public void setName(String name) {
-    this.name = (String)name;
+    this.name = (String) name;
   }
 
   @Override
@@ -146,7 +112,7 @@ public class FileListMutationArguments implements MetaInput, FileInputBase {
 
   @Override
   public void setContentType(String contentType) {
-    this.contentType = (String)contentType;
+    this.contentType = (String) contentType;
   }
 
   @Override
@@ -156,7 +122,7 @@ public class FileListMutationArguments implements MetaInput, FileInputBase {
 
   @Override
   public void setContent(String content) {
-    this.content = (String)content;
+    this.content = (String) content;
   }
 
   @Override
@@ -166,7 +132,7 @@ public class FileListMutationArguments implements MetaInput, FileInputBase {
 
   @Override
   public void setUrl(String url) {
-    this.url = (String)url;
+    this.url = (String) url;
   }
 
   @Override
@@ -176,7 +142,7 @@ public class FileListMutationArguments implements MetaInput, FileInputBase {
 
   @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean)isDeprecated;
+    this.isDeprecated = (Boolean) isDeprecated;
   }
 
   @Override
@@ -186,7 +152,7 @@ public class FileListMutationArguments implements MetaInput, FileInputBase {
 
   @Override
   public void setVersion(Integer version) {
-    this.version = (Integer)version;
+    this.version = (Integer) version;
   }
 
   @Override
@@ -196,7 +162,7 @@ public class FileListMutationArguments implements MetaInput, FileInputBase {
 
   @Override
   public void setRealmId(Integer realmId) {
-    this.realmId = (Integer)realmId;
+    this.realmId = (Integer) realmId;
   }
 
   @Override
@@ -206,7 +172,7 @@ public class FileListMutationArguments implements MetaInput, FileInputBase {
 
   @Override
   public void setCreateUserId(String createUserId) {
-    this.createUserId = (String)createUserId;
+    this.createUserId = (String) createUserId;
   }
 
   @Override
@@ -216,7 +182,7 @@ public class FileListMutationArguments implements MetaInput, FileInputBase {
 
   @Override
   public void setCreateTime(LocalDateTime createTime) {
-    this.createTime = (LocalDateTime)createTime;
+    this.createTime = (LocalDateTime) createTime;
   }
 
   @Override
@@ -226,7 +192,7 @@ public class FileListMutationArguments implements MetaInput, FileInputBase {
 
   @Override
   public void setUpdateUserId(String updateUserId) {
-    this.updateUserId = (String)updateUserId;
+    this.updateUserId = (String) updateUserId;
   }
 
   @Override
@@ -236,7 +202,7 @@ public class FileListMutationArguments implements MetaInput, FileInputBase {
 
   @Override
   public void setUpdateTime(LocalDateTime updateTime) {
-    this.updateTime = (LocalDateTime)updateTime;
+    this.updateTime = (LocalDateTime) updateTime;
   }
 
   @Override
@@ -246,7 +212,7 @@ public class FileListMutationArguments implements MetaInput, FileInputBase {
 
   @Override
   public void setCreateGroupId(String createGroupId) {
-    this.createGroupId = (String)createGroupId;
+    this.createGroupId = (String) createGroupId;
   }
 
   @Override
@@ -256,7 +222,7 @@ public class FileListMutationArguments implements MetaInput, FileInputBase {
 
   @Override
   public void set__typename(String __typename) {
-    this.__typename = (String)__typename;
+    this.__typename = (String) __typename;
   }
 
   public Collection<FileInput> getList() {
@@ -274,6 +240,6 @@ public class FileListMutationArguments implements MetaInput, FileInputBase {
 
   @Override
   public void setWhere(FileExpression where) {
-    this.where = (FileExpression)where;
+    this.where = (FileExpression) where;
   }
 }

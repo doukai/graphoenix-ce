@@ -8,29 +8,21 @@ import java.util.Collection;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Type;
 
-/**
- * Connection Object for Relationship Object between __Type and __Type
- */
+/** Connection Object for Relationship Object between __Type and __Type */
 @Type
 @CompiledJson
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Connection Object for Relationship Object between __Type and __Type")
 public class __TypeInterfacesConnection {
-  /**
-   * Total
-   */
+  /** Total */
   @Description("Total")
   private Integer totalCount;
 
-  /**
-   * Page Info
-   */
+  /** Page Info */
   @Description("Page Info")
   private PageInfo pageInfo;
 
-  /**
-   * Edges
-   */
+  /** Edges */
   @Description("Edges")
   private Collection<__TypeInterfacesEdge> edges;
 

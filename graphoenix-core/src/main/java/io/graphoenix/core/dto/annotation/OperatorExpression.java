@@ -10,30 +10,22 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/**
- * Query Expression Input for Operator
- */
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+/** Query Expression Input for Operator */
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Query Expression Input for Operator")
 public @interface OperatorExpression {
-  /**
-   * Operators
-   */
+  /** Operators */
   @Description("Operators")
   Operator opr() default Operator.EQ;
 
-  /**
-   * Value
-   */
+  /** Value */
   @Description("Value")
   Operator val() default Operator.EQ;
 
-  /**
-   * Array
-   */
+  /** Array */
   @Description("Array")
   Operator[] arr() default {};
 

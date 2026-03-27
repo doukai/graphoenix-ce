@@ -17,24 +17,25 @@ import java.io.StringReader;
 @Named("r2dbc")
 public class R2DBCQueryHandler implements QueryHandler {
 
-    private final QueryTranslator queryTranslator;
+  private final QueryTranslator queryTranslator;
 
-    private final QueryExecutor queryExecutor;
+  private final QueryExecutor queryExecutor;
 
-    private final JsonProvider jsonProvider;
+  private final JsonProvider jsonProvider;
 
-    @Inject
-    public R2DBCQueryHandler(QueryTranslator queryTranslator, QueryExecutor queryExecutor, JsonProvider jsonProvider) {
-        this.queryTranslator = queryTranslator;
-        this.queryExecutor = queryExecutor;
-        this.jsonProvider = jsonProvider;
-    }
+  @Inject
+  public R2DBCQueryHandler(
+      QueryTranslator queryTranslator, QueryExecutor queryExecutor, JsonProvider jsonProvider) {
+    this.queryTranslator = queryTranslator;
+    this.queryExecutor = queryExecutor;
+    this.jsonProvider = jsonProvider;
+  }
 
-    @Override
-    public Mono<JsonValue> query(Operation operation) {
-        return Mono.justOrEmpty(queryTranslator.operationToSelectSQL(operation))
-                .flatMap(queryExecutor::executeQuery)
-                .map(json -> jsonProvider.createReader(new StringReader(json)).readValue())
-                .defaultIfEmpty(JsonValue.EMPTY_JSON_OBJECT);
-    }
+  @Override
+  public Mono<JsonValue> query(Operation operation) {
+    return Mono.justOrEmpty(queryTranslator.operationToSelectSQL(operation))
+        .flatMap(queryExecutor::executeQuery)
+        .map(json -> jsonProvider.createReader(new StringReader(json)).readValue())
+        .defaultIfEmpty(JsonValue.EMPTY_JSON_OBJECT);
+  }
 }

@@ -6,137 +6,93 @@ import jakarta.annotation.Generated;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/**
- * Order Input for Relationship Object between __Directive and locations
- */
+/** Order Input for Relationship Object between __Directive and locations */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
 @Description("Order Input for Relationship Object between __Directive and locations")
 public class __DirectiveLocationsRelationOrderBy {
-  /**
-   * ID
-   */
+  /** ID */
   @Description("ID")
   private Sort id;
 
-  /**
-   * __Directive Reference
-   */
+  /** __Directive Reference */
   @Description("__Directive Reference")
   private Sort __directiveRef;
 
-  /**
-   * locations Reference
-   */
+  /** locations Reference */
   @Description("locations Reference")
   private Sort locationsRef;
 
-  /**
-   * Is Deprecated
-   */
+  /** Is Deprecated */
   @Description("Is Deprecated")
   private Sort isDeprecated;
 
-  /**
-   * Version
-   */
+  /** Version */
   @Description("Version")
   private Sort version;
 
-  /**
-   * Realm ID
-   */
+  /** Realm ID */
   @Description("Realm ID")
   private Sort realmId;
 
-  /**
-   * Create User ID
-   */
+  /** Create User ID */
   @Description("Create User ID")
   private Sort createUserId;
 
-  /**
-   * Create Time
-   */
+  /** Create Time */
   @Description("Create Time")
   private Sort createTime;
 
-  /**
-   * Update User ID
-   */
+  /** Update User ID */
   @Description("Update User ID")
   private Sort updateUserId;
 
-  /**
-   * Update Time
-   */
+  /** Update Time */
   @Description("Update Time")
   private Sort updateTime;
 
-  /**
-   * Create Group ID
-   */
+  /** Create Group ID */
   @Description("Create Group ID")
   private Sort createGroupId;
 
-  /**
-   * Type Name
-   */
+  /** Type Name */
   @Description("Type Name")
   private Sort __typename;
 
-  /**
-   * Count of Relationship Object between __Directive and locations
-   */
+  /** Count of Relationship Object between __Directive and locations */
   @Description("Count of Relationship Object between __Directive and locations")
   private Sort idCount;
 
-  /**
-   * Max of ID
-   */
+  /** Max of ID */
   @Description("Max of ID")
   private Sort idMax;
 
-  /**
-   * Min of ID
-   */
+  /** Min of ID */
   @Description("Min of ID")
   private Sort idMin;
 
-  /**
-   * Count of __Directive Reference
-   */
+  /** Count of __Directive Reference */
   @Description("Count of __Directive Reference")
   private Sort __directiveRefCount;
 
-  /**
-   * Max of __Directive Reference
-   */
+  /** Max of __Directive Reference */
   @Description("Max of __Directive Reference")
   private Sort __directiveRefMax;
 
-  /**
-   * Min of __Directive Reference
-   */
+  /** Min of __Directive Reference */
   @Description("Min of __Directive Reference")
   private Sort __directiveRefMin;
 
-  /**
-   * Count of locations Reference
-   */
+  /** Count of locations Reference */
   @Description("Count of locations Reference")
   private Sort locationsRefCount;
 
-  /**
-   * Max of locations Reference
-   */
+  /** Max of locations Reference */
   @Description("Max of locations Reference")
   private Sort locationsRefMax;
 
-  /**
-   * Min of locations Reference
-   */
+  /** Min of locations Reference */
   @Description("Min of locations Reference")
   private Sort locationsRefMin;
 
