@@ -476,6 +476,9 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler, FetchBef
       } else {
         String packageName = fieldTypeDefinition.asObject().getPackageNameOrError();
         String fetchTo = fieldDefinition.getFetchToOrError();
+        if (!valueWithVariable.isObject()) {
+          return Stream.empty();
+        }
         valueWithVariable
             .asObject()
             .put(INPUT_VALUE_GROUP_BY_NAME, Collections.singletonList(fetchTo));
@@ -489,6 +492,9 @@ public class QueryBeforeFetchHandler implements OperationBeforeHandler, FetchBef
             new FetchItem(packageName, protocol, path, fetchField, fetchTo, field, fetchFrom));
       }
     } else if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
+      if (!valueWithVariable.isObject()) {
+        return Stream.empty();
+      }
       Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
       return Streams.concat(
           inputValueTypeDefinition.asInputObject().getInputValues().stream()

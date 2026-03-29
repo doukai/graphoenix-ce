@@ -215,7 +215,8 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                     Map.of(
                         INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
                         field.getArguments().getArgument(idField.getName()))));
-          } else if (field.getArguments().hasArgument(INPUT_VALUE_WHERE_NAME)) {
+          } else if (field.getArguments().hasArgument(INPUT_VALUE_WHERE_NAME)
+              && field.getArguments().getArgument(INPUT_VALUE_WHERE_NAME).isObject()) {
             fetchField.setArguments(
                 field.getArguments().getArgument(INPUT_VALUE_WHERE_NAME).asObject());
           }
@@ -223,6 +224,9 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
               Stream.of(
                   new FetchItem(packageName, protocol, fieldTypeDefinition.getName(), fetchField));
         } else if (field.getArguments().hasArgument(INPUT_VALUE_INPUT_NAME)) {
+          if (!field.getArguments().getArgument(INPUT_VALUE_INPUT_NAME).isObject()) {
+            return Stream.empty();
+          }
           ObjectValueWithVariable input =
               field.getArguments().getArgument(INPUT_VALUE_INPUT_NAME).asObject();
           if (input.containsKey(idField.getName()) || input.containsKey(INPUT_VALUE_WHERE_NAME)) {
@@ -250,7 +254,8 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                       Map.of(
                           INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
                           input.getValueWithVariable(idField.getName()))));
-            } else if (input.containsKey(INPUT_VALUE_WHERE_NAME)) {
+            } else if (input.containsKey(INPUT_VALUE_WHERE_NAME)
+                && input.getValueWithVariable(INPUT_VALUE_WHERE_NAME).isObject()) {
               fetchField.setArguments(
                   input.getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject());
             }
@@ -269,10 +274,14 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                         fieldTypeDefinition.getName()));
           }
         } else if (field.getArguments().hasArgument(INPUT_VALUE_LIST_NAME)) {
+          if (!field.getArguments().getArgument(INPUT_VALUE_LIST_NAME).isArray()) {
+            return Stream.empty();
+          }
           ArrayValueWithVariable list =
               field.getArguments().getArgument(INPUT_VALUE_LIST_NAME).asArray();
           fetchItemStream =
               IntStream.range(0, list.size())
+                  .filter(index -> list.getValueWithVariable(index).isObject())
                   .mapToObj(
                       index -> {
                         ObjectValueWithVariable item = list.getValueWithVariable(index).asObject();
@@ -305,7 +314,8 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                                     Map.of(
                                         INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
                                         item.getValueWithVariable(idField.getName()))));
-                          } else if (item.containsKey(INPUT_VALUE_WHERE_NAME)) {
+                          } else if (item.containsKey(INPUT_VALUE_WHERE_NAME)
+                              && item.getValueWithVariable(INPUT_VALUE_WHERE_NAME).isObject()) {
                             fetchField.setArguments(
                                 item.getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject());
                           }
@@ -429,6 +439,11 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                               .flatMap(
                                   arrayValueWithVariable ->
                                       IntStream.range(0, arrayValueWithVariable.size())
+                                          .filter(
+                                              index ->
+                                                  arrayValueWithVariable
+                                                      .getValueWithVariable(index)
+                                                      .isObject())
                                           .mapToObj(
                                               index ->
                                                   documentManager
@@ -489,6 +504,9 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
     if (valueWithVariable.isNull()) {
       return Stream.empty();
     }
+    if (fieldDefinition.getType().hasList() && !valueWithVariable.isArray()) {
+      return Stream.empty();
+    }
     Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
     Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
     if (fieldTypeDefinition.isObject() && !fieldTypeDefinition.isContainer()) {
@@ -510,6 +528,9 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
         if (fieldDefinition.getType().hasList()) {
           fetchItemStream =
               IntStream.range(0, valueWithVariable.asArray().size())
+                  .filter(
+                      index ->
+                          valueWithVariable.asArray().getValueWithVariable(index).isObject())
                   .mapToObj(
                       index -> {
                         ObjectValueWithVariable item =
@@ -550,7 +571,8 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                                             INPUT_OPERATOR_INPUT_VALUE_VAL_NAME,
                                             item.getValueWithVariable(idField.getName()))))
                                 .setName(typeNameToFieldName(fieldTypeDefinition.getName()));
-                          } else if (item.containsKey(INPUT_VALUE_WHERE_NAME)) {
+                          } else if (item.containsKey(INPUT_VALUE_WHERE_NAME)
+                              && item.getValueWithVariable(INPUT_VALUE_WHERE_NAME).isObject()) {
                             fetchField
                                 .setArguments(
                                     item.getValueWithVariable(INPUT_VALUE_WHERE_NAME).asObject())
@@ -576,6 +598,9 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                         }
                       });
         } else {
+          if (!valueWithVariable.isObject()) {
+            return Stream.empty();
+          }
           if (valueWithVariable.asObject().containsKey(idField.getName())
               || valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME)) {
             Field fetchField =
@@ -609,7 +634,11 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                                   .getValueWithVariable(idField.getName()))))
                   .setName(typeNameToFieldName(fieldTypeDefinition.getName()));
 
-            } else if (valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME)) {
+            } else if (valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME)
+                && valueWithVariable
+                    .asObject()
+                    .getValueWithVariable(INPUT_VALUE_WHERE_NAME)
+                    .isObject()) {
               fetchField
                   .setArguments(
                       valueWithVariable
@@ -718,6 +747,12 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                               subFieldDefinition -> {
                                 if (fieldDefinition.getType().hasList()) {
                                   return IntStream.range(0, valueWithVariable.asArray().size())
+                                      .filter(
+                                          index ->
+                                              valueWithVariable
+                                                  .asArray()
+                                                  .getValueWithVariable(index)
+                                                  .isObject())
                                       .mapToObj(
                                           index ->
                                               Stream.ofNullable(
@@ -758,6 +793,9 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
                                                               subValueWithVariable)))
                                       .flatMap(stream -> stream);
                                 } else {
+                                  if (!valueWithVariable.isObject()) {
+                                    return Stream.empty();
+                                  }
                                   return Stream.ofNullable(
                                           valueWithVariable.asObject().getObjectValueWithVariable())
                                       .flatMap(

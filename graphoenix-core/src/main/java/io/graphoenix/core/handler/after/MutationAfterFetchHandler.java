@@ -240,9 +240,18 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                 arrayValueWithVariable ->
                                     arrayValueWithVariable.getValueWithVariables().stream()
                                         .filter(valueWithVariable -> !valueWithVariable.isNull())
+                                        .filter(ValueWithVariable::isObject)
                                         .filter(
                                             item ->
                                                 !item.asObject().containsKey(INPUT_VALUE_WHERE_NAME)
+                                                    || item.asObject()
+                                                        .getValueWithVariable(
+                                                            INPUT_VALUE_WHERE_NAME)
+                                                        .isNull()
+                                                    || !item.asObject()
+                                                        .getValueWithVariable(
+                                                            INPUT_VALUE_WHERE_NAME)
+                                                        .isObject()
                                                     || item.asObject()
                                                         .getValueWithVariable(
                                                             INPUT_VALUE_WHERE_NAME)
@@ -413,6 +422,9 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
         || valueWithVariable.isNull()) {
       return Stream.empty();
     }
+    if (fieldDefinition.getType().hasList() && !valueWithVariable.isArray()) {
+      return Stream.empty();
+    }
     Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
     if (fieldDefinition.isFetchField()) {
       String fetchFrom = fieldDefinition.getFetchFromOrError();
@@ -463,9 +475,13 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
           if (fieldDefinition.getType().hasList()) {
             Stream<FetchItem> fetchItemStream =
                 valueWithVariable.asArray().getValueWithVariables().stream()
+                    .filter(ValueWithVariable::isObject)
                     .map(
                         item ->
                             item.asObject().containsKey(INPUT_VALUE_WHERE_NAME)
+                                    && item.asObject()
+                                        .getValueWithVariable(INPUT_VALUE_WHERE_NAME)
+                                        .isObject()
                                     && item.asObject().keySet().size() == 1
                                 ? jsonProvider
                                     .createObjectBuilder()
@@ -529,8 +545,15 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
               return Stream.concat(Stream.of(removeRelationFetchItem), fetchItemStream);
             }
           } else {
+            if (!valueWithVariable.isObject()) {
+              return Stream.empty();
+            }
             JsonValue mutationJsonValue =
                 valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME)
+                        && valueWithVariable
+                            .asObject()
+                            .getValueWithVariable(INPUT_VALUE_WHERE_NAME)
+                            .isObject()
                         && valueWithVariable.asObject().keySet().size() == 1
                     ? jsonProvider
                         .createObjectBuilder()
@@ -671,6 +694,9 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
               return Stream.concat(Stream.of(removeRelationFetchItem), fetchItemStream);
             }
           } else {
+            if (!valueWithVariable.isObject()) {
+              return Stream.empty();
+            }
             String id;
             if (valueWithVariable.asJsonObject().containsKey(idField.getName())) {
               id = getId(valueWithVariable.asJsonObject().get(idField.getName()));
@@ -793,6 +819,13 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                           subFieldDefinition -> {
                             if (fieldDefinition.getType().hasList()) {
                               return IntStream.range(0, valueWithVariable.asArray().size())
+                                  .filter(
+                                      index ->
+                                          valueWithVariable
+                                              .asArray()
+                                              .getValueWithVariables()
+                                              .get(index)
+                                              .isObject())
                                   .mapToObj(
                                       index ->
                                           fieldJsonValue.asJsonArray().stream()
@@ -839,6 +872,9 @@ public class MutationAfterFetchHandler implements OperationAfterHandler, FetchAf
                                                                       merge))))
                                   .flatMap(stream -> stream);
                             } else {
+                              if (!valueWithVariable.isObject()) {
+                                return Stream.empty();
+                              }
                               return Stream.ofNullable(
                                       valueWithVariable.asObject().getObjectValueWithVariable())
                                   .flatMap(

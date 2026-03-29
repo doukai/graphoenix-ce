@@ -894,7 +894,7 @@ public class InputInvokeHandlerBuilder {
                                               CodeBlock.of("case $S:\n", inputValue.getName());
                                           CodeBlock invokeCodeBlock =
                                               CodeBlock.of(
-                                                  "return $T.justOrEmpty($L.$L()).map($T::size).flatMapMany(size -> $T.range(0, size)).flatMap(index -> $L(new $T<>($L.$L()).get(index), entry.getValue().asArray().getValueWithVariables().get(index).asObject())).collectList().doOnNext($L -> $L.$L($L));",
+                                                  "return $T.justOrEmpty($L.$L()).map($T::size).flatMapMany(size -> $T.range(0, size)).flatMap(index -> $L(new $T<>($L.$L()).get(index), entry.getValue().asArray().getValueWithVariables().size() > index ? entry.getValue().asArray().getValueWithVariables().get(index).asObject() : null)).collectList().doOnNext($L -> $L.$L($L));",
                                                   ClassName.get(Mono.class),
                                                   resultParameterName,
                                                   getFieldGetterMethodName(inputValue.getName()),

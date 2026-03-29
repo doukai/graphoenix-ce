@@ -801,7 +801,11 @@ public class ArgumentsTranslator {
       return Optional.of(where);
     } else {
       List<ValueWithVariable> valList =
-          arr.isNull() ? Collections.singletonList(arr) : arr.asArray().getValueWithVariables();
+          arr.isNull()
+              ? Collections.singletonList(arr)
+              : arr.isArray()
+                  ? arr.asArray().getValueWithVariables()
+                  : Collections.singletonList(arr);
 
       Expression value;
       if (valList.isEmpty()) {

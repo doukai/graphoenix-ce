@@ -645,6 +645,7 @@ public class OperationInterfaceImplementer {
                                                         .asArray()
                                                         .getValueWithVariables()
                                                         .stream()
+                                                        .filter(ValueWithVariable::isObject)
                                                         .flatMap(
                                                             valueWithVariable ->
                                                                 getVariableInputValue(
@@ -723,6 +724,7 @@ public class OperationInterfaceImplementer {
                                                         .asArray()
                                                         .getValueWithVariables()
                                                         .stream()
+                                                        .filter(ValueWithVariable::isObject)
                                                         .flatMap(
                                                             valueWithVariable ->
                                                                 getVariableInputValue(

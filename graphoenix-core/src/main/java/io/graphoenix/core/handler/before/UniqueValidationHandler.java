@@ -17,11 +17,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.AbstractMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -163,29 +161,21 @@ public class UniqueValidationHandler implements OperationBeforeHandler {
   }
 
   private List<GraphQLError> buildRequestDuplicateErrors(List<UniqueItem> duplicatedItems) {
-    if (!hasRequestDuplicateConflict(duplicatedItems)) {
-      return List.of();
-    }
-    return duplicatedItems.stream().flatMap(this::buildUniqueErrors).collect(Collectors.toList());
-  }
-
-  private boolean hasRequestDuplicateConflict(List<UniqueItem> duplicatedItems) {
-    boolean hasNullId = false;
-    Set<String> ids = new HashSet<>();
-    for (UniqueItem duplicatedItem : duplicatedItems) {
-      if (duplicatedItem.getCurrentId().isNull()) {
-        hasNullId = true;
-      } else {
-        ids.add(duplicatedItem.getCurrentId().toString());
-      }
-      if (hasNullId && (!ids.isEmpty() || duplicatedItems.size() > 1)) {
-        return true;
-      }
-      if (ids.size() > 1) {
-        return true;
-      }
-    }
-    return false;
+    return duplicatedItems.stream()
+        .filter(
+            uniqueItem ->
+                duplicatedItems.stream()
+                    .anyMatch(
+                        other ->
+                            uniqueItem != other
+                                && (uniqueItem.getCurrentId().isNull()
+                                    || other.getCurrentId().isNull()
+                                    || !uniqueItem
+                                        .getCurrentId()
+                                        .toString()
+                                        .equals(other.getCurrentId().toString()))))
+        .flatMap(this::buildUniqueErrors)
+        .collect(Collectors.toList());
   }
 
   private Stream<GraphQLError> buildUniqueErrors(UniqueItem uniqueItem) {

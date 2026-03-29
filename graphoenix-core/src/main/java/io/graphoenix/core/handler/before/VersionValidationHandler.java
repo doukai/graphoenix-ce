@@ -286,6 +286,11 @@ public class VersionValidationHandler implements OperationBeforeHandler {
                           .flatMap(
                               arrayValueWithVariable ->
                                   IntStream.range(0, arrayValueWithVariable.size())
+                                      .filter(
+                                          index ->
+                                              arrayValueWithVariable
+                                                  .getValueWithVariable(index)
+                                                  .isObject())
                                       .mapToObj(
                                           index -> {
                                             ValueWithVariable itemIdValueWithVariable =
@@ -350,6 +355,9 @@ public class VersionValidationHandler implements OperationBeforeHandler {
     if (valueWithVariable.isNull()) {
       return Stream.empty();
     }
+    if (fieldDefinition.getType().hasList() && !valueWithVariable.isArray()) {
+      return Stream.empty();
+    }
     Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
     if (fieldDefinition.getName().equals("version") && !parentIDValueWithVariable.isNull()) {
       return Stream.of(
@@ -371,6 +379,12 @@ public class VersionValidationHandler implements OperationBeforeHandler {
                           subFieldDefinition -> {
                             if (fieldDefinition.getType().hasList()) {
                               return IntStream.range(0, valueWithVariable.asArray().size())
+                                  .filter(
+                                      index ->
+                                          valueWithVariable
+                                              .asArray()
+                                              .getValueWithVariable(index)
+                                              .isObject())
                                   .mapToObj(
                                       index -> {
                                         ValueWithVariable idValueWithVariable =
@@ -413,6 +427,9 @@ public class VersionValidationHandler implements OperationBeforeHandler {
                                       })
                                   .flatMap(stream -> stream);
                             } else {
+                              if (!valueWithVariable.isObject()) {
+                                return Stream.empty();
+                              }
                               ValueWithVariable idValueWithVariable =
                                   getIDValueWithVariable(
                                           idField.getName(), valueWithVariable.asObject())
@@ -449,10 +466,16 @@ public class VersionValidationHandler implements OperationBeforeHandler {
       if (objectValueWithVariable.containsKey(idFieldName)) {
         return Optional.of(objectValueWithVariable.getValueWithVariable(idFieldName));
       } else if (objectValueWithVariable.containsKey(INPUT_VALUE_WHERE_NAME)
+          && objectValueWithVariable.getValueWithVariable(INPUT_VALUE_WHERE_NAME).isObject()
           && objectValueWithVariable
               .getValueWithVariable(INPUT_VALUE_WHERE_NAME)
               .asObject()
               .containsKey(idFieldName)
+          && objectValueWithVariable
+              .getValueWithVariable(INPUT_VALUE_WHERE_NAME)
+              .asObject()
+              .getValueWithVariable(idFieldName)
+              .isObject()
           && objectValueWithVariable
               .getValueWithVariable(INPUT_VALUE_WHERE_NAME)
               .asObject()
@@ -477,7 +500,13 @@ public class VersionValidationHandler implements OperationBeforeHandler {
       if (arguments.containsKey(idFieldName)) {
         return Optional.of(arguments.getArgument(idFieldName));
       } else if (arguments.containsKey(INPUT_VALUE_WHERE_NAME)
+          && arguments.getArgument(INPUT_VALUE_WHERE_NAME).isObject()
           && arguments.getArgument(INPUT_VALUE_WHERE_NAME).asObject().containsKey(idFieldName)
+          && arguments
+              .getArgument(INPUT_VALUE_WHERE_NAME)
+              .asObject()
+              .getValueWithVariable(idFieldName)
+              .isObject()
           && arguments
               .getArgument(INPUT_VALUE_WHERE_NAME)
               .asObject()

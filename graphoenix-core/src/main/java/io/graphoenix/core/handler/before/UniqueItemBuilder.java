@@ -15,11 +15,16 @@ import io.graphoenix.spi.graphql.type.ObjectType;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
-import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonCollectors;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -135,7 +140,12 @@ public class UniqueItemBuilder {
                         .collect(JsonCollectors.toJsonArray()))
                 .build())
         .addSelection(new Field(objectType.getIDFieldOrError().getName()))
-        .addSelections(buildUniqueSelectionFields(uniqueItems));
+        .addSelections(
+            uniqueItems.stream()
+                .flatMap(uniqueItem -> uniqueItem.getUniqueValues().keySet().stream())
+                .distinct()
+                .map(Field::new)
+                .collect(Collectors.toList()));
   }
 
   public String buildUniqueKey(UniqueItem uniqueItem) {
@@ -149,17 +159,13 @@ public class UniqueItemBuilder {
         .collect(Collectors.joining("|"));
   }
 
-  private Optional<String> buildUniqueKey(
+  private String buildUniqueKey(
       Map<String, ValueWithVariable> uniqueValues, JsonObject jsonObject) {
-    StringJoiner uniqueKey = new StringJoiner("|");
-    for (String fieldName : new TreeSet<>(uniqueValues.keySet())) {
-      JsonValue value = getValueFromPath(jsonObject, fieldName);
-      if (value == null) {
-        return Optional.empty();
-      }
-      uniqueKey.add(fieldName + "=" + value);
-    }
-    return Optional.of(uniqueKey.toString());
+    return uniqueValues.keySet().stream()
+        .sorted(Comparator.naturalOrder())
+        .filter(jsonObject::containsKey)
+        .map(fieldName -> fieldName + "=" + jsonObject.get(fieldName))
+        .collect(Collectors.joining("|"));
   }
 
   public Map<String, JsonObject> buildMatchedItemIndex(
@@ -167,12 +173,13 @@ public class UniqueItemBuilder {
     if (uniqueItems.isEmpty() || matchedItems.isEmpty()) {
       return Map.of();
     }
-    Map<String, JsonObject> matchedItemIndex = new LinkedHashMap<>();
-    for (JsonObject matchedItem : matchedItems) {
-      buildUniqueKey(uniqueItems.get(0).getUniqueValues(), matchedItem)
-          .ifPresent(uniqueKey -> matchedItemIndex.putIfAbsent(uniqueKey, matchedItem));
-    }
-    return matchedItemIndex;
+    return matchedItems.stream()
+        .collect(
+            Collectors.toMap(
+                item -> buildUniqueKey(uniqueItems.get(0).getUniqueValues(), item),
+                Function.identity(),
+                (left, right) -> left,
+                LinkedHashMap::new));
   }
 
   private Optional<ValueWithVariable> getIDValueWithVariable(
@@ -181,10 +188,16 @@ public class UniqueItemBuilder {
       if (objectValueWithVariable.containsKey(idFieldName)) {
         return Optional.of(objectValueWithVariable.getValueWithVariable(idFieldName));
       } else if (objectValueWithVariable.containsKey(INPUT_VALUE_WHERE_NAME)
+          && objectValueWithVariable.getValueWithVariable(INPUT_VALUE_WHERE_NAME).isObject()
           && objectValueWithVariable
               .getValueWithVariable(INPUT_VALUE_WHERE_NAME)
               .asObject()
               .containsKey(idFieldName)
+          && objectValueWithVariable
+              .getValueWithVariable(INPUT_VALUE_WHERE_NAME)
+              .asObject()
+              .getValueWithVariable(idFieldName)
+              .isObject()
           && objectValueWithVariable
               .getValueWithVariable(INPUT_VALUE_WHERE_NAME)
               .asObject()
@@ -209,7 +222,13 @@ public class UniqueItemBuilder {
       if (arguments.containsKey(idFieldName)) {
         return Optional.of(arguments.getArgument(idFieldName));
       } else if (arguments.containsKey(INPUT_VALUE_WHERE_NAME)
+          && arguments.getArgument(INPUT_VALUE_WHERE_NAME).isObject()
           && arguments.getArgument(INPUT_VALUE_WHERE_NAME).asObject().containsKey(idFieldName)
+          && arguments
+              .getArgument(INPUT_VALUE_WHERE_NAME)
+              .asObject()
+              .getValueWithVariable(idFieldName)
+              .isObject()
           && arguments
               .getArgument(INPUT_VALUE_WHERE_NAME)
               .asObject()
@@ -324,9 +343,7 @@ public class UniqueItemBuilder {
       return Stream.empty();
     }
     Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-    if (fieldTypeDefinition == null
-        || !fieldTypeDefinition.isObject()
-        || fieldTypeDefinition.isContainer()) {
+    if (!fieldTypeDefinition.isObject() || fieldTypeDefinition.isContainer()) {
       return Stream.empty();
     }
     ObjectType nestedObjectType = fieldTypeDefinition.asObject();
@@ -334,7 +351,11 @@ public class UniqueItemBuilder {
     Collection<InputValue> nestedInputValues =
         documentManager.getInputValueTypeDefinition(inputValue).asInputObject().getInputValues();
     if (fieldDefinition.getType().hasList()) {
+      if (!valueWithVariable.isArray()) {
+        return Stream.empty();
+      }
       return IntStream.range(0, valueWithVariable.asArray().size())
+          .filter(index -> valueWithVariable.asArray().getValueWithVariable(index).isObject())
           .boxed()
           .flatMap(
               index ->
@@ -369,9 +390,18 @@ public class UniqueItemBuilder {
     }
     Map<String, ValueWithVariable> uniqueValues = new LinkedHashMap<>();
     LinkedHashSet<String> errorPaths = new LinkedHashSet<>();
-    long uniqueFieldCount =
-        collectCombinedUniqueValues(
-            objectType, path, inputValues, valueProvider, "", uniqueValues, errorPaths);
+    long uniqueFieldCount = 0;
+    for (InputValue inputValue : inputValues) {
+      FieldDefinition subFieldDefinition = objectType.getField(inputValue.getName());
+      if (subFieldDefinition != null && subFieldDefinition.isUnique()) {
+        uniqueFieldCount++;
+        errorPaths.add(path + "/" + subFieldDefinition.getName());
+        Optional<ValueWithVariable> valueWithVariable =
+            valueProvider.apply(inputValue).filter(value -> !value.isNull());
+        valueWithVariable.ifPresent(
+            withVariable -> uniqueValues.put(subFieldDefinition.getName(), withVariable));
+      }
+    }
     if (uniqueFieldCount > 0 && uniqueValues.size() == uniqueFieldCount) {
       return Optional.of(
           new UniqueItem(
@@ -381,160 +411,16 @@ public class UniqueItemBuilder {
   }
 
   private JsonObject buildUniqueExpression(UniqueItem uniqueItem) {
-    Map<String, Object> expression = new LinkedHashMap<>();
+    jakarta.json.JsonObjectBuilder expressionBuilder = jsonProvider.createObjectBuilder();
     uniqueItem
         .getUniqueValues()
         .forEach(
             (fieldName, valueWithVariable) ->
-                putNestedExpression(expression, splitPath(fieldName), valueWithVariable));
-    return new ObjectValueWithVariable(expression);
-  }
-
-  private long collectCombinedUniqueValues(
-      ObjectType objectType,
-      String path,
-      Collection<InputValue> inputValues,
-      Function<InputValue, Optional<ValueWithVariable>> valueProvider,
-      String keyPrefix,
-      Map<String, ValueWithVariable> uniqueValues,
-      LinkedHashSet<String> errorPaths) {
-    long uniqueFieldCount = 0;
-    for (InputValue inputValue : inputValues) {
-      FieldDefinition subFieldDefinition = objectType.getField(inputValue.getName());
-      if (subFieldDefinition == null || !subFieldDefinition.isUnique()) {
-        continue;
-      }
-      Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(subFieldDefinition);
-      Optional<ValueWithVariable> currentValue = valueProvider.apply(inputValue);
-      String fieldKey =
-          keyPrefix.isEmpty()
-              ? subFieldDefinition.getName()
-              : keyPrefix + "." + subFieldDefinition.getName();
-      String fieldPath = path + "/" + subFieldDefinition.getName();
-      if (fieldTypeDefinition != null
-          && fieldTypeDefinition.isObject()
-          && !fieldTypeDefinition.isContainer()) {
-        Collection<InputValue> nestedInputValues =
-            documentManager
-                .getInputValueTypeDefinition(inputValue)
-                .asInputObject()
-                .getInputValues();
-        uniqueFieldCount +=
-            collectCombinedUniqueValues(
-                fieldTypeDefinition.asObject(),
-                fieldPath,
-                nestedInputValues,
-                buildNestedValueProvider(currentValue.orElse(null)),
-                fieldKey,
-                uniqueValues,
-                errorPaths);
-      } else {
-        uniqueFieldCount++;
-        errorPaths.add(fieldPath);
-        currentValue
-            .filter(value -> !value.isNull())
-            .ifPresent(withVariable -> uniqueValues.put(fieldKey, withVariable));
-      }
-    }
-    return uniqueFieldCount;
-  }
-
-  private Function<InputValue, Optional<ValueWithVariable>> buildNestedValueProvider(
-      ValueWithVariable parentValue) {
-    if (parentValue == null || parentValue.isNull() || !parentValue.isObject()) {
-      return inputValue -> Optional.empty();
-    }
-    return inputValue ->
-        parentValue
-            .asObject()
-            .getValueWithVariableOrEmpty(inputValue.getName())
-            .or(() -> Optional.ofNullable(inputValue.getDefaultValue()));
-  }
-
-  private void putNestedExpression(
-      Map<String, Object> expression, List<String> path, ValueWithVariable valueWithVariable) {
-    Map<String, Object> current = expression;
-    for (int index = 0; index < path.size(); index++) {
-      String segment = path.get(index);
-      if (index == path.size() - 1) {
-        Map<String, Object> operator = new LinkedHashMap<>();
-        operator.put(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME, valueWithVariable);
-        current.put(segment, operator);
-      } else {
-        Object nestedExpression = current.get(segment);
-        if (nestedExpression == null) {
-          Map<String, Object> childExpression = new LinkedHashMap<>();
-          current.put(segment, childExpression);
-          current = childExpression;
-        } else {
-          current = asExpressionMap(nestedExpression, segment);
-        }
-      }
-    }
-  }
-
-  @SuppressWarnings("unchecked")
-  private Map<String, Object> asExpressionMap(Object value, String segment) {
-    if (!(value instanceof Map<?, ?>)) {
-      throw new IllegalStateException("expression segment '" + segment + "' is not an object");
-    }
-    return (Map<String, Object>) value;
-  }
-
-  private List<String> splitPath(String fieldName) {
-    return List.of(fieldName.split("\\."));
-  }
-
-  private JsonValue getValueFromPath(JsonObject jsonObject, String fieldPath) {
-    JsonValue current = jsonObject;
-    for (String segment : splitPath(fieldPath)) {
-      if (current == null || !JsonValue.ValueType.OBJECT.equals(current.getValueType())) {
-        return null;
-      }
-      JsonObject currentObject = current.asJsonObject();
-      if (!currentObject.containsKey(segment) || currentObject.isNull(segment)) {
-        return null;
-      }
-      current = currentObject.get(segment);
-    }
-    return current;
-  }
-
-  private List<Field> buildUniqueSelectionFields(List<UniqueItem> uniqueItems) {
-    LinkedHashMap<String, SelectionNode> selectionTree = new LinkedHashMap<>();
-    uniqueItems.stream()
-        .flatMap(uniqueItem -> uniqueItem.getUniqueValues().keySet().stream())
-        .distinct()
-        .forEach(fieldPath -> addSelectionPath(selectionTree, splitPath(fieldPath), 0));
-    return buildSelectionFields(selectionTree);
-  }
-
-  private void addSelectionPath(
-      LinkedHashMap<String, SelectionNode> selectionTree, List<String> segments, int index) {
-    if (index >= segments.size()) {
-      return;
-    }
-    SelectionNode node =
-        selectionTree.computeIfAbsent(segments.get(index), key -> new SelectionNode());
-    addSelectionPath(node.children, segments, index + 1);
-  }
-
-  private List<Field> buildSelectionFields(LinkedHashMap<String, SelectionNode> tree) {
-    return tree.entrySet().stream()
-        .map(
-            entry -> {
-              Field field = new Field(entry.getKey());
-              List<Field> childSelections = buildSelectionFields(entry.getValue().children);
-              if (!childSelections.isEmpty()) {
-                field.addSelections(childSelections);
-              }
-              return field;
-            })
-        .collect(Collectors.toList());
-  }
-
-  private static final class SelectionNode {
-
-    private final LinkedHashMap<String, SelectionNode> children = new LinkedHashMap<>();
+                expressionBuilder.add(
+                    fieldName,
+                    jsonProvider
+                        .createObjectBuilder()
+                        .add(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME, valueWithVariable)));
+    return expressionBuilder.build();
   }
 }

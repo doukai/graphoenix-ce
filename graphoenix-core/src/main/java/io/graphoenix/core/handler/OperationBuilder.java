@@ -46,6 +46,11 @@ public class OperationBuilder {
           original != null ? original.asJsonObject() : null, jsonValue.asJsonObject());
     } else if (jsonValue.getValueType().equals(JsonValue.ValueType.ARRAY)) {
       return IntStream.range(0, jsonValue.asJsonArray().size())
+          .filter(
+              index ->
+                  original != null
+                      ? original.asJsonArray().size() > index
+                      : jsonValue.asJsonArray().size() > index)
           .mapToObj(
               index ->
                   updateJsonValue(

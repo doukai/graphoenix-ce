@@ -120,6 +120,8 @@ public class MutationTranslator {
                                             leafFieldDefinitionList,
                                             inputValue,
                                             valueWithVariable.asVariable())));
+                          } else if (!valueWithVariable.isArray()) {
+                            return Stream.<Statement>empty();
                           } else {
                             return IntStream.range(0, valueWithVariable.asArray().size())
                                 .mapToObj(
@@ -621,6 +623,8 @@ public class MutationTranslator {
                             index))
                 .flatMap(statementStream -> statementStream);
       }
+    } else {
+      return Stream.empty();
     }
 
     if (merge) {
@@ -761,6 +765,8 @@ public class MutationTranslator {
           removeMapStatement,
           mergeLeafMapStatement(
               objectType, fieldDefinition, valueWithVariable, parentIdExpression));
+    } else if (!valueWithVariable.isArray()) {
+      return Stream.of(removeMapStatement);
     } else {
       return Stream.concat(
           Stream.of(removeMapStatement),

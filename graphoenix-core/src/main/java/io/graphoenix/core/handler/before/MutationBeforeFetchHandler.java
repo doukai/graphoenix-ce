@@ -327,6 +327,9 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
           arguments.put(fetchFrom, JsonValue.NULL);
           return Stream.empty();
         }
+        if (!valueWithVariable.isObject()) {
+          return Stream.empty();
+        }
         if (valueWithVariable.asObject().containsKey(INPUT_VALUE_WHERE_NAME)
             && valueWithVariable.asObject().keySet().size() == 1) {
           return Stream.empty();
@@ -354,6 +357,12 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
       if (valueWithVariable.isNull()) {
         return Stream.empty();
       }
+      if (fieldDefinition.getType().hasList() && !valueWithVariable.isArray()) {
+        return Stream.empty();
+      }
+      if (!fieldDefinition.getType().hasList() && !valueWithVariable.isObject()) {
+        return Stream.empty();
+      }
       Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
       return inputValueTypeDefinition.asInputObject().getInputValues().stream()
           .filter(
@@ -366,6 +375,12 @@ public class MutationBeforeFetchHandler implements OperationBeforeHandler, Fetch
                           subFieldDefinition -> {
                             if (fieldDefinition.getType().hasList()) {
                               return IntStream.range(0, valueWithVariable.asArray().size())
+                                  .filter(
+                                      index ->
+                                          valueWithVariable
+                                              .asArray()
+                                              .getValueWithVariable(index)
+                                              .isObject())
                                   .mapToObj(
                                       index ->
                                           Stream.ofNullable(

@@ -252,6 +252,7 @@ public class QueryTranslator {
                                           arguments ->
                                               arguments.getArgumentOrEmpty(inputValue.getName()))
                                       .filter(valueWithVariable -> !valueWithVariable.isNull())
+                                      .filter(ValueWithVariable::isArray)
                                       .map(
                                           valueWithVariable -> {
                                             if (valueWithVariable.isVariable()) {
@@ -276,6 +277,18 @@ public class QueryTranslator {
                                                                       .containsKey(
                                                                           INPUT_VALUE_WHERE_NAME)
                                                                   || valueWithVariableList
+                                                                      .get(index)
+                                                                      .asObject()
+                                                                      .getValueWithVariable(
+                                                                          INPUT_VALUE_WHERE_NAME)
+                                                                      .isNull()
+                                                                  || valueWithVariableList
+                                                                      .get(index)
+                                                                      .asObject()
+                                                                      .getValueWithVariable(
+                                                                          INPUT_VALUE_WHERE_NAME)
+                                                                      .isObject()
+                                                                  && valueWithVariableList
                                                                       .get(index)
                                                                       .asObject()
                                                                       .getValueWithVariable(
@@ -307,6 +320,9 @@ public class QueryTranslator {
                                                                               .asObject()
                                                                               .getValueWithVariableOrEmpty(
                                                                                   INPUT_VALUE_WHERE_NAME)
+                                                                              .filter(
+                                                                                  ValueWithVariable
+                                                                                      ::isObject)
                                                                               .flatMap(
                                                                                   whereInputValue ->
                                                                                       whereInputValue
@@ -339,10 +355,16 @@ public class QueryTranslator {
                                                       .filter(
                                                           index ->
                                                               valueWithVariableList
-                                                                  .get(index)
-                                                                  .asObject()
-                                                                  .containsKey(
-                                                                      INPUT_VALUE_WHERE_NAME))
+                                                                      .get(index)
+                                                                      .asObject()
+                                                                      .containsKey(
+                                                                          INPUT_VALUE_WHERE_NAME)
+                                                                  && valueWithVariableList
+                                                                      .get(index)
+                                                                      .asObject()
+                                                                      .getValueWithVariable(
+                                                                          INPUT_VALUE_WHERE_NAME)
+                                                                      .isObject())
                                                       .filter(
                                                           index ->
                                                               !valueWithVariableList
@@ -502,13 +524,21 @@ public class QueryTranslator {
                       .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
                       .filter(valueWithVariable -> !valueWithVariable.isNull())
                       .filter(valueWithVariable -> !valueWithVariable.isVariable())
+                      .filter(ValueWithVariable::isArray)
                       .map(
                           valueWithVariable ->
                               valueWithVariable.asArray().getValueWithVariables().stream()
                                   .filter(item -> !item.isNull())
+                                  .filter(ValueWithVariable::isObject)
                                   .filter(
                                       item ->
                                           !item.asObject().containsKey(INPUT_VALUE_WHERE_NAME)
+                                              || item.asObject()
+                                                  .getValueWithVariable(INPUT_VALUE_WHERE_NAME)
+                                                  .isNull()
+                                              || !item.asObject()
+                                                  .getValueWithVariable(INPUT_VALUE_WHERE_NAME)
+                                                  .isObject()
                                               || item.asObject()
                                                   .getValueWithVariable(INPUT_VALUE_WHERE_NAME)
                                                   .asObject()
@@ -538,6 +568,7 @@ public class QueryTranslator {
                                                               .asObject()
                                                               .getValueWithVariableOrEmpty(
                                                                   INPUT_VALUE_WHERE_NAME)
+                                                              .filter(ValueWithVariable::isObject)
                                                               .flatMap(
                                                                   whereInputValue ->
                                                                       whereInputValue
