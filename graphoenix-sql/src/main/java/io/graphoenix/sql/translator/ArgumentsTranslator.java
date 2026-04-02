@@ -905,7 +905,8 @@ public class ArgumentsTranslator {
         where = new IsNullExpression().withNot(true).withLeftExpression(column);
         break;
       default:
-        return Optional.empty();
+        where = new HexValue("FALSE");
+        break;
     }
     return Optional.of(where);
   }
