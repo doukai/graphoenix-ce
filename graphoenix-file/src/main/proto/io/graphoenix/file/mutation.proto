@@ -16,8 +16,8 @@ import "io/graphoenix/file/mutation_responses.proto";
 * Mutation
 */
 service MutationService {
-  rpc File (MutationFileRequest) returns (MutationFileResponse); /* Mutation Field for 文件 */
-  rpc FileList (MutationFileListRequest) returns (MutationFileListResponse); /* Mutation Field for 文件 List */
-  rpc SingleUpload (MutationSingleUploadRequest) returns (MutationSingleUploadResponse);
-  rpc MultipleUpload (MutationMultipleUploadRequest) returns (MutationMultipleUploadResponse);
+    rpc File (MutationFileRequest) returns (MutationFileResponse); /* Mutation Field for 文件 */
+    rpc FileList (MutationFileListRequest) returns (MutationFileListResponse); /* Mutation Field for 文件 List */
+    rpc SingleUpload (MutationSingleUploadRequest) returns (MutationSingleUploadResponse);
+    rpc MultipleUpload (MutationMultipleUploadRequest) returns (MutationMultipleUploadResponse);
 }

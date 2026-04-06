@@ -1,6 +1,7 @@
 package io.graphoenix.file.dto.annotation;
 
 import jakarta.annotation.Generated;
+import java.lang.String;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,17 +10,19 @@ import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
 /**
- * Query
+ * Group Input for 文件
  */
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-@Description("Query")
-public @interface Query {
-  FileQueryArguments file() default @FileQueryArguments;
+@Description("Group Input for 文件")
+public @interface FileGroupBy2 {
+  /**
+   * Group By Field Names
+   */
+  @Description("Group By Field Names")
+  String[] fieldNames() default {};
 
-  FileListQueryArguments fileList() default @FileListQueryArguments;
-
-  FileConnectionQueryArguments fileConnection() default @FileConnectionQueryArguments;
+  String $fieldNames() default "";
 }

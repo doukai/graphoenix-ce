@@ -18,7 +18,7 @@ import org.eclipse.microprofile.graphql.Description;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Order Input for 文件")
-public @interface FileOrderBy {
+public @interface FileOrderBy1 {
   /**
    * ID
    */
@@ -197,7 +197,7 @@ public @interface FileOrderBy {
    * OrderByes
    */
   @Description("OrderByes")
-  FileOrderBy1[] obs() default {};
+  FileOrderBy2[] obs() default {};
 
   String $id() default "";
 

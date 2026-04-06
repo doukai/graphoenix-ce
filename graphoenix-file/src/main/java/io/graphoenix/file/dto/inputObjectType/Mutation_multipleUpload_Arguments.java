@@ -8,7 +8,7 @@ import org.eclipse.microprofile.graphql.Input;
 
 @CompiledJson
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 public class Mutation_multipleUpload_Arguments {
   private Collection<String> files;
 

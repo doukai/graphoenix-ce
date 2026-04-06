@@ -8,7 +8,6 @@ import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.FieldDefinition;
-import io.graphoenix.spi.graphql.type.InputValue;
 import io.graphoenix.spi.graphql.type.ObjectType;
 import io.graphoenix.sql.expression.JsonArrayAggregateFunction;
 import io.graphoenix.sql.utils.DBValueUtil;
@@ -22,15 +21,14 @@ import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.util.cnfexpression.MultiAndExpression;
 import net.sf.jsqlparser.util.cnfexpression.MultiOrExpression;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.OBJECT_SELECTION_NOT_EXIST;
+import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_FIELD_TYPE;
 import static io.graphoenix.sql.utils.DBNameUtil.*;
 import static io.graphoenix.sql.utils.DBValueUtil.*;
 import static net.sf.jsqlparser.expression.AnalyticType.OVER;
@@ -923,37 +921,117 @@ public class QueryTranslator {
       ObjectType fieldTypeDefinition =
           documentManager.getFieldTypeDefinition(fieldDefinition).asObject();
 
-      List<Column> columnList =
-          Stream.ofNullable(fieldDefinition.getArgument(INPUT_VALUE_GROUP_BY_NAME))
-              .filter(Definition::isInputObject)
-              .flatMap(
-                  inputValue ->
-                      Stream.ofNullable(
-                          inputValue
-                              .asInputObject()
-                              .getInputValue(INPUT_VALUE_GROUP_BY_FIELD_NAMES_NAME)))
-              .flatMap(
+      List<Expression> groupByExpressions =
+          fieldDefinition
+              .getArgumentOrEmpty(INPUT_VALUE_GROUP_BY_NAME)
+              .map(
                   inputValue ->
                       Optional.ofNullable(field.getArguments())
                           .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
                           .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
-                          .stream())
-              .filter(ValueWithVariable::isArray)
-              .flatMap(
-                  valueWithVariable -> valueWithVariable.asArray().getValueWithVariables().stream())
-              .filter(ValueWithVariable::isString)
-              .map(
-                  valueWithVariable ->
-                      graphqlFieldToColumn(
-                          typeToTable(fieldTypeDefinition, level),
-                          valueWithVariable.asString().getValue()))
-              .collect(Collectors.toList());
+                          .stream()
+                          .filter(ValueWithVariable::isObject)
+                          .flatMap(
+                              valueWithVariable ->
+                                  valueWithVariableToGroupByExpressionStream(
+                                      fieldTypeDefinition, valueWithVariable, level))
+                          .collect(Collectors.toList()))
+              .orElseGet(Collections::emptyList);
 
-      if (!columnList.isEmpty()) {
-        return new GroupByElement().withGroupByExpressions(new ExpressionList<>(columnList));
+      if (!groupByExpressions.isEmpty()) {
+        return new GroupByElement()
+            .withGroupByExpressions(new ExpressionList<>(groupByExpressions));
       }
     }
     return null;
+  }
+
+  protected Stream<Expression> valueWithVariableToGroupByExpressionStream(
+      ObjectType objectType, ValueWithVariable valueWithVariable, int level) {
+    if (valueWithVariable.isNull() || !valueWithVariable.isObject()) {
+      return Stream.empty();
+    }
+    Table table = typeToTable(objectType, level);
+    return valueWithVariable.asObject().getObjectValueWithVariable().entrySet().stream()
+        .flatMap(
+            entry -> {
+              if (entry.getValue() == null || entry.getValue().isNull()) {
+                return Stream.empty();
+              }
+              if (entry.getKey().equals(INPUT_VALUE_GROUP_BY_FIELD_NAMES_NAME)) {
+                return entry.getValue().isArray()
+                    ? entry.getValue().asArray().getValueWithVariables().stream()
+                        .filter(ValueWithVariable::isString)
+                        .flatMap(
+                            item ->
+                                Optional.ofNullable(objectType.getField(item.asString().getValue()))
+                                    .stream())
+                        .filter(subFieldDefinition -> !subFieldDefinition.isFetchField())
+                        .filter(subFieldDefinition -> !subFieldDefinition.isInvokeField())
+                        .filter(subFieldDefinition -> !subFieldDefinition.isConnectionField())
+                        .filter(subFieldDefinition -> !subFieldDefinition.isFunctionField())
+                        .filter(subFieldDefinition -> !subFieldDefinition.isAggregateField())
+                        .flatMap(
+                            subFieldDefinition -> {
+                              Definition subFieldTypeDefinition =
+                                  documentManager.getFieldTypeDefinition(subFieldDefinition);
+                              if (subFieldTypeDefinition.isLeaf()) {
+                                return Stream.of(
+                                    graphqlFieldToColumn(table, subFieldDefinition.getName()));
+                              }
+                              return Stream.empty();
+                            })
+                    : Stream.empty();
+              }
+              if (entry.getKey().equals(INPUT_VALUE_GBS_NAME)) {
+                return entry.getValue().isArray()
+                    ? entry.getValue().asArray().getValueWithVariables().stream()
+                        .filter(ValueWithVariable::isObject)
+                        .flatMap(
+                            item ->
+                                valueWithVariableToGroupByExpressionStream(objectType, item, level))
+                    : Stream.empty();
+              }
+              return Optional.ofNullable(objectType.getField(entry.getKey())).stream()
+                  .filter(subFieldDefinition -> !subFieldDefinition.isFetchField())
+                  .filter(subFieldDefinition -> !subFieldDefinition.isInvokeField())
+                  .filter(subFieldDefinition -> !subFieldDefinition.isConnectionField())
+                  .flatMap(
+                      subFieldDefinition -> {
+                        ValueWithVariable subValueWithVariable = entry.getValue();
+                        Definition subFieldTypeDefinition =
+                            documentManager.getFieldTypeDefinition(subFieldDefinition);
+                        if (subValueWithVariable.isObject()
+                            && subFieldTypeDefinition.isObject()
+                            && !subFieldDefinition.getType().hasList()) {
+                          return valueWithVariableToGroupByExpressionStream(
+                                  subFieldTypeDefinition.asObject(),
+                                  subValueWithVariable,
+                                  level + 1)
+                              .map(
+                                  expression ->
+                                      objectFieldToGroupByExpression(
+                                          objectType, subFieldDefinition, expression, level));
+                        } else if (subValueWithVariable.isObject()
+                            && subFieldTypeDefinition.isObject()
+                            && subFieldDefinition.getType().hasList()) {
+                          if (hasFunctionFieldInGroupBy(
+                              subFieldTypeDefinition.asObject(), subValueWithVariable)) {
+                            throw new GraphQLErrors(
+                                UNSUPPORTED_FIELD_TYPE.bind(subFieldDefinition.toString()));
+                          }
+                          return valueWithVariableToGroupByExpressionStream(
+                                  subFieldTypeDefinition.asObject(),
+                                  subValueWithVariable,
+                                  level + 1)
+                              .map(
+                                  expression ->
+                                      listFieldToGroupByExpression(
+                                          objectType, subFieldDefinition, expression, level));
+                        }
+                        return Stream.empty();
+                      });
+            });
   }
 
   protected Stream<OrderByElement> argumentsToOrderByStream(
@@ -962,94 +1040,40 @@ public class QueryTranslator {
     if (fieldDefinition.getArguments() != null) {
       if (fieldTypeDefinition.isObject()) {
         Table table = typeToTable(fieldTypeDefinition.asObject(), level);
-        return fieldDefinition
-            .getArgumentOrEmpty(INPUT_VALUE_ORDER_BY_NAME)
-            .map(
-                inputValue ->
-                    Optional.ofNullable(field.getArguments())
-                        .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
-                        .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
-                        .stream()
-                        .filter(ValueWithVariable::isObject)
-                        .flatMap(
-                            valueWithVariable ->
-                                documentManager
-                                    .getInputValueTypeDefinition(inputValue)
-                                    .asInputObject()
-                                    .getInputValues()
-                                    .stream()
-                                    .flatMap(
-                                        subInputValue ->
-                                            valueWithVariable
-                                                .asObject()
-                                                .getValueWithVariableOrEmpty(
-                                                    subInputValue.getName())
-                                                .or(
-                                                    () ->
-                                                        Optional.ofNullable(
-                                                            subInputValue.getDefaultValue()))
-                                                .stream()
-                                                .flatMap(
-                                                    subValueWithVariable -> {
-                                                      FieldDefinition subFieldDefinition =
-                                                          fieldTypeDefinition
-                                                              .asObject()
-                                                              .getFieldOrError(
-                                                                  subInputValue.getName());
-                                                      if (subValueWithVariable.isEnum()) {
-                                                        Expression expression;
-                                                        if (subFieldDefinition.isFunctionField()) {
-                                                          expression =
-                                                              new Function()
-                                                                  .withName(
-                                                                      subFieldDefinition
-                                                                          .getFunctionNameOrError())
-                                                                  .withParameters(
-                                                                      graphqlFieldToColumn(
-                                                                          table,
-                                                                          subFieldDefinition
-                                                                              .getFunctionFieldOrError()));
-                                                        } else {
-                                                          expression =
-                                                              graphqlFieldToColumn(
-                                                                  table,
-                                                                  subFieldDefinition.getName());
-                                                        }
-                                                        return Stream.of(
-                                                            new OrderByElement()
-                                                                .withAsc(
-                                                                    !subValueWithVariable
-                                                                        .asEnum()
-                                                                        .getValue()
-                                                                        .equals(
-                                                                            INPUT_SORT_NAME_VALUE_DESC))
-                                                                .withExpression(expression));
-                                                      } else {
-                                                        return valueWithVariableToOrderByStream(
-                                                            subFieldDefinition,
-                                                            subInputValue,
-                                                            subValueWithVariable,
-                                                            level + 1);
-                                                      }
-                                                    }))))
-            .orElseGet(
-                () ->
-                    Stream.of(
-                        new OrderByElement()
-                            .withAsc(
-                                !Optional.ofNullable(field.getArguments())
-                                    .map(arguments -> arguments.hasArgument(INPUT_VALUE_LAST_NAME))
-                                    .orElse(false))
-                            .withExpression(
-                                graphqlFieldToColumn(
-                                    table,
-                                    fieldTypeDefinition
-                                        .asObject()
-                                        .getCursorField()
-                                        .orElseGet(
-                                            () ->
-                                                fieldTypeDefinition.asObject().getIDFieldOrError())
-                                        .getName()))));
+        List<OrderByElement> orderByElements =
+            fieldDefinition
+                .getArgumentOrEmpty(INPUT_VALUE_ORDER_BY_NAME)
+                .map(
+                    inputValue ->
+                        Optional.ofNullable(field.getArguments())
+                            .flatMap(
+                                arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
+                            .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
+                            .stream()
+                            .filter(ValueWithVariable::isObject)
+                            .flatMap(
+                                valueWithVariable ->
+                                    valueWithVariableToOrderByStream(
+                                        fieldTypeDefinition.asObject(), valueWithVariable, level))
+                            .collect(Collectors.toList()))
+                .orElseGet(Collections::emptyList);
+        if (!orderByElements.isEmpty()) {
+          return orderByElements.stream();
+        }
+        return Stream.of(
+            new OrderByElement()
+                .withAsc(
+                    !Optional.ofNullable(field.getArguments())
+                        .map(arguments -> arguments.hasArgument(INPUT_VALUE_LAST_NAME))
+                        .orElse(false))
+                .withExpression(
+                    graphqlFieldToColumn(
+                        table,
+                        fieldTypeDefinition
+                            .asObject()
+                            .getCursorField()
+                            .orElseGet(() -> fieldTypeDefinition.asObject().getIDFieldOrError())
+                            .getName())));
       } else {
         Table withTable = graphqlTypeToTable(fieldDefinition.getMapWithTypeOrError(), level);
         return fieldDefinition
@@ -1074,59 +1098,405 @@ public class QueryTranslator {
   }
 
   protected Stream<OrderByElement> valueWithVariableToOrderByStream(
-      FieldDefinition fieldDefinition,
-      InputValue inputValue,
-      ValueWithVariable valueWithVariable,
-      int level) {
-    if (valueWithVariable.isNull()) {
+      ObjectType objectType, ValueWithVariable valueWithVariable, int level) {
+    if (valueWithVariable.isNull() || !valueWithVariable.isObject()) {
       return Stream.empty();
     }
-    Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-    Table table = typeToTable(fieldTypeDefinition.asObject(), level);
-    return documentManager
-        .getInputValueTypeDefinition(inputValue)
-        .asInputObject()
-        .getInputValues()
-        .stream()
+    Table table = typeToTable(objectType, level);
+    return valueWithVariable.asObject().getObjectValueWithVariable().entrySet().stream()
         .flatMap(
-            subInputValue ->
-                valueWithVariable
-                    .asObject()
-                    .getValueWithVariableOrEmpty(subInputValue.getName())
-                    .or(() -> Optional.ofNullable(subInputValue.getDefaultValue()))
-                    .stream()
-                    .flatMap(
-                        subValueWithVariable -> {
-                          FieldDefinition subFieldDefinition =
-                              fieldTypeDefinition
-                                  .asObject()
-                                  .getFieldOrError(subInputValue.getName());
-                          if (subValueWithVariable.isEnum()) {
-                            Expression expression;
-                            if (subFieldDefinition.isFunctionField()) {
-                              expression =
-                                  new Function()
-                                      .withName(subFieldDefinition.getFunctionNameOrError())
-                                      .withParameters(
-                                          graphqlFieldToColumn(
-                                              table, subFieldDefinition.getFunctionFieldOrError()));
-                            } else {
-                              expression =
-                                  graphqlFieldToColumn(table, subFieldDefinition.getName());
-                            }
-                            return Stream.of(
-                                new OrderByElement()
-                                    .withAsc(
-                                        !subValueWithVariable
-                                            .asEnum()
-                                            .getValue()
-                                            .equals(INPUT_SORT_NAME_VALUE_DESC))
-                                    .withExpression(expression));
+            entry -> {
+              if (entry.getValue() == null || entry.getValue().isNull()) {
+                return Stream.empty();
+              }
+              if (entry.getKey().equals(INPUT_VALUE_OBS_NAME)) {
+                return entry.getValue().isArray()
+                    ? entry.getValue().asArray().getValueWithVariables().stream()
+                        .filter(ValueWithVariable::isObject)
+                        .flatMap(item -> valueWithVariableToOrderByStream(objectType, item, level))
+                    : Stream.empty();
+              }
+              return Optional.ofNullable(objectType.getField(entry.getKey())).stream()
+                  .filter(subFieldDefinition -> !subFieldDefinition.isFetchField())
+                  .filter(subFieldDefinition -> !subFieldDefinition.isInvokeField())
+                  .filter(subFieldDefinition -> !subFieldDefinition.isConnectionField())
+                  .flatMap(
+                      subFieldDefinition -> {
+                        ValueWithVariable subValueWithVariable = entry.getValue();
+                        Definition subFieldTypeDefinition =
+                            documentManager.getFieldTypeDefinition(subFieldDefinition);
+                        if (subValueWithVariable.isEnum()
+                            && isValidOrderByEnum(subValueWithVariable)) {
+                          Expression expression;
+                          if (subFieldDefinition.isFunctionField()) {
+                            expression =
+                                new Function()
+                                    .withName(subFieldDefinition.getFunctionNameOrError())
+                                    .withParameters(
+                                        graphqlFieldToColumn(
+                                            table, subFieldDefinition.getFunctionFieldOrError()));
+                          } else if (subFieldTypeDefinition.isLeaf()) {
+                            expression = graphqlFieldToColumn(table, subFieldDefinition.getName());
                           } else {
-                            return valueWithVariableToOrderByStream(
-                                subFieldDefinition, subInputValue, subValueWithVariable, level + 1);
+                            return Stream.empty();
                           }
-                        }));
+                          return Stream.of(
+                              new OrderByElement()
+                                  .withAsc(
+                                      !subValueWithVariable
+                                          .asEnum()
+                                          .getValue()
+                                          .equals(INPUT_SORT_NAME_VALUE_DESC))
+                                  .withExpression(expression));
+                        } else if (subValueWithVariable.isObject()
+                            && subFieldTypeDefinition.isObject()
+                            && !subFieldDefinition.getType().hasList()) {
+                          return valueWithVariableToOrderByStream(
+                                  subFieldTypeDefinition.asObject(),
+                                  subValueWithVariable,
+                                  level + 1)
+                              .map(
+                                  orderByElement ->
+                                      new OrderByElement()
+                                          .withAsc(orderByElement.isAsc())
+                                          .withExpression(
+                                              objectFieldToOrderByExpression(
+                                                  objectType,
+                                                  subFieldDefinition,
+                                                  orderByElement.getExpression(),
+                                                  level)));
+                        } else if (subValueWithVariable.isObject()
+                            && subFieldTypeDefinition.isObject()
+                            && subFieldDefinition.getType().hasList()) {
+                          if (subFieldDefinition.isFunctionField()) {
+                            throw new GraphQLErrors(
+                                UNSUPPORTED_FIELD_TYPE.bind(subFieldDefinition.toString()));
+                          }
+                          if (hasFunctionFieldInOrderBy(
+                              subFieldTypeDefinition.asObject(), subValueWithVariable)) {
+                            throw new GraphQLErrors(
+                                UNSUPPORTED_FIELD_TYPE.bind(subFieldDefinition.toString()));
+                          }
+                          return valueWithVariableToOrderByStream(
+                                  subFieldTypeDefinition.asObject(),
+                                  subValueWithVariable,
+                                  level + 1)
+                              .map(
+                                  orderByElement ->
+                                      new OrderByElement()
+                                          .withAsc(orderByElement.isAsc())
+                                          .withExpression(
+                                              listFieldToOrderByExpression(
+                                                  objectType,
+                                                  subFieldDefinition,
+                                                  orderByElement.getExpression(),
+                                                  orderByElement.isAsc(),
+                                                  level)));
+                        }
+                        return Stream.empty();
+                      });
+            });
+  }
+
+  protected boolean isValidOrderByEnum(ValueWithVariable valueWithVariable) {
+    return valueWithVariable.isEnum()
+        && (valueWithVariable.asEnum().getValue().equals(INPUT_SORT_NAME_VALUE_ASC)
+            || valueWithVariable.asEnum().getValue().equals(INPUT_SORT_NAME_VALUE_DESC));
+  }
+
+  protected boolean hasFunctionFieldInGroupBy(
+      ObjectType objectType, ValueWithVariable valueWithVariable) {
+    if (valueWithVariable == null || valueWithVariable.isNull() || !valueWithVariable.isObject()) {
+      return false;
+    }
+    return valueWithVariable.asObject().getObjectValueWithVariable().entrySet().stream()
+        .anyMatch(
+            entry -> {
+              if (entry.getValue() == null || entry.getValue().isNull()) {
+                return false;
+              }
+              if (entry.getKey().equals(INPUT_VALUE_GROUP_BY_FIELD_NAMES_NAME)) {
+                return entry.getValue().isArray()
+                    && entry.getValue().asArray().getValueWithVariables().stream()
+                        .filter(ValueWithVariable::isString)
+                        .map(item -> objectType.getField(item.asString().getValue()))
+                        .filter(Objects::nonNull)
+                        .anyMatch(FieldDefinition::isFunctionField);
+              }
+              if (entry.getKey().equals(INPUT_VALUE_GBS_NAME)) {
+                return entry.getValue().isArray()
+                    && entry.getValue().asArray().getValueWithVariables().stream()
+                        .filter(ValueWithVariable::isObject)
+                        .anyMatch(item -> hasFunctionFieldInGroupBy(objectType, item));
+              }
+              return Optional.ofNullable(objectType.getField(entry.getKey()))
+                  .filter(subFieldDefinition -> !subFieldDefinition.isFetchField())
+                  .filter(subFieldDefinition -> !subFieldDefinition.isInvokeField())
+                  .filter(subFieldDefinition -> !subFieldDefinition.isConnectionField())
+                  .filter(
+                      subFieldDefinition ->
+                          entry.getValue().isObject()
+                              && documentManager
+                                  .getFieldTypeDefinition(subFieldDefinition)
+                                  .isObject())
+                  .map(
+                      subFieldDefinition ->
+                          hasFunctionFieldInGroupBy(
+                              documentManager.getFieldTypeDefinition(subFieldDefinition).asObject(),
+                              entry.getValue()))
+                  .orElse(false);
+            });
+  }
+
+  protected boolean hasFunctionFieldInOrderBy(
+      ObjectType objectType, ValueWithVariable valueWithVariable) {
+    if (valueWithVariable == null || valueWithVariable.isNull() || !valueWithVariable.isObject()) {
+      return false;
+    }
+    return valueWithVariable.asObject().getObjectValueWithVariable().entrySet().stream()
+        .anyMatch(
+            entry -> {
+              if (entry.getValue() == null || entry.getValue().isNull()) {
+                return false;
+              }
+              if (entry.getKey().equals(INPUT_VALUE_OBS_NAME)) {
+                return entry.getValue().isArray()
+                    && entry.getValue().asArray().getValueWithVariables().stream()
+                        .filter(ValueWithVariable::isObject)
+                        .anyMatch(item -> hasFunctionFieldInOrderBy(objectType, item));
+              }
+              return Optional.ofNullable(objectType.getField(entry.getKey()))
+                  .filter(subFieldDefinition -> !subFieldDefinition.isFetchField())
+                  .filter(subFieldDefinition -> !subFieldDefinition.isInvokeField())
+                  .filter(subFieldDefinition -> !subFieldDefinition.isConnectionField())
+                  .map(
+                      subFieldDefinition -> {
+                        Definition subFieldTypeDefinition =
+                            documentManager.getFieldTypeDefinition(subFieldDefinition);
+                        if (entry.getValue().isEnum() && isValidOrderByEnum(entry.getValue())) {
+                          return subFieldDefinition.isFunctionField();
+                        }
+                        return entry.getValue().isObject()
+                            && subFieldTypeDefinition.isObject()
+                            && hasFunctionFieldInOrderBy(
+                                subFieldTypeDefinition.asObject(), entry.getValue());
+                      })
+                  .orElse(false);
+            });
+  }
+
+  protected Expression objectFieldToOrderByExpression(
+      ObjectType objectType, FieldDefinition fieldDefinition, Expression expression, int level) {
+    Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+    if (!fieldTypeDefinition.isObject() || fieldDefinition.getType().hasList()) {
+      return expression;
+    }
+    Table parentTable = typeToTable(objectType, level);
+    Table table = typeToTable(fieldTypeDefinition.asObject(), level + 1);
+    PlainSelect plainSelect = new PlainSelect().addSelectItem(expression).withFromItem(table);
+    if (fieldDefinition.hasMapWith()) {
+      Table withTable = graphqlTypeToTable(fieldDefinition.getMapWithTypeOrError(), level + 1);
+      plainSelect.setLimit(new Limit().withOffset(new LongValue(0)).withRowCount(new LongValue(1)));
+      return new ParenthesedSelect()
+          .withSelect(
+              plainSelect
+                  .addJoins(
+                      new Join()
+                          .withLeft(true)
+                          .setFromItem(withTable)
+                          .addOnExpression(
+                              new MultiAndExpression(
+                                  Arrays.asList(
+                                      new EqualsTo()
+                                          .withLeftExpression(
+                                              graphqlFieldToColumn(
+                                                  withTable, fieldDefinition.getMapWithToOrError()))
+                                          .withRightExpression(
+                                              graphqlFieldToColumn(
+                                                  table, fieldDefinition.getMapToOrError())),
+                                      new NotEqualsTo()
+                                          .withLeftExpression(
+                                              graphqlFieldToColumn(
+                                                  withTable, FIELD_DEPRECATED_NAME))
+                                          .withRightExpression(new LongValue(1))))))
+                  .withWhere(
+                      new MultiAndExpression(
+                          Arrays.asList(
+                              new EqualsTo()
+                                  .withLeftExpression(
+                                      graphqlFieldToColumn(
+                                          withTable, fieldDefinition.getMapWithFromOrError()))
+                                  .withRightExpression(
+                                      graphqlFieldToColumn(
+                                          parentTable, fieldDefinition.getMapFromOrError())),
+                              new NotEqualsTo()
+                                  .withLeftExpression(
+                                      graphqlFieldToColumn(table, FIELD_DEPRECATED_NAME))
+                                  .withRightExpression(new LongValue(1))))));
+    }
+    plainSelect.setLimit(new Limit().withOffset(new LongValue(0)).withRowCount(new LongValue(1)));
+    return new ParenthesedSelect()
+        .withSelect(
+            plainSelect.withWhere(
+                new MultiAndExpression(
+                    Arrays.asList(
+                        new EqualsTo()
+                            .withLeftExpression(
+                                graphqlFieldToColumn(table, fieldDefinition.getMapToOrError()))
+                            .withRightExpression(
+                                graphqlFieldToColumn(
+                                    parentTable, fieldDefinition.getMapFromOrError())),
+                        new NotEqualsTo()
+                            .withLeftExpression(graphqlFieldToColumn(table, FIELD_DEPRECATED_NAME))
+                            .withRightExpression(new LongValue(1))))));
+  }
+
+  protected Expression listFieldToOrderByExpression(
+      ObjectType objectType,
+      FieldDefinition fieldDefinition,
+      Expression expression,
+      boolean asc,
+      int level) {
+    Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+    if (!fieldTypeDefinition.isObject() || !fieldDefinition.getType().hasList()) {
+      return expression;
+    }
+    Table parentTable = typeToTable(objectType, level);
+    Table table = typeToTable(fieldTypeDefinition.asObject(), level + 1);
+    Expression aggregateExpression =
+        new Function().withName(asc ? "MIN" : "MAX").withParameters(expression);
+    PlainSelect plainSelect =
+        new PlainSelect().addSelectItem(aggregateExpression).withFromItem(table);
+    if (fieldDefinition.hasMapWith()) {
+      Table withTable = graphqlTypeToTable(fieldDefinition.getMapWithTypeOrError(), level + 1);
+      return new ParenthesedSelect()
+          .withSelect(
+              plainSelect
+                  .addJoins(
+                      new Join()
+                          .withLeft(true)
+                          .setFromItem(withTable)
+                          .addOnExpression(
+                              new MultiAndExpression(
+                                  Arrays.asList(
+                                      new EqualsTo()
+                                          .withLeftExpression(
+                                              graphqlFieldToColumn(
+                                                  withTable, fieldDefinition.getMapWithToOrError()))
+                                          .withRightExpression(
+                                              graphqlFieldToColumn(
+                                                  table, fieldDefinition.getMapToOrError())),
+                                      new NotEqualsTo()
+                                          .withLeftExpression(
+                                              graphqlFieldToColumn(
+                                                  withTable, FIELD_DEPRECATED_NAME))
+                                          .withRightExpression(new LongValue(1))))))
+                  .withWhere(
+                      new MultiAndExpression(
+                          Arrays.asList(
+                              new EqualsTo()
+                                  .withLeftExpression(
+                                      graphqlFieldToColumn(
+                                          withTable, fieldDefinition.getMapWithFromOrError()))
+                                  .withRightExpression(
+                                      graphqlFieldToColumn(
+                                          parentTable, fieldDefinition.getMapFromOrError())),
+                              new NotEqualsTo()
+                                  .withLeftExpression(
+                                      graphqlFieldToColumn(table, FIELD_DEPRECATED_NAME))
+                                  .withRightExpression(new LongValue(1))))));
+    }
+    return new ParenthesedSelect()
+        .withSelect(
+            plainSelect.withWhere(
+                new MultiAndExpression(
+                    Arrays.asList(
+                        new EqualsTo()
+                            .withLeftExpression(
+                                graphqlFieldToColumn(table, fieldDefinition.getMapToOrError()))
+                            .withRightExpression(
+                                graphqlFieldToColumn(
+                                    parentTable, fieldDefinition.getMapFromOrError())),
+                        new NotEqualsTo()
+                            .withLeftExpression(graphqlFieldToColumn(table, FIELD_DEPRECATED_NAME))
+                            .withRightExpression(new LongValue(1))))));
+  }
+
+  protected Expression objectFieldToGroupByExpression(
+      ObjectType objectType, FieldDefinition fieldDefinition, Expression expression, int level) {
+    return objectFieldToOrderByExpression(objectType, fieldDefinition, expression, level);
+  }
+
+  protected Expression listFieldToGroupByExpression(
+      ObjectType objectType, FieldDefinition fieldDefinition, Expression expression, int level) {
+    if (expression instanceof Function && ((Function) expression).isAllColumns()) {
+      throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(fieldDefinition.toString()));
+    }
+    if (expression instanceof Function) {
+      throw new GraphQLErrors(UNSUPPORTED_FIELD_TYPE.bind(fieldDefinition.toString()));
+    }
+    Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+    if (!fieldTypeDefinition.isObject() || !fieldDefinition.getType().hasList()) {
+      return expression;
+    }
+    Table parentTable = typeToTable(objectType, level);
+    Table table = typeToTable(fieldTypeDefinition.asObject(), level + 1);
+    Expression aggregateExpression = new Function().withName("MIN").withParameters(expression);
+    PlainSelect plainSelect =
+        new PlainSelect().addSelectItem(aggregateExpression).withFromItem(table);
+    if (fieldDefinition.hasMapWith()) {
+      Table withTable = graphqlTypeToTable(fieldDefinition.getMapWithTypeOrError(), level + 1);
+      return new ParenthesedSelect()
+          .withSelect(
+              plainSelect
+                  .addJoins(
+                      new Join()
+                          .withLeft(true)
+                          .setFromItem(withTable)
+                          .addOnExpression(
+                              new MultiAndExpression(
+                                  Arrays.asList(
+                                      new EqualsTo()
+                                          .withLeftExpression(
+                                              graphqlFieldToColumn(
+                                                  withTable, fieldDefinition.getMapWithToOrError()))
+                                          .withRightExpression(
+                                              graphqlFieldToColumn(
+                                                  table, fieldDefinition.getMapToOrError())),
+                                      new NotEqualsTo()
+                                          .withLeftExpression(
+                                              graphqlFieldToColumn(
+                                                  withTable, FIELD_DEPRECATED_NAME))
+                                          .withRightExpression(new LongValue(1))))))
+                  .withWhere(
+                      new MultiAndExpression(
+                          Arrays.asList(
+                              new EqualsTo()
+                                  .withLeftExpression(
+                                      graphqlFieldToColumn(
+                                          withTable, fieldDefinition.getMapWithFromOrError()))
+                                  .withRightExpression(
+                                      graphqlFieldToColumn(
+                                          parentTable, fieldDefinition.getMapFromOrError())),
+                              new NotEqualsTo()
+                                  .withLeftExpression(
+                                      graphqlFieldToColumn(table, FIELD_DEPRECATED_NAME))
+                                  .withRightExpression(new LongValue(1))))));
+    }
+    return new ParenthesedSelect()
+        .withSelect(
+            plainSelect.withWhere(
+                new MultiAndExpression(
+                    Arrays.asList(
+                        new EqualsTo()
+                            .withLeftExpression(
+                                graphqlFieldToColumn(table, fieldDefinition.getMapToOrError()))
+                            .withRightExpression(
+                                graphqlFieldToColumn(
+                                    parentTable, fieldDefinition.getMapFromOrError())),
+                        new NotEqualsTo()
+                            .withLeftExpression(graphqlFieldToColumn(table, FIELD_DEPRECATED_NAME))
+                            .withRightExpression(new LongValue(1))))));
   }
 
   protected Limit argumentsToLimit(FieldDefinition fieldDefinition, Field field) {

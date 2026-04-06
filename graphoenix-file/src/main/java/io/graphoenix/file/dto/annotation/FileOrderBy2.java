@@ -18,7 +18,7 @@ import org.eclipse.microprofile.graphql.Description;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Order Input for 文件")
-public @interface FileOrderBy {
+public @interface FileOrderBy2 {
   /**
    * ID
    */
@@ -193,12 +193,6 @@ public @interface FileOrderBy {
   @Description("Min of URL")
   Sort urlMin() default Sort.ASC;
 
-  /**
-   * OrderByes
-   */
-  @Description("OrderByes")
-  FileOrderBy1[] obs() default {};
-
   String $id() default "";
 
   String $name() default "";
@@ -256,6 +250,4 @@ public @interface FileOrderBy {
   String $urlMax() default "";
 
   String $urlMin() default "";
-
-  String $obs() default "";
 }
