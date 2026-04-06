@@ -9,90 +9,132 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/** Mutation Arguments for __Schema List */
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+/**
+ * Mutation Arguments for __Schema List
+ */
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Mutation Arguments for __Schema List")
 public @interface __SchemaListMutationArguments {
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   String id() default "";
 
-  /** types */
+  /**
+   * types
+   */
   @Description("types")
   __TypeInput[] types() default {};
 
-  /** queryType */
+  /**
+   * queryType
+   */
   @Description("queryType")
   __TypeInput queryType() default @__TypeInput;
 
-  /** mutationType */
+  /**
+   * mutationType
+   */
   @Description("mutationType")
   __TypeInput mutationType() default @__TypeInput;
 
-  /** subscriptionType */
+  /**
+   * subscriptionType
+   */
   @Description("subscriptionType")
   __TypeInput subscriptionType() default @__TypeInput;
 
-  /** directives */
+  /**
+   * directives
+   */
   @Description("directives")
   __DirectiveInput[] directives() default {};
 
-  /** Is Deprecated */
+  /**
+   * Is Deprecated
+   */
   @Description("Is Deprecated")
   boolean isDeprecated() default false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   int version() default 0;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   int realmId() default 0;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   String createUserId() default "";
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   String createTime() default "";
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   String updateUserId() default "";
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   String updateTime() default "";
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   String createGroupId() default "";
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   String __typename() default "__Schema";
 
-  /** queryType Reference */
+  /**
+   * queryType Reference
+   */
   @Description("queryType Reference")
   String queryTypeName() default "";
 
-  /** mutationType Reference */
+  /**
+   * mutationType Reference
+   */
   @Description("mutationType Reference")
   String mutationTypeName() default "";
 
-  /** subscriptionType Reference */
+  /**
+   * subscriptionType Reference
+   */
   @Description("subscriptionType Reference")
   String subscriptionTypeName() default "";
 
-  /** Input List */
+  /**
+   * Input List
+   */
   @Description("Input List")
   __SchemaInput[] list() default {};
 
-  /** Where */
+  /**
+   * Where
+   */
   @Description("Where")
   __SchemaExpression where() default @__SchemaExpression;
 

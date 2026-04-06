@@ -9,60 +9,88 @@ import java.lang.Boolean;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/** Query Expression Input for NamedStruct */
+/**
+ * Query Expression Input for NamedStruct
+ */
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Query Expression Input for NamedStruct")
 public interface NamedStructExpression extends MetaExpression {
-  /** name */
+  /**
+   * name
+   */
   @Description("name")
   StringExpression name = null;
 
-  /** description */
+  /**
+   * description
+   */
   @Description("description")
   StringExpression description = null;
 
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   StringExpression id = null;
 
-  /** Include Deprecated */
+  /**
+   * Include Deprecated
+   */
   @Description("Include Deprecated")
   Boolean includeDeprecated = false;
 
-  /** version */
+  /**
+   * version
+   */
   @Description("version")
   IntExpression version = null;
 
-  /** realmId */
+  /**
+   * realmId
+   */
   @Description("realmId")
   IntExpression realmId = null;
 
-  /** createUserId */
+  /**
+   * createUserId
+   */
   @Description("createUserId")
   StringExpression createUserId = null;
 
-  /** createTime */
+  /**
+   * createTime
+   */
   @Description("createTime")
   StringExpression createTime = null;
 
-  /** updateUserId */
+  /**
+   * updateUserId
+   */
   @Description("updateUserId")
   StringExpression updateUserId = null;
 
-  /** updateTime */
+  /**
+   * updateTime
+   */
   @Description("updateTime")
   StringExpression updateTime = null;
 
-  /** createGroupId */
+  /**
+   * createGroupId
+   */
   @Description("createGroupId")
   StringExpression createGroupId = null;
 
-  /** Not */
+  /**
+   * Not
+   */
   @Description("Not")
   Boolean not = false;
 
-  /** Condition */
+  /**
+   * Condition
+   */
   @Description("Condition")
   Conditional cond = Conditional.AND;
 

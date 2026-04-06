@@ -9,54 +9,78 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/** Mutation Input for NamedStruct */
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+/**
+ * Mutation Input for NamedStruct
+ */
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Mutation Input for NamedStruct")
 public @interface NamedStructInput {
-  /** name */
+  /**
+   * name
+   */
   @Description("name")
   String name() default "";
 
-  /** description */
+  /**
+   * description
+   */
   @Description("description")
   String description() default "";
 
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   String id() default "";
 
-  /** Is Deprecated */
+  /**
+   * Is Deprecated
+   */
   @Description("Is Deprecated")
   boolean isDeprecated() default false;
 
-  /** version */
+  /**
+   * version
+   */
   @Description("version")
   int version() default 0;
 
-  /** realmId */
+  /**
+   * realmId
+   */
   @Description("realmId")
   int realmId() default 0;
 
-  /** createUserId */
+  /**
+   * createUserId
+   */
   @Description("createUserId")
   String createUserId() default "";
 
-  /** createTime */
+  /**
+   * createTime
+   */
   @Description("createTime")
   String createTime() default "";
 
-  /** updateUserId */
+  /**
+   * updateUserId
+   */
   @Description("updateUserId")
   String updateUserId() default "";
 
-  /** updateTime */
+  /**
+   * updateTime
+   */
   @Description("updateTime")
   String updateTime() default "";
 
-  /** createGroupId */
+  /**
+   * createGroupId
+   */
   @Description("createGroupId")
   String createGroupId() default "";
 

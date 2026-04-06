@@ -14,115 +14,169 @@ import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/** Mutation Arguments for __Type */
+/**
+ * Mutation Arguments for __Type
+ */
 @CompiledJson
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Mutation Arguments for __Type")
 public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   private String id;
 
-  /** name */
+  /**
+   * name
+   */
   @Description("name")
   private String name;
 
-  /** ofSchema */
+  /**
+   * ofSchema
+   */
   @Description("ofSchema")
   private __SchemaInput ofSchema;
 
-  /** kind */
+  /**
+   * kind
+   */
   @Description("kind")
   private __TypeKind kind;
 
-  /** description */
+  /**
+   * description
+   */
   @Description("description")
   private String description;
 
-  /** fields */
+  /**
+   * fields
+   */
   @Description("fields")
   private Collection<__FieldInput> fields;
 
-  /** interfaces */
+  /**
+   * interfaces
+   */
   @Description("interfaces")
   private Collection<__TypeInput> interfaces;
 
-  /** possibleTypes */
+  /**
+   * possibleTypes
+   */
   @Description("possibleTypes")
   private Collection<__TypeInput> possibleTypes;
 
-  /** enumValues */
+  /**
+   * enumValues
+   */
   @Description("enumValues")
   private Collection<__EnumValueInput> enumValues;
 
-  /** inputFields */
+  /**
+   * inputFields
+   */
   @Description("inputFields")
   private Collection<__InputValueInput> inputFields;
 
-  /** ofType */
+  /**
+   * ofType
+   */
   @Description("ofType")
   private __TypeInput ofType;
 
-  /** Is Deprecated */
+  /**
+   * Is Deprecated
+   */
   @DefaultValue("false")
   @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   private Integer version;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   private Integer realmId;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   private String createUserId;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   private LocalDateTime createTime;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   private String updateUserId;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   private LocalDateTime updateTime;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   private String createGroupId;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @DefaultValue("__Type")
   @Description("Type Name")
   private String __typename = "__Type";
 
-  /** ofSchema Reference */
+  /**
+   * ofSchema Reference
+   */
   @Description("ofSchema Reference")
   private Integer schemaId;
 
-  /** ofType Reference */
+  /**
+   * ofType Reference
+   */
   @Description("ofType Reference")
   private String ofTypeName;
 
-  /** Relationship Object between __Type and __Type */
+  /**
+   * Relationship Object between __Type and __Type
+   */
   @Description("Relationship Object between __Type and __Type")
   private Collection<__TypeInterfacesInput> __typeInterfaces;
 
-  /** Relationship Object between __Type and __Type */
+  /**
+   * Relationship Object between __Type and __Type
+   */
   @Description("Relationship Object between __Type and __Type")
   private Collection<__TypePossibleTypesInput> __typePossibleTypes;
 
-  /** Input */
+  /**
+   * Input
+   */
   @Description("Input")
   private __TypeInput input;
 
-  /** Where */
+  /**
+   * Where
+   */
   @Description("Where")
   private __TypeExpression where;
 
@@ -133,7 +187,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void setId(String id) {
-    this.id = (String) id;
+    this.id = (String)id;
   }
 
   @Override
@@ -143,7 +197,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void setName(String name) {
-    this.name = (String) name;
+    this.name = (String)name;
   }
 
   @Override
@@ -153,7 +207,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void setOfSchema(__SchemaInput ofSchema) {
-    this.ofSchema = (__SchemaInput) ofSchema;
+    this.ofSchema = (__SchemaInput)ofSchema;
   }
 
   @Override
@@ -163,7 +217,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void setKind(__TypeKind kind) {
-    this.kind = (__TypeKind) kind;
+    this.kind = (__TypeKind)kind;
   }
 
   @Override
@@ -173,7 +227,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void setDescription(String description) {
-    this.description = (String) description;
+    this.description = (String)description;
   }
 
   @Override
@@ -183,7 +237,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void setFields(Collection<__FieldInput> fields) {
-    this.fields = (Collection<__FieldInput>) fields;
+    this.fields = (Collection<__FieldInput>)fields;
   }
 
   @Override
@@ -193,7 +247,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void setInterfaces(Collection<__TypeInput> interfaces) {
-    this.interfaces = (Collection<__TypeInput>) interfaces;
+    this.interfaces = (Collection<__TypeInput>)interfaces;
   }
 
   @Override
@@ -203,7 +257,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void setPossibleTypes(Collection<__TypeInput> possibleTypes) {
-    this.possibleTypes = (Collection<__TypeInput>) possibleTypes;
+    this.possibleTypes = (Collection<__TypeInput>)possibleTypes;
   }
 
   @Override
@@ -213,7 +267,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void setEnumValues(Collection<__EnumValueInput> enumValues) {
-    this.enumValues = (Collection<__EnumValueInput>) enumValues;
+    this.enumValues = (Collection<__EnumValueInput>)enumValues;
   }
 
   @Override
@@ -223,7 +277,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void setInputFields(Collection<__InputValueInput> inputFields) {
-    this.inputFields = (Collection<__InputValueInput>) inputFields;
+    this.inputFields = (Collection<__InputValueInput>)inputFields;
   }
 
   @Override
@@ -233,7 +287,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void setOfType(__TypeInput ofType) {
-    this.ofType = (__TypeInput) ofType;
+    this.ofType = (__TypeInput)ofType;
   }
 
   @Override
@@ -243,7 +297,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean) isDeprecated;
+    this.isDeprecated = (Boolean)isDeprecated;
   }
 
   @Override
@@ -253,7 +307,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void setVersion(Integer version) {
-    this.version = (Integer) version;
+    this.version = (Integer)version;
   }
 
   @Override
@@ -263,7 +317,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void setRealmId(Integer realmId) {
-    this.realmId = (Integer) realmId;
+    this.realmId = (Integer)realmId;
   }
 
   @Override
@@ -273,7 +327,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void setCreateUserId(String createUserId) {
-    this.createUserId = (String) createUserId;
+    this.createUserId = (String)createUserId;
   }
 
   @Override
@@ -283,7 +337,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void setCreateTime(LocalDateTime createTime) {
-    this.createTime = (LocalDateTime) createTime;
+    this.createTime = (LocalDateTime)createTime;
   }
 
   @Override
@@ -293,7 +347,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void setUpdateUserId(String updateUserId) {
-    this.updateUserId = (String) updateUserId;
+    this.updateUserId = (String)updateUserId;
   }
 
   @Override
@@ -303,7 +357,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void setUpdateTime(LocalDateTime updateTime) {
-    this.updateTime = (LocalDateTime) updateTime;
+    this.updateTime = (LocalDateTime)updateTime;
   }
 
   @Override
@@ -313,7 +367,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void setCreateGroupId(String createGroupId) {
-    this.createGroupId = (String) createGroupId;
+    this.createGroupId = (String)createGroupId;
   }
 
   @Override
@@ -323,7 +377,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void set__typename(String __typename) {
-    this.__typename = (String) __typename;
+    this.__typename = (String)__typename;
   }
 
   @Override
@@ -333,7 +387,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void setSchemaId(Integer schemaId) {
-    this.schemaId = (Integer) schemaId;
+    this.schemaId = (Integer)schemaId;
   }
 
   @Override
@@ -343,7 +397,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void setOfTypeName(String ofTypeName) {
-    this.ofTypeName = (String) ofTypeName;
+    this.ofTypeName = (String)ofTypeName;
   }
 
   @Override
@@ -353,7 +407,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void set__typeInterfaces(Collection<__TypeInterfacesInput> __typeInterfaces) {
-    this.__typeInterfaces = (Collection<__TypeInterfacesInput>) __typeInterfaces;
+    this.__typeInterfaces = (Collection<__TypeInterfacesInput>)__typeInterfaces;
   }
 
   @Override
@@ -363,7 +417,7 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void set__typePossibleTypes(Collection<__TypePossibleTypesInput> __typePossibleTypes) {
-    this.__typePossibleTypes = (Collection<__TypePossibleTypesInput>) __typePossibleTypes;
+    this.__typePossibleTypes = (Collection<__TypePossibleTypesInput>)__typePossibleTypes;
   }
 
   public __TypeInput getInput() {
@@ -381,6 +435,6 @@ public class __TypeMutationArguments implements MetaInput, __TypeInputBase {
 
   @Override
   public void setWhere(__TypeExpression where) {
-    this.where = (__TypeExpression) where;
+    this.where = (__TypeExpression)where;
   }
 }

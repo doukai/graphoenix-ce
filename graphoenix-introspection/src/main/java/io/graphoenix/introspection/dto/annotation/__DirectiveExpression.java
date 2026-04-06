@@ -13,95 +13,139 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/** Query Expression Input for __Directive */
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+/**
+ * Query Expression Input for __Directive
+ */
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Query Expression Input for __Directive")
 public @interface __DirectiveExpression {
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   StringExpression id() default @StringExpression;
 
-  /** name */
+  /**
+   * name
+   */
   @Description("name")
   StringExpression name() default @StringExpression;
 
-  /** ofSchema */
+  /**
+   * ofSchema
+   */
   @Description("ofSchema")
   __SchemaExpression1 ofSchema() default @__SchemaExpression1;
 
-  /** description */
+  /**
+   * description
+   */
   @Description("description")
   StringExpression description() default @StringExpression;
 
-  /** locations */
+  /**
+   * locations
+   */
   @Description("locations")
   __DirectiveLocationExpression locations() default @__DirectiveLocationExpression;
 
-  /** args */
+  /**
+   * args
+   */
   @Description("args")
   __InputValueExpression1 args() default @__InputValueExpression1;
 
-  /** isRepeatable */
+  /**
+   * isRepeatable
+   */
   @Description("isRepeatable")
   BooleanExpression isRepeatable() default @BooleanExpression;
 
-  /** Include Deprecated */
+  /**
+   * Include Deprecated
+   */
   @Description("Include Deprecated")
   boolean includeDeprecated() default false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   IntExpression version() default @IntExpression;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   IntExpression realmId() default @IntExpression;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   StringExpression createUserId() default @StringExpression;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   StringExpression createTime() default @StringExpression;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   StringExpression updateUserId() default @StringExpression;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   StringExpression updateTime() default @StringExpression;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   StringExpression createGroupId() default @StringExpression;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   StringExpression __typename() default @StringExpression;
 
-  /** ofSchema Reference */
+  /**
+   * ofSchema Reference
+   */
   @Description("ofSchema Reference")
   IntExpression schemaId() default @IntExpression;
 
-  /** Relationship Object between __Directive and locations */
+  /**
+   * Relationship Object between __Directive and locations
+   */
   @Description("Relationship Object between __Directive and locations")
-  __DirectiveLocationsRelationExpression1 __directiveLocationsRelation() default
-      @__DirectiveLocationsRelationExpression1;
+  __DirectiveLocationsRelationExpression1 __directiveLocationsRelation(
+      ) default @__DirectiveLocationsRelationExpression1;
 
-  /** Not */
+  /**
+   * Not
+   */
   @Description("Not")
   boolean not() default false;
 
-  /** Condition */
+  /**
+   * Condition
+   */
   @Description("Condition")
   Conditional cond() default Conditional.AND;
 
-  /** Expressions */
+  /**
+   * Expressions
+   */
   @Description("Expressions")
   __DirectiveExpression1[] exs() default {};
 

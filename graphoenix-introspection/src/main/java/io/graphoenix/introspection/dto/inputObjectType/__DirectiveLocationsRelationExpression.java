@@ -13,77 +13,110 @@ import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/** Query Expression Input for Relationship Object between __Directive and locations */
+/**
+ * Query Expression Input for Relationship Object between __Directive and locations
+ */
 @CompiledJson
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Query Expression Input for Relationship Object between __Directive and locations")
-public class __DirectiveLocationsRelationExpression
-    implements MetaExpression, __DirectiveLocationsRelationExpressionBase {
-  /** ID */
+public class __DirectiveLocationsRelationExpression implements MetaExpression, __DirectiveLocationsRelationExpressionBase {
+  /**
+   * ID
+   */
   @Description("ID")
   private StringExpression id;
 
-  /** __Directive Reference */
+  /**
+   * __Directive Reference
+   */
   @Description("__Directive Reference")
   private StringExpression __directiveRef;
 
-  /** __Directive */
+  /**
+   * __Directive
+   */
   @Description("__Directive")
   private __DirectiveExpression __directive;
 
-  /** locations Reference */
+  /**
+   * locations Reference
+   */
   @Description("locations Reference")
   private __DirectiveLocationExpression locationsRef;
 
-  /** Include Deprecated */
+  /**
+   * Include Deprecated
+   */
   @DefaultValue("false")
   @Description("Include Deprecated")
   private Boolean includeDeprecated = false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   private IntExpression version;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   private IntExpression realmId;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   private StringExpression createUserId;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   private StringExpression createTime;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   private StringExpression updateUserId;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   private StringExpression updateTime;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   private StringExpression createGroupId;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   private StringExpression __typename;
 
-  /** Not */
+  /**
+   * Not
+   */
   @DefaultValue("false")
   @Description("Not")
   private Boolean not = false;
 
-  /** Condition */
+  /**
+   * Condition
+   */
   @DefaultValue("AND")
   @Description("Condition")
   private Conditional cond = Conditional.AND;
 
-  /** Expressions */
+  /**
+   * Expressions
+   */
   @Description("Expressions")
   private Collection<__DirectiveLocationsRelationExpression> exs;
 
@@ -94,7 +127,7 @@ public class __DirectiveLocationsRelationExpression
 
   @Override
   public void setId(StringExpression id) {
-    this.id = (StringExpression) id;
+    this.id = (StringExpression)id;
   }
 
   @Override
@@ -104,7 +137,7 @@ public class __DirectiveLocationsRelationExpression
 
   @Override
   public void set__directiveRef(StringExpression __directiveRef) {
-    this.__directiveRef = (StringExpression) __directiveRef;
+    this.__directiveRef = (StringExpression)__directiveRef;
   }
 
   @Override
@@ -114,7 +147,7 @@ public class __DirectiveLocationsRelationExpression
 
   @Override
   public void set__directive(__DirectiveExpression __directive) {
-    this.__directive = (__DirectiveExpression) __directive;
+    this.__directive = (__DirectiveExpression)__directive;
   }
 
   @Override
@@ -124,7 +157,7 @@ public class __DirectiveLocationsRelationExpression
 
   @Override
   public void setLocationsRef(__DirectiveLocationExpression locationsRef) {
-    this.locationsRef = (__DirectiveLocationExpression) locationsRef;
+    this.locationsRef = (__DirectiveLocationExpression)locationsRef;
   }
 
   @Override
@@ -134,7 +167,7 @@ public class __DirectiveLocationsRelationExpression
 
   @Override
   public void setIncludeDeprecated(Boolean includeDeprecated) {
-    this.includeDeprecated = (Boolean) includeDeprecated;
+    this.includeDeprecated = (Boolean)includeDeprecated;
   }
 
   @Override
@@ -144,7 +177,7 @@ public class __DirectiveLocationsRelationExpression
 
   @Override
   public void setVersion(IntExpression version) {
-    this.version = (IntExpression) version;
+    this.version = (IntExpression)version;
   }
 
   @Override
@@ -154,7 +187,7 @@ public class __DirectiveLocationsRelationExpression
 
   @Override
   public void setRealmId(IntExpression realmId) {
-    this.realmId = (IntExpression) realmId;
+    this.realmId = (IntExpression)realmId;
   }
 
   @Override
@@ -164,7 +197,7 @@ public class __DirectiveLocationsRelationExpression
 
   @Override
   public void setCreateUserId(StringExpression createUserId) {
-    this.createUserId = (StringExpression) createUserId;
+    this.createUserId = (StringExpression)createUserId;
   }
 
   @Override
@@ -174,7 +207,7 @@ public class __DirectiveLocationsRelationExpression
 
   @Override
   public void setCreateTime(StringExpression createTime) {
-    this.createTime = (StringExpression) createTime;
+    this.createTime = (StringExpression)createTime;
   }
 
   @Override
@@ -184,7 +217,7 @@ public class __DirectiveLocationsRelationExpression
 
   @Override
   public void setUpdateUserId(StringExpression updateUserId) {
-    this.updateUserId = (StringExpression) updateUserId;
+    this.updateUserId = (StringExpression)updateUserId;
   }
 
   @Override
@@ -194,7 +227,7 @@ public class __DirectiveLocationsRelationExpression
 
   @Override
   public void setUpdateTime(StringExpression updateTime) {
-    this.updateTime = (StringExpression) updateTime;
+    this.updateTime = (StringExpression)updateTime;
   }
 
   @Override
@@ -204,7 +237,7 @@ public class __DirectiveLocationsRelationExpression
 
   @Override
   public void setCreateGroupId(StringExpression createGroupId) {
-    this.createGroupId = (StringExpression) createGroupId;
+    this.createGroupId = (StringExpression)createGroupId;
   }
 
   @Override
@@ -214,7 +247,7 @@ public class __DirectiveLocationsRelationExpression
 
   @Override
   public void set__typename(StringExpression __typename) {
-    this.__typename = (StringExpression) __typename;
+    this.__typename = (StringExpression)__typename;
   }
 
   @Override
@@ -224,7 +257,7 @@ public class __DirectiveLocationsRelationExpression
 
   @Override
   public void setNot(Boolean not) {
-    this.not = (Boolean) not;
+    this.not = (Boolean)not;
   }
 
   @Override
@@ -234,7 +267,7 @@ public class __DirectiveLocationsRelationExpression
 
   @Override
   public void setCond(Conditional cond) {
-    this.cond = (Conditional) cond;
+    this.cond = (Conditional)cond;
   }
 
   @Override
@@ -244,6 +277,6 @@ public class __DirectiveLocationsRelationExpression
 
   @Override
   public void setExs(Collection<__DirectiveLocationsRelationExpression> exs) {
-    this.exs = (Collection<__DirectiveLocationsRelationExpression>) exs;
+    this.exs = (Collection<__DirectiveLocationsRelationExpression>)exs;
   }
 }

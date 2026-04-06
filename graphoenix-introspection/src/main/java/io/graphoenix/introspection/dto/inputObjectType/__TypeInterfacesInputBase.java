@@ -10,69 +10,101 @@ import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 import org.eclipse.microprofile.graphql.Name;
 
-/** Mutation Input for Relationship Object between __Type and __Type */
+/**
+ * Mutation Input for Relationship Object between __Type and __Type
+ */
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Mutation Input for Relationship Object between __Type and __Type")
 public interface __TypeInterfacesInputBase extends MetaInput {
-  /** ID */
+  /**
+   * ID
+   */
   @Description("ID")
   String id = null;
 
-  /** __Type Reference */
+  /**
+   * __Type Reference
+   */
   @Description("__Type Reference")
   String typeRef = null;
 
-  /** __Type */
+  /**
+   * __Type
+   */
   @Description("__Type")
   __TypeInput type = null;
 
-  /** __Type Reference */
+  /**
+   * __Type Reference
+   */
   @Description("__Type Reference")
   String interfaceRef = null;
 
-  /** __Type */
+  /**
+   * __Type
+   */
   @Name("interface")
   @Description("__Type")
   __TypeInput _interface = null;
 
-  /** Is Deprecated */
+  /**
+   * Is Deprecated
+   */
   @Description("Is Deprecated")
   Boolean isDeprecated = false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   Integer version = null;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   Integer realmId = null;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   String createUserId = null;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   LocalDateTime createTime = null;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   String updateUserId = null;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   LocalDateTime updateTime = null;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   String createGroupId = null;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   String __typename = "__TypeInterfaces";
 
-  /** Where */
+  /**
+   * Where
+   */
   @Description("Where")
   __TypeInterfacesExpression where = null;
 

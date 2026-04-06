@@ -12,56 +12,56 @@ import "io/graphoenix/introspection/input_objects.proto";
 import "google/protobuf/timestamp.proto";
 
 message MutationIntroSchemaResponse {
-  IntroSchema intro_schema = 1;
+    IntroSchema intro_schema = 1;
 }
 message MutationIntroSchemaListResponse {
-  repeated IntroSchema intro_schema_list = 1;
+    repeated IntroSchema intro_schema_list = 1;
 }
 message MutationIntroTypeResponse {
-  IntroType intro_type = 1;
+    IntroType intro_type = 1;
 }
 message MutationIntroTypeListResponse {
-  repeated IntroType intro_type_list = 1;
+    repeated IntroType intro_type_list = 1;
 }
 message MutationIntroFieldResponse {
-  IntroField intro_field = 1;
+    IntroField intro_field = 1;
 }
 message MutationIntroFieldListResponse {
-  repeated IntroField intro_field_list = 1;
+    repeated IntroField intro_field_list = 1;
 }
 message MutationIntroInputValueResponse {
-  IntroInputValue intro_input_value = 1;
+    IntroInputValue intro_input_value = 1;
 }
 message MutationIntroInputValueListResponse {
-  repeated IntroInputValue intro_input_value_list = 1;
+    repeated IntroInputValue intro_input_value_list = 1;
 }
 message MutationIntroEnumValueResponse {
-  IntroEnumValue intro_enum_value = 1;
+    IntroEnumValue intro_enum_value = 1;
 }
 message MutationIntroEnumValueListResponse {
-  repeated IntroEnumValue intro_enum_value_list = 1;
+    repeated IntroEnumValue intro_enum_value_list = 1;
 }
 message MutationIntroDirectiveResponse {
-  IntroDirective intro_directive = 1;
+    IntroDirective intro_directive = 1;
 }
 message MutationIntroDirectiveListResponse {
-  repeated IntroDirective intro_directive_list = 1;
+    repeated IntroDirective intro_directive_list = 1;
 }
 message MutationIntroTypeInterfacesResponse {
-  IntroTypeInterfaces intro_type_interfaces = 1;
+    IntroTypeInterfaces intro_type_interfaces = 1;
 }
 message MutationIntroTypeInterfacesListResponse {
-  repeated IntroTypeInterfaces intro_type_interfaces_list = 1;
+    repeated IntroTypeInterfaces intro_type_interfaces_list = 1;
 }
 message MutationIntroTypePossibleTypesResponse {
-  IntroTypePossibleTypes intro_type_possible_types = 1;
+    IntroTypePossibleTypes intro_type_possible_types = 1;
 }
 message MutationIntroTypePossibleTypesListResponse {
-  repeated IntroTypePossibleTypes intro_type_possible_types_list = 1;
+    repeated IntroTypePossibleTypes intro_type_possible_types_list = 1;
 }
 message MutationIntroDirectiveLocationsRelationResponse {
-  IntroDirectiveLocationsRelation intro_directive_locations_relation = 1;
+    IntroDirectiveLocationsRelation intro_directive_locations_relation = 1;
 }
 message MutationIntroDirectiveLocationsRelationListResponse {
-  repeated IntroDirectiveLocationsRelation intro_directive_locations_relation_list = 1;
+    repeated IntroDirectiveLocationsRelation intro_directive_locations_relation_list = 1;
 }

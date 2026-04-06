@@ -9,88 +9,130 @@ import java.time.LocalDateTime;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/** Mutation Input for __InputValue */
+/**
+ * Mutation Input for __InputValue
+ */
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Mutation Input for __InputValue")
 public interface __InputValueInputBase extends MetaInput {
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   String id = null;
 
-  /** name */
+  /**
+   * name
+   */
   @Description("name")
   String name = null;
 
-  /** ofType */
+  /**
+   * ofType
+   */
   @Description("ofType")
   __TypeInput ofType = null;
 
-  /** fieldId */
+  /**
+   * fieldId
+   */
   @Description("fieldId")
   Integer fieldId = null;
 
-  /** directiveName */
+  /**
+   * directiveName
+   */
   @Description("directiveName")
   String directiveName = null;
 
-  /** description */
+  /**
+   * description
+   */
   @Description("description")
   String description = null;
 
-  /** type */
+  /**
+   * type
+   */
   @Description("type")
   __TypeInput type = null;
 
-  /** defaultValue */
+  /**
+   * defaultValue
+   */
   @Description("defaultValue")
   String defaultValue = null;
 
-  /** Is Deprecated */
+  /**
+   * Is Deprecated
+   */
   @Description("Is Deprecated")
   Boolean isDeprecated = false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   Integer version = null;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   Integer realmId = null;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   String createUserId = null;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   LocalDateTime createTime = null;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   String updateUserId = null;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   LocalDateTime updateTime = null;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   String createGroupId = null;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   String __typename = "__InputValue";
 
-  /** ofType Reference */
+  /**
+   * ofType Reference
+   */
   @Description("ofType Reference")
   String ofTypeName = null;
 
-  /** type Reference */
+  /**
+   * type Reference
+   */
   @Description("type Reference")
   String typeName = null;
 
-  /** Where */
+  /**
+   * Where
+   */
   @Description("Where")
   __InputValueExpression where = null;
 

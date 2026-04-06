@@ -3,98 +3,161 @@ package io.graphoenix.introspection.dto.inputObjectType;
 import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.enumType.Sort;
 import jakarta.annotation.Generated;
+import java.util.Collection;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/** Order Input for Relationship Object between __Type and __Type */
+/**
+ * Order Input for Relationship Object between __Type and __Type
+ */
 @CompiledJson
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Order Input for Relationship Object between __Type and __Type")
 public class __TypePossibleTypesOrderBy {
-  /** ID */
+  /**
+   * ID
+   */
   @Description("ID")
   private Sort id;
 
-  /** __Type Reference */
+  /**
+   * __Type Reference
+   */
   @Description("__Type Reference")
   private Sort typeRef;
 
-  /** __Type Reference */
+  /**
+   * __Type
+   */
+  @Description("__Type")
+  private __TypeOrderBy type;
+
+  /**
+   * __Type Reference
+   */
   @Description("__Type Reference")
   private Sort possibleTypeRef;
 
-  /** Is Deprecated */
+  /**
+   * __Type
+   */
+  @Description("__Type")
+  private __TypeOrderBy possibleType;
+
+  /**
+   * Is Deprecated
+   */
   @Description("Is Deprecated")
   private Sort isDeprecated;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   private Sort version;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   private Sort realmId;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   private Sort createUserId;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   private Sort createTime;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   private Sort updateUserId;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   private Sort updateTime;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   private Sort createGroupId;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   private Sort __typename;
 
-  /** Count of Relationship Object between __Type and __Type */
+  /**
+   * Count of Relationship Object between __Type and __Type
+   */
   @Description("Count of Relationship Object between __Type and __Type")
   private Sort idCount;
 
-  /** Max of ID */
+  /**
+   * Max of ID
+   */
   @Description("Max of ID")
   private Sort idMax;
 
-  /** Min of ID */
+  /**
+   * Min of ID
+   */
   @Description("Min of ID")
   private Sort idMin;
 
-  /** Count of __Type Reference */
+  /**
+   * Count of __Type Reference
+   */
   @Description("Count of __Type Reference")
   private Sort typeRefCount;
 
-  /** Max of __Type Reference */
+  /**
+   * Max of __Type Reference
+   */
   @Description("Max of __Type Reference")
   private Sort typeRefMax;
 
-  /** Min of __Type Reference */
+  /**
+   * Min of __Type Reference
+   */
   @Description("Min of __Type Reference")
   private Sort typeRefMin;
 
-  /** Count of __Type Reference */
+  /**
+   * Count of __Type Reference
+   */
   @Description("Count of __Type Reference")
   private Sort possibleTypeRefCount;
 
-  /** Max of __Type Reference */
+  /**
+   * Max of __Type Reference
+   */
   @Description("Max of __Type Reference")
   private Sort possibleTypeRefMax;
 
-  /** Min of __Type Reference */
+  /**
+   * Min of __Type Reference
+   */
   @Description("Min of __Type Reference")
   private Sort possibleTypeRefMin;
+
+  /**
+   * OrderByes
+   */
+  @Description("OrderByes")
+  private Collection<__TypePossibleTypesOrderBy> obs;
 
   public Sort getId() {
     return this.id;
@@ -112,12 +175,28 @@ public class __TypePossibleTypesOrderBy {
     this.typeRef = typeRef;
   }
 
+  public __TypeOrderBy getType() {
+    return this.type;
+  }
+
+  public void setType(__TypeOrderBy type) {
+    this.type = type;
+  }
+
   public Sort getPossibleTypeRef() {
     return this.possibleTypeRef;
   }
 
   public void setPossibleTypeRef(Sort possibleTypeRef) {
     this.possibleTypeRef = possibleTypeRef;
+  }
+
+  public __TypeOrderBy getPossibleType() {
+    return this.possibleType;
+  }
+
+  public void setPossibleType(__TypeOrderBy possibleType) {
+    this.possibleType = possibleType;
   }
 
   public Sort getIsDeprecated() {
@@ -262,5 +341,13 @@ public class __TypePossibleTypesOrderBy {
 
   public void setPossibleTypeRefMin(Sort possibleTypeRefMin) {
     this.possibleTypeRefMin = possibleTypeRefMin;
+  }
+
+  public Collection<__TypePossibleTypesOrderBy> getObs() {
+    return this.obs;
+  }
+
+  public void setObs(Collection<__TypePossibleTypesOrderBy> obs) {
+    this.obs = obs;
   }
 }

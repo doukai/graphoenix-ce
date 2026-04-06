@@ -10,84 +10,124 @@ import java.util.Collection;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/** Mutation Input for __Schema */
+/**
+ * Mutation Input for __Schema
+ */
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Mutation Input for __Schema")
 public interface __SchemaInputBase extends MetaInput {
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   String id = null;
 
-  /** types */
+  /**
+   * types
+   */
   @Description("types")
   Collection<__TypeInput> types = null;
 
-  /** queryType */
+  /**
+   * queryType
+   */
   @Description("queryType")
   __TypeInput queryType = null;
 
-  /** mutationType */
+  /**
+   * mutationType
+   */
   @Description("mutationType")
   __TypeInput mutationType = null;
 
-  /** subscriptionType */
+  /**
+   * subscriptionType
+   */
   @Description("subscriptionType")
   __TypeInput subscriptionType = null;
 
-  /** directives */
+  /**
+   * directives
+   */
   @Description("directives")
   Collection<__DirectiveInput> directives = null;
 
-  /** Is Deprecated */
+  /**
+   * Is Deprecated
+   */
   @Description("Is Deprecated")
   Boolean isDeprecated = false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   Integer version = null;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   Integer realmId = null;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   String createUserId = null;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   LocalDateTime createTime = null;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   String updateUserId = null;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   LocalDateTime updateTime = null;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   String createGroupId = null;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   String __typename = "__Schema";
 
-  /** queryType Reference */
+  /**
+   * queryType Reference
+   */
   @Description("queryType Reference")
   String queryTypeName = null;
 
-  /** mutationType Reference */
+  /**
+   * mutationType Reference
+   */
   @Description("mutationType Reference")
   String mutationTypeName = null;
 
-  /** subscriptionType Reference */
+  /**
+   * subscriptionType Reference
+   */
   @Description("subscriptionType Reference")
   String subscriptionTypeName = null;
 
-  /** Where */
+  /**
+   * Where
+   */
   @Description("Where")
   __SchemaExpression where = null;
 

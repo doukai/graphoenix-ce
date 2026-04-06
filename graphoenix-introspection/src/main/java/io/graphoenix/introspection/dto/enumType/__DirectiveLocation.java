@@ -4,7 +4,7 @@ import jakarta.annotation.Generated;
 import org.eclipse.microprofile.graphql.Enum;
 
 @Enum
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 public enum __DirectiveLocation {
   QUERY,
 

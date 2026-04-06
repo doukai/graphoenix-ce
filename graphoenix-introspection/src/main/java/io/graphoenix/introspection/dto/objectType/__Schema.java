@@ -18,129 +18,189 @@ import org.eclipse.microprofile.graphql.Type;
 
 @Type
 @CompiledJson
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 public class __Schema implements Meta {
-  @Id private String id;
+  @Id
+  private String id;
 
-  @NonNull private Collection<__Type> types;
+  @NonNull
+  private Collection<__Type> types;
 
-  @NonNull private __Type queryType;
+  @NonNull
+  private __Type queryType;
 
   private __Type mutationType;
 
   private __Type subscriptionType;
 
-  @NonNull private Collection<__Directive> directives;
+  @NonNull
+  private Collection<__Directive> directives;
 
-  /** Is Deprecated */
+  /**
+   * Is Deprecated
+   */
   @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   private Integer version;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   private Integer realmId;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   private String createUserId;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   private LocalDateTime createTime;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   private String updateUserId;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   private LocalDateTime updateTime;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   private String createGroupId;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   private String __typename = "__Schema";
 
-  /** queryType Reference */
+  /**
+   * queryType Reference
+   */
   @Description("queryType Reference")
   private String queryTypeName;
 
-  /** mutationType Reference */
+  /**
+   * mutationType Reference
+   */
   @Description("mutationType Reference")
   private String mutationTypeName;
 
-  /** subscriptionType Reference */
+  /**
+   * subscriptionType Reference
+   */
   @Description("subscriptionType Reference")
   private String subscriptionTypeName;
 
-  /** Aggregate Field for types */
+  /**
+   * Aggregate Field for types
+   */
   @Description("Aggregate Field for types")
   private __Type typesAggregate;
 
-  /** Connection Field for types */
+  /**
+   * Connection Field for types
+   */
   @Description("Connection Field for types")
   private __TypeConnection typesConnection;
 
-  /** Aggregate Field for directives */
+  /**
+   * Aggregate Field for directives
+   */
   @Description("Aggregate Field for directives")
   private __Directive directivesAggregate;
 
-  /** Connection Field for directives */
+  /**
+   * Connection Field for directives
+   */
   @Description("Connection Field for directives")
   private __DirectiveConnection directivesConnection;
 
-  /** Count of __Schema */
+  /**
+   * Count of __Schema
+   */
   @Description("Count of __Schema")
   private Integer idCount;
 
-  /** Max of id */
+  /**
+   * Max of id
+   */
   @Description("Max of id")
   private Integer idMax;
 
-  /** Min of id */
+  /**
+   * Min of id
+   */
   @Description("Min of id")
   private Integer idMin;
 
-  /** Count of queryType Reference */
+  /**
+   * Count of queryType Reference
+   */
   @Description("Count of queryType Reference")
   private Integer queryTypeNameCount;
 
-  /** Max of queryType Reference */
+  /**
+   * Max of queryType Reference
+   */
   @Description("Max of queryType Reference")
   private String queryTypeNameMax;
 
-  /** Min of queryType Reference */
+  /**
+   * Min of queryType Reference
+   */
   @Description("Min of queryType Reference")
   private String queryTypeNameMin;
 
-  /** Count of mutationType Reference */
+  /**
+   * Count of mutationType Reference
+   */
   @Description("Count of mutationType Reference")
   private Integer mutationTypeNameCount;
 
-  /** Max of mutationType Reference */
+  /**
+   * Max of mutationType Reference
+   */
   @Description("Max of mutationType Reference")
   private String mutationTypeNameMax;
 
-  /** Min of mutationType Reference */
+  /**
+   * Min of mutationType Reference
+   */
   @Description("Min of mutationType Reference")
   private String mutationTypeNameMin;
 
-  /** Count of subscriptionType Reference */
+  /**
+   * Count of subscriptionType Reference
+   */
   @Description("Count of subscriptionType Reference")
   private Integer subscriptionTypeNameCount;
 
-  /** Max of subscriptionType Reference */
+  /**
+   * Max of subscriptionType Reference
+   */
   @Description("Max of subscriptionType Reference")
   private String subscriptionTypeNameMax;
 
-  /** Min of subscriptionType Reference */
+  /**
+   * Min of subscriptionType Reference
+   */
   @Description("Min of subscriptionType Reference")
   private String subscriptionTypeNameMin;
 
@@ -151,7 +211,7 @@ public class __Schema implements Meta {
 
   @Override
   public void setId(String id) {
-    this.id = (String) id;
+    this.id = (String)id;
   }
 
   public Collection<__Type> getTypes() {
@@ -201,7 +261,7 @@ public class __Schema implements Meta {
 
   @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean) isDeprecated;
+    this.isDeprecated = (Boolean)isDeprecated;
   }
 
   @Override
@@ -211,7 +271,7 @@ public class __Schema implements Meta {
 
   @Override
   public void setVersion(Integer version) {
-    this.version = (Integer) version;
+    this.version = (Integer)version;
   }
 
   @Override
@@ -221,7 +281,7 @@ public class __Schema implements Meta {
 
   @Override
   public void setRealmId(Integer realmId) {
-    this.realmId = (Integer) realmId;
+    this.realmId = (Integer)realmId;
   }
 
   @Override
@@ -231,7 +291,7 @@ public class __Schema implements Meta {
 
   @Override
   public void setCreateUserId(String createUserId) {
-    this.createUserId = (String) createUserId;
+    this.createUserId = (String)createUserId;
   }
 
   @Override
@@ -241,7 +301,7 @@ public class __Schema implements Meta {
 
   @Override
   public void setCreateTime(LocalDateTime createTime) {
-    this.createTime = (LocalDateTime) createTime;
+    this.createTime = (LocalDateTime)createTime;
   }
 
   @Override
@@ -251,7 +311,7 @@ public class __Schema implements Meta {
 
   @Override
   public void setUpdateUserId(String updateUserId) {
-    this.updateUserId = (String) updateUserId;
+    this.updateUserId = (String)updateUserId;
   }
 
   @Override
@@ -261,7 +321,7 @@ public class __Schema implements Meta {
 
   @Override
   public void setUpdateTime(LocalDateTime updateTime) {
-    this.updateTime = (LocalDateTime) updateTime;
+    this.updateTime = (LocalDateTime)updateTime;
   }
 
   @Override
@@ -271,7 +331,7 @@ public class __Schema implements Meta {
 
   @Override
   public void setCreateGroupId(String createGroupId) {
-    this.createGroupId = (String) createGroupId;
+    this.createGroupId = (String)createGroupId;
   }
 
   public String get__typename() {
@@ -437,22 +497,20 @@ public class __Schema implements Meta {
   public __SchemaInput toInput() {
     __SchemaInput input = new __SchemaInput();
     input.setId(this.getId());
-    if (getTypes() != null) {
-      input.setTypes(
-          this.getTypes().stream().map(item -> item.toInput()).collect(Collectors.toList()));
+    if(getTypes() != null) {
+      input.setTypes(this.getTypes().stream().map(item -> item.toInput()).collect(Collectors.toList()));
     }
-    if (getQueryType() != null) {
+    if(getQueryType() != null) {
       input.setQueryType(this.getQueryType().toInput());
     }
-    if (getMutationType() != null) {
+    if(getMutationType() != null) {
       input.setMutationType(this.getMutationType().toInput());
     }
-    if (getSubscriptionType() != null) {
+    if(getSubscriptionType() != null) {
       input.setSubscriptionType(this.getSubscriptionType().toInput());
     }
-    if (getDirectives() != null) {
-      input.setDirectives(
-          this.getDirectives().stream().map(item -> item.toInput()).collect(Collectors.toList()));
+    if(getDirectives() != null) {
+      input.setDirectives(this.getDirectives().stream().map(item -> item.toInput()).collect(Collectors.toList()));
     }
     input.setIsDeprecated(this.getIsDeprecated());
     input.setVersion(this.getVersion());

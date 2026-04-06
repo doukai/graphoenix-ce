@@ -3,186 +3,293 @@ package io.graphoenix.introspection.dto.inputObjectType;
 import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.enumType.Sort;
 import jakarta.annotation.Generated;
+import java.util.Collection;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/** Order Input for __InputValue */
+/**
+ * Order Input for __InputValue
+ */
 @CompiledJson
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Order Input for __InputValue")
 public class __InputValueOrderBy {
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   private Sort id;
 
-  /** name */
+  /**
+   * name
+   */
   @Description("name")
   private Sort name;
 
-  /** fieldId */
+  /**
+   * ofType
+   */
+  @Description("ofType")
+  private __TypeOrderBy ofType;
+
+  /**
+   * fieldId
+   */
   @Description("fieldId")
   private Sort fieldId;
 
-  /** directiveName */
+  /**
+   * directiveName
+   */
   @Description("directiveName")
   private Sort directiveName;
 
-  /** description */
+  /**
+   * description
+   */
   @Description("description")
   private Sort description;
 
-  /** defaultValue */
+  /**
+   * type
+   */
+  @Description("type")
+  private __TypeOrderBy type;
+
+  /**
+   * defaultValue
+   */
   @Description("defaultValue")
   private Sort defaultValue;
 
-  /** Is Deprecated */
+  /**
+   * Is Deprecated
+   */
   @Description("Is Deprecated")
   private Sort isDeprecated;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   private Sort version;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   private Sort realmId;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   private Sort createUserId;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   private Sort createTime;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   private Sort updateUserId;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   private Sort updateTime;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   private Sort createGroupId;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   private Sort __typename;
 
-  /** ofType Reference */
+  /**
+   * ofType Reference
+   */
   @Description("ofType Reference")
   private Sort ofTypeName;
 
-  /** type Reference */
+  /**
+   * type Reference
+   */
   @Description("type Reference")
   private Sort typeName;
 
-  /** Count of __InputValue */
+  /**
+   * Count of __InputValue
+   */
   @Description("Count of __InputValue")
   private Sort idCount;
 
-  /** Max of id */
+  /**
+   * Max of id
+   */
   @Description("Max of id")
   private Sort idMax;
 
-  /** Min of id */
+  /**
+   * Min of id
+   */
   @Description("Min of id")
   private Sort idMin;
 
-  /** Count of name */
+  /**
+   * Count of name
+   */
   @Description("Count of name")
   private Sort nameCount;
 
-  /** Max of name */
+  /**
+   * Max of name
+   */
   @Description("Max of name")
   private Sort nameMax;
 
-  /** Min of name */
+  /**
+   * Min of name
+   */
   @Description("Min of name")
   private Sort nameMin;
 
-  /** Count of directiveName */
+  /**
+   * Count of directiveName
+   */
   @Description("Count of directiveName")
   private Sort directiveNameCount;
 
-  /** Max of directiveName */
+  /**
+   * Max of directiveName
+   */
   @Description("Max of directiveName")
   private Sort directiveNameMax;
 
-  /** Min of directiveName */
+  /**
+   * Min of directiveName
+   */
   @Description("Min of directiveName")
   private Sort directiveNameMin;
 
-  /** Count of description */
+  /**
+   * Count of description
+   */
   @Description("Count of description")
   private Sort descriptionCount;
 
-  /** Max of description */
+  /**
+   * Max of description
+   */
   @Description("Max of description")
   private Sort descriptionMax;
 
-  /** Min of description */
+  /**
+   * Min of description
+   */
   @Description("Min of description")
   private Sort descriptionMin;
 
-  /** Count of defaultValue */
+  /**
+   * Count of defaultValue
+   */
   @Description("Count of defaultValue")
   private Sort defaultValueCount;
 
-  /** Max of defaultValue */
+  /**
+   * Max of defaultValue
+   */
   @Description("Max of defaultValue")
   private Sort defaultValueMax;
 
-  /** Min of defaultValue */
+  /**
+   * Min of defaultValue
+   */
   @Description("Min of defaultValue")
   private Sort defaultValueMin;
 
-  /** Count of ofType Reference */
+  /**
+   * Count of ofType Reference
+   */
   @Description("Count of ofType Reference")
   private Sort ofTypeNameCount;
 
-  /** Max of ofType Reference */
+  /**
+   * Max of ofType Reference
+   */
   @Description("Max of ofType Reference")
   private Sort ofTypeNameMax;
 
-  /** Min of ofType Reference */
+  /**
+   * Min of ofType Reference
+   */
   @Description("Min of ofType Reference")
   private Sort ofTypeNameMin;
 
-  /** Count of type Reference */
+  /**
+   * Count of type Reference
+   */
   @Description("Count of type Reference")
   private Sort typeNameCount;
 
-  /** Max of type Reference */
+  /**
+   * Max of type Reference
+   */
   @Description("Max of type Reference")
   private Sort typeNameMax;
 
-  /** Min of type Reference */
+  /**
+   * Min of type Reference
+   */
   @Description("Min of type Reference")
   private Sort typeNameMin;
 
-  /** Count of fieldId */
+  /**
+   * Count of fieldId
+   */
   @Description("Count of fieldId")
   private Sort fieldIdCount;
 
-  /** Sum of fieldId */
+  /**
+   * Sum of fieldId
+   */
   @Description("Sum of fieldId")
   private Sort fieldIdSum;
 
-  /** Avg of fieldId */
+  /**
+   * Avg of fieldId
+   */
   @Description("Avg of fieldId")
   private Sort fieldIdAvg;
 
-  /** Max of fieldId */
+  /**
+   * Max of fieldId
+   */
   @Description("Max of fieldId")
   private Sort fieldIdMax;
 
-  /** Min of fieldId */
+  /**
+   * Min of fieldId
+   */
   @Description("Min of fieldId")
   private Sort fieldIdMin;
+
+  /**
+   * OrderByes
+   */
+  @Description("OrderByes")
+  private Collection<__InputValueOrderBy> obs;
 
   public Sort getId() {
     return this.id;
@@ -198,6 +305,14 @@ public class __InputValueOrderBy {
 
   public void setName(Sort name) {
     this.name = name;
+  }
+
+  public __TypeOrderBy getOfType() {
+    return this.ofType;
+  }
+
+  public void setOfType(__TypeOrderBy ofType) {
+    this.ofType = ofType;
   }
 
   public Sort getFieldId() {
@@ -222,6 +337,14 @@ public class __InputValueOrderBy {
 
   public void setDescription(Sort description) {
     this.description = description;
+  }
+
+  public __TypeOrderBy getType() {
+    return this.type;
+  }
+
+  public void setType(__TypeOrderBy type) {
+    this.type = type;
   }
 
   public Sort getDefaultValue() {
@@ -526,5 +649,13 @@ public class __InputValueOrderBy {
 
   public void setFieldIdMin(Sort fieldIdMin) {
     this.fieldIdMin = fieldIdMin;
+  }
+
+  public Collection<__InputValueOrderBy> getObs() {
+    return this.obs;
+  }
+
+  public void setObs(Collection<__InputValueOrderBy> obs) {
+    this.obs = obs;
   }
 }

@@ -15,124 +15,182 @@ import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/** Query Arguments for __Field List */
+/**
+ * Query Arguments for __Field List
+ */
 @CompiledJson
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Query Arguments for __Field List")
 public class __FieldListQueryArguments implements MetaExpression, __FieldExpressionBase {
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   private StringExpression id;
 
-  /** name */
+  /**
+   * name
+   */
   @Description("name")
   private StringExpression name;
 
-  /** ofType */
+  /**
+   * ofType
+   */
   @Description("ofType")
   private __TypeExpression ofType;
 
-  /** description */
+  /**
+   * description
+   */
   @Description("description")
   private StringExpression description;
 
-  /** args */
+  /**
+   * args
+   */
   @Description("args")
   private __InputValueExpression args;
 
-  /** type */
+  /**
+   * type
+   */
   @Description("type")
   private __TypeExpression type;
 
-  /** deprecationReason */
+  /**
+   * deprecationReason
+   */
   @Description("deprecationReason")
   private StringExpression deprecationReason;
 
-  /** Include Deprecated */
+  /**
+   * Include Deprecated
+   */
   @DefaultValue("false")
   @Description("Include Deprecated")
   private Boolean includeDeprecated = false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   private IntExpression version;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   private IntExpression realmId;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   private StringExpression createUserId;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   private StringExpression createTime;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   private StringExpression updateUserId;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   private StringExpression updateTime;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   private StringExpression createGroupId;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   private StringExpression __typename;
 
-  /** ofType Reference */
+  /**
+   * ofType Reference
+   */
   @Description("ofType Reference")
   private StringExpression ofTypeName;
 
-  /** type Reference */
+  /**
+   * type Reference
+   */
   @Description("type Reference")
   private StringExpression typeName;
 
-  /** Order By */
+  /**
+   * Order By
+   */
   @Description("Order By")
   private __FieldOrderBy orderBy;
 
-  /** Group By */
+  /**
+   * Group By
+   */
   @Description("Group By")
-  private Collection<String> groupBy;
+  private __FieldGroupBy groupBy;
 
-  /** Not */
+  /**
+   * Not
+   */
   @DefaultValue("false")
   @Description("Not")
   private Boolean not = false;
 
-  /** Condition */
+  /**
+   * Condition
+   */
   @DefaultValue("AND")
   @Description("Condition")
   private Conditional cond = Conditional.AND;
 
-  /** Expressions */
+  /**
+   * Expressions
+   */
   @Description("Expressions")
   private Collection<__FieldExpression> exs;
 
-  /** First */
+  /**
+   * First
+   */
   @Description("First")
   private Integer first;
 
-  /** Last */
+  /**
+   * Last
+   */
   @Description("Last")
   private Integer last;
 
-  /** Offset */
+  /**
+   * Offset
+   */
   @Description("Offset")
   private Integer offset;
 
-  /** After */
+  /**
+   * After
+   */
   @Description("After")
   private String after;
 
-  /** Before */
+  /**
+   * Before
+   */
   @Description("Before")
   private String before;
 
@@ -143,7 +201,7 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
 
   @Override
   public void setId(StringExpression id) {
-    this.id = (StringExpression) id;
+    this.id = (StringExpression)id;
   }
 
   @Override
@@ -153,7 +211,7 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
 
   @Override
   public void setName(StringExpression name) {
-    this.name = (StringExpression) name;
+    this.name = (StringExpression)name;
   }
 
   @Override
@@ -163,7 +221,7 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
 
   @Override
   public void setOfType(__TypeExpression ofType) {
-    this.ofType = (__TypeExpression) ofType;
+    this.ofType = (__TypeExpression)ofType;
   }
 
   @Override
@@ -173,7 +231,7 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
 
   @Override
   public void setDescription(StringExpression description) {
-    this.description = (StringExpression) description;
+    this.description = (StringExpression)description;
   }
 
   @Override
@@ -183,7 +241,7 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
 
   @Override
   public void setArgs(__InputValueExpression args) {
-    this.args = (__InputValueExpression) args;
+    this.args = (__InputValueExpression)args;
   }
 
   @Override
@@ -193,7 +251,7 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
 
   @Override
   public void setType(__TypeExpression type) {
-    this.type = (__TypeExpression) type;
+    this.type = (__TypeExpression)type;
   }
 
   @Override
@@ -203,7 +261,7 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
 
   @Override
   public void setDeprecationReason(StringExpression deprecationReason) {
-    this.deprecationReason = (StringExpression) deprecationReason;
+    this.deprecationReason = (StringExpression)deprecationReason;
   }
 
   @Override
@@ -213,7 +271,7 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
 
   @Override
   public void setIncludeDeprecated(Boolean includeDeprecated) {
-    this.includeDeprecated = (Boolean) includeDeprecated;
+    this.includeDeprecated = (Boolean)includeDeprecated;
   }
 
   @Override
@@ -223,7 +281,7 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
 
   @Override
   public void setVersion(IntExpression version) {
-    this.version = (IntExpression) version;
+    this.version = (IntExpression)version;
   }
 
   @Override
@@ -233,7 +291,7 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
 
   @Override
   public void setRealmId(IntExpression realmId) {
-    this.realmId = (IntExpression) realmId;
+    this.realmId = (IntExpression)realmId;
   }
 
   @Override
@@ -243,7 +301,7 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
 
   @Override
   public void setCreateUserId(StringExpression createUserId) {
-    this.createUserId = (StringExpression) createUserId;
+    this.createUserId = (StringExpression)createUserId;
   }
 
   @Override
@@ -253,7 +311,7 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
 
   @Override
   public void setCreateTime(StringExpression createTime) {
-    this.createTime = (StringExpression) createTime;
+    this.createTime = (StringExpression)createTime;
   }
 
   @Override
@@ -263,7 +321,7 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
 
   @Override
   public void setUpdateUserId(StringExpression updateUserId) {
-    this.updateUserId = (StringExpression) updateUserId;
+    this.updateUserId = (StringExpression)updateUserId;
   }
 
   @Override
@@ -273,7 +331,7 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
 
   @Override
   public void setUpdateTime(StringExpression updateTime) {
-    this.updateTime = (StringExpression) updateTime;
+    this.updateTime = (StringExpression)updateTime;
   }
 
   @Override
@@ -283,7 +341,7 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
 
   @Override
   public void setCreateGroupId(StringExpression createGroupId) {
-    this.createGroupId = (StringExpression) createGroupId;
+    this.createGroupId = (StringExpression)createGroupId;
   }
 
   @Override
@@ -293,7 +351,7 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
 
   @Override
   public void set__typename(StringExpression __typename) {
-    this.__typename = (StringExpression) __typename;
+    this.__typename = (StringExpression)__typename;
   }
 
   @Override
@@ -303,7 +361,7 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
 
   @Override
   public void setOfTypeName(StringExpression ofTypeName) {
-    this.ofTypeName = (StringExpression) ofTypeName;
+    this.ofTypeName = (StringExpression)ofTypeName;
   }
 
   @Override
@@ -313,7 +371,7 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
 
   @Override
   public void setTypeName(StringExpression typeName) {
-    this.typeName = (StringExpression) typeName;
+    this.typeName = (StringExpression)typeName;
   }
 
   public __FieldOrderBy getOrderBy() {
@@ -324,11 +382,11 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
     this.orderBy = orderBy;
   }
 
-  public Collection<String> getGroupBy() {
+  public __FieldGroupBy getGroupBy() {
     return this.groupBy;
   }
 
-  public void setGroupBy(Collection<String> groupBy) {
+  public void setGroupBy(__FieldGroupBy groupBy) {
     this.groupBy = groupBy;
   }
 
@@ -339,7 +397,7 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
 
   @Override
   public void setNot(Boolean not) {
-    this.not = (Boolean) not;
+    this.not = (Boolean)not;
   }
 
   @Override
@@ -349,7 +407,7 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
 
   @Override
   public void setCond(Conditional cond) {
-    this.cond = (Conditional) cond;
+    this.cond = (Conditional)cond;
   }
 
   @Override
@@ -359,7 +417,7 @@ public class __FieldListQueryArguments implements MetaExpression, __FieldExpress
 
   @Override
   public void setExs(Collection<__FieldExpression> exs) {
-    this.exs = (Collection<__FieldExpression>) exs;
+    this.exs = (Collection<__FieldExpression>)exs;
   }
 
   public Integer getFirst() {

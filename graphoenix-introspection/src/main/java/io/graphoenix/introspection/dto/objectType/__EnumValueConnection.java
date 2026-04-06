@@ -8,21 +8,29 @@ import java.util.Collection;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Type;
 
-/** Connection Object for __EnumValue */
+/**
+ * Connection Object for __EnumValue
+ */
 @Type
 @CompiledJson
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Connection Object for __EnumValue")
 public class __EnumValueConnection {
-  /** Total */
+  /**
+   * Total
+   */
   @Description("Total")
   private Integer totalCount;
 
-  /** Page Info */
+  /**
+   * Page Info
+   */
   @Description("Page Info")
   private PageInfo pageInfo;
 
-  /** Edges */
+  /**
+   * Edges
+   */
   @Description("Edges")
   private Collection<__EnumValueEdge> edges;
 

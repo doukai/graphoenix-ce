@@ -8,8 +8,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/** Mutation */
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+/**
+ * Mutation
+ */
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
@@ -41,18 +43,18 @@ public @interface Mutation {
 
   __TypeInterfacesMutationArguments __typeInterfaces() default @__TypeInterfacesMutationArguments;
 
-  __TypeInterfacesListMutationArguments __typeInterfacesList() default
-      @__TypeInterfacesListMutationArguments;
+  __TypeInterfacesListMutationArguments __typeInterfacesList(
+      ) default @__TypeInterfacesListMutationArguments;
 
-  __TypePossibleTypesMutationArguments __typePossibleTypes() default
-      @__TypePossibleTypesMutationArguments;
+  __TypePossibleTypesMutationArguments __typePossibleTypes(
+      ) default @__TypePossibleTypesMutationArguments;
 
-  __TypePossibleTypesListMutationArguments __typePossibleTypesList() default
-      @__TypePossibleTypesListMutationArguments;
+  __TypePossibleTypesListMutationArguments __typePossibleTypesList(
+      ) default @__TypePossibleTypesListMutationArguments;
 
-  __DirectiveLocationsRelationMutationArguments __directiveLocationsRelation() default
-      @__DirectiveLocationsRelationMutationArguments;
+  __DirectiveLocationsRelationMutationArguments __directiveLocationsRelation(
+      ) default @__DirectiveLocationsRelationMutationArguments;
 
-  __DirectiveLocationsRelationListMutationArguments __directiveLocationsRelationList() default
-      @__DirectiveLocationsRelationListMutationArguments;
+  __DirectiveLocationsRelationListMutationArguments __directiveLocationsRelationList(
+      ) default @__DirectiveLocationsRelationListMutationArguments;
 }

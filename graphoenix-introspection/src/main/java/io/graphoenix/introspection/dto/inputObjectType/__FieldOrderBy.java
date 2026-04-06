@@ -3,146 +3,245 @@ package io.graphoenix.introspection.dto.inputObjectType;
 import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.enumType.Sort;
 import jakarta.annotation.Generated;
+import java.util.Collection;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/** Order Input for __Field */
+/**
+ * Order Input for __Field
+ */
 @CompiledJson
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Order Input for __Field")
 public class __FieldOrderBy {
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   private Sort id;
 
-  /** name */
+  /**
+   * name
+   */
   @Description("name")
   private Sort name;
 
-  /** description */
+  /**
+   * ofType
+   */
+  @Description("ofType")
+  private __TypeOrderBy ofType;
+
+  /**
+   * description
+   */
   @Description("description")
   private Sort description;
 
-  /** deprecationReason */
+  /**
+   * args
+   */
+  @Description("args")
+  private __InputValueOrderBy args;
+
+  /**
+   * type
+   */
+  @Description("type")
+  private __TypeOrderBy type;
+
+  /**
+   * deprecationReason
+   */
   @Description("deprecationReason")
   private Sort deprecationReason;
 
-  /** Is Deprecated */
+  /**
+   * Is Deprecated
+   */
   @Description("Is Deprecated")
   private Sort isDeprecated;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   private Sort version;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   private Sort realmId;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   private Sort createUserId;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   private Sort createTime;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   private Sort updateUserId;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   private Sort updateTime;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   private Sort createGroupId;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   private Sort __typename;
 
-  /** ofType Reference */
+  /**
+   * ofType Reference
+   */
   @Description("ofType Reference")
   private Sort ofTypeName;
 
-  /** type Reference */
+  /**
+   * type Reference
+   */
   @Description("type Reference")
   private Sort typeName;
 
-  /** Count of __Field */
+  /**
+   * Aggregate Field for args
+   */
+  @Description("Aggregate Field for args")
+  private __InputValueOrderBy argsAggregate;
+
+  /**
+   * Count of __Field
+   */
   @Description("Count of __Field")
   private Sort idCount;
 
-  /** Max of id */
+  /**
+   * Max of id
+   */
   @Description("Max of id")
   private Sort idMax;
 
-  /** Min of id */
+  /**
+   * Min of id
+   */
   @Description("Min of id")
   private Sort idMin;
 
-  /** Count of name */
+  /**
+   * Count of name
+   */
   @Description("Count of name")
   private Sort nameCount;
 
-  /** Max of name */
+  /**
+   * Max of name
+   */
   @Description("Max of name")
   private Sort nameMax;
 
-  /** Min of name */
+  /**
+   * Min of name
+   */
   @Description("Min of name")
   private Sort nameMin;
 
-  /** Count of description */
+  /**
+   * Count of description
+   */
   @Description("Count of description")
   private Sort descriptionCount;
 
-  /** Max of description */
+  /**
+   * Max of description
+   */
   @Description("Max of description")
   private Sort descriptionMax;
 
-  /** Min of description */
+  /**
+   * Min of description
+   */
   @Description("Min of description")
   private Sort descriptionMin;
 
-  /** Count of deprecationReason */
+  /**
+   * Count of deprecationReason
+   */
   @Description("Count of deprecationReason")
   private Sort deprecationReasonCount;
 
-  /** Max of deprecationReason */
+  /**
+   * Max of deprecationReason
+   */
   @Description("Max of deprecationReason")
   private Sort deprecationReasonMax;
 
-  /** Min of deprecationReason */
+  /**
+   * Min of deprecationReason
+   */
   @Description("Min of deprecationReason")
   private Sort deprecationReasonMin;
 
-  /** Count of ofType Reference */
+  /**
+   * Count of ofType Reference
+   */
   @Description("Count of ofType Reference")
   private Sort ofTypeNameCount;
 
-  /** Max of ofType Reference */
+  /**
+   * Max of ofType Reference
+   */
   @Description("Max of ofType Reference")
   private Sort ofTypeNameMax;
 
-  /** Min of ofType Reference */
+  /**
+   * Min of ofType Reference
+   */
   @Description("Min of ofType Reference")
   private Sort ofTypeNameMin;
 
-  /** Count of type Reference */
+  /**
+   * Count of type Reference
+   */
   @Description("Count of type Reference")
   private Sort typeNameCount;
 
-  /** Max of type Reference */
+  /**
+   * Max of type Reference
+   */
   @Description("Max of type Reference")
   private Sort typeNameMax;
 
-  /** Min of type Reference */
+  /**
+   * Min of type Reference
+   */
   @Description("Min of type Reference")
   private Sort typeNameMin;
+
+  /**
+   * OrderByes
+   */
+  @Description("OrderByes")
+  private Collection<__FieldOrderBy> obs;
 
   public Sort getId() {
     return this.id;
@@ -160,12 +259,36 @@ public class __FieldOrderBy {
     this.name = name;
   }
 
+  public __TypeOrderBy getOfType() {
+    return this.ofType;
+  }
+
+  public void setOfType(__TypeOrderBy ofType) {
+    this.ofType = ofType;
+  }
+
   public Sort getDescription() {
     return this.description;
   }
 
   public void setDescription(Sort description) {
     this.description = description;
+  }
+
+  public __InputValueOrderBy getArgs() {
+    return this.args;
+  }
+
+  public void setArgs(__InputValueOrderBy args) {
+    this.args = args;
+  }
+
+  public __TypeOrderBy getType() {
+    return this.type;
+  }
+
+  public void setType(__TypeOrderBy type) {
+    this.type = type;
   }
 
   public Sort getDeprecationReason() {
@@ -262,6 +385,14 @@ public class __FieldOrderBy {
 
   public void setTypeName(Sort typeName) {
     this.typeName = typeName;
+  }
+
+  public __InputValueOrderBy getArgsAggregate() {
+    return this.argsAggregate;
+  }
+
+  public void setArgsAggregate(__InputValueOrderBy argsAggregate) {
+    this.argsAggregate = argsAggregate;
   }
 
   public Sort getIdCount() {
@@ -406,5 +537,13 @@ public class __FieldOrderBy {
 
   public void setTypeNameMin(Sort typeNameMin) {
     this.typeNameMin = typeNameMin;
+  }
+
+  public Collection<__FieldOrderBy> getObs() {
+    return this.obs;
+  }
+
+  public void setObs(Collection<__FieldOrderBy> obs) {
+    this.obs = obs;
   }
 }

@@ -6,17 +6,23 @@ import java.lang.String;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Type;
 
-/** Edge Object for __Type */
+/**
+ * Edge Object for __Type
+ */
 @Type
 @CompiledJson
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Edge Object for __Type")
 public class __TypeEdge {
-  /** Node */
+  /**
+   * Node
+   */
   @Description("Node")
   private __Type node;
 
-  /** Cursor */
+  /**
+   * Cursor
+   */
   @Description("Cursor")
   private String cursor;
 

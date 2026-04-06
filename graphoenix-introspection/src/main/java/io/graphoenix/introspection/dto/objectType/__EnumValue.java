@@ -15,9 +15,10 @@ import org.eclipse.microprofile.graphql.Type;
 
 @Type
 @CompiledJson
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 public class __EnumValue implements Meta {
-  @Id private String id;
+  @Id
+  private String id;
 
   private String name;
 
@@ -27,103 +28,153 @@ public class __EnumValue implements Meta {
 
   private String deprecationReason;
 
-  /** Is Deprecated */
+  /**
+   * Is Deprecated
+   */
   @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   private Integer version;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   private Integer realmId;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   private String createUserId;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   private LocalDateTime createTime;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   private String updateUserId;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   private LocalDateTime updateTime;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   private String createGroupId;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   private String __typename = "__EnumValue";
 
-  /** ofType Reference */
+  /**
+   * ofType Reference
+   */
   @Description("ofType Reference")
   private String ofTypeName;
 
-  /** Count of __EnumValue */
+  /**
+   * Count of __EnumValue
+   */
   @Description("Count of __EnumValue")
   private Integer idCount;
 
-  /** Max of id */
+  /**
+   * Max of id
+   */
   @Description("Max of id")
   private Integer idMax;
 
-  /** Min of id */
+  /**
+   * Min of id
+   */
   @Description("Min of id")
   private Integer idMin;
 
-  /** Count of name */
+  /**
+   * Count of name
+   */
   @Description("Count of name")
   private Integer nameCount;
 
-  /** Max of name */
+  /**
+   * Max of name
+   */
   @Description("Max of name")
   private String nameMax;
 
-  /** Min of name */
+  /**
+   * Min of name
+   */
   @Description("Min of name")
   private String nameMin;
 
-  /** Count of description */
+  /**
+   * Count of description
+   */
   @Description("Count of description")
   private Integer descriptionCount;
 
-  /** Max of description */
+  /**
+   * Max of description
+   */
   @Description("Max of description")
   private String descriptionMax;
 
-  /** Min of description */
+  /**
+   * Min of description
+   */
   @Description("Min of description")
   private String descriptionMin;
 
-  /** Count of deprecationReason */
+  /**
+   * Count of deprecationReason
+   */
   @Description("Count of deprecationReason")
   private Integer deprecationReasonCount;
 
-  /** Max of deprecationReason */
+  /**
+   * Max of deprecationReason
+   */
   @Description("Max of deprecationReason")
   private String deprecationReasonMax;
 
-  /** Min of deprecationReason */
+  /**
+   * Min of deprecationReason
+   */
   @Description("Min of deprecationReason")
   private String deprecationReasonMin;
 
-  /** Count of ofType Reference */
+  /**
+   * Count of ofType Reference
+   */
   @Description("Count of ofType Reference")
   private Integer ofTypeNameCount;
 
-  /** Max of ofType Reference */
+  /**
+   * Max of ofType Reference
+   */
   @Description("Max of ofType Reference")
   private String ofTypeNameMax;
 
-  /** Min of ofType Reference */
+  /**
+   * Min of ofType Reference
+   */
   @Description("Min of ofType Reference")
   private String ofTypeNameMin;
 
@@ -134,7 +185,7 @@ public class __EnumValue implements Meta {
 
   @Override
   public void setId(String id) {
-    this.id = (String) id;
+    this.id = (String)id;
   }
 
   public String getName() {
@@ -176,7 +227,7 @@ public class __EnumValue implements Meta {
 
   @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean) isDeprecated;
+    this.isDeprecated = (Boolean)isDeprecated;
   }
 
   @Override
@@ -186,7 +237,7 @@ public class __EnumValue implements Meta {
 
   @Override
   public void setVersion(Integer version) {
-    this.version = (Integer) version;
+    this.version = (Integer)version;
   }
 
   @Override
@@ -196,7 +247,7 @@ public class __EnumValue implements Meta {
 
   @Override
   public void setRealmId(Integer realmId) {
-    this.realmId = (Integer) realmId;
+    this.realmId = (Integer)realmId;
   }
 
   @Override
@@ -206,7 +257,7 @@ public class __EnumValue implements Meta {
 
   @Override
   public void setCreateUserId(String createUserId) {
-    this.createUserId = (String) createUserId;
+    this.createUserId = (String)createUserId;
   }
 
   @Override
@@ -216,7 +267,7 @@ public class __EnumValue implements Meta {
 
   @Override
   public void setCreateTime(LocalDateTime createTime) {
-    this.createTime = (LocalDateTime) createTime;
+    this.createTime = (LocalDateTime)createTime;
   }
 
   @Override
@@ -226,7 +277,7 @@ public class __EnumValue implements Meta {
 
   @Override
   public void setUpdateUserId(String updateUserId) {
-    this.updateUserId = (String) updateUserId;
+    this.updateUserId = (String)updateUserId;
   }
 
   @Override
@@ -236,7 +287,7 @@ public class __EnumValue implements Meta {
 
   @Override
   public void setUpdateTime(LocalDateTime updateTime) {
-    this.updateTime = (LocalDateTime) updateTime;
+    this.updateTime = (LocalDateTime)updateTime;
   }
 
   @Override
@@ -246,7 +297,7 @@ public class __EnumValue implements Meta {
 
   @Override
   public void setCreateGroupId(String createGroupId) {
-    this.createGroupId = (String) createGroupId;
+    this.createGroupId = (String)createGroupId;
   }
 
   public String get__typename() {
@@ -389,7 +440,7 @@ public class __EnumValue implements Meta {
     __EnumValueInput input = new __EnumValueInput();
     input.setId(this.getId());
     input.setName(this.getName());
-    if (getOfType() != null) {
+    if(getOfType() != null) {
       input.setOfType(this.getOfType().toInput());
     }
     input.setDescription(this.getDescription());

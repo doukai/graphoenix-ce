@@ -8,10 +8,10 @@ package io.graphoenix.structure;
 import "io/graphoenix/structure/enums.proto";
 
 message TreeStruct {
-  string parent_id = 1;
-  string name = 2;
+    string parent_id = 1;
+    string name = 2;
 }
 message NamedStruct {
-  string name = 1;
-  string description = 2;
+    string name = 1;
+    string description = 2;
 }

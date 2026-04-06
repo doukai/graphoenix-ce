@@ -14,72 +14,103 @@ import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/** Mutation Arguments for Relationship Object between __Directive and locations List */
+/**
+ * Mutation Arguments for Relationship Object between __Directive and locations List
+ */
 @CompiledJson
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Mutation Arguments for Relationship Object between __Directive and locations List")
-public class __DirectiveLocationsRelationListMutationArguments
-    implements MetaInput, __DirectiveLocationsRelationInputBase {
-  /** ID */
+public class __DirectiveLocationsRelationListMutationArguments implements MetaInput, __DirectiveLocationsRelationInputBase {
+  /**
+   * ID
+   */
   @Description("ID")
   private String id;
 
-  /** __Directive Reference */
+  /**
+   * __Directive Reference
+   */
   @Description("__Directive Reference")
   private String __directiveRef;
 
-  /** __Directive */
+  /**
+   * __Directive
+   */
   @Description("__Directive")
   private __DirectiveInput __directive;
 
-  /** locations Reference */
+  /**
+   * locations Reference
+   */
   @Description("locations Reference")
   private __DirectiveLocation locationsRef;
 
-  /** Is Deprecated */
+  /**
+   * Is Deprecated
+   */
   @DefaultValue("false")
   @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   private Integer version;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   private Integer realmId;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   private String createUserId;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   private LocalDateTime createTime;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   private String updateUserId;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   private LocalDateTime updateTime;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   private String createGroupId;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @DefaultValue("__DirectiveLocationsRelation")
   @Description("Type Name")
   private String __typename = "__DirectiveLocationsRelation";
 
-  /** Input List */
+  /**
+   * Input List
+   */
   @Description("Input List")
   private Collection<__DirectiveLocationsRelationInput> list;
 
-  /** Where */
+  /**
+   * Where
+   */
   @Description("Where")
   private __DirectiveLocationsRelationExpression where;
 
@@ -90,7 +121,7 @@ public class __DirectiveLocationsRelationListMutationArguments
 
   @Override
   public void setId(String id) {
-    this.id = (String) id;
+    this.id = (String)id;
   }
 
   @Override
@@ -100,7 +131,7 @@ public class __DirectiveLocationsRelationListMutationArguments
 
   @Override
   public void set__directiveRef(String __directiveRef) {
-    this.__directiveRef = (String) __directiveRef;
+    this.__directiveRef = (String)__directiveRef;
   }
 
   @Override
@@ -110,7 +141,7 @@ public class __DirectiveLocationsRelationListMutationArguments
 
   @Override
   public void set__directive(__DirectiveInput __directive) {
-    this.__directive = (__DirectiveInput) __directive;
+    this.__directive = (__DirectiveInput)__directive;
   }
 
   @Override
@@ -120,7 +151,7 @@ public class __DirectiveLocationsRelationListMutationArguments
 
   @Override
   public void setLocationsRef(__DirectiveLocation locationsRef) {
-    this.locationsRef = (__DirectiveLocation) locationsRef;
+    this.locationsRef = (__DirectiveLocation)locationsRef;
   }
 
   @Override
@@ -130,7 +161,7 @@ public class __DirectiveLocationsRelationListMutationArguments
 
   @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean) isDeprecated;
+    this.isDeprecated = (Boolean)isDeprecated;
   }
 
   @Override
@@ -140,7 +171,7 @@ public class __DirectiveLocationsRelationListMutationArguments
 
   @Override
   public void setVersion(Integer version) {
-    this.version = (Integer) version;
+    this.version = (Integer)version;
   }
 
   @Override
@@ -150,7 +181,7 @@ public class __DirectiveLocationsRelationListMutationArguments
 
   @Override
   public void setRealmId(Integer realmId) {
-    this.realmId = (Integer) realmId;
+    this.realmId = (Integer)realmId;
   }
 
   @Override
@@ -160,7 +191,7 @@ public class __DirectiveLocationsRelationListMutationArguments
 
   @Override
   public void setCreateUserId(String createUserId) {
-    this.createUserId = (String) createUserId;
+    this.createUserId = (String)createUserId;
   }
 
   @Override
@@ -170,7 +201,7 @@ public class __DirectiveLocationsRelationListMutationArguments
 
   @Override
   public void setCreateTime(LocalDateTime createTime) {
-    this.createTime = (LocalDateTime) createTime;
+    this.createTime = (LocalDateTime)createTime;
   }
 
   @Override
@@ -180,7 +211,7 @@ public class __DirectiveLocationsRelationListMutationArguments
 
   @Override
   public void setUpdateUserId(String updateUserId) {
-    this.updateUserId = (String) updateUserId;
+    this.updateUserId = (String)updateUserId;
   }
 
   @Override
@@ -190,7 +221,7 @@ public class __DirectiveLocationsRelationListMutationArguments
 
   @Override
   public void setUpdateTime(LocalDateTime updateTime) {
-    this.updateTime = (LocalDateTime) updateTime;
+    this.updateTime = (LocalDateTime)updateTime;
   }
 
   @Override
@@ -200,7 +231,7 @@ public class __DirectiveLocationsRelationListMutationArguments
 
   @Override
   public void setCreateGroupId(String createGroupId) {
-    this.createGroupId = (String) createGroupId;
+    this.createGroupId = (String)createGroupId;
   }
 
   @Override
@@ -210,7 +241,7 @@ public class __DirectiveLocationsRelationListMutationArguments
 
   @Override
   public void set__typename(String __typename) {
-    this.__typename = (String) __typename;
+    this.__typename = (String)__typename;
   }
 
   public Collection<__DirectiveLocationsRelationInput> getList() {
@@ -228,6 +259,6 @@ public class __DirectiveLocationsRelationListMutationArguments
 
   @Override
   public void setWhere(__DirectiveLocationsRelationExpression where) {
-    this.where = (__DirectiveLocationsRelationExpression) where;
+    this.where = (__DirectiveLocationsRelationExpression)where;
   }
 }

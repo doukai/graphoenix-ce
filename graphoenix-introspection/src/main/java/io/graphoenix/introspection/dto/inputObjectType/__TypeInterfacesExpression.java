@@ -14,81 +14,117 @@ import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 import org.eclipse.microprofile.graphql.Name;
 
-/** Query Expression Input for Relationship Object between __Type and __Type */
+/**
+ * Query Expression Input for Relationship Object between __Type and __Type
+ */
 @CompiledJson
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Query Expression Input for Relationship Object between __Type and __Type")
 public class __TypeInterfacesExpression implements MetaExpression, __TypeInterfacesExpressionBase {
-  /** ID */
+  /**
+   * ID
+   */
   @Description("ID")
   private StringExpression id;
 
-  /** __Type Reference */
+  /**
+   * __Type Reference
+   */
   @Description("__Type Reference")
   private StringExpression typeRef;
 
-  /** __Type */
+  /**
+   * __Type
+   */
   @Description("__Type")
   private __TypeExpression type;
 
-  /** __Type Reference */
+  /**
+   * __Type Reference
+   */
   @Description("__Type Reference")
   private StringExpression interfaceRef;
 
-  /** __Type */
+  /**
+   * __Type
+   */
   @Name("interface")
   @Description("__Type")
   private __TypeExpression _interface;
 
-  /** Include Deprecated */
+  /**
+   * Include Deprecated
+   */
   @DefaultValue("false")
   @Description("Include Deprecated")
   private Boolean includeDeprecated = false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   private IntExpression version;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   private IntExpression realmId;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   private StringExpression createUserId;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   private StringExpression createTime;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   private StringExpression updateUserId;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   private StringExpression updateTime;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   private StringExpression createGroupId;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   private StringExpression __typename;
 
-  /** Not */
+  /**
+   * Not
+   */
   @DefaultValue("false")
   @Description("Not")
   private Boolean not = false;
 
-  /** Condition */
+  /**
+   * Condition
+   */
   @DefaultValue("AND")
   @Description("Condition")
   private Conditional cond = Conditional.AND;
 
-  /** Expressions */
+  /**
+   * Expressions
+   */
   @Description("Expressions")
   private Collection<__TypeInterfacesExpression> exs;
 
@@ -99,7 +135,7 @@ public class __TypeInterfacesExpression implements MetaExpression, __TypeInterfa
 
   @Override
   public void setId(StringExpression id) {
-    this.id = (StringExpression) id;
+    this.id = (StringExpression)id;
   }
 
   @Override
@@ -109,7 +145,7 @@ public class __TypeInterfacesExpression implements MetaExpression, __TypeInterfa
 
   @Override
   public void setTypeRef(StringExpression typeRef) {
-    this.typeRef = (StringExpression) typeRef;
+    this.typeRef = (StringExpression)typeRef;
   }
 
   @Override
@@ -119,7 +155,7 @@ public class __TypeInterfacesExpression implements MetaExpression, __TypeInterfa
 
   @Override
   public void setType(__TypeExpression type) {
-    this.type = (__TypeExpression) type;
+    this.type = (__TypeExpression)type;
   }
 
   @Override
@@ -129,7 +165,7 @@ public class __TypeInterfacesExpression implements MetaExpression, __TypeInterfa
 
   @Override
   public void setInterfaceRef(StringExpression interfaceRef) {
-    this.interfaceRef = (StringExpression) interfaceRef;
+    this.interfaceRef = (StringExpression)interfaceRef;
   }
 
   public __TypeExpression get_interface() {
@@ -147,7 +183,7 @@ public class __TypeInterfacesExpression implements MetaExpression, __TypeInterfa
 
   @Override
   public void setIncludeDeprecated(Boolean includeDeprecated) {
-    this.includeDeprecated = (Boolean) includeDeprecated;
+    this.includeDeprecated = (Boolean)includeDeprecated;
   }
 
   @Override
@@ -157,7 +193,7 @@ public class __TypeInterfacesExpression implements MetaExpression, __TypeInterfa
 
   @Override
   public void setVersion(IntExpression version) {
-    this.version = (IntExpression) version;
+    this.version = (IntExpression)version;
   }
 
   @Override
@@ -167,7 +203,7 @@ public class __TypeInterfacesExpression implements MetaExpression, __TypeInterfa
 
   @Override
   public void setRealmId(IntExpression realmId) {
-    this.realmId = (IntExpression) realmId;
+    this.realmId = (IntExpression)realmId;
   }
 
   @Override
@@ -177,7 +213,7 @@ public class __TypeInterfacesExpression implements MetaExpression, __TypeInterfa
 
   @Override
   public void setCreateUserId(StringExpression createUserId) {
-    this.createUserId = (StringExpression) createUserId;
+    this.createUserId = (StringExpression)createUserId;
   }
 
   @Override
@@ -187,7 +223,7 @@ public class __TypeInterfacesExpression implements MetaExpression, __TypeInterfa
 
   @Override
   public void setCreateTime(StringExpression createTime) {
-    this.createTime = (StringExpression) createTime;
+    this.createTime = (StringExpression)createTime;
   }
 
   @Override
@@ -197,7 +233,7 @@ public class __TypeInterfacesExpression implements MetaExpression, __TypeInterfa
 
   @Override
   public void setUpdateUserId(StringExpression updateUserId) {
-    this.updateUserId = (StringExpression) updateUserId;
+    this.updateUserId = (StringExpression)updateUserId;
   }
 
   @Override
@@ -207,7 +243,7 @@ public class __TypeInterfacesExpression implements MetaExpression, __TypeInterfa
 
   @Override
   public void setUpdateTime(StringExpression updateTime) {
-    this.updateTime = (StringExpression) updateTime;
+    this.updateTime = (StringExpression)updateTime;
   }
 
   @Override
@@ -217,7 +253,7 @@ public class __TypeInterfacesExpression implements MetaExpression, __TypeInterfa
 
   @Override
   public void setCreateGroupId(StringExpression createGroupId) {
-    this.createGroupId = (StringExpression) createGroupId;
+    this.createGroupId = (StringExpression)createGroupId;
   }
 
   @Override
@@ -227,7 +263,7 @@ public class __TypeInterfacesExpression implements MetaExpression, __TypeInterfa
 
   @Override
   public void set__typename(StringExpression __typename) {
-    this.__typename = (StringExpression) __typename;
+    this.__typename = (StringExpression)__typename;
   }
 
   @Override
@@ -237,7 +273,7 @@ public class __TypeInterfacesExpression implements MetaExpression, __TypeInterfa
 
   @Override
   public void setNot(Boolean not) {
-    this.not = (Boolean) not;
+    this.not = (Boolean)not;
   }
 
   @Override
@@ -247,7 +283,7 @@ public class __TypeInterfacesExpression implements MetaExpression, __TypeInterfa
 
   @Override
   public void setCond(Conditional cond) {
-    this.cond = (Conditional) cond;
+    this.cond = (Conditional)cond;
   }
 
   @Override
@@ -257,6 +293,6 @@ public class __TypeInterfacesExpression implements MetaExpression, __TypeInterfa
 
   @Override
   public void setExs(Collection<__TypeInterfacesExpression> exs) {
-    this.exs = (Collection<__TypeInterfacesExpression>) exs;
+    this.exs = (Collection<__TypeInterfacesExpression>)exs;
   }
 }

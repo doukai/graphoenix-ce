@@ -12,102 +12,150 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/** Query Arguments for Relationship Object between __Directive and locations List */
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+/**
+ * Query Arguments for Relationship Object between __Directive and locations List
+ */
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Query Arguments for Relationship Object between __Directive and locations List")
 public @interface __DirectiveLocationsRelationListQueryArguments {
-  /** ID */
+  /**
+   * ID
+   */
   @Description("ID")
   StringExpression id() default @StringExpression;
 
-  /** __Directive Reference */
+  /**
+   * __Directive Reference
+   */
   @Description("__Directive Reference")
   StringExpression __directiveRef() default @StringExpression;
 
-  /** __Directive */
+  /**
+   * __Directive
+   */
   @Description("__Directive")
   __DirectiveExpression __directive() default @__DirectiveExpression;
 
-  /** locations Reference */
+  /**
+   * locations Reference
+   */
   @Description("locations Reference")
   __DirectiveLocationExpression locationsRef() default @__DirectiveLocationExpression;
 
-  /** Include Deprecated */
+  /**
+   * Include Deprecated
+   */
   @Description("Include Deprecated")
   boolean includeDeprecated() default false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   IntExpression version() default @IntExpression;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   IntExpression realmId() default @IntExpression;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   StringExpression createUserId() default @StringExpression;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   StringExpression createTime() default @StringExpression;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   StringExpression updateUserId() default @StringExpression;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   StringExpression updateTime() default @StringExpression;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   StringExpression createGroupId() default @StringExpression;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   StringExpression __typename() default @StringExpression;
 
-  /** Order By */
+  /**
+   * Order By
+   */
   @Description("Order By")
   __DirectiveLocationsRelationOrderBy orderBy() default @__DirectiveLocationsRelationOrderBy;
 
-  /** Group By */
+  /**
+   * Group By
+   */
   @Description("Group By")
-  String[] groupBy() default {};
+  __DirectiveLocationsRelationGroupBy groupBy() default @__DirectiveLocationsRelationGroupBy;
 
-  /** Not */
+  /**
+   * Not
+   */
   @Description("Not")
   boolean not() default false;
 
-  /** Condition */
+  /**
+   * Condition
+   */
   @Description("Condition")
   Conditional cond() default Conditional.AND;
 
-  /** Expressions */
+  /**
+   * Expressions
+   */
   @Description("Expressions")
   __DirectiveLocationsRelationExpression[] exs() default {};
 
-  /** First */
+  /**
+   * First
+   */
   @Description("First")
   int first() default 0;
 
-  /** Last */
+  /**
+   * Last
+   */
   @Description("Last")
   int last() default 0;
 
-  /** Offset */
+  /**
+   * Offset
+   */
   @Description("Offset")
   int offset() default 0;
 
-  /** After */
+  /**
+   * After
+   */
   @Description("After")
   String after() default "";
 
-  /** Before */
+  /**
+   * Before
+   */
   @Description("Before")
   String before() default "";
 

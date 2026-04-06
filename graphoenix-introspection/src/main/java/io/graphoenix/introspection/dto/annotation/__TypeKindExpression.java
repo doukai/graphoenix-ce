@@ -11,22 +11,30 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/** Query Expression Input for __TypeKind */
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+/**
+ * Query Expression Input for __TypeKind
+ */
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Query Expression Input for __TypeKind")
 public @interface __TypeKindExpression {
-  /** Operators */
+  /**
+   * Operators
+   */
   @Description("Operators")
   Operator opr() default Operator.EQ;
 
-  /** Value */
+  /**
+   * Value
+   */
   @Description("Value")
   __TypeKind val() default __TypeKind.SCALAR;
 
-  /** Array */
+  /**
+   * Array
+   */
   @Description("Array")
   __TypeKind[] arr() default {};
 

@@ -10,80 +10,118 @@ import java.util.Collection;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/** Query Expression Input for __EnumValue */
+/**
+ * Query Expression Input for __EnumValue
+ */
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Query Expression Input for __EnumValue")
 public interface __EnumValueExpressionBase extends MetaExpression {
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   StringExpression id = null;
 
-  /** name */
+  /**
+   * name
+   */
   @Description("name")
   StringExpression name = null;
 
-  /** ofType */
+  /**
+   * ofType
+   */
   @Description("ofType")
   __TypeExpression ofType = null;
 
-  /** description */
+  /**
+   * description
+   */
   @Description("description")
   StringExpression description = null;
 
-  /** deprecationReason */
+  /**
+   * deprecationReason
+   */
   @Description("deprecationReason")
   StringExpression deprecationReason = null;
 
-  /** Include Deprecated */
+  /**
+   * Include Deprecated
+   */
   @Description("Include Deprecated")
   Boolean includeDeprecated = false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   IntExpression version = null;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   IntExpression realmId = null;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   StringExpression createUserId = null;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   StringExpression createTime = null;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   StringExpression updateUserId = null;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   StringExpression updateTime = null;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   StringExpression createGroupId = null;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   StringExpression __typename = null;
 
-  /** ofType Reference */
+  /**
+   * ofType Reference
+   */
   @Description("ofType Reference")
   StringExpression ofTypeName = null;
 
-  /** Not */
+  /**
+   * Not
+   */
   @Description("Not")
   Boolean not = false;
 
-  /** Condition */
+  /**
+   * Condition
+   */
   @Description("Condition")
   Conditional cond = Conditional.AND;
 
-  /** Expressions */
+  /**
+   * Expressions
+   */
   @Description("Expressions")
   Collection<__EnumValueExpression> exs = null;
 

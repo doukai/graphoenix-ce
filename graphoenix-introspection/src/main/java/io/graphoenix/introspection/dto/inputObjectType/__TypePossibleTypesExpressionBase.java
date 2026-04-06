@@ -10,76 +10,112 @@ import java.util.Collection;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/** Query Expression Input for Relationship Object between __Type and __Type */
+/**
+ * Query Expression Input for Relationship Object between __Type and __Type
+ */
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Query Expression Input for Relationship Object between __Type and __Type")
 public interface __TypePossibleTypesExpressionBase extends MetaExpression {
-  /** ID */
+  /**
+   * ID
+   */
   @Description("ID")
   StringExpression id = null;
 
-  /** __Type Reference */
+  /**
+   * __Type Reference
+   */
   @Description("__Type Reference")
   StringExpression typeRef = null;
 
-  /** __Type */
+  /**
+   * __Type
+   */
   @Description("__Type")
   __TypeExpression type = null;
 
-  /** __Type Reference */
+  /**
+   * __Type Reference
+   */
   @Description("__Type Reference")
   StringExpression possibleTypeRef = null;
 
-  /** __Type */
+  /**
+   * __Type
+   */
   @Description("__Type")
   __TypeExpression possibleType = null;
 
-  /** Include Deprecated */
+  /**
+   * Include Deprecated
+   */
   @Description("Include Deprecated")
   Boolean includeDeprecated = false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   IntExpression version = null;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   IntExpression realmId = null;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   StringExpression createUserId = null;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   StringExpression createTime = null;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   StringExpression updateUserId = null;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   StringExpression updateTime = null;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   StringExpression createGroupId = null;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   StringExpression __typename = null;
 
-  /** Not */
+  /**
+   * Not
+   */
   @Description("Not")
   Boolean not = false;
 
-  /** Condition */
+  /**
+   * Condition
+   */
   @Description("Condition")
   Conditional cond = Conditional.AND;
 
-  /** Expressions */
+  /**
+   * Expressions
+   */
   @Description("Expressions")
   Collection<__TypePossibleTypesExpression> exs = null;
 

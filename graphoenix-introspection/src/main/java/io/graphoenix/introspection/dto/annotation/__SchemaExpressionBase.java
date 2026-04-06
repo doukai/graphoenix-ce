@@ -12,94 +12,138 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/** Query Expression Input for __Schema */
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+/**
+ * Query Expression Input for __Schema
+ */
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Query Expression Input for __Schema")
 public @interface __SchemaExpressionBase {
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   StringExpression id() default @StringExpression;
 
-  /** types */
+  /**
+   * types
+   */
   @Description("types")
   __TypeExpression1 types() default @__TypeExpression1;
 
-  /** queryType */
+  /**
+   * queryType
+   */
   @Description("queryType")
   __TypeExpression1 queryType() default @__TypeExpression1;
 
-  /** mutationType */
+  /**
+   * mutationType
+   */
   @Description("mutationType")
   __TypeExpression1 mutationType() default @__TypeExpression1;
 
-  /** subscriptionType */
+  /**
+   * subscriptionType
+   */
   @Description("subscriptionType")
   __TypeExpression1 subscriptionType() default @__TypeExpression1;
 
-  /** directives */
+  /**
+   * directives
+   */
   @Description("directives")
   __DirectiveExpression1 directives() default @__DirectiveExpression1;
 
-  /** Include Deprecated */
+  /**
+   * Include Deprecated
+   */
   @Description("Include Deprecated")
   boolean includeDeprecated() default false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   IntExpression version() default @IntExpression;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   IntExpression realmId() default @IntExpression;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   StringExpression createUserId() default @StringExpression;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   StringExpression createTime() default @StringExpression;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   StringExpression updateUserId() default @StringExpression;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   StringExpression updateTime() default @StringExpression;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   StringExpression createGroupId() default @StringExpression;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   StringExpression __typename() default @StringExpression;
 
-  /** queryType Reference */
+  /**
+   * queryType Reference
+   */
   @Description("queryType Reference")
   StringExpression queryTypeName() default @StringExpression;
 
-  /** mutationType Reference */
+  /**
+   * mutationType Reference
+   */
   @Description("mutationType Reference")
   StringExpression mutationTypeName() default @StringExpression;
 
-  /** subscriptionType Reference */
+  /**
+   * subscriptionType Reference
+   */
   @Description("subscriptionType Reference")
   StringExpression subscriptionTypeName() default @StringExpression;
 
-  /** Not */
+  /**
+   * Not
+   */
   @Description("Not")
   boolean not() default false;
 
-  /** Condition */
+  /**
+   * Condition
+   */
   @Description("Condition")
   Conditional cond() default Conditional.AND;
 
-  /** Expressions */
+  /**
+   * Expressions
+   */
   @Description("Expressions")
   __SchemaExpression1[] exs() default {};
 

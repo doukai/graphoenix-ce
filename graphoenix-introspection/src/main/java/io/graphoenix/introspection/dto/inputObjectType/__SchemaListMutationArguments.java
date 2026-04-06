@@ -13,91 +13,133 @@ import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/** Mutation Arguments for __Schema List */
+/**
+ * Mutation Arguments for __Schema List
+ */
 @CompiledJson
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Mutation Arguments for __Schema List")
 public class __SchemaListMutationArguments implements MetaInput, __SchemaInputBase {
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   private String id;
 
-  /** types */
+  /**
+   * types
+   */
   @Description("types")
   private Collection<__TypeInput> types;
 
-  /** queryType */
+  /**
+   * queryType
+   */
   @Description("queryType")
   private __TypeInput queryType;
 
-  /** mutationType */
+  /**
+   * mutationType
+   */
   @Description("mutationType")
   private __TypeInput mutationType;
 
-  /** subscriptionType */
+  /**
+   * subscriptionType
+   */
   @Description("subscriptionType")
   private __TypeInput subscriptionType;
 
-  /** directives */
+  /**
+   * directives
+   */
   @Description("directives")
   private Collection<__DirectiveInput> directives;
 
-  /** Is Deprecated */
+  /**
+   * Is Deprecated
+   */
   @DefaultValue("false")
   @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   private Integer version;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   private Integer realmId;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   private String createUserId;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   private LocalDateTime createTime;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   private String updateUserId;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   private LocalDateTime updateTime;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   private String createGroupId;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @DefaultValue("__Schema")
   @Description("Type Name")
   private String __typename = "__Schema";
 
-  /** queryType Reference */
+  /**
+   * queryType Reference
+   */
   @Description("queryType Reference")
   private String queryTypeName;
 
-  /** mutationType Reference */
+  /**
+   * mutationType Reference
+   */
   @Description("mutationType Reference")
   private String mutationTypeName;
 
-  /** subscriptionType Reference */
+  /**
+   * subscriptionType Reference
+   */
   @Description("subscriptionType Reference")
   private String subscriptionTypeName;
 
-  /** Input List */
+  /**
+   * Input List
+   */
   @Description("Input List")
   private Collection<__SchemaInput> list;
 
-  /** Where */
+  /**
+   * Where
+   */
   @Description("Where")
   private __SchemaExpression where;
 
@@ -108,7 +150,7 @@ public class __SchemaListMutationArguments implements MetaInput, __SchemaInputBa
 
   @Override
   public void setId(String id) {
-    this.id = (String) id;
+    this.id = (String)id;
   }
 
   @Override
@@ -118,7 +160,7 @@ public class __SchemaListMutationArguments implements MetaInput, __SchemaInputBa
 
   @Override
   public void setTypes(Collection<__TypeInput> types) {
-    this.types = (Collection<__TypeInput>) types;
+    this.types = (Collection<__TypeInput>)types;
   }
 
   @Override
@@ -128,7 +170,7 @@ public class __SchemaListMutationArguments implements MetaInput, __SchemaInputBa
 
   @Override
   public void setQueryType(__TypeInput queryType) {
-    this.queryType = (__TypeInput) queryType;
+    this.queryType = (__TypeInput)queryType;
   }
 
   @Override
@@ -138,7 +180,7 @@ public class __SchemaListMutationArguments implements MetaInput, __SchemaInputBa
 
   @Override
   public void setMutationType(__TypeInput mutationType) {
-    this.mutationType = (__TypeInput) mutationType;
+    this.mutationType = (__TypeInput)mutationType;
   }
 
   @Override
@@ -148,7 +190,7 @@ public class __SchemaListMutationArguments implements MetaInput, __SchemaInputBa
 
   @Override
   public void setSubscriptionType(__TypeInput subscriptionType) {
-    this.subscriptionType = (__TypeInput) subscriptionType;
+    this.subscriptionType = (__TypeInput)subscriptionType;
   }
 
   @Override
@@ -158,7 +200,7 @@ public class __SchemaListMutationArguments implements MetaInput, __SchemaInputBa
 
   @Override
   public void setDirectives(Collection<__DirectiveInput> directives) {
-    this.directives = (Collection<__DirectiveInput>) directives;
+    this.directives = (Collection<__DirectiveInput>)directives;
   }
 
   @Override
@@ -168,7 +210,7 @@ public class __SchemaListMutationArguments implements MetaInput, __SchemaInputBa
 
   @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean) isDeprecated;
+    this.isDeprecated = (Boolean)isDeprecated;
   }
 
   @Override
@@ -178,7 +220,7 @@ public class __SchemaListMutationArguments implements MetaInput, __SchemaInputBa
 
   @Override
   public void setVersion(Integer version) {
-    this.version = (Integer) version;
+    this.version = (Integer)version;
   }
 
   @Override
@@ -188,7 +230,7 @@ public class __SchemaListMutationArguments implements MetaInput, __SchemaInputBa
 
   @Override
   public void setRealmId(Integer realmId) {
-    this.realmId = (Integer) realmId;
+    this.realmId = (Integer)realmId;
   }
 
   @Override
@@ -198,7 +240,7 @@ public class __SchemaListMutationArguments implements MetaInput, __SchemaInputBa
 
   @Override
   public void setCreateUserId(String createUserId) {
-    this.createUserId = (String) createUserId;
+    this.createUserId = (String)createUserId;
   }
 
   @Override
@@ -208,7 +250,7 @@ public class __SchemaListMutationArguments implements MetaInput, __SchemaInputBa
 
   @Override
   public void setCreateTime(LocalDateTime createTime) {
-    this.createTime = (LocalDateTime) createTime;
+    this.createTime = (LocalDateTime)createTime;
   }
 
   @Override
@@ -218,7 +260,7 @@ public class __SchemaListMutationArguments implements MetaInput, __SchemaInputBa
 
   @Override
   public void setUpdateUserId(String updateUserId) {
-    this.updateUserId = (String) updateUserId;
+    this.updateUserId = (String)updateUserId;
   }
 
   @Override
@@ -228,7 +270,7 @@ public class __SchemaListMutationArguments implements MetaInput, __SchemaInputBa
 
   @Override
   public void setUpdateTime(LocalDateTime updateTime) {
-    this.updateTime = (LocalDateTime) updateTime;
+    this.updateTime = (LocalDateTime)updateTime;
   }
 
   @Override
@@ -238,7 +280,7 @@ public class __SchemaListMutationArguments implements MetaInput, __SchemaInputBa
 
   @Override
   public void setCreateGroupId(String createGroupId) {
-    this.createGroupId = (String) createGroupId;
+    this.createGroupId = (String)createGroupId;
   }
 
   @Override
@@ -248,7 +290,7 @@ public class __SchemaListMutationArguments implements MetaInput, __SchemaInputBa
 
   @Override
   public void set__typename(String __typename) {
-    this.__typename = (String) __typename;
+    this.__typename = (String)__typename;
   }
 
   @Override
@@ -258,7 +300,7 @@ public class __SchemaListMutationArguments implements MetaInput, __SchemaInputBa
 
   @Override
   public void setQueryTypeName(String queryTypeName) {
-    this.queryTypeName = (String) queryTypeName;
+    this.queryTypeName = (String)queryTypeName;
   }
 
   @Override
@@ -268,7 +310,7 @@ public class __SchemaListMutationArguments implements MetaInput, __SchemaInputBa
 
   @Override
   public void setMutationTypeName(String mutationTypeName) {
-    this.mutationTypeName = (String) mutationTypeName;
+    this.mutationTypeName = (String)mutationTypeName;
   }
 
   @Override
@@ -278,7 +320,7 @@ public class __SchemaListMutationArguments implements MetaInput, __SchemaInputBa
 
   @Override
   public void setSubscriptionTypeName(String subscriptionTypeName) {
-    this.subscriptionTypeName = (String) subscriptionTypeName;
+    this.subscriptionTypeName = (String)subscriptionTypeName;
   }
 
   public Collection<__SchemaInput> getList() {
@@ -296,6 +338,6 @@ public class __SchemaListMutationArguments implements MetaInput, __SchemaInputBa
 
   @Override
   public void setWhere(__SchemaExpression where) {
-    this.where = (__SchemaExpression) where;
+    this.where = (__SchemaExpression)where;
   }
 }

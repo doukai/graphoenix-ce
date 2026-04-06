@@ -12,76 +12,109 @@ import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/** Mutation Arguments for Relationship Object between __Type and __Type */
+/**
+ * Mutation Arguments for Relationship Object between __Type and __Type
+ */
 @CompiledJson
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Mutation Arguments for Relationship Object between __Type and __Type")
-public class __TypePossibleTypesMutationArguments
-    implements MetaInput, __TypePossibleTypesInputBase {
-  /** ID */
+public class __TypePossibleTypesMutationArguments implements MetaInput, __TypePossibleTypesInputBase {
+  /**
+   * ID
+   */
   @Description("ID")
   private String id;
 
-  /** __Type Reference */
+  /**
+   * __Type Reference
+   */
   @Description("__Type Reference")
   private String typeRef;
 
-  /** __Type */
+  /**
+   * __Type
+   */
   @Description("__Type")
   private __TypeInput type;
 
-  /** __Type Reference */
+  /**
+   * __Type Reference
+   */
   @Description("__Type Reference")
   private String possibleTypeRef;
 
-  /** __Type */
+  /**
+   * __Type
+   */
   @Description("__Type")
   private __TypeInput possibleType;
 
-  /** Is Deprecated */
+  /**
+   * Is Deprecated
+   */
   @DefaultValue("false")
   @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   private Integer version;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   private Integer realmId;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   private String createUserId;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   private LocalDateTime createTime;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   private String updateUserId;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   private LocalDateTime updateTime;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   private String createGroupId;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @DefaultValue("__TypePossibleTypes")
   @Description("Type Name")
   private String __typename = "__TypePossibleTypes";
 
-  /** Input */
+  /**
+   * Input
+   */
   @Description("Input")
   private __TypePossibleTypesInput input;
 
-  /** Where */
+  /**
+   * Where
+   */
   @Description("Where")
   private __TypePossibleTypesExpression where;
 
@@ -92,7 +125,7 @@ public class __TypePossibleTypesMutationArguments
 
   @Override
   public void setId(String id) {
-    this.id = (String) id;
+    this.id = (String)id;
   }
 
   @Override
@@ -102,7 +135,7 @@ public class __TypePossibleTypesMutationArguments
 
   @Override
   public void setTypeRef(String typeRef) {
-    this.typeRef = (String) typeRef;
+    this.typeRef = (String)typeRef;
   }
 
   @Override
@@ -112,7 +145,7 @@ public class __TypePossibleTypesMutationArguments
 
   @Override
   public void setType(__TypeInput type) {
-    this.type = (__TypeInput) type;
+    this.type = (__TypeInput)type;
   }
 
   @Override
@@ -122,7 +155,7 @@ public class __TypePossibleTypesMutationArguments
 
   @Override
   public void setPossibleTypeRef(String possibleTypeRef) {
-    this.possibleTypeRef = (String) possibleTypeRef;
+    this.possibleTypeRef = (String)possibleTypeRef;
   }
 
   @Override
@@ -132,7 +165,7 @@ public class __TypePossibleTypesMutationArguments
 
   @Override
   public void setPossibleType(__TypeInput possibleType) {
-    this.possibleType = (__TypeInput) possibleType;
+    this.possibleType = (__TypeInput)possibleType;
   }
 
   @Override
@@ -142,7 +175,7 @@ public class __TypePossibleTypesMutationArguments
 
   @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean) isDeprecated;
+    this.isDeprecated = (Boolean)isDeprecated;
   }
 
   @Override
@@ -152,7 +185,7 @@ public class __TypePossibleTypesMutationArguments
 
   @Override
   public void setVersion(Integer version) {
-    this.version = (Integer) version;
+    this.version = (Integer)version;
   }
 
   @Override
@@ -162,7 +195,7 @@ public class __TypePossibleTypesMutationArguments
 
   @Override
   public void setRealmId(Integer realmId) {
-    this.realmId = (Integer) realmId;
+    this.realmId = (Integer)realmId;
   }
 
   @Override
@@ -172,7 +205,7 @@ public class __TypePossibleTypesMutationArguments
 
   @Override
   public void setCreateUserId(String createUserId) {
-    this.createUserId = (String) createUserId;
+    this.createUserId = (String)createUserId;
   }
 
   @Override
@@ -182,7 +215,7 @@ public class __TypePossibleTypesMutationArguments
 
   @Override
   public void setCreateTime(LocalDateTime createTime) {
-    this.createTime = (LocalDateTime) createTime;
+    this.createTime = (LocalDateTime)createTime;
   }
 
   @Override
@@ -192,7 +225,7 @@ public class __TypePossibleTypesMutationArguments
 
   @Override
   public void setUpdateUserId(String updateUserId) {
-    this.updateUserId = (String) updateUserId;
+    this.updateUserId = (String)updateUserId;
   }
 
   @Override
@@ -202,7 +235,7 @@ public class __TypePossibleTypesMutationArguments
 
   @Override
   public void setUpdateTime(LocalDateTime updateTime) {
-    this.updateTime = (LocalDateTime) updateTime;
+    this.updateTime = (LocalDateTime)updateTime;
   }
 
   @Override
@@ -212,7 +245,7 @@ public class __TypePossibleTypesMutationArguments
 
   @Override
   public void setCreateGroupId(String createGroupId) {
-    this.createGroupId = (String) createGroupId;
+    this.createGroupId = (String)createGroupId;
   }
 
   @Override
@@ -222,7 +255,7 @@ public class __TypePossibleTypesMutationArguments
 
   @Override
   public void set__typename(String __typename) {
-    this.__typename = (String) __typename;
+    this.__typename = (String)__typename;
   }
 
   public __TypePossibleTypesInput getInput() {
@@ -240,6 +273,6 @@ public class __TypePossibleTypesMutationArguments
 
   @Override
   public void setWhere(__TypePossibleTypesExpression where) {
-    this.where = (__TypePossibleTypesExpression) where;
+    this.where = (__TypePossibleTypesExpression)where;
   }
 }

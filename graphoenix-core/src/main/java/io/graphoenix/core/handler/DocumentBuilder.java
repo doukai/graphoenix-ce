@@ -933,7 +933,7 @@ public class DocumentBuilder {
                     fieldTypeDefinition.asObject(), InputType.EXPRESSION))
             .addArgument(
                 new InputValue(INPUT_VALUE_GROUP_BY_NAME)
-                    .setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME))))
+                    .setType(new TypeName(fieldTypeDefinition.getName() + InputType.GROUP_BY))
                     .setDescription(descriptionConfig.getGroupByArgument()));
         if (fieldDefinition.getType().hasList()) {
           fieldDefinition
@@ -1057,6 +1057,14 @@ public class DocumentBuilder {
                 Optional.ofNullable(fieldDefinition.getDescription())
                     .orElseGet(fieldDefinition::getName));
       }
+    } else if (inputType.equals(InputType.GROUP_BY)) {
+      if (fieldTypeDefinition.isObject()) {
+        return new InputValue(fieldDefinition.getName())
+            .setType(new TypeName(fieldTypeDefinition.getName() + InputType.GROUP_BY))
+            .setDescription(
+                Optional.ofNullable(fieldDefinition.getDescription())
+                    .orElseGet(fieldDefinition::getName));
+      }
     }
     throw new GraphQLErrors(GraphQLErrorType.UNSUPPORTED_FIELD_TYPE.bind(inputType.toString()));
   }
@@ -1076,10 +1084,14 @@ public class DocumentBuilder {
         .filter(
             fieldDefinition ->
                 inputType.equals(InputType.ORDER_BY) || !fieldDefinition.isAggregateField())
+        //        .filter(
+        //            fieldDefinition ->
+        //                !inputType.equals(InputType.ORDER_BY)
+        //                    || documentManager.getFieldTypeDefinition(fieldDefinition).isLeaf())
         .filter(
             fieldDefinition ->
-                !inputType.equals(InputType.ORDER_BY)
-                    || documentManager.getFieldTypeDefinition(fieldDefinition).isLeaf())
+                !inputType.equals(InputType.GROUP_BY)
+                    || documentManager.getFieldTypeDefinition(fieldDefinition).isObject())
         .filter(
             fieldDefinition ->
                 !documentManager.getFieldTypeDefinition(fieldDefinition).isContainer())
@@ -1146,7 +1158,8 @@ public class DocumentBuilder {
                             fieldsToInput(objectType, true),
                             fieldsToExpression(objectType),
                             fieldsToInput(objectType),
-                            fieldsToOrderBy(objectType))),
+                            fieldsToOrderBy(objectType),
+                            fieldsToGroupBy(objectType))),
             document.getDefinitions().stream()
                 .filter(Definition::isInterface)
                 .map(Definition::asInterface)
@@ -1351,6 +1364,10 @@ public class DocumentBuilder {
     InputObjectType inputObjectType =
         new InputObjectType(fieldsType.getName() + InputType.ORDER_BY)
             .setInputValues(buildInputValuesFromObjectType(fieldsType, InputType.ORDER_BY))
+            .addInputValue(
+                new InputValue(INPUT_VALUE_OBS_NAME)
+                    .setType(new ListType(new TypeName(fieldsType.getName() + InputType.ORDER_BY)))
+                    .setDescription(descriptionConfig.getObsArgument()))
             .addDirective(
                 new Directive(DIRECTIVE_PACKAGE_NAME)
                     .addArgument(
@@ -1381,6 +1398,56 @@ public class DocumentBuilder {
             .setDescription(
                 String.format(
                     descriptionConfig.getOrderByInput(),
+                    Optional.ofNullable(fieldsType.getDescription())
+                        .orElseGet(fieldsType::getName)));
+    if (fieldsType instanceof InterfaceType) {
+      inputObjectType.addDirective(new Directive(DIRECTIVE_INTERFACE_NAME));
+    }
+    return inputObjectType;
+  }
+
+  public InputObjectType fieldsToGroupBy(FieldsType fieldsType) {
+    InputObjectType inputObjectType =
+        new InputObjectType(fieldsType.getName() + InputType.GROUP_BY)
+            .addInputValue(
+                new InputValue(INPUT_VALUE_GROUP_BY_FIELD_NAMES_NAME)
+                    .setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME))))
+                    .setDescription(descriptionConfig.getGroupByFieldNamesArgument()))
+            .addInputValues(buildInputValuesFromObjectType(fieldsType, InputType.GROUP_BY))
+            .addInputValue(
+                new InputValue(INPUT_VALUE_GBS_NAME)
+                    .setType(new ListType(new TypeName(fieldsType.getName() + InputType.GROUP_BY)))
+                    .setDescription(descriptionConfig.getObsArgument()))
+            .addDirective(
+                new Directive(DIRECTIVE_PACKAGE_NAME)
+                    .addArgument(
+                        DIRECTIVE_PACKAGE_ARGUMENT_NAME_NAME, packageConfig.getPackageName()))
+            .addDirective(
+                new Directive(DIRECTIVE_CLASS_NAME)
+                    .addArgument(
+                        DIRECTIVE_CLASS_ARGUMENT_NAME_NAME,
+                        packageConfig.getInputObjectTypePackageName()
+                            + "."
+                            + fieldsType.getName()
+                            + InputType.GROUP_BY))
+            .addDirective(
+                new Directive(DIRECTIVE_ANNOTATION_NAME)
+                    .addArgument(
+                        DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME,
+                        packageConfig.getAnnotationPackageName()
+                            + "."
+                            + fieldsType.getName()
+                            + InputType.GROUP_BY))
+            .addDirective(
+                new Directive(DIRECTIVE_GRPC_NAME)
+                    .addArgument(
+                        DIRECTIVE_GRPC_ARGUMENT_NAME_NAME,
+                        packageConfig.getGrpcInputObjectTypePackageName()
+                            + "."
+                            + getGrpcName(fieldsType.getName() + InputType.GROUP_BY)))
+            .setDescription(
+                String.format(
+                    descriptionConfig.getGroupByInput(),
                     Optional.ofNullable(fieldsType.getDescription())
                         .orElseGet(fieldsType::getName)));
     if (fieldsType instanceof InterfaceType) {
@@ -1573,10 +1640,6 @@ public class DocumentBuilder {
         || inputType.equals(InputType.SUBSCRIPTION_ARGUMENTS)) {
       fieldDefinition
           .addArgument(
-              new InputValue(INPUT_VALUE_GROUP_BY_NAME)
-                  .setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME))))
-                  .setDescription(descriptionConfig.getGroupByArgument()))
-          .addArgument(
               new InputValue(INPUT_VALUE_NOT_NAME)
                   .setType(new TypeName(SCALA_BOOLEAN_NAME))
                   .setDefaultValue(false)
@@ -1638,7 +1701,7 @@ public class DocumentBuilder {
                   .setDescription(descriptionConfig.getOrderByArgument()))
           .addArgument(
               new InputValue(INPUT_VALUE_GROUP_BY_NAME)
-                  .setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME))))
+                  .setType(new TypeName(objectType.getName() + InputType.GROUP_BY))
                   .setDescription(descriptionConfig.getGroupByArgument()))
           .addArgument(
               new InputValue(INPUT_VALUE_NOT_NAME)
@@ -1723,7 +1786,7 @@ public class DocumentBuilder {
                     .setDescription(descriptionConfig.getOrderByArgument()))
             .addArgument(
                 new InputValue(INPUT_VALUE_GROUP_BY_NAME)
-                    .setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME))))
+                    .setType(new TypeName(objectType.getName() + InputType.GROUP_BY))
                     .setDescription(descriptionConfig.getGroupByArgument()))
             .addDirective(
                 new Directive()
@@ -2014,7 +2077,9 @@ public class DocumentBuilder {
                 .setDescription(descriptionConfig.getOrderByArgument()))
         .addArgument(
             new InputValue(INPUT_VALUE_GROUP_BY_NAME)
-                .setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME))))
+                .setType(
+                    new TypeName(
+                        fieldDefinition.getType().getTypeName().getName() + InputType.GROUP_BY))
                 .setDescription(descriptionConfig.getGroupByArgument()))
         .addDirective(
             new Directive(DIRECTIVE_CONNECTION_NAME)
@@ -2056,7 +2121,9 @@ public class DocumentBuilder {
                 .setDescription(descriptionConfig.getOrderByArgument()))
         .addArgument(
             new InputValue(INPUT_VALUE_GROUP_BY_NAME)
-                .setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME))))
+                .setType(
+                    new TypeName(
+                        fieldDefinition.getType().getTypeName().getName() + InputType.GROUP_BY))
                 .setDescription(descriptionConfig.getGroupByArgument()))
         .setDirectives(fieldDefinition.getDirectives())
         .addDirective(new Directive(DIRECTIVE_AGGREGATE_NAME))
@@ -2127,10 +2194,6 @@ public class DocumentBuilder {
       ObjectType queryOperationType = documentManager.getDocument().getQueryOperationTypeOrError();
       inputObjectType
           .addInputValue(
-              new InputValue(INPUT_VALUE_GROUP_BY_NAME)
-                  .setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME))))
-                  .setDescription(descriptionConfig.getGroupByArgument()))
-          .addInputValue(
               new InputValue(INPUT_VALUE_NOT_NAME)
                   .setType(new TypeName(SCALA_BOOLEAN_NAME))
                   .setDefaultValue(false)
@@ -2194,10 +2257,6 @@ public class DocumentBuilder {
       ObjectType subscriptionOperation =
           documentManager.getDocument().getSubscriptionOperationTypeOrError();
       inputObjectType
-          .addInputValue(
-              new InputValue(INPUT_VALUE_GROUP_BY_NAME)
-                  .setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME))))
-                  .setDescription(descriptionConfig.getGroupByArgument()))
           .addInputValue(
               new InputValue(INPUT_VALUE_NOT_NAME)
                   .setType(new TypeName(SCALA_BOOLEAN_NAME))
@@ -2338,7 +2397,7 @@ public class DocumentBuilder {
                   .setDescription(descriptionConfig.getOrderByArgument()))
           .addInputValue(
               new InputValue(INPUT_VALUE_GROUP_BY_NAME)
-                  .setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME))))
+                  .setType(new TypeName(objectType.getName() + InputType.GROUP_BY))
                   .setDescription(descriptionConfig.getGroupByArgument()))
           .addInputValue(
               new InputValue(INPUT_VALUE_NOT_NAME)
@@ -2441,7 +2500,7 @@ public class DocumentBuilder {
                   .setDescription(descriptionConfig.getOrderByArgument()))
           .addInputValue(
               new InputValue(INPUT_VALUE_GROUP_BY_NAME)
-                  .setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME))))
+                  .setType(new TypeName(objectType.getName() + InputType.GROUP_BY))
                   .setDescription(descriptionConfig.getGroupByArgument()))
           .addInputValue(
               new InputValue(INPUT_VALUE_NOT_NAME)
@@ -2620,7 +2679,7 @@ public class DocumentBuilder {
                   .setDescription(descriptionConfig.getOrderByArgument()))
           .addInputValue(
               new InputValue(INPUT_VALUE_GROUP_BY_NAME)
-                  .setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME))))
+                  .setType(new TypeName(objectType.getName() + InputType.GROUP_BY))
                   .setDescription(descriptionConfig.getGroupByArgument()))
           .addInputValue(
               new InputValue(INPUT_VALUE_NOT_NAME)
@@ -2724,7 +2783,7 @@ public class DocumentBuilder {
                   .setDescription(descriptionConfig.getOrderByArgument()))
           .addInputValue(
               new InputValue(INPUT_VALUE_GROUP_BY_NAME)
-                  .setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME))))
+                  .setType(new TypeName(objectType.getName() + InputType.GROUP_BY))
                   .setDescription(descriptionConfig.getOrderByArgument()))
           .addInputValue(
               new InputValue(INPUT_VALUE_NOT_NAME)
@@ -2910,6 +2969,7 @@ public class DocumentBuilder {
     MUTATION_ARGUMENTS(SUFFIX_ARGUMENTS),
     SUBSCRIPTION_ARGUMENTS(SUFFIX_ARGUMENTS),
     ORDER_BY(SUFFIX_ORDER_BY),
+    GROUP_BY(SUFFIX_GROUP_BY),
     CONNECTION(SUFFIX_CONNECTION),
     EDGE(SUFFIX_EDGE);
 

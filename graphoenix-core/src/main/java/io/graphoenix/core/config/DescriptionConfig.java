@@ -26,6 +26,8 @@ public class DescriptionConfig {
 
   @Optional private String orderByInput = "Order Input for %s";
 
+  @Optional private String groupByInput = "Group Input for %s";
+
   @Optional private String queryArguments = "Query Arguments for %s";
 
   @Optional private String queryListArguments = "Query Arguments for %s List";
@@ -125,6 +127,8 @@ public class DescriptionConfig {
 
   @Optional private String groupByArgument = "Group By";
 
+  @Optional private String groupByFieldNamesArgument = "Group By Field Names";
+
   @Optional private String orderByArgument = "Order By";
 
   @Optional private String includeDeprecatedArgument = "Include Deprecated";
@@ -134,6 +138,10 @@ public class DescriptionConfig {
   @Optional private String condArgument = "Condition";
 
   @Optional private String exsArgument = "Expressions";
+
+  @Optional private String obsArgument = "OrderByes";
+
+  @Optional private String gbsArgument = "GroupByes";
 
   @Optional private String whereArgument = "Where";
 
@@ -219,6 +227,14 @@ public class DescriptionConfig {
 
   public void setOrderByInput(String orderByInput) {
     this.orderByInput = orderByInput;
+  }
+
+  public String getGroupByInput() {
+    return groupByInput;
+  }
+
+  public void setGroupByInput(String groupByInput) {
+    this.groupByInput = groupByInput;
   }
 
   public String getQueryArguments() {
@@ -613,6 +629,14 @@ public class DescriptionConfig {
     this.groupByArgument = groupByArgument;
   }
 
+  public String getGroupByFieldNamesArgument() {
+    return groupByFieldNamesArgument;
+  }
+
+  public void setGroupByFieldNamesArgument(String groupByFieldNamesArgument) {
+    this.groupByFieldNamesArgument = groupByFieldNamesArgument;
+  }
+
   public String getOrderByArgument() {
     return orderByArgument;
   }
@@ -651,6 +675,22 @@ public class DescriptionConfig {
 
   public void setExsArgument(String exsArgument) {
     this.exsArgument = exsArgument;
+  }
+
+  public String getObsArgument() {
+    return obsArgument;
+  }
+
+  public void setObsArgument(String obsArgument) {
+    this.obsArgument = obsArgument;
+  }
+
+  public String getGbsArgument() {
+    return gbsArgument;
+  }
+
+  public void setGbsArgument(String gbsArgument) {
+    this.gbsArgument = gbsArgument;
   }
 
   public String getWhereArgument() {

@@ -12,94 +12,138 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/** Query Expression Input for __Field */
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+/**
+ * Query Expression Input for __Field
+ */
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Query Expression Input for __Field")
 public @interface __FieldExpression {
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   StringExpression id() default @StringExpression;
 
-  /** name */
+  /**
+   * name
+   */
   @Description("name")
   StringExpression name() default @StringExpression;
 
-  /** ofType */
+  /**
+   * ofType
+   */
   @Description("ofType")
   __TypeExpression1 ofType() default @__TypeExpression1;
 
-  /** description */
+  /**
+   * description
+   */
   @Description("description")
   StringExpression description() default @StringExpression;
 
-  /** args */
+  /**
+   * args
+   */
   @Description("args")
   __InputValueExpression1 args() default @__InputValueExpression1;
 
-  /** type */
+  /**
+   * type
+   */
   @Description("type")
   __TypeExpression1 type() default @__TypeExpression1;
 
-  /** deprecationReason */
+  /**
+   * deprecationReason
+   */
   @Description("deprecationReason")
   StringExpression deprecationReason() default @StringExpression;
 
-  /** Include Deprecated */
+  /**
+   * Include Deprecated
+   */
   @Description("Include Deprecated")
   boolean includeDeprecated() default false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   IntExpression version() default @IntExpression;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   IntExpression realmId() default @IntExpression;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   StringExpression createUserId() default @StringExpression;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   StringExpression createTime() default @StringExpression;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   StringExpression updateUserId() default @StringExpression;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   StringExpression updateTime() default @StringExpression;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   StringExpression createGroupId() default @StringExpression;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   StringExpression __typename() default @StringExpression;
 
-  /** ofType Reference */
+  /**
+   * ofType Reference
+   */
   @Description("ofType Reference")
   StringExpression ofTypeName() default @StringExpression;
 
-  /** type Reference */
+  /**
+   * type Reference
+   */
   @Description("type Reference")
   StringExpression typeName() default @StringExpression;
 
-  /** Not */
+  /**
+   * Not
+   */
   @Description("Not")
   boolean not() default false;
 
-  /** Condition */
+  /**
+   * Condition
+   */
   @Description("Condition")
   Conditional cond() default Conditional.AND;
 
-  /** Expressions */
+  /**
+   * Expressions
+   */
   @Description("Expressions")
   __FieldExpression1[] exs() default {};
 

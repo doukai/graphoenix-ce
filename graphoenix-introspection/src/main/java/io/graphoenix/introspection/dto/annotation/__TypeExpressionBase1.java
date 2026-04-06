@@ -12,118 +12,174 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/** Query Expression Input for __Type */
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+/**
+ * Query Expression Input for __Type
+ */
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Query Expression Input for __Type")
 public @interface __TypeExpressionBase1 {
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   StringExpression id() default @StringExpression;
 
-  /** name */
+  /**
+   * name
+   */
   @Description("name")
   StringExpression name() default @StringExpression;
 
-  /** ofSchema */
+  /**
+   * ofSchema
+   */
   @Description("ofSchema")
   __SchemaExpression2 ofSchema() default @__SchemaExpression2;
 
-  /** kind */
+  /**
+   * kind
+   */
   @Description("kind")
   __TypeKindExpression kind() default @__TypeKindExpression;
 
-  /** description */
+  /**
+   * description
+   */
   @Description("description")
   StringExpression description() default @StringExpression;
 
-  /** fields */
+  /**
+   * fields
+   */
   @Description("fields")
   __FieldExpression2 fields() default @__FieldExpression2;
 
-  /** interfaces */
+  /**
+   * interfaces
+   */
   @Description("interfaces")
   __TypeExpression2 interfaces() default @__TypeExpression2;
 
-  /** possibleTypes */
+  /**
+   * possibleTypes
+   */
   @Description("possibleTypes")
   __TypeExpression2 possibleTypes() default @__TypeExpression2;
 
-  /** enumValues */
+  /**
+   * enumValues
+   */
   @Description("enumValues")
   __EnumValueExpression2 enumValues() default @__EnumValueExpression2;
 
-  /** inputFields */
+  /**
+   * inputFields
+   */
   @Description("inputFields")
   __InputValueExpression2 inputFields() default @__InputValueExpression2;
 
-  /** ofType */
+  /**
+   * ofType
+   */
   @Description("ofType")
   __TypeExpression2 ofType() default @__TypeExpression2;
 
-  /** Include Deprecated */
+  /**
+   * Include Deprecated
+   */
   @Description("Include Deprecated")
   boolean includeDeprecated() default false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   IntExpression version() default @IntExpression;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   IntExpression realmId() default @IntExpression;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   StringExpression createUserId() default @StringExpression;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   StringExpression createTime() default @StringExpression;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   StringExpression updateUserId() default @StringExpression;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   StringExpression updateTime() default @StringExpression;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   StringExpression createGroupId() default @StringExpression;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   StringExpression __typename() default @StringExpression;
 
-  /** ofSchema Reference */
+  /**
+   * ofSchema Reference
+   */
   @Description("ofSchema Reference")
   IntExpression schemaId() default @IntExpression;
 
-  /** ofType Reference */
+  /**
+   * ofType Reference
+   */
   @Description("ofType Reference")
   StringExpression ofTypeName() default @StringExpression;
 
-  /** Relationship Object between __Type and __Type */
+  /**
+   * Relationship Object between __Type and __Type
+   */
   @Description("Relationship Object between __Type and __Type")
   __TypeInterfacesExpression2 __typeInterfaces() default @__TypeInterfacesExpression2;
 
-  /** Relationship Object between __Type and __Type */
+  /**
+   * Relationship Object between __Type and __Type
+   */
   @Description("Relationship Object between __Type and __Type")
   __TypePossibleTypesExpression2 __typePossibleTypes() default @__TypePossibleTypesExpression2;
 
-  /** Not */
+  /**
+   * Not
+   */
   @Description("Not")
   boolean not() default false;
 
-  /** Condition */
+  /**
+   * Condition
+   */
   @Description("Condition")
   Conditional cond() default Conditional.AND;
 
-  /** Expressions */
+  /**
+   * Expressions
+   */
   @Description("Expressions")
   __TypeExpression2[] exs() default {};
 

@@ -11,22 +11,30 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/** Query Expression Input for __DirectiveLocation */
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+/**
+ * Query Expression Input for __DirectiveLocation
+ */
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Query Expression Input for __DirectiveLocation")
 public @interface __DirectiveLocationExpression {
-  /** Operators */
+  /**
+   * Operators
+   */
   @Description("Operators")
   Operator opr() default Operator.EQ;
 
-  /** Value */
+  /**
+   * Value
+   */
   @Description("Value")
   __DirectiveLocation val() default __DirectiveLocation.QUERY;
 
-  /** Array */
+  /**
+   * Array
+   */
   @Description("Array")
   __DirectiveLocation[] arr() default {};
 

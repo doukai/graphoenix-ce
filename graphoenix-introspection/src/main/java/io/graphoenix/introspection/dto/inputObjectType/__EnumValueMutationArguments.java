@@ -12,79 +12,115 @@ import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/** Mutation Arguments for __EnumValue */
+/**
+ * Mutation Arguments for __EnumValue
+ */
 @CompiledJson
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Mutation Arguments for __EnumValue")
 public class __EnumValueMutationArguments implements MetaInput, __EnumValueInputBase {
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   private String id;
 
-  /** name */
+  /**
+   * name
+   */
   @Description("name")
   private String name;
 
-  /** ofType */
+  /**
+   * ofType
+   */
   @Description("ofType")
   private __TypeInput ofType;
 
-  /** description */
+  /**
+   * description
+   */
   @Description("description")
   private String description;
 
-  /** deprecationReason */
+  /**
+   * deprecationReason
+   */
   @Description("deprecationReason")
   private String deprecationReason;
 
-  /** Is Deprecated */
+  /**
+   * Is Deprecated
+   */
   @DefaultValue("false")
   @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   private Integer version;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   private Integer realmId;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   private String createUserId;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   private LocalDateTime createTime;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   private String updateUserId;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   private LocalDateTime updateTime;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   private String createGroupId;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @DefaultValue("__EnumValue")
   @Description("Type Name")
   private String __typename = "__EnumValue";
 
-  /** ofType Reference */
+  /**
+   * ofType Reference
+   */
   @Description("ofType Reference")
   private String ofTypeName;
 
-  /** Input */
+  /**
+   * Input
+   */
   @Description("Input")
   private __EnumValueInput input;
 
-  /** Where */
+  /**
+   * Where
+   */
   @Description("Where")
   private __EnumValueExpression where;
 
@@ -95,7 +131,7 @@ public class __EnumValueMutationArguments implements MetaInput, __EnumValueInput
 
   @Override
   public void setId(String id) {
-    this.id = (String) id;
+    this.id = (String)id;
   }
 
   @Override
@@ -105,7 +141,7 @@ public class __EnumValueMutationArguments implements MetaInput, __EnumValueInput
 
   @Override
   public void setName(String name) {
-    this.name = (String) name;
+    this.name = (String)name;
   }
 
   @Override
@@ -115,7 +151,7 @@ public class __EnumValueMutationArguments implements MetaInput, __EnumValueInput
 
   @Override
   public void setOfType(__TypeInput ofType) {
-    this.ofType = (__TypeInput) ofType;
+    this.ofType = (__TypeInput)ofType;
   }
 
   @Override
@@ -125,7 +161,7 @@ public class __EnumValueMutationArguments implements MetaInput, __EnumValueInput
 
   @Override
   public void setDescription(String description) {
-    this.description = (String) description;
+    this.description = (String)description;
   }
 
   @Override
@@ -135,7 +171,7 @@ public class __EnumValueMutationArguments implements MetaInput, __EnumValueInput
 
   @Override
   public void setDeprecationReason(String deprecationReason) {
-    this.deprecationReason = (String) deprecationReason;
+    this.deprecationReason = (String)deprecationReason;
   }
 
   @Override
@@ -145,7 +181,7 @@ public class __EnumValueMutationArguments implements MetaInput, __EnumValueInput
 
   @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean) isDeprecated;
+    this.isDeprecated = (Boolean)isDeprecated;
   }
 
   @Override
@@ -155,7 +191,7 @@ public class __EnumValueMutationArguments implements MetaInput, __EnumValueInput
 
   @Override
   public void setVersion(Integer version) {
-    this.version = (Integer) version;
+    this.version = (Integer)version;
   }
 
   @Override
@@ -165,7 +201,7 @@ public class __EnumValueMutationArguments implements MetaInput, __EnumValueInput
 
   @Override
   public void setRealmId(Integer realmId) {
-    this.realmId = (Integer) realmId;
+    this.realmId = (Integer)realmId;
   }
 
   @Override
@@ -175,7 +211,7 @@ public class __EnumValueMutationArguments implements MetaInput, __EnumValueInput
 
   @Override
   public void setCreateUserId(String createUserId) {
-    this.createUserId = (String) createUserId;
+    this.createUserId = (String)createUserId;
   }
 
   @Override
@@ -185,7 +221,7 @@ public class __EnumValueMutationArguments implements MetaInput, __EnumValueInput
 
   @Override
   public void setCreateTime(LocalDateTime createTime) {
-    this.createTime = (LocalDateTime) createTime;
+    this.createTime = (LocalDateTime)createTime;
   }
 
   @Override
@@ -195,7 +231,7 @@ public class __EnumValueMutationArguments implements MetaInput, __EnumValueInput
 
   @Override
   public void setUpdateUserId(String updateUserId) {
-    this.updateUserId = (String) updateUserId;
+    this.updateUserId = (String)updateUserId;
   }
 
   @Override
@@ -205,7 +241,7 @@ public class __EnumValueMutationArguments implements MetaInput, __EnumValueInput
 
   @Override
   public void setUpdateTime(LocalDateTime updateTime) {
-    this.updateTime = (LocalDateTime) updateTime;
+    this.updateTime = (LocalDateTime)updateTime;
   }
 
   @Override
@@ -215,7 +251,7 @@ public class __EnumValueMutationArguments implements MetaInput, __EnumValueInput
 
   @Override
   public void setCreateGroupId(String createGroupId) {
-    this.createGroupId = (String) createGroupId;
+    this.createGroupId = (String)createGroupId;
   }
 
   @Override
@@ -225,7 +261,7 @@ public class __EnumValueMutationArguments implements MetaInput, __EnumValueInput
 
   @Override
   public void set__typename(String __typename) {
-    this.__typename = (String) __typename;
+    this.__typename = (String)__typename;
   }
 
   @Override
@@ -235,7 +271,7 @@ public class __EnumValueMutationArguments implements MetaInput, __EnumValueInput
 
   @Override
   public void setOfTypeName(String ofTypeName) {
-    this.ofTypeName = (String) ofTypeName;
+    this.ofTypeName = (String)ofTypeName;
   }
 
   public __EnumValueInput getInput() {
@@ -253,6 +289,6 @@ public class __EnumValueMutationArguments implements MetaInput, __EnumValueInput
 
   @Override
   public void setWhere(__EnumValueExpression where) {
-    this.where = (__EnumValueExpression) where;
+    this.where = (__EnumValueExpression)where;
   }
 }

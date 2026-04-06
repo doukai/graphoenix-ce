@@ -12,62 +12,90 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/** Query Expression Input for TreeStruct */
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+/**
+ * Query Expression Input for TreeStruct
+ */
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Query Expression Input for TreeStruct")
 public @interface TreeStructExpression {
-  /** parentId */
+  /**
+   * parentId
+   */
   @Description("parentId")
   StringExpression parentId() default @StringExpression;
 
-  /** name */
+  /**
+   * name
+   */
   @Description("name")
   StringExpression name() default @StringExpression;
 
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   StringExpression id() default @StringExpression;
 
-  /** Include Deprecated */
+  /**
+   * Include Deprecated
+   */
   @Description("Include Deprecated")
   boolean includeDeprecated() default false;
 
-  /** version */
+  /**
+   * version
+   */
   @Description("version")
   IntExpression version() default @IntExpression;
 
-  /** realmId */
+  /**
+   * realmId
+   */
   @Description("realmId")
   IntExpression realmId() default @IntExpression;
 
-  /** createUserId */
+  /**
+   * createUserId
+   */
   @Description("createUserId")
   StringExpression createUserId() default @StringExpression;
 
-  /** createTime */
+  /**
+   * createTime
+   */
   @Description("createTime")
   StringExpression createTime() default @StringExpression;
 
-  /** updateUserId */
+  /**
+   * updateUserId
+   */
   @Description("updateUserId")
   StringExpression updateUserId() default @StringExpression;
 
-  /** updateTime */
+  /**
+   * updateTime
+   */
   @Description("updateTime")
   StringExpression updateTime() default @StringExpression;
 
-  /** createGroupId */
+  /**
+   * createGroupId
+   */
   @Description("createGroupId")
   StringExpression createGroupId() default @StringExpression;
 
-  /** Not */
+  /**
+   * Not
+   */
   @Description("Not")
   boolean not() default false;
 
-  /** Condition */
+  /**
+   * Condition
+   */
   @Description("Condition")
   Conditional cond() default Conditional.AND;
 

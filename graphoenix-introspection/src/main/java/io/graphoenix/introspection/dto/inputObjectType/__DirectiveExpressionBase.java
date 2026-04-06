@@ -11,92 +11,136 @@ import java.util.Collection;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/** Query Expression Input for __Directive */
+/**
+ * Query Expression Input for __Directive
+ */
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Query Expression Input for __Directive")
 public interface __DirectiveExpressionBase extends MetaExpression {
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   StringExpression id = null;
 
-  /** name */
+  /**
+   * name
+   */
   @Description("name")
   StringExpression name = null;
 
-  /** ofSchema */
+  /**
+   * ofSchema
+   */
   @Description("ofSchema")
   __SchemaExpression ofSchema = null;
 
-  /** description */
+  /**
+   * description
+   */
   @Description("description")
   StringExpression description = null;
 
-  /** locations */
+  /**
+   * locations
+   */
   @Description("locations")
   __DirectiveLocationExpression locations = null;
 
-  /** args */
+  /**
+   * args
+   */
   @Description("args")
   __InputValueExpression args = null;
 
-  /** isRepeatable */
+  /**
+   * isRepeatable
+   */
   @Description("isRepeatable")
   BooleanExpression isRepeatable = null;
 
-  /** Include Deprecated */
+  /**
+   * Include Deprecated
+   */
   @Description("Include Deprecated")
   Boolean includeDeprecated = false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   IntExpression version = null;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   IntExpression realmId = null;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   StringExpression createUserId = null;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   StringExpression createTime = null;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   StringExpression updateUserId = null;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   StringExpression updateTime = null;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   StringExpression createGroupId = null;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   StringExpression __typename = null;
 
-  /** ofSchema Reference */
+  /**
+   * ofSchema Reference
+   */
   @Description("ofSchema Reference")
   IntExpression schemaId = null;
 
-  /** Relationship Object between __Directive and locations */
+  /**
+   * Relationship Object between __Directive and locations
+   */
   @Description("Relationship Object between __Directive and locations")
   __DirectiveLocationsRelationExpression __directiveLocationsRelation = null;
 
-  /** Not */
+  /**
+   * Not
+   */
   @Description("Not")
   Boolean not = false;
 
-  /** Condition */
+  /**
+   * Condition
+   */
   @Description("Condition")
   Conditional cond = Conditional.AND;
 
-  /** Expressions */
+  /**
+   * Expressions
+   */
   @Description("Expressions")
   Collection<__DirectiveExpression> exs = null;
 

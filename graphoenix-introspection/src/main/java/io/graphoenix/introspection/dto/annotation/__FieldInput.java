@@ -9,86 +9,126 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/** Mutation Input for __Field */
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+/**
+ * Mutation Input for __Field
+ */
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Mutation Input for __Field")
 public @interface __FieldInput {
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   String id() default "";
 
-  /** name */
+  /**
+   * name
+   */
   @Description("name")
   String name() default "";
 
-  /** ofType */
+  /**
+   * ofType
+   */
   @Description("ofType")
   __TypeInput1 ofType() default @__TypeInput1;
 
-  /** description */
+  /**
+   * description
+   */
   @Description("description")
   String description() default "";
 
-  /** args */
+  /**
+   * args
+   */
   @Description("args")
   __InputValueInput1[] args() default {};
 
-  /** type */
+  /**
+   * type
+   */
   @Description("type")
   __TypeInput1 type() default @__TypeInput1;
 
-  /** deprecationReason */
+  /**
+   * deprecationReason
+   */
   @Description("deprecationReason")
   String deprecationReason() default "";
 
-  /** Is Deprecated */
+  /**
+   * Is Deprecated
+   */
   @Description("Is Deprecated")
   boolean isDeprecated() default false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   int version() default 0;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   int realmId() default 0;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   String createUserId() default "";
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   String createTime() default "";
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   String updateUserId() default "";
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   String updateTime() default "";
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   String createGroupId() default "";
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   String __typename() default "__Field";
 
-  /** ofType Reference */
+  /**
+   * ofType Reference
+   */
   @Description("ofType Reference")
   String ofTypeName() default "";
 
-  /** type Reference */
+  /**
+   * type Reference
+   */
   @Description("type Reference")
   String typeName() default "";
 
-  /** Where */
+  /**
+   * Where
+   */
   @Description("Where")
   __FieldExpression1 where() default @__FieldExpression1;
 

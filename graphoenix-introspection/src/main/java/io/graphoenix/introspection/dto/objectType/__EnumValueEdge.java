@@ -6,17 +6,23 @@ import java.lang.String;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Type;
 
-/** Edge Object for __EnumValue */
+/**
+ * Edge Object for __EnumValue
+ */
 @Type
 @CompiledJson
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Edge Object for __EnumValue")
 public class __EnumValueEdge {
-  /** Node */
+  /**
+   * Node
+   */
   @Description("Node")
   private __EnumValue node;
 
-  /** Cursor */
+  /**
+   * Cursor
+   */
   @Description("Cursor")
   private String cursor;
 

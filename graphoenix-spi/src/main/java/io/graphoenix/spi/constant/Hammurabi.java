@@ -81,7 +81,10 @@ public class Hammurabi {
   public static final String INPUT_VALUE_AFTER_NAME = "after";
   public static final String INPUT_VALUE_BEFORE_NAME = "before";
   public static final String INPUT_VALUE_ORDER_BY_NAME = "orderBy";
+  public static final String INPUT_VALUE_OBS_NAME = "obs";
   public static final String INPUT_VALUE_GROUP_BY_NAME = "groupBy";
+  public static final String INPUT_VALUE_GROUP_BY_FIELD_NAMES_NAME = "fieldNames";
+  public static final String INPUT_VALUE_GBS_NAME = "gbs";
   public static final String INPUT_VALUE_SORT_NAME = "sort";
   public static final String INPUT_VALUE_COND_NAME = "cond";
 
@@ -208,6 +211,7 @@ public class Hammurabi {
   public static final String SUFFIX_INPUT = "Input";
   public static final String SUFFIX_ARGUMENTS = "Arguments";
   public static final String SUFFIX_ORDER_BY = "OrderBy";
+  public static final String SUFFIX_GROUP_BY = "GroupBy";
   public static final String SUFFIX_LIST = "List";
   public static final String SUFFIX_CONNECTION = "Connection";
   public static final String SUFFIX_AGGREGATE = "Aggregate";

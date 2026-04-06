@@ -13,102 +13,150 @@ import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Id;
 import org.eclipse.microprofile.graphql.Type;
 
-/** Relationship Object between __Type and __Type */
+/**
+ * Relationship Object between __Type and __Type
+ */
 @Type
 @CompiledJson
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Relationship Object between __Type and __Type")
 public class __TypePossibleTypes implements Meta {
-  /** ID */
+  /**
+   * ID
+   */
   @Id
   @Description("ID")
   private String id;
 
-  /** __Type Reference */
+  /**
+   * __Type Reference
+   */
   @Description("__Type Reference")
   private String typeRef;
 
-  /** __Type */
+  /**
+   * __Type
+   */
   @Description("__Type")
   private __Type type;
 
-  /** __Type Reference */
+  /**
+   * __Type Reference
+   */
   @Description("__Type Reference")
   private String possibleTypeRef;
 
-  /** __Type */
+  /**
+   * __Type
+   */
   @Description("__Type")
   private __Type possibleType;
 
-  /** Is Deprecated */
+  /**
+   * Is Deprecated
+   */
   @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   private Integer version;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   private Integer realmId;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   private String createUserId;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   private LocalDateTime createTime;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   private String updateUserId;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   private LocalDateTime updateTime;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   private String createGroupId;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   private String __typename = "__TypePossibleTypes";
 
-  /** Count of Relationship Object between __Type and __Type */
+  /**
+   * Count of Relationship Object between __Type and __Type
+   */
   @Description("Count of Relationship Object between __Type and __Type")
   private Integer idCount;
 
-  /** Max of ID */
+  /**
+   * Max of ID
+   */
   @Description("Max of ID")
   private Integer idMax;
 
-  /** Min of ID */
+  /**
+   * Min of ID
+   */
   @Description("Min of ID")
   private Integer idMin;
 
-  /** Count of __Type Reference */
+  /**
+   * Count of __Type Reference
+   */
   @Description("Count of __Type Reference")
   private Integer typeRefCount;
 
-  /** Max of __Type Reference */
+  /**
+   * Max of __Type Reference
+   */
   @Description("Max of __Type Reference")
   private String typeRefMax;
 
-  /** Min of __Type Reference */
+  /**
+   * Min of __Type Reference
+   */
   @Description("Min of __Type Reference")
   private String typeRefMin;
 
-  /** Count of __Type Reference */
+  /**
+   * Count of __Type Reference
+   */
   @Description("Count of __Type Reference")
   private Integer possibleTypeRefCount;
 
-  /** Max of __Type Reference */
+  /**
+   * Max of __Type Reference
+   */
   @Description("Max of __Type Reference")
   private String possibleTypeRefMax;
 
-  /** Min of __Type Reference */
+  /**
+   * Min of __Type Reference
+   */
   @Description("Min of __Type Reference")
   private String possibleTypeRefMin;
 
@@ -119,7 +167,7 @@ public class __TypePossibleTypes implements Meta {
 
   @Override
   public void setId(String id) {
-    this.id = (String) id;
+    this.id = (String)id;
   }
 
   public String getTypeRef() {
@@ -161,7 +209,7 @@ public class __TypePossibleTypes implements Meta {
 
   @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean) isDeprecated;
+    this.isDeprecated = (Boolean)isDeprecated;
   }
 
   @Override
@@ -171,7 +219,7 @@ public class __TypePossibleTypes implements Meta {
 
   @Override
   public void setVersion(Integer version) {
-    this.version = (Integer) version;
+    this.version = (Integer)version;
   }
 
   @Override
@@ -181,7 +229,7 @@ public class __TypePossibleTypes implements Meta {
 
   @Override
   public void setRealmId(Integer realmId) {
-    this.realmId = (Integer) realmId;
+    this.realmId = (Integer)realmId;
   }
 
   @Override
@@ -191,7 +239,7 @@ public class __TypePossibleTypes implements Meta {
 
   @Override
   public void setCreateUserId(String createUserId) {
-    this.createUserId = (String) createUserId;
+    this.createUserId = (String)createUserId;
   }
 
   @Override
@@ -201,7 +249,7 @@ public class __TypePossibleTypes implements Meta {
 
   @Override
   public void setCreateTime(LocalDateTime createTime) {
-    this.createTime = (LocalDateTime) createTime;
+    this.createTime = (LocalDateTime)createTime;
   }
 
   @Override
@@ -211,7 +259,7 @@ public class __TypePossibleTypes implements Meta {
 
   @Override
   public void setUpdateUserId(String updateUserId) {
-    this.updateUserId = (String) updateUserId;
+    this.updateUserId = (String)updateUserId;
   }
 
   @Override
@@ -221,7 +269,7 @@ public class __TypePossibleTypes implements Meta {
 
   @Override
   public void setUpdateTime(LocalDateTime updateTime) {
-    this.updateTime = (LocalDateTime) updateTime;
+    this.updateTime = (LocalDateTime)updateTime;
   }
 
   @Override
@@ -231,7 +279,7 @@ public class __TypePossibleTypes implements Meta {
 
   @Override
   public void setCreateGroupId(String createGroupId) {
-    this.createGroupId = (String) createGroupId;
+    this.createGroupId = (String)createGroupId;
   }
 
   public String get__typename() {
@@ -318,11 +366,11 @@ public class __TypePossibleTypes implements Meta {
     __TypePossibleTypesInput input = new __TypePossibleTypesInput();
     input.setId(this.getId());
     input.setTypeRef(this.getTypeRef());
-    if (getType() != null) {
+    if(getType() != null) {
       input.setType(this.getType().toInput());
     }
     input.setPossibleTypeRef(this.getPossibleTypeRef());
-    if (getPossibleType() != null) {
+    if(getPossibleType() != null) {
       input.setPossibleType(this.getPossibleType().toInput());
     }
     input.setIsDeprecated(this.getIsDeprecated());

@@ -9,22 +9,30 @@ import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/** Query Expression Input for __DirectiveLocation */
+/**
+ * Query Expression Input for __DirectiveLocation
+ */
 @CompiledJson
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Query Expression Input for __DirectiveLocation")
 public class __DirectiveLocationExpression {
-  /** Operators */
+  /**
+   * Operators
+   */
   @DefaultValue("EQ")
   @Description("Operators")
   private Operator opr = Operator.EQ;
 
-  /** Value */
+  /**
+   * Value
+   */
   @Description("Value")
   private __DirectiveLocation val;
 
-  /** Array */
+  /**
+   * Array
+   */
   @Description("Array")
   private Collection<__DirectiveLocation> arr;
 

@@ -13,91 +13,133 @@ import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/** Mutation Arguments for __Field */
+/**
+ * Mutation Arguments for __Field
+ */
 @CompiledJson
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Mutation Arguments for __Field")
 public class __FieldMutationArguments implements MetaInput, __FieldInputBase {
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   private String id;
 
-  /** name */
+  /**
+   * name
+   */
   @Description("name")
   private String name;
 
-  /** ofType */
+  /**
+   * ofType
+   */
   @Description("ofType")
   private __TypeInput ofType;
 
-  /** description */
+  /**
+   * description
+   */
   @Description("description")
   private String description;
 
-  /** args */
+  /**
+   * args
+   */
   @Description("args")
   private Collection<__InputValueInput> args;
 
-  /** type */
+  /**
+   * type
+   */
   @Description("type")
   private __TypeInput type;
 
-  /** deprecationReason */
+  /**
+   * deprecationReason
+   */
   @Description("deprecationReason")
   private String deprecationReason;
 
-  /** Is Deprecated */
+  /**
+   * Is Deprecated
+   */
   @DefaultValue("false")
   @Description("Is Deprecated")
   private Boolean isDeprecated = false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   private Integer version;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   private Integer realmId;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   private String createUserId;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   private LocalDateTime createTime;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   private String updateUserId;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   private LocalDateTime updateTime;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   private String createGroupId;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @DefaultValue("__Field")
   @Description("Type Name")
   private String __typename = "__Field";
 
-  /** ofType Reference */
+  /**
+   * ofType Reference
+   */
   @Description("ofType Reference")
   private String ofTypeName;
 
-  /** type Reference */
+  /**
+   * type Reference
+   */
   @Description("type Reference")
   private String typeName;
 
-  /** Input */
+  /**
+   * Input
+   */
   @Description("Input")
   private __FieldInput input;
 
-  /** Where */
+  /**
+   * Where
+   */
   @Description("Where")
   private __FieldExpression where;
 
@@ -108,7 +150,7 @@ public class __FieldMutationArguments implements MetaInput, __FieldInputBase {
 
   @Override
   public void setId(String id) {
-    this.id = (String) id;
+    this.id = (String)id;
   }
 
   @Override
@@ -118,7 +160,7 @@ public class __FieldMutationArguments implements MetaInput, __FieldInputBase {
 
   @Override
   public void setName(String name) {
-    this.name = (String) name;
+    this.name = (String)name;
   }
 
   @Override
@@ -128,7 +170,7 @@ public class __FieldMutationArguments implements MetaInput, __FieldInputBase {
 
   @Override
   public void setOfType(__TypeInput ofType) {
-    this.ofType = (__TypeInput) ofType;
+    this.ofType = (__TypeInput)ofType;
   }
 
   @Override
@@ -138,7 +180,7 @@ public class __FieldMutationArguments implements MetaInput, __FieldInputBase {
 
   @Override
   public void setDescription(String description) {
-    this.description = (String) description;
+    this.description = (String)description;
   }
 
   @Override
@@ -148,7 +190,7 @@ public class __FieldMutationArguments implements MetaInput, __FieldInputBase {
 
   @Override
   public void setArgs(Collection<__InputValueInput> args) {
-    this.args = (Collection<__InputValueInput>) args;
+    this.args = (Collection<__InputValueInput>)args;
   }
 
   @Override
@@ -158,7 +200,7 @@ public class __FieldMutationArguments implements MetaInput, __FieldInputBase {
 
   @Override
   public void setType(__TypeInput type) {
-    this.type = (__TypeInput) type;
+    this.type = (__TypeInput)type;
   }
 
   @Override
@@ -168,7 +210,7 @@ public class __FieldMutationArguments implements MetaInput, __FieldInputBase {
 
   @Override
   public void setDeprecationReason(String deprecationReason) {
-    this.deprecationReason = (String) deprecationReason;
+    this.deprecationReason = (String)deprecationReason;
   }
 
   @Override
@@ -178,7 +220,7 @@ public class __FieldMutationArguments implements MetaInput, __FieldInputBase {
 
   @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean) isDeprecated;
+    this.isDeprecated = (Boolean)isDeprecated;
   }
 
   @Override
@@ -188,7 +230,7 @@ public class __FieldMutationArguments implements MetaInput, __FieldInputBase {
 
   @Override
   public void setVersion(Integer version) {
-    this.version = (Integer) version;
+    this.version = (Integer)version;
   }
 
   @Override
@@ -198,7 +240,7 @@ public class __FieldMutationArguments implements MetaInput, __FieldInputBase {
 
   @Override
   public void setRealmId(Integer realmId) {
-    this.realmId = (Integer) realmId;
+    this.realmId = (Integer)realmId;
   }
 
   @Override
@@ -208,7 +250,7 @@ public class __FieldMutationArguments implements MetaInput, __FieldInputBase {
 
   @Override
   public void setCreateUserId(String createUserId) {
-    this.createUserId = (String) createUserId;
+    this.createUserId = (String)createUserId;
   }
 
   @Override
@@ -218,7 +260,7 @@ public class __FieldMutationArguments implements MetaInput, __FieldInputBase {
 
   @Override
   public void setCreateTime(LocalDateTime createTime) {
-    this.createTime = (LocalDateTime) createTime;
+    this.createTime = (LocalDateTime)createTime;
   }
 
   @Override
@@ -228,7 +270,7 @@ public class __FieldMutationArguments implements MetaInput, __FieldInputBase {
 
   @Override
   public void setUpdateUserId(String updateUserId) {
-    this.updateUserId = (String) updateUserId;
+    this.updateUserId = (String)updateUserId;
   }
 
   @Override
@@ -238,7 +280,7 @@ public class __FieldMutationArguments implements MetaInput, __FieldInputBase {
 
   @Override
   public void setUpdateTime(LocalDateTime updateTime) {
-    this.updateTime = (LocalDateTime) updateTime;
+    this.updateTime = (LocalDateTime)updateTime;
   }
 
   @Override
@@ -248,7 +290,7 @@ public class __FieldMutationArguments implements MetaInput, __FieldInputBase {
 
   @Override
   public void setCreateGroupId(String createGroupId) {
-    this.createGroupId = (String) createGroupId;
+    this.createGroupId = (String)createGroupId;
   }
 
   @Override
@@ -258,7 +300,7 @@ public class __FieldMutationArguments implements MetaInput, __FieldInputBase {
 
   @Override
   public void set__typename(String __typename) {
-    this.__typename = (String) __typename;
+    this.__typename = (String)__typename;
   }
 
   @Override
@@ -268,7 +310,7 @@ public class __FieldMutationArguments implements MetaInput, __FieldInputBase {
 
   @Override
   public void setOfTypeName(String ofTypeName) {
-    this.ofTypeName = (String) ofTypeName;
+    this.ofTypeName = (String)ofTypeName;
   }
 
   @Override
@@ -278,7 +320,7 @@ public class __FieldMutationArguments implements MetaInput, __FieldInputBase {
 
   @Override
   public void setTypeName(String typeName) {
-    this.typeName = (String) typeName;
+    this.typeName = (String)typeName;
   }
 
   public __FieldInput getInput() {
@@ -296,6 +338,6 @@ public class __FieldMutationArguments implements MetaInput, __FieldInputBase {
 
   @Override
   public void setWhere(__FieldExpression where) {
-    this.where = (__FieldExpression) where;
+    this.where = (__FieldExpression)where;
   }
 }

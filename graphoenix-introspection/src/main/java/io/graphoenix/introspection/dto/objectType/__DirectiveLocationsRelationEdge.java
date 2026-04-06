@@ -6,17 +6,23 @@ import java.lang.String;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Type;
 
-/** Edge Object for Relationship Object between __Directive and locations */
+/**
+ * Edge Object for Relationship Object between __Directive and locations
+ */
 @Type
 @CompiledJson
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Edge Object for Relationship Object between __Directive and locations")
 public class __DirectiveLocationsRelationEdge {
-  /** Node */
+  /**
+   * Node
+   */
   @Description("Node")
   private __DirectiveLocationsRelation node;
 
-  /** Cursor */
+  /**
+   * Cursor
+   */
   @Description("Cursor")
   private String cursor;
 

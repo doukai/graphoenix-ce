@@ -3,130 +3,227 @@ package io.graphoenix.introspection.dto.inputObjectType;
 import com.dslplatform.json.CompiledJson;
 import io.graphoenix.core.dto.enumType.Sort;
 import jakarta.annotation.Generated;
+import java.util.Collection;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/** Order Input for __Directive */
+/**
+ * Order Input for __Directive
+ */
 @CompiledJson
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Order Input for __Directive")
 public class __DirectiveOrderBy {
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   private Sort id;
 
-  /** name */
+  /**
+   * name
+   */
   @Description("name")
   private Sort name;
 
-  /** description */
+  /**
+   * ofSchema
+   */
+  @Description("ofSchema")
+  private __SchemaOrderBy ofSchema;
+
+  /**
+   * description
+   */
   @Description("description")
   private Sort description;
 
-  /** locations */
+  /**
+   * locations
+   */
   @Description("locations")
   private Sort locations;
 
-  /** isRepeatable */
+  /**
+   * args
+   */
+  @Description("args")
+  private __InputValueOrderBy args;
+
+  /**
+   * isRepeatable
+   */
   @Description("isRepeatable")
   private Sort isRepeatable;
 
-  /** Is Deprecated */
+  /**
+   * Is Deprecated
+   */
   @Description("Is Deprecated")
   private Sort isDeprecated;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   private Sort version;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   private Sort realmId;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   private Sort createUserId;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   private Sort createTime;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   private Sort updateUserId;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   private Sort updateTime;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   private Sort createGroupId;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   private Sort __typename;
 
-  /** ofSchema Reference */
+  /**
+   * ofSchema Reference
+   */
   @Description("ofSchema Reference")
   private Sort schemaId;
 
-  /** Count of __Directive */
+  /**
+   * Relationship Object between __Directive and locations
+   */
+  @Description("Relationship Object between __Directive and locations")
+  private __DirectiveLocationsRelationOrderBy __directiveLocationsRelation;
+
+  /**
+   * Aggregate Field for args
+   */
+  @Description("Aggregate Field for args")
+  private __InputValueOrderBy argsAggregate;
+
+  /**
+   * Aggregate Field for Relationship Object between __Directive and locations
+   */
+  @Description("Aggregate Field for Relationship Object between __Directive and locations")
+  private __DirectiveLocationsRelationOrderBy __directiveLocationsRelationAggregate;
+
+  /**
+   * Count of __Directive
+   */
   @Description("Count of __Directive")
   private Sort idCount;
 
-  /** Max of id */
+  /**
+   * Max of id
+   */
   @Description("Max of id")
   private Sort idMax;
 
-  /** Min of id */
+  /**
+   * Min of id
+   */
   @Description("Min of id")
   private Sort idMin;
 
-  /** Count of name */
+  /**
+   * Count of name
+   */
   @Description("Count of name")
   private Sort nameCount;
 
-  /** Max of name */
+  /**
+   * Max of name
+   */
   @Description("Max of name")
   private Sort nameMax;
 
-  /** Min of name */
+  /**
+   * Min of name
+   */
   @Description("Min of name")
   private Sort nameMin;
 
-  /** Count of description */
+  /**
+   * Count of description
+   */
   @Description("Count of description")
   private Sort descriptionCount;
 
-  /** Max of description */
+  /**
+   * Max of description
+   */
   @Description("Max of description")
   private Sort descriptionMax;
 
-  /** Min of description */
+  /**
+   * Min of description
+   */
   @Description("Min of description")
   private Sort descriptionMin;
 
-  /** Count of ofSchema Reference */
+  /**
+   * Count of ofSchema Reference
+   */
   @Description("Count of ofSchema Reference")
   private Sort schemaIdCount;
 
-  /** Sum of ofSchema Reference */
+  /**
+   * Sum of ofSchema Reference
+   */
   @Description("Sum of ofSchema Reference")
   private Sort schemaIdSum;
 
-  /** Avg of ofSchema Reference */
+  /**
+   * Avg of ofSchema Reference
+   */
   @Description("Avg of ofSchema Reference")
   private Sort schemaIdAvg;
 
-  /** Max of ofSchema Reference */
+  /**
+   * Max of ofSchema Reference
+   */
   @Description("Max of ofSchema Reference")
   private Sort schemaIdMax;
 
-  /** Min of ofSchema Reference */
+  /**
+   * Min of ofSchema Reference
+   */
   @Description("Min of ofSchema Reference")
   private Sort schemaIdMin;
+
+  /**
+   * OrderByes
+   */
+  @Description("OrderByes")
+  private Collection<__DirectiveOrderBy> obs;
 
   public Sort getId() {
     return this.id;
@@ -144,6 +241,14 @@ public class __DirectiveOrderBy {
     this.name = name;
   }
 
+  public __SchemaOrderBy getOfSchema() {
+    return this.ofSchema;
+  }
+
+  public void setOfSchema(__SchemaOrderBy ofSchema) {
+    this.ofSchema = ofSchema;
+  }
+
   public Sort getDescription() {
     return this.description;
   }
@@ -158,6 +263,14 @@ public class __DirectiveOrderBy {
 
   public void setLocations(Sort locations) {
     this.locations = locations;
+  }
+
+  public __InputValueOrderBy getArgs() {
+    return this.args;
+  }
+
+  public void setArgs(__InputValueOrderBy args) {
+    this.args = args;
   }
 
   public Sort getIsRepeatable() {
@@ -246,6 +359,32 @@ public class __DirectiveOrderBy {
 
   public void setSchemaId(Sort schemaId) {
     this.schemaId = schemaId;
+  }
+
+  public __DirectiveLocationsRelationOrderBy get__directiveLocationsRelation() {
+    return this.__directiveLocationsRelation;
+  }
+
+  public void set__directiveLocationsRelation(
+      __DirectiveLocationsRelationOrderBy __directiveLocationsRelation) {
+    this.__directiveLocationsRelation = __directiveLocationsRelation;
+  }
+
+  public __InputValueOrderBy getArgsAggregate() {
+    return this.argsAggregate;
+  }
+
+  public void setArgsAggregate(__InputValueOrderBy argsAggregate) {
+    this.argsAggregate = argsAggregate;
+  }
+
+  public __DirectiveLocationsRelationOrderBy get__directiveLocationsRelationAggregate() {
+    return this.__directiveLocationsRelationAggregate;
+  }
+
+  public void set__directiveLocationsRelationAggregate(
+      __DirectiveLocationsRelationOrderBy __directiveLocationsRelationAggregate) {
+    this.__directiveLocationsRelationAggregate = __directiveLocationsRelationAggregate;
   }
 
   public Sort getIdCount() {
@@ -358,5 +497,13 @@ public class __DirectiveOrderBy {
 
   public void setSchemaIdMin(Sort schemaIdMin) {
     this.schemaIdMin = schemaIdMin;
+  }
+
+  public Collection<__DirectiveOrderBy> getObs() {
+    return this.obs;
+  }
+
+  public void setObs(Collection<__DirectiveOrderBy> obs) {
+    this.obs = obs;
   }
 }

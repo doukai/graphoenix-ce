@@ -16,124 +16,182 @@ import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/** Query Arguments for __Directive List */
+/**
+ * Query Arguments for __Directive List
+ */
 @CompiledJson
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Query Arguments for __Directive List")
 public class __DirectiveListQueryArguments implements MetaExpression, __DirectiveExpressionBase {
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   private StringExpression id;
 
-  /** name */
+  /**
+   * name
+   */
   @Description("name")
   private StringExpression name;
 
-  /** ofSchema */
+  /**
+   * ofSchema
+   */
   @Description("ofSchema")
   private __SchemaExpression ofSchema;
 
-  /** description */
+  /**
+   * description
+   */
   @Description("description")
   private StringExpression description;
 
-  /** locations */
+  /**
+   * locations
+   */
   @Description("locations")
   private __DirectiveLocationExpression locations;
 
-  /** args */
+  /**
+   * args
+   */
   @Description("args")
   private __InputValueExpression args;
 
-  /** isRepeatable */
+  /**
+   * isRepeatable
+   */
   @Description("isRepeatable")
   private BooleanExpression isRepeatable;
 
-  /** Include Deprecated */
+  /**
+   * Include Deprecated
+   */
   @DefaultValue("false")
   @Description("Include Deprecated")
   private Boolean includeDeprecated = false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   private IntExpression version;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   private IntExpression realmId;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   private StringExpression createUserId;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   private StringExpression createTime;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   private StringExpression updateUserId;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   private StringExpression updateTime;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   private StringExpression createGroupId;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   private StringExpression __typename;
 
-  /** ofSchema Reference */
+  /**
+   * ofSchema Reference
+   */
   @Description("ofSchema Reference")
   private IntExpression schemaId;
 
-  /** Relationship Object between __Directive and locations */
+  /**
+   * Relationship Object between __Directive and locations
+   */
   @Description("Relationship Object between __Directive and locations")
   private __DirectiveLocationsRelationExpression __directiveLocationsRelation;
 
-  /** Order By */
+  /**
+   * Order By
+   */
   @Description("Order By")
   private __DirectiveOrderBy orderBy;
 
-  /** Group By */
+  /**
+   * Group By
+   */
   @Description("Group By")
-  private Collection<String> groupBy;
+  private __DirectiveGroupBy groupBy;
 
-  /** Not */
+  /**
+   * Not
+   */
   @DefaultValue("false")
   @Description("Not")
   private Boolean not = false;
 
-  /** Condition */
+  /**
+   * Condition
+   */
   @DefaultValue("AND")
   @Description("Condition")
   private Conditional cond = Conditional.AND;
 
-  /** Expressions */
+  /**
+   * Expressions
+   */
   @Description("Expressions")
   private Collection<__DirectiveExpression> exs;
 
-  /** First */
+  /**
+   * First
+   */
   @Description("First")
   private Integer first;
 
-  /** Last */
+  /**
+   * Last
+   */
   @Description("Last")
   private Integer last;
 
-  /** Offset */
+  /**
+   * Offset
+   */
   @Description("Offset")
   private Integer offset;
 
-  /** After */
+  /**
+   * After
+   */
   @Description("After")
   private String after;
 
-  /** Before */
+  /**
+   * Before
+   */
   @Description("Before")
   private String before;
 
@@ -144,7 +202,7 @@ public class __DirectiveListQueryArguments implements MetaExpression, __Directiv
 
   @Override
   public void setId(StringExpression id) {
-    this.id = (StringExpression) id;
+    this.id = (StringExpression)id;
   }
 
   @Override
@@ -154,7 +212,7 @@ public class __DirectiveListQueryArguments implements MetaExpression, __Directiv
 
   @Override
   public void setName(StringExpression name) {
-    this.name = (StringExpression) name;
+    this.name = (StringExpression)name;
   }
 
   @Override
@@ -164,7 +222,7 @@ public class __DirectiveListQueryArguments implements MetaExpression, __Directiv
 
   @Override
   public void setOfSchema(__SchemaExpression ofSchema) {
-    this.ofSchema = (__SchemaExpression) ofSchema;
+    this.ofSchema = (__SchemaExpression)ofSchema;
   }
 
   @Override
@@ -174,7 +232,7 @@ public class __DirectiveListQueryArguments implements MetaExpression, __Directiv
 
   @Override
   public void setDescription(StringExpression description) {
-    this.description = (StringExpression) description;
+    this.description = (StringExpression)description;
   }
 
   @Override
@@ -184,7 +242,7 @@ public class __DirectiveListQueryArguments implements MetaExpression, __Directiv
 
   @Override
   public void setLocations(__DirectiveLocationExpression locations) {
-    this.locations = (__DirectiveLocationExpression) locations;
+    this.locations = (__DirectiveLocationExpression)locations;
   }
 
   @Override
@@ -194,7 +252,7 @@ public class __DirectiveListQueryArguments implements MetaExpression, __Directiv
 
   @Override
   public void setArgs(__InputValueExpression args) {
-    this.args = (__InputValueExpression) args;
+    this.args = (__InputValueExpression)args;
   }
 
   @Override
@@ -204,7 +262,7 @@ public class __DirectiveListQueryArguments implements MetaExpression, __Directiv
 
   @Override
   public void setIsRepeatable(BooleanExpression isRepeatable) {
-    this.isRepeatable = (BooleanExpression) isRepeatable;
+    this.isRepeatable = (BooleanExpression)isRepeatable;
   }
 
   @Override
@@ -214,7 +272,7 @@ public class __DirectiveListQueryArguments implements MetaExpression, __Directiv
 
   @Override
   public void setIncludeDeprecated(Boolean includeDeprecated) {
-    this.includeDeprecated = (Boolean) includeDeprecated;
+    this.includeDeprecated = (Boolean)includeDeprecated;
   }
 
   @Override
@@ -224,7 +282,7 @@ public class __DirectiveListQueryArguments implements MetaExpression, __Directiv
 
   @Override
   public void setVersion(IntExpression version) {
-    this.version = (IntExpression) version;
+    this.version = (IntExpression)version;
   }
 
   @Override
@@ -234,7 +292,7 @@ public class __DirectiveListQueryArguments implements MetaExpression, __Directiv
 
   @Override
   public void setRealmId(IntExpression realmId) {
-    this.realmId = (IntExpression) realmId;
+    this.realmId = (IntExpression)realmId;
   }
 
   @Override
@@ -244,7 +302,7 @@ public class __DirectiveListQueryArguments implements MetaExpression, __Directiv
 
   @Override
   public void setCreateUserId(StringExpression createUserId) {
-    this.createUserId = (StringExpression) createUserId;
+    this.createUserId = (StringExpression)createUserId;
   }
 
   @Override
@@ -254,7 +312,7 @@ public class __DirectiveListQueryArguments implements MetaExpression, __Directiv
 
   @Override
   public void setCreateTime(StringExpression createTime) {
-    this.createTime = (StringExpression) createTime;
+    this.createTime = (StringExpression)createTime;
   }
 
   @Override
@@ -264,7 +322,7 @@ public class __DirectiveListQueryArguments implements MetaExpression, __Directiv
 
   @Override
   public void setUpdateUserId(StringExpression updateUserId) {
-    this.updateUserId = (StringExpression) updateUserId;
+    this.updateUserId = (StringExpression)updateUserId;
   }
 
   @Override
@@ -274,7 +332,7 @@ public class __DirectiveListQueryArguments implements MetaExpression, __Directiv
 
   @Override
   public void setUpdateTime(StringExpression updateTime) {
-    this.updateTime = (StringExpression) updateTime;
+    this.updateTime = (StringExpression)updateTime;
   }
 
   @Override
@@ -284,7 +342,7 @@ public class __DirectiveListQueryArguments implements MetaExpression, __Directiv
 
   @Override
   public void setCreateGroupId(StringExpression createGroupId) {
-    this.createGroupId = (StringExpression) createGroupId;
+    this.createGroupId = (StringExpression)createGroupId;
   }
 
   @Override
@@ -294,7 +352,7 @@ public class __DirectiveListQueryArguments implements MetaExpression, __Directiv
 
   @Override
   public void set__typename(StringExpression __typename) {
-    this.__typename = (StringExpression) __typename;
+    this.__typename = (StringExpression)__typename;
   }
 
   @Override
@@ -304,7 +362,7 @@ public class __DirectiveListQueryArguments implements MetaExpression, __Directiv
 
   @Override
   public void setSchemaId(IntExpression schemaId) {
-    this.schemaId = (IntExpression) schemaId;
+    this.schemaId = (IntExpression)schemaId;
   }
 
   @Override
@@ -315,8 +373,7 @@ public class __DirectiveListQueryArguments implements MetaExpression, __Directiv
   @Override
   public void set__directiveLocationsRelation(
       __DirectiveLocationsRelationExpression __directiveLocationsRelation) {
-    this.__directiveLocationsRelation =
-        (__DirectiveLocationsRelationExpression) __directiveLocationsRelation;
+    this.__directiveLocationsRelation = (__DirectiveLocationsRelationExpression)__directiveLocationsRelation;
   }
 
   public __DirectiveOrderBy getOrderBy() {
@@ -327,11 +384,11 @@ public class __DirectiveListQueryArguments implements MetaExpression, __Directiv
     this.orderBy = orderBy;
   }
 
-  public Collection<String> getGroupBy() {
+  public __DirectiveGroupBy getGroupBy() {
     return this.groupBy;
   }
 
-  public void setGroupBy(Collection<String> groupBy) {
+  public void setGroupBy(__DirectiveGroupBy groupBy) {
     this.groupBy = groupBy;
   }
 
@@ -342,7 +399,7 @@ public class __DirectiveListQueryArguments implements MetaExpression, __Directiv
 
   @Override
   public void setNot(Boolean not) {
-    this.not = (Boolean) not;
+    this.not = (Boolean)not;
   }
 
   @Override
@@ -352,7 +409,7 @@ public class __DirectiveListQueryArguments implements MetaExpression, __Directiv
 
   @Override
   public void setCond(Conditional cond) {
-    this.cond = (Conditional) cond;
+    this.cond = (Conditional)cond;
   }
 
   @Override
@@ -362,7 +419,7 @@ public class __DirectiveListQueryArguments implements MetaExpression, __Directiv
 
   @Override
   public void setExs(Collection<__DirectiveExpression> exs) {
-    this.exs = (Collection<__DirectiveExpression>) exs;
+    this.exs = (Collection<__DirectiveExpression>)exs;
   }
 
   public Integer getFirst() {

@@ -12,122 +12,180 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/** Subscription Arguments for __Field List */
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+/**
+ * Subscription Arguments for __Field List
+ */
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Subscription Arguments for __Field List")
 public @interface __FieldListSubscriptionArguments {
-  /** id */
+  /**
+   * id
+   */
   @Description("id")
   StringExpression id() default @StringExpression;
 
-  /** name */
+  /**
+   * name
+   */
   @Description("name")
   StringExpression name() default @StringExpression;
 
-  /** ofType */
+  /**
+   * ofType
+   */
   @Description("ofType")
   __TypeExpression ofType() default @__TypeExpression;
 
-  /** description */
+  /**
+   * description
+   */
   @Description("description")
   StringExpression description() default @StringExpression;
 
-  /** args */
+  /**
+   * args
+   */
   @Description("args")
   __InputValueExpression args() default @__InputValueExpression;
 
-  /** type */
+  /**
+   * type
+   */
   @Description("type")
   __TypeExpression type() default @__TypeExpression;
 
-  /** deprecationReason */
+  /**
+   * deprecationReason
+   */
   @Description("deprecationReason")
   StringExpression deprecationReason() default @StringExpression;
 
-  /** Include Deprecated */
+  /**
+   * Include Deprecated
+   */
   @Description("Include Deprecated")
   boolean includeDeprecated() default false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   IntExpression version() default @IntExpression;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   IntExpression realmId() default @IntExpression;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   StringExpression createUserId() default @StringExpression;
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   StringExpression createTime() default @StringExpression;
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   StringExpression updateUserId() default @StringExpression;
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   StringExpression updateTime() default @StringExpression;
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   StringExpression createGroupId() default @StringExpression;
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   StringExpression __typename() default @StringExpression;
 
-  /** ofType Reference */
+  /**
+   * ofType Reference
+   */
   @Description("ofType Reference")
   StringExpression ofTypeName() default @StringExpression;
 
-  /** type Reference */
+  /**
+   * type Reference
+   */
   @Description("type Reference")
   StringExpression typeName() default @StringExpression;
 
-  /** Order By */
+  /**
+   * Order By
+   */
   @Description("Order By")
   __FieldOrderBy orderBy() default @__FieldOrderBy;
 
-  /** Group By */
+  /**
+   * Group By
+   */
   @Description("Group By")
-  String[] groupBy() default {};
+  __FieldGroupBy groupBy() default @__FieldGroupBy;
 
-  /** Not */
+  /**
+   * Not
+   */
   @Description("Not")
   boolean not() default false;
 
-  /** Condition */
+  /**
+   * Condition
+   */
   @Description("Condition")
   Conditional cond() default Conditional.AND;
 
-  /** Expressions */
+  /**
+   * Expressions
+   */
   @Description("Expressions")
   __FieldExpression[] exs() default {};
 
-  /** First */
+  /**
+   * First
+   */
   @Description("First")
   int first() default 0;
 
-  /** Input List */
+  /**
+   * Input List
+   */
   @Description("Input List")
   int last() default 0;
 
-  /** Offset */
+  /**
+   * Offset
+   */
   @Description("Offset")
   int offset() default 0;
 
-  /** After */
+  /**
+   * After
+   */
   @Description("After")
   String after() default "";
 
-  /** Before */
+  /**
+   * Before
+   */
   @Description("Before")
   String before() default "";
 

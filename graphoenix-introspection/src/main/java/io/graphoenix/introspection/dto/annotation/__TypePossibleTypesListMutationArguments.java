@@ -9,74 +9,108 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/** Mutation Arguments for Relationship Object between __Type and __Type List */
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+/**
+ * Mutation Arguments for Relationship Object between __Type and __Type List
+ */
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Mutation Arguments for Relationship Object between __Type and __Type List")
 public @interface __TypePossibleTypesListMutationArguments {
-  /** ID */
+  /**
+   * ID
+   */
   @Description("ID")
   String id() default "";
 
-  /** __Type Reference */
+  /**
+   * __Type Reference
+   */
   @Description("__Type Reference")
   String typeRef() default "";
 
-  /** __Type */
+  /**
+   * __Type
+   */
   @Description("__Type")
   __TypeInput type() default @__TypeInput;
 
-  /** __Type Reference */
+  /**
+   * __Type Reference
+   */
   @Description("__Type Reference")
   String possibleTypeRef() default "";
 
-  /** __Type */
+  /**
+   * __Type
+   */
   @Description("__Type")
   __TypeInput possibleType() default @__TypeInput;
 
-  /** Is Deprecated */
+  /**
+   * Is Deprecated
+   */
   @Description("Is Deprecated")
   boolean isDeprecated() default false;
 
-  /** Version */
+  /**
+   * Version
+   */
   @Description("Version")
   int version() default 0;
 
-  /** Realm ID */
+  /**
+   * Realm ID
+   */
   @Description("Realm ID")
   int realmId() default 0;
 
-  /** Create User ID */
+  /**
+   * Create User ID
+   */
   @Description("Create User ID")
   String createUserId() default "";
 
-  /** Create Time */
+  /**
+   * Create Time
+   */
   @Description("Create Time")
   String createTime() default "";
 
-  /** Update User ID */
+  /**
+   * Update User ID
+   */
   @Description("Update User ID")
   String updateUserId() default "";
 
-  /** Update Time */
+  /**
+   * Update Time
+   */
   @Description("Update Time")
   String updateTime() default "";
 
-  /** Create Group ID */
+  /**
+   * Create Group ID
+   */
   @Description("Create Group ID")
   String createGroupId() default "";
 
-  /** Type Name */
+  /**
+   * Type Name
+   */
   @Description("Type Name")
   String __typename() default "__TypePossibleTypes";
 
-  /** Input List */
+  /**
+   * Input List
+   */
   @Description("Input List")
   __TypePossibleTypesInput[] list() default {};
 
-  /** Where */
+  /**
+   * Where
+   */
   @Description("Where")
   __TypePossibleTypesExpression where() default @__TypePossibleTypesExpression;
 

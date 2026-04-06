@@ -283,18 +283,18 @@ public class QueryTranslator {
                                                                           INPUT_VALUE_WHERE_NAME)
                                                                       .isNull()
                                                                   || valueWithVariableList
-                                                                      .get(index)
-                                                                      .asObject()
-                                                                      .getValueWithVariable(
-                                                                          INPUT_VALUE_WHERE_NAME)
-                                                                      .isObject()
-                                                                  && valueWithVariableList
-                                                                      .get(index)
-                                                                      .asObject()
-                                                                      .getValueWithVariable(
-                                                                          INPUT_VALUE_WHERE_NAME)
-                                                                      .asObject()
-                                                                      .containsKey(idName))
+                                                                          .get(index)
+                                                                          .asObject()
+                                                                          .getValueWithVariable(
+                                                                              INPUT_VALUE_WHERE_NAME)
+                                                                          .isObject()
+                                                                      && valueWithVariableList
+                                                                          .get(index)
+                                                                          .asObject()
+                                                                          .getValueWithVariable(
+                                                                              INPUT_VALUE_WHERE_NAME)
+                                                                          .asObject()
+                                                                          .containsKey(idName))
                                                       .mapToObj(
                                                           index -> {
                                                             if (valueWithVariableList
@@ -925,6 +925,13 @@ public class QueryTranslator {
 
       List<Column> columnList =
           Stream.ofNullable(fieldDefinition.getArgument(INPUT_VALUE_GROUP_BY_NAME))
+              .filter(Definition::isInputObject)
+              .flatMap(
+                  inputValue ->
+                      Stream.ofNullable(
+                          inputValue
+                              .asInputObject()
+                              .getInputValue(INPUT_VALUE_GROUP_BY_FIELD_NAMES_NAME)))
               .flatMap(
                   inputValue ->
                       Optional.ofNullable(field.getArguments())
