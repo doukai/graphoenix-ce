@@ -20,7 +20,7 @@ public class __TypeInterfacesGroupBy {
    * Group By Field Names
    */
   @Description("Group By Field Names")
-  private Collection<String> fieldNames;
+  private Collection<String> by;
 
   /**
    * __Type
@@ -41,12 +41,12 @@ public class __TypeInterfacesGroupBy {
   @Description("OrderByes")
   private Collection<__TypeInterfacesGroupBy> gbs;
 
-  public Collection<String> getFieldNames() {
-    return this.fieldNames;
+  public Collection<String> getBy() {
+    return this.by;
   }
 
-  public void setFieldNames(Collection<String> fieldNames) {
-    this.fieldNames = fieldNames;
+  public void setBy(Collection<String> by) {
+    this.by = by;
   }
 
   public __TypeGroupBy getType() {

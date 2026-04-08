@@ -15,7 +15,7 @@ import org.eclipse.microprofile.graphql.Name;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("invokes")
-@Target({ElementType.CONSTRUCTOR, ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER})
+@Target({ElementType.CONSTRUCTOR,ElementType.TYPE,ElementType.FIELD,ElementType.PARAMETER})
 public @interface Invokes {
   Invoke[] methods() default {};
 

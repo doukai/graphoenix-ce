@@ -28,20 +28,20 @@ message File {
     string create_group_id = 13; /* Create Group ID */
     string intro_typename = 14; /* Type Name */
     int32 id_count = 15; /* Count of 文件 */
-    int32 id_max = 16; /* Max of ID */
-    int32 id_min = 17; /* Min of ID */
-    int32 name_count = 18; /* Count of 文件名 */
-    string name_max = 19; /* Max of 文件名 */
-    string name_min = 20; /* Min of 文件名 */
-    int32 content_type_count = 21; /* Count of 类型 */
-    string content_type_max = 22; /* Max of 类型 */
-    string content_type_min = 23; /* Min of 类型 */
-    int32 content_count = 24; /* Count of 内容 */
-    string content_max = 25; /* Max of 内容 */
-    string content_min = 26; /* Min of 内容 */
-    int32 url_count = 27; /* Count of URL */
-    string url_max = 28; /* Max of URL */
-    string url_min = 29; /* Min of URL */
+    int32 name_count = 16; /* Count of 文件名 */
+    int32 content_type_count = 17; /* Count of 类型 */
+    int32 content_count = 18; /* Count of 内容 */
+    int32 url_count = 19; /* Count of URL */
+    int32 create_time_year = 20; /* Year of Create Time */
+    int32 create_time_month = 21; /* Month of Create Time */
+    int32 create_time_day = 22; /* Day of Create Time */
+    int32 create_time_week = 23; /* Week of Create Time */
+    int32 create_time_quarter = 24; /* Quarter of Create Time */
+    int32 update_time_year = 25; /* Year of Update Time */
+    int32 update_time_month = 26; /* Month of Update Time */
+    int32 update_time_day = 27; /* Day of Update Time */
+    int32 update_time_week = 28; /* Week of Update Time */
+    int32 update_time_quarter = 29; /* Quarter of Update Time */
 }
 /**
 * Connection Object for 文件

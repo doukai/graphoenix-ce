@@ -14,7 +14,7 @@ import org.eclipse.microprofile.graphql.Name;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("merge")
-@Target({ElementType.METHOD, ElementType.PARAMETER})
+@Target({ElementType.METHOD,ElementType.PARAMETER})
 public @interface Merge {
   @Name("package")
   String _package() default "io.graphoenix.core";

@@ -100,34 +100,10 @@ public class __DirectiveLocationsRelationOrderBy {
   private Sort idCount;
 
   /**
-   * Max of ID
-   */
-  @Description("Max of ID")
-  private Sort idMax;
-
-  /**
-   * Min of ID
-   */
-  @Description("Min of ID")
-  private Sort idMin;
-
-  /**
    * Count of __Directive Reference
    */
   @Description("Count of __Directive Reference")
   private Sort __directiveRefCount;
-
-  /**
-   * Max of __Directive Reference
-   */
-  @Description("Max of __Directive Reference")
-  private Sort __directiveRefMax;
-
-  /**
-   * Min of __Directive Reference
-   */
-  @Description("Min of __Directive Reference")
-  private Sort __directiveRefMin;
 
   /**
    * Count of locations Reference
@@ -136,16 +112,64 @@ public class __DirectiveLocationsRelationOrderBy {
   private Sort locationsRefCount;
 
   /**
-   * Max of locations Reference
+   * Year of Create Time
    */
-  @Description("Max of locations Reference")
-  private Sort locationsRefMax;
+  @Description("Year of Create Time")
+  private Sort createTimeYear;
 
   /**
-   * Min of locations Reference
+   * Month of Create Time
    */
-  @Description("Min of locations Reference")
-  private Sort locationsRefMin;
+  @Description("Month of Create Time")
+  private Sort createTimeMonth;
+
+  /**
+   * Day of Create Time
+   */
+  @Description("Day of Create Time")
+  private Sort createTimeDay;
+
+  /**
+   * Week of Create Time
+   */
+  @Description("Week of Create Time")
+  private Sort createTimeWeek;
+
+  /**
+   * Quarter of Create Time
+   */
+  @Description("Quarter of Create Time")
+  private Sort createTimeQuarter;
+
+  /**
+   * Year of Update Time
+   */
+  @Description("Year of Update Time")
+  private Sort updateTimeYear;
+
+  /**
+   * Month of Update Time
+   */
+  @Description("Month of Update Time")
+  private Sort updateTimeMonth;
+
+  /**
+   * Day of Update Time
+   */
+  @Description("Day of Update Time")
+  private Sort updateTimeDay;
+
+  /**
+   * Week of Update Time
+   */
+  @Description("Week of Update Time")
+  private Sort updateTimeWeek;
+
+  /**
+   * Quarter of Update Time
+   */
+  @Description("Quarter of Update Time")
+  private Sort updateTimeQuarter;
 
   /**
    * OrderByes
@@ -265,44 +289,12 @@ public class __DirectiveLocationsRelationOrderBy {
     this.idCount = idCount;
   }
 
-  public Sort getIdMax() {
-    return this.idMax;
-  }
-
-  public void setIdMax(Sort idMax) {
-    this.idMax = idMax;
-  }
-
-  public Sort getIdMin() {
-    return this.idMin;
-  }
-
-  public void setIdMin(Sort idMin) {
-    this.idMin = idMin;
-  }
-
   public Sort get__directiveRefCount() {
     return this.__directiveRefCount;
   }
 
   public void set__directiveRefCount(Sort __directiveRefCount) {
     this.__directiveRefCount = __directiveRefCount;
-  }
-
-  public Sort get__directiveRefMax() {
-    return this.__directiveRefMax;
-  }
-
-  public void set__directiveRefMax(Sort __directiveRefMax) {
-    this.__directiveRefMax = __directiveRefMax;
-  }
-
-  public Sort get__directiveRefMin() {
-    return this.__directiveRefMin;
-  }
-
-  public void set__directiveRefMin(Sort __directiveRefMin) {
-    this.__directiveRefMin = __directiveRefMin;
   }
 
   public Sort getLocationsRefCount() {
@@ -313,20 +305,84 @@ public class __DirectiveLocationsRelationOrderBy {
     this.locationsRefCount = locationsRefCount;
   }
 
-  public Sort getLocationsRefMax() {
-    return this.locationsRefMax;
+  public Sort getCreateTimeYear() {
+    return this.createTimeYear;
   }
 
-  public void setLocationsRefMax(Sort locationsRefMax) {
-    this.locationsRefMax = locationsRefMax;
+  public void setCreateTimeYear(Sort createTimeYear) {
+    this.createTimeYear = createTimeYear;
   }
 
-  public Sort getLocationsRefMin() {
-    return this.locationsRefMin;
+  public Sort getCreateTimeMonth() {
+    return this.createTimeMonth;
   }
 
-  public void setLocationsRefMin(Sort locationsRefMin) {
-    this.locationsRefMin = locationsRefMin;
+  public void setCreateTimeMonth(Sort createTimeMonth) {
+    this.createTimeMonth = createTimeMonth;
+  }
+
+  public Sort getCreateTimeDay() {
+    return this.createTimeDay;
+  }
+
+  public void setCreateTimeDay(Sort createTimeDay) {
+    this.createTimeDay = createTimeDay;
+  }
+
+  public Sort getCreateTimeWeek() {
+    return this.createTimeWeek;
+  }
+
+  public void setCreateTimeWeek(Sort createTimeWeek) {
+    this.createTimeWeek = createTimeWeek;
+  }
+
+  public Sort getCreateTimeQuarter() {
+    return this.createTimeQuarter;
+  }
+
+  public void setCreateTimeQuarter(Sort createTimeQuarter) {
+    this.createTimeQuarter = createTimeQuarter;
+  }
+
+  public Sort getUpdateTimeYear() {
+    return this.updateTimeYear;
+  }
+
+  public void setUpdateTimeYear(Sort updateTimeYear) {
+    this.updateTimeYear = updateTimeYear;
+  }
+
+  public Sort getUpdateTimeMonth() {
+    return this.updateTimeMonth;
+  }
+
+  public void setUpdateTimeMonth(Sort updateTimeMonth) {
+    this.updateTimeMonth = updateTimeMonth;
+  }
+
+  public Sort getUpdateTimeDay() {
+    return this.updateTimeDay;
+  }
+
+  public void setUpdateTimeDay(Sort updateTimeDay) {
+    this.updateTimeDay = updateTimeDay;
+  }
+
+  public Sort getUpdateTimeWeek() {
+    return this.updateTimeWeek;
+  }
+
+  public void setUpdateTimeWeek(Sort updateTimeWeek) {
+    this.updateTimeWeek = updateTimeWeek;
+  }
+
+  public Sort getUpdateTimeQuarter() {
+    return this.updateTimeQuarter;
+  }
+
+  public void setUpdateTimeQuarter(Sort updateTimeQuarter) {
+    this.updateTimeQuarter = updateTimeQuarter;
   }
 
   public Collection<__DirectiveLocationsRelationOrderBy> getObs() {

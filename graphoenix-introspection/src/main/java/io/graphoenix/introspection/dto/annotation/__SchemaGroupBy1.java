@@ -22,7 +22,7 @@ public @interface __SchemaGroupBy1 {
    * Group By Field Names
    */
   @Description("Group By Field Names")
-  String[] fieldNames() default {};
+  String[] by() default {};
 
   /**
    * types
@@ -60,7 +60,7 @@ public @interface __SchemaGroupBy1 {
   @Description("OrderByes")
   __SchemaGroupBy2[] gbs() default {};
 
-  String $fieldNames() default "";
+  String $by() default "";
 
   String $types() default "";
 

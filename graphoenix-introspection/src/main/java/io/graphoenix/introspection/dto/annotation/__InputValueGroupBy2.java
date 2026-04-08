@@ -22,7 +22,7 @@ public @interface __InputValueGroupBy2 {
    * Group By Field Names
    */
   @Description("Group By Field Names")
-  String[] fieldNames() default {};
+  String[] by() default {};
 
-  String $fieldNames() default "";
+  String $by() default "";
 }

@@ -14,7 +14,7 @@ import org.eclipse.microprofile.graphql.Name;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("connection")
-@Target({ElementType.FIELD, ElementType.PARAMETER})
+@Target({ElementType.FIELD,ElementType.PARAMETER})
 public @interface Connection {
   String field() default "";
 

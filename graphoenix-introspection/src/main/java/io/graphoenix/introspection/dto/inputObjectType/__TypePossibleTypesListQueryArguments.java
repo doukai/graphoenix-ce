@@ -109,6 +109,66 @@ public class __TypePossibleTypesListQueryArguments implements MetaExpression, __
   private StringExpression __typename;
 
   /**
+   * Year of Create Time
+   */
+  @Description("Year of Create Time")
+  private IntExpression createTimeYear;
+
+  /**
+   * Month of Create Time
+   */
+  @Description("Month of Create Time")
+  private IntExpression createTimeMonth;
+
+  /**
+   * Day of Create Time
+   */
+  @Description("Day of Create Time")
+  private IntExpression createTimeDay;
+
+  /**
+   * Week of Create Time
+   */
+  @Description("Week of Create Time")
+  private IntExpression createTimeWeek;
+
+  /**
+   * Quarter of Create Time
+   */
+  @Description("Quarter of Create Time")
+  private IntExpression createTimeQuarter;
+
+  /**
+   * Year of Update Time
+   */
+  @Description("Year of Update Time")
+  private IntExpression updateTimeYear;
+
+  /**
+   * Month of Update Time
+   */
+  @Description("Month of Update Time")
+  private IntExpression updateTimeMonth;
+
+  /**
+   * Day of Update Time
+   */
+  @Description("Day of Update Time")
+  private IntExpression updateTimeDay;
+
+  /**
+   * Week of Update Time
+   */
+  @Description("Week of Update Time")
+  private IntExpression updateTimeWeek;
+
+  /**
+   * Quarter of Update Time
+   */
+  @Description("Quarter of Update Time")
+  private IntExpression updateTimeQuarter;
+
+  /**
    * Order By
    */
   @Description("Order By")
@@ -308,6 +368,106 @@ public class __TypePossibleTypesListQueryArguments implements MetaExpression, __
   @Override
   public void set__typename(StringExpression __typename) {
     this.__typename = (StringExpression)__typename;
+  }
+
+  @Override
+  public IntExpression getCreateTimeYear() {
+    return this.createTimeYear;
+  }
+
+  @Override
+  public void setCreateTimeYear(IntExpression createTimeYear) {
+    this.createTimeYear = (IntExpression)createTimeYear;
+  }
+
+  @Override
+  public IntExpression getCreateTimeMonth() {
+    return this.createTimeMonth;
+  }
+
+  @Override
+  public void setCreateTimeMonth(IntExpression createTimeMonth) {
+    this.createTimeMonth = (IntExpression)createTimeMonth;
+  }
+
+  @Override
+  public IntExpression getCreateTimeDay() {
+    return this.createTimeDay;
+  }
+
+  @Override
+  public void setCreateTimeDay(IntExpression createTimeDay) {
+    this.createTimeDay = (IntExpression)createTimeDay;
+  }
+
+  @Override
+  public IntExpression getCreateTimeWeek() {
+    return this.createTimeWeek;
+  }
+
+  @Override
+  public void setCreateTimeWeek(IntExpression createTimeWeek) {
+    this.createTimeWeek = (IntExpression)createTimeWeek;
+  }
+
+  @Override
+  public IntExpression getCreateTimeQuarter() {
+    return this.createTimeQuarter;
+  }
+
+  @Override
+  public void setCreateTimeQuarter(IntExpression createTimeQuarter) {
+    this.createTimeQuarter = (IntExpression)createTimeQuarter;
+  }
+
+  @Override
+  public IntExpression getUpdateTimeYear() {
+    return this.updateTimeYear;
+  }
+
+  @Override
+  public void setUpdateTimeYear(IntExpression updateTimeYear) {
+    this.updateTimeYear = (IntExpression)updateTimeYear;
+  }
+
+  @Override
+  public IntExpression getUpdateTimeMonth() {
+    return this.updateTimeMonth;
+  }
+
+  @Override
+  public void setUpdateTimeMonth(IntExpression updateTimeMonth) {
+    this.updateTimeMonth = (IntExpression)updateTimeMonth;
+  }
+
+  @Override
+  public IntExpression getUpdateTimeDay() {
+    return this.updateTimeDay;
+  }
+
+  @Override
+  public void setUpdateTimeDay(IntExpression updateTimeDay) {
+    this.updateTimeDay = (IntExpression)updateTimeDay;
+  }
+
+  @Override
+  public IntExpression getUpdateTimeWeek() {
+    return this.updateTimeWeek;
+  }
+
+  @Override
+  public void setUpdateTimeWeek(IntExpression updateTimeWeek) {
+    this.updateTimeWeek = (IntExpression)updateTimeWeek;
+  }
+
+  @Override
+  public IntExpression getUpdateTimeQuarter() {
+    return this.updateTimeQuarter;
+  }
+
+  @Override
+  public void setUpdateTimeQuarter(IntExpression updateTimeQuarter) {
+    this.updateTimeQuarter = (IntExpression)updateTimeQuarter;
   }
 
   public __TypePossibleTypesOrderBy getOrderBy() {

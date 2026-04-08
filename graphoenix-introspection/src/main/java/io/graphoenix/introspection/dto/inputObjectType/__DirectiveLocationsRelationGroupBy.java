@@ -19,7 +19,7 @@ public class __DirectiveLocationsRelationGroupBy {
    * Group By Field Names
    */
   @Description("Group By Field Names")
-  private Collection<String> fieldNames;
+  private Collection<String> by;
 
   /**
    * __Directive
@@ -33,12 +33,12 @@ public class __DirectiveLocationsRelationGroupBy {
   @Description("OrderByes")
   private Collection<__DirectiveLocationsRelationGroupBy> gbs;
 
-  public Collection<String> getFieldNames() {
-    return this.fieldNames;
+  public Collection<String> getBy() {
+    return this.by;
   }
 
-  public void setFieldNames(Collection<String> fieldNames) {
-    this.fieldNames = fieldNames;
+  public void setBy(Collection<String> by) {
+    this.by = by;
   }
 
   public __DirectiveGroupBy get__directive() {

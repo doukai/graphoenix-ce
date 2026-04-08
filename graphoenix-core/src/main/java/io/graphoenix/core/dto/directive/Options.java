@@ -15,7 +15,7 @@ import org.eclipse.microprofile.graphql.Name;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("options")
-@Target({ElementType.FIELD, ElementType.PARAMETER})
+@Target({ElementType.FIELD,ElementType.PARAMETER})
 public @interface Options {
   String type() default "";
 

@@ -113,34 +113,10 @@ public class __TypePossibleTypes implements Meta {
   private Integer idCount;
 
   /**
-   * Max of ID
-   */
-  @Description("Max of ID")
-  private Integer idMax;
-
-  /**
-   * Min of ID
-   */
-  @Description("Min of ID")
-  private Integer idMin;
-
-  /**
    * Count of __Type Reference
    */
   @Description("Count of __Type Reference")
   private Integer typeRefCount;
-
-  /**
-   * Max of __Type Reference
-   */
-  @Description("Max of __Type Reference")
-  private String typeRefMax;
-
-  /**
-   * Min of __Type Reference
-   */
-  @Description("Min of __Type Reference")
-  private String typeRefMin;
 
   /**
    * Count of __Type Reference
@@ -149,16 +125,64 @@ public class __TypePossibleTypes implements Meta {
   private Integer possibleTypeRefCount;
 
   /**
-   * Max of __Type Reference
+   * Year of Create Time
    */
-  @Description("Max of __Type Reference")
-  private String possibleTypeRefMax;
+  @Description("Year of Create Time")
+  private Integer createTimeYear;
 
   /**
-   * Min of __Type Reference
+   * Month of Create Time
    */
-  @Description("Min of __Type Reference")
-  private String possibleTypeRefMin;
+  @Description("Month of Create Time")
+  private Integer createTimeMonth;
+
+  /**
+   * Day of Create Time
+   */
+  @Description("Day of Create Time")
+  private Integer createTimeDay;
+
+  /**
+   * Week of Create Time
+   */
+  @Description("Week of Create Time")
+  private Integer createTimeWeek;
+
+  /**
+   * Quarter of Create Time
+   */
+  @Description("Quarter of Create Time")
+  private Integer createTimeQuarter;
+
+  /**
+   * Year of Update Time
+   */
+  @Description("Year of Update Time")
+  private Integer updateTimeYear;
+
+  /**
+   * Month of Update Time
+   */
+  @Description("Month of Update Time")
+  private Integer updateTimeMonth;
+
+  /**
+   * Day of Update Time
+   */
+  @Description("Day of Update Time")
+  private Integer updateTimeDay;
+
+  /**
+   * Week of Update Time
+   */
+  @Description("Week of Update Time")
+  private Integer updateTimeWeek;
+
+  /**
+   * Quarter of Update Time
+   */
+  @Description("Quarter of Update Time")
+  private Integer updateTimeQuarter;
 
   @Override
   public String getId() {
@@ -298,44 +322,12 @@ public class __TypePossibleTypes implements Meta {
     this.idCount = idCount;
   }
 
-  public Integer getIdMax() {
-    return this.idMax;
-  }
-
-  public void setIdMax(Integer idMax) {
-    this.idMax = idMax;
-  }
-
-  public Integer getIdMin() {
-    return this.idMin;
-  }
-
-  public void setIdMin(Integer idMin) {
-    this.idMin = idMin;
-  }
-
   public Integer getTypeRefCount() {
     return this.typeRefCount;
   }
 
   public void setTypeRefCount(Integer typeRefCount) {
     this.typeRefCount = typeRefCount;
-  }
-
-  public String getTypeRefMax() {
-    return this.typeRefMax;
-  }
-
-  public void setTypeRefMax(String typeRefMax) {
-    this.typeRefMax = typeRefMax;
-  }
-
-  public String getTypeRefMin() {
-    return this.typeRefMin;
-  }
-
-  public void setTypeRefMin(String typeRefMin) {
-    this.typeRefMin = typeRefMin;
   }
 
   public Integer getPossibleTypeRefCount() {
@@ -346,20 +338,84 @@ public class __TypePossibleTypes implements Meta {
     this.possibleTypeRefCount = possibleTypeRefCount;
   }
 
-  public String getPossibleTypeRefMax() {
-    return this.possibleTypeRefMax;
+  public Integer getCreateTimeYear() {
+    return this.createTimeYear;
   }
 
-  public void setPossibleTypeRefMax(String possibleTypeRefMax) {
-    this.possibleTypeRefMax = possibleTypeRefMax;
+  public void setCreateTimeYear(Integer createTimeYear) {
+    this.createTimeYear = createTimeYear;
   }
 
-  public String getPossibleTypeRefMin() {
-    return this.possibleTypeRefMin;
+  public Integer getCreateTimeMonth() {
+    return this.createTimeMonth;
   }
 
-  public void setPossibleTypeRefMin(String possibleTypeRefMin) {
-    this.possibleTypeRefMin = possibleTypeRefMin;
+  public void setCreateTimeMonth(Integer createTimeMonth) {
+    this.createTimeMonth = createTimeMonth;
+  }
+
+  public Integer getCreateTimeDay() {
+    return this.createTimeDay;
+  }
+
+  public void setCreateTimeDay(Integer createTimeDay) {
+    this.createTimeDay = createTimeDay;
+  }
+
+  public Integer getCreateTimeWeek() {
+    return this.createTimeWeek;
+  }
+
+  public void setCreateTimeWeek(Integer createTimeWeek) {
+    this.createTimeWeek = createTimeWeek;
+  }
+
+  public Integer getCreateTimeQuarter() {
+    return this.createTimeQuarter;
+  }
+
+  public void setCreateTimeQuarter(Integer createTimeQuarter) {
+    this.createTimeQuarter = createTimeQuarter;
+  }
+
+  public Integer getUpdateTimeYear() {
+    return this.updateTimeYear;
+  }
+
+  public void setUpdateTimeYear(Integer updateTimeYear) {
+    this.updateTimeYear = updateTimeYear;
+  }
+
+  public Integer getUpdateTimeMonth() {
+    return this.updateTimeMonth;
+  }
+
+  public void setUpdateTimeMonth(Integer updateTimeMonth) {
+    this.updateTimeMonth = updateTimeMonth;
+  }
+
+  public Integer getUpdateTimeDay() {
+    return this.updateTimeDay;
+  }
+
+  public void setUpdateTimeDay(Integer updateTimeDay) {
+    this.updateTimeDay = updateTimeDay;
+  }
+
+  public Integer getUpdateTimeWeek() {
+    return this.updateTimeWeek;
+  }
+
+  public void setUpdateTimeWeek(Integer updateTimeWeek) {
+    this.updateTimeWeek = updateTimeWeek;
+  }
+
+  public Integer getUpdateTimeQuarter() {
+    return this.updateTimeQuarter;
+  }
+
+  public void setUpdateTimeQuarter(Integer updateTimeQuarter) {
+    this.updateTimeQuarter = updateTimeQuarter;
   }
 
   public __TypePossibleTypesInput toInput() {

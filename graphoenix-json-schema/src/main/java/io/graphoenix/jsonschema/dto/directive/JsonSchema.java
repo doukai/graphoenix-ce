@@ -11,11 +11,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Name;
 
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("jsonSchema")
-@Target({ElementType.FIELD, ElementType.TYPE, ElementType.PARAMETER})
+@Target({ElementType.FIELD,ElementType.TYPE,ElementType.PARAMETER})
 public @interface JsonSchema {
   int minLength() default 0;
 
@@ -45,8 +45,8 @@ public @interface JsonSchema {
   @Name("enum")
   String[] _enum() default {};
 
-  io.graphoenix.jsonschema.dto.annotation.JsonSchema items() default
-      @io.graphoenix.jsonschema.dto.annotation.JsonSchema;
+  io.graphoenix.jsonschema.dto.annotation.JsonSchema items(
+      ) default @io.graphoenix.jsonschema.dto.annotation.JsonSchema;
 
   int minItems() default 0;
 
@@ -60,21 +60,21 @@ public @interface JsonSchema {
 
   io.graphoenix.jsonschema.dto.annotation.JsonSchema[] oneOf() default {};
 
-  io.graphoenix.jsonschema.dto.annotation.JsonSchema not() default
-      @io.graphoenix.jsonschema.dto.annotation.JsonSchema;
+  io.graphoenix.jsonschema.dto.annotation.JsonSchema not(
+      ) default @io.graphoenix.jsonschema.dto.annotation.JsonSchema;
 
   Property[] properties() default {};
 
   @Name("if")
-  io.graphoenix.jsonschema.dto.annotation.JsonSchema _if() default
-      @io.graphoenix.jsonschema.dto.annotation.JsonSchema;
+  io.graphoenix.jsonschema.dto.annotation.JsonSchema _if(
+      ) default @io.graphoenix.jsonschema.dto.annotation.JsonSchema;
 
-  io.graphoenix.jsonschema.dto.annotation.JsonSchema then() default
-      @io.graphoenix.jsonschema.dto.annotation.JsonSchema;
+  io.graphoenix.jsonschema.dto.annotation.JsonSchema then(
+      ) default @io.graphoenix.jsonschema.dto.annotation.JsonSchema;
 
   @Name("else")
-  io.graphoenix.jsonschema.dto.annotation.JsonSchema _else() default
-      @io.graphoenix.jsonschema.dto.annotation.JsonSchema;
+  io.graphoenix.jsonschema.dto.annotation.JsonSchema _else(
+      ) default @io.graphoenix.jsonschema.dto.annotation.JsonSchema;
 
   Property[] dependentRequired() default {};
 

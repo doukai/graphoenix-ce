@@ -142,34 +142,10 @@ public class __SchemaOrderBy {
   private Sort idCount;
 
   /**
-   * Max of id
-   */
-  @Description("Max of id")
-  private Sort idMax;
-
-  /**
-   * Min of id
-   */
-  @Description("Min of id")
-  private Sort idMin;
-
-  /**
    * Count of queryType Reference
    */
   @Description("Count of queryType Reference")
   private Sort queryTypeNameCount;
-
-  /**
-   * Max of queryType Reference
-   */
-  @Description("Max of queryType Reference")
-  private Sort queryTypeNameMax;
-
-  /**
-   * Min of queryType Reference
-   */
-  @Description("Min of queryType Reference")
-  private Sort queryTypeNameMin;
 
   /**
    * Count of mutationType Reference
@@ -178,34 +154,70 @@ public class __SchemaOrderBy {
   private Sort mutationTypeNameCount;
 
   /**
-   * Max of mutationType Reference
-   */
-  @Description("Max of mutationType Reference")
-  private Sort mutationTypeNameMax;
-
-  /**
-   * Min of mutationType Reference
-   */
-  @Description("Min of mutationType Reference")
-  private Sort mutationTypeNameMin;
-
-  /**
    * Count of subscriptionType Reference
    */
   @Description("Count of subscriptionType Reference")
   private Sort subscriptionTypeNameCount;
 
   /**
-   * Max of subscriptionType Reference
+   * Year of Create Time
    */
-  @Description("Max of subscriptionType Reference")
-  private Sort subscriptionTypeNameMax;
+  @Description("Year of Create Time")
+  private Sort createTimeYear;
 
   /**
-   * Min of subscriptionType Reference
+   * Month of Create Time
    */
-  @Description("Min of subscriptionType Reference")
-  private Sort subscriptionTypeNameMin;
+  @Description("Month of Create Time")
+  private Sort createTimeMonth;
+
+  /**
+   * Day of Create Time
+   */
+  @Description("Day of Create Time")
+  private Sort createTimeDay;
+
+  /**
+   * Week of Create Time
+   */
+  @Description("Week of Create Time")
+  private Sort createTimeWeek;
+
+  /**
+   * Quarter of Create Time
+   */
+  @Description("Quarter of Create Time")
+  private Sort createTimeQuarter;
+
+  /**
+   * Year of Update Time
+   */
+  @Description("Year of Update Time")
+  private Sort updateTimeYear;
+
+  /**
+   * Month of Update Time
+   */
+  @Description("Month of Update Time")
+  private Sort updateTimeMonth;
+
+  /**
+   * Day of Update Time
+   */
+  @Description("Day of Update Time")
+  private Sort updateTimeDay;
+
+  /**
+   * Week of Update Time
+   */
+  @Description("Week of Update Time")
+  private Sort updateTimeWeek;
+
+  /**
+   * Quarter of Update Time
+   */
+  @Description("Quarter of Update Time")
+  private Sort updateTimeQuarter;
 
   /**
    * OrderByes
@@ -381,44 +393,12 @@ public class __SchemaOrderBy {
     this.idCount = idCount;
   }
 
-  public Sort getIdMax() {
-    return this.idMax;
-  }
-
-  public void setIdMax(Sort idMax) {
-    this.idMax = idMax;
-  }
-
-  public Sort getIdMin() {
-    return this.idMin;
-  }
-
-  public void setIdMin(Sort idMin) {
-    this.idMin = idMin;
-  }
-
   public Sort getQueryTypeNameCount() {
     return this.queryTypeNameCount;
   }
 
   public void setQueryTypeNameCount(Sort queryTypeNameCount) {
     this.queryTypeNameCount = queryTypeNameCount;
-  }
-
-  public Sort getQueryTypeNameMax() {
-    return this.queryTypeNameMax;
-  }
-
-  public void setQueryTypeNameMax(Sort queryTypeNameMax) {
-    this.queryTypeNameMax = queryTypeNameMax;
-  }
-
-  public Sort getQueryTypeNameMin() {
-    return this.queryTypeNameMin;
-  }
-
-  public void setQueryTypeNameMin(Sort queryTypeNameMin) {
-    this.queryTypeNameMin = queryTypeNameMin;
   }
 
   public Sort getMutationTypeNameCount() {
@@ -429,22 +409,6 @@ public class __SchemaOrderBy {
     this.mutationTypeNameCount = mutationTypeNameCount;
   }
 
-  public Sort getMutationTypeNameMax() {
-    return this.mutationTypeNameMax;
-  }
-
-  public void setMutationTypeNameMax(Sort mutationTypeNameMax) {
-    this.mutationTypeNameMax = mutationTypeNameMax;
-  }
-
-  public Sort getMutationTypeNameMin() {
-    return this.mutationTypeNameMin;
-  }
-
-  public void setMutationTypeNameMin(Sort mutationTypeNameMin) {
-    this.mutationTypeNameMin = mutationTypeNameMin;
-  }
-
   public Sort getSubscriptionTypeNameCount() {
     return this.subscriptionTypeNameCount;
   }
@@ -453,20 +417,84 @@ public class __SchemaOrderBy {
     this.subscriptionTypeNameCount = subscriptionTypeNameCount;
   }
 
-  public Sort getSubscriptionTypeNameMax() {
-    return this.subscriptionTypeNameMax;
+  public Sort getCreateTimeYear() {
+    return this.createTimeYear;
   }
 
-  public void setSubscriptionTypeNameMax(Sort subscriptionTypeNameMax) {
-    this.subscriptionTypeNameMax = subscriptionTypeNameMax;
+  public void setCreateTimeYear(Sort createTimeYear) {
+    this.createTimeYear = createTimeYear;
   }
 
-  public Sort getSubscriptionTypeNameMin() {
-    return this.subscriptionTypeNameMin;
+  public Sort getCreateTimeMonth() {
+    return this.createTimeMonth;
   }
 
-  public void setSubscriptionTypeNameMin(Sort subscriptionTypeNameMin) {
-    this.subscriptionTypeNameMin = subscriptionTypeNameMin;
+  public void setCreateTimeMonth(Sort createTimeMonth) {
+    this.createTimeMonth = createTimeMonth;
+  }
+
+  public Sort getCreateTimeDay() {
+    return this.createTimeDay;
+  }
+
+  public void setCreateTimeDay(Sort createTimeDay) {
+    this.createTimeDay = createTimeDay;
+  }
+
+  public Sort getCreateTimeWeek() {
+    return this.createTimeWeek;
+  }
+
+  public void setCreateTimeWeek(Sort createTimeWeek) {
+    this.createTimeWeek = createTimeWeek;
+  }
+
+  public Sort getCreateTimeQuarter() {
+    return this.createTimeQuarter;
+  }
+
+  public void setCreateTimeQuarter(Sort createTimeQuarter) {
+    this.createTimeQuarter = createTimeQuarter;
+  }
+
+  public Sort getUpdateTimeYear() {
+    return this.updateTimeYear;
+  }
+
+  public void setUpdateTimeYear(Sort updateTimeYear) {
+    this.updateTimeYear = updateTimeYear;
+  }
+
+  public Sort getUpdateTimeMonth() {
+    return this.updateTimeMonth;
+  }
+
+  public void setUpdateTimeMonth(Sort updateTimeMonth) {
+    this.updateTimeMonth = updateTimeMonth;
+  }
+
+  public Sort getUpdateTimeDay() {
+    return this.updateTimeDay;
+  }
+
+  public void setUpdateTimeDay(Sort updateTimeDay) {
+    this.updateTimeDay = updateTimeDay;
+  }
+
+  public Sort getUpdateTimeWeek() {
+    return this.updateTimeWeek;
+  }
+
+  public void setUpdateTimeWeek(Sort updateTimeWeek) {
+    this.updateTimeWeek = updateTimeWeek;
+  }
+
+  public Sort getUpdateTimeQuarter() {
+    return this.updateTimeQuarter;
+  }
+
+  public void setUpdateTimeQuarter(Sort updateTimeQuarter) {
+    this.updateTimeQuarter = updateTimeQuarter;
   }
 
   public Collection<__SchemaOrderBy> getObs() {

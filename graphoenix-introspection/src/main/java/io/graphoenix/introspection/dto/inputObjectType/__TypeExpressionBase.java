@@ -162,6 +162,66 @@ public interface __TypeExpressionBase extends MetaExpression {
   __TypePossibleTypesExpression __typePossibleTypes = null;
 
   /**
+   * Year of Create Time
+   */
+  @Description("Year of Create Time")
+  IntExpression createTimeYear = null;
+
+  /**
+   * Month of Create Time
+   */
+  @Description("Month of Create Time")
+  IntExpression createTimeMonth = null;
+
+  /**
+   * Day of Create Time
+   */
+  @Description("Day of Create Time")
+  IntExpression createTimeDay = null;
+
+  /**
+   * Week of Create Time
+   */
+  @Description("Week of Create Time")
+  IntExpression createTimeWeek = null;
+
+  /**
+   * Quarter of Create Time
+   */
+  @Description("Quarter of Create Time")
+  IntExpression createTimeQuarter = null;
+
+  /**
+   * Year of Update Time
+   */
+  @Description("Year of Update Time")
+  IntExpression updateTimeYear = null;
+
+  /**
+   * Month of Update Time
+   */
+  @Description("Month of Update Time")
+  IntExpression updateTimeMonth = null;
+
+  /**
+   * Day of Update Time
+   */
+  @Description("Day of Update Time")
+  IntExpression updateTimeDay = null;
+
+  /**
+   * Week of Update Time
+   */
+  @Description("Week of Update Time")
+  IntExpression updateTimeWeek = null;
+
+  /**
+   * Quarter of Update Time
+   */
+  @Description("Quarter of Update Time")
+  IntExpression updateTimeQuarter = null;
+
+  /**
    * Not
    */
   @Description("Not")
@@ -322,6 +382,66 @@ public interface __TypeExpressionBase extends MetaExpression {
   }
 
   void set__typePossibleTypes(__TypePossibleTypesExpression __typePossibleTypes);
+
+  default IntExpression getCreateTimeYear() {
+    return createTimeYear;
+  }
+
+  void setCreateTimeYear(IntExpression createTimeYear);
+
+  default IntExpression getCreateTimeMonth() {
+    return createTimeMonth;
+  }
+
+  void setCreateTimeMonth(IntExpression createTimeMonth);
+
+  default IntExpression getCreateTimeDay() {
+    return createTimeDay;
+  }
+
+  void setCreateTimeDay(IntExpression createTimeDay);
+
+  default IntExpression getCreateTimeWeek() {
+    return createTimeWeek;
+  }
+
+  void setCreateTimeWeek(IntExpression createTimeWeek);
+
+  default IntExpression getCreateTimeQuarter() {
+    return createTimeQuarter;
+  }
+
+  void setCreateTimeQuarter(IntExpression createTimeQuarter);
+
+  default IntExpression getUpdateTimeYear() {
+    return updateTimeYear;
+  }
+
+  void setUpdateTimeYear(IntExpression updateTimeYear);
+
+  default IntExpression getUpdateTimeMonth() {
+    return updateTimeMonth;
+  }
+
+  void setUpdateTimeMonth(IntExpression updateTimeMonth);
+
+  default IntExpression getUpdateTimeDay() {
+    return updateTimeDay;
+  }
+
+  void setUpdateTimeDay(IntExpression updateTimeDay);
+
+  default IntExpression getUpdateTimeWeek() {
+    return updateTimeWeek;
+  }
+
+  void setUpdateTimeWeek(IntExpression updateTimeWeek);
+
+  default IntExpression getUpdateTimeQuarter() {
+    return updateTimeQuarter;
+  }
+
+  void setUpdateTimeQuarter(IntExpression updateTimeQuarter);
 
   default Boolean getNot() {
     return not;

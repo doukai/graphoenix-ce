@@ -136,34 +136,16 @@ public class __InputValueOrderBy {
   private Sort idCount;
 
   /**
-   * Max of id
-   */
-  @Description("Max of id")
-  private Sort idMax;
-
-  /**
-   * Min of id
-   */
-  @Description("Min of id")
-  private Sort idMin;
-
-  /**
    * Count of name
    */
   @Description("Count of name")
   private Sort nameCount;
 
   /**
-   * Max of name
+   * Count of fieldId
    */
-  @Description("Max of name")
-  private Sort nameMax;
-
-  /**
-   * Min of name
-   */
-  @Description("Min of name")
-  private Sort nameMin;
+  @Description("Count of fieldId")
+  private Sort fieldIdCount;
 
   /**
    * Count of directiveName
@@ -172,34 +154,10 @@ public class __InputValueOrderBy {
   private Sort directiveNameCount;
 
   /**
-   * Max of directiveName
-   */
-  @Description("Max of directiveName")
-  private Sort directiveNameMax;
-
-  /**
-   * Min of directiveName
-   */
-  @Description("Min of directiveName")
-  private Sort directiveNameMin;
-
-  /**
    * Count of description
    */
   @Description("Count of description")
   private Sort descriptionCount;
-
-  /**
-   * Max of description
-   */
-  @Description("Max of description")
-  private Sort descriptionMax;
-
-  /**
-   * Min of description
-   */
-  @Description("Min of description")
-  private Sort descriptionMin;
 
   /**
    * Count of defaultValue
@@ -208,34 +166,10 @@ public class __InputValueOrderBy {
   private Sort defaultValueCount;
 
   /**
-   * Max of defaultValue
-   */
-  @Description("Max of defaultValue")
-  private Sort defaultValueMax;
-
-  /**
-   * Min of defaultValue
-   */
-  @Description("Min of defaultValue")
-  private Sort defaultValueMin;
-
-  /**
    * Count of ofType Reference
    */
   @Description("Count of ofType Reference")
   private Sort ofTypeNameCount;
-
-  /**
-   * Max of ofType Reference
-   */
-  @Description("Max of ofType Reference")
-  private Sort ofTypeNameMax;
-
-  /**
-   * Min of ofType Reference
-   */
-  @Description("Min of ofType Reference")
-  private Sort ofTypeNameMin;
 
   /**
    * Count of type Reference
@@ -244,22 +178,16 @@ public class __InputValueOrderBy {
   private Sort typeNameCount;
 
   /**
-   * Max of type Reference
+   * Max of fieldId
    */
-  @Description("Max of type Reference")
-  private Sort typeNameMax;
+  @Description("Max of fieldId")
+  private Sort fieldIdMax;
 
   /**
-   * Min of type Reference
+   * Min of fieldId
    */
-  @Description("Min of type Reference")
-  private Sort typeNameMin;
-
-  /**
-   * Count of fieldId
-   */
-  @Description("Count of fieldId")
-  private Sort fieldIdCount;
+  @Description("Min of fieldId")
+  private Sort fieldIdMin;
 
   /**
    * Sum of fieldId
@@ -274,16 +202,64 @@ public class __InputValueOrderBy {
   private Sort fieldIdAvg;
 
   /**
-   * Max of fieldId
+   * Year of Create Time
    */
-  @Description("Max of fieldId")
-  private Sort fieldIdMax;
+  @Description("Year of Create Time")
+  private Sort createTimeYear;
 
   /**
-   * Min of fieldId
+   * Month of Create Time
    */
-  @Description("Min of fieldId")
-  private Sort fieldIdMin;
+  @Description("Month of Create Time")
+  private Sort createTimeMonth;
+
+  /**
+   * Day of Create Time
+   */
+  @Description("Day of Create Time")
+  private Sort createTimeDay;
+
+  /**
+   * Week of Create Time
+   */
+  @Description("Week of Create Time")
+  private Sort createTimeWeek;
+
+  /**
+   * Quarter of Create Time
+   */
+  @Description("Quarter of Create Time")
+  private Sort createTimeQuarter;
+
+  /**
+   * Year of Update Time
+   */
+  @Description("Year of Update Time")
+  private Sort updateTimeYear;
+
+  /**
+   * Month of Update Time
+   */
+  @Description("Month of Update Time")
+  private Sort updateTimeMonth;
+
+  /**
+   * Day of Update Time
+   */
+  @Description("Day of Update Time")
+  private Sort updateTimeDay;
+
+  /**
+   * Week of Update Time
+   */
+  @Description("Week of Update Time")
+  private Sort updateTimeWeek;
+
+  /**
+   * Quarter of Update Time
+   */
+  @Description("Quarter of Update Time")
+  private Sort updateTimeQuarter;
 
   /**
    * OrderByes
@@ -451,22 +427,6 @@ public class __InputValueOrderBy {
     this.idCount = idCount;
   }
 
-  public Sort getIdMax() {
-    return this.idMax;
-  }
-
-  public void setIdMax(Sort idMax) {
-    this.idMax = idMax;
-  }
-
-  public Sort getIdMin() {
-    return this.idMin;
-  }
-
-  public void setIdMin(Sort idMin) {
-    this.idMin = idMin;
-  }
-
   public Sort getNameCount() {
     return this.nameCount;
   }
@@ -475,20 +435,12 @@ public class __InputValueOrderBy {
     this.nameCount = nameCount;
   }
 
-  public Sort getNameMax() {
-    return this.nameMax;
+  public Sort getFieldIdCount() {
+    return this.fieldIdCount;
   }
 
-  public void setNameMax(Sort nameMax) {
-    this.nameMax = nameMax;
-  }
-
-  public Sort getNameMin() {
-    return this.nameMin;
-  }
-
-  public void setNameMin(Sort nameMin) {
-    this.nameMin = nameMin;
+  public void setFieldIdCount(Sort fieldIdCount) {
+    this.fieldIdCount = fieldIdCount;
   }
 
   public Sort getDirectiveNameCount() {
@@ -499,44 +451,12 @@ public class __InputValueOrderBy {
     this.directiveNameCount = directiveNameCount;
   }
 
-  public Sort getDirectiveNameMax() {
-    return this.directiveNameMax;
-  }
-
-  public void setDirectiveNameMax(Sort directiveNameMax) {
-    this.directiveNameMax = directiveNameMax;
-  }
-
-  public Sort getDirectiveNameMin() {
-    return this.directiveNameMin;
-  }
-
-  public void setDirectiveNameMin(Sort directiveNameMin) {
-    this.directiveNameMin = directiveNameMin;
-  }
-
   public Sort getDescriptionCount() {
     return this.descriptionCount;
   }
 
   public void setDescriptionCount(Sort descriptionCount) {
     this.descriptionCount = descriptionCount;
-  }
-
-  public Sort getDescriptionMax() {
-    return this.descriptionMax;
-  }
-
-  public void setDescriptionMax(Sort descriptionMax) {
-    this.descriptionMax = descriptionMax;
-  }
-
-  public Sort getDescriptionMin() {
-    return this.descriptionMin;
-  }
-
-  public void setDescriptionMin(Sort descriptionMin) {
-    this.descriptionMin = descriptionMin;
   }
 
   public Sort getDefaultValueCount() {
@@ -547,44 +467,12 @@ public class __InputValueOrderBy {
     this.defaultValueCount = defaultValueCount;
   }
 
-  public Sort getDefaultValueMax() {
-    return this.defaultValueMax;
-  }
-
-  public void setDefaultValueMax(Sort defaultValueMax) {
-    this.defaultValueMax = defaultValueMax;
-  }
-
-  public Sort getDefaultValueMin() {
-    return this.defaultValueMin;
-  }
-
-  public void setDefaultValueMin(Sort defaultValueMin) {
-    this.defaultValueMin = defaultValueMin;
-  }
-
   public Sort getOfTypeNameCount() {
     return this.ofTypeNameCount;
   }
 
   public void setOfTypeNameCount(Sort ofTypeNameCount) {
     this.ofTypeNameCount = ofTypeNameCount;
-  }
-
-  public Sort getOfTypeNameMax() {
-    return this.ofTypeNameMax;
-  }
-
-  public void setOfTypeNameMax(Sort ofTypeNameMax) {
-    this.ofTypeNameMax = ofTypeNameMax;
-  }
-
-  public Sort getOfTypeNameMin() {
-    return this.ofTypeNameMin;
-  }
-
-  public void setOfTypeNameMin(Sort ofTypeNameMin) {
-    this.ofTypeNameMin = ofTypeNameMin;
   }
 
   public Sort getTypeNameCount() {
@@ -595,28 +483,20 @@ public class __InputValueOrderBy {
     this.typeNameCount = typeNameCount;
   }
 
-  public Sort getTypeNameMax() {
-    return this.typeNameMax;
+  public Sort getFieldIdMax() {
+    return this.fieldIdMax;
   }
 
-  public void setTypeNameMax(Sort typeNameMax) {
-    this.typeNameMax = typeNameMax;
+  public void setFieldIdMax(Sort fieldIdMax) {
+    this.fieldIdMax = fieldIdMax;
   }
 
-  public Sort getTypeNameMin() {
-    return this.typeNameMin;
+  public Sort getFieldIdMin() {
+    return this.fieldIdMin;
   }
 
-  public void setTypeNameMin(Sort typeNameMin) {
-    this.typeNameMin = typeNameMin;
-  }
-
-  public Sort getFieldIdCount() {
-    return this.fieldIdCount;
-  }
-
-  public void setFieldIdCount(Sort fieldIdCount) {
-    this.fieldIdCount = fieldIdCount;
+  public void setFieldIdMin(Sort fieldIdMin) {
+    this.fieldIdMin = fieldIdMin;
   }
 
   public Sort getFieldIdSum() {
@@ -635,20 +515,84 @@ public class __InputValueOrderBy {
     this.fieldIdAvg = fieldIdAvg;
   }
 
-  public Sort getFieldIdMax() {
-    return this.fieldIdMax;
+  public Sort getCreateTimeYear() {
+    return this.createTimeYear;
   }
 
-  public void setFieldIdMax(Sort fieldIdMax) {
-    this.fieldIdMax = fieldIdMax;
+  public void setCreateTimeYear(Sort createTimeYear) {
+    this.createTimeYear = createTimeYear;
   }
 
-  public Sort getFieldIdMin() {
-    return this.fieldIdMin;
+  public Sort getCreateTimeMonth() {
+    return this.createTimeMonth;
   }
 
-  public void setFieldIdMin(Sort fieldIdMin) {
-    this.fieldIdMin = fieldIdMin;
+  public void setCreateTimeMonth(Sort createTimeMonth) {
+    this.createTimeMonth = createTimeMonth;
+  }
+
+  public Sort getCreateTimeDay() {
+    return this.createTimeDay;
+  }
+
+  public void setCreateTimeDay(Sort createTimeDay) {
+    this.createTimeDay = createTimeDay;
+  }
+
+  public Sort getCreateTimeWeek() {
+    return this.createTimeWeek;
+  }
+
+  public void setCreateTimeWeek(Sort createTimeWeek) {
+    this.createTimeWeek = createTimeWeek;
+  }
+
+  public Sort getCreateTimeQuarter() {
+    return this.createTimeQuarter;
+  }
+
+  public void setCreateTimeQuarter(Sort createTimeQuarter) {
+    this.createTimeQuarter = createTimeQuarter;
+  }
+
+  public Sort getUpdateTimeYear() {
+    return this.updateTimeYear;
+  }
+
+  public void setUpdateTimeYear(Sort updateTimeYear) {
+    this.updateTimeYear = updateTimeYear;
+  }
+
+  public Sort getUpdateTimeMonth() {
+    return this.updateTimeMonth;
+  }
+
+  public void setUpdateTimeMonth(Sort updateTimeMonth) {
+    this.updateTimeMonth = updateTimeMonth;
+  }
+
+  public Sort getUpdateTimeDay() {
+    return this.updateTimeDay;
+  }
+
+  public void setUpdateTimeDay(Sort updateTimeDay) {
+    this.updateTimeDay = updateTimeDay;
+  }
+
+  public Sort getUpdateTimeWeek() {
+    return this.updateTimeWeek;
+  }
+
+  public void setUpdateTimeWeek(Sort updateTimeWeek) {
+    this.updateTimeWeek = updateTimeWeek;
+  }
+
+  public Sort getUpdateTimeQuarter() {
+    return this.updateTimeQuarter;
+  }
+
+  public void setUpdateTimeQuarter(Sort updateTimeQuarter) {
+    this.updateTimeQuarter = updateTimeQuarter;
   }
 
   public Collection<__InputValueOrderBy> getObs() {

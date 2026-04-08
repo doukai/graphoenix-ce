@@ -106,34 +106,10 @@ public class __TypePossibleTypesOrderBy {
   private Sort idCount;
 
   /**
-   * Max of ID
-   */
-  @Description("Max of ID")
-  private Sort idMax;
-
-  /**
-   * Min of ID
-   */
-  @Description("Min of ID")
-  private Sort idMin;
-
-  /**
    * Count of __Type Reference
    */
   @Description("Count of __Type Reference")
   private Sort typeRefCount;
-
-  /**
-   * Max of __Type Reference
-   */
-  @Description("Max of __Type Reference")
-  private Sort typeRefMax;
-
-  /**
-   * Min of __Type Reference
-   */
-  @Description("Min of __Type Reference")
-  private Sort typeRefMin;
 
   /**
    * Count of __Type Reference
@@ -142,16 +118,64 @@ public class __TypePossibleTypesOrderBy {
   private Sort possibleTypeRefCount;
 
   /**
-   * Max of __Type Reference
+   * Year of Create Time
    */
-  @Description("Max of __Type Reference")
-  private Sort possibleTypeRefMax;
+  @Description("Year of Create Time")
+  private Sort createTimeYear;
 
   /**
-   * Min of __Type Reference
+   * Month of Create Time
    */
-  @Description("Min of __Type Reference")
-  private Sort possibleTypeRefMin;
+  @Description("Month of Create Time")
+  private Sort createTimeMonth;
+
+  /**
+   * Day of Create Time
+   */
+  @Description("Day of Create Time")
+  private Sort createTimeDay;
+
+  /**
+   * Week of Create Time
+   */
+  @Description("Week of Create Time")
+  private Sort createTimeWeek;
+
+  /**
+   * Quarter of Create Time
+   */
+  @Description("Quarter of Create Time")
+  private Sort createTimeQuarter;
+
+  /**
+   * Year of Update Time
+   */
+  @Description("Year of Update Time")
+  private Sort updateTimeYear;
+
+  /**
+   * Month of Update Time
+   */
+  @Description("Month of Update Time")
+  private Sort updateTimeMonth;
+
+  /**
+   * Day of Update Time
+   */
+  @Description("Day of Update Time")
+  private Sort updateTimeDay;
+
+  /**
+   * Week of Update Time
+   */
+  @Description("Week of Update Time")
+  private Sort updateTimeWeek;
+
+  /**
+   * Quarter of Update Time
+   */
+  @Description("Quarter of Update Time")
+  private Sort updateTimeQuarter;
 
   /**
    * OrderByes
@@ -279,44 +303,12 @@ public class __TypePossibleTypesOrderBy {
     this.idCount = idCount;
   }
 
-  public Sort getIdMax() {
-    return this.idMax;
-  }
-
-  public void setIdMax(Sort idMax) {
-    this.idMax = idMax;
-  }
-
-  public Sort getIdMin() {
-    return this.idMin;
-  }
-
-  public void setIdMin(Sort idMin) {
-    this.idMin = idMin;
-  }
-
   public Sort getTypeRefCount() {
     return this.typeRefCount;
   }
 
   public void setTypeRefCount(Sort typeRefCount) {
     this.typeRefCount = typeRefCount;
-  }
-
-  public Sort getTypeRefMax() {
-    return this.typeRefMax;
-  }
-
-  public void setTypeRefMax(Sort typeRefMax) {
-    this.typeRefMax = typeRefMax;
-  }
-
-  public Sort getTypeRefMin() {
-    return this.typeRefMin;
-  }
-
-  public void setTypeRefMin(Sort typeRefMin) {
-    this.typeRefMin = typeRefMin;
   }
 
   public Sort getPossibleTypeRefCount() {
@@ -327,20 +319,84 @@ public class __TypePossibleTypesOrderBy {
     this.possibleTypeRefCount = possibleTypeRefCount;
   }
 
-  public Sort getPossibleTypeRefMax() {
-    return this.possibleTypeRefMax;
+  public Sort getCreateTimeYear() {
+    return this.createTimeYear;
   }
 
-  public void setPossibleTypeRefMax(Sort possibleTypeRefMax) {
-    this.possibleTypeRefMax = possibleTypeRefMax;
+  public void setCreateTimeYear(Sort createTimeYear) {
+    this.createTimeYear = createTimeYear;
   }
 
-  public Sort getPossibleTypeRefMin() {
-    return this.possibleTypeRefMin;
+  public Sort getCreateTimeMonth() {
+    return this.createTimeMonth;
   }
 
-  public void setPossibleTypeRefMin(Sort possibleTypeRefMin) {
-    this.possibleTypeRefMin = possibleTypeRefMin;
+  public void setCreateTimeMonth(Sort createTimeMonth) {
+    this.createTimeMonth = createTimeMonth;
+  }
+
+  public Sort getCreateTimeDay() {
+    return this.createTimeDay;
+  }
+
+  public void setCreateTimeDay(Sort createTimeDay) {
+    this.createTimeDay = createTimeDay;
+  }
+
+  public Sort getCreateTimeWeek() {
+    return this.createTimeWeek;
+  }
+
+  public void setCreateTimeWeek(Sort createTimeWeek) {
+    this.createTimeWeek = createTimeWeek;
+  }
+
+  public Sort getCreateTimeQuarter() {
+    return this.createTimeQuarter;
+  }
+
+  public void setCreateTimeQuarter(Sort createTimeQuarter) {
+    this.createTimeQuarter = createTimeQuarter;
+  }
+
+  public Sort getUpdateTimeYear() {
+    return this.updateTimeYear;
+  }
+
+  public void setUpdateTimeYear(Sort updateTimeYear) {
+    this.updateTimeYear = updateTimeYear;
+  }
+
+  public Sort getUpdateTimeMonth() {
+    return this.updateTimeMonth;
+  }
+
+  public void setUpdateTimeMonth(Sort updateTimeMonth) {
+    this.updateTimeMonth = updateTimeMonth;
+  }
+
+  public Sort getUpdateTimeDay() {
+    return this.updateTimeDay;
+  }
+
+  public void setUpdateTimeDay(Sort updateTimeDay) {
+    this.updateTimeDay = updateTimeDay;
+  }
+
+  public Sort getUpdateTimeWeek() {
+    return this.updateTimeWeek;
+  }
+
+  public void setUpdateTimeWeek(Sort updateTimeWeek) {
+    this.updateTimeWeek = updateTimeWeek;
+  }
+
+  public Sort getUpdateTimeQuarter() {
+    return this.updateTimeQuarter;
+  }
+
+  public void setUpdateTimeQuarter(Sort updateTimeQuarter) {
+    this.updateTimeQuarter = updateTimeQuarter;
   }
 
   public Collection<__TypePossibleTypesOrderBy> getObs() {

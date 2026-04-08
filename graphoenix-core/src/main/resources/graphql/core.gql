@@ -40,6 +40,11 @@ enum Func {
     MIN
     SUM
     AVG
+    YEAR
+    MONTH
+    DAY
+    WEEK
+    QUARTER
 }
 enum Protocol {
     LOCAL

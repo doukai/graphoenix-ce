@@ -12,7 +12,7 @@ import org.eclipse.microprofile.graphql.Name;
 
 @CompiledJson
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 public class JsonSchema {
   private Integer minLength;
 

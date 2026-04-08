@@ -15,7 +15,7 @@ import org.eclipse.microprofile.graphql.Name;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("map")
-@Target({ElementType.FIELD, ElementType.PARAMETER})
+@Target({ElementType.FIELD,ElementType.PARAMETER})
 public @interface Map {
   String from() default "";
 

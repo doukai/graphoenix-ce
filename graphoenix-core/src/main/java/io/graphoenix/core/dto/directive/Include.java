@@ -14,7 +14,7 @@ import org.eclipse.microprofile.graphql.Name;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("include")
-@Target({ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.PARAMETER})
+@Target({ElementType.CONSTRUCTOR,ElementType.METHOD,ElementType.PARAMETER})
 public @interface Include {
   @Name("if")
   boolean _if() default true;

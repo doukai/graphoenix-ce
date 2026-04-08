@@ -83,7 +83,7 @@ public class Hammurabi {
   public static final String INPUT_VALUE_ORDER_BY_NAME = "orderBy";
   public static final String INPUT_VALUE_OBS_NAME = "obs";
   public static final String INPUT_VALUE_GROUP_BY_NAME = "groupBy";
-  public static final String INPUT_VALUE_GROUP_BY_FIELD_NAMES_NAME = "fieldNames";
+  public static final String INPUT_VALUE_BY_NAME = "by";
   public static final String INPUT_VALUE_GBS_NAME = "gbs";
   public static final String INPUT_VALUE_SORT_NAME = "sort";
   public static final String INPUT_VALUE_COND_NAME = "cond";
@@ -223,6 +223,11 @@ public class Hammurabi {
   public static final String SUFFIX_AVG = "Avg";
   public static final String SUFFIX_MAX = "Max";
   public static final String SUFFIX_MIN = "Min";
+  public static final String SUFFIX_YEAR = "Year";
+  public static final String SUFFIX_MONTH = "Month";
+  public static final String SUFFIX_DAY = "Day";
+  public static final String SUFFIX_WEEK = "Week";
+  public static final String SUFFIX_QUARTER = "Quarter";
   public static final String SUFFIX_REF = "Ref";
   public static final String SUFFIX_TYPE = "Type";
   public static final String SUFFIX_RELATION = "Relation";

@@ -212,11 +212,9 @@ public class ArgumentsTranslator {
                                   .flatMap(
                                       arguments -> {
                                         if (fieldDefinition.getType().hasList()) {
-                                          Column column =
-                                              graphqlFieldToColumn(
-                                                  fieldDefinition.getMapWithTypeOrError(),
-                                                  fieldDefinition.getMapWithToOrError(),
-                                                  level);
+                                          Expression column =
+                                              fieldDefinitionToExpression(
+                                                  objectType, fieldDefinition, level);
                                           return arguments
                                               .getArgumentOrEmpty(
                                                   INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
@@ -240,11 +238,9 @@ public class ArgumentsTranslator {
                                                                       skipNull(arguments))))
                                               .or(() -> valToExpression(column, opr));
                                         } else {
-                                          Column column =
-                                              graphqlFieldToColumn(
-                                                  objectType.getName(),
-                                                  fieldDefinition.getName(),
-                                                  level);
+                                          Expression column =
+                                              fieldDefinitionToExpression(
+                                                  objectType, fieldDefinition, level);
                                           return arguments
                                               .getArgumentOrEmpty(
                                                   INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
@@ -455,11 +451,8 @@ public class ArgumentsTranslator {
                       .flatMap(
                           objectValueWithVariable -> {
                             if (fieldDefinition.getType().hasList()) {
-                              Column column =
-                                  graphqlFieldToColumn(
-                                      fieldDefinition.getMapWithTypeOrError(),
-                                      fieldDefinition.getMapWithToOrError(),
-                                      level);
+                              Expression column =
+                                  fieldDefinitionToExpression(objectType, fieldDefinition, level);
                               return objectValueWithVariable
                                   .getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
                                   .flatMap(
@@ -487,9 +480,8 @@ public class ArgumentsTranslator {
                                               selectFromFieldType(
                                                   objectType, fieldDefinition, expression, level)));
                             } else {
-                              Column column =
-                                  graphqlFieldToColumn(
-                                      objectType.getName(), fieldDefinition.getName(), level);
+                              Expression column =
+                                  fieldDefinitionToExpression(objectType, fieldDefinition, level);
                               return objectValueWithVariable
                                   .getValueWithVariableOrEmpty(INPUT_OPERATOR_INPUT_VALUE_VAL_NAME)
                                   .flatMap(
@@ -514,6 +506,31 @@ public class ArgumentsTranslator {
                             }
                           }));
     }
+  }
+
+  protected Expression fieldDefinitionToExpression(
+      ObjectType objectType, FieldDefinition fieldDefinition, int level) {
+    if (fieldDefinition.isFunctionField()) {
+      if (fieldDefinition.getType().hasList()) {
+        return new Function()
+            .withName(fieldDefinition.getFunctionNameOrError())
+            .withParameters(
+                graphqlFieldToColumn(
+                    fieldDefinition.getMapWithTypeOrError(),
+                    fieldDefinition.getMapWithToOrError(),
+                    level));
+      }
+      return new Function()
+          .withName(fieldDefinition.getFunctionNameOrError())
+          .withParameters(
+              graphqlFieldToColumn(
+                  objectType.getName(), fieldDefinition.getFunctionFieldOrError(), level));
+    }
+    if (fieldDefinition.getType().hasList()) {
+      return graphqlFieldToColumn(
+          fieldDefinition.getMapWithTypeOrError(), fieldDefinition.getMapWithToOrError(), level);
+    }
+    return graphqlFieldToColumn(objectType.getName(), fieldDefinition.getName(), level);
   }
 
   protected Optional<Expression> cursorArgumentsToExpression(
@@ -699,7 +716,7 @@ public class ArgumentsTranslator {
   }
 
   protected Optional<Expression> valToExpression(
-      Column column, String opr, ValueWithVariable val, boolean skipNull) {
+      Expression column, String opr, ValueWithVariable val, boolean skipNull) {
     if (skipNull && val.isNull()) {
       return Optional.empty();
     }
@@ -750,7 +767,7 @@ public class ArgumentsTranslator {
   }
 
   protected Optional<Expression> arrToExpression(
-      Column column, String opr, InputValue inputValue, ValueWithVariable arr, boolean skipNull) {
+      Expression column, String opr, InputValue inputValue, ValueWithVariable arr, boolean skipNull) {
     if (skipNull && arr.isNull()) {
       return Optional.empty();
     }
@@ -895,7 +912,7 @@ public class ArgumentsTranslator {
     }
   }
 
-  protected Optional<Expression> valToExpression(Column column, String opr) {
+  protected Optional<Expression> valToExpression(Expression column, String opr) {
     Expression where;
     switch (opr) {
       case INPUT_OPERATOR_INPUT_VALUE_NIL:

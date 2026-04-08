@@ -110,34 +110,10 @@ public @interface FileOrderBy {
   Sort idCount() default Sort.ASC;
 
   /**
-   * Max of ID
-   */
-  @Description("Max of ID")
-  Sort idMax() default Sort.ASC;
-
-  /**
-   * Min of ID
-   */
-  @Description("Min of ID")
-  Sort idMin() default Sort.ASC;
-
-  /**
    * Count of 文件名
    */
   @Description("Count of 文件名")
   Sort nameCount() default Sort.ASC;
-
-  /**
-   * Max of 文件名
-   */
-  @Description("Max of 文件名")
-  Sort nameMax() default Sort.ASC;
-
-  /**
-   * Min of 文件名
-   */
-  @Description("Min of 文件名")
-  Sort nameMin() default Sort.ASC;
 
   /**
    * Count of 类型
@@ -146,34 +122,10 @@ public @interface FileOrderBy {
   Sort contentTypeCount() default Sort.ASC;
 
   /**
-   * Max of 类型
-   */
-  @Description("Max of 类型")
-  Sort contentTypeMax() default Sort.ASC;
-
-  /**
-   * Min of 类型
-   */
-  @Description("Min of 类型")
-  Sort contentTypeMin() default Sort.ASC;
-
-  /**
    * Count of 内容
    */
   @Description("Count of 内容")
   Sort contentCount() default Sort.ASC;
-
-  /**
-   * Max of 内容
-   */
-  @Description("Max of 内容")
-  Sort contentMax() default Sort.ASC;
-
-  /**
-   * Min of 内容
-   */
-  @Description("Min of 内容")
-  Sort contentMin() default Sort.ASC;
 
   /**
    * Count of URL
@@ -182,16 +134,64 @@ public @interface FileOrderBy {
   Sort urlCount() default Sort.ASC;
 
   /**
-   * Max of URL
+   * Year of Create Time
    */
-  @Description("Max of URL")
-  Sort urlMax() default Sort.ASC;
+  @Description("Year of Create Time")
+  Sort createTimeYear() default Sort.ASC;
 
   /**
-   * Min of URL
+   * Month of Create Time
    */
-  @Description("Min of URL")
-  Sort urlMin() default Sort.ASC;
+  @Description("Month of Create Time")
+  Sort createTimeMonth() default Sort.ASC;
+
+  /**
+   * Day of Create Time
+   */
+  @Description("Day of Create Time")
+  Sort createTimeDay() default Sort.ASC;
+
+  /**
+   * Week of Create Time
+   */
+  @Description("Week of Create Time")
+  Sort createTimeWeek() default Sort.ASC;
+
+  /**
+   * Quarter of Create Time
+   */
+  @Description("Quarter of Create Time")
+  Sort createTimeQuarter() default Sort.ASC;
+
+  /**
+   * Year of Update Time
+   */
+  @Description("Year of Update Time")
+  Sort updateTimeYear() default Sort.ASC;
+
+  /**
+   * Month of Update Time
+   */
+  @Description("Month of Update Time")
+  Sort updateTimeMonth() default Sort.ASC;
+
+  /**
+   * Day of Update Time
+   */
+  @Description("Day of Update Time")
+  Sort updateTimeDay() default Sort.ASC;
+
+  /**
+   * Week of Update Time
+   */
+  @Description("Week of Update Time")
+  Sort updateTimeWeek() default Sort.ASC;
+
+  /**
+   * Quarter of Update Time
+   */
+  @Description("Quarter of Update Time")
+  Sort updateTimeQuarter() default Sort.ASC;
 
   /**
    * OrderByes
@@ -229,33 +229,33 @@ public @interface FileOrderBy {
 
   String $idCount() default "";
 
-  String $idMax() default "";
-
-  String $idMin() default "";
-
   String $nameCount() default "";
-
-  String $nameMax() default "";
-
-  String $nameMin() default "";
 
   String $contentTypeCount() default "";
 
-  String $contentTypeMax() default "";
-
-  String $contentTypeMin() default "";
-
   String $contentCount() default "";
-
-  String $contentMax() default "";
-
-  String $contentMin() default "";
 
   String $urlCount() default "";
 
-  String $urlMax() default "";
+  String $createTimeYear() default "";
 
-  String $urlMin() default "";
+  String $createTimeMonth() default "";
+
+  String $createTimeDay() default "";
+
+  String $createTimeWeek() default "";
+
+  String $createTimeQuarter() default "";
+
+  String $updateTimeYear() default "";
+
+  String $updateTimeMonth() default "";
+
+  String $updateTimeDay() default "";
+
+  String $updateTimeWeek() default "";
+
+  String $updateTimeQuarter() default "";
 
   String $obs() default "";
 }

@@ -14,7 +14,7 @@ import org.eclipse.microprofile.graphql.Name;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("func")
-@Target({ElementType.FIELD, ElementType.PARAMETER})
+@Target({ElementType.FIELD,ElementType.PARAMETER})
 public @interface Func {
   io.graphoenix.core.dto.enumType.Func name() default io.graphoenix.core.dto.enumType.Func.COUNT;
 

@@ -14,7 +14,7 @@ import org.eclipse.microprofile.graphql.Name;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("rolesAllowed")
-@Target({ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER})
+@Target({ElementType.TYPE,ElementType.FIELD,ElementType.PARAMETER})
 public @interface RolesAllowed {
   String[] roles() default {};
 

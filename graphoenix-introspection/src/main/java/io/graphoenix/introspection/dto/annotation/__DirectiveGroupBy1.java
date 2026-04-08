@@ -22,7 +22,7 @@ public @interface __DirectiveGroupBy1 {
    * Group By Field Names
    */
   @Description("Group By Field Names")
-  String[] fieldNames() default {};
+  String[] by() default {};
 
   /**
    * ofSchema
@@ -49,7 +49,7 @@ public @interface __DirectiveGroupBy1 {
   @Description("OrderByes")
   __DirectiveGroupBy2[] gbs() default {};
 
-  String $fieldNames() default "";
+  String $by() default "";
 
   String $ofSchema() default "";
 

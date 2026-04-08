@@ -146,34 +146,10 @@ public @interface __SchemaOrderBy {
   Sort idCount() default Sort.ASC;
 
   /**
-   * Max of id
-   */
-  @Description("Max of id")
-  Sort idMax() default Sort.ASC;
-
-  /**
-   * Min of id
-   */
-  @Description("Min of id")
-  Sort idMin() default Sort.ASC;
-
-  /**
    * Count of queryType Reference
    */
   @Description("Count of queryType Reference")
   Sort queryTypeNameCount() default Sort.ASC;
-
-  /**
-   * Max of queryType Reference
-   */
-  @Description("Max of queryType Reference")
-  Sort queryTypeNameMax() default Sort.ASC;
-
-  /**
-   * Min of queryType Reference
-   */
-  @Description("Min of queryType Reference")
-  Sort queryTypeNameMin() default Sort.ASC;
 
   /**
    * Count of mutationType Reference
@@ -182,34 +158,70 @@ public @interface __SchemaOrderBy {
   Sort mutationTypeNameCount() default Sort.ASC;
 
   /**
-   * Max of mutationType Reference
-   */
-  @Description("Max of mutationType Reference")
-  Sort mutationTypeNameMax() default Sort.ASC;
-
-  /**
-   * Min of mutationType Reference
-   */
-  @Description("Min of mutationType Reference")
-  Sort mutationTypeNameMin() default Sort.ASC;
-
-  /**
    * Count of subscriptionType Reference
    */
   @Description("Count of subscriptionType Reference")
   Sort subscriptionTypeNameCount() default Sort.ASC;
 
   /**
-   * Max of subscriptionType Reference
+   * Year of Create Time
    */
-  @Description("Max of subscriptionType Reference")
-  Sort subscriptionTypeNameMax() default Sort.ASC;
+  @Description("Year of Create Time")
+  Sort createTimeYear() default Sort.ASC;
 
   /**
-   * Min of subscriptionType Reference
+   * Month of Create Time
    */
-  @Description("Min of subscriptionType Reference")
-  Sort subscriptionTypeNameMin() default Sort.ASC;
+  @Description("Month of Create Time")
+  Sort createTimeMonth() default Sort.ASC;
+
+  /**
+   * Day of Create Time
+   */
+  @Description("Day of Create Time")
+  Sort createTimeDay() default Sort.ASC;
+
+  /**
+   * Week of Create Time
+   */
+  @Description("Week of Create Time")
+  Sort createTimeWeek() default Sort.ASC;
+
+  /**
+   * Quarter of Create Time
+   */
+  @Description("Quarter of Create Time")
+  Sort createTimeQuarter() default Sort.ASC;
+
+  /**
+   * Year of Update Time
+   */
+  @Description("Year of Update Time")
+  Sort updateTimeYear() default Sort.ASC;
+
+  /**
+   * Month of Update Time
+   */
+  @Description("Month of Update Time")
+  Sort updateTimeMonth() default Sort.ASC;
+
+  /**
+   * Day of Update Time
+   */
+  @Description("Day of Update Time")
+  Sort updateTimeDay() default Sort.ASC;
+
+  /**
+   * Week of Update Time
+   */
+  @Description("Week of Update Time")
+  Sort updateTimeWeek() default Sort.ASC;
+
+  /**
+   * Quarter of Update Time
+   */
+  @Description("Quarter of Update Time")
+  Sort updateTimeQuarter() default Sort.ASC;
 
   /**
    * OrderByes
@@ -259,27 +271,31 @@ public @interface __SchemaOrderBy {
 
   String $idCount() default "";
 
-  String $idMax() default "";
-
-  String $idMin() default "";
-
   String $queryTypeNameCount() default "";
-
-  String $queryTypeNameMax() default "";
-
-  String $queryTypeNameMin() default "";
 
   String $mutationTypeNameCount() default "";
 
-  String $mutationTypeNameMax() default "";
-
-  String $mutationTypeNameMin() default "";
-
   String $subscriptionTypeNameCount() default "";
 
-  String $subscriptionTypeNameMax() default "";
+  String $createTimeYear() default "";
 
-  String $subscriptionTypeNameMin() default "";
+  String $createTimeMonth() default "";
+
+  String $createTimeDay() default "";
+
+  String $createTimeWeek() default "";
+
+  String $createTimeQuarter() default "";
+
+  String $updateTimeYear() default "";
+
+  String $updateTimeMonth() default "";
+
+  String $updateTimeDay() default "";
+
+  String $updateTimeWeek() default "";
+
+  String $updateTimeQuarter() default "";
 
   String $obs() default "";
 }

@@ -9,22 +9,30 @@ import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
 
-/** Query Expression Input for Sort */
+/**
+ * Query Expression Input for Sort
+ */
 @CompiledJson
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Query Expression Input for Sort")
 public class SortExpression {
-  /** Operators */
+  /**
+   * Operators
+   */
   @DefaultValue("EQ")
   @Description("Operators")
   private Operator opr = Operator.EQ;
 
-  /** Value */
+  /**
+   * Value
+   */
   @Description("Value")
   private Sort val;
 
-  /** Array */
+  /**
+   * Array
+   */
   @Description("Array")
   private Collection<Sort> arr;
 

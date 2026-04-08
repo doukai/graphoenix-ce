@@ -14,7 +14,7 @@ import org.eclipse.microprofile.graphql.Name;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("tool")
-@Target({ElementType.FIELD, ElementType.TYPE, ElementType.PARAMETER})
+@Target({ElementType.FIELD,ElementType.TYPE,ElementType.PARAMETER})
 public @interface Tool {
   String name() default "";
 

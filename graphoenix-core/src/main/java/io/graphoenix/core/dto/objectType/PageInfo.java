@@ -11,13 +11,17 @@ import org.eclipse.microprofile.graphql.Type;
 @CompiledJson
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 public class PageInfo {
-  @NonNull private Boolean hasNextPage;
+  @NonNull
+  private Boolean hasNextPage;
 
-  @NonNull private Boolean hasPreviousPage;
+  @NonNull
+  private Boolean hasPreviousPage;
 
-  @NonNull private String startCursor;
+  @NonNull
+  private String startCursor;
 
-  @NonNull private String endCursor;
+  @NonNull
+  private String endCursor;
 
   public Boolean getHasNextPage() {
     return this.hasNextPage;

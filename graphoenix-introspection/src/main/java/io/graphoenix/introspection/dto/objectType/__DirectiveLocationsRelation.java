@@ -108,34 +108,10 @@ public class __DirectiveLocationsRelation implements Meta {
   private Integer idCount;
 
   /**
-   * Max of ID
-   */
-  @Description("Max of ID")
-  private Integer idMax;
-
-  /**
-   * Min of ID
-   */
-  @Description("Min of ID")
-  private Integer idMin;
-
-  /**
    * Count of __Directive Reference
    */
   @Description("Count of __Directive Reference")
   private Integer __directiveRefCount;
-
-  /**
-   * Max of __Directive Reference
-   */
-  @Description("Max of __Directive Reference")
-  private String __directiveRefMax;
-
-  /**
-   * Min of __Directive Reference
-   */
-  @Description("Min of __Directive Reference")
-  private String __directiveRefMin;
 
   /**
    * Count of locations Reference
@@ -144,16 +120,64 @@ public class __DirectiveLocationsRelation implements Meta {
   private Integer locationsRefCount;
 
   /**
-   * Max of locations Reference
+   * Year of Create Time
    */
-  @Description("Max of locations Reference")
-  private __DirectiveLocation locationsRefMax;
+  @Description("Year of Create Time")
+  private Integer createTimeYear;
 
   /**
-   * Min of locations Reference
+   * Month of Create Time
    */
-  @Description("Min of locations Reference")
-  private __DirectiveLocation locationsRefMin;
+  @Description("Month of Create Time")
+  private Integer createTimeMonth;
+
+  /**
+   * Day of Create Time
+   */
+  @Description("Day of Create Time")
+  private Integer createTimeDay;
+
+  /**
+   * Week of Create Time
+   */
+  @Description("Week of Create Time")
+  private Integer createTimeWeek;
+
+  /**
+   * Quarter of Create Time
+   */
+  @Description("Quarter of Create Time")
+  private Integer createTimeQuarter;
+
+  /**
+   * Year of Update Time
+   */
+  @Description("Year of Update Time")
+  private Integer updateTimeYear;
+
+  /**
+   * Month of Update Time
+   */
+  @Description("Month of Update Time")
+  private Integer updateTimeMonth;
+
+  /**
+   * Day of Update Time
+   */
+  @Description("Day of Update Time")
+  private Integer updateTimeDay;
+
+  /**
+   * Week of Update Time
+   */
+  @Description("Week of Update Time")
+  private Integer updateTimeWeek;
+
+  /**
+   * Quarter of Update Time
+   */
+  @Description("Quarter of Update Time")
+  private Integer updateTimeQuarter;
 
   @Override
   public String getId() {
@@ -285,44 +309,12 @@ public class __DirectiveLocationsRelation implements Meta {
     this.idCount = idCount;
   }
 
-  public Integer getIdMax() {
-    return this.idMax;
-  }
-
-  public void setIdMax(Integer idMax) {
-    this.idMax = idMax;
-  }
-
-  public Integer getIdMin() {
-    return this.idMin;
-  }
-
-  public void setIdMin(Integer idMin) {
-    this.idMin = idMin;
-  }
-
   public Integer get__directiveRefCount() {
     return this.__directiveRefCount;
   }
 
   public void set__directiveRefCount(Integer __directiveRefCount) {
     this.__directiveRefCount = __directiveRefCount;
-  }
-
-  public String get__directiveRefMax() {
-    return this.__directiveRefMax;
-  }
-
-  public void set__directiveRefMax(String __directiveRefMax) {
-    this.__directiveRefMax = __directiveRefMax;
-  }
-
-  public String get__directiveRefMin() {
-    return this.__directiveRefMin;
-  }
-
-  public void set__directiveRefMin(String __directiveRefMin) {
-    this.__directiveRefMin = __directiveRefMin;
   }
 
   public Integer getLocationsRefCount() {
@@ -333,20 +325,84 @@ public class __DirectiveLocationsRelation implements Meta {
     this.locationsRefCount = locationsRefCount;
   }
 
-  public __DirectiveLocation getLocationsRefMax() {
-    return this.locationsRefMax;
+  public Integer getCreateTimeYear() {
+    return this.createTimeYear;
   }
 
-  public void setLocationsRefMax(__DirectiveLocation locationsRefMax) {
-    this.locationsRefMax = locationsRefMax;
+  public void setCreateTimeYear(Integer createTimeYear) {
+    this.createTimeYear = createTimeYear;
   }
 
-  public __DirectiveLocation getLocationsRefMin() {
-    return this.locationsRefMin;
+  public Integer getCreateTimeMonth() {
+    return this.createTimeMonth;
   }
 
-  public void setLocationsRefMin(__DirectiveLocation locationsRefMin) {
-    this.locationsRefMin = locationsRefMin;
+  public void setCreateTimeMonth(Integer createTimeMonth) {
+    this.createTimeMonth = createTimeMonth;
+  }
+
+  public Integer getCreateTimeDay() {
+    return this.createTimeDay;
+  }
+
+  public void setCreateTimeDay(Integer createTimeDay) {
+    this.createTimeDay = createTimeDay;
+  }
+
+  public Integer getCreateTimeWeek() {
+    return this.createTimeWeek;
+  }
+
+  public void setCreateTimeWeek(Integer createTimeWeek) {
+    this.createTimeWeek = createTimeWeek;
+  }
+
+  public Integer getCreateTimeQuarter() {
+    return this.createTimeQuarter;
+  }
+
+  public void setCreateTimeQuarter(Integer createTimeQuarter) {
+    this.createTimeQuarter = createTimeQuarter;
+  }
+
+  public Integer getUpdateTimeYear() {
+    return this.updateTimeYear;
+  }
+
+  public void setUpdateTimeYear(Integer updateTimeYear) {
+    this.updateTimeYear = updateTimeYear;
+  }
+
+  public Integer getUpdateTimeMonth() {
+    return this.updateTimeMonth;
+  }
+
+  public void setUpdateTimeMonth(Integer updateTimeMonth) {
+    this.updateTimeMonth = updateTimeMonth;
+  }
+
+  public Integer getUpdateTimeDay() {
+    return this.updateTimeDay;
+  }
+
+  public void setUpdateTimeDay(Integer updateTimeDay) {
+    this.updateTimeDay = updateTimeDay;
+  }
+
+  public Integer getUpdateTimeWeek() {
+    return this.updateTimeWeek;
+  }
+
+  public void setUpdateTimeWeek(Integer updateTimeWeek) {
+    this.updateTimeWeek = updateTimeWeek;
+  }
+
+  public Integer getUpdateTimeQuarter() {
+    return this.updateTimeQuarter;
+  }
+
+  public void setUpdateTimeQuarter(Integer updateTimeQuarter) {
+    this.updateTimeQuarter = updateTimeQuarter;
   }
 
   public __DirectiveLocationsRelationInput toInput() {

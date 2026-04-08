@@ -28,9 +28,19 @@ message FileExpressionBase {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    bool not = 15; /* Not */
-    io.graphoenix.core.Conditional cond = 16; /* Condition */
-    repeated FileExpression exs = 17; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    bool not = 25; /* Not */
+    io.graphoenix.core.Conditional cond = 26; /* Condition */
+    repeated FileExpression exs = 27; /* Expressions */
 }
 /**
 * Mutation Input for 文件
@@ -70,9 +80,19 @@ message FileExpression {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    bool not = 15; /* Not */
-    io.graphoenix.core.Conditional cond = 16; /* Condition */
-    repeated FileExpression exs = 17; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    bool not = 25; /* Not */
+    io.graphoenix.core.Conditional cond = 26; /* Condition */
+    repeated FileExpression exs = 27; /* Expressions */
 }
 /**
 * Mutation Input for 文件
@@ -113,20 +133,20 @@ message FileOrderBy {
     io.graphoenix.core.Sort create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.Sort intro_typename = 14; /* Type Name */
     io.graphoenix.core.Sort id_count = 15; /* Count of 文件 */
-    io.graphoenix.core.Sort id_max = 16; /* Max of ID */
-    io.graphoenix.core.Sort id_min = 17; /* Min of ID */
-    io.graphoenix.core.Sort name_count = 18; /* Count of 文件名 */
-    io.graphoenix.core.Sort name_max = 19; /* Max of 文件名 */
-    io.graphoenix.core.Sort name_min = 20; /* Min of 文件名 */
-    io.graphoenix.core.Sort content_type_count = 21; /* Count of 类型 */
-    io.graphoenix.core.Sort content_type_max = 22; /* Max of 类型 */
-    io.graphoenix.core.Sort content_type_min = 23; /* Min of 类型 */
-    io.graphoenix.core.Sort content_count = 24; /* Count of 内容 */
-    io.graphoenix.core.Sort content_max = 25; /* Max of 内容 */
-    io.graphoenix.core.Sort content_min = 26; /* Min of 内容 */
-    io.graphoenix.core.Sort url_count = 27; /* Count of URL */
-    io.graphoenix.core.Sort url_max = 28; /* Max of URL */
-    io.graphoenix.core.Sort url_min = 29; /* Min of URL */
+    io.graphoenix.core.Sort name_count = 16; /* Count of 文件名 */
+    io.graphoenix.core.Sort content_type_count = 17; /* Count of 类型 */
+    io.graphoenix.core.Sort content_count = 18; /* Count of 内容 */
+    io.graphoenix.core.Sort url_count = 19; /* Count of URL */
+    io.graphoenix.core.Sort create_time_year = 20; /* Year of Create Time */
+    io.graphoenix.core.Sort create_time_month = 21; /* Month of Create Time */
+    io.graphoenix.core.Sort create_time_day = 22; /* Day of Create Time */
+    io.graphoenix.core.Sort create_time_week = 23; /* Week of Create Time */
+    io.graphoenix.core.Sort create_time_quarter = 24; /* Quarter of Create Time */
+    io.graphoenix.core.Sort update_time_year = 25; /* Year of Update Time */
+    io.graphoenix.core.Sort update_time_month = 26; /* Month of Update Time */
+    io.graphoenix.core.Sort update_time_day = 27; /* Day of Update Time */
+    io.graphoenix.core.Sort update_time_week = 28; /* Week of Update Time */
+    io.graphoenix.core.Sort update_time_quarter = 29; /* Quarter of Update Time */
     repeated FileOrderBy obs = 30; /* OrderByes */
 }
 /**
@@ -154,9 +174,19 @@ message FileQueryArguments {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    bool not = 15; /* Not */
-    io.graphoenix.core.Conditional cond = 16; /* Condition */
-    repeated FileExpression exs = 17; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    bool not = 25; /* Not */
+    io.graphoenix.core.Conditional cond = 26; /* Condition */
+    repeated FileExpression exs = 27; /* Expressions */
 }
 /**
 * Query Arguments for 文件 List
@@ -176,16 +206,26 @@ message FileListQueryArguments {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    FileOrderBy order_by = 15; /* Order By */
-    FileGroupBy group_by = 16; /* Group By */
-    bool not = 17; /* Not */
-    io.graphoenix.core.Conditional cond = 18; /* Condition */
-    repeated FileExpression exs = 19; /* Expressions */
-    int32 first = 20; /* First */
-    int32 last = 21; /* Last */
-    int32 offset = 22; /* Offset */
-    string after = 23; /* After */
-    string before = 24; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    FileOrderBy order_by = 25; /* Order By */
+    FileGroupBy group_by = 26; /* Group By */
+    bool not = 27; /* Not */
+    io.graphoenix.core.Conditional cond = 28; /* Condition */
+    repeated FileExpression exs = 29; /* Expressions */
+    int32 first = 30; /* First */
+    int32 last = 31; /* Last */
+    int32 offset = 32; /* Offset */
+    string after = 33; /* After */
+    string before = 34; /* Before */
 }
 /**
 * Query Arguments for 文件 Connection
@@ -205,16 +245,26 @@ message FileConnectionQueryArguments {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    FileOrderBy order_by = 15; /* Order By */
-    FileGroupBy group_by = 16; /* Group By */
-    bool not = 17; /* Not */
-    io.graphoenix.core.Conditional cond = 18; /* Condition */
-    repeated FileExpression exs = 19; /* Expressions */
-    int32 first = 20; /* First */
-    int32 last = 21; /* Last */
-    int32 offset = 22; /* Offset */
-    string after = 23; /* After */
-    string before = 24; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    FileOrderBy order_by = 25; /* Order By */
+    FileGroupBy group_by = 26; /* Group By */
+    bool not = 27; /* Not */
+    io.graphoenix.core.Conditional cond = 28; /* Condition */
+    repeated FileExpression exs = 29; /* Expressions */
+    int32 first = 30; /* First */
+    int32 last = 31; /* Last */
+    int32 offset = 32; /* Offset */
+    string after = 33; /* After */
+    string before = 34; /* Before */
 }
 /**
 * Mutation Arguments for 文件
@@ -276,9 +326,19 @@ message FileSubscriptionArguments {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    bool not = 15; /* Not */
-    io.graphoenix.core.Conditional cond = 16; /* Condition */
-    repeated FileExpression exs = 17; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    bool not = 25; /* Not */
+    io.graphoenix.core.Conditional cond = 26; /* Condition */
+    repeated FileExpression exs = 27; /* Expressions */
 }
 /**
 * Subscription Arguments for 文件 List
@@ -298,16 +358,26 @@ message FileListSubscriptionArguments {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    FileOrderBy order_by = 15; /* Order By */
-    FileGroupBy group_by = 16; /* Group By */
-    bool not = 17; /* Not */
-    io.graphoenix.core.Conditional cond = 18; /* Condition */
-    repeated FileExpression exs = 19; /* Expressions */
-    int32 first = 20; /* First */
-    int32 last = 21; /* Input List */
-    int32 offset = 22; /* Offset */
-    string after = 23; /* After */
-    string before = 24; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    FileOrderBy order_by = 25; /* Order By */
+    FileGroupBy group_by = 26; /* Group By */
+    bool not = 27; /* Not */
+    io.graphoenix.core.Conditional cond = 28; /* Condition */
+    repeated FileExpression exs = 29; /* Expressions */
+    int32 first = 30; /* First */
+    int32 last = 31; /* Input List */
+    int32 offset = 32; /* Offset */
+    string after = 33; /* After */
+    string before = 34; /* Before */
 }
 /**
 * Subscription Arguments for 文件 List
@@ -327,16 +397,26 @@ message FileConnectionSubscriptionArguments {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    FileOrderBy order_by = 15; /* Order By */
-    FileGroupBy group_by = 16; /* Order By */
-    bool not = 17; /* Not */
-    io.graphoenix.core.Conditional cond = 18; /* Condition */
-    repeated FileExpression exs = 19; /* Expressions */
-    int32 first = 20; /* First */
-    int32 last = 21; /* Last */
-    int32 offset = 22; /* Offset */
-    string after = 23; /* After */
-    string before = 24; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    FileOrderBy order_by = 25; /* Order By */
+    FileGroupBy group_by = 26; /* Order By */
+    bool not = 27; /* Not */
+    io.graphoenix.core.Conditional cond = 28; /* Condition */
+    repeated FileExpression exs = 29; /* Expressions */
+    int32 first = 30; /* First */
+    int32 last = 31; /* Last */
+    int32 offset = 32; /* Offset */
+    string after = 33; /* After */
+    string before = 34; /* Before */
 }
 message Mutation_singleUpload_Arguments {
     string file = 1;

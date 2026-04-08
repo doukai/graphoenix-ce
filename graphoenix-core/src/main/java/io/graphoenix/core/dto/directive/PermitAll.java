@@ -14,7 +14,7 @@ import org.eclipse.microprofile.graphql.Name;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("permitAll")
-@Target({ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER})
+@Target({ElementType.TYPE,ElementType.FIELD,ElementType.PARAMETER})
 public @interface PermitAll {
   @Name("package")
   String _package() default "io.graphoenix.core";

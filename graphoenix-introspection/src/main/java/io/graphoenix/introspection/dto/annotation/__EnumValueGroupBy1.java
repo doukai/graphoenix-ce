@@ -22,7 +22,7 @@ public @interface __EnumValueGroupBy1 {
    * Group By Field Names
    */
   @Description("Group By Field Names")
-  String[] fieldNames() default {};
+  String[] by() default {};
 
   /**
    * ofType
@@ -36,7 +36,7 @@ public @interface __EnumValueGroupBy1 {
   @Description("OrderByes")
   __EnumValueGroupBy2[] gbs() default {};
 
-  String $fieldNames() default "";
+  String $by() default "";
 
   String $ofType() default "";
 

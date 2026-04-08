@@ -16,7 +16,7 @@ import org.eclipse.microprofile.graphql.Name;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("fetch")
-@Target({ElementType.FIELD, ElementType.PARAMETER})
+@Target({ElementType.FIELD,ElementType.PARAMETER})
 public @interface Fetch {
   Protocol protocol() default Protocol.LOCAL;
 

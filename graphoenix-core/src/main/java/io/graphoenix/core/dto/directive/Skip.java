@@ -14,7 +14,7 @@ import org.eclipse.microprofile.graphql.Name;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("skip")
-@Target({ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.PARAMETER})
+@Target({ElementType.CONSTRUCTOR,ElementType.METHOD,ElementType.PARAMETER})
 public @interface Skip {
   @Name("if")
   boolean _if() default true;

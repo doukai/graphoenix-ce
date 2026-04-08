@@ -11,22 +11,30 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/** Query Expression Input for Sort */
+/**
+ * Query Expression Input for Sort
+ */
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Query Expression Input for Sort")
 public @interface SortExpression {
-  /** Operators */
+  /**
+   * Operators
+   */
   @Description("Operators")
   Operator opr() default Operator.EQ;
 
-  /** Value */
+  /**
+   * Value
+   */
   @Description("Value")
   Sort val() default Sort.ASC;
 
-  /** Array */
+  /**
+   * Array
+   */
   @Description("Array")
   Sort[] arr() default {};
 

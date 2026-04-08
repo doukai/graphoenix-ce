@@ -22,7 +22,7 @@ public @interface __DirectiveLocationsRelationGroupBy1 {
    * Group By Field Names
    */
   @Description("Group By Field Names")
-  String[] fieldNames() default {};
+  String[] by() default {};
 
   /**
    * __Directive
@@ -36,7 +36,7 @@ public @interface __DirectiveLocationsRelationGroupBy1 {
   @Description("OrderByes")
   __DirectiveLocationsRelationGroupBy2[] gbs() default {};
 
-  String $fieldNames() default "";
+  String $by() default "";
 
   String $__directive() default "";
 

@@ -110,34 +110,10 @@ public @interface __TypePossibleTypesOrderBy1 {
   Sort idCount() default Sort.ASC;
 
   /**
-   * Max of ID
-   */
-  @Description("Max of ID")
-  Sort idMax() default Sort.ASC;
-
-  /**
-   * Min of ID
-   */
-  @Description("Min of ID")
-  Sort idMin() default Sort.ASC;
-
-  /**
    * Count of __Type Reference
    */
   @Description("Count of __Type Reference")
   Sort typeRefCount() default Sort.ASC;
-
-  /**
-   * Max of __Type Reference
-   */
-  @Description("Max of __Type Reference")
-  Sort typeRefMax() default Sort.ASC;
-
-  /**
-   * Min of __Type Reference
-   */
-  @Description("Min of __Type Reference")
-  Sort typeRefMin() default Sort.ASC;
 
   /**
    * Count of __Type Reference
@@ -146,16 +122,64 @@ public @interface __TypePossibleTypesOrderBy1 {
   Sort possibleTypeRefCount() default Sort.ASC;
 
   /**
-   * Max of __Type Reference
+   * Year of Create Time
    */
-  @Description("Max of __Type Reference")
-  Sort possibleTypeRefMax() default Sort.ASC;
+  @Description("Year of Create Time")
+  Sort createTimeYear() default Sort.ASC;
 
   /**
-   * Min of __Type Reference
+   * Month of Create Time
    */
-  @Description("Min of __Type Reference")
-  Sort possibleTypeRefMin() default Sort.ASC;
+  @Description("Month of Create Time")
+  Sort createTimeMonth() default Sort.ASC;
+
+  /**
+   * Day of Create Time
+   */
+  @Description("Day of Create Time")
+  Sort createTimeDay() default Sort.ASC;
+
+  /**
+   * Week of Create Time
+   */
+  @Description("Week of Create Time")
+  Sort createTimeWeek() default Sort.ASC;
+
+  /**
+   * Quarter of Create Time
+   */
+  @Description("Quarter of Create Time")
+  Sort createTimeQuarter() default Sort.ASC;
+
+  /**
+   * Year of Update Time
+   */
+  @Description("Year of Update Time")
+  Sort updateTimeYear() default Sort.ASC;
+
+  /**
+   * Month of Update Time
+   */
+  @Description("Month of Update Time")
+  Sort updateTimeMonth() default Sort.ASC;
+
+  /**
+   * Day of Update Time
+   */
+  @Description("Day of Update Time")
+  Sort updateTimeDay() default Sort.ASC;
+
+  /**
+   * Week of Update Time
+   */
+  @Description("Week of Update Time")
+  Sort updateTimeWeek() default Sort.ASC;
+
+  /**
+   * Quarter of Update Time
+   */
+  @Description("Quarter of Update Time")
+  Sort updateTimeQuarter() default Sort.ASC;
 
   /**
    * OrderByes
@@ -193,21 +217,29 @@ public @interface __TypePossibleTypesOrderBy1 {
 
   String $idCount() default "";
 
-  String $idMax() default "";
-
-  String $idMin() default "";
-
   String $typeRefCount() default "";
-
-  String $typeRefMax() default "";
-
-  String $typeRefMin() default "";
 
   String $possibleTypeRefCount() default "";
 
-  String $possibleTypeRefMax() default "";
+  String $createTimeYear() default "";
 
-  String $possibleTypeRefMin() default "";
+  String $createTimeMonth() default "";
+
+  String $createTimeDay() default "";
+
+  String $createTimeWeek() default "";
+
+  String $createTimeQuarter() default "";
+
+  String $updateTimeYear() default "";
+
+  String $updateTimeMonth() default "";
+
+  String $updateTimeDay() default "";
+
+  String $updateTimeWeek() default "";
+
+  String $updateTimeQuarter() default "";
 
   String $obs() default "";
 }

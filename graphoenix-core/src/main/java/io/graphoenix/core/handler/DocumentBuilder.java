@@ -1080,7 +1080,12 @@ public class DocumentBuilder {
         .filter(fieldDefinition -> !fieldDefinition.isConnectionField())
         .filter(
             fieldDefinition ->
-                inputType.equals(InputType.ORDER_BY) || !fieldDefinition.isFunctionField())
+                inputType.equals(InputType.ORDER_BY)
+                    || ((inputType.equals(InputType.EXPRESSION)
+                            || inputType.equals(InputType.QUERY_ARGUMENTS)
+                            || inputType.equals(InputType.SUBSCRIPTION_ARGUMENTS))
+                        && !fieldDefinition.isGroupFunctionField())
+                    || !fieldDefinition.isFunctionField())
         .filter(
             fieldDefinition ->
                 inputType.equals(InputType.ORDER_BY) || !fieldDefinition.isAggregateField())
@@ -1410,7 +1415,7 @@ public class DocumentBuilder {
     InputObjectType inputObjectType =
         new InputObjectType(fieldsType.getName() + InputType.GROUP_BY)
             .addInputValue(
-                new InputValue(INPUT_VALUE_GROUP_BY_FIELD_NAMES_NAME)
+                new InputValue(INPUT_VALUE_BY_NAME)
                     .setType(new ListType(new NonNullType(new TypeName(SCALA_STRING_NAME))))
                     .setDescription(descriptionConfig.getGroupByFieldNamesArgument()))
             .addInputValues(buildInputValuesFromObjectType(fieldsType, InputType.GROUP_BY))
@@ -1885,46 +1890,30 @@ public class DocumentBuilder {
             .filter(
                 fieldDefinition ->
                     fieldDefinition.getName().equals(FIELD_ID_NAME)
+                        || fieldDefinition.getType().getTypeName().getName().equals(SCALA_DATE_NAME)
+                        || fieldDefinition
+                            .getType()
+                            .getTypeName()
+                            .getName()
+                            .equals(SCALA_DATE_TIME_NAME)
+                        || fieldDefinition
+                            .getType()
+                            .getTypeName()
+                            .getName()
+                            .equals(SCALA_TIMESTAMP_NAME)
                         || !documentManager.isMetaInterfaceField(fieldDefinition))
             .filter(fieldDefinition -> !fieldDefinition.getType().hasList())
             .collect(Collectors.toList());
 
-    return Stream.concat(
+    return Streams.concat(
             fieldDefinitions.stream()
                 .filter(
                     fieldDefinition ->
                         fieldDefinition.getType().getTypeName().getName().equals(SCALA_ID_NAME)
-                            || fieldDefinition
-                                .getType()
-                                .getTypeName()
-                                .getName()
-                                .equals(SCALA_STRING_NAME)
-                            || fieldDefinition
-                                .getType()
-                                .getTypeName()
-                                .getName()
-                                .equals(SCALA_DATE_NAME)
-                            || fieldDefinition
-                                .getType()
-                                .getTypeName()
-                                .getName()
-                                .equals(SCALA_TIME_NAME)
-                            || fieldDefinition
-                                .getType()
-                                .getTypeName()
-                                .getName()
-                                .equals(SCALA_DATE_TIME_NAME)
-                            || fieldDefinition
-                                .getType()
-                                .getTypeName()
-                                .getName()
-                                .equals(SCALA_TIMESTAMP_NAME)
-                            || fieldDefinition
-                                .getType()
-                                .getTypeName()
-                                .getName()
-                                .equals(SCALA_UPLOAD_NAME)
-                            || documentManager.getFieldTypeDefinition(fieldDefinition).isEnum())
+                            || !documentManager.isMetaInterfaceField(fieldDefinition))
+                .filter(
+                    fieldDefinition ->
+                        documentManager.getFieldTypeDefinition(fieldDefinition).isLeaf())
                 .flatMap(
                     fieldDefinition ->
                         Stream.of(
@@ -1945,7 +1934,50 @@ public class DocumentBuilder {
                                             ? Optional.ofNullable(objectType.getDescription())
                                                 .orElseGet(objectType::getName)
                                             : Optional.ofNullable(fieldDefinition.getDescription())
-                                                .orElseGet(fieldDefinition::getName))),
+                                                .orElseGet(fieldDefinition::getName))))),
+            fieldDefinitions.stream()
+                .filter(fieldDefinition -> !documentManager.isMetaInterfaceField(fieldDefinition))
+                .filter(
+                    fieldDefinition ->
+                        fieldDefinition.getType().getTypeName().getName().equals(SCALA_INT_NAME)
+                            || fieldDefinition
+                                .getType()
+                                .getTypeName()
+                                .getName()
+                                .equals(SCALA_FLOAT_NAME)
+                            || fieldDefinition
+                                .getType()
+                                .getTypeName()
+                                .getName()
+                                .equals(SCALA_BIG_INTEGER_NAME)
+                            || fieldDefinition
+                                .getType()
+                                .getTypeName()
+                                .getName()
+                                .equals(SCALA_BIG_DECIMAL_NAME)
+                            || fieldDefinition
+                                .getType()
+                                .getTypeName()
+                                .getName()
+                                .equals(SCALA_DATE_NAME)
+                            || fieldDefinition
+                                .getType()
+                                .getTypeName()
+                                .getName()
+                                .equals(SCALA_TIME_NAME)
+                            || fieldDefinition
+                                .getType()
+                                .getTypeName()
+                                .getName()
+                                .equals(SCALA_DATE_TIME_NAME)
+                            || fieldDefinition
+                                .getType()
+                                .getTypeName()
+                                .getName()
+                                .equals(SCALA_TIMESTAMP_NAME))
+                .flatMap(
+                    fieldDefinition ->
+                        Stream.of(
                             Function.MAX
                                 .toField(
                                     fieldDefinition.getName(),
@@ -1969,6 +2001,7 @@ public class DocumentBuilder {
                                         Optional.ofNullable(fieldDefinition.getDescription())
                                             .orElseGet(fieldDefinition::getName))))),
             fieldDefinitions.stream()
+                .filter(fieldDefinition -> !documentManager.isMetaInterfaceField(fieldDefinition))
                 .filter(
                     fieldDefinition ->
                         fieldDefinition.getType().getTypeName().getName().equals(SCALA_INT_NAME)
@@ -1991,28 +2024,17 @@ public class DocumentBuilder {
                     fieldDefinition ->
                         Stream.of(
                             (FieldDefinition)
-                                Function.COUNT
+                                Function.SUM
                                     .toField(
                                         fieldDefinition.getName(),
-                                        SCALA_INT_NAME,
+                                        fieldDefinition.getTypeNameWithoutID(),
                                         fieldDefinition.getTypeNameWithoutID(),
                                         fieldDefinition.getType().hasList())
                                     .setDescription(
                                         String.format(
-                                            descriptionConfig.getCountField(),
+                                            descriptionConfig.getSumField(),
                                             Optional.ofNullable(fieldDefinition.getDescription())
                                                 .orElseGet(fieldDefinition::getName))),
-                            Function.SUM
-                                .toField(
-                                    fieldDefinition.getName(),
-                                    fieldDefinition.getTypeNameWithoutID(),
-                                    fieldDefinition.getTypeNameWithoutID(),
-                                    fieldDefinition.getType().hasList())
-                                .setDescription(
-                                    String.format(
-                                        descriptionConfig.getSumField(),
-                                        Optional.ofNullable(fieldDefinition.getDescription())
-                                            .orElseGet(fieldDefinition::getName))),
                             Function.AVG
                                 .toField(
                                     fieldDefinition.getName(),
@@ -2023,27 +2045,77 @@ public class DocumentBuilder {
                                     String.format(
                                         descriptionConfig.getAvgField(),
                                         Optional.ofNullable(fieldDefinition.getDescription())
-                                            .orElseGet(fieldDefinition::getName))),
-                            Function.MAX
+                                            .orElseGet(fieldDefinition::getName))))),
+            fieldDefinitions.stream()
+                .filter(
+                    fieldDefinition ->
+                        fieldDefinition.getType().getTypeName().getName().equals(SCALA_DATE_NAME)
+                            || fieldDefinition
+                                .getType()
+                                .getTypeName()
+                                .getName()
+                                .equals(SCALA_DATE_TIME_NAME)
+                            || fieldDefinition
+                                .getType()
+                                .getTypeName()
+                                .getName()
+                                .equals(SCALA_TIMESTAMP_NAME))
+                .flatMap(
+                    fieldDefinition ->
+                        Stream.of(
+                            Function.YEAR
                                 .toField(
                                     fieldDefinition.getName(),
-                                    fieldDefinition.getTypeNameWithoutID(),
+                                    SCALA_INT_NAME,
                                     fieldDefinition.getTypeNameWithoutID(),
                                     fieldDefinition.getType().hasList())
                                 .setDescription(
                                     String.format(
-                                        descriptionConfig.getMaxField(),
+                                        descriptionConfig.getYearField(),
                                         Optional.ofNullable(fieldDefinition.getDescription())
                                             .orElseGet(fieldDefinition::getName))),
-                            Function.MIN
+                            Function.MONTH
                                 .toField(
                                     fieldDefinition.getName(),
-                                    fieldDefinition.getTypeNameWithoutID(),
+                                    SCALA_INT_NAME,
                                     fieldDefinition.getTypeNameWithoutID(),
                                     fieldDefinition.getType().hasList())
                                 .setDescription(
                                     String.format(
-                                        descriptionConfig.getMinField(),
+                                        descriptionConfig.getMonthField(),
+                                        Optional.ofNullable(fieldDefinition.getDescription())
+                                            .orElseGet(fieldDefinition::getName))),
+                            Function.DAY
+                                .toField(
+                                    fieldDefinition.getName(),
+                                    SCALA_INT_NAME,
+                                    fieldDefinition.getTypeNameWithoutID(),
+                                    fieldDefinition.getType().hasList())
+                                .setDescription(
+                                    String.format(
+                                        descriptionConfig.getDayField(),
+                                        Optional.ofNullable(fieldDefinition.getDescription())
+                                            .orElseGet(fieldDefinition::getName))),
+                            Function.WEEK
+                                .toField(
+                                    fieldDefinition.getName(),
+                                    SCALA_INT_NAME,
+                                    fieldDefinition.getTypeNameWithoutID(),
+                                    fieldDefinition.getType().hasList())
+                                .setDescription(
+                                    String.format(
+                                        descriptionConfig.getWeekField(),
+                                        Optional.ofNullable(fieldDefinition.getDescription())
+                                            .orElseGet(fieldDefinition::getName))),
+                            Function.QUARTER
+                                .toField(
+                                    fieldDefinition.getName(),
+                                    SCALA_INT_NAME,
+                                    fieldDefinition.getTypeNameWithoutID(),
+                                    fieldDefinition.getType().hasList())
+                                .setDescription(
+                                    String.format(
+                                        descriptionConfig.getQuarterField(),
                                         Optional.ofNullable(fieldDefinition.getDescription())
                                             .orElseGet(fieldDefinition::getName))))))
         .collect(Collectors.toList());
@@ -2990,7 +3062,12 @@ public class DocumentBuilder {
     SUM(SUFFIX_SUM),
     AVG(SUFFIX_AVG),
     MAX(SUFFIX_MAX),
-    MIN(SUFFIX_MIN);
+    MIN(SUFFIX_MIN),
+    YEAR(SUFFIX_YEAR),
+    MONTH(SUFFIX_MONTH),
+    DAY(SUFFIX_DAY),
+    WEEK(SUFFIX_WEEK),
+    QUARTER(SUFFIX_QUARTER);
 
     private final String name;
 

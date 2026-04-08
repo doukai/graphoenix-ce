@@ -106,34 +106,10 @@ public class FileOrderBy {
   private Sort idCount;
 
   /**
-   * Max of ID
-   */
-  @Description("Max of ID")
-  private Sort idMax;
-
-  /**
-   * Min of ID
-   */
-  @Description("Min of ID")
-  private Sort idMin;
-
-  /**
    * Count of 文件名
    */
   @Description("Count of 文件名")
   private Sort nameCount;
-
-  /**
-   * Max of 文件名
-   */
-  @Description("Max of 文件名")
-  private Sort nameMax;
-
-  /**
-   * Min of 文件名
-   */
-  @Description("Min of 文件名")
-  private Sort nameMin;
 
   /**
    * Count of 类型
@@ -142,34 +118,10 @@ public class FileOrderBy {
   private Sort contentTypeCount;
 
   /**
-   * Max of 类型
-   */
-  @Description("Max of 类型")
-  private Sort contentTypeMax;
-
-  /**
-   * Min of 类型
-   */
-  @Description("Min of 类型")
-  private Sort contentTypeMin;
-
-  /**
    * Count of 内容
    */
   @Description("Count of 内容")
   private Sort contentCount;
-
-  /**
-   * Max of 内容
-   */
-  @Description("Max of 内容")
-  private Sort contentMax;
-
-  /**
-   * Min of 内容
-   */
-  @Description("Min of 内容")
-  private Sort contentMin;
 
   /**
    * Count of URL
@@ -178,16 +130,64 @@ public class FileOrderBy {
   private Sort urlCount;
 
   /**
-   * Max of URL
+   * Year of Create Time
    */
-  @Description("Max of URL")
-  private Sort urlMax;
+  @Description("Year of Create Time")
+  private Sort createTimeYear;
 
   /**
-   * Min of URL
+   * Month of Create Time
    */
-  @Description("Min of URL")
-  private Sort urlMin;
+  @Description("Month of Create Time")
+  private Sort createTimeMonth;
+
+  /**
+   * Day of Create Time
+   */
+  @Description("Day of Create Time")
+  private Sort createTimeDay;
+
+  /**
+   * Week of Create Time
+   */
+  @Description("Week of Create Time")
+  private Sort createTimeWeek;
+
+  /**
+   * Quarter of Create Time
+   */
+  @Description("Quarter of Create Time")
+  private Sort createTimeQuarter;
+
+  /**
+   * Year of Update Time
+   */
+  @Description("Year of Update Time")
+  private Sort updateTimeYear;
+
+  /**
+   * Month of Update Time
+   */
+  @Description("Month of Update Time")
+  private Sort updateTimeMonth;
+
+  /**
+   * Day of Update Time
+   */
+  @Description("Day of Update Time")
+  private Sort updateTimeDay;
+
+  /**
+   * Week of Update Time
+   */
+  @Description("Week of Update Time")
+  private Sort updateTimeWeek;
+
+  /**
+   * Quarter of Update Time
+   */
+  @Description("Quarter of Update Time")
+  private Sort updateTimeQuarter;
 
   /**
    * OrderByes
@@ -315,44 +315,12 @@ public class FileOrderBy {
     this.idCount = idCount;
   }
 
-  public Sort getIdMax() {
-    return this.idMax;
-  }
-
-  public void setIdMax(Sort idMax) {
-    this.idMax = idMax;
-  }
-
-  public Sort getIdMin() {
-    return this.idMin;
-  }
-
-  public void setIdMin(Sort idMin) {
-    this.idMin = idMin;
-  }
-
   public Sort getNameCount() {
     return this.nameCount;
   }
 
   public void setNameCount(Sort nameCount) {
     this.nameCount = nameCount;
-  }
-
-  public Sort getNameMax() {
-    return this.nameMax;
-  }
-
-  public void setNameMax(Sort nameMax) {
-    this.nameMax = nameMax;
-  }
-
-  public Sort getNameMin() {
-    return this.nameMin;
-  }
-
-  public void setNameMin(Sort nameMin) {
-    this.nameMin = nameMin;
   }
 
   public Sort getContentTypeCount() {
@@ -363,44 +331,12 @@ public class FileOrderBy {
     this.contentTypeCount = contentTypeCount;
   }
 
-  public Sort getContentTypeMax() {
-    return this.contentTypeMax;
-  }
-
-  public void setContentTypeMax(Sort contentTypeMax) {
-    this.contentTypeMax = contentTypeMax;
-  }
-
-  public Sort getContentTypeMin() {
-    return this.contentTypeMin;
-  }
-
-  public void setContentTypeMin(Sort contentTypeMin) {
-    this.contentTypeMin = contentTypeMin;
-  }
-
   public Sort getContentCount() {
     return this.contentCount;
   }
 
   public void setContentCount(Sort contentCount) {
     this.contentCount = contentCount;
-  }
-
-  public Sort getContentMax() {
-    return this.contentMax;
-  }
-
-  public void setContentMax(Sort contentMax) {
-    this.contentMax = contentMax;
-  }
-
-  public Sort getContentMin() {
-    return this.contentMin;
-  }
-
-  public void setContentMin(Sort contentMin) {
-    this.contentMin = contentMin;
   }
 
   public Sort getUrlCount() {
@@ -411,20 +347,84 @@ public class FileOrderBy {
     this.urlCount = urlCount;
   }
 
-  public Sort getUrlMax() {
-    return this.urlMax;
+  public Sort getCreateTimeYear() {
+    return this.createTimeYear;
   }
 
-  public void setUrlMax(Sort urlMax) {
-    this.urlMax = urlMax;
+  public void setCreateTimeYear(Sort createTimeYear) {
+    this.createTimeYear = createTimeYear;
   }
 
-  public Sort getUrlMin() {
-    return this.urlMin;
+  public Sort getCreateTimeMonth() {
+    return this.createTimeMonth;
   }
 
-  public void setUrlMin(Sort urlMin) {
-    this.urlMin = urlMin;
+  public void setCreateTimeMonth(Sort createTimeMonth) {
+    this.createTimeMonth = createTimeMonth;
+  }
+
+  public Sort getCreateTimeDay() {
+    return this.createTimeDay;
+  }
+
+  public void setCreateTimeDay(Sort createTimeDay) {
+    this.createTimeDay = createTimeDay;
+  }
+
+  public Sort getCreateTimeWeek() {
+    return this.createTimeWeek;
+  }
+
+  public void setCreateTimeWeek(Sort createTimeWeek) {
+    this.createTimeWeek = createTimeWeek;
+  }
+
+  public Sort getCreateTimeQuarter() {
+    return this.createTimeQuarter;
+  }
+
+  public void setCreateTimeQuarter(Sort createTimeQuarter) {
+    this.createTimeQuarter = createTimeQuarter;
+  }
+
+  public Sort getUpdateTimeYear() {
+    return this.updateTimeYear;
+  }
+
+  public void setUpdateTimeYear(Sort updateTimeYear) {
+    this.updateTimeYear = updateTimeYear;
+  }
+
+  public Sort getUpdateTimeMonth() {
+    return this.updateTimeMonth;
+  }
+
+  public void setUpdateTimeMonth(Sort updateTimeMonth) {
+    this.updateTimeMonth = updateTimeMonth;
+  }
+
+  public Sort getUpdateTimeDay() {
+    return this.updateTimeDay;
+  }
+
+  public void setUpdateTimeDay(Sort updateTimeDay) {
+    this.updateTimeDay = updateTimeDay;
+  }
+
+  public Sort getUpdateTimeWeek() {
+    return this.updateTimeWeek;
+  }
+
+  public void setUpdateTimeWeek(Sort updateTimeWeek) {
+    this.updateTimeWeek = updateTimeWeek;
+  }
+
+  public Sort getUpdateTimeQuarter() {
+    return this.updateTimeQuarter;
+  }
+
+  public void setUpdateTimeQuarter(Sort updateTimeQuarter) {
+    this.updateTimeQuarter = updateTimeQuarter;
   }
 
   public Collection<FileOrderBy> getObs() {

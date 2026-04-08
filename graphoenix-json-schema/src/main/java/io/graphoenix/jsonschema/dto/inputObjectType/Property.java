@@ -9,9 +9,10 @@ import org.eclipse.microprofile.graphql.NonNull;
 
 @CompiledJson
 @Input
-@Generated("io.graphoenix.java.builder.TypeSpecBuilder_Proxy")
+@Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 public class Property {
-  @NonNull private String name;
+  @NonNull
+  private String name;
 
   private JsonSchema validation;
 

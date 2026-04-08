@@ -93,6 +93,16 @@ public class DescriptionConfig {
 
   @Optional private String minField = "Min of %s";
 
+  @Optional private String yearField = "Year of %s";
+
+  @Optional private String monthField = "Month of %s";
+
+  @Optional private String dayField = "Day of %s";
+
+  @Optional private String weekField = "Week of %s";
+
+  @Optional private String quarterField = "Quarter of %s";
+
   @Optional private String versionField = "Version";
 
   @Optional private String realmIdField = "Realm ID";
@@ -491,6 +501,46 @@ public class DescriptionConfig {
 
   public void setMinField(String minField) {
     this.minField = minField;
+  }
+
+  public String getYearField() {
+    return yearField;
+  }
+
+  public void setYearField(String yearField) {
+    this.yearField = yearField;
+  }
+
+  public String getMonthField() {
+    return monthField;
+  }
+
+  public void setMonthField(String monthField) {
+    this.monthField = monthField;
+  }
+
+  public String getDayField() {
+    return dayField;
+  }
+
+  public void setDayField(String dayField) {
+    this.dayField = dayField;
+  }
+
+  public String getWeekField() {
+    return weekField;
+  }
+
+  public void setWeekField(String weekField) {
+    this.weekField = weekField;
+  }
+
+  public String getQuarterField() {
+    return quarterField;
+  }
+
+  public void setQuarterField(String quarterField) {
+    this.quarterField = quarterField;
   }
 
   public String getVersionField() {

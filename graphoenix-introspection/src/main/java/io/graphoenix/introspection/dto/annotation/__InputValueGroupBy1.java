@@ -22,7 +22,7 @@ public @interface __InputValueGroupBy1 {
    * Group By Field Names
    */
   @Description("Group By Field Names")
-  String[] fieldNames() default {};
+  String[] by() default {};
 
   /**
    * ofType
@@ -42,7 +42,7 @@ public @interface __InputValueGroupBy1 {
   @Description("OrderByes")
   __InputValueGroupBy2[] gbs() default {};
 
-  String $fieldNames() default "";
+  String $by() default "";
 
   String $ofType() default "";
 

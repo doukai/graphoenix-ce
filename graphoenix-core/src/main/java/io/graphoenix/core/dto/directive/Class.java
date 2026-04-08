@@ -14,7 +14,7 @@ import org.eclipse.microprofile.graphql.Name;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("class")
-@Target({ElementType.TYPE, ElementType.PARAMETER})
+@Target({ElementType.TYPE,ElementType.PARAMETER})
 public @interface Class {
   String name() default "";
 

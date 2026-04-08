@@ -14,7 +14,7 @@ import org.eclipse.microprofile.graphql.Name;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("hide")
-@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
+@Target({ElementType.FIELD,ElementType.METHOD,ElementType.PARAMETER})
 public @interface Hide {
   @Name("package")
   String _package() default "io.graphoenix.core";

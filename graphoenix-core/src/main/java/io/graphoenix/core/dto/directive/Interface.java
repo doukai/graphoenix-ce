@@ -14,7 +14,7 @@ import org.eclipse.microprofile.graphql.Name;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Directive("interface")
-@Target({ElementType.TYPE, ElementType.PARAMETER})
+@Target({ElementType.TYPE,ElementType.PARAMETER})
 public @interface Interface {
   @Name("package")
   String _package() default "io.graphoenix.core";

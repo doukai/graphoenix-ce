@@ -139,34 +139,10 @@ public class __Schema implements Meta {
   private Integer idCount;
 
   /**
-   * Max of id
-   */
-  @Description("Max of id")
-  private Integer idMax;
-
-  /**
-   * Min of id
-   */
-  @Description("Min of id")
-  private Integer idMin;
-
-  /**
    * Count of queryType Reference
    */
   @Description("Count of queryType Reference")
   private Integer queryTypeNameCount;
-
-  /**
-   * Max of queryType Reference
-   */
-  @Description("Max of queryType Reference")
-  private String queryTypeNameMax;
-
-  /**
-   * Min of queryType Reference
-   */
-  @Description("Min of queryType Reference")
-  private String queryTypeNameMin;
 
   /**
    * Count of mutationType Reference
@@ -175,34 +151,70 @@ public class __Schema implements Meta {
   private Integer mutationTypeNameCount;
 
   /**
-   * Max of mutationType Reference
-   */
-  @Description("Max of mutationType Reference")
-  private String mutationTypeNameMax;
-
-  /**
-   * Min of mutationType Reference
-   */
-  @Description("Min of mutationType Reference")
-  private String mutationTypeNameMin;
-
-  /**
    * Count of subscriptionType Reference
    */
   @Description("Count of subscriptionType Reference")
   private Integer subscriptionTypeNameCount;
 
   /**
-   * Max of subscriptionType Reference
+   * Year of Create Time
    */
-  @Description("Max of subscriptionType Reference")
-  private String subscriptionTypeNameMax;
+  @Description("Year of Create Time")
+  private Integer createTimeYear;
 
   /**
-   * Min of subscriptionType Reference
+   * Month of Create Time
    */
-  @Description("Min of subscriptionType Reference")
-  private String subscriptionTypeNameMin;
+  @Description("Month of Create Time")
+  private Integer createTimeMonth;
+
+  /**
+   * Day of Create Time
+   */
+  @Description("Day of Create Time")
+  private Integer createTimeDay;
+
+  /**
+   * Week of Create Time
+   */
+  @Description("Week of Create Time")
+  private Integer createTimeWeek;
+
+  /**
+   * Quarter of Create Time
+   */
+  @Description("Quarter of Create Time")
+  private Integer createTimeQuarter;
+
+  /**
+   * Year of Update Time
+   */
+  @Description("Year of Update Time")
+  private Integer updateTimeYear;
+
+  /**
+   * Month of Update Time
+   */
+  @Description("Month of Update Time")
+  private Integer updateTimeMonth;
+
+  /**
+   * Day of Update Time
+   */
+  @Description("Day of Update Time")
+  private Integer updateTimeDay;
+
+  /**
+   * Week of Update Time
+   */
+  @Description("Week of Update Time")
+  private Integer updateTimeWeek;
+
+  /**
+   * Quarter of Update Time
+   */
+  @Description("Quarter of Update Time")
+  private Integer updateTimeQuarter;
 
   @Override
   public String getId() {
@@ -406,44 +418,12 @@ public class __Schema implements Meta {
     this.idCount = idCount;
   }
 
-  public Integer getIdMax() {
-    return this.idMax;
-  }
-
-  public void setIdMax(Integer idMax) {
-    this.idMax = idMax;
-  }
-
-  public Integer getIdMin() {
-    return this.idMin;
-  }
-
-  public void setIdMin(Integer idMin) {
-    this.idMin = idMin;
-  }
-
   public Integer getQueryTypeNameCount() {
     return this.queryTypeNameCount;
   }
 
   public void setQueryTypeNameCount(Integer queryTypeNameCount) {
     this.queryTypeNameCount = queryTypeNameCount;
-  }
-
-  public String getQueryTypeNameMax() {
-    return this.queryTypeNameMax;
-  }
-
-  public void setQueryTypeNameMax(String queryTypeNameMax) {
-    this.queryTypeNameMax = queryTypeNameMax;
-  }
-
-  public String getQueryTypeNameMin() {
-    return this.queryTypeNameMin;
-  }
-
-  public void setQueryTypeNameMin(String queryTypeNameMin) {
-    this.queryTypeNameMin = queryTypeNameMin;
   }
 
   public Integer getMutationTypeNameCount() {
@@ -454,22 +434,6 @@ public class __Schema implements Meta {
     this.mutationTypeNameCount = mutationTypeNameCount;
   }
 
-  public String getMutationTypeNameMax() {
-    return this.mutationTypeNameMax;
-  }
-
-  public void setMutationTypeNameMax(String mutationTypeNameMax) {
-    this.mutationTypeNameMax = mutationTypeNameMax;
-  }
-
-  public String getMutationTypeNameMin() {
-    return this.mutationTypeNameMin;
-  }
-
-  public void setMutationTypeNameMin(String mutationTypeNameMin) {
-    this.mutationTypeNameMin = mutationTypeNameMin;
-  }
-
   public Integer getSubscriptionTypeNameCount() {
     return this.subscriptionTypeNameCount;
   }
@@ -478,20 +442,84 @@ public class __Schema implements Meta {
     this.subscriptionTypeNameCount = subscriptionTypeNameCount;
   }
 
-  public String getSubscriptionTypeNameMax() {
-    return this.subscriptionTypeNameMax;
+  public Integer getCreateTimeYear() {
+    return this.createTimeYear;
   }
 
-  public void setSubscriptionTypeNameMax(String subscriptionTypeNameMax) {
-    this.subscriptionTypeNameMax = subscriptionTypeNameMax;
+  public void setCreateTimeYear(Integer createTimeYear) {
+    this.createTimeYear = createTimeYear;
   }
 
-  public String getSubscriptionTypeNameMin() {
-    return this.subscriptionTypeNameMin;
+  public Integer getCreateTimeMonth() {
+    return this.createTimeMonth;
   }
 
-  public void setSubscriptionTypeNameMin(String subscriptionTypeNameMin) {
-    this.subscriptionTypeNameMin = subscriptionTypeNameMin;
+  public void setCreateTimeMonth(Integer createTimeMonth) {
+    this.createTimeMonth = createTimeMonth;
+  }
+
+  public Integer getCreateTimeDay() {
+    return this.createTimeDay;
+  }
+
+  public void setCreateTimeDay(Integer createTimeDay) {
+    this.createTimeDay = createTimeDay;
+  }
+
+  public Integer getCreateTimeWeek() {
+    return this.createTimeWeek;
+  }
+
+  public void setCreateTimeWeek(Integer createTimeWeek) {
+    this.createTimeWeek = createTimeWeek;
+  }
+
+  public Integer getCreateTimeQuarter() {
+    return this.createTimeQuarter;
+  }
+
+  public void setCreateTimeQuarter(Integer createTimeQuarter) {
+    this.createTimeQuarter = createTimeQuarter;
+  }
+
+  public Integer getUpdateTimeYear() {
+    return this.updateTimeYear;
+  }
+
+  public void setUpdateTimeYear(Integer updateTimeYear) {
+    this.updateTimeYear = updateTimeYear;
+  }
+
+  public Integer getUpdateTimeMonth() {
+    return this.updateTimeMonth;
+  }
+
+  public void setUpdateTimeMonth(Integer updateTimeMonth) {
+    this.updateTimeMonth = updateTimeMonth;
+  }
+
+  public Integer getUpdateTimeDay() {
+    return this.updateTimeDay;
+  }
+
+  public void setUpdateTimeDay(Integer updateTimeDay) {
+    this.updateTimeDay = updateTimeDay;
+  }
+
+  public Integer getUpdateTimeWeek() {
+    return this.updateTimeWeek;
+  }
+
+  public void setUpdateTimeWeek(Integer updateTimeWeek) {
+    this.updateTimeWeek = updateTimeWeek;
+  }
+
+  public Integer getUpdateTimeQuarter() {
+    return this.updateTimeQuarter;
+  }
+
+  public void setUpdateTimeQuarter(Integer updateTimeQuarter) {
+    this.updateTimeQuarter = updateTimeQuarter;
   }
 
   public __SchemaInput toInput() {

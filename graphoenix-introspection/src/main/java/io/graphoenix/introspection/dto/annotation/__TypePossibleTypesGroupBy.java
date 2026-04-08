@@ -22,7 +22,7 @@ public @interface __TypePossibleTypesGroupBy {
    * Group By Field Names
    */
   @Description("Group By Field Names")
-  String[] fieldNames() default {};
+  String[] by() default {};
 
   /**
    * __Type
@@ -42,7 +42,7 @@ public @interface __TypePossibleTypesGroupBy {
   @Description("OrderByes")
   __TypePossibleTypesGroupBy1[] gbs() default {};
 
-  String $fieldNames() default "";
+  String $by() default "";
 
   String $type() default "";
 

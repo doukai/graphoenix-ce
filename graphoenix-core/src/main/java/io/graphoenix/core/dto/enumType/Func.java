@@ -14,5 +14,15 @@ public enum Func {
 
   SUM,
 
-  AVG
+  AVG,
+
+  YEAR,
+
+  MONTH,
+
+  DAY,
+
+  WEEK,
+
+  QUARTER
 }

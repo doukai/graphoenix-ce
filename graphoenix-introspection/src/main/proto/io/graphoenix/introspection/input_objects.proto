@@ -32,9 +32,19 @@ message IntroSchemaExpressionBase {
     io.graphoenix.core.StringExpression query_type_name = 16; /* queryType Reference */
     io.graphoenix.core.StringExpression mutation_type_name = 17; /* mutationType Reference */
     io.graphoenix.core.StringExpression subscription_type_name = 18; /* subscriptionType Reference */
-    bool not = 19; /* Not */
-    io.graphoenix.core.Conditional cond = 20; /* Condition */
-    repeated IntroSchemaExpression exs = 21; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    bool not = 29; /* Not */
+    io.graphoenix.core.Conditional cond = 30; /* Condition */
+    repeated IntroSchemaExpression exs = 31; /* Expressions */
 }
 /**
 * Mutation Input for __Schema
@@ -82,9 +92,19 @@ message IntroSchemaExpression {
     io.graphoenix.core.StringExpression query_type_name = 16; /* queryType Reference */
     io.graphoenix.core.StringExpression mutation_type_name = 17; /* mutationType Reference */
     io.graphoenix.core.StringExpression subscription_type_name = 18; /* subscriptionType Reference */
-    bool not = 19; /* Not */
-    io.graphoenix.core.Conditional cond = 20; /* Condition */
-    repeated IntroSchemaExpression exs = 21; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    bool not = 29; /* Not */
+    io.graphoenix.core.Conditional cond = 30; /* Condition */
+    repeated IntroSchemaExpression exs = 31; /* Expressions */
 }
 /**
 * Mutation Input for __Schema
@@ -135,24 +155,26 @@ message IntroSchemaOrderBy {
     IntroTypeOrderBy types_aggregate = 19; /* Aggregate Field for types */
     IntroDirectiveOrderBy directives_aggregate = 20; /* Aggregate Field for directives */
     io.graphoenix.core.Sort id_count = 21; /* Count of __Schema */
-    io.graphoenix.core.Sort id_max = 22; /* Max of id */
-    io.graphoenix.core.Sort id_min = 23; /* Min of id */
-    io.graphoenix.core.Sort query_type_name_count = 24; /* Count of queryType Reference */
-    io.graphoenix.core.Sort query_type_name_max = 25; /* Max of queryType Reference */
-    io.graphoenix.core.Sort query_type_name_min = 26; /* Min of queryType Reference */
-    io.graphoenix.core.Sort mutation_type_name_count = 27; /* Count of mutationType Reference */
-    io.graphoenix.core.Sort mutation_type_name_max = 28; /* Max of mutationType Reference */
-    io.graphoenix.core.Sort mutation_type_name_min = 29; /* Min of mutationType Reference */
-    io.graphoenix.core.Sort subscription_type_name_count = 30; /* Count of subscriptionType Reference */
-    io.graphoenix.core.Sort subscription_type_name_max = 31; /* Max of subscriptionType Reference */
-    io.graphoenix.core.Sort subscription_type_name_min = 32; /* Min of subscriptionType Reference */
-    repeated IntroSchemaOrderBy obs = 33; /* OrderByes */
+    io.graphoenix.core.Sort query_type_name_count = 22; /* Count of queryType Reference */
+    io.graphoenix.core.Sort mutation_type_name_count = 23; /* Count of mutationType Reference */
+    io.graphoenix.core.Sort subscription_type_name_count = 24; /* Count of subscriptionType Reference */
+    io.graphoenix.core.Sort create_time_year = 25; /* Year of Create Time */
+    io.graphoenix.core.Sort create_time_month = 26; /* Month of Create Time */
+    io.graphoenix.core.Sort create_time_day = 27; /* Day of Create Time */
+    io.graphoenix.core.Sort create_time_week = 28; /* Week of Create Time */
+    io.graphoenix.core.Sort create_time_quarter = 29; /* Quarter of Create Time */
+    io.graphoenix.core.Sort update_time_year = 30; /* Year of Update Time */
+    io.graphoenix.core.Sort update_time_month = 31; /* Month of Update Time */
+    io.graphoenix.core.Sort update_time_day = 32; /* Day of Update Time */
+    io.graphoenix.core.Sort update_time_week = 33; /* Week of Update Time */
+    io.graphoenix.core.Sort update_time_quarter = 34; /* Quarter of Update Time */
+    repeated IntroSchemaOrderBy obs = 35; /* OrderByes */
 }
 /**
 * Group Input for __Schema
 */
 message IntroSchemaGroupBy {
-    repeated string field_names = 1; /* Group By Field Names */
+    repeated string by = 1; /* Group By Field Names */
     IntroTypeGroupBy types = 2; /* types */
     IntroTypeGroupBy query_type = 3; /* queryType */
     IntroTypeGroupBy mutation_type = 4; /* mutationType */
@@ -188,9 +210,19 @@ message IntroTypeExpressionBase {
     io.graphoenix.core.StringExpression of_type_name = 22; /* ofType Reference */
     IntroTypeInterfacesExpression intro_type_interfaces = 23; /* Relationship Object between __Type and __Type */
     IntroTypePossibleTypesExpression intro_type_possible_types = 24; /* Relationship Object between __Type and __Type */
-    bool not = 25; /* Not */
-    io.graphoenix.core.Conditional cond = 26; /* Condition */
-    repeated IntroTypeExpression exs = 27; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 25; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 26; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 27; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 28; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 29; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 30; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 31; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 32; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 33; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 34; /* Quarter of Update Time */
+    bool not = 35; /* Not */
+    io.graphoenix.core.Conditional cond = 36; /* Condition */
+    repeated IntroTypeExpression exs = 37; /* Expressions */
 }
 /**
 * Mutation Input for __Type
@@ -250,9 +282,19 @@ message IntroTypeExpression {
     io.graphoenix.core.StringExpression of_type_name = 22; /* ofType Reference */
     IntroTypeInterfacesExpression intro_type_interfaces = 23; /* Relationship Object between __Type and __Type */
     IntroTypePossibleTypesExpression intro_type_possible_types = 24; /* Relationship Object between __Type and __Type */
-    bool not = 25; /* Not */
-    io.graphoenix.core.Conditional cond = 26; /* Condition */
-    repeated IntroTypeExpression exs = 27; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 25; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 26; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 27; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 28; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 29; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 30; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 31; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 32; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 33; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 34; /* Quarter of Update Time */
+    bool not = 35; /* Not */
+    io.graphoenix.core.Conditional cond = 36; /* Condition */
+    repeated IntroTypeExpression exs = 37; /* Expressions */
 }
 /**
 * Mutation Input for __Type
@@ -320,32 +362,32 @@ message IntroTypeOrderBy {
     IntroTypeInterfacesOrderBy intro_type_interfaces_aggregate = 30; /* Aggregate Field for Relationship Object between __Type and __Type */
     IntroTypePossibleTypesOrderBy intro_type_possible_types_aggregate = 31; /* Aggregate Field for Relationship Object between __Type and __Type */
     io.graphoenix.core.Sort id_count = 32; /* Count of __Type */
-    io.graphoenix.core.Sort id_max = 33; /* Max of id */
-    io.graphoenix.core.Sort id_min = 34; /* Min of id */
-    io.graphoenix.core.Sort name_count = 35; /* Count of name */
-    io.graphoenix.core.Sort name_max = 36; /* Max of name */
-    io.graphoenix.core.Sort name_min = 37; /* Min of name */
-    io.graphoenix.core.Sort kind_count = 38; /* Count of kind */
-    io.graphoenix.core.Sort kind_max = 39; /* Max of kind */
-    io.graphoenix.core.Sort kind_min = 40; /* Min of kind */
-    io.graphoenix.core.Sort description_count = 41; /* Count of description */
-    io.graphoenix.core.Sort description_max = 42; /* Max of description */
-    io.graphoenix.core.Sort description_min = 43; /* Min of description */
-    io.graphoenix.core.Sort of_type_name_count = 44; /* Count of ofType Reference */
-    io.graphoenix.core.Sort of_type_name_max = 45; /* Max of ofType Reference */
-    io.graphoenix.core.Sort of_type_name_min = 46; /* Min of ofType Reference */
-    io.graphoenix.core.Sort schema_id_count = 47; /* Count of ofSchema Reference */
-    io.graphoenix.core.Sort schema_id_sum = 48; /* Sum of ofSchema Reference */
-    io.graphoenix.core.Sort schema_id_avg = 49; /* Avg of ofSchema Reference */
-    io.graphoenix.core.Sort schema_id_max = 50; /* Max of ofSchema Reference */
-    io.graphoenix.core.Sort schema_id_min = 51; /* Min of ofSchema Reference */
+    io.graphoenix.core.Sort name_count = 33; /* Count of name */
+    io.graphoenix.core.Sort kind_count = 34; /* Count of kind */
+    io.graphoenix.core.Sort description_count = 35; /* Count of description */
+    io.graphoenix.core.Sort schema_id_count = 36; /* Count of ofSchema Reference */
+    io.graphoenix.core.Sort of_type_name_count = 37; /* Count of ofType Reference */
+    io.graphoenix.core.Sort schema_id_max = 38; /* Max of ofSchema Reference */
+    io.graphoenix.core.Sort schema_id_min = 39; /* Min of ofSchema Reference */
+    io.graphoenix.core.Sort schema_id_sum = 40; /* Sum of ofSchema Reference */
+    io.graphoenix.core.Sort schema_id_avg = 41; /* Avg of ofSchema Reference */
+    io.graphoenix.core.Sort create_time_year = 42; /* Year of Create Time */
+    io.graphoenix.core.Sort create_time_month = 43; /* Month of Create Time */
+    io.graphoenix.core.Sort create_time_day = 44; /* Day of Create Time */
+    io.graphoenix.core.Sort create_time_week = 45; /* Week of Create Time */
+    io.graphoenix.core.Sort create_time_quarter = 46; /* Quarter of Create Time */
+    io.graphoenix.core.Sort update_time_year = 47; /* Year of Update Time */
+    io.graphoenix.core.Sort update_time_month = 48; /* Month of Update Time */
+    io.graphoenix.core.Sort update_time_day = 49; /* Day of Update Time */
+    io.graphoenix.core.Sort update_time_week = 50; /* Week of Update Time */
+    io.graphoenix.core.Sort update_time_quarter = 51; /* Quarter of Update Time */
     repeated IntroTypeOrderBy obs = 52; /* OrderByes */
 }
 /**
 * Group Input for __Type
 */
 message IntroTypeGroupBy {
-    repeated string field_names = 1; /* Group By Field Names */
+    repeated string by = 1; /* Group By Field Names */
     IntroSchemaGroupBy of_schema = 2; /* ofSchema */
     IntroFieldGroupBy fields = 3; /* fields */
     IntroTypeGroupBy interfaces = 4; /* interfaces */
@@ -379,9 +421,19 @@ message IntroFieldExpressionBase {
     io.graphoenix.core.StringExpression intro_typename = 16; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 17; /* ofType Reference */
     io.graphoenix.core.StringExpression type_name = 18; /* type Reference */
-    bool not = 19; /* Not */
-    io.graphoenix.core.Conditional cond = 20; /* Condition */
-    repeated IntroFieldExpression exs = 21; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    bool not = 29; /* Not */
+    io.graphoenix.core.Conditional cond = 30; /* Condition */
+    repeated IntroFieldExpression exs = 31; /* Expressions */
 }
 /**
 * Mutation Input for __Field
@@ -429,9 +481,19 @@ message IntroFieldExpression {
     io.graphoenix.core.StringExpression intro_typename = 16; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 17; /* ofType Reference */
     io.graphoenix.core.StringExpression type_name = 18; /* type Reference */
-    bool not = 19; /* Not */
-    io.graphoenix.core.Conditional cond = 20; /* Condition */
-    repeated IntroFieldExpression exs = 21; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    bool not = 29; /* Not */
+    io.graphoenix.core.Conditional cond = 30; /* Condition */
+    repeated IntroFieldExpression exs = 31; /* Expressions */
 }
 /**
 * Mutation Input for __Field
@@ -481,30 +543,28 @@ message IntroFieldOrderBy {
     io.graphoenix.core.Sort type_name = 18; /* type Reference */
     IntroInputValueOrderBy args_aggregate = 19; /* Aggregate Field for args */
     io.graphoenix.core.Sort id_count = 20; /* Count of __Field */
-    io.graphoenix.core.Sort id_max = 21; /* Max of id */
-    io.graphoenix.core.Sort id_min = 22; /* Min of id */
-    io.graphoenix.core.Sort name_count = 23; /* Count of name */
-    io.graphoenix.core.Sort name_max = 24; /* Max of name */
-    io.graphoenix.core.Sort name_min = 25; /* Min of name */
-    io.graphoenix.core.Sort description_count = 26; /* Count of description */
-    io.graphoenix.core.Sort description_max = 27; /* Max of description */
-    io.graphoenix.core.Sort description_min = 28; /* Min of description */
-    io.graphoenix.core.Sort deprecation_reason_count = 29; /* Count of deprecationReason */
-    io.graphoenix.core.Sort deprecation_reason_max = 30; /* Max of deprecationReason */
-    io.graphoenix.core.Sort deprecation_reason_min = 31; /* Min of deprecationReason */
-    io.graphoenix.core.Sort of_type_name_count = 32; /* Count of ofType Reference */
-    io.graphoenix.core.Sort of_type_name_max = 33; /* Max of ofType Reference */
-    io.graphoenix.core.Sort of_type_name_min = 34; /* Min of ofType Reference */
-    io.graphoenix.core.Sort type_name_count = 35; /* Count of type Reference */
-    io.graphoenix.core.Sort type_name_max = 36; /* Max of type Reference */
-    io.graphoenix.core.Sort type_name_min = 37; /* Min of type Reference */
-    repeated IntroFieldOrderBy obs = 38; /* OrderByes */
+    io.graphoenix.core.Sort name_count = 21; /* Count of name */
+    io.graphoenix.core.Sort description_count = 22; /* Count of description */
+    io.graphoenix.core.Sort deprecation_reason_count = 23; /* Count of deprecationReason */
+    io.graphoenix.core.Sort of_type_name_count = 24; /* Count of ofType Reference */
+    io.graphoenix.core.Sort type_name_count = 25; /* Count of type Reference */
+    io.graphoenix.core.Sort create_time_year = 26; /* Year of Create Time */
+    io.graphoenix.core.Sort create_time_month = 27; /* Month of Create Time */
+    io.graphoenix.core.Sort create_time_day = 28; /* Day of Create Time */
+    io.graphoenix.core.Sort create_time_week = 29; /* Week of Create Time */
+    io.graphoenix.core.Sort create_time_quarter = 30; /* Quarter of Create Time */
+    io.graphoenix.core.Sort update_time_year = 31; /* Year of Update Time */
+    io.graphoenix.core.Sort update_time_month = 32; /* Month of Update Time */
+    io.graphoenix.core.Sort update_time_day = 33; /* Day of Update Time */
+    io.graphoenix.core.Sort update_time_week = 34; /* Week of Update Time */
+    io.graphoenix.core.Sort update_time_quarter = 35; /* Quarter of Update Time */
+    repeated IntroFieldOrderBy obs = 36; /* OrderByes */
 }
 /**
 * Group Input for __Field
 */
 message IntroFieldGroupBy {
-    repeated string field_names = 1; /* Group By Field Names */
+    repeated string by = 1; /* Group By Field Names */
     IntroTypeGroupBy of_type = 2; /* ofType */
     IntroInputValueGroupBy args = 3; /* args */
     IntroTypeGroupBy type = 4; /* type */
@@ -533,9 +593,19 @@ message IntroInputValueExpressionBase {
     io.graphoenix.core.StringExpression intro_typename = 17; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 18; /* ofType Reference */
     io.graphoenix.core.StringExpression type_name = 19; /* type Reference */
-    bool not = 20; /* Not */
-    io.graphoenix.core.Conditional cond = 21; /* Condition */
-    repeated IntroInputValueExpression exs = 22; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 20; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 21; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 22; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 23; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 24; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 25; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 26; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 27; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 28; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 29; /* Quarter of Update Time */
+    bool not = 30; /* Not */
+    io.graphoenix.core.Conditional cond = 31; /* Condition */
+    repeated IntroInputValueExpression exs = 32; /* Expressions */
 }
 /**
 * Mutation Input for __InputValue
@@ -585,9 +655,19 @@ message IntroInputValueExpression {
     io.graphoenix.core.StringExpression intro_typename = 17; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 18; /* ofType Reference */
     io.graphoenix.core.StringExpression type_name = 19; /* type Reference */
-    bool not = 20; /* Not */
-    io.graphoenix.core.Conditional cond = 21; /* Condition */
-    repeated IntroInputValueExpression exs = 22; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 20; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 21; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 22; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 23; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 24; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 25; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 26; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 27; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 28; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 29; /* Quarter of Update Time */
+    bool not = 30; /* Not */
+    io.graphoenix.core.Conditional cond = 31; /* Condition */
+    repeated IntroInputValueExpression exs = 32; /* Expressions */
 }
 /**
 * Mutation Input for __InputValue
@@ -638,38 +718,34 @@ message IntroInputValueOrderBy {
     io.graphoenix.core.Sort of_type_name = 18; /* ofType Reference */
     io.graphoenix.core.Sort type_name = 19; /* type Reference */
     io.graphoenix.core.Sort id_count = 20; /* Count of __InputValue */
-    io.graphoenix.core.Sort id_max = 21; /* Max of id */
-    io.graphoenix.core.Sort id_min = 22; /* Min of id */
-    io.graphoenix.core.Sort name_count = 23; /* Count of name */
-    io.graphoenix.core.Sort name_max = 24; /* Max of name */
-    io.graphoenix.core.Sort name_min = 25; /* Min of name */
-    io.graphoenix.core.Sort directive_name_count = 26; /* Count of directiveName */
-    io.graphoenix.core.Sort directive_name_max = 27; /* Max of directiveName */
-    io.graphoenix.core.Sort directive_name_min = 28; /* Min of directiveName */
-    io.graphoenix.core.Sort description_count = 29; /* Count of description */
-    io.graphoenix.core.Sort description_max = 30; /* Max of description */
-    io.graphoenix.core.Sort description_min = 31; /* Min of description */
-    io.graphoenix.core.Sort default_value_count = 32; /* Count of defaultValue */
-    io.graphoenix.core.Sort default_value_max = 33; /* Max of defaultValue */
-    io.graphoenix.core.Sort default_value_min = 34; /* Min of defaultValue */
-    io.graphoenix.core.Sort of_type_name_count = 35; /* Count of ofType Reference */
-    io.graphoenix.core.Sort of_type_name_max = 36; /* Max of ofType Reference */
-    io.graphoenix.core.Sort of_type_name_min = 37; /* Min of ofType Reference */
-    io.graphoenix.core.Sort type_name_count = 38; /* Count of type Reference */
-    io.graphoenix.core.Sort type_name_max = 39; /* Max of type Reference */
-    io.graphoenix.core.Sort type_name_min = 40; /* Min of type Reference */
-    io.graphoenix.core.Sort field_id_count = 41; /* Count of fieldId */
-    io.graphoenix.core.Sort field_id_sum = 42; /* Sum of fieldId */
-    io.graphoenix.core.Sort field_id_avg = 43; /* Avg of fieldId */
-    io.graphoenix.core.Sort field_id_max = 44; /* Max of fieldId */
-    io.graphoenix.core.Sort field_id_min = 45; /* Min of fieldId */
-    repeated IntroInputValueOrderBy obs = 46; /* OrderByes */
+    io.graphoenix.core.Sort name_count = 21; /* Count of name */
+    io.graphoenix.core.Sort field_id_count = 22; /* Count of fieldId */
+    io.graphoenix.core.Sort directive_name_count = 23; /* Count of directiveName */
+    io.graphoenix.core.Sort description_count = 24; /* Count of description */
+    io.graphoenix.core.Sort default_value_count = 25; /* Count of defaultValue */
+    io.graphoenix.core.Sort of_type_name_count = 26; /* Count of ofType Reference */
+    io.graphoenix.core.Sort type_name_count = 27; /* Count of type Reference */
+    io.graphoenix.core.Sort field_id_max = 28; /* Max of fieldId */
+    io.graphoenix.core.Sort field_id_min = 29; /* Min of fieldId */
+    io.graphoenix.core.Sort field_id_sum = 30; /* Sum of fieldId */
+    io.graphoenix.core.Sort field_id_avg = 31; /* Avg of fieldId */
+    io.graphoenix.core.Sort create_time_year = 32; /* Year of Create Time */
+    io.graphoenix.core.Sort create_time_month = 33; /* Month of Create Time */
+    io.graphoenix.core.Sort create_time_day = 34; /* Day of Create Time */
+    io.graphoenix.core.Sort create_time_week = 35; /* Week of Create Time */
+    io.graphoenix.core.Sort create_time_quarter = 36; /* Quarter of Create Time */
+    io.graphoenix.core.Sort update_time_year = 37; /* Year of Update Time */
+    io.graphoenix.core.Sort update_time_month = 38; /* Month of Update Time */
+    io.graphoenix.core.Sort update_time_day = 39; /* Day of Update Time */
+    io.graphoenix.core.Sort update_time_week = 40; /* Week of Update Time */
+    io.graphoenix.core.Sort update_time_quarter = 41; /* Quarter of Update Time */
+    repeated IntroInputValueOrderBy obs = 42; /* OrderByes */
 }
 /**
 * Group Input for __InputValue
 */
 message IntroInputValueGroupBy {
-    repeated string field_names = 1; /* Group By Field Names */
+    repeated string by = 1; /* Group By Field Names */
     IntroTypeGroupBy of_type = 2; /* ofType */
     IntroTypeGroupBy type = 3; /* type */
     repeated IntroInputValueGroupBy gbs = 4; /* OrderByes */
@@ -693,9 +769,19 @@ message IntroEnumValueExpressionBase {
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 15; /* ofType Reference */
-    bool not = 16; /* Not */
-    io.graphoenix.core.Conditional cond = 17; /* Condition */
-    repeated IntroEnumValueExpression exs = 18; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 16; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 17; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 18; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 19; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 20; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 21; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 22; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 23; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 24; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 25; /* Quarter of Update Time */
+    bool not = 26; /* Not */
+    io.graphoenix.core.Conditional cond = 27; /* Condition */
+    repeated IntroEnumValueExpression exs = 28; /* Expressions */
 }
 /**
 * Mutation Input for __EnumValue
@@ -737,9 +823,19 @@ message IntroEnumValueExpression {
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 15; /* ofType Reference */
-    bool not = 16; /* Not */
-    io.graphoenix.core.Conditional cond = 17; /* Condition */
-    repeated IntroEnumValueExpression exs = 18; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 16; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 17; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 18; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 19; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 20; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 21; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 22; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 23; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 24; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 25; /* Quarter of Update Time */
+    bool not = 26; /* Not */
+    io.graphoenix.core.Conditional cond = 27; /* Condition */
+    repeated IntroEnumValueExpression exs = 28; /* Expressions */
 }
 /**
 * Mutation Input for __EnumValue
@@ -782,27 +878,27 @@ message IntroEnumValueOrderBy {
     io.graphoenix.core.Sort intro_typename = 14; /* Type Name */
     io.graphoenix.core.Sort of_type_name = 15; /* ofType Reference */
     io.graphoenix.core.Sort id_count = 16; /* Count of __EnumValue */
-    io.graphoenix.core.Sort id_max = 17; /* Max of id */
-    io.graphoenix.core.Sort id_min = 18; /* Min of id */
-    io.graphoenix.core.Sort name_count = 19; /* Count of name */
-    io.graphoenix.core.Sort name_max = 20; /* Max of name */
-    io.graphoenix.core.Sort name_min = 21; /* Min of name */
-    io.graphoenix.core.Sort description_count = 22; /* Count of description */
-    io.graphoenix.core.Sort description_max = 23; /* Max of description */
-    io.graphoenix.core.Sort description_min = 24; /* Min of description */
-    io.graphoenix.core.Sort deprecation_reason_count = 25; /* Count of deprecationReason */
-    io.graphoenix.core.Sort deprecation_reason_max = 26; /* Max of deprecationReason */
-    io.graphoenix.core.Sort deprecation_reason_min = 27; /* Min of deprecationReason */
-    io.graphoenix.core.Sort of_type_name_count = 28; /* Count of ofType Reference */
-    io.graphoenix.core.Sort of_type_name_max = 29; /* Max of ofType Reference */
-    io.graphoenix.core.Sort of_type_name_min = 30; /* Min of ofType Reference */
+    io.graphoenix.core.Sort name_count = 17; /* Count of name */
+    io.graphoenix.core.Sort description_count = 18; /* Count of description */
+    io.graphoenix.core.Sort deprecation_reason_count = 19; /* Count of deprecationReason */
+    io.graphoenix.core.Sort of_type_name_count = 20; /* Count of ofType Reference */
+    io.graphoenix.core.Sort create_time_year = 21; /* Year of Create Time */
+    io.graphoenix.core.Sort create_time_month = 22; /* Month of Create Time */
+    io.graphoenix.core.Sort create_time_day = 23; /* Day of Create Time */
+    io.graphoenix.core.Sort create_time_week = 24; /* Week of Create Time */
+    io.graphoenix.core.Sort create_time_quarter = 25; /* Quarter of Create Time */
+    io.graphoenix.core.Sort update_time_year = 26; /* Year of Update Time */
+    io.graphoenix.core.Sort update_time_month = 27; /* Month of Update Time */
+    io.graphoenix.core.Sort update_time_day = 28; /* Day of Update Time */
+    io.graphoenix.core.Sort update_time_week = 29; /* Week of Update Time */
+    io.graphoenix.core.Sort update_time_quarter = 30; /* Quarter of Update Time */
     repeated IntroEnumValueOrderBy obs = 31; /* OrderByes */
 }
 /**
 * Group Input for __EnumValue
 */
 message IntroEnumValueGroupBy {
-    repeated string field_names = 1; /* Group By Field Names */
+    repeated string by = 1; /* Group By Field Names */
     IntroTypeGroupBy of_type = 2; /* ofType */
     repeated IntroEnumValueGroupBy gbs = 3; /* OrderByes */
 }
@@ -828,9 +924,19 @@ message IntroDirectiveExpressionBase {
     io.graphoenix.core.StringExpression intro_typename = 16; /* Type Name */
     io.graphoenix.core.IntExpression schema_id = 17; /* ofSchema Reference */
     IntroDirectiveLocationsRelationExpression intro_directive_locations_relation = 18; /* Relationship Object between __Directive and locations */
-    bool not = 19; /* Not */
-    io.graphoenix.core.Conditional cond = 20; /* Condition */
-    repeated IntroDirectiveExpression exs = 21; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    bool not = 29; /* Not */
+    io.graphoenix.core.Conditional cond = 30; /* Condition */
+    repeated IntroDirectiveExpression exs = 31; /* Expressions */
 }
 /**
 * Mutation Input for __Directive
@@ -878,9 +984,19 @@ message IntroDirectiveExpression {
     io.graphoenix.core.StringExpression intro_typename = 16; /* Type Name */
     io.graphoenix.core.IntExpression schema_id = 17; /* ofSchema Reference */
     IntroDirectiveLocationsRelationExpression intro_directive_locations_relation = 18; /* Relationship Object between __Directive and locations */
-    bool not = 19; /* Not */
-    io.graphoenix.core.Conditional cond = 20; /* Condition */
-    repeated IntroDirectiveExpression exs = 21; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    bool not = 29; /* Not */
+    io.graphoenix.core.Conditional cond = 30; /* Condition */
+    repeated IntroDirectiveExpression exs = 31; /* Expressions */
 }
 /**
 * Mutation Input for __Directive
@@ -931,26 +1047,31 @@ message IntroDirectiveOrderBy {
     IntroInputValueOrderBy args_aggregate = 19; /* Aggregate Field for args */
     IntroDirectiveLocationsRelationOrderBy intro_directive_locations_relation_aggregate = 20; /* Aggregate Field for Relationship Object between __Directive and locations */
     io.graphoenix.core.Sort id_count = 21; /* Count of __Directive */
-    io.graphoenix.core.Sort id_max = 22; /* Max of id */
-    io.graphoenix.core.Sort id_min = 23; /* Min of id */
-    io.graphoenix.core.Sort name_count = 24; /* Count of name */
-    io.graphoenix.core.Sort name_max = 25; /* Max of name */
-    io.graphoenix.core.Sort name_min = 26; /* Min of name */
-    io.graphoenix.core.Sort description_count = 27; /* Count of description */
-    io.graphoenix.core.Sort description_max = 28; /* Max of description */
-    io.graphoenix.core.Sort description_min = 29; /* Min of description */
-    io.graphoenix.core.Sort schema_id_count = 30; /* Count of ofSchema Reference */
-    io.graphoenix.core.Sort schema_id_sum = 31; /* Sum of ofSchema Reference */
-    io.graphoenix.core.Sort schema_id_avg = 32; /* Avg of ofSchema Reference */
-    io.graphoenix.core.Sort schema_id_max = 33; /* Max of ofSchema Reference */
-    io.graphoenix.core.Sort schema_id_min = 34; /* Min of ofSchema Reference */
-    repeated IntroDirectiveOrderBy obs = 35; /* OrderByes */
+    io.graphoenix.core.Sort name_count = 22; /* Count of name */
+    io.graphoenix.core.Sort description_count = 23; /* Count of description */
+    io.graphoenix.core.Sort is_repeatable_count = 24; /* Count of isRepeatable */
+    io.graphoenix.core.Sort schema_id_count = 25; /* Count of ofSchema Reference */
+    io.graphoenix.core.Sort schema_id_max = 26; /* Max of ofSchema Reference */
+    io.graphoenix.core.Sort schema_id_min = 27; /* Min of ofSchema Reference */
+    io.graphoenix.core.Sort schema_id_sum = 28; /* Sum of ofSchema Reference */
+    io.graphoenix.core.Sort schema_id_avg = 29; /* Avg of ofSchema Reference */
+    io.graphoenix.core.Sort create_time_year = 30; /* Year of Create Time */
+    io.graphoenix.core.Sort create_time_month = 31; /* Month of Create Time */
+    io.graphoenix.core.Sort create_time_day = 32; /* Day of Create Time */
+    io.graphoenix.core.Sort create_time_week = 33; /* Week of Create Time */
+    io.graphoenix.core.Sort create_time_quarter = 34; /* Quarter of Create Time */
+    io.graphoenix.core.Sort update_time_year = 35; /* Year of Update Time */
+    io.graphoenix.core.Sort update_time_month = 36; /* Month of Update Time */
+    io.graphoenix.core.Sort update_time_day = 37; /* Day of Update Time */
+    io.graphoenix.core.Sort update_time_week = 38; /* Week of Update Time */
+    io.graphoenix.core.Sort update_time_quarter = 39; /* Quarter of Update Time */
+    repeated IntroDirectiveOrderBy obs = 40; /* OrderByes */
 }
 /**
 * Group Input for __Directive
 */
 message IntroDirectiveGroupBy {
-    repeated string field_names = 1; /* Group By Field Names */
+    repeated string by = 1; /* Group By Field Names */
     IntroSchemaGroupBy of_schema = 2; /* ofSchema */
     IntroInputValueGroupBy args = 3; /* args */
     IntroDirectiveLocationsRelationGroupBy intro_directive_locations_relation = 4; /* Relationship Object between __Directive and locations */
@@ -974,9 +1095,19 @@ message IntroTypeInterfacesExpressionBase {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    bool not = 15; /* Not */
-    io.graphoenix.core.Conditional cond = 16; /* Condition */
-    repeated IntroTypeInterfacesExpression exs = 17; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    bool not = 25; /* Not */
+    io.graphoenix.core.Conditional cond = 26; /* Condition */
+    repeated IntroTypeInterfacesExpression exs = 27; /* Expressions */
 }
 /**
 * Mutation Input for Relationship Object between __Type and __Type
@@ -1016,9 +1147,19 @@ message IntroTypeInterfacesExpression {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    bool not = 15; /* Not */
-    io.graphoenix.core.Conditional cond = 16; /* Condition */
-    repeated IntroTypeInterfacesExpression exs = 17; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    bool not = 25; /* Not */
+    io.graphoenix.core.Conditional cond = 26; /* Condition */
+    repeated IntroTypeInterfacesExpression exs = 27; /* Expressions */
 }
 /**
 * Mutation Input for Relationship Object between __Type and __Type
@@ -1059,21 +1200,25 @@ message IntroTypeInterfacesOrderBy {
     io.graphoenix.core.Sort create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.Sort intro_typename = 14; /* Type Name */
     io.graphoenix.core.Sort id_count = 15; /* Count of Relationship Object between __Type and __Type */
-    io.graphoenix.core.Sort id_max = 16; /* Max of ID */
-    io.graphoenix.core.Sort id_min = 17; /* Min of ID */
-    io.graphoenix.core.Sort type_ref_count = 18; /* Count of __Type Reference */
-    io.graphoenix.core.Sort type_ref_max = 19; /* Max of __Type Reference */
-    io.graphoenix.core.Sort type_ref_min = 20; /* Min of __Type Reference */
-    io.graphoenix.core.Sort interface_ref_count = 21; /* Count of __Type Reference */
-    io.graphoenix.core.Sort interface_ref_max = 22; /* Max of __Type Reference */
-    io.graphoenix.core.Sort interface_ref_min = 23; /* Min of __Type Reference */
-    repeated IntroTypeInterfacesOrderBy obs = 24; /* OrderByes */
+    io.graphoenix.core.Sort type_ref_count = 16; /* Count of __Type Reference */
+    io.graphoenix.core.Sort interface_ref_count = 17; /* Count of __Type Reference */
+    io.graphoenix.core.Sort create_time_year = 18; /* Year of Create Time */
+    io.graphoenix.core.Sort create_time_month = 19; /* Month of Create Time */
+    io.graphoenix.core.Sort create_time_day = 20; /* Day of Create Time */
+    io.graphoenix.core.Sort create_time_week = 21; /* Week of Create Time */
+    io.graphoenix.core.Sort create_time_quarter = 22; /* Quarter of Create Time */
+    io.graphoenix.core.Sort update_time_year = 23; /* Year of Update Time */
+    io.graphoenix.core.Sort update_time_month = 24; /* Month of Update Time */
+    io.graphoenix.core.Sort update_time_day = 25; /* Day of Update Time */
+    io.graphoenix.core.Sort update_time_week = 26; /* Week of Update Time */
+    io.graphoenix.core.Sort update_time_quarter = 27; /* Quarter of Update Time */
+    repeated IntroTypeInterfacesOrderBy obs = 28; /* OrderByes */
 }
 /**
 * Group Input for Relationship Object between __Type and __Type
 */
 message IntroTypeInterfacesGroupBy {
-    repeated string field_names = 1; /* Group By Field Names */
+    repeated string by = 1; /* Group By Field Names */
     IntroTypeGroupBy type = 2; /* __Type */
     IntroTypeGroupBy interface = 3; /* __Type */
     repeated IntroTypeInterfacesGroupBy gbs = 4; /* OrderByes */
@@ -1096,9 +1241,19 @@ message IntroTypePossibleTypesExpressionBase {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    bool not = 15; /* Not */
-    io.graphoenix.core.Conditional cond = 16; /* Condition */
-    repeated IntroTypePossibleTypesExpression exs = 17; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    bool not = 25; /* Not */
+    io.graphoenix.core.Conditional cond = 26; /* Condition */
+    repeated IntroTypePossibleTypesExpression exs = 27; /* Expressions */
 }
 /**
 * Mutation Input for Relationship Object between __Type and __Type
@@ -1138,9 +1293,19 @@ message IntroTypePossibleTypesExpression {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    bool not = 15; /* Not */
-    io.graphoenix.core.Conditional cond = 16; /* Condition */
-    repeated IntroTypePossibleTypesExpression exs = 17; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    bool not = 25; /* Not */
+    io.graphoenix.core.Conditional cond = 26; /* Condition */
+    repeated IntroTypePossibleTypesExpression exs = 27; /* Expressions */
 }
 /**
 * Mutation Input for Relationship Object between __Type and __Type
@@ -1181,21 +1346,25 @@ message IntroTypePossibleTypesOrderBy {
     io.graphoenix.core.Sort create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.Sort intro_typename = 14; /* Type Name */
     io.graphoenix.core.Sort id_count = 15; /* Count of Relationship Object between __Type and __Type */
-    io.graphoenix.core.Sort id_max = 16; /* Max of ID */
-    io.graphoenix.core.Sort id_min = 17; /* Min of ID */
-    io.graphoenix.core.Sort type_ref_count = 18; /* Count of __Type Reference */
-    io.graphoenix.core.Sort type_ref_max = 19; /* Max of __Type Reference */
-    io.graphoenix.core.Sort type_ref_min = 20; /* Min of __Type Reference */
-    io.graphoenix.core.Sort possible_type_ref_count = 21; /* Count of __Type Reference */
-    io.graphoenix.core.Sort possible_type_ref_max = 22; /* Max of __Type Reference */
-    io.graphoenix.core.Sort possible_type_ref_min = 23; /* Min of __Type Reference */
-    repeated IntroTypePossibleTypesOrderBy obs = 24; /* OrderByes */
+    io.graphoenix.core.Sort type_ref_count = 16; /* Count of __Type Reference */
+    io.graphoenix.core.Sort possible_type_ref_count = 17; /* Count of __Type Reference */
+    io.graphoenix.core.Sort create_time_year = 18; /* Year of Create Time */
+    io.graphoenix.core.Sort create_time_month = 19; /* Month of Create Time */
+    io.graphoenix.core.Sort create_time_day = 20; /* Day of Create Time */
+    io.graphoenix.core.Sort create_time_week = 21; /* Week of Create Time */
+    io.graphoenix.core.Sort create_time_quarter = 22; /* Quarter of Create Time */
+    io.graphoenix.core.Sort update_time_year = 23; /* Year of Update Time */
+    io.graphoenix.core.Sort update_time_month = 24; /* Month of Update Time */
+    io.graphoenix.core.Sort update_time_day = 25; /* Day of Update Time */
+    io.graphoenix.core.Sort update_time_week = 26; /* Week of Update Time */
+    io.graphoenix.core.Sort update_time_quarter = 27; /* Quarter of Update Time */
+    repeated IntroTypePossibleTypesOrderBy obs = 28; /* OrderByes */
 }
 /**
 * Group Input for Relationship Object between __Type and __Type
 */
 message IntroTypePossibleTypesGroupBy {
-    repeated string field_names = 1; /* Group By Field Names */
+    repeated string by = 1; /* Group By Field Names */
     IntroTypeGroupBy type = 2; /* __Type */
     IntroTypeGroupBy possible_type = 3; /* __Type */
     repeated IntroTypePossibleTypesGroupBy gbs = 4; /* OrderByes */
@@ -1217,9 +1386,19 @@ message IntroDirectiveLocationsRelationExpressionBase {
     io.graphoenix.core.StringExpression update_time = 11; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 12; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 13; /* Type Name */
-    bool not = 14; /* Not */
-    io.graphoenix.core.Conditional cond = 15; /* Condition */
-    repeated IntroDirectiveLocationsRelationExpression exs = 16; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 14; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 15; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 16; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 17; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 18; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 19; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 20; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 21; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 22; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 23; /* Quarter of Update Time */
+    bool not = 24; /* Not */
+    io.graphoenix.core.Conditional cond = 25; /* Condition */
+    repeated IntroDirectiveLocationsRelationExpression exs = 26; /* Expressions */
 }
 /**
 * Mutation Input for Relationship Object between __Directive and locations
@@ -1257,9 +1436,19 @@ message IntroDirectiveLocationsRelationExpression {
     io.graphoenix.core.StringExpression update_time = 11; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 12; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 13; /* Type Name */
-    bool not = 14; /* Not */
-    io.graphoenix.core.Conditional cond = 15; /* Condition */
-    repeated IntroDirectiveLocationsRelationExpression exs = 16; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 14; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 15; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 16; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 17; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 18; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 19; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 20; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 21; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 22; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 23; /* Quarter of Update Time */
+    bool not = 24; /* Not */
+    io.graphoenix.core.Conditional cond = 25; /* Condition */
+    repeated IntroDirectiveLocationsRelationExpression exs = 26; /* Expressions */
 }
 /**
 * Mutation Input for Relationship Object between __Directive and locations
@@ -1298,21 +1487,25 @@ message IntroDirectiveLocationsRelationOrderBy {
     io.graphoenix.core.Sort create_group_id = 12; /* Create Group ID */
     io.graphoenix.core.Sort intro_typename = 13; /* Type Name */
     io.graphoenix.core.Sort id_count = 14; /* Count of Relationship Object between __Directive and locations */
-    io.graphoenix.core.Sort id_max = 15; /* Max of ID */
-    io.graphoenix.core.Sort id_min = 16; /* Min of ID */
-    io.graphoenix.core.Sort intro_directive_ref_count = 17; /* Count of __Directive Reference */
-    io.graphoenix.core.Sort intro_directive_ref_max = 18; /* Max of __Directive Reference */
-    io.graphoenix.core.Sort intro_directive_ref_min = 19; /* Min of __Directive Reference */
-    io.graphoenix.core.Sort locations_ref_count = 20; /* Count of locations Reference */
-    io.graphoenix.core.Sort locations_ref_max = 21; /* Max of locations Reference */
-    io.graphoenix.core.Sort locations_ref_min = 22; /* Min of locations Reference */
-    repeated IntroDirectiveLocationsRelationOrderBy obs = 23; /* OrderByes */
+    io.graphoenix.core.Sort intro_directive_ref_count = 15; /* Count of __Directive Reference */
+    io.graphoenix.core.Sort locations_ref_count = 16; /* Count of locations Reference */
+    io.graphoenix.core.Sort create_time_year = 17; /* Year of Create Time */
+    io.graphoenix.core.Sort create_time_month = 18; /* Month of Create Time */
+    io.graphoenix.core.Sort create_time_day = 19; /* Day of Create Time */
+    io.graphoenix.core.Sort create_time_week = 20; /* Week of Create Time */
+    io.graphoenix.core.Sort create_time_quarter = 21; /* Quarter of Create Time */
+    io.graphoenix.core.Sort update_time_year = 22; /* Year of Update Time */
+    io.graphoenix.core.Sort update_time_month = 23; /* Month of Update Time */
+    io.graphoenix.core.Sort update_time_day = 24; /* Day of Update Time */
+    io.graphoenix.core.Sort update_time_week = 25; /* Week of Update Time */
+    io.graphoenix.core.Sort update_time_quarter = 26; /* Quarter of Update Time */
+    repeated IntroDirectiveLocationsRelationOrderBy obs = 27; /* OrderByes */
 }
 /**
 * Group Input for Relationship Object between __Directive and locations
 */
 message IntroDirectiveLocationsRelationGroupBy {
-    repeated string field_names = 1; /* Group By Field Names */
+    repeated string by = 1; /* Group By Field Names */
     IntroDirectiveGroupBy intro_directive = 2; /* __Directive */
     repeated IntroDirectiveLocationsRelationGroupBy gbs = 3; /* OrderByes */
 }
@@ -1354,9 +1547,19 @@ message IntroSchemaQueryArguments {
     io.graphoenix.core.StringExpression query_type_name = 16; /* queryType Reference */
     io.graphoenix.core.StringExpression mutation_type_name = 17; /* mutationType Reference */
     io.graphoenix.core.StringExpression subscription_type_name = 18; /* subscriptionType Reference */
-    bool not = 19; /* Not */
-    io.graphoenix.core.Conditional cond = 20; /* Condition */
-    repeated IntroSchemaExpression exs = 21; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    bool not = 29; /* Not */
+    io.graphoenix.core.Conditional cond = 30; /* Condition */
+    repeated IntroSchemaExpression exs = 31; /* Expressions */
 }
 /**
 * Query Arguments for __Schema List
@@ -1380,16 +1583,26 @@ message IntroSchemaListQueryArguments {
     io.graphoenix.core.StringExpression query_type_name = 16; /* queryType Reference */
     io.graphoenix.core.StringExpression mutation_type_name = 17; /* mutationType Reference */
     io.graphoenix.core.StringExpression subscription_type_name = 18; /* subscriptionType Reference */
-    IntroSchemaOrderBy order_by = 19; /* Order By */
-    IntroSchemaGroupBy group_by = 20; /* Group By */
-    bool not = 21; /* Not */
-    io.graphoenix.core.Conditional cond = 22; /* Condition */
-    repeated IntroSchemaExpression exs = 23; /* Expressions */
-    int32 first = 24; /* First */
-    int32 last = 25; /* Last */
-    int32 offset = 26; /* Offset */
-    string after = 27; /* After */
-    string before = 28; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    IntroSchemaOrderBy order_by = 29; /* Order By */
+    IntroSchemaGroupBy group_by = 30; /* Group By */
+    bool not = 31; /* Not */
+    io.graphoenix.core.Conditional cond = 32; /* Condition */
+    repeated IntroSchemaExpression exs = 33; /* Expressions */
+    int32 first = 34; /* First */
+    int32 last = 35; /* Last */
+    int32 offset = 36; /* Offset */
+    string after = 37; /* After */
+    string before = 38; /* Before */
 }
 /**
 * Query Arguments for __Schema Connection
@@ -1413,16 +1626,26 @@ message IntroSchemaConnectionQueryArguments {
     io.graphoenix.core.StringExpression query_type_name = 16; /* queryType Reference */
     io.graphoenix.core.StringExpression mutation_type_name = 17; /* mutationType Reference */
     io.graphoenix.core.StringExpression subscription_type_name = 18; /* subscriptionType Reference */
-    IntroSchemaOrderBy order_by = 19; /* Order By */
-    IntroSchemaGroupBy group_by = 20; /* Group By */
-    bool not = 21; /* Not */
-    io.graphoenix.core.Conditional cond = 22; /* Condition */
-    repeated IntroSchemaExpression exs = 23; /* Expressions */
-    int32 first = 24; /* First */
-    int32 last = 25; /* Last */
-    int32 offset = 26; /* Offset */
-    string after = 27; /* After */
-    string before = 28; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    IntroSchemaOrderBy order_by = 29; /* Order By */
+    IntroSchemaGroupBy group_by = 30; /* Group By */
+    bool not = 31; /* Not */
+    io.graphoenix.core.Conditional cond = 32; /* Condition */
+    repeated IntroSchemaExpression exs = 33; /* Expressions */
+    int32 first = 34; /* First */
+    int32 last = 35; /* Last */
+    int32 offset = 36; /* Offset */
+    string after = 37; /* After */
+    string before = 38; /* Before */
 }
 /**
 * Query Arguments for __Type
@@ -1452,9 +1675,19 @@ message IntroTypeQueryArguments {
     io.graphoenix.core.StringExpression of_type_name = 22; /* ofType Reference */
     IntroTypeInterfacesExpression intro_type_interfaces = 23; /* Relationship Object between __Type and __Type */
     IntroTypePossibleTypesExpression intro_type_possible_types = 24; /* Relationship Object between __Type and __Type */
-    bool not = 25; /* Not */
-    io.graphoenix.core.Conditional cond = 26; /* Condition */
-    repeated IntroTypeExpression exs = 27; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 25; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 26; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 27; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 28; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 29; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 30; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 31; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 32; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 33; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 34; /* Quarter of Update Time */
+    bool not = 35; /* Not */
+    io.graphoenix.core.Conditional cond = 36; /* Condition */
+    repeated IntroTypeExpression exs = 37; /* Expressions */
 }
 /**
 * Query Arguments for __Type List
@@ -1484,16 +1717,26 @@ message IntroTypeListQueryArguments {
     io.graphoenix.core.StringExpression of_type_name = 22; /* ofType Reference */
     IntroTypeInterfacesExpression intro_type_interfaces = 23; /* Relationship Object between __Type and __Type */
     IntroTypePossibleTypesExpression intro_type_possible_types = 24; /* Relationship Object between __Type and __Type */
-    IntroTypeOrderBy order_by = 25; /* Order By */
-    IntroTypeGroupBy group_by = 26; /* Group By */
-    bool not = 27; /* Not */
-    io.graphoenix.core.Conditional cond = 28; /* Condition */
-    repeated IntroTypeExpression exs = 29; /* Expressions */
-    int32 first = 30; /* First */
-    int32 last = 31; /* Last */
-    int32 offset = 32; /* Offset */
-    string after = 33; /* After */
-    string before = 34; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 25; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 26; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 27; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 28; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 29; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 30; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 31; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 32; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 33; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 34; /* Quarter of Update Time */
+    IntroTypeOrderBy order_by = 35; /* Order By */
+    IntroTypeGroupBy group_by = 36; /* Group By */
+    bool not = 37; /* Not */
+    io.graphoenix.core.Conditional cond = 38; /* Condition */
+    repeated IntroTypeExpression exs = 39; /* Expressions */
+    int32 first = 40; /* First */
+    int32 last = 41; /* Last */
+    int32 offset = 42; /* Offset */
+    string after = 43; /* After */
+    string before = 44; /* Before */
 }
 /**
 * Query Arguments for __Type Connection
@@ -1523,16 +1766,26 @@ message IntroTypeConnectionQueryArguments {
     io.graphoenix.core.StringExpression of_type_name = 22; /* ofType Reference */
     IntroTypeInterfacesExpression intro_type_interfaces = 23; /* Relationship Object between __Type and __Type */
     IntroTypePossibleTypesExpression intro_type_possible_types = 24; /* Relationship Object between __Type and __Type */
-    IntroTypeOrderBy order_by = 25; /* Order By */
-    IntroTypeGroupBy group_by = 26; /* Group By */
-    bool not = 27; /* Not */
-    io.graphoenix.core.Conditional cond = 28; /* Condition */
-    repeated IntroTypeExpression exs = 29; /* Expressions */
-    int32 first = 30; /* First */
-    int32 last = 31; /* Last */
-    int32 offset = 32; /* Offset */
-    string after = 33; /* After */
-    string before = 34; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 25; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 26; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 27; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 28; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 29; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 30; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 31; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 32; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 33; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 34; /* Quarter of Update Time */
+    IntroTypeOrderBy order_by = 35; /* Order By */
+    IntroTypeGroupBy group_by = 36; /* Group By */
+    bool not = 37; /* Not */
+    io.graphoenix.core.Conditional cond = 38; /* Condition */
+    repeated IntroTypeExpression exs = 39; /* Expressions */
+    int32 first = 40; /* First */
+    int32 last = 41; /* Last */
+    int32 offset = 42; /* Offset */
+    string after = 43; /* After */
+    string before = 44; /* Before */
 }
 /**
 * Query Arguments for __Field
@@ -1556,9 +1809,19 @@ message IntroFieldQueryArguments {
     io.graphoenix.core.StringExpression intro_typename = 16; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 17; /* ofType Reference */
     io.graphoenix.core.StringExpression type_name = 18; /* type Reference */
-    bool not = 19; /* Not */
-    io.graphoenix.core.Conditional cond = 20; /* Condition */
-    repeated IntroFieldExpression exs = 21; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    bool not = 29; /* Not */
+    io.graphoenix.core.Conditional cond = 30; /* Condition */
+    repeated IntroFieldExpression exs = 31; /* Expressions */
 }
 /**
 * Query Arguments for __Field List
@@ -1582,16 +1845,26 @@ message IntroFieldListQueryArguments {
     io.graphoenix.core.StringExpression intro_typename = 16; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 17; /* ofType Reference */
     io.graphoenix.core.StringExpression type_name = 18; /* type Reference */
-    IntroFieldOrderBy order_by = 19; /* Order By */
-    IntroFieldGroupBy group_by = 20; /* Group By */
-    bool not = 21; /* Not */
-    io.graphoenix.core.Conditional cond = 22; /* Condition */
-    repeated IntroFieldExpression exs = 23; /* Expressions */
-    int32 first = 24; /* First */
-    int32 last = 25; /* Last */
-    int32 offset = 26; /* Offset */
-    string after = 27; /* After */
-    string before = 28; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    IntroFieldOrderBy order_by = 29; /* Order By */
+    IntroFieldGroupBy group_by = 30; /* Group By */
+    bool not = 31; /* Not */
+    io.graphoenix.core.Conditional cond = 32; /* Condition */
+    repeated IntroFieldExpression exs = 33; /* Expressions */
+    int32 first = 34; /* First */
+    int32 last = 35; /* Last */
+    int32 offset = 36; /* Offset */
+    string after = 37; /* After */
+    string before = 38; /* Before */
 }
 /**
 * Query Arguments for __Field Connection
@@ -1615,16 +1888,26 @@ message IntroFieldConnectionQueryArguments {
     io.graphoenix.core.StringExpression intro_typename = 16; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 17; /* ofType Reference */
     io.graphoenix.core.StringExpression type_name = 18; /* type Reference */
-    IntroFieldOrderBy order_by = 19; /* Order By */
-    IntroFieldGroupBy group_by = 20; /* Group By */
-    bool not = 21; /* Not */
-    io.graphoenix.core.Conditional cond = 22; /* Condition */
-    repeated IntroFieldExpression exs = 23; /* Expressions */
-    int32 first = 24; /* First */
-    int32 last = 25; /* Last */
-    int32 offset = 26; /* Offset */
-    string after = 27; /* After */
-    string before = 28; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    IntroFieldOrderBy order_by = 29; /* Order By */
+    IntroFieldGroupBy group_by = 30; /* Group By */
+    bool not = 31; /* Not */
+    io.graphoenix.core.Conditional cond = 32; /* Condition */
+    repeated IntroFieldExpression exs = 33; /* Expressions */
+    int32 first = 34; /* First */
+    int32 last = 35; /* Last */
+    int32 offset = 36; /* Offset */
+    string after = 37; /* After */
+    string before = 38; /* Before */
 }
 /**
 * Query Arguments for __InputValue
@@ -1649,9 +1932,19 @@ message IntroInputValueQueryArguments {
     io.graphoenix.core.StringExpression intro_typename = 17; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 18; /* ofType Reference */
     io.graphoenix.core.StringExpression type_name = 19; /* type Reference */
-    bool not = 20; /* Not */
-    io.graphoenix.core.Conditional cond = 21; /* Condition */
-    repeated IntroInputValueExpression exs = 22; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 20; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 21; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 22; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 23; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 24; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 25; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 26; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 27; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 28; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 29; /* Quarter of Update Time */
+    bool not = 30; /* Not */
+    io.graphoenix.core.Conditional cond = 31; /* Condition */
+    repeated IntroInputValueExpression exs = 32; /* Expressions */
 }
 /**
 * Query Arguments for __InputValue List
@@ -1676,16 +1969,26 @@ message IntroInputValueListQueryArguments {
     io.graphoenix.core.StringExpression intro_typename = 17; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 18; /* ofType Reference */
     io.graphoenix.core.StringExpression type_name = 19; /* type Reference */
-    IntroInputValueOrderBy order_by = 20; /* Order By */
-    IntroInputValueGroupBy group_by = 21; /* Group By */
-    bool not = 22; /* Not */
-    io.graphoenix.core.Conditional cond = 23; /* Condition */
-    repeated IntroInputValueExpression exs = 24; /* Expressions */
-    int32 first = 25; /* First */
-    int32 last = 26; /* Last */
-    int32 offset = 27; /* Offset */
-    string after = 28; /* After */
-    string before = 29; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 20; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 21; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 22; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 23; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 24; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 25; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 26; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 27; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 28; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 29; /* Quarter of Update Time */
+    IntroInputValueOrderBy order_by = 30; /* Order By */
+    IntroInputValueGroupBy group_by = 31; /* Group By */
+    bool not = 32; /* Not */
+    io.graphoenix.core.Conditional cond = 33; /* Condition */
+    repeated IntroInputValueExpression exs = 34; /* Expressions */
+    int32 first = 35; /* First */
+    int32 last = 36; /* Last */
+    int32 offset = 37; /* Offset */
+    string after = 38; /* After */
+    string before = 39; /* Before */
 }
 /**
 * Query Arguments for __InputValue Connection
@@ -1710,16 +2013,26 @@ message IntroInputValueConnectionQueryArguments {
     io.graphoenix.core.StringExpression intro_typename = 17; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 18; /* ofType Reference */
     io.graphoenix.core.StringExpression type_name = 19; /* type Reference */
-    IntroInputValueOrderBy order_by = 20; /* Order By */
-    IntroInputValueGroupBy group_by = 21; /* Group By */
-    bool not = 22; /* Not */
-    io.graphoenix.core.Conditional cond = 23; /* Condition */
-    repeated IntroInputValueExpression exs = 24; /* Expressions */
-    int32 first = 25; /* First */
-    int32 last = 26; /* Last */
-    int32 offset = 27; /* Offset */
-    string after = 28; /* After */
-    string before = 29; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 20; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 21; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 22; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 23; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 24; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 25; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 26; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 27; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 28; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 29; /* Quarter of Update Time */
+    IntroInputValueOrderBy order_by = 30; /* Order By */
+    IntroInputValueGroupBy group_by = 31; /* Group By */
+    bool not = 32; /* Not */
+    io.graphoenix.core.Conditional cond = 33; /* Condition */
+    repeated IntroInputValueExpression exs = 34; /* Expressions */
+    int32 first = 35; /* First */
+    int32 last = 36; /* Last */
+    int32 offset = 37; /* Offset */
+    string after = 38; /* After */
+    string before = 39; /* Before */
 }
 /**
 * Query Arguments for __EnumValue
@@ -1740,9 +2053,19 @@ message IntroEnumValueQueryArguments {
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 15; /* ofType Reference */
-    bool not = 16; /* Not */
-    io.graphoenix.core.Conditional cond = 17; /* Condition */
-    repeated IntroEnumValueExpression exs = 18; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 16; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 17; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 18; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 19; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 20; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 21; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 22; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 23; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 24; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 25; /* Quarter of Update Time */
+    bool not = 26; /* Not */
+    io.graphoenix.core.Conditional cond = 27; /* Condition */
+    repeated IntroEnumValueExpression exs = 28; /* Expressions */
 }
 /**
 * Query Arguments for __EnumValue List
@@ -1763,16 +2086,26 @@ message IntroEnumValueListQueryArguments {
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 15; /* ofType Reference */
-    IntroEnumValueOrderBy order_by = 16; /* Order By */
-    IntroEnumValueGroupBy group_by = 17; /* Group By */
-    bool not = 18; /* Not */
-    io.graphoenix.core.Conditional cond = 19; /* Condition */
-    repeated IntroEnumValueExpression exs = 20; /* Expressions */
-    int32 first = 21; /* First */
-    int32 last = 22; /* Last */
-    int32 offset = 23; /* Offset */
-    string after = 24; /* After */
-    string before = 25; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 16; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 17; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 18; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 19; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 20; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 21; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 22; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 23; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 24; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 25; /* Quarter of Update Time */
+    IntroEnumValueOrderBy order_by = 26; /* Order By */
+    IntroEnumValueGroupBy group_by = 27; /* Group By */
+    bool not = 28; /* Not */
+    io.graphoenix.core.Conditional cond = 29; /* Condition */
+    repeated IntroEnumValueExpression exs = 30; /* Expressions */
+    int32 first = 31; /* First */
+    int32 last = 32; /* Last */
+    int32 offset = 33; /* Offset */
+    string after = 34; /* After */
+    string before = 35; /* Before */
 }
 /**
 * Query Arguments for __EnumValue Connection
@@ -1793,16 +2126,26 @@ message IntroEnumValueConnectionQueryArguments {
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 15; /* ofType Reference */
-    IntroEnumValueOrderBy order_by = 16; /* Order By */
-    IntroEnumValueGroupBy group_by = 17; /* Group By */
-    bool not = 18; /* Not */
-    io.graphoenix.core.Conditional cond = 19; /* Condition */
-    repeated IntroEnumValueExpression exs = 20; /* Expressions */
-    int32 first = 21; /* First */
-    int32 last = 22; /* Last */
-    int32 offset = 23; /* Offset */
-    string after = 24; /* After */
-    string before = 25; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 16; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 17; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 18; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 19; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 20; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 21; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 22; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 23; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 24; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 25; /* Quarter of Update Time */
+    IntroEnumValueOrderBy order_by = 26; /* Order By */
+    IntroEnumValueGroupBy group_by = 27; /* Group By */
+    bool not = 28; /* Not */
+    io.graphoenix.core.Conditional cond = 29; /* Condition */
+    repeated IntroEnumValueExpression exs = 30; /* Expressions */
+    int32 first = 31; /* First */
+    int32 last = 32; /* Last */
+    int32 offset = 33; /* Offset */
+    string after = 34; /* After */
+    string before = 35; /* Before */
 }
 /**
 * Query Arguments for __Directive
@@ -1826,9 +2169,19 @@ message IntroDirectiveQueryArguments {
     io.graphoenix.core.StringExpression intro_typename = 16; /* Type Name */
     io.graphoenix.core.IntExpression schema_id = 17; /* ofSchema Reference */
     IntroDirectiveLocationsRelationExpression intro_directive_locations_relation = 18; /* Relationship Object between __Directive and locations */
-    bool not = 19; /* Not */
-    io.graphoenix.core.Conditional cond = 20; /* Condition */
-    repeated IntroDirectiveExpression exs = 21; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    bool not = 29; /* Not */
+    io.graphoenix.core.Conditional cond = 30; /* Condition */
+    repeated IntroDirectiveExpression exs = 31; /* Expressions */
 }
 /**
 * Query Arguments for __Directive List
@@ -1852,16 +2205,26 @@ message IntroDirectiveListQueryArguments {
     io.graphoenix.core.StringExpression intro_typename = 16; /* Type Name */
     io.graphoenix.core.IntExpression schema_id = 17; /* ofSchema Reference */
     IntroDirectiveLocationsRelationExpression intro_directive_locations_relation = 18; /* Relationship Object between __Directive and locations */
-    IntroDirectiveOrderBy order_by = 19; /* Order By */
-    IntroDirectiveGroupBy group_by = 20; /* Group By */
-    bool not = 21; /* Not */
-    io.graphoenix.core.Conditional cond = 22; /* Condition */
-    repeated IntroDirectiveExpression exs = 23; /* Expressions */
-    int32 first = 24; /* First */
-    int32 last = 25; /* Last */
-    int32 offset = 26; /* Offset */
-    string after = 27; /* After */
-    string before = 28; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    IntroDirectiveOrderBy order_by = 29; /* Order By */
+    IntroDirectiveGroupBy group_by = 30; /* Group By */
+    bool not = 31; /* Not */
+    io.graphoenix.core.Conditional cond = 32; /* Condition */
+    repeated IntroDirectiveExpression exs = 33; /* Expressions */
+    int32 first = 34; /* First */
+    int32 last = 35; /* Last */
+    int32 offset = 36; /* Offset */
+    string after = 37; /* After */
+    string before = 38; /* Before */
 }
 /**
 * Query Arguments for __Directive Connection
@@ -1885,16 +2248,26 @@ message IntroDirectiveConnectionQueryArguments {
     io.graphoenix.core.StringExpression intro_typename = 16; /* Type Name */
     io.graphoenix.core.IntExpression schema_id = 17; /* ofSchema Reference */
     IntroDirectiveLocationsRelationExpression intro_directive_locations_relation = 18; /* Relationship Object between __Directive and locations */
-    IntroDirectiveOrderBy order_by = 19; /* Order By */
-    IntroDirectiveGroupBy group_by = 20; /* Group By */
-    bool not = 21; /* Not */
-    io.graphoenix.core.Conditional cond = 22; /* Condition */
-    repeated IntroDirectiveExpression exs = 23; /* Expressions */
-    int32 first = 24; /* First */
-    int32 last = 25; /* Last */
-    int32 offset = 26; /* Offset */
-    string after = 27; /* After */
-    string before = 28; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    IntroDirectiveOrderBy order_by = 29; /* Order By */
+    IntroDirectiveGroupBy group_by = 30; /* Group By */
+    bool not = 31; /* Not */
+    io.graphoenix.core.Conditional cond = 32; /* Condition */
+    repeated IntroDirectiveExpression exs = 33; /* Expressions */
+    int32 first = 34; /* First */
+    int32 last = 35; /* Last */
+    int32 offset = 36; /* Offset */
+    string after = 37; /* After */
+    string before = 38; /* Before */
 }
 /**
 * Query Arguments for Relationship Object between __Type and __Type
@@ -1914,9 +2287,19 @@ message IntroTypeInterfacesQueryArguments {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    bool not = 15; /* Not */
-    io.graphoenix.core.Conditional cond = 16; /* Condition */
-    repeated IntroTypeInterfacesExpression exs = 17; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    bool not = 25; /* Not */
+    io.graphoenix.core.Conditional cond = 26; /* Condition */
+    repeated IntroTypeInterfacesExpression exs = 27; /* Expressions */
 }
 /**
 * Query Arguments for Relationship Object between __Type and __Type List
@@ -1936,16 +2319,26 @@ message IntroTypeInterfacesListQueryArguments {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    IntroTypeInterfacesOrderBy order_by = 15; /* Order By */
-    IntroTypeInterfacesGroupBy group_by = 16; /* Group By */
-    bool not = 17; /* Not */
-    io.graphoenix.core.Conditional cond = 18; /* Condition */
-    repeated IntroTypeInterfacesExpression exs = 19; /* Expressions */
-    int32 first = 20; /* First */
-    int32 last = 21; /* Last */
-    int32 offset = 22; /* Offset */
-    string after = 23; /* After */
-    string before = 24; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    IntroTypeInterfacesOrderBy order_by = 25; /* Order By */
+    IntroTypeInterfacesGroupBy group_by = 26; /* Group By */
+    bool not = 27; /* Not */
+    io.graphoenix.core.Conditional cond = 28; /* Condition */
+    repeated IntroTypeInterfacesExpression exs = 29; /* Expressions */
+    int32 first = 30; /* First */
+    int32 last = 31; /* Last */
+    int32 offset = 32; /* Offset */
+    string after = 33; /* After */
+    string before = 34; /* Before */
 }
 /**
 * Query Arguments for Relationship Object between __Type and __Type Connection
@@ -1965,16 +2358,26 @@ message IntroTypeInterfacesConnectionQueryArguments {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    IntroTypeInterfacesOrderBy order_by = 15; /* Order By */
-    IntroTypeInterfacesGroupBy group_by = 16; /* Group By */
-    bool not = 17; /* Not */
-    io.graphoenix.core.Conditional cond = 18; /* Condition */
-    repeated IntroTypeInterfacesExpression exs = 19; /* Expressions */
-    int32 first = 20; /* First */
-    int32 last = 21; /* Last */
-    int32 offset = 22; /* Offset */
-    string after = 23; /* After */
-    string before = 24; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    IntroTypeInterfacesOrderBy order_by = 25; /* Order By */
+    IntroTypeInterfacesGroupBy group_by = 26; /* Group By */
+    bool not = 27; /* Not */
+    io.graphoenix.core.Conditional cond = 28; /* Condition */
+    repeated IntroTypeInterfacesExpression exs = 29; /* Expressions */
+    int32 first = 30; /* First */
+    int32 last = 31; /* Last */
+    int32 offset = 32; /* Offset */
+    string after = 33; /* After */
+    string before = 34; /* Before */
 }
 /**
 * Query Arguments for Relationship Object between __Type and __Type
@@ -1994,9 +2397,19 @@ message IntroTypePossibleTypesQueryArguments {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    bool not = 15; /* Not */
-    io.graphoenix.core.Conditional cond = 16; /* Condition */
-    repeated IntroTypePossibleTypesExpression exs = 17; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    bool not = 25; /* Not */
+    io.graphoenix.core.Conditional cond = 26; /* Condition */
+    repeated IntroTypePossibleTypesExpression exs = 27; /* Expressions */
 }
 /**
 * Query Arguments for Relationship Object between __Type and __Type List
@@ -2016,16 +2429,26 @@ message IntroTypePossibleTypesListQueryArguments {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    IntroTypePossibleTypesOrderBy order_by = 15; /* Order By */
-    IntroTypePossibleTypesGroupBy group_by = 16; /* Group By */
-    bool not = 17; /* Not */
-    io.graphoenix.core.Conditional cond = 18; /* Condition */
-    repeated IntroTypePossibleTypesExpression exs = 19; /* Expressions */
-    int32 first = 20; /* First */
-    int32 last = 21; /* Last */
-    int32 offset = 22; /* Offset */
-    string after = 23; /* After */
-    string before = 24; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    IntroTypePossibleTypesOrderBy order_by = 25; /* Order By */
+    IntroTypePossibleTypesGroupBy group_by = 26; /* Group By */
+    bool not = 27; /* Not */
+    io.graphoenix.core.Conditional cond = 28; /* Condition */
+    repeated IntroTypePossibleTypesExpression exs = 29; /* Expressions */
+    int32 first = 30; /* First */
+    int32 last = 31; /* Last */
+    int32 offset = 32; /* Offset */
+    string after = 33; /* After */
+    string before = 34; /* Before */
 }
 /**
 * Query Arguments for Relationship Object between __Type and __Type Connection
@@ -2045,16 +2468,26 @@ message IntroTypePossibleTypesConnectionQueryArguments {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    IntroTypePossibleTypesOrderBy order_by = 15; /* Order By */
-    IntroTypePossibleTypesGroupBy group_by = 16; /* Group By */
-    bool not = 17; /* Not */
-    io.graphoenix.core.Conditional cond = 18; /* Condition */
-    repeated IntroTypePossibleTypesExpression exs = 19; /* Expressions */
-    int32 first = 20; /* First */
-    int32 last = 21; /* Last */
-    int32 offset = 22; /* Offset */
-    string after = 23; /* After */
-    string before = 24; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    IntroTypePossibleTypesOrderBy order_by = 25; /* Order By */
+    IntroTypePossibleTypesGroupBy group_by = 26; /* Group By */
+    bool not = 27; /* Not */
+    io.graphoenix.core.Conditional cond = 28; /* Condition */
+    repeated IntroTypePossibleTypesExpression exs = 29; /* Expressions */
+    int32 first = 30; /* First */
+    int32 last = 31; /* Last */
+    int32 offset = 32; /* Offset */
+    string after = 33; /* After */
+    string before = 34; /* Before */
 }
 /**
 * Query Arguments for Relationship Object between __Directive and locations
@@ -2073,9 +2506,19 @@ message IntroDirectiveLocationsRelationQueryArguments {
     io.graphoenix.core.StringExpression update_time = 11; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 12; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 13; /* Type Name */
-    bool not = 14; /* Not */
-    io.graphoenix.core.Conditional cond = 15; /* Condition */
-    repeated IntroDirectiveLocationsRelationExpression exs = 16; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 14; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 15; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 16; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 17; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 18; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 19; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 20; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 21; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 22; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 23; /* Quarter of Update Time */
+    bool not = 24; /* Not */
+    io.graphoenix.core.Conditional cond = 25; /* Condition */
+    repeated IntroDirectiveLocationsRelationExpression exs = 26; /* Expressions */
 }
 /**
 * Query Arguments for Relationship Object between __Directive and locations List
@@ -2094,16 +2537,26 @@ message IntroDirectiveLocationsRelationListQueryArguments {
     io.graphoenix.core.StringExpression update_time = 11; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 12; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 13; /* Type Name */
-    IntroDirectiveLocationsRelationOrderBy order_by = 14; /* Order By */
-    IntroDirectiveLocationsRelationGroupBy group_by = 15; /* Group By */
-    bool not = 16; /* Not */
-    io.graphoenix.core.Conditional cond = 17; /* Condition */
-    repeated IntroDirectiveLocationsRelationExpression exs = 18; /* Expressions */
-    int32 first = 19; /* First */
-    int32 last = 20; /* Last */
-    int32 offset = 21; /* Offset */
-    string after = 22; /* After */
-    string before = 23; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 14; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 15; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 16; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 17; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 18; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 19; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 20; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 21; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 22; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 23; /* Quarter of Update Time */
+    IntroDirectiveLocationsRelationOrderBy order_by = 24; /* Order By */
+    IntroDirectiveLocationsRelationGroupBy group_by = 25; /* Group By */
+    bool not = 26; /* Not */
+    io.graphoenix.core.Conditional cond = 27; /* Condition */
+    repeated IntroDirectiveLocationsRelationExpression exs = 28; /* Expressions */
+    int32 first = 29; /* First */
+    int32 last = 30; /* Last */
+    int32 offset = 31; /* Offset */
+    string after = 32; /* After */
+    string before = 33; /* Before */
 }
 /**
 * Query Arguments for Relationship Object between __Directive and locations Connection
@@ -2122,16 +2575,26 @@ message IntroDirectiveLocationsRelationConnectionQueryArguments {
     io.graphoenix.core.StringExpression update_time = 11; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 12; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 13; /* Type Name */
-    IntroDirectiveLocationsRelationOrderBy order_by = 14; /* Order By */
-    IntroDirectiveLocationsRelationGroupBy group_by = 15; /* Group By */
-    bool not = 16; /* Not */
-    io.graphoenix.core.Conditional cond = 17; /* Condition */
-    repeated IntroDirectiveLocationsRelationExpression exs = 18; /* Expressions */
-    int32 first = 19; /* First */
-    int32 last = 20; /* Last */
-    int32 offset = 21; /* Offset */
-    string after = 22; /* After */
-    string before = 23; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 14; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 15; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 16; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 17; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 18; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 19; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 20; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 21; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 22; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 23; /* Quarter of Update Time */
+    IntroDirectiveLocationsRelationOrderBy order_by = 24; /* Order By */
+    IntroDirectiveLocationsRelationGroupBy group_by = 25; /* Group By */
+    bool not = 26; /* Not */
+    io.graphoenix.core.Conditional cond = 27; /* Condition */
+    repeated IntroDirectiveLocationsRelationExpression exs = 28; /* Expressions */
+    int32 first = 29; /* First */
+    int32 last = 30; /* Last */
+    int32 offset = 31; /* Offset */
+    string after = 32; /* After */
+    string before = 33; /* Before */
 }
 /**
 * Mutation Arguments for __Schema
@@ -2587,9 +3050,19 @@ message IntroSchemaSubscriptionArguments {
     io.graphoenix.core.StringExpression query_type_name = 16; /* queryType Reference */
     io.graphoenix.core.StringExpression mutation_type_name = 17; /* mutationType Reference */
     io.graphoenix.core.StringExpression subscription_type_name = 18; /* subscriptionType Reference */
-    bool not = 19; /* Not */
-    io.graphoenix.core.Conditional cond = 20; /* Condition */
-    repeated IntroSchemaExpression exs = 21; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    bool not = 29; /* Not */
+    io.graphoenix.core.Conditional cond = 30; /* Condition */
+    repeated IntroSchemaExpression exs = 31; /* Expressions */
 }
 /**
 * Subscription Arguments for __Schema List
@@ -2613,16 +3086,26 @@ message IntroSchemaListSubscriptionArguments {
     io.graphoenix.core.StringExpression query_type_name = 16; /* queryType Reference */
     io.graphoenix.core.StringExpression mutation_type_name = 17; /* mutationType Reference */
     io.graphoenix.core.StringExpression subscription_type_name = 18; /* subscriptionType Reference */
-    IntroSchemaOrderBy order_by = 19; /* Order By */
-    IntroSchemaGroupBy group_by = 20; /* Group By */
-    bool not = 21; /* Not */
-    io.graphoenix.core.Conditional cond = 22; /* Condition */
-    repeated IntroSchemaExpression exs = 23; /* Expressions */
-    int32 first = 24; /* First */
-    int32 last = 25; /* Input List */
-    int32 offset = 26; /* Offset */
-    string after = 27; /* After */
-    string before = 28; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    IntroSchemaOrderBy order_by = 29; /* Order By */
+    IntroSchemaGroupBy group_by = 30; /* Group By */
+    bool not = 31; /* Not */
+    io.graphoenix.core.Conditional cond = 32; /* Condition */
+    repeated IntroSchemaExpression exs = 33; /* Expressions */
+    int32 first = 34; /* First */
+    int32 last = 35; /* Input List */
+    int32 offset = 36; /* Offset */
+    string after = 37; /* After */
+    string before = 38; /* Before */
 }
 /**
 * Subscription Arguments for __Schema List
@@ -2646,16 +3129,26 @@ message IntroSchemaConnectionSubscriptionArguments {
     io.graphoenix.core.StringExpression query_type_name = 16; /* queryType Reference */
     io.graphoenix.core.StringExpression mutation_type_name = 17; /* mutationType Reference */
     io.graphoenix.core.StringExpression subscription_type_name = 18; /* subscriptionType Reference */
-    IntroSchemaOrderBy order_by = 19; /* Order By */
-    IntroSchemaGroupBy group_by = 20; /* Order By */
-    bool not = 21; /* Not */
-    io.graphoenix.core.Conditional cond = 22; /* Condition */
-    repeated IntroSchemaExpression exs = 23; /* Expressions */
-    int32 first = 24; /* First */
-    int32 last = 25; /* Last */
-    int32 offset = 26; /* Offset */
-    string after = 27; /* After */
-    string before = 28; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    IntroSchemaOrderBy order_by = 29; /* Order By */
+    IntroSchemaGroupBy group_by = 30; /* Order By */
+    bool not = 31; /* Not */
+    io.graphoenix.core.Conditional cond = 32; /* Condition */
+    repeated IntroSchemaExpression exs = 33; /* Expressions */
+    int32 first = 34; /* First */
+    int32 last = 35; /* Last */
+    int32 offset = 36; /* Offset */
+    string after = 37; /* After */
+    string before = 38; /* Before */
 }
 /**
 * Subscription Arguments for __Type
@@ -2685,9 +3178,19 @@ message IntroTypeSubscriptionArguments {
     io.graphoenix.core.StringExpression of_type_name = 22; /* ofType Reference */
     IntroTypeInterfacesExpression intro_type_interfaces = 23; /* Relationship Object between __Type and __Type */
     IntroTypePossibleTypesExpression intro_type_possible_types = 24; /* Relationship Object between __Type and __Type */
-    bool not = 25; /* Not */
-    io.graphoenix.core.Conditional cond = 26; /* Condition */
-    repeated IntroTypeExpression exs = 27; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 25; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 26; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 27; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 28; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 29; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 30; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 31; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 32; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 33; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 34; /* Quarter of Update Time */
+    bool not = 35; /* Not */
+    io.graphoenix.core.Conditional cond = 36; /* Condition */
+    repeated IntroTypeExpression exs = 37; /* Expressions */
 }
 /**
 * Subscription Arguments for __Type List
@@ -2717,16 +3220,26 @@ message IntroTypeListSubscriptionArguments {
     io.graphoenix.core.StringExpression of_type_name = 22; /* ofType Reference */
     IntroTypeInterfacesExpression intro_type_interfaces = 23; /* Relationship Object between __Type and __Type */
     IntroTypePossibleTypesExpression intro_type_possible_types = 24; /* Relationship Object between __Type and __Type */
-    IntroTypeOrderBy order_by = 25; /* Order By */
-    IntroTypeGroupBy group_by = 26; /* Group By */
-    bool not = 27; /* Not */
-    io.graphoenix.core.Conditional cond = 28; /* Condition */
-    repeated IntroTypeExpression exs = 29; /* Expressions */
-    int32 first = 30; /* First */
-    int32 last = 31; /* Input List */
-    int32 offset = 32; /* Offset */
-    string after = 33; /* After */
-    string before = 34; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 25; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 26; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 27; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 28; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 29; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 30; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 31; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 32; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 33; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 34; /* Quarter of Update Time */
+    IntroTypeOrderBy order_by = 35; /* Order By */
+    IntroTypeGroupBy group_by = 36; /* Group By */
+    bool not = 37; /* Not */
+    io.graphoenix.core.Conditional cond = 38; /* Condition */
+    repeated IntroTypeExpression exs = 39; /* Expressions */
+    int32 first = 40; /* First */
+    int32 last = 41; /* Input List */
+    int32 offset = 42; /* Offset */
+    string after = 43; /* After */
+    string before = 44; /* Before */
 }
 /**
 * Subscription Arguments for __Type List
@@ -2756,16 +3269,26 @@ message IntroTypeConnectionSubscriptionArguments {
     io.graphoenix.core.StringExpression of_type_name = 22; /* ofType Reference */
     IntroTypeInterfacesExpression intro_type_interfaces = 23; /* Relationship Object between __Type and __Type */
     IntroTypePossibleTypesExpression intro_type_possible_types = 24; /* Relationship Object between __Type and __Type */
-    IntroTypeOrderBy order_by = 25; /* Order By */
-    IntroTypeGroupBy group_by = 26; /* Order By */
-    bool not = 27; /* Not */
-    io.graphoenix.core.Conditional cond = 28; /* Condition */
-    repeated IntroTypeExpression exs = 29; /* Expressions */
-    int32 first = 30; /* First */
-    int32 last = 31; /* Last */
-    int32 offset = 32; /* Offset */
-    string after = 33; /* After */
-    string before = 34; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 25; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 26; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 27; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 28; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 29; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 30; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 31; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 32; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 33; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 34; /* Quarter of Update Time */
+    IntroTypeOrderBy order_by = 35; /* Order By */
+    IntroTypeGroupBy group_by = 36; /* Order By */
+    bool not = 37; /* Not */
+    io.graphoenix.core.Conditional cond = 38; /* Condition */
+    repeated IntroTypeExpression exs = 39; /* Expressions */
+    int32 first = 40; /* First */
+    int32 last = 41; /* Last */
+    int32 offset = 42; /* Offset */
+    string after = 43; /* After */
+    string before = 44; /* Before */
 }
 /**
 * Subscription Arguments for __Field
@@ -2789,9 +3312,19 @@ message IntroFieldSubscriptionArguments {
     io.graphoenix.core.StringExpression intro_typename = 16; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 17; /* ofType Reference */
     io.graphoenix.core.StringExpression type_name = 18; /* type Reference */
-    bool not = 19; /* Not */
-    io.graphoenix.core.Conditional cond = 20; /* Condition */
-    repeated IntroFieldExpression exs = 21; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    bool not = 29; /* Not */
+    io.graphoenix.core.Conditional cond = 30; /* Condition */
+    repeated IntroFieldExpression exs = 31; /* Expressions */
 }
 /**
 * Subscription Arguments for __Field List
@@ -2815,16 +3348,26 @@ message IntroFieldListSubscriptionArguments {
     io.graphoenix.core.StringExpression intro_typename = 16; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 17; /* ofType Reference */
     io.graphoenix.core.StringExpression type_name = 18; /* type Reference */
-    IntroFieldOrderBy order_by = 19; /* Order By */
-    IntroFieldGroupBy group_by = 20; /* Group By */
-    bool not = 21; /* Not */
-    io.graphoenix.core.Conditional cond = 22; /* Condition */
-    repeated IntroFieldExpression exs = 23; /* Expressions */
-    int32 first = 24; /* First */
-    int32 last = 25; /* Input List */
-    int32 offset = 26; /* Offset */
-    string after = 27; /* After */
-    string before = 28; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    IntroFieldOrderBy order_by = 29; /* Order By */
+    IntroFieldGroupBy group_by = 30; /* Group By */
+    bool not = 31; /* Not */
+    io.graphoenix.core.Conditional cond = 32; /* Condition */
+    repeated IntroFieldExpression exs = 33; /* Expressions */
+    int32 first = 34; /* First */
+    int32 last = 35; /* Input List */
+    int32 offset = 36; /* Offset */
+    string after = 37; /* After */
+    string before = 38; /* Before */
 }
 /**
 * Subscription Arguments for __Field List
@@ -2848,16 +3391,26 @@ message IntroFieldConnectionSubscriptionArguments {
     io.graphoenix.core.StringExpression intro_typename = 16; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 17; /* ofType Reference */
     io.graphoenix.core.StringExpression type_name = 18; /* type Reference */
-    IntroFieldOrderBy order_by = 19; /* Order By */
-    IntroFieldGroupBy group_by = 20; /* Order By */
-    bool not = 21; /* Not */
-    io.graphoenix.core.Conditional cond = 22; /* Condition */
-    repeated IntroFieldExpression exs = 23; /* Expressions */
-    int32 first = 24; /* First */
-    int32 last = 25; /* Last */
-    int32 offset = 26; /* Offset */
-    string after = 27; /* After */
-    string before = 28; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    IntroFieldOrderBy order_by = 29; /* Order By */
+    IntroFieldGroupBy group_by = 30; /* Order By */
+    bool not = 31; /* Not */
+    io.graphoenix.core.Conditional cond = 32; /* Condition */
+    repeated IntroFieldExpression exs = 33; /* Expressions */
+    int32 first = 34; /* First */
+    int32 last = 35; /* Last */
+    int32 offset = 36; /* Offset */
+    string after = 37; /* After */
+    string before = 38; /* Before */
 }
 /**
 * Subscription Arguments for __InputValue
@@ -2882,9 +3435,19 @@ message IntroInputValueSubscriptionArguments {
     io.graphoenix.core.StringExpression intro_typename = 17; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 18; /* ofType Reference */
     io.graphoenix.core.StringExpression type_name = 19; /* type Reference */
-    bool not = 20; /* Not */
-    io.graphoenix.core.Conditional cond = 21; /* Condition */
-    repeated IntroInputValueExpression exs = 22; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 20; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 21; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 22; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 23; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 24; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 25; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 26; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 27; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 28; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 29; /* Quarter of Update Time */
+    bool not = 30; /* Not */
+    io.graphoenix.core.Conditional cond = 31; /* Condition */
+    repeated IntroInputValueExpression exs = 32; /* Expressions */
 }
 /**
 * Subscription Arguments for __InputValue List
@@ -2909,16 +3472,26 @@ message IntroInputValueListSubscriptionArguments {
     io.graphoenix.core.StringExpression intro_typename = 17; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 18; /* ofType Reference */
     io.graphoenix.core.StringExpression type_name = 19; /* type Reference */
-    IntroInputValueOrderBy order_by = 20; /* Order By */
-    IntroInputValueGroupBy group_by = 21; /* Group By */
-    bool not = 22; /* Not */
-    io.graphoenix.core.Conditional cond = 23; /* Condition */
-    repeated IntroInputValueExpression exs = 24; /* Expressions */
-    int32 first = 25; /* First */
-    int32 last = 26; /* Input List */
-    int32 offset = 27; /* Offset */
-    string after = 28; /* After */
-    string before = 29; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 20; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 21; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 22; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 23; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 24; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 25; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 26; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 27; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 28; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 29; /* Quarter of Update Time */
+    IntroInputValueOrderBy order_by = 30; /* Order By */
+    IntroInputValueGroupBy group_by = 31; /* Group By */
+    bool not = 32; /* Not */
+    io.graphoenix.core.Conditional cond = 33; /* Condition */
+    repeated IntroInputValueExpression exs = 34; /* Expressions */
+    int32 first = 35; /* First */
+    int32 last = 36; /* Input List */
+    int32 offset = 37; /* Offset */
+    string after = 38; /* After */
+    string before = 39; /* Before */
 }
 /**
 * Subscription Arguments for __InputValue List
@@ -2943,16 +3516,26 @@ message IntroInputValueConnectionSubscriptionArguments {
     io.graphoenix.core.StringExpression intro_typename = 17; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 18; /* ofType Reference */
     io.graphoenix.core.StringExpression type_name = 19; /* type Reference */
-    IntroInputValueOrderBy order_by = 20; /* Order By */
-    IntroInputValueGroupBy group_by = 21; /* Order By */
-    bool not = 22; /* Not */
-    io.graphoenix.core.Conditional cond = 23; /* Condition */
-    repeated IntroInputValueExpression exs = 24; /* Expressions */
-    int32 first = 25; /* First */
-    int32 last = 26; /* Last */
-    int32 offset = 27; /* Offset */
-    string after = 28; /* After */
-    string before = 29; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 20; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 21; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 22; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 23; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 24; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 25; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 26; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 27; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 28; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 29; /* Quarter of Update Time */
+    IntroInputValueOrderBy order_by = 30; /* Order By */
+    IntroInputValueGroupBy group_by = 31; /* Order By */
+    bool not = 32; /* Not */
+    io.graphoenix.core.Conditional cond = 33; /* Condition */
+    repeated IntroInputValueExpression exs = 34; /* Expressions */
+    int32 first = 35; /* First */
+    int32 last = 36; /* Last */
+    int32 offset = 37; /* Offset */
+    string after = 38; /* After */
+    string before = 39; /* Before */
 }
 /**
 * Subscription Arguments for __EnumValue
@@ -2973,9 +3556,19 @@ message IntroEnumValueSubscriptionArguments {
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 15; /* ofType Reference */
-    bool not = 16; /* Not */
-    io.graphoenix.core.Conditional cond = 17; /* Condition */
-    repeated IntroEnumValueExpression exs = 18; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 16; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 17; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 18; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 19; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 20; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 21; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 22; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 23; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 24; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 25; /* Quarter of Update Time */
+    bool not = 26; /* Not */
+    io.graphoenix.core.Conditional cond = 27; /* Condition */
+    repeated IntroEnumValueExpression exs = 28; /* Expressions */
 }
 /**
 * Subscription Arguments for __EnumValue List
@@ -2996,16 +3589,26 @@ message IntroEnumValueListSubscriptionArguments {
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 15; /* ofType Reference */
-    IntroEnumValueOrderBy order_by = 16; /* Order By */
-    IntroEnumValueGroupBy group_by = 17; /* Group By */
-    bool not = 18; /* Not */
-    io.graphoenix.core.Conditional cond = 19; /* Condition */
-    repeated IntroEnumValueExpression exs = 20; /* Expressions */
-    int32 first = 21; /* First */
-    int32 last = 22; /* Input List */
-    int32 offset = 23; /* Offset */
-    string after = 24; /* After */
-    string before = 25; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 16; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 17; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 18; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 19; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 20; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 21; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 22; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 23; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 24; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 25; /* Quarter of Update Time */
+    IntroEnumValueOrderBy order_by = 26; /* Order By */
+    IntroEnumValueGroupBy group_by = 27; /* Group By */
+    bool not = 28; /* Not */
+    io.graphoenix.core.Conditional cond = 29; /* Condition */
+    repeated IntroEnumValueExpression exs = 30; /* Expressions */
+    int32 first = 31; /* First */
+    int32 last = 32; /* Input List */
+    int32 offset = 33; /* Offset */
+    string after = 34; /* After */
+    string before = 35; /* Before */
 }
 /**
 * Subscription Arguments for __EnumValue List
@@ -3026,16 +3629,26 @@ message IntroEnumValueConnectionSubscriptionArguments {
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
     io.graphoenix.core.StringExpression of_type_name = 15; /* ofType Reference */
-    IntroEnumValueOrderBy order_by = 16; /* Order By */
-    IntroEnumValueGroupBy group_by = 17; /* Order By */
-    bool not = 18; /* Not */
-    io.graphoenix.core.Conditional cond = 19; /* Condition */
-    repeated IntroEnumValueExpression exs = 20; /* Expressions */
-    int32 first = 21; /* First */
-    int32 last = 22; /* Last */
-    int32 offset = 23; /* Offset */
-    string after = 24; /* After */
-    string before = 25; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 16; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 17; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 18; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 19; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 20; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 21; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 22; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 23; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 24; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 25; /* Quarter of Update Time */
+    IntroEnumValueOrderBy order_by = 26; /* Order By */
+    IntroEnumValueGroupBy group_by = 27; /* Order By */
+    bool not = 28; /* Not */
+    io.graphoenix.core.Conditional cond = 29; /* Condition */
+    repeated IntroEnumValueExpression exs = 30; /* Expressions */
+    int32 first = 31; /* First */
+    int32 last = 32; /* Last */
+    int32 offset = 33; /* Offset */
+    string after = 34; /* After */
+    string before = 35; /* Before */
 }
 /**
 * Subscription Arguments for __Directive
@@ -3059,9 +3672,19 @@ message IntroDirectiveSubscriptionArguments {
     io.graphoenix.core.StringExpression intro_typename = 16; /* Type Name */
     io.graphoenix.core.IntExpression schema_id = 17; /* ofSchema Reference */
     IntroDirectiveLocationsRelationExpression intro_directive_locations_relation = 18; /* Relationship Object between __Directive and locations */
-    bool not = 19; /* Not */
-    io.graphoenix.core.Conditional cond = 20; /* Condition */
-    repeated IntroDirectiveExpression exs = 21; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    bool not = 29; /* Not */
+    io.graphoenix.core.Conditional cond = 30; /* Condition */
+    repeated IntroDirectiveExpression exs = 31; /* Expressions */
 }
 /**
 * Subscription Arguments for __Directive List
@@ -3085,16 +3708,26 @@ message IntroDirectiveListSubscriptionArguments {
     io.graphoenix.core.StringExpression intro_typename = 16; /* Type Name */
     io.graphoenix.core.IntExpression schema_id = 17; /* ofSchema Reference */
     IntroDirectiveLocationsRelationExpression intro_directive_locations_relation = 18; /* Relationship Object between __Directive and locations */
-    IntroDirectiveOrderBy order_by = 19; /* Order By */
-    IntroDirectiveGroupBy group_by = 20; /* Group By */
-    bool not = 21; /* Not */
-    io.graphoenix.core.Conditional cond = 22; /* Condition */
-    repeated IntroDirectiveExpression exs = 23; /* Expressions */
-    int32 first = 24; /* First */
-    int32 last = 25; /* Input List */
-    int32 offset = 26; /* Offset */
-    string after = 27; /* After */
-    string before = 28; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    IntroDirectiveOrderBy order_by = 29; /* Order By */
+    IntroDirectiveGroupBy group_by = 30; /* Group By */
+    bool not = 31; /* Not */
+    io.graphoenix.core.Conditional cond = 32; /* Condition */
+    repeated IntroDirectiveExpression exs = 33; /* Expressions */
+    int32 first = 34; /* First */
+    int32 last = 35; /* Input List */
+    int32 offset = 36; /* Offset */
+    string after = 37; /* After */
+    string before = 38; /* Before */
 }
 /**
 * Subscription Arguments for __Directive List
@@ -3118,16 +3751,26 @@ message IntroDirectiveConnectionSubscriptionArguments {
     io.graphoenix.core.StringExpression intro_typename = 16; /* Type Name */
     io.graphoenix.core.IntExpression schema_id = 17; /* ofSchema Reference */
     IntroDirectiveLocationsRelationExpression intro_directive_locations_relation = 18; /* Relationship Object between __Directive and locations */
-    IntroDirectiveOrderBy order_by = 19; /* Order By */
-    IntroDirectiveGroupBy group_by = 20; /* Order By */
-    bool not = 21; /* Not */
-    io.graphoenix.core.Conditional cond = 22; /* Condition */
-    repeated IntroDirectiveExpression exs = 23; /* Expressions */
-    int32 first = 24; /* First */
-    int32 last = 25; /* Last */
-    int32 offset = 26; /* Offset */
-    string after = 27; /* After */
-    string before = 28; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 19; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 20; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 21; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 22; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 23; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 24; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 25; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 26; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 27; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 28; /* Quarter of Update Time */
+    IntroDirectiveOrderBy order_by = 29; /* Order By */
+    IntroDirectiveGroupBy group_by = 30; /* Order By */
+    bool not = 31; /* Not */
+    io.graphoenix.core.Conditional cond = 32; /* Condition */
+    repeated IntroDirectiveExpression exs = 33; /* Expressions */
+    int32 first = 34; /* First */
+    int32 last = 35; /* Last */
+    int32 offset = 36; /* Offset */
+    string after = 37; /* After */
+    string before = 38; /* Before */
 }
 /**
 * Subscription Arguments for Relationship Object between __Type and __Type
@@ -3147,9 +3790,19 @@ message IntroTypeInterfacesSubscriptionArguments {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    bool not = 15; /* Not */
-    io.graphoenix.core.Conditional cond = 16; /* Condition */
-    repeated IntroTypeInterfacesExpression exs = 17; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    bool not = 25; /* Not */
+    io.graphoenix.core.Conditional cond = 26; /* Condition */
+    repeated IntroTypeInterfacesExpression exs = 27; /* Expressions */
 }
 /**
 * Subscription Arguments for Relationship Object between __Type and __Type List
@@ -3169,16 +3822,26 @@ message IntroTypeInterfacesListSubscriptionArguments {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    IntroTypeInterfacesOrderBy order_by = 15; /* Order By */
-    IntroTypeInterfacesGroupBy group_by = 16; /* Group By */
-    bool not = 17; /* Not */
-    io.graphoenix.core.Conditional cond = 18; /* Condition */
-    repeated IntroTypeInterfacesExpression exs = 19; /* Expressions */
-    int32 first = 20; /* First */
-    int32 last = 21; /* Input List */
-    int32 offset = 22; /* Offset */
-    string after = 23; /* After */
-    string before = 24; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    IntroTypeInterfacesOrderBy order_by = 25; /* Order By */
+    IntroTypeInterfacesGroupBy group_by = 26; /* Group By */
+    bool not = 27; /* Not */
+    io.graphoenix.core.Conditional cond = 28; /* Condition */
+    repeated IntroTypeInterfacesExpression exs = 29; /* Expressions */
+    int32 first = 30; /* First */
+    int32 last = 31; /* Input List */
+    int32 offset = 32; /* Offset */
+    string after = 33; /* After */
+    string before = 34; /* Before */
 }
 /**
 * Subscription Arguments for Relationship Object between __Type and __Type List
@@ -3198,16 +3861,26 @@ message IntroTypeInterfacesConnectionSubscriptionArguments {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    IntroTypeInterfacesOrderBy order_by = 15; /* Order By */
-    IntroTypeInterfacesGroupBy group_by = 16; /* Order By */
-    bool not = 17; /* Not */
-    io.graphoenix.core.Conditional cond = 18; /* Condition */
-    repeated IntroTypeInterfacesExpression exs = 19; /* Expressions */
-    int32 first = 20; /* First */
-    int32 last = 21; /* Last */
-    int32 offset = 22; /* Offset */
-    string after = 23; /* After */
-    string before = 24; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    IntroTypeInterfacesOrderBy order_by = 25; /* Order By */
+    IntroTypeInterfacesGroupBy group_by = 26; /* Order By */
+    bool not = 27; /* Not */
+    io.graphoenix.core.Conditional cond = 28; /* Condition */
+    repeated IntroTypeInterfacesExpression exs = 29; /* Expressions */
+    int32 first = 30; /* First */
+    int32 last = 31; /* Last */
+    int32 offset = 32; /* Offset */
+    string after = 33; /* After */
+    string before = 34; /* Before */
 }
 /**
 * Subscription Arguments for Relationship Object between __Type and __Type
@@ -3227,9 +3900,19 @@ message IntroTypePossibleTypesSubscriptionArguments {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    bool not = 15; /* Not */
-    io.graphoenix.core.Conditional cond = 16; /* Condition */
-    repeated IntroTypePossibleTypesExpression exs = 17; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    bool not = 25; /* Not */
+    io.graphoenix.core.Conditional cond = 26; /* Condition */
+    repeated IntroTypePossibleTypesExpression exs = 27; /* Expressions */
 }
 /**
 * Subscription Arguments for Relationship Object between __Type and __Type List
@@ -3249,16 +3932,26 @@ message IntroTypePossibleTypesListSubscriptionArguments {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    IntroTypePossibleTypesOrderBy order_by = 15; /* Order By */
-    IntroTypePossibleTypesGroupBy group_by = 16; /* Group By */
-    bool not = 17; /* Not */
-    io.graphoenix.core.Conditional cond = 18; /* Condition */
-    repeated IntroTypePossibleTypesExpression exs = 19; /* Expressions */
-    int32 first = 20; /* First */
-    int32 last = 21; /* Input List */
-    int32 offset = 22; /* Offset */
-    string after = 23; /* After */
-    string before = 24; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    IntroTypePossibleTypesOrderBy order_by = 25; /* Order By */
+    IntroTypePossibleTypesGroupBy group_by = 26; /* Group By */
+    bool not = 27; /* Not */
+    io.graphoenix.core.Conditional cond = 28; /* Condition */
+    repeated IntroTypePossibleTypesExpression exs = 29; /* Expressions */
+    int32 first = 30; /* First */
+    int32 last = 31; /* Input List */
+    int32 offset = 32; /* Offset */
+    string after = 33; /* After */
+    string before = 34; /* Before */
 }
 /**
 * Subscription Arguments for Relationship Object between __Type and __Type List
@@ -3278,16 +3971,26 @@ message IntroTypePossibleTypesConnectionSubscriptionArguments {
     io.graphoenix.core.StringExpression update_time = 12; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 13; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 14; /* Type Name */
-    IntroTypePossibleTypesOrderBy order_by = 15; /* Order By */
-    IntroTypePossibleTypesGroupBy group_by = 16; /* Order By */
-    bool not = 17; /* Not */
-    io.graphoenix.core.Conditional cond = 18; /* Condition */
-    repeated IntroTypePossibleTypesExpression exs = 19; /* Expressions */
-    int32 first = 20; /* First */
-    int32 last = 21; /* Last */
-    int32 offset = 22; /* Offset */
-    string after = 23; /* After */
-    string before = 24; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 15; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 16; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 17; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 18; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 19; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 20; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 21; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 22; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 23; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 24; /* Quarter of Update Time */
+    IntroTypePossibleTypesOrderBy order_by = 25; /* Order By */
+    IntroTypePossibleTypesGroupBy group_by = 26; /* Order By */
+    bool not = 27; /* Not */
+    io.graphoenix.core.Conditional cond = 28; /* Condition */
+    repeated IntroTypePossibleTypesExpression exs = 29; /* Expressions */
+    int32 first = 30; /* First */
+    int32 last = 31; /* Last */
+    int32 offset = 32; /* Offset */
+    string after = 33; /* After */
+    string before = 34; /* Before */
 }
 /**
 * Subscription Arguments for Relationship Object between __Directive and locations
@@ -3306,9 +4009,19 @@ message IntroDirectiveLocationsRelationSubscriptionArguments {
     io.graphoenix.core.StringExpression update_time = 11; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 12; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 13; /* Type Name */
-    bool not = 14; /* Not */
-    io.graphoenix.core.Conditional cond = 15; /* Condition */
-    repeated IntroDirectiveLocationsRelationExpression exs = 16; /* Expressions */
+    io.graphoenix.core.IntExpression create_time_year = 14; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 15; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 16; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 17; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 18; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 19; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 20; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 21; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 22; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 23; /* Quarter of Update Time */
+    bool not = 24; /* Not */
+    io.graphoenix.core.Conditional cond = 25; /* Condition */
+    repeated IntroDirectiveLocationsRelationExpression exs = 26; /* Expressions */
 }
 /**
 * Subscription Arguments for Relationship Object between __Directive and locations List
@@ -3327,16 +4040,26 @@ message IntroDirectiveLocationsRelationListSubscriptionArguments {
     io.graphoenix.core.StringExpression update_time = 11; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 12; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 13; /* Type Name */
-    IntroDirectiveLocationsRelationOrderBy order_by = 14; /* Order By */
-    IntroDirectiveLocationsRelationGroupBy group_by = 15; /* Group By */
-    bool not = 16; /* Not */
-    io.graphoenix.core.Conditional cond = 17; /* Condition */
-    repeated IntroDirectiveLocationsRelationExpression exs = 18; /* Expressions */
-    int32 first = 19; /* First */
-    int32 last = 20; /* Input List */
-    int32 offset = 21; /* Offset */
-    string after = 22; /* After */
-    string before = 23; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 14; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 15; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 16; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 17; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 18; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 19; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 20; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 21; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 22; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 23; /* Quarter of Update Time */
+    IntroDirectiveLocationsRelationOrderBy order_by = 24; /* Order By */
+    IntroDirectiveLocationsRelationGroupBy group_by = 25; /* Group By */
+    bool not = 26; /* Not */
+    io.graphoenix.core.Conditional cond = 27; /* Condition */
+    repeated IntroDirectiveLocationsRelationExpression exs = 28; /* Expressions */
+    int32 first = 29; /* First */
+    int32 last = 30; /* Input List */
+    int32 offset = 31; /* Offset */
+    string after = 32; /* After */
+    string before = 33; /* Before */
 }
 /**
 * Subscription Arguments for Relationship Object between __Directive and locations List
@@ -3355,14 +4078,24 @@ message IntroDirectiveLocationsRelationConnectionSubscriptionArguments {
     io.graphoenix.core.StringExpression update_time = 11; /* Update Time */
     io.graphoenix.core.StringExpression create_group_id = 12; /* Create Group ID */
     io.graphoenix.core.StringExpression intro_typename = 13; /* Type Name */
-    IntroDirectiveLocationsRelationOrderBy order_by = 14; /* Order By */
-    IntroDirectiveLocationsRelationGroupBy group_by = 15; /* Order By */
-    bool not = 16; /* Not */
-    io.graphoenix.core.Conditional cond = 17; /* Condition */
-    repeated IntroDirectiveLocationsRelationExpression exs = 18; /* Expressions */
-    int32 first = 19; /* First */
-    int32 last = 20; /* Last */
-    int32 offset = 21; /* Offset */
-    string after = 22; /* After */
-    string before = 23; /* Before */
+    io.graphoenix.core.IntExpression create_time_year = 14; /* Year of Create Time */
+    io.graphoenix.core.IntExpression create_time_month = 15; /* Month of Create Time */
+    io.graphoenix.core.IntExpression create_time_day = 16; /* Day of Create Time */
+    io.graphoenix.core.IntExpression create_time_week = 17; /* Week of Create Time */
+    io.graphoenix.core.IntExpression create_time_quarter = 18; /* Quarter of Create Time */
+    io.graphoenix.core.IntExpression update_time_year = 19; /* Year of Update Time */
+    io.graphoenix.core.IntExpression update_time_month = 20; /* Month of Update Time */
+    io.graphoenix.core.IntExpression update_time_day = 21; /* Day of Update Time */
+    io.graphoenix.core.IntExpression update_time_week = 22; /* Week of Update Time */
+    io.graphoenix.core.IntExpression update_time_quarter = 23; /* Quarter of Update Time */
+    IntroDirectiveLocationsRelationOrderBy order_by = 24; /* Order By */
+    IntroDirectiveLocationsRelationGroupBy group_by = 25; /* Order By */
+    bool not = 26; /* Not */
+    io.graphoenix.core.Conditional cond = 27; /* Condition */
+    repeated IntroDirectiveLocationsRelationExpression exs = 28; /* Expressions */
+    int32 first = 29; /* First */
+    int32 last = 30; /* Last */
+    int32 offset = 31; /* Offset */
+    string after = 32; /* After */
+    string before = 33; /* Before */
 }

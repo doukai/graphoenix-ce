@@ -142,34 +142,10 @@ public class __DirectiveOrderBy {
   private Sort idCount;
 
   /**
-   * Max of id
-   */
-  @Description("Max of id")
-  private Sort idMax;
-
-  /**
-   * Min of id
-   */
-  @Description("Min of id")
-  private Sort idMin;
-
-  /**
    * Count of name
    */
   @Description("Count of name")
   private Sort nameCount;
-
-  /**
-   * Max of name
-   */
-  @Description("Max of name")
-  private Sort nameMax;
-
-  /**
-   * Min of name
-   */
-  @Description("Min of name")
-  private Sort nameMin;
 
   /**
    * Count of description
@@ -178,22 +154,28 @@ public class __DirectiveOrderBy {
   private Sort descriptionCount;
 
   /**
-   * Max of description
+   * Count of isRepeatable
    */
-  @Description("Max of description")
-  private Sort descriptionMax;
-
-  /**
-   * Min of description
-   */
-  @Description("Min of description")
-  private Sort descriptionMin;
+  @Description("Count of isRepeatable")
+  private Sort isRepeatableCount;
 
   /**
    * Count of ofSchema Reference
    */
   @Description("Count of ofSchema Reference")
   private Sort schemaIdCount;
+
+  /**
+   * Max of ofSchema Reference
+   */
+  @Description("Max of ofSchema Reference")
+  private Sort schemaIdMax;
+
+  /**
+   * Min of ofSchema Reference
+   */
+  @Description("Min of ofSchema Reference")
+  private Sort schemaIdMin;
 
   /**
    * Sum of ofSchema Reference
@@ -208,16 +190,64 @@ public class __DirectiveOrderBy {
   private Sort schemaIdAvg;
 
   /**
-   * Max of ofSchema Reference
+   * Year of Create Time
    */
-  @Description("Max of ofSchema Reference")
-  private Sort schemaIdMax;
+  @Description("Year of Create Time")
+  private Sort createTimeYear;
 
   /**
-   * Min of ofSchema Reference
+   * Month of Create Time
    */
-  @Description("Min of ofSchema Reference")
-  private Sort schemaIdMin;
+  @Description("Month of Create Time")
+  private Sort createTimeMonth;
+
+  /**
+   * Day of Create Time
+   */
+  @Description("Day of Create Time")
+  private Sort createTimeDay;
+
+  /**
+   * Week of Create Time
+   */
+  @Description("Week of Create Time")
+  private Sort createTimeWeek;
+
+  /**
+   * Quarter of Create Time
+   */
+  @Description("Quarter of Create Time")
+  private Sort createTimeQuarter;
+
+  /**
+   * Year of Update Time
+   */
+  @Description("Year of Update Time")
+  private Sort updateTimeYear;
+
+  /**
+   * Month of Update Time
+   */
+  @Description("Month of Update Time")
+  private Sort updateTimeMonth;
+
+  /**
+   * Day of Update Time
+   */
+  @Description("Day of Update Time")
+  private Sort updateTimeDay;
+
+  /**
+   * Week of Update Time
+   */
+  @Description("Week of Update Time")
+  private Sort updateTimeWeek;
+
+  /**
+   * Quarter of Update Time
+   */
+  @Description("Quarter of Update Time")
+  private Sort updateTimeQuarter;
 
   /**
    * OrderByes
@@ -395,44 +425,12 @@ public class __DirectiveOrderBy {
     this.idCount = idCount;
   }
 
-  public Sort getIdMax() {
-    return this.idMax;
-  }
-
-  public void setIdMax(Sort idMax) {
-    this.idMax = idMax;
-  }
-
-  public Sort getIdMin() {
-    return this.idMin;
-  }
-
-  public void setIdMin(Sort idMin) {
-    this.idMin = idMin;
-  }
-
   public Sort getNameCount() {
     return this.nameCount;
   }
 
   public void setNameCount(Sort nameCount) {
     this.nameCount = nameCount;
-  }
-
-  public Sort getNameMax() {
-    return this.nameMax;
-  }
-
-  public void setNameMax(Sort nameMax) {
-    this.nameMax = nameMax;
-  }
-
-  public Sort getNameMin() {
-    return this.nameMin;
-  }
-
-  public void setNameMin(Sort nameMin) {
-    this.nameMin = nameMin;
   }
 
   public Sort getDescriptionCount() {
@@ -443,20 +441,12 @@ public class __DirectiveOrderBy {
     this.descriptionCount = descriptionCount;
   }
 
-  public Sort getDescriptionMax() {
-    return this.descriptionMax;
+  public Sort getIsRepeatableCount() {
+    return this.isRepeatableCount;
   }
 
-  public void setDescriptionMax(Sort descriptionMax) {
-    this.descriptionMax = descriptionMax;
-  }
-
-  public Sort getDescriptionMin() {
-    return this.descriptionMin;
-  }
-
-  public void setDescriptionMin(Sort descriptionMin) {
-    this.descriptionMin = descriptionMin;
+  public void setIsRepeatableCount(Sort isRepeatableCount) {
+    this.isRepeatableCount = isRepeatableCount;
   }
 
   public Sort getSchemaIdCount() {
@@ -465,6 +455,22 @@ public class __DirectiveOrderBy {
 
   public void setSchemaIdCount(Sort schemaIdCount) {
     this.schemaIdCount = schemaIdCount;
+  }
+
+  public Sort getSchemaIdMax() {
+    return this.schemaIdMax;
+  }
+
+  public void setSchemaIdMax(Sort schemaIdMax) {
+    this.schemaIdMax = schemaIdMax;
+  }
+
+  public Sort getSchemaIdMin() {
+    return this.schemaIdMin;
+  }
+
+  public void setSchemaIdMin(Sort schemaIdMin) {
+    this.schemaIdMin = schemaIdMin;
   }
 
   public Sort getSchemaIdSum() {
@@ -483,20 +489,84 @@ public class __DirectiveOrderBy {
     this.schemaIdAvg = schemaIdAvg;
   }
 
-  public Sort getSchemaIdMax() {
-    return this.schemaIdMax;
+  public Sort getCreateTimeYear() {
+    return this.createTimeYear;
   }
 
-  public void setSchemaIdMax(Sort schemaIdMax) {
-    this.schemaIdMax = schemaIdMax;
+  public void setCreateTimeYear(Sort createTimeYear) {
+    this.createTimeYear = createTimeYear;
   }
 
-  public Sort getSchemaIdMin() {
-    return this.schemaIdMin;
+  public Sort getCreateTimeMonth() {
+    return this.createTimeMonth;
   }
 
-  public void setSchemaIdMin(Sort schemaIdMin) {
-    this.schemaIdMin = schemaIdMin;
+  public void setCreateTimeMonth(Sort createTimeMonth) {
+    this.createTimeMonth = createTimeMonth;
+  }
+
+  public Sort getCreateTimeDay() {
+    return this.createTimeDay;
+  }
+
+  public void setCreateTimeDay(Sort createTimeDay) {
+    this.createTimeDay = createTimeDay;
+  }
+
+  public Sort getCreateTimeWeek() {
+    return this.createTimeWeek;
+  }
+
+  public void setCreateTimeWeek(Sort createTimeWeek) {
+    this.createTimeWeek = createTimeWeek;
+  }
+
+  public Sort getCreateTimeQuarter() {
+    return this.createTimeQuarter;
+  }
+
+  public void setCreateTimeQuarter(Sort createTimeQuarter) {
+    this.createTimeQuarter = createTimeQuarter;
+  }
+
+  public Sort getUpdateTimeYear() {
+    return this.updateTimeYear;
+  }
+
+  public void setUpdateTimeYear(Sort updateTimeYear) {
+    this.updateTimeYear = updateTimeYear;
+  }
+
+  public Sort getUpdateTimeMonth() {
+    return this.updateTimeMonth;
+  }
+
+  public void setUpdateTimeMonth(Sort updateTimeMonth) {
+    this.updateTimeMonth = updateTimeMonth;
+  }
+
+  public Sort getUpdateTimeDay() {
+    return this.updateTimeDay;
+  }
+
+  public void setUpdateTimeDay(Sort updateTimeDay) {
+    this.updateTimeDay = updateTimeDay;
+  }
+
+  public Sort getUpdateTimeWeek() {
+    return this.updateTimeWeek;
+  }
+
+  public void setUpdateTimeWeek(Sort updateTimeWeek) {
+    this.updateTimeWeek = updateTimeWeek;
+  }
+
+  public Sort getUpdateTimeQuarter() {
+    return this.updateTimeQuarter;
+  }
+
+  public void setUpdateTimeQuarter(Sort updateTimeQuarter) {
+    this.updateTimeQuarter = updateTimeQuarter;
   }
 
   public Collection<__DirectiveOrderBy> getObs() {

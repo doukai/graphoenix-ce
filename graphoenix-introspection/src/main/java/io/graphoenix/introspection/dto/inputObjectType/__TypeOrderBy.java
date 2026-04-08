@@ -208,34 +208,10 @@ public class __TypeOrderBy {
   private Sort idCount;
 
   /**
-   * Max of id
-   */
-  @Description("Max of id")
-  private Sort idMax;
-
-  /**
-   * Min of id
-   */
-  @Description("Min of id")
-  private Sort idMin;
-
-  /**
    * Count of name
    */
   @Description("Count of name")
   private Sort nameCount;
-
-  /**
-   * Max of name
-   */
-  @Description("Max of name")
-  private Sort nameMax;
-
-  /**
-   * Min of name
-   */
-  @Description("Min of name")
-  private Sort nameMin;
 
   /**
    * Count of kind
@@ -244,34 +220,16 @@ public class __TypeOrderBy {
   private Sort kindCount;
 
   /**
-   * Max of kind
-   */
-  @Description("Max of kind")
-  private Sort kindMax;
-
-  /**
-   * Min of kind
-   */
-  @Description("Min of kind")
-  private Sort kindMin;
-
-  /**
    * Count of description
    */
   @Description("Count of description")
   private Sort descriptionCount;
 
   /**
-   * Max of description
+   * Count of ofSchema Reference
    */
-  @Description("Max of description")
-  private Sort descriptionMax;
-
-  /**
-   * Min of description
-   */
-  @Description("Min of description")
-  private Sort descriptionMin;
+  @Description("Count of ofSchema Reference")
+  private Sort schemaIdCount;
 
   /**
    * Count of ofType Reference
@@ -280,22 +238,16 @@ public class __TypeOrderBy {
   private Sort ofTypeNameCount;
 
   /**
-   * Max of ofType Reference
+   * Max of ofSchema Reference
    */
-  @Description("Max of ofType Reference")
-  private Sort ofTypeNameMax;
+  @Description("Max of ofSchema Reference")
+  private Sort schemaIdMax;
 
   /**
-   * Min of ofType Reference
+   * Min of ofSchema Reference
    */
-  @Description("Min of ofType Reference")
-  private Sort ofTypeNameMin;
-
-  /**
-   * Count of ofSchema Reference
-   */
-  @Description("Count of ofSchema Reference")
-  private Sort schemaIdCount;
+  @Description("Min of ofSchema Reference")
+  private Sort schemaIdMin;
 
   /**
    * Sum of ofSchema Reference
@@ -310,16 +262,64 @@ public class __TypeOrderBy {
   private Sort schemaIdAvg;
 
   /**
-   * Max of ofSchema Reference
+   * Year of Create Time
    */
-  @Description("Max of ofSchema Reference")
-  private Sort schemaIdMax;
+  @Description("Year of Create Time")
+  private Sort createTimeYear;
 
   /**
-   * Min of ofSchema Reference
+   * Month of Create Time
    */
-  @Description("Min of ofSchema Reference")
-  private Sort schemaIdMin;
+  @Description("Month of Create Time")
+  private Sort createTimeMonth;
+
+  /**
+   * Day of Create Time
+   */
+  @Description("Day of Create Time")
+  private Sort createTimeDay;
+
+  /**
+   * Week of Create Time
+   */
+  @Description("Week of Create Time")
+  private Sort createTimeWeek;
+
+  /**
+   * Quarter of Create Time
+   */
+  @Description("Quarter of Create Time")
+  private Sort createTimeQuarter;
+
+  /**
+   * Year of Update Time
+   */
+  @Description("Year of Update Time")
+  private Sort updateTimeYear;
+
+  /**
+   * Month of Update Time
+   */
+  @Description("Month of Update Time")
+  private Sort updateTimeMonth;
+
+  /**
+   * Day of Update Time
+   */
+  @Description("Day of Update Time")
+  private Sort updateTimeDay;
+
+  /**
+   * Week of Update Time
+   */
+  @Description("Week of Update Time")
+  private Sort updateTimeWeek;
+
+  /**
+   * Quarter of Update Time
+   */
+  @Description("Quarter of Update Time")
+  private Sort updateTimeQuarter;
 
   /**
    * OrderByes
@@ -584,44 +584,12 @@ public class __TypeOrderBy {
     this.idCount = idCount;
   }
 
-  public Sort getIdMax() {
-    return this.idMax;
-  }
-
-  public void setIdMax(Sort idMax) {
-    this.idMax = idMax;
-  }
-
-  public Sort getIdMin() {
-    return this.idMin;
-  }
-
-  public void setIdMin(Sort idMin) {
-    this.idMin = idMin;
-  }
-
   public Sort getNameCount() {
     return this.nameCount;
   }
 
   public void setNameCount(Sort nameCount) {
     this.nameCount = nameCount;
-  }
-
-  public Sort getNameMax() {
-    return this.nameMax;
-  }
-
-  public void setNameMax(Sort nameMax) {
-    this.nameMax = nameMax;
-  }
-
-  public Sort getNameMin() {
-    return this.nameMin;
-  }
-
-  public void setNameMin(Sort nameMin) {
-    this.nameMin = nameMin;
   }
 
   public Sort getKindCount() {
@@ -632,22 +600,6 @@ public class __TypeOrderBy {
     this.kindCount = kindCount;
   }
 
-  public Sort getKindMax() {
-    return this.kindMax;
-  }
-
-  public void setKindMax(Sort kindMax) {
-    this.kindMax = kindMax;
-  }
-
-  public Sort getKindMin() {
-    return this.kindMin;
-  }
-
-  public void setKindMin(Sort kindMin) {
-    this.kindMin = kindMin;
-  }
-
   public Sort getDescriptionCount() {
     return this.descriptionCount;
   }
@@ -656,20 +608,12 @@ public class __TypeOrderBy {
     this.descriptionCount = descriptionCount;
   }
 
-  public Sort getDescriptionMax() {
-    return this.descriptionMax;
+  public Sort getSchemaIdCount() {
+    return this.schemaIdCount;
   }
 
-  public void setDescriptionMax(Sort descriptionMax) {
-    this.descriptionMax = descriptionMax;
-  }
-
-  public Sort getDescriptionMin() {
-    return this.descriptionMin;
-  }
-
-  public void setDescriptionMin(Sort descriptionMin) {
-    this.descriptionMin = descriptionMin;
+  public void setSchemaIdCount(Sort schemaIdCount) {
+    this.schemaIdCount = schemaIdCount;
   }
 
   public Sort getOfTypeNameCount() {
@@ -680,28 +624,20 @@ public class __TypeOrderBy {
     this.ofTypeNameCount = ofTypeNameCount;
   }
 
-  public Sort getOfTypeNameMax() {
-    return this.ofTypeNameMax;
+  public Sort getSchemaIdMax() {
+    return this.schemaIdMax;
   }
 
-  public void setOfTypeNameMax(Sort ofTypeNameMax) {
-    this.ofTypeNameMax = ofTypeNameMax;
+  public void setSchemaIdMax(Sort schemaIdMax) {
+    this.schemaIdMax = schemaIdMax;
   }
 
-  public Sort getOfTypeNameMin() {
-    return this.ofTypeNameMin;
+  public Sort getSchemaIdMin() {
+    return this.schemaIdMin;
   }
 
-  public void setOfTypeNameMin(Sort ofTypeNameMin) {
-    this.ofTypeNameMin = ofTypeNameMin;
-  }
-
-  public Sort getSchemaIdCount() {
-    return this.schemaIdCount;
-  }
-
-  public void setSchemaIdCount(Sort schemaIdCount) {
-    this.schemaIdCount = schemaIdCount;
+  public void setSchemaIdMin(Sort schemaIdMin) {
+    this.schemaIdMin = schemaIdMin;
   }
 
   public Sort getSchemaIdSum() {
@@ -720,20 +656,84 @@ public class __TypeOrderBy {
     this.schemaIdAvg = schemaIdAvg;
   }
 
-  public Sort getSchemaIdMax() {
-    return this.schemaIdMax;
+  public Sort getCreateTimeYear() {
+    return this.createTimeYear;
   }
 
-  public void setSchemaIdMax(Sort schemaIdMax) {
-    this.schemaIdMax = schemaIdMax;
+  public void setCreateTimeYear(Sort createTimeYear) {
+    this.createTimeYear = createTimeYear;
   }
 
-  public Sort getSchemaIdMin() {
-    return this.schemaIdMin;
+  public Sort getCreateTimeMonth() {
+    return this.createTimeMonth;
   }
 
-  public void setSchemaIdMin(Sort schemaIdMin) {
-    this.schemaIdMin = schemaIdMin;
+  public void setCreateTimeMonth(Sort createTimeMonth) {
+    this.createTimeMonth = createTimeMonth;
+  }
+
+  public Sort getCreateTimeDay() {
+    return this.createTimeDay;
+  }
+
+  public void setCreateTimeDay(Sort createTimeDay) {
+    this.createTimeDay = createTimeDay;
+  }
+
+  public Sort getCreateTimeWeek() {
+    return this.createTimeWeek;
+  }
+
+  public void setCreateTimeWeek(Sort createTimeWeek) {
+    this.createTimeWeek = createTimeWeek;
+  }
+
+  public Sort getCreateTimeQuarter() {
+    return this.createTimeQuarter;
+  }
+
+  public void setCreateTimeQuarter(Sort createTimeQuarter) {
+    this.createTimeQuarter = createTimeQuarter;
+  }
+
+  public Sort getUpdateTimeYear() {
+    return this.updateTimeYear;
+  }
+
+  public void setUpdateTimeYear(Sort updateTimeYear) {
+    this.updateTimeYear = updateTimeYear;
+  }
+
+  public Sort getUpdateTimeMonth() {
+    return this.updateTimeMonth;
+  }
+
+  public void setUpdateTimeMonth(Sort updateTimeMonth) {
+    this.updateTimeMonth = updateTimeMonth;
+  }
+
+  public Sort getUpdateTimeDay() {
+    return this.updateTimeDay;
+  }
+
+  public void setUpdateTimeDay(Sort updateTimeDay) {
+    this.updateTimeDay = updateTimeDay;
+  }
+
+  public Sort getUpdateTimeWeek() {
+    return this.updateTimeWeek;
+  }
+
+  public void setUpdateTimeWeek(Sort updateTimeWeek) {
+    this.updateTimeWeek = updateTimeWeek;
+  }
+
+  public Sort getUpdateTimeQuarter() {
+    return this.updateTimeQuarter;
+  }
+
+  public void setUpdateTimeQuarter(Sort updateTimeQuarter) {
+    this.updateTimeQuarter = updateTimeQuarter;
   }
 
   public Collection<__TypeOrderBy> getObs() {

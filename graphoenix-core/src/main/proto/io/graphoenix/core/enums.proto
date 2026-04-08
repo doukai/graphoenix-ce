@@ -6,39 +6,44 @@ option java_package = "io.graphoenix.core.dto.enumType.grpc";
 package io.graphoenix.core;
 
 enum Operator {
-  EQ_OPERATOR = 0;
-  NEQ_OPERATOR = 1;
-  LK_OPERATOR = 2;
-  NLK_OPERATOR = 3;
-  GT_OPERATOR = 4;
-  GTE_OPERATOR = 5;
-  LT_OPERATOR = 6;
-  LTE_OPERATOR = 7;
-  NIL_OPERATOR = 8;
-  NNIL_OPERATOR = 9;
-  IN_OPERATOR = 10;
-  NIN_OPERATOR = 11;
-  BT_OPERATOR = 12;
-  NBT_OPERATOR = 13;
+    EQ_OPERATOR = 0;
+    NEQ_OPERATOR = 1;
+    LK_OPERATOR = 2;
+    NLK_OPERATOR = 3;
+    GT_OPERATOR = 4;
+    GTE_OPERATOR = 5;
+    LT_OPERATOR = 6;
+    LTE_OPERATOR = 7;
+    NIL_OPERATOR = 8;
+    NNIL_OPERATOR = 9;
+    IN_OPERATOR = 10;
+    NIN_OPERATOR = 11;
+    BT_OPERATOR = 12;
+    NBT_OPERATOR = 13;
 }
 enum Conditional {
-  AND_CONDITIONAL = 0;
-  OR_CONDITIONAL = 1;
+    AND_CONDITIONAL = 0;
+    OR_CONDITIONAL = 1;
 }
 enum Sort {
-  ASC_SORT = 0;
-  DESC_SORT = 1;
+    ASC_SORT = 0;
+    DESC_SORT = 1;
 }
 enum Func {
-  COUNT_FUNC = 0;
-  MAX_FUNC = 1;
-  MIN_FUNC = 2;
-  SUM_FUNC = 3;
-  AVG_FUNC = 4;
+    COUNT_FUNC = 0;
+    MAX_FUNC = 1;
+    MIN_FUNC = 2;
+    SUM_FUNC = 3;
+    AVG_FUNC = 4;
+    YEAR_FUNC = 5;
+    MONTH_FUNC = 6;
+    DAY_FUNC = 7;
+    WEEK_FUNC = 8;
+    QUARTER_FUNC = 9;
 }
 enum Protocol {
-  LOCAL_PROTOCOL = 0;
-  GRPC_PROTOCOL = 1;
-  HTTP_PROTOCOL = 2;
-  RSOCKET_PROTOCOL = 3;
+    LOCAL_PROTOCOL = 0;
+    GRPC_PROTOCOL = 1;
+    HTTP_PROTOCOL = 2;
+    RSOCKET_PROTOCOL = 3;
 }

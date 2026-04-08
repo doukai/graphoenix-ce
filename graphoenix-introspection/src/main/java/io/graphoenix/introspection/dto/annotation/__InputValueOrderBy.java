@@ -140,34 +140,16 @@ public @interface __InputValueOrderBy {
   Sort idCount() default Sort.ASC;
 
   /**
-   * Max of id
-   */
-  @Description("Max of id")
-  Sort idMax() default Sort.ASC;
-
-  /**
-   * Min of id
-   */
-  @Description("Min of id")
-  Sort idMin() default Sort.ASC;
-
-  /**
    * Count of name
    */
   @Description("Count of name")
   Sort nameCount() default Sort.ASC;
 
   /**
-   * Max of name
+   * Count of fieldId
    */
-  @Description("Max of name")
-  Sort nameMax() default Sort.ASC;
-
-  /**
-   * Min of name
-   */
-  @Description("Min of name")
-  Sort nameMin() default Sort.ASC;
+  @Description("Count of fieldId")
+  Sort fieldIdCount() default Sort.ASC;
 
   /**
    * Count of directiveName
@@ -176,34 +158,10 @@ public @interface __InputValueOrderBy {
   Sort directiveNameCount() default Sort.ASC;
 
   /**
-   * Max of directiveName
-   */
-  @Description("Max of directiveName")
-  Sort directiveNameMax() default Sort.ASC;
-
-  /**
-   * Min of directiveName
-   */
-  @Description("Min of directiveName")
-  Sort directiveNameMin() default Sort.ASC;
-
-  /**
    * Count of description
    */
   @Description("Count of description")
   Sort descriptionCount() default Sort.ASC;
-
-  /**
-   * Max of description
-   */
-  @Description("Max of description")
-  Sort descriptionMax() default Sort.ASC;
-
-  /**
-   * Min of description
-   */
-  @Description("Min of description")
-  Sort descriptionMin() default Sort.ASC;
 
   /**
    * Count of defaultValue
@@ -212,34 +170,10 @@ public @interface __InputValueOrderBy {
   Sort defaultValueCount() default Sort.ASC;
 
   /**
-   * Max of defaultValue
-   */
-  @Description("Max of defaultValue")
-  Sort defaultValueMax() default Sort.ASC;
-
-  /**
-   * Min of defaultValue
-   */
-  @Description("Min of defaultValue")
-  Sort defaultValueMin() default Sort.ASC;
-
-  /**
    * Count of ofType Reference
    */
   @Description("Count of ofType Reference")
   Sort ofTypeNameCount() default Sort.ASC;
-
-  /**
-   * Max of ofType Reference
-   */
-  @Description("Max of ofType Reference")
-  Sort ofTypeNameMax() default Sort.ASC;
-
-  /**
-   * Min of ofType Reference
-   */
-  @Description("Min of ofType Reference")
-  Sort ofTypeNameMin() default Sort.ASC;
 
   /**
    * Count of type Reference
@@ -248,22 +182,16 @@ public @interface __InputValueOrderBy {
   Sort typeNameCount() default Sort.ASC;
 
   /**
-   * Max of type Reference
+   * Max of fieldId
    */
-  @Description("Max of type Reference")
-  Sort typeNameMax() default Sort.ASC;
+  @Description("Max of fieldId")
+  Sort fieldIdMax() default Sort.ASC;
 
   /**
-   * Min of type Reference
+   * Min of fieldId
    */
-  @Description("Min of type Reference")
-  Sort typeNameMin() default Sort.ASC;
-
-  /**
-   * Count of fieldId
-   */
-  @Description("Count of fieldId")
-  Sort fieldIdCount() default Sort.ASC;
+  @Description("Min of fieldId")
+  Sort fieldIdMin() default Sort.ASC;
 
   /**
    * Sum of fieldId
@@ -278,16 +206,64 @@ public @interface __InputValueOrderBy {
   Sort fieldIdAvg() default Sort.ASC;
 
   /**
-   * Max of fieldId
+   * Year of Create Time
    */
-  @Description("Max of fieldId")
-  Sort fieldIdMax() default Sort.ASC;
+  @Description("Year of Create Time")
+  Sort createTimeYear() default Sort.ASC;
 
   /**
-   * Min of fieldId
+   * Month of Create Time
    */
-  @Description("Min of fieldId")
-  Sort fieldIdMin() default Sort.ASC;
+  @Description("Month of Create Time")
+  Sort createTimeMonth() default Sort.ASC;
+
+  /**
+   * Day of Create Time
+   */
+  @Description("Day of Create Time")
+  Sort createTimeDay() default Sort.ASC;
+
+  /**
+   * Week of Create Time
+   */
+  @Description("Week of Create Time")
+  Sort createTimeWeek() default Sort.ASC;
+
+  /**
+   * Quarter of Create Time
+   */
+  @Description("Quarter of Create Time")
+  Sort createTimeQuarter() default Sort.ASC;
+
+  /**
+   * Year of Update Time
+   */
+  @Description("Year of Update Time")
+  Sort updateTimeYear() default Sort.ASC;
+
+  /**
+   * Month of Update Time
+   */
+  @Description("Month of Update Time")
+  Sort updateTimeMonth() default Sort.ASC;
+
+  /**
+   * Day of Update Time
+   */
+  @Description("Day of Update Time")
+  Sort updateTimeDay() default Sort.ASC;
+
+  /**
+   * Week of Update Time
+   */
+  @Description("Week of Update Time")
+  Sort updateTimeWeek() default Sort.ASC;
+
+  /**
+   * Quarter of Update Time
+   */
+  @Description("Quarter of Update Time")
+  Sort updateTimeQuarter() default Sort.ASC;
 
   /**
    * OrderByes
@@ -335,55 +311,47 @@ public @interface __InputValueOrderBy {
 
   String $idCount() default "";
 
-  String $idMax() default "";
-
-  String $idMin() default "";
-
   String $nameCount() default "";
 
-  String $nameMax() default "";
-
-  String $nameMin() default "";
+  String $fieldIdCount() default "";
 
   String $directiveNameCount() default "";
 
-  String $directiveNameMax() default "";
-
-  String $directiveNameMin() default "";
-
   String $descriptionCount() default "";
-
-  String $descriptionMax() default "";
-
-  String $descriptionMin() default "";
 
   String $defaultValueCount() default "";
 
-  String $defaultValueMax() default "";
-
-  String $defaultValueMin() default "";
-
   String $ofTypeNameCount() default "";
-
-  String $ofTypeNameMax() default "";
-
-  String $ofTypeNameMin() default "";
 
   String $typeNameCount() default "";
 
-  String $typeNameMax() default "";
+  String $fieldIdMax() default "";
 
-  String $typeNameMin() default "";
-
-  String $fieldIdCount() default "";
+  String $fieldIdMin() default "";
 
   String $fieldIdSum() default "";
 
   String $fieldIdAvg() default "";
 
-  String $fieldIdMax() default "";
+  String $createTimeYear() default "";
 
-  String $fieldIdMin() default "";
+  String $createTimeMonth() default "";
+
+  String $createTimeDay() default "";
+
+  String $createTimeWeek() default "";
+
+  String $createTimeQuarter() default "";
+
+  String $updateTimeYear() default "";
+
+  String $updateTimeMonth() default "";
+
+  String $updateTimeDay() default "";
+
+  String $updateTimeWeek() default "";
+
+  String $updateTimeQuarter() default "";
 
   String $obs() default "";
 }

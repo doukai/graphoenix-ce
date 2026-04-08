@@ -44,6 +44,11 @@ enum Func @package(name: "io.graphoenix.core") @class(name: "io.graphoenix.core.
     MIN
     SUM
     AVG
+    YEAR
+    MONTH
+    DAY
+    WEEK
+    QUARTER
 }
 enum Protocol @package(name: "io.graphoenix.core") @class(name: "io.graphoenix.core.dto.enumType.Protocol") @grpc(name: "io.graphoenix.core.dto.enumType.grpc.Protocol") {
     LOCAL

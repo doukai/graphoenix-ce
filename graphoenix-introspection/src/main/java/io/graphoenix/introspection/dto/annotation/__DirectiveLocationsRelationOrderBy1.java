@@ -104,34 +104,10 @@ public @interface __DirectiveLocationsRelationOrderBy1 {
   Sort idCount() default Sort.ASC;
 
   /**
-   * Max of ID
-   */
-  @Description("Max of ID")
-  Sort idMax() default Sort.ASC;
-
-  /**
-   * Min of ID
-   */
-  @Description("Min of ID")
-  Sort idMin() default Sort.ASC;
-
-  /**
    * Count of __Directive Reference
    */
   @Description("Count of __Directive Reference")
   Sort __directiveRefCount() default Sort.ASC;
-
-  /**
-   * Max of __Directive Reference
-   */
-  @Description("Max of __Directive Reference")
-  Sort __directiveRefMax() default Sort.ASC;
-
-  /**
-   * Min of __Directive Reference
-   */
-  @Description("Min of __Directive Reference")
-  Sort __directiveRefMin() default Sort.ASC;
 
   /**
    * Count of locations Reference
@@ -140,16 +116,64 @@ public @interface __DirectiveLocationsRelationOrderBy1 {
   Sort locationsRefCount() default Sort.ASC;
 
   /**
-   * Max of locations Reference
+   * Year of Create Time
    */
-  @Description("Max of locations Reference")
-  Sort locationsRefMax() default Sort.ASC;
+  @Description("Year of Create Time")
+  Sort createTimeYear() default Sort.ASC;
 
   /**
-   * Min of locations Reference
+   * Month of Create Time
    */
-  @Description("Min of locations Reference")
-  Sort locationsRefMin() default Sort.ASC;
+  @Description("Month of Create Time")
+  Sort createTimeMonth() default Sort.ASC;
+
+  /**
+   * Day of Create Time
+   */
+  @Description("Day of Create Time")
+  Sort createTimeDay() default Sort.ASC;
+
+  /**
+   * Week of Create Time
+   */
+  @Description("Week of Create Time")
+  Sort createTimeWeek() default Sort.ASC;
+
+  /**
+   * Quarter of Create Time
+   */
+  @Description("Quarter of Create Time")
+  Sort createTimeQuarter() default Sort.ASC;
+
+  /**
+   * Year of Update Time
+   */
+  @Description("Year of Update Time")
+  Sort updateTimeYear() default Sort.ASC;
+
+  /**
+   * Month of Update Time
+   */
+  @Description("Month of Update Time")
+  Sort updateTimeMonth() default Sort.ASC;
+
+  /**
+   * Day of Update Time
+   */
+  @Description("Day of Update Time")
+  Sort updateTimeDay() default Sort.ASC;
+
+  /**
+   * Week of Update Time
+   */
+  @Description("Week of Update Time")
+  Sort updateTimeWeek() default Sort.ASC;
+
+  /**
+   * Quarter of Update Time
+   */
+  @Description("Quarter of Update Time")
+  Sort updateTimeQuarter() default Sort.ASC;
 
   /**
    * OrderByes
@@ -185,21 +209,29 @@ public @interface __DirectiveLocationsRelationOrderBy1 {
 
   String $idCount() default "";
 
-  String $idMax() default "";
-
-  String $idMin() default "";
-
   String $__directiveRefCount() default "";
-
-  String $__directiveRefMax() default "";
-
-  String $__directiveRefMin() default "";
 
   String $locationsRefCount() default "";
 
-  String $locationsRefMax() default "";
+  String $createTimeYear() default "";
 
-  String $locationsRefMin() default "";
+  String $createTimeMonth() default "";
+
+  String $createTimeDay() default "";
+
+  String $createTimeWeek() default "";
+
+  String $createTimeQuarter() default "";
+
+  String $updateTimeYear() default "";
+
+  String $updateTimeMonth() default "";
+
+  String $updateTimeDay() default "";
+
+  String $updateTimeWeek() default "";
+
+  String $updateTimeQuarter() default "";
 
   String $obs() default "";
 }

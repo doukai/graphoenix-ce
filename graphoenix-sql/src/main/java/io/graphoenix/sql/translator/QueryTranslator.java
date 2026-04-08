@@ -958,7 +958,7 @@ public class QueryTranslator {
               if (entry.getValue() == null || entry.getValue().isNull()) {
                 return Stream.empty();
               }
-              if (entry.getKey().equals(INPUT_VALUE_GROUP_BY_FIELD_NAMES_NAME)) {
+              if (entry.getKey().equals(INPUT_VALUE_BY_NAME)) {
                 return entry.getValue().isArray()
                     ? entry.getValue().asArray().getValueWithVariables().stream()
                         .filter(ValueWithVariable::isString)
@@ -969,13 +969,21 @@ public class QueryTranslator {
                         .filter(subFieldDefinition -> !subFieldDefinition.isFetchField())
                         .filter(subFieldDefinition -> !subFieldDefinition.isInvokeField())
                         .filter(subFieldDefinition -> !subFieldDefinition.isConnectionField())
-                        .filter(subFieldDefinition -> !subFieldDefinition.isFunctionField())
+                        .filter(subFieldDefinition -> !subFieldDefinition.isGroupFunctionField())
                         .filter(subFieldDefinition -> !subFieldDefinition.isAggregateField())
                         .flatMap(
                             subFieldDefinition -> {
                               Definition subFieldTypeDefinition =
                                   documentManager.getFieldTypeDefinition(subFieldDefinition);
-                              if (subFieldTypeDefinition.isLeaf()) {
+                              if (subFieldDefinition.isFunctionField()) {
+                                return Stream.of(
+                                    new Function()
+                                        .withName(subFieldDefinition.getFunctionNameOrError())
+                                        .withParameters(
+                                            graphqlFieldToColumn(
+                                                table,
+                                                subFieldDefinition.getFunctionFieldOrError())));
+                              } else if (subFieldTypeDefinition.isLeaf()) {
                                 return Stream.of(
                                     graphqlFieldToColumn(table, subFieldDefinition.getName()));
                               }
@@ -1215,7 +1223,7 @@ public class QueryTranslator {
               if (entry.getValue() == null || entry.getValue().isNull()) {
                 return false;
               }
-              if (entry.getKey().equals(INPUT_VALUE_GROUP_BY_FIELD_NAMES_NAME)) {
+              if (entry.getKey().equals(INPUT_VALUE_BY_NAME)) {
                 return entry.getValue().isArray()
                     && entry.getValue().asArray().getValueWithVariables().stream()
                         .filter(ValueWithVariable::isString)

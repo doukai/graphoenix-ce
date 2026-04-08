@@ -95,34 +95,10 @@ public class __EnumValue implements Meta {
   private Integer idCount;
 
   /**
-   * Max of id
-   */
-  @Description("Max of id")
-  private Integer idMax;
-
-  /**
-   * Min of id
-   */
-  @Description("Min of id")
-  private Integer idMin;
-
-  /**
    * Count of name
    */
   @Description("Count of name")
   private Integer nameCount;
-
-  /**
-   * Max of name
-   */
-  @Description("Max of name")
-  private String nameMax;
-
-  /**
-   * Min of name
-   */
-  @Description("Min of name")
-  private String nameMin;
 
   /**
    * Count of description
@@ -131,34 +107,10 @@ public class __EnumValue implements Meta {
   private Integer descriptionCount;
 
   /**
-   * Max of description
-   */
-  @Description("Max of description")
-  private String descriptionMax;
-
-  /**
-   * Min of description
-   */
-  @Description("Min of description")
-  private String descriptionMin;
-
-  /**
    * Count of deprecationReason
    */
   @Description("Count of deprecationReason")
   private Integer deprecationReasonCount;
-
-  /**
-   * Max of deprecationReason
-   */
-  @Description("Max of deprecationReason")
-  private String deprecationReasonMax;
-
-  /**
-   * Min of deprecationReason
-   */
-  @Description("Min of deprecationReason")
-  private String deprecationReasonMin;
 
   /**
    * Count of ofType Reference
@@ -167,16 +119,64 @@ public class __EnumValue implements Meta {
   private Integer ofTypeNameCount;
 
   /**
-   * Max of ofType Reference
+   * Year of Create Time
    */
-  @Description("Max of ofType Reference")
-  private String ofTypeNameMax;
+  @Description("Year of Create Time")
+  private Integer createTimeYear;
 
   /**
-   * Min of ofType Reference
+   * Month of Create Time
    */
-  @Description("Min of ofType Reference")
-  private String ofTypeNameMin;
+  @Description("Month of Create Time")
+  private Integer createTimeMonth;
+
+  /**
+   * Day of Create Time
+   */
+  @Description("Day of Create Time")
+  private Integer createTimeDay;
+
+  /**
+   * Week of Create Time
+   */
+  @Description("Week of Create Time")
+  private Integer createTimeWeek;
+
+  /**
+   * Quarter of Create Time
+   */
+  @Description("Quarter of Create Time")
+  private Integer createTimeQuarter;
+
+  /**
+   * Year of Update Time
+   */
+  @Description("Year of Update Time")
+  private Integer updateTimeYear;
+
+  /**
+   * Month of Update Time
+   */
+  @Description("Month of Update Time")
+  private Integer updateTimeMonth;
+
+  /**
+   * Day of Update Time
+   */
+  @Description("Day of Update Time")
+  private Integer updateTimeDay;
+
+  /**
+   * Week of Update Time
+   */
+  @Description("Week of Update Time")
+  private Integer updateTimeWeek;
+
+  /**
+   * Quarter of Update Time
+   */
+  @Description("Quarter of Update Time")
+  private Integer updateTimeQuarter;
 
   @Override
   public String getId() {
@@ -324,44 +324,12 @@ public class __EnumValue implements Meta {
     this.idCount = idCount;
   }
 
-  public Integer getIdMax() {
-    return this.idMax;
-  }
-
-  public void setIdMax(Integer idMax) {
-    this.idMax = idMax;
-  }
-
-  public Integer getIdMin() {
-    return this.idMin;
-  }
-
-  public void setIdMin(Integer idMin) {
-    this.idMin = idMin;
-  }
-
   public Integer getNameCount() {
     return this.nameCount;
   }
 
   public void setNameCount(Integer nameCount) {
     this.nameCount = nameCount;
-  }
-
-  public String getNameMax() {
-    return this.nameMax;
-  }
-
-  public void setNameMax(String nameMax) {
-    this.nameMax = nameMax;
-  }
-
-  public String getNameMin() {
-    return this.nameMin;
-  }
-
-  public void setNameMin(String nameMin) {
-    this.nameMin = nameMin;
   }
 
   public Integer getDescriptionCount() {
@@ -372,44 +340,12 @@ public class __EnumValue implements Meta {
     this.descriptionCount = descriptionCount;
   }
 
-  public String getDescriptionMax() {
-    return this.descriptionMax;
-  }
-
-  public void setDescriptionMax(String descriptionMax) {
-    this.descriptionMax = descriptionMax;
-  }
-
-  public String getDescriptionMin() {
-    return this.descriptionMin;
-  }
-
-  public void setDescriptionMin(String descriptionMin) {
-    this.descriptionMin = descriptionMin;
-  }
-
   public Integer getDeprecationReasonCount() {
     return this.deprecationReasonCount;
   }
 
   public void setDeprecationReasonCount(Integer deprecationReasonCount) {
     this.deprecationReasonCount = deprecationReasonCount;
-  }
-
-  public String getDeprecationReasonMax() {
-    return this.deprecationReasonMax;
-  }
-
-  public void setDeprecationReasonMax(String deprecationReasonMax) {
-    this.deprecationReasonMax = deprecationReasonMax;
-  }
-
-  public String getDeprecationReasonMin() {
-    return this.deprecationReasonMin;
-  }
-
-  public void setDeprecationReasonMin(String deprecationReasonMin) {
-    this.deprecationReasonMin = deprecationReasonMin;
   }
 
   public Integer getOfTypeNameCount() {
@@ -420,20 +356,84 @@ public class __EnumValue implements Meta {
     this.ofTypeNameCount = ofTypeNameCount;
   }
 
-  public String getOfTypeNameMax() {
-    return this.ofTypeNameMax;
+  public Integer getCreateTimeYear() {
+    return this.createTimeYear;
   }
 
-  public void setOfTypeNameMax(String ofTypeNameMax) {
-    this.ofTypeNameMax = ofTypeNameMax;
+  public void setCreateTimeYear(Integer createTimeYear) {
+    this.createTimeYear = createTimeYear;
   }
 
-  public String getOfTypeNameMin() {
-    return this.ofTypeNameMin;
+  public Integer getCreateTimeMonth() {
+    return this.createTimeMonth;
   }
 
-  public void setOfTypeNameMin(String ofTypeNameMin) {
-    this.ofTypeNameMin = ofTypeNameMin;
+  public void setCreateTimeMonth(Integer createTimeMonth) {
+    this.createTimeMonth = createTimeMonth;
+  }
+
+  public Integer getCreateTimeDay() {
+    return this.createTimeDay;
+  }
+
+  public void setCreateTimeDay(Integer createTimeDay) {
+    this.createTimeDay = createTimeDay;
+  }
+
+  public Integer getCreateTimeWeek() {
+    return this.createTimeWeek;
+  }
+
+  public void setCreateTimeWeek(Integer createTimeWeek) {
+    this.createTimeWeek = createTimeWeek;
+  }
+
+  public Integer getCreateTimeQuarter() {
+    return this.createTimeQuarter;
+  }
+
+  public void setCreateTimeQuarter(Integer createTimeQuarter) {
+    this.createTimeQuarter = createTimeQuarter;
+  }
+
+  public Integer getUpdateTimeYear() {
+    return this.updateTimeYear;
+  }
+
+  public void setUpdateTimeYear(Integer updateTimeYear) {
+    this.updateTimeYear = updateTimeYear;
+  }
+
+  public Integer getUpdateTimeMonth() {
+    return this.updateTimeMonth;
+  }
+
+  public void setUpdateTimeMonth(Integer updateTimeMonth) {
+    this.updateTimeMonth = updateTimeMonth;
+  }
+
+  public Integer getUpdateTimeDay() {
+    return this.updateTimeDay;
+  }
+
+  public void setUpdateTimeDay(Integer updateTimeDay) {
+    this.updateTimeDay = updateTimeDay;
+  }
+
+  public Integer getUpdateTimeWeek() {
+    return this.updateTimeWeek;
+  }
+
+  public void setUpdateTimeWeek(Integer updateTimeWeek) {
+    this.updateTimeWeek = updateTimeWeek;
+  }
+
+  public Integer getUpdateTimeQuarter() {
+    return this.updateTimeQuarter;
+  }
+
+  public void setUpdateTimeQuarter(Integer updateTimeQuarter) {
+    this.updateTimeQuarter = updateTimeQuarter;
   }
 
   public __EnumValueInput toInput() {

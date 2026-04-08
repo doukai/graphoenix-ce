@@ -140,34 +140,10 @@ public @interface __FieldOrderBy {
   Sort idCount() default Sort.ASC;
 
   /**
-   * Max of id
-   */
-  @Description("Max of id")
-  Sort idMax() default Sort.ASC;
-
-  /**
-   * Min of id
-   */
-  @Description("Min of id")
-  Sort idMin() default Sort.ASC;
-
-  /**
    * Count of name
    */
   @Description("Count of name")
   Sort nameCount() default Sort.ASC;
-
-  /**
-   * Max of name
-   */
-  @Description("Max of name")
-  Sort nameMax() default Sort.ASC;
-
-  /**
-   * Min of name
-   */
-  @Description("Min of name")
-  Sort nameMin() default Sort.ASC;
 
   /**
    * Count of description
@@ -176,34 +152,10 @@ public @interface __FieldOrderBy {
   Sort descriptionCount() default Sort.ASC;
 
   /**
-   * Max of description
-   */
-  @Description("Max of description")
-  Sort descriptionMax() default Sort.ASC;
-
-  /**
-   * Min of description
-   */
-  @Description("Min of description")
-  Sort descriptionMin() default Sort.ASC;
-
-  /**
    * Count of deprecationReason
    */
   @Description("Count of deprecationReason")
   Sort deprecationReasonCount() default Sort.ASC;
-
-  /**
-   * Max of deprecationReason
-   */
-  @Description("Max of deprecationReason")
-  Sort deprecationReasonMax() default Sort.ASC;
-
-  /**
-   * Min of deprecationReason
-   */
-  @Description("Min of deprecationReason")
-  Sort deprecationReasonMin() default Sort.ASC;
 
   /**
    * Count of ofType Reference
@@ -212,34 +164,70 @@ public @interface __FieldOrderBy {
   Sort ofTypeNameCount() default Sort.ASC;
 
   /**
-   * Max of ofType Reference
-   */
-  @Description("Max of ofType Reference")
-  Sort ofTypeNameMax() default Sort.ASC;
-
-  /**
-   * Min of ofType Reference
-   */
-  @Description("Min of ofType Reference")
-  Sort ofTypeNameMin() default Sort.ASC;
-
-  /**
    * Count of type Reference
    */
   @Description("Count of type Reference")
   Sort typeNameCount() default Sort.ASC;
 
   /**
-   * Max of type Reference
+   * Year of Create Time
    */
-  @Description("Max of type Reference")
-  Sort typeNameMax() default Sort.ASC;
+  @Description("Year of Create Time")
+  Sort createTimeYear() default Sort.ASC;
 
   /**
-   * Min of type Reference
+   * Month of Create Time
    */
-  @Description("Min of type Reference")
-  Sort typeNameMin() default Sort.ASC;
+  @Description("Month of Create Time")
+  Sort createTimeMonth() default Sort.ASC;
+
+  /**
+   * Day of Create Time
+   */
+  @Description("Day of Create Time")
+  Sort createTimeDay() default Sort.ASC;
+
+  /**
+   * Week of Create Time
+   */
+  @Description("Week of Create Time")
+  Sort createTimeWeek() default Sort.ASC;
+
+  /**
+   * Quarter of Create Time
+   */
+  @Description("Quarter of Create Time")
+  Sort createTimeQuarter() default Sort.ASC;
+
+  /**
+   * Year of Update Time
+   */
+  @Description("Year of Update Time")
+  Sort updateTimeYear() default Sort.ASC;
+
+  /**
+   * Month of Update Time
+   */
+  @Description("Month of Update Time")
+  Sort updateTimeMonth() default Sort.ASC;
+
+  /**
+   * Day of Update Time
+   */
+  @Description("Day of Update Time")
+  Sort updateTimeDay() default Sort.ASC;
+
+  /**
+   * Week of Update Time
+   */
+  @Description("Week of Update Time")
+  Sort updateTimeWeek() default Sort.ASC;
+
+  /**
+   * Quarter of Update Time
+   */
+  @Description("Quarter of Update Time")
+  Sort updateTimeQuarter() default Sort.ASC;
 
   /**
    * OrderByes
@@ -287,39 +275,35 @@ public @interface __FieldOrderBy {
 
   String $idCount() default "";
 
-  String $idMax() default "";
-
-  String $idMin() default "";
-
   String $nameCount() default "";
-
-  String $nameMax() default "";
-
-  String $nameMin() default "";
 
   String $descriptionCount() default "";
 
-  String $descriptionMax() default "";
-
-  String $descriptionMin() default "";
-
   String $deprecationReasonCount() default "";
-
-  String $deprecationReasonMax() default "";
-
-  String $deprecationReasonMin() default "";
 
   String $ofTypeNameCount() default "";
 
-  String $ofTypeNameMax() default "";
-
-  String $ofTypeNameMin() default "";
-
   String $typeNameCount() default "";
 
-  String $typeNameMax() default "";
+  String $createTimeYear() default "";
 
-  String $typeNameMin() default "";
+  String $createTimeMonth() default "";
+
+  String $createTimeDay() default "";
+
+  String $createTimeWeek() default "";
+
+  String $createTimeQuarter() default "";
+
+  String $updateTimeYear() default "";
+
+  String $updateTimeMonth() default "";
+
+  String $updateTimeDay() default "";
+
+  String $updateTimeWeek() default "";
+
+  String $updateTimeQuarter() default "";
 
   String $obs() default "";
 }

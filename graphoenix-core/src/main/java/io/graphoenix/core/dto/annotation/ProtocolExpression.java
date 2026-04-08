@@ -11,22 +11,30 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.eclipse.microprofile.graphql.Description;
 
-/** Query Expression Input for Protocol */
+/**
+ * Query Expression Input for Protocol
+ */
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 @Description("Query Expression Input for Protocol")
 public @interface ProtocolExpression {
-  /** Operators */
+  /**
+   * Operators
+   */
   @Description("Operators")
   Operator opr() default Operator.EQ;
 
-  /** Value */
+  /**
+   * Value
+   */
   @Description("Value")
   Protocol val() default Protocol.LOCAL;
 
-  /** Array */
+  /**
+   * Array
+   */
   @Description("Array")
   Protocol[] arr() default {};
 

@@ -19,7 +19,7 @@ public class __TypeGroupBy {
    * Group By Field Names
    */
   @Description("Group By Field Names")
-  private Collection<String> fieldNames;
+  private Collection<String> by;
 
   /**
    * ofSchema
@@ -81,12 +81,12 @@ public class __TypeGroupBy {
   @Description("OrderByes")
   private Collection<__TypeGroupBy> gbs;
 
-  public Collection<String> getFieldNames() {
-    return this.fieldNames;
+  public Collection<String> getBy() {
+    return this.by;
   }
 
-  public void setFieldNames(Collection<String> fieldNames) {
-    this.fieldNames = fieldNames;
+  public void setBy(Collection<String> by) {
+    this.by = by;
   }
 
   public __SchemaGroupBy getOfSchema() {

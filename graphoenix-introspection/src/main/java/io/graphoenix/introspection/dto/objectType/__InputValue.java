@@ -109,34 +109,16 @@ public class __InputValue implements Meta {
   private Integer idCount;
 
   /**
-   * Max of id
-   */
-  @Description("Max of id")
-  private Integer idMax;
-
-  /**
-   * Min of id
-   */
-  @Description("Min of id")
-  private Integer idMin;
-
-  /**
    * Count of name
    */
   @Description("Count of name")
   private Integer nameCount;
 
   /**
-   * Max of name
+   * Count of fieldId
    */
-  @Description("Max of name")
-  private String nameMax;
-
-  /**
-   * Min of name
-   */
-  @Description("Min of name")
-  private String nameMin;
+  @Description("Count of fieldId")
+  private Integer fieldIdCount;
 
   /**
    * Count of directiveName
@@ -145,34 +127,10 @@ public class __InputValue implements Meta {
   private Integer directiveNameCount;
 
   /**
-   * Max of directiveName
-   */
-  @Description("Max of directiveName")
-  private String directiveNameMax;
-
-  /**
-   * Min of directiveName
-   */
-  @Description("Min of directiveName")
-  private String directiveNameMin;
-
-  /**
    * Count of description
    */
   @Description("Count of description")
   private Integer descriptionCount;
-
-  /**
-   * Max of description
-   */
-  @Description("Max of description")
-  private String descriptionMax;
-
-  /**
-   * Min of description
-   */
-  @Description("Min of description")
-  private String descriptionMin;
 
   /**
    * Count of defaultValue
@@ -181,34 +139,10 @@ public class __InputValue implements Meta {
   private Integer defaultValueCount;
 
   /**
-   * Max of defaultValue
-   */
-  @Description("Max of defaultValue")
-  private String defaultValueMax;
-
-  /**
-   * Min of defaultValue
-   */
-  @Description("Min of defaultValue")
-  private String defaultValueMin;
-
-  /**
    * Count of ofType Reference
    */
   @Description("Count of ofType Reference")
   private Integer ofTypeNameCount;
-
-  /**
-   * Max of ofType Reference
-   */
-  @Description("Max of ofType Reference")
-  private String ofTypeNameMax;
-
-  /**
-   * Min of ofType Reference
-   */
-  @Description("Min of ofType Reference")
-  private String ofTypeNameMin;
 
   /**
    * Count of type Reference
@@ -217,22 +151,16 @@ public class __InputValue implements Meta {
   private Integer typeNameCount;
 
   /**
-   * Max of type Reference
+   * Max of fieldId
    */
-  @Description("Max of type Reference")
-  private String typeNameMax;
+  @Description("Max of fieldId")
+  private Integer fieldIdMax;
 
   /**
-   * Min of type Reference
+   * Min of fieldId
    */
-  @Description("Min of type Reference")
-  private String typeNameMin;
-
-  /**
-   * Count of fieldId
-   */
-  @Description("Count of fieldId")
-  private Integer fieldIdCount;
+  @Description("Min of fieldId")
+  private Integer fieldIdMin;
 
   /**
    * Sum of fieldId
@@ -247,16 +175,64 @@ public class __InputValue implements Meta {
   private Integer fieldIdAvg;
 
   /**
-   * Max of fieldId
+   * Year of Create Time
    */
-  @Description("Max of fieldId")
-  private Integer fieldIdMax;
+  @Description("Year of Create Time")
+  private Integer createTimeYear;
 
   /**
-   * Min of fieldId
+   * Month of Create Time
    */
-  @Description("Min of fieldId")
-  private Integer fieldIdMin;
+  @Description("Month of Create Time")
+  private Integer createTimeMonth;
+
+  /**
+   * Day of Create Time
+   */
+  @Description("Day of Create Time")
+  private Integer createTimeDay;
+
+  /**
+   * Week of Create Time
+   */
+  @Description("Week of Create Time")
+  private Integer createTimeWeek;
+
+  /**
+   * Quarter of Create Time
+   */
+  @Description("Quarter of Create Time")
+  private Integer createTimeQuarter;
+
+  /**
+   * Year of Update Time
+   */
+  @Description("Year of Update Time")
+  private Integer updateTimeYear;
+
+  /**
+   * Month of Update Time
+   */
+  @Description("Month of Update Time")
+  private Integer updateTimeMonth;
+
+  /**
+   * Day of Update Time
+   */
+  @Description("Day of Update Time")
+  private Integer updateTimeDay;
+
+  /**
+   * Week of Update Time
+   */
+  @Description("Week of Update Time")
+  private Integer updateTimeWeek;
+
+  /**
+   * Quarter of Update Time
+   */
+  @Description("Quarter of Update Time")
+  private Integer updateTimeQuarter;
 
   @Override
   public String getId() {
@@ -436,22 +412,6 @@ public class __InputValue implements Meta {
     this.idCount = idCount;
   }
 
-  public Integer getIdMax() {
-    return this.idMax;
-  }
-
-  public void setIdMax(Integer idMax) {
-    this.idMax = idMax;
-  }
-
-  public Integer getIdMin() {
-    return this.idMin;
-  }
-
-  public void setIdMin(Integer idMin) {
-    this.idMin = idMin;
-  }
-
   public Integer getNameCount() {
     return this.nameCount;
   }
@@ -460,20 +420,12 @@ public class __InputValue implements Meta {
     this.nameCount = nameCount;
   }
 
-  public String getNameMax() {
-    return this.nameMax;
+  public Integer getFieldIdCount() {
+    return this.fieldIdCount;
   }
 
-  public void setNameMax(String nameMax) {
-    this.nameMax = nameMax;
-  }
-
-  public String getNameMin() {
-    return this.nameMin;
-  }
-
-  public void setNameMin(String nameMin) {
-    this.nameMin = nameMin;
+  public void setFieldIdCount(Integer fieldIdCount) {
+    this.fieldIdCount = fieldIdCount;
   }
 
   public Integer getDirectiveNameCount() {
@@ -484,44 +436,12 @@ public class __InputValue implements Meta {
     this.directiveNameCount = directiveNameCount;
   }
 
-  public String getDirectiveNameMax() {
-    return this.directiveNameMax;
-  }
-
-  public void setDirectiveNameMax(String directiveNameMax) {
-    this.directiveNameMax = directiveNameMax;
-  }
-
-  public String getDirectiveNameMin() {
-    return this.directiveNameMin;
-  }
-
-  public void setDirectiveNameMin(String directiveNameMin) {
-    this.directiveNameMin = directiveNameMin;
-  }
-
   public Integer getDescriptionCount() {
     return this.descriptionCount;
   }
 
   public void setDescriptionCount(Integer descriptionCount) {
     this.descriptionCount = descriptionCount;
-  }
-
-  public String getDescriptionMax() {
-    return this.descriptionMax;
-  }
-
-  public void setDescriptionMax(String descriptionMax) {
-    this.descriptionMax = descriptionMax;
-  }
-
-  public String getDescriptionMin() {
-    return this.descriptionMin;
-  }
-
-  public void setDescriptionMin(String descriptionMin) {
-    this.descriptionMin = descriptionMin;
   }
 
   public Integer getDefaultValueCount() {
@@ -532,44 +452,12 @@ public class __InputValue implements Meta {
     this.defaultValueCount = defaultValueCount;
   }
 
-  public String getDefaultValueMax() {
-    return this.defaultValueMax;
-  }
-
-  public void setDefaultValueMax(String defaultValueMax) {
-    this.defaultValueMax = defaultValueMax;
-  }
-
-  public String getDefaultValueMin() {
-    return this.defaultValueMin;
-  }
-
-  public void setDefaultValueMin(String defaultValueMin) {
-    this.defaultValueMin = defaultValueMin;
-  }
-
   public Integer getOfTypeNameCount() {
     return this.ofTypeNameCount;
   }
 
   public void setOfTypeNameCount(Integer ofTypeNameCount) {
     this.ofTypeNameCount = ofTypeNameCount;
-  }
-
-  public String getOfTypeNameMax() {
-    return this.ofTypeNameMax;
-  }
-
-  public void setOfTypeNameMax(String ofTypeNameMax) {
-    this.ofTypeNameMax = ofTypeNameMax;
-  }
-
-  public String getOfTypeNameMin() {
-    return this.ofTypeNameMin;
-  }
-
-  public void setOfTypeNameMin(String ofTypeNameMin) {
-    this.ofTypeNameMin = ofTypeNameMin;
   }
 
   public Integer getTypeNameCount() {
@@ -580,28 +468,20 @@ public class __InputValue implements Meta {
     this.typeNameCount = typeNameCount;
   }
 
-  public String getTypeNameMax() {
-    return this.typeNameMax;
+  public Integer getFieldIdMax() {
+    return this.fieldIdMax;
   }
 
-  public void setTypeNameMax(String typeNameMax) {
-    this.typeNameMax = typeNameMax;
+  public void setFieldIdMax(Integer fieldIdMax) {
+    this.fieldIdMax = fieldIdMax;
   }
 
-  public String getTypeNameMin() {
-    return this.typeNameMin;
+  public Integer getFieldIdMin() {
+    return this.fieldIdMin;
   }
 
-  public void setTypeNameMin(String typeNameMin) {
-    this.typeNameMin = typeNameMin;
-  }
-
-  public Integer getFieldIdCount() {
-    return this.fieldIdCount;
-  }
-
-  public void setFieldIdCount(Integer fieldIdCount) {
-    this.fieldIdCount = fieldIdCount;
+  public void setFieldIdMin(Integer fieldIdMin) {
+    this.fieldIdMin = fieldIdMin;
   }
 
   public Integer getFieldIdSum() {
@@ -620,20 +500,84 @@ public class __InputValue implements Meta {
     this.fieldIdAvg = fieldIdAvg;
   }
 
-  public Integer getFieldIdMax() {
-    return this.fieldIdMax;
+  public Integer getCreateTimeYear() {
+    return this.createTimeYear;
   }
 
-  public void setFieldIdMax(Integer fieldIdMax) {
-    this.fieldIdMax = fieldIdMax;
+  public void setCreateTimeYear(Integer createTimeYear) {
+    this.createTimeYear = createTimeYear;
   }
 
-  public Integer getFieldIdMin() {
-    return this.fieldIdMin;
+  public Integer getCreateTimeMonth() {
+    return this.createTimeMonth;
   }
 
-  public void setFieldIdMin(Integer fieldIdMin) {
-    this.fieldIdMin = fieldIdMin;
+  public void setCreateTimeMonth(Integer createTimeMonth) {
+    this.createTimeMonth = createTimeMonth;
+  }
+
+  public Integer getCreateTimeDay() {
+    return this.createTimeDay;
+  }
+
+  public void setCreateTimeDay(Integer createTimeDay) {
+    this.createTimeDay = createTimeDay;
+  }
+
+  public Integer getCreateTimeWeek() {
+    return this.createTimeWeek;
+  }
+
+  public void setCreateTimeWeek(Integer createTimeWeek) {
+    this.createTimeWeek = createTimeWeek;
+  }
+
+  public Integer getCreateTimeQuarter() {
+    return this.createTimeQuarter;
+  }
+
+  public void setCreateTimeQuarter(Integer createTimeQuarter) {
+    this.createTimeQuarter = createTimeQuarter;
+  }
+
+  public Integer getUpdateTimeYear() {
+    return this.updateTimeYear;
+  }
+
+  public void setUpdateTimeYear(Integer updateTimeYear) {
+    this.updateTimeYear = updateTimeYear;
+  }
+
+  public Integer getUpdateTimeMonth() {
+    return this.updateTimeMonth;
+  }
+
+  public void setUpdateTimeMonth(Integer updateTimeMonth) {
+    this.updateTimeMonth = updateTimeMonth;
+  }
+
+  public Integer getUpdateTimeDay() {
+    return this.updateTimeDay;
+  }
+
+  public void setUpdateTimeDay(Integer updateTimeDay) {
+    this.updateTimeDay = updateTimeDay;
+  }
+
+  public Integer getUpdateTimeWeek() {
+    return this.updateTimeWeek;
+  }
+
+  public void setUpdateTimeWeek(Integer updateTimeWeek) {
+    this.updateTimeWeek = updateTimeWeek;
+  }
+
+  public Integer getUpdateTimeQuarter() {
+    return this.updateTimeQuarter;
+  }
+
+  public void setUpdateTimeQuarter(Integer updateTimeQuarter) {
+    this.updateTimeQuarter = updateTimeQuarter;
   }
 
   public __InputValueInput toInput() {

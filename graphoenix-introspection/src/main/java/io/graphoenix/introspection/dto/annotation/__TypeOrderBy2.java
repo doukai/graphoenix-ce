@@ -116,34 +116,10 @@ public @interface __TypeOrderBy2 {
   Sort idCount() default Sort.ASC;
 
   /**
-   * Max of id
-   */
-  @Description("Max of id")
-  Sort idMax() default Sort.ASC;
-
-  /**
-   * Min of id
-   */
-  @Description("Min of id")
-  Sort idMin() default Sort.ASC;
-
-  /**
    * Count of name
    */
   @Description("Count of name")
   Sort nameCount() default Sort.ASC;
-
-  /**
-   * Max of name
-   */
-  @Description("Max of name")
-  Sort nameMax() default Sort.ASC;
-
-  /**
-   * Min of name
-   */
-  @Description("Min of name")
-  Sort nameMin() default Sort.ASC;
 
   /**
    * Count of kind
@@ -152,34 +128,16 @@ public @interface __TypeOrderBy2 {
   Sort kindCount() default Sort.ASC;
 
   /**
-   * Max of kind
-   */
-  @Description("Max of kind")
-  Sort kindMax() default Sort.ASC;
-
-  /**
-   * Min of kind
-   */
-  @Description("Min of kind")
-  Sort kindMin() default Sort.ASC;
-
-  /**
    * Count of description
    */
   @Description("Count of description")
   Sort descriptionCount() default Sort.ASC;
 
   /**
-   * Max of description
+   * Count of ofSchema Reference
    */
-  @Description("Max of description")
-  Sort descriptionMax() default Sort.ASC;
-
-  /**
-   * Min of description
-   */
-  @Description("Min of description")
-  Sort descriptionMin() default Sort.ASC;
+  @Description("Count of ofSchema Reference")
+  Sort schemaIdCount() default Sort.ASC;
 
   /**
    * Count of ofType Reference
@@ -188,22 +146,16 @@ public @interface __TypeOrderBy2 {
   Sort ofTypeNameCount() default Sort.ASC;
 
   /**
-   * Max of ofType Reference
+   * Max of ofSchema Reference
    */
-  @Description("Max of ofType Reference")
-  Sort ofTypeNameMax() default Sort.ASC;
+  @Description("Max of ofSchema Reference")
+  Sort schemaIdMax() default Sort.ASC;
 
   /**
-   * Min of ofType Reference
+   * Min of ofSchema Reference
    */
-  @Description("Min of ofType Reference")
-  Sort ofTypeNameMin() default Sort.ASC;
-
-  /**
-   * Count of ofSchema Reference
-   */
-  @Description("Count of ofSchema Reference")
-  Sort schemaIdCount() default Sort.ASC;
+  @Description("Min of ofSchema Reference")
+  Sort schemaIdMin() default Sort.ASC;
 
   /**
    * Sum of ofSchema Reference
@@ -218,16 +170,64 @@ public @interface __TypeOrderBy2 {
   Sort schemaIdAvg() default Sort.ASC;
 
   /**
-   * Max of ofSchema Reference
+   * Year of Create Time
    */
-  @Description("Max of ofSchema Reference")
-  Sort schemaIdMax() default Sort.ASC;
+  @Description("Year of Create Time")
+  Sort createTimeYear() default Sort.ASC;
 
   /**
-   * Min of ofSchema Reference
+   * Month of Create Time
    */
-  @Description("Min of ofSchema Reference")
-  Sort schemaIdMin() default Sort.ASC;
+  @Description("Month of Create Time")
+  Sort createTimeMonth() default Sort.ASC;
+
+  /**
+   * Day of Create Time
+   */
+  @Description("Day of Create Time")
+  Sort createTimeDay() default Sort.ASC;
+
+  /**
+   * Week of Create Time
+   */
+  @Description("Week of Create Time")
+  Sort createTimeWeek() default Sort.ASC;
+
+  /**
+   * Quarter of Create Time
+   */
+  @Description("Quarter of Create Time")
+  Sort createTimeQuarter() default Sort.ASC;
+
+  /**
+   * Year of Update Time
+   */
+  @Description("Year of Update Time")
+  Sort updateTimeYear() default Sort.ASC;
+
+  /**
+   * Month of Update Time
+   */
+  @Description("Month of Update Time")
+  Sort updateTimeMonth() default Sort.ASC;
+
+  /**
+   * Day of Update Time
+   */
+  @Description("Day of Update Time")
+  Sort updateTimeDay() default Sort.ASC;
+
+  /**
+   * Week of Update Time
+   */
+  @Description("Week of Update Time")
+  Sort updateTimeWeek() default Sort.ASC;
+
+  /**
+   * Quarter of Update Time
+   */
+  @Description("Quarter of Update Time")
+  Sort updateTimeQuarter() default Sort.ASC;
 
   String $id() default "";
 
@@ -261,41 +261,41 @@ public @interface __TypeOrderBy2 {
 
   String $idCount() default "";
 
-  String $idMax() default "";
-
-  String $idMin() default "";
-
   String $nameCount() default "";
-
-  String $nameMax() default "";
-
-  String $nameMin() default "";
 
   String $kindCount() default "";
 
-  String $kindMax() default "";
-
-  String $kindMin() default "";
-
   String $descriptionCount() default "";
 
-  String $descriptionMax() default "";
-
-  String $descriptionMin() default "";
+  String $schemaIdCount() default "";
 
   String $ofTypeNameCount() default "";
 
-  String $ofTypeNameMax() default "";
+  String $schemaIdMax() default "";
 
-  String $ofTypeNameMin() default "";
-
-  String $schemaIdCount() default "";
+  String $schemaIdMin() default "";
 
   String $schemaIdSum() default "";
 
   String $schemaIdAvg() default "";
 
-  String $schemaIdMax() default "";
+  String $createTimeYear() default "";
 
-  String $schemaIdMin() default "";
+  String $createTimeMonth() default "";
+
+  String $createTimeDay() default "";
+
+  String $createTimeWeek() default "";
+
+  String $createTimeQuarter() default "";
+
+  String $updateTimeYear() default "";
+
+  String $updateTimeMonth() default "";
+
+  String $updateTimeDay() default "";
+
+  String $updateTimeWeek() default "";
+
+  String $updateTimeQuarter() default "";
 }
