@@ -250,7 +250,6 @@ public class QueryTranslator {
                                           arguments ->
                                               arguments.getArgumentOrEmpty(inputValue.getName()))
                                       .filter(valueWithVariable -> !valueWithVariable.isNull())
-                                      .filter(ValueWithVariable::isArray)
                                       .map(
                                           valueWithVariable -> {
                                             if (valueWithVariable.isVariable()) {
