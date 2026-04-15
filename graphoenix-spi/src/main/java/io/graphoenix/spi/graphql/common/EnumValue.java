@@ -6,14 +6,15 @@ import jakarta.json.JsonString;
 import jakarta.json.JsonWriter;
 import jakarta.json.spi.JsonProvider;
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupFile;
+import org.stringtemplate.v4.STGroup;
+import io.graphoenix.spi.utils.StringTemplateLoader;
 
 import javax.lang.model.element.AnnotationValue;
 import java.io.StringWriter;
 
 public class EnumValue implements ValueWithVariable, JsonString {
 
-  private final STGroupFile stGroupFile = new STGroupFile("stg/common/EnumValue.stg");
+  private final STGroup stGroupFile = StringTemplateLoader.load("stg/common/EnumValue.stg");
 
   private final JsonProvider jsonProvider = JsonProvider.provider();
 

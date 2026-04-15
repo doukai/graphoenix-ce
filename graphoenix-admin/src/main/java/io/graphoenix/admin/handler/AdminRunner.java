@@ -12,34 +12,36 @@ import org.eclipse.jetty.servlet.ServletHolder;
 @ApplicationScoped
 public class AdminRunner implements Runner {
 
-    private final AdminConfig adminConfig;
+  private final AdminConfig adminConfig;
 
-    @Inject
-    public AdminRunner(AdminConfig adminConfig) {
-        this.adminConfig = adminConfig;
-    }
+  @Inject
+  public AdminRunner(AdminConfig adminConfig) {
+    this.adminConfig = adminConfig;
+  }
 
-    @Override
-    public void run() {
-        Javalin app = Javalin.create(
-                config -> {
-                    config.staticFiles.add("/webroot", Location.CLASSPATH);
-                    config.staticFiles.add("/webroot/static", Location.CLASSPATH);
-                    config.spaRoot.addFile("/", "/webroot/index.html");
-                    config.jetty.modifyServletContextHandler(handler -> {
-                        ServletHolder proxyServlet = new ServletHolder(AsyncProxyServlet.Transparent.class);
-                        proxyServlet.setInitParameter("proxyTo", adminConfig.getGraphQLPath());
-                        proxyServlet.setInitParameter("prefix", "/graphql");
-                        handler.addServlet(proxyServlet, "/graphql/*");
-                    });
-                }
-        );
+  @Override
+  public void run() {
+    Javalin app =
+        Javalin.create(
+            config -> {
+              config.staticFiles.add("/webroot", Location.CLASSPATH);
+              config.staticFiles.add("/webroot/static", Location.CLASSPATH);
+              config.spaRoot.addFile("/", "/webroot/index.html");
+              config.jetty.modifyServletContextHandler(
+                  handler -> {
+                    ServletHolder proxyServlet =
+                        new ServletHolder(AsyncProxyServlet.Transparent.class);
+                    proxyServlet.setInitParameter("proxyTo", adminConfig.getGraphQLPath());
+                    proxyServlet.setInitParameter("prefix", "/graphql");
+                    handler.addServlet(proxyServlet, "/graphql/*");
+                  });
+            });
 
-        app.start(port());
-    }
+    app.start(port());
+  }
 
-    @Override
-    public int port() {
-        return adminConfig.getPort();
-    }
+  @Override
+  public int port() {
+    return adminConfig.getPort();
+  }
 }

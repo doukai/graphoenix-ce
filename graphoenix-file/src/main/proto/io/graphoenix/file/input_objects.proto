@@ -153,7 +153,7 @@ message FileOrderBy {
 * Group Input for 文件
 */
 message FileGroupBy {
-    repeated string field_names = 1; /* Group By Field Names */
+    repeated string by = 1; /* Group By Field Names */
     repeated FileGroupBy gbs = 2; /* OrderByes */
 }
 /**

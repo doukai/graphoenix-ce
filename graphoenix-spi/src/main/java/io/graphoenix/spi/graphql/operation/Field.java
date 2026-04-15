@@ -7,7 +7,8 @@ import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupFile;
+import org.stringtemplate.v4.STGroup;
+import io.graphoenix.spi.utils.StringTemplateLoader;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ExecutableElement;
@@ -20,7 +21,7 @@ import static io.graphoenix.spi.utils.DocumentUtil.*;
 
 public class Field extends AbstractDefinition implements Selection {
 
-  private final STGroupFile stGroupFile = new STGroupFile("stg/operation/Field.stg");
+  private final STGroup stGroupFile = StringTemplateLoader.load("stg/operation/Field.stg");
   private String alias;
   private Arguments arguments;
   private Collection<Selection> selections = new LinkedHashSet<>();

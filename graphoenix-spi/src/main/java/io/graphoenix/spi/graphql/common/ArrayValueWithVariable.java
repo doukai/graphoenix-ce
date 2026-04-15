@@ -3,7 +3,8 @@ package io.graphoenix.spi.graphql.common;
 import graphql.parser.antlr.GraphqlParser;
 import jakarta.json.*;
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupFile;
+import org.stringtemplate.v4.STGroup;
+import io.graphoenix.spi.utils.StringTemplateLoader;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,7 +13,8 @@ import java.util.stream.Stream;
 public class ArrayValueWithVariable extends AbstractList<JsonValue>
     implements ValueWithVariable, JsonArray {
 
-  private final STGroupFile stGroupFile = new STGroupFile("stg/common/ArrayValueWithVariable.stg");
+  private final STGroup stGroupFile =
+      StringTemplateLoader.load("stg/common/ArrayValueWithVariable.stg");
 
   private final List<ValueWithVariable> valueWithVariables;
 

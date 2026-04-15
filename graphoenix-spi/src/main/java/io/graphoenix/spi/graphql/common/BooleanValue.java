@@ -3,7 +3,8 @@ package io.graphoenix.spi.graphql.common;
 import jakarta.json.JsonValue;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupFile;
+import org.stringtemplate.v4.STGroup;
+import io.graphoenix.spi.utils.StringTemplateLoader;
 
 import javax.lang.model.element.AnnotationValue;
 
@@ -11,7 +12,7 @@ import static io.graphoenix.spi.utils.DocumentUtil.getBooleanValue;
 
 public class BooleanValue implements ValueWithVariable, JsonValue {
 
-  private final STGroupFile stGroupFile = new STGroupFile("stg/common/BooleanValue.stg");
+  private final STGroup stGroupFile = StringTemplateLoader.load("stg/common/BooleanValue.stg");
 
   private Boolean value;
 

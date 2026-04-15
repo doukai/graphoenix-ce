@@ -8,7 +8,8 @@ import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import org.eclipse.microprofile.graphql.Ignore;
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupFile;
+import org.stringtemplate.v4.STGroup;
+import io.graphoenix.spi.utils.StringTemplateLoader;
 
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
@@ -23,7 +24,7 @@ import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
 public class InputObjectType extends AbstractDefinition implements Definition {
 
-  private final STGroupFile stGroupFile = new STGroupFile("stg/type/InputObjectType.stg");
+  private final STGroup stGroupFile = StringTemplateLoader.load("stg/type/InputObjectType.stg");
   private final Map<String, InputValue> inputValueMap = new LinkedHashMap<>();
 
   public InputObjectType() {

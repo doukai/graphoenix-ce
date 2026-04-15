@@ -5,7 +5,8 @@ import io.graphoenix.spi.graphql.common.Directive;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.common.Variable;
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupFile;
+import org.stringtemplate.v4.STGroup;
+import io.graphoenix.spi.utils.StringTemplateLoader;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class VariableDefinition {
 
-  private final STGroupFile stGroupFile = new STGroupFile("stg/type/VariableDefinition.stg");
+  private final STGroup stGroupFile = StringTemplateLoader.load("stg/type/VariableDefinition.stg");
   private Variable variable;
   private Type type;
   private ValueWithVariable defaultValue;

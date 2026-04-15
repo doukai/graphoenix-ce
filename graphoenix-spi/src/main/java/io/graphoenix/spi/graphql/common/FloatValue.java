@@ -3,7 +3,8 @@ package io.graphoenix.spi.graphql.common;
 import jakarta.json.JsonNumber;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupFile;
+import org.stringtemplate.v4.STGroup;
+import io.graphoenix.spi.utils.StringTemplateLoader;
 
 import javax.lang.model.element.AnnotationValue;
 import java.math.BigDecimal;
@@ -13,7 +14,7 @@ import static io.graphoenix.spi.utils.DocumentUtil.getFloatValue;
 
 public class FloatValue implements ValueWithVariable, JsonNumber {
 
-  private final STGroupFile stGroupFile = new STGroupFile("stg/common/FloatValue.stg");
+  private final STGroup stGroupFile = StringTemplateLoader.load("stg/common/FloatValue.stg");
 
   private Number value;
 

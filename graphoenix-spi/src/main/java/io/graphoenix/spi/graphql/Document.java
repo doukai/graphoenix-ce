@@ -5,9 +5,6 @@ import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.operation.FragmentDefinition;
 import io.graphoenix.spi.graphql.operation.Operation;
 import io.graphoenix.spi.graphql.type.*;
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,8 +20,6 @@ import static io.graphoenix.spi.error.GraphQLErrorType.*;
 import static io.graphoenix.spi.utils.DocumentUtil.graphqlToDocument;
 
 public class Document {
-
-  private final STGroupFile stGroupFile = new STGroupFile("stg/Document.stg");
 
   private final Map<String, Definition> definitionMap = new LinkedHashMap<>();
 
@@ -496,8 +491,16 @@ public class Document {
 
   @Override
   public String toString() {
-    ST st = stGroupFile.getInstanceOf("documentDefinition");
-    st.add("document", this);
-    return st.render();
+    StringBuilder stringBuilder = new StringBuilder();
+    boolean first = true;
+    for (Definition definition : definitionMap.values()) {
+      String renderedDefinition = definition.toString();
+      if (!first) {
+        stringBuilder.append('\n');
+      }
+      stringBuilder.append(renderedDefinition);
+      first = false;
+    }
+    return stringBuilder.toString();
   }
 }

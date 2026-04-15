@@ -3,13 +3,14 @@ package io.graphoenix.spi.graphql.type;
 import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupFile;
+import org.stringtemplate.v4.STGroup;
+import io.graphoenix.spi.utils.StringTemplateLoader;
 
 import javax.lang.model.element.VariableElement;
 
 public class EnumValueDefinition extends AbstractDefinition {
 
-  private final STGroupFile stGroupFile = new STGroupFile("stg/type/EnumValueDefinition.stg");
+  private final STGroup stGroupFile = StringTemplateLoader.load("stg/type/EnumValueDefinition.stg");
 
   public EnumValueDefinition() {
     super();

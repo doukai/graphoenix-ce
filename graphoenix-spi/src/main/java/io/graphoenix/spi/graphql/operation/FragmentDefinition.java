@@ -4,7 +4,8 @@ import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupFile;
+import org.stringtemplate.v4.STGroup;
+import io.graphoenix.spi.utils.StringTemplateLoader;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -12,7 +13,8 @@ import java.util.stream.Collectors;
 
 public class FragmentDefinition extends AbstractDefinition implements Definition {
 
-  private final STGroupFile stGroupFile = new STGroupFile("stg/operation/FragmentDefinition.stg");
+  private final STGroup stGroupFile =
+      StringTemplateLoader.load("stg/operation/FragmentDefinition.stg");
   private String typeName;
   private final Collection<Selection> selections = new LinkedHashSet<>();
 

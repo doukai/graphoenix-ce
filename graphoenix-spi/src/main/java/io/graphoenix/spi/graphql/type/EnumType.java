@@ -6,7 +6,8 @@ import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
 import org.eclipse.microprofile.graphql.Ignore;
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupFile;
+import org.stringtemplate.v4.STGroup;
+import io.graphoenix.spi.utils.StringTemplateLoader;
 
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
@@ -21,7 +22,7 @@ import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
 public class EnumType extends AbstractDefinition implements Definition {
 
-  private final STGroupFile stGroupFile = new STGroupFile("stg/type/EnumType.stg");
+  private final STGroup stGroupFile = StringTemplateLoader.load("stg/type/EnumType.stg");
   private final Map<String, EnumValueDefinition> enumValueMap = new LinkedHashMap<>();
 
   public EnumType() {

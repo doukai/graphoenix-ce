@@ -4,15 +4,17 @@ import graphql.parser.antlr.GraphqlParser;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupFile;
+import org.stringtemplate.v4.STGroup;
+import io.graphoenix.spi.utils.StringTemplateLoader;
 
 import javax.lang.model.element.AnnotationMirror;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 public class Directive {
 
-  private final STGroupFile stGroupFile = new STGroupFile("stg/common/Directive.stg");
+  private final STGroup stGroupFile = StringTemplateLoader.load("stg/common/Directive.stg");
   private String name;
   private Arguments arguments;
 
@@ -31,14 +33,14 @@ public class Directive {
 
   public Directive(AnnotationMirror annotationMirror) {
     this.name =
-        annotationMirror
-            .getAnnotationType()
-            .asElement()
-            .getAnnotation(io.graphoenix.spi.annotation.Directive.class)
+        Objects.requireNonNull(
+                annotationMirror
+                    .getAnnotationType()
+                    .asElement()
+                    .getAnnotation(io.graphoenix.spi.annotation.Directive.class))
             .value();
-    if (annotationMirror.getElementValues() != null) {
-      setArguments(new Arguments(annotationMirror));
-    }
+    annotationMirror.getElementValues();
+    setArguments(new Arguments(annotationMirror));
   }
 
   public Directive(String name) {

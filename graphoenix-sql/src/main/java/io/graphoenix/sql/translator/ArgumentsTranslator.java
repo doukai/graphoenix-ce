@@ -767,7 +767,11 @@ public class ArgumentsTranslator {
   }
 
   protected Optional<Expression> arrToExpression(
-      Expression column, String opr, InputValue inputValue, ValueWithVariable arr, boolean skipNull) {
+      Expression column,
+      String opr,
+      InputValue inputValue,
+      ValueWithVariable arr,
+      boolean skipNull) {
     if (skipNull && arr.isNull()) {
       return Optional.empty();
     }

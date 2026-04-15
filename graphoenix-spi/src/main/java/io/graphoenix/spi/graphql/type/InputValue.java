@@ -4,7 +4,8 @@ import graphql.parser.antlr.GraphqlParser;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupFile;
+import org.stringtemplate.v4.STGroup;
+import io.graphoenix.spi.utils.StringTemplateLoader;
 
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Types;
@@ -14,7 +15,7 @@ import static io.graphoenix.spi.utils.ElementUtil.variableElementToTypeName;
 
 public class InputValue extends AbstractDefinition {
 
-  private final STGroupFile stGroupFile = new STGroupFile("stg/type/InputValue.stg");
+  private final STGroup stGroupFile = StringTemplateLoader.load("stg/type/InputValue.stg");
   private Type type;
   private ValueWithVariable defaultValue;
 

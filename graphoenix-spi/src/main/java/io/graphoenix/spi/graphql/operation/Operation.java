@@ -8,7 +8,8 @@ import io.graphoenix.spi.graphql.Definition;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.type.VariableDefinition;
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupFile;
+import org.stringtemplate.v4.STGroup;
+import io.graphoenix.spi.utils.StringTemplateLoader;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,7 +21,7 @@ import static io.graphoenix.spi.utils.DocumentUtil.graphqlToOperation;
 
 public class Operation extends AbstractDefinition implements Definition {
 
-  private final STGroupFile stGroupFile = new STGroupFile("stg/operation/Operation.stg");
+  private final STGroup stGroupFile = StringTemplateLoader.load("stg/operation/Operation.stg");
   private String operationType;
   private Map<String, VariableDefinition> variableDefinitionMap;
   private final Collection<Selection> selections = new LinkedHashSet<>();

@@ -19,7 +19,7 @@ public class FileGroupBy {
    * Group By Field Names
    */
   @Description("Group By Field Names")
-  private Collection<String> fieldNames;
+  private Collection<String> by;
 
   /**
    * OrderByes
@@ -27,12 +27,12 @@ public class FileGroupBy {
   @Description("OrderByes")
   private Collection<FileGroupBy> gbs;
 
-  public Collection<String> getFieldNames() {
-    return this.fieldNames;
+  public Collection<String> getBy() {
+    return this.by;
   }
 
-  public void setFieldNames(Collection<String> fieldNames) {
-    this.fieldNames = fieldNames;
+  public void setBy(Collection<String> by) {
+    this.by = by;
   }
 
   public Collection<FileGroupBy> getGbs() {

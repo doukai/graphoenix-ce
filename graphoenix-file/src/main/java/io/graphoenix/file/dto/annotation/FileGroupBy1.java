@@ -22,7 +22,7 @@ public @interface FileGroupBy1 {
    * Group By Field Names
    */
   @Description("Group By Field Names")
-  String[] fieldNames() default {};
+  String[] by() default {};
 
   /**
    * OrderByes
@@ -30,7 +30,7 @@ public @interface FileGroupBy1 {
   @Description("OrderByes")
   FileGroupBy2[] gbs() default {};
 
-  String $fieldNames() default "";
+  String $by() default "";
 
   String $gbs() default "";
 }

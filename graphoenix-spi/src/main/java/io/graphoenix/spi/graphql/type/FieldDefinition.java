@@ -10,7 +10,8 @@ import jakarta.annotation.security.DenyAll;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupFile;
+import org.stringtemplate.v4.STGroup;
+import io.graphoenix.spi.utils.StringTemplateLoader;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
@@ -25,7 +26,7 @@ import static io.graphoenix.spi.utils.ElementUtil.*;
 
 public class FieldDefinition extends AbstractDefinition {
 
-  private final STGroupFile stGroupFile = new STGroupFile("stg/type/FieldDefinition.stg");
+  private final STGroup stGroupFile = StringTemplateLoader.load("stg/type/FieldDefinition.stg");
   private Map<String, InputValue> argumentMap;
   private Type type;
 

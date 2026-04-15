@@ -2,11 +2,12 @@ package io.graphoenix.spi.graphql.common;
 
 import jakarta.json.JsonValue;
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupFile;
+import org.stringtemplate.v4.STGroup;
+import io.graphoenix.spi.utils.StringTemplateLoader;
 
 public class NullValue implements ValueWithVariable, JsonValue {
 
-  private final STGroupFile stGroupFile = new STGroupFile("stg/common/NullValue.stg");
+  private final STGroup stGroupFile = StringTemplateLoader.load("stg/common/NullValue.stg");
 
   @Override
   public ValueType getValueType() {

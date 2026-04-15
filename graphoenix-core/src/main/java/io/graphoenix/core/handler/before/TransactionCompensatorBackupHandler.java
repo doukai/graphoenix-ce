@@ -529,8 +529,7 @@ public class TransactionCompensatorBackupHandler implements OperationBeforeHandl
           fetchItemStream =
               IntStream.range(0, valueWithVariable.asArray().size())
                   .filter(
-                      index ->
-                          valueWithVariable.asArray().getValueWithVariable(index).isObject())
+                      index -> valueWithVariable.asArray().getValueWithVariable(index).isObject())
                   .mapToObj(
                       index -> {
                         ObjectValueWithVariable item =

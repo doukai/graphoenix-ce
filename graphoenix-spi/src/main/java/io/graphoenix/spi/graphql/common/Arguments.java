@@ -5,7 +5,8 @@ import jakarta.json.*;
 import jakarta.json.spi.JsonProvider;
 import jakarta.validation.constraints.NotNull;
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupFile;
+import org.stringtemplate.v4.STGroup;
+import io.graphoenix.spi.utils.StringTemplateLoader;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
@@ -21,7 +22,7 @@ import static io.graphoenix.spi.utils.ReflectUtil.getFieldValue;
 public class Arguments extends AbstractMap<String, JsonValue>
     implements ValueWithVariable, JsonObject, Iterable<JsonValue> {
 
-  private final STGroupFile stGroupFile = new STGroupFile("stg/common/Arguments.stg");
+  private final STGroup stGroupFile = StringTemplateLoader.load("stg/common/Arguments.stg");
 
   private final Map<String, ValueWithVariable> arguments;
 

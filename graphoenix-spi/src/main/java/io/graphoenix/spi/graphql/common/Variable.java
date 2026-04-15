@@ -3,11 +3,12 @@ package io.graphoenix.spi.graphql.common;
 import graphql.parser.antlr.GraphqlParser;
 import jakarta.json.JsonString;
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupFile;
+import org.stringtemplate.v4.STGroup;
+import io.graphoenix.spi.utils.StringTemplateLoader;
 
 public class Variable implements ValueWithVariable, JsonString {
 
-  private final STGroupFile stGroupFile = new STGroupFile("stg/common/Variable.stg");
+  private final STGroup stGroupFile = StringTemplateLoader.load("stg/common/Variable.stg");
 
   private String name;
 

@@ -9,7 +9,8 @@ import io.graphoenix.spi.graphql.FieldsType;
 import io.graphoenix.spi.graphql.common.Directive;
 import org.eclipse.microprofile.graphql.Ignore;
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupFile;
+import org.stringtemplate.v4.STGroup;
+import io.graphoenix.spi.utils.StringTemplateLoader;
 
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
@@ -30,7 +31,7 @@ import static io.graphoenix.spi.utils.StreamUtil.distinctByKey;
 
 public class InterfaceType extends AbstractDefinition implements Definition, FieldsType {
 
-  private final STGroupFile stGroupFile = new STGroupFile("stg/type/InterfaceType.stg");
+  private final STGroup stGroupFile = StringTemplateLoader.load("stg/type/InterfaceType.stg");
   private final Collection<String> interfaces = new LinkedHashSet<>();
   private final Map<String, FieldDefinition> fieldDefinitionMap = new LinkedHashMap<>();
 
