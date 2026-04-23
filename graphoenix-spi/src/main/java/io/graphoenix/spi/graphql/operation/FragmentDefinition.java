@@ -7,6 +7,7 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import io.graphoenix.spi.utils.StringTemplateLoader;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.stream.Collectors;
@@ -39,7 +40,7 @@ public class FragmentDefinition extends AbstractDefinition implements Definition
 
   public Collection<Selection> getSelections() {
     if (selections != null) {
-      return selections.stream().filter(Selection::isInclude).collect(Collectors.toList());
+      return new ArrayList<>(selections);
     }
     return null;
   }

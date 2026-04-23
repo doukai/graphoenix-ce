@@ -9,14 +9,14 @@ import jakarta.inject.Provider;
 import jakarta.json.JsonValue;
 import reactor.core.publisher.Mono;
 
-import static io.graphoenix.core.handler.after.SelectionHandler.SELECTION_HANDLER_PRIORITY;
+import static io.graphoenix.core.handler.after.SelectionAfterHandler.SELECTION_AFTER_HANDLER_PRIORITY;
 
 @ApplicationScoped
 @Priority(SubscriptionAfterDataListener.SUBSCRIPTION_AFTER_DATA_LISTENER_PRIORITY)
 public class SubscriptionAfterDataListener implements OperationAfterHandler {
 
   public static final int SUBSCRIPTION_AFTER_DATA_LISTENER_PRIORITY =
-      SELECTION_HANDLER_PRIORITY - 125;
+      SELECTION_AFTER_HANDLER_PRIORITY - 125;
 
   private final Provider<Mono<SubscriptionDataListener>> subscriptionDataListenerProvider;
 

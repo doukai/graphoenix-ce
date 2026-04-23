@@ -34,10 +34,10 @@ import java.util.stream.Stream;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 
 @ApplicationScoped
-@Priority(SelectionHandler.SELECTION_HANDLER_PRIORITY)
-public class SelectionHandler implements OperationAfterHandler {
+@Priority(SelectionAfterHandler.SELECTION_AFTER_HANDLER_PRIORITY)
+public class SelectionAfterHandler implements OperationAfterHandler {
 
-  public static final int SELECTION_HANDLER_PRIORITY = Integer.MAX_VALUE - 100;
+  public static final int SELECTION_AFTER_HANDLER_PRIORITY = Integer.MAX_VALUE - 100;
 
   private final DocumentManager documentManager;
   private final ScalarFormatter scalarFormatter;
@@ -45,7 +45,7 @@ public class SelectionHandler implements OperationAfterHandler {
   private final Jsonb jsonb;
 
   @Inject
-  public SelectionHandler(
+  public SelectionAfterHandler(
       DocumentManager documentManager,
       ScalarFormatter scalarFormatter,
       JsonProvider jsonProvider,

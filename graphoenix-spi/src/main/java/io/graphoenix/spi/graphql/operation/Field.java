@@ -231,7 +231,7 @@ public class Field extends AbstractDefinition implements Selection {
   }
 
   public Collection<Selection> getSelections() {
-    return selections.stream().filter(Selection::isInclude).collect(Collectors.toList());
+    return new ArrayList<>(selections);
   }
 
   public Collection<Field> getFields() {

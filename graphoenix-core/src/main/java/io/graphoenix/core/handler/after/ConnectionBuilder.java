@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static io.graphoenix.core.handler.after.SelectionHandler.SELECTION_HANDLER_PRIORITY;
+import static io.graphoenix.core.handler.after.SelectionAfterHandler.SELECTION_AFTER_HANDLER_PRIORITY;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.OBJECT_SELECTION_NOT_EXIST;
 import static jakarta.json.JsonValue.NULL;
@@ -35,7 +35,7 @@ import static jakarta.json.JsonValue.NULL;
 @Priority(ConnectionBuilder.CONNECTION_BUILDER_PRIORITY)
 public class ConnectionBuilder implements OperationAfterHandler {
 
-  public static final int CONNECTION_BUILDER_PRIORITY = SELECTION_HANDLER_PRIORITY - 200;
+  public static final int CONNECTION_BUILDER_PRIORITY = SELECTION_AFTER_HANDLER_PRIORITY - 200;
 
   private final DocumentManager documentManager;
   private final PackageManager packageManager;

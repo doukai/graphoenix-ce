@@ -557,6 +557,14 @@ public class MutationTranslator {
       ValueWithVariable valueWithVariable,
       boolean merge,
       int level) {
+    if (valueWithVariable.isArray() && valueWithVariable.asArray().isEmpty()) {
+      if (parentIdExpression != null) {
+        return Stream.of(removeMapStatement(objectType, fieldDefinition, parentIdExpression, null));
+      } else {
+        return Stream.empty();
+      }
+    }
+
     Stream<Statement> mutationStatementStream = Stream.empty();
     if (valueWithVariable.isVariable()) {
       Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
