@@ -207,6 +207,48 @@ public @interface __FieldExpression1 {
   @Description("Expressions")
   __FieldExpression2[] exs() default {};
 
+  /**
+   * Order By
+   */
+  @Description("Order By")
+  __FieldOrderBy2 orderBy() default @__FieldOrderBy2;
+
+  /**
+   * Group By
+   */
+  @Description("Group By")
+  __FieldGroupBy2 groupBy() default @__FieldGroupBy2;
+
+  /**
+   * First
+   */
+  @Description("First")
+  int first() default 0;
+
+  /**
+   * Last
+   */
+  @Description("Last")
+  int last() default 0;
+
+  /**
+   * Offset
+   */
+  @Description("Offset")
+  int offset() default 0;
+
+  /**
+   * After
+   */
+  @Description("After")
+  String after() default "";
+
+  /**
+   * Before
+   */
+  @Description("Before")
+  String before() default "";
+
   String $id() default "";
 
   String $name() default "";
@@ -268,4 +310,18 @@ public @interface __FieldExpression1 {
   String $cond() default "";
 
   String $exs() default "";
+
+  String $orderBy() default "";
+
+  String $groupBy() default "";
+
+  String $first() default "";
+
+  String $last() default "";
+
+  String $offset() default "";
+
+  String $after() default "";
+
+  String $before() default "";
 }

@@ -128,6 +128,18 @@ public @interface __DirectiveInput {
   __DirectiveLocationsRelationInput1[] __directiveLocationsRelation() default {};
 
   /**
+   * Input
+   */
+  @Description("Input")
+  __DirectiveInput1 input() default @__DirectiveInput1;
+
+  /**
+   * Input List
+   */
+  @Description("Input List")
+  __DirectiveInput1[] list() default {};
+
+  /**
    * Where
    */
   @Description("Where")
@@ -168,6 +180,10 @@ public @interface __DirectiveInput {
   String $schemaId() default "";
 
   String $__directiveLocationsRelation() default "";
+
+  String $input() default "";
+
+  String $list() default "";
 
   String $where() default "";
 }

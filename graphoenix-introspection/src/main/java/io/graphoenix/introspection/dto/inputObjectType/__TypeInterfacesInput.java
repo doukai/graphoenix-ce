@@ -8,6 +8,7 @@ import java.lang.Integer;
 import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
@@ -20,7 +21,7 @@ import org.eclipse.microprofile.graphql.Name;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Mutation Input for Relationship Object between __Type and __Type")
-public class __TypeInterfacesInput implements MetaInput, __TypeInterfacesInputBase {
+public class __TypeInterfacesInput implements MetaInput {
   /**
    * ID
    */
@@ -109,6 +110,18 @@ public class __TypeInterfacesInput implements MetaInput, __TypeInterfacesInputBa
   private String __typename = "__TypeInterfaces";
 
   /**
+   * Input
+   */
+  @Description("Input")
+  private __TypeInterfacesInput input;
+
+  /**
+   * Input List
+   */
+  @Description("Input List")
+  private Collection<__TypeInterfacesInput> list;
+
+  /**
    * Where
    */
   @Description("Where")
@@ -124,34 +137,28 @@ public class __TypeInterfacesInput implements MetaInput, __TypeInterfacesInputBa
     this.id = (String)id;
   }
 
-  @Override
   public String getTypeRef() {
     return this.typeRef;
   }
 
-  @Override
   public void setTypeRef(String typeRef) {
-    this.typeRef = (String)typeRef;
+    this.typeRef = typeRef;
   }
 
-  @Override
   public __TypeInput getType() {
     return this.type;
   }
 
-  @Override
   public void setType(__TypeInput type) {
-    this.type = (__TypeInput)type;
+    this.type = type;
   }
 
-  @Override
   public String getInterfaceRef() {
     return this.interfaceRef;
   }
 
-  @Override
   public void setInterfaceRef(String interfaceRef) {
-    this.interfaceRef = (String)interfaceRef;
+    this.interfaceRef = interfaceRef;
   }
 
   public __TypeInput get_interface() {
@@ -162,14 +169,12 @@ public class __TypeInterfacesInput implements MetaInput, __TypeInterfacesInputBa
     this._interface = _interface;
   }
 
-  @Override
   public Boolean getIsDeprecated() {
     return this.isDeprecated;
   }
 
-  @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean)isDeprecated;
+    this.isDeprecated = isDeprecated;
   }
 
   @Override
@@ -242,23 +247,35 @@ public class __TypeInterfacesInput implements MetaInput, __TypeInterfacesInputBa
     this.createGroupId = (String)createGroupId;
   }
 
-  @Override
   public String get__typename() {
     return this.__typename;
   }
 
-  @Override
   public void set__typename(String __typename) {
-    this.__typename = (String)__typename;
+    this.__typename = __typename;
   }
 
-  @Override
+  public __TypeInterfacesInput getInput() {
+    return this.input;
+  }
+
+  public void setInput(__TypeInterfacesInput input) {
+    this.input = input;
+  }
+
+  public Collection<__TypeInterfacesInput> getList() {
+    return this.list;
+  }
+
+  public void setList(Collection<__TypeInterfacesInput> list) {
+    this.list = list;
+  }
+
   public __TypeInterfacesExpression getWhere() {
     return this.where;
   }
 
-  @Override
   public void setWhere(__TypeInterfacesExpression where) {
-    this.where = (__TypeInterfacesExpression)where;
+    this.where = where;
   }
 }

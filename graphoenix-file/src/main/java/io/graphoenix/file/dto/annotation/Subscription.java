@@ -17,9 +17,9 @@ import org.eclipse.microprofile.graphql.Description;
 @Target(ElementType.METHOD)
 @Description("Subscription")
 public @interface Subscription {
-  FileSubscriptionArguments file() default @FileSubscriptionArguments;
+  FileExpression file() default @FileExpression;
 
-  FileListSubscriptionArguments fileList() default @FileListSubscriptionArguments;
+  FileExpression fileList() default @FileExpression;
 
-  FileConnectionSubscriptionArguments fileConnection() default @FileConnectionSubscriptionArguments;
+  FileExpression fileConnection() default @FileExpression;
 }

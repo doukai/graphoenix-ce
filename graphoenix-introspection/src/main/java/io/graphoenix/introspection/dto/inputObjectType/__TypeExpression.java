@@ -7,7 +7,9 @@ import io.graphoenix.core.dto.inputObjectType.MetaExpression;
 import io.graphoenix.core.dto.inputObjectType.StringExpression;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
+import java.lang.Integer;
 import java.lang.Override;
+import java.lang.String;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
@@ -20,7 +22,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Query Expression Input for __Type")
-public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
+public class __TypeExpression implements MetaExpression {
   /**
    * id
    */
@@ -246,6 +248,48 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
   @Description("Expressions")
   private Collection<__TypeExpression> exs;
 
+  /**
+   * Order By
+   */
+  @Description("Order By")
+  private __TypeOrderBy orderBy;
+
+  /**
+   * Group By
+   */
+  @Description("Group By")
+  private __TypeGroupBy groupBy;
+
+  /**
+   * First
+   */
+  @Description("First")
+  private Integer first;
+
+  /**
+   * Last
+   */
+  @Description("Last")
+  private Integer last;
+
+  /**
+   * Offset
+   */
+  @Description("Offset")
+  private Integer offset;
+
+  /**
+   * After
+   */
+  @Description("After")
+  private String after;
+
+  /**
+   * Before
+   */
+  @Description("Before")
+  private String before;
+
   @Override
   public StringExpression getId() {
     return this.id;
@@ -256,124 +300,100 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
     this.id = (StringExpression)id;
   }
 
-  @Override
   public StringExpression getName() {
     return this.name;
   }
 
-  @Override
   public void setName(StringExpression name) {
-    this.name = (StringExpression)name;
+    this.name = name;
   }
 
-  @Override
   public __SchemaExpression getOfSchema() {
     return this.ofSchema;
   }
 
-  @Override
   public void setOfSchema(__SchemaExpression ofSchema) {
-    this.ofSchema = (__SchemaExpression)ofSchema;
+    this.ofSchema = ofSchema;
   }
 
-  @Override
   public __TypeKindExpression getKind() {
     return this.kind;
   }
 
-  @Override
   public void setKind(__TypeKindExpression kind) {
-    this.kind = (__TypeKindExpression)kind;
+    this.kind = kind;
   }
 
-  @Override
   public StringExpression getDescription() {
     return this.description;
   }
 
-  @Override
   public void setDescription(StringExpression description) {
-    this.description = (StringExpression)description;
+    this.description = description;
   }
 
-  @Override
   public __FieldExpression getFields() {
     return this.fields;
   }
 
-  @Override
   public void setFields(__FieldExpression fields) {
-    this.fields = (__FieldExpression)fields;
+    this.fields = fields;
   }
 
-  @Override
   public __TypeExpression getInterfaces() {
     return this.interfaces;
   }
 
-  @Override
   public void setInterfaces(__TypeExpression interfaces) {
-    this.interfaces = (__TypeExpression)interfaces;
+    this.interfaces = interfaces;
   }
 
-  @Override
   public __TypeExpression getPossibleTypes() {
     return this.possibleTypes;
   }
 
-  @Override
   public void setPossibleTypes(__TypeExpression possibleTypes) {
-    this.possibleTypes = (__TypeExpression)possibleTypes;
+    this.possibleTypes = possibleTypes;
   }
 
-  @Override
   public __EnumValueExpression getEnumValues() {
     return this.enumValues;
   }
 
-  @Override
   public void setEnumValues(__EnumValueExpression enumValues) {
-    this.enumValues = (__EnumValueExpression)enumValues;
+    this.enumValues = enumValues;
   }
 
-  @Override
   public __InputValueExpression getInputFields() {
     return this.inputFields;
   }
 
-  @Override
   public void setInputFields(__InputValueExpression inputFields) {
-    this.inputFields = (__InputValueExpression)inputFields;
+    this.inputFields = inputFields;
   }
 
-  @Override
   public __TypeExpression getOfType() {
     return this.ofType;
   }
 
-  @Override
   public void setOfType(__TypeExpression ofType) {
-    this.ofType = (__TypeExpression)ofType;
+    this.ofType = ofType;
   }
 
-  @Override
   public Boolean getIncludeDeprecated() {
     return this.includeDeprecated;
   }
 
-  @Override
   public void setIncludeDeprecated(Boolean includeDeprecated) {
-    this.includeDeprecated = (Boolean)includeDeprecated;
+    this.includeDeprecated = includeDeprecated;
   }
 
-  @Override
   public IntExpression getVersion() {
     return this.version;
   }
 
-  @Override
   public void setVersion(IntExpression version) {
-    this.version = (IntExpression)version;
+    this.version = version;
   }
 
   @Override
@@ -436,183 +456,203 @@ public class __TypeExpression implements MetaExpression, __TypeExpressionBase {
     this.createGroupId = (StringExpression)createGroupId;
   }
 
-  @Override
   public StringExpression get__typename() {
     return this.__typename;
   }
 
-  @Override
   public void set__typename(StringExpression __typename) {
-    this.__typename = (StringExpression)__typename;
+    this.__typename = __typename;
   }
 
-  @Override
   public IntExpression getSchemaId() {
     return this.schemaId;
   }
 
-  @Override
   public void setSchemaId(IntExpression schemaId) {
-    this.schemaId = (IntExpression)schemaId;
+    this.schemaId = schemaId;
   }
 
-  @Override
   public StringExpression getOfTypeName() {
     return this.ofTypeName;
   }
 
-  @Override
   public void setOfTypeName(StringExpression ofTypeName) {
-    this.ofTypeName = (StringExpression)ofTypeName;
+    this.ofTypeName = ofTypeName;
   }
 
-  @Override
   public __TypeInterfacesExpression get__typeInterfaces() {
     return this.__typeInterfaces;
   }
 
-  @Override
   public void set__typeInterfaces(__TypeInterfacesExpression __typeInterfaces) {
-    this.__typeInterfaces = (__TypeInterfacesExpression)__typeInterfaces;
+    this.__typeInterfaces = __typeInterfaces;
   }
 
-  @Override
   public __TypePossibleTypesExpression get__typePossibleTypes() {
     return this.__typePossibleTypes;
   }
 
-  @Override
   public void set__typePossibleTypes(__TypePossibleTypesExpression __typePossibleTypes) {
-    this.__typePossibleTypes = (__TypePossibleTypesExpression)__typePossibleTypes;
+    this.__typePossibleTypes = __typePossibleTypes;
   }
 
-  @Override
   public IntExpression getCreateTimeYear() {
     return this.createTimeYear;
   }
 
-  @Override
   public void setCreateTimeYear(IntExpression createTimeYear) {
-    this.createTimeYear = (IntExpression)createTimeYear;
+    this.createTimeYear = createTimeYear;
   }
 
-  @Override
   public IntExpression getCreateTimeMonth() {
     return this.createTimeMonth;
   }
 
-  @Override
   public void setCreateTimeMonth(IntExpression createTimeMonth) {
-    this.createTimeMonth = (IntExpression)createTimeMonth;
+    this.createTimeMonth = createTimeMonth;
   }
 
-  @Override
   public IntExpression getCreateTimeDay() {
     return this.createTimeDay;
   }
 
-  @Override
   public void setCreateTimeDay(IntExpression createTimeDay) {
-    this.createTimeDay = (IntExpression)createTimeDay;
+    this.createTimeDay = createTimeDay;
   }
 
-  @Override
   public IntExpression getCreateTimeWeek() {
     return this.createTimeWeek;
   }
 
-  @Override
   public void setCreateTimeWeek(IntExpression createTimeWeek) {
-    this.createTimeWeek = (IntExpression)createTimeWeek;
+    this.createTimeWeek = createTimeWeek;
   }
 
-  @Override
   public IntExpression getCreateTimeQuarter() {
     return this.createTimeQuarter;
   }
 
-  @Override
   public void setCreateTimeQuarter(IntExpression createTimeQuarter) {
-    this.createTimeQuarter = (IntExpression)createTimeQuarter;
+    this.createTimeQuarter = createTimeQuarter;
   }
 
-  @Override
   public IntExpression getUpdateTimeYear() {
     return this.updateTimeYear;
   }
 
-  @Override
   public void setUpdateTimeYear(IntExpression updateTimeYear) {
-    this.updateTimeYear = (IntExpression)updateTimeYear;
+    this.updateTimeYear = updateTimeYear;
   }
 
-  @Override
   public IntExpression getUpdateTimeMonth() {
     return this.updateTimeMonth;
   }
 
-  @Override
   public void setUpdateTimeMonth(IntExpression updateTimeMonth) {
-    this.updateTimeMonth = (IntExpression)updateTimeMonth;
+    this.updateTimeMonth = updateTimeMonth;
   }
 
-  @Override
   public IntExpression getUpdateTimeDay() {
     return this.updateTimeDay;
   }
 
-  @Override
   public void setUpdateTimeDay(IntExpression updateTimeDay) {
-    this.updateTimeDay = (IntExpression)updateTimeDay;
+    this.updateTimeDay = updateTimeDay;
   }
 
-  @Override
   public IntExpression getUpdateTimeWeek() {
     return this.updateTimeWeek;
   }
 
-  @Override
   public void setUpdateTimeWeek(IntExpression updateTimeWeek) {
-    this.updateTimeWeek = (IntExpression)updateTimeWeek;
+    this.updateTimeWeek = updateTimeWeek;
   }
 
-  @Override
   public IntExpression getUpdateTimeQuarter() {
     return this.updateTimeQuarter;
   }
 
-  @Override
   public void setUpdateTimeQuarter(IntExpression updateTimeQuarter) {
-    this.updateTimeQuarter = (IntExpression)updateTimeQuarter;
+    this.updateTimeQuarter = updateTimeQuarter;
   }
 
-  @Override
   public Boolean getNot() {
     return this.not;
   }
 
-  @Override
   public void setNot(Boolean not) {
-    this.not = (Boolean)not;
+    this.not = not;
   }
 
-  @Override
   public Conditional getCond() {
     return this.cond;
   }
 
-  @Override
   public void setCond(Conditional cond) {
-    this.cond = (Conditional)cond;
+    this.cond = cond;
   }
 
-  @Override
   public Collection<__TypeExpression> getExs() {
     return this.exs;
   }
 
-  @Override
   public void setExs(Collection<__TypeExpression> exs) {
-    this.exs = (Collection<__TypeExpression>)exs;
+    this.exs = exs;
+  }
+
+  public __TypeOrderBy getOrderBy() {
+    return this.orderBy;
+  }
+
+  public void setOrderBy(__TypeOrderBy orderBy) {
+    this.orderBy = orderBy;
+  }
+
+  public __TypeGroupBy getGroupBy() {
+    return this.groupBy;
+  }
+
+  public void setGroupBy(__TypeGroupBy groupBy) {
+    this.groupBy = groupBy;
+  }
+
+  public Integer getFirst() {
+    return this.first;
+  }
+
+  public void setFirst(Integer first) {
+    this.first = first;
+  }
+
+  public Integer getLast() {
+    return this.last;
+  }
+
+  public void setLast(Integer last) {
+    this.last = last;
+  }
+
+  public Integer getOffset() {
+    return this.offset;
+  }
+
+  public void setOffset(Integer offset) {
+    this.offset = offset;
+  }
+
+  public String getAfter() {
+    return this.after;
+  }
+
+  public void setAfter(String after) {
+    this.after = after;
+  }
+
+  public String getBefore() {
+    return this.before;
+  }
+
+  public void setBefore(String before) {
+    this.before = before;
   }
 }

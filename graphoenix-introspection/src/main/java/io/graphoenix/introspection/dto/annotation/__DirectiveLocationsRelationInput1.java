@@ -98,6 +98,18 @@ public @interface __DirectiveLocationsRelationInput1 {
   String __typename() default "__DirectiveLocationsRelation";
 
   /**
+   * Input
+   */
+  @Description("Input")
+  __DirectiveLocationsRelationInput2 input() default @__DirectiveLocationsRelationInput2;
+
+  /**
+   * Input List
+   */
+  @Description("Input List")
+  __DirectiveLocationsRelationInput2[] list() default {};
+
+  /**
    * Where
    */
   @Description("Where")
@@ -128,6 +140,10 @@ public @interface __DirectiveLocationsRelationInput1 {
   String $createGroupId() default "";
 
   String $__typename() default "";
+
+  String $input() default "";
+
+  String $list() default "";
 
   String $where() default "";
 }

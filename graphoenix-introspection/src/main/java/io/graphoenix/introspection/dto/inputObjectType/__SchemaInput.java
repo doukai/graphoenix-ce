@@ -20,7 +20,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Mutation Input for __Schema")
-public class __SchemaInput implements MetaInput, __SchemaInputBase {
+public class __SchemaInput implements MetaInput {
   /**
    * id
    */
@@ -132,6 +132,18 @@ public class __SchemaInput implements MetaInput, __SchemaInputBase {
   private String subscriptionTypeName;
 
   /**
+   * Input
+   */
+  @Description("Input")
+  private __SchemaInput input;
+
+  /**
+   * Input List
+   */
+  @Description("Input List")
+  private Collection<__SchemaInput> list;
+
+  /**
    * Where
    */
   @Description("Where")
@@ -147,64 +159,52 @@ public class __SchemaInput implements MetaInput, __SchemaInputBase {
     this.id = (String)id;
   }
 
-  @Override
   public Collection<__TypeInput> getTypes() {
     return this.types;
   }
 
-  @Override
   public void setTypes(Collection<__TypeInput> types) {
-    this.types = (Collection<__TypeInput>)types;
+    this.types = types;
   }
 
-  @Override
   public __TypeInput getQueryType() {
     return this.queryType;
   }
 
-  @Override
   public void setQueryType(__TypeInput queryType) {
-    this.queryType = (__TypeInput)queryType;
+    this.queryType = queryType;
   }
 
-  @Override
   public __TypeInput getMutationType() {
     return this.mutationType;
   }
 
-  @Override
   public void setMutationType(__TypeInput mutationType) {
-    this.mutationType = (__TypeInput)mutationType;
+    this.mutationType = mutationType;
   }
 
-  @Override
   public __TypeInput getSubscriptionType() {
     return this.subscriptionType;
   }
 
-  @Override
   public void setSubscriptionType(__TypeInput subscriptionType) {
-    this.subscriptionType = (__TypeInput)subscriptionType;
+    this.subscriptionType = subscriptionType;
   }
 
-  @Override
   public Collection<__DirectiveInput> getDirectives() {
     return this.directives;
   }
 
-  @Override
   public void setDirectives(Collection<__DirectiveInput> directives) {
-    this.directives = (Collection<__DirectiveInput>)directives;
+    this.directives = directives;
   }
 
-  @Override
   public Boolean getIsDeprecated() {
     return this.isDeprecated;
   }
 
-  @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean)isDeprecated;
+    this.isDeprecated = isDeprecated;
   }
 
   @Override
@@ -277,53 +277,59 @@ public class __SchemaInput implements MetaInput, __SchemaInputBase {
     this.createGroupId = (String)createGroupId;
   }
 
-  @Override
   public String get__typename() {
     return this.__typename;
   }
 
-  @Override
   public void set__typename(String __typename) {
-    this.__typename = (String)__typename;
+    this.__typename = __typename;
   }
 
-  @Override
   public String getQueryTypeName() {
     return this.queryTypeName;
   }
 
-  @Override
   public void setQueryTypeName(String queryTypeName) {
-    this.queryTypeName = (String)queryTypeName;
+    this.queryTypeName = queryTypeName;
   }
 
-  @Override
   public String getMutationTypeName() {
     return this.mutationTypeName;
   }
 
-  @Override
   public void setMutationTypeName(String mutationTypeName) {
-    this.mutationTypeName = (String)mutationTypeName;
+    this.mutationTypeName = mutationTypeName;
   }
 
-  @Override
   public String getSubscriptionTypeName() {
     return this.subscriptionTypeName;
   }
 
-  @Override
   public void setSubscriptionTypeName(String subscriptionTypeName) {
-    this.subscriptionTypeName = (String)subscriptionTypeName;
+    this.subscriptionTypeName = subscriptionTypeName;
   }
 
-  @Override
+  public __SchemaInput getInput() {
+    return this.input;
+  }
+
+  public void setInput(__SchemaInput input) {
+    this.input = input;
+  }
+
+  public Collection<__SchemaInput> getList() {
+    return this.list;
+  }
+
+  public void setList(Collection<__SchemaInput> list) {
+    this.list = list;
+  }
+
   public __SchemaExpression getWhere() {
     return this.where;
   }
 
-  @Override
   public void setWhere(__SchemaExpression where) {
-    this.where = (__SchemaExpression)where;
+    this.where = where;
   }
 }

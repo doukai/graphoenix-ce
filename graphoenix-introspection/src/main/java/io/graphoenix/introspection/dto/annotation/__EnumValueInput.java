@@ -109,6 +109,18 @@ public @interface __EnumValueInput {
   String ofTypeName() default "";
 
   /**
+   * Input
+   */
+  @Description("Input")
+  __EnumValueInput1 input() default @__EnumValueInput1;
+
+  /**
+   * Input List
+   */
+  @Description("Input List")
+  __EnumValueInput1[] list() default {};
+
+  /**
    * Where
    */
   @Description("Where")
@@ -143,6 +155,10 @@ public @interface __EnumValueInput {
   String $__typename() default "";
 
   String $ofTypeName() default "";
+
+  String $input() default "";
+
+  String $list() default "";
 
   String $where() default "";
 }

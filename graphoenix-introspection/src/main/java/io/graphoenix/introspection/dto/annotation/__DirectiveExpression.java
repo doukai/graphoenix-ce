@@ -209,6 +209,48 @@ public @interface __DirectiveExpression {
   @Description("Expressions")
   __DirectiveExpression1[] exs() default {};
 
+  /**
+   * Order By
+   */
+  @Description("Order By")
+  __DirectiveOrderBy1 orderBy() default @__DirectiveOrderBy1;
+
+  /**
+   * Group By
+   */
+  @Description("Group By")
+  __DirectiveGroupBy1 groupBy() default @__DirectiveGroupBy1;
+
+  /**
+   * First
+   */
+  @Description("First")
+  int first() default 0;
+
+  /**
+   * Last
+   */
+  @Description("Last")
+  int last() default 0;
+
+  /**
+   * Offset
+   */
+  @Description("Offset")
+  int offset() default 0;
+
+  /**
+   * After
+   */
+  @Description("After")
+  String after() default "";
+
+  /**
+   * Before
+   */
+  @Description("Before")
+  String before() default "";
+
   String $id() default "";
 
   String $name() default "";
@@ -270,4 +312,18 @@ public @interface __DirectiveExpression {
   String $cond() default "";
 
   String $exs() default "";
+
+  String $orderBy() default "";
+
+  String $groupBy() default "";
+
+  String $first() default "";
+
+  String $last() default "";
+
+  String $offset() default "";
+
+  String $after() default "";
+
+  String $before() default "";
 }

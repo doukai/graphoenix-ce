@@ -164,6 +164,18 @@ public @interface __TypeInput {
   __TypePossibleTypesInput1[] __typePossibleTypes() default {};
 
   /**
+   * Input
+   */
+  @Description("Input")
+  __TypeInput1 input() default @__TypeInput1;
+
+  /**
+   * Input List
+   */
+  @Description("Input List")
+  __TypeInput1[] list() default {};
+
+  /**
    * Where
    */
   @Description("Where")
@@ -216,6 +228,10 @@ public @interface __TypeInput {
   String $__typeInterfaces() default "";
 
   String $__typePossibleTypes() default "";
+
+  String $input() default "";
+
+  String $list() default "";
 
   String $where() default "";
 }

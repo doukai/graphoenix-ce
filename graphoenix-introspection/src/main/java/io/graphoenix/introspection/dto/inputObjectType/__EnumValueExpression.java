@@ -7,7 +7,9 @@ import io.graphoenix.core.dto.inputObjectType.MetaExpression;
 import io.graphoenix.core.dto.inputObjectType.StringExpression;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
+import java.lang.Integer;
 import java.lang.Override;
+import java.lang.String;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
@@ -20,7 +22,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Query Expression Input for __EnumValue")
-public class __EnumValueExpression implements MetaExpression, __EnumValueExpressionBase {
+public class __EnumValueExpression implements MetaExpression {
   /**
    * id
    */
@@ -192,6 +194,48 @@ public class __EnumValueExpression implements MetaExpression, __EnumValueExpress
   @Description("Expressions")
   private Collection<__EnumValueExpression> exs;
 
+  /**
+   * Order By
+   */
+  @Description("Order By")
+  private __EnumValueOrderBy orderBy;
+
+  /**
+   * Group By
+   */
+  @Description("Group By")
+  private __EnumValueGroupBy groupBy;
+
+  /**
+   * First
+   */
+  @Description("First")
+  private Integer first;
+
+  /**
+   * Last
+   */
+  @Description("Last")
+  private Integer last;
+
+  /**
+   * Offset
+   */
+  @Description("Offset")
+  private Integer offset;
+
+  /**
+   * After
+   */
+  @Description("After")
+  private String after;
+
+  /**
+   * Before
+   */
+  @Description("Before")
+  private String before;
+
   @Override
   public StringExpression getId() {
     return this.id;
@@ -202,64 +246,52 @@ public class __EnumValueExpression implements MetaExpression, __EnumValueExpress
     this.id = (StringExpression)id;
   }
 
-  @Override
   public StringExpression getName() {
     return this.name;
   }
 
-  @Override
   public void setName(StringExpression name) {
-    this.name = (StringExpression)name;
+    this.name = name;
   }
 
-  @Override
   public __TypeExpression getOfType() {
     return this.ofType;
   }
 
-  @Override
   public void setOfType(__TypeExpression ofType) {
-    this.ofType = (__TypeExpression)ofType;
+    this.ofType = ofType;
   }
 
-  @Override
   public StringExpression getDescription() {
     return this.description;
   }
 
-  @Override
   public void setDescription(StringExpression description) {
-    this.description = (StringExpression)description;
+    this.description = description;
   }
 
-  @Override
   public StringExpression getDeprecationReason() {
     return this.deprecationReason;
   }
 
-  @Override
   public void setDeprecationReason(StringExpression deprecationReason) {
-    this.deprecationReason = (StringExpression)deprecationReason;
+    this.deprecationReason = deprecationReason;
   }
 
-  @Override
   public Boolean getIncludeDeprecated() {
     return this.includeDeprecated;
   }
 
-  @Override
   public void setIncludeDeprecated(Boolean includeDeprecated) {
-    this.includeDeprecated = (Boolean)includeDeprecated;
+    this.includeDeprecated = includeDeprecated;
   }
 
-  @Override
   public IntExpression getVersion() {
     return this.version;
   }
 
-  @Override
   public void setVersion(IntExpression version) {
-    this.version = (IntExpression)version;
+    this.version = version;
   }
 
   @Override
@@ -322,153 +354,179 @@ public class __EnumValueExpression implements MetaExpression, __EnumValueExpress
     this.createGroupId = (StringExpression)createGroupId;
   }
 
-  @Override
   public StringExpression get__typename() {
     return this.__typename;
   }
 
-  @Override
   public void set__typename(StringExpression __typename) {
-    this.__typename = (StringExpression)__typename;
+    this.__typename = __typename;
   }
 
-  @Override
   public StringExpression getOfTypeName() {
     return this.ofTypeName;
   }
 
-  @Override
   public void setOfTypeName(StringExpression ofTypeName) {
-    this.ofTypeName = (StringExpression)ofTypeName;
+    this.ofTypeName = ofTypeName;
   }
 
-  @Override
   public IntExpression getCreateTimeYear() {
     return this.createTimeYear;
   }
 
-  @Override
   public void setCreateTimeYear(IntExpression createTimeYear) {
-    this.createTimeYear = (IntExpression)createTimeYear;
+    this.createTimeYear = createTimeYear;
   }
 
-  @Override
   public IntExpression getCreateTimeMonth() {
     return this.createTimeMonth;
   }
 
-  @Override
   public void setCreateTimeMonth(IntExpression createTimeMonth) {
-    this.createTimeMonth = (IntExpression)createTimeMonth;
+    this.createTimeMonth = createTimeMonth;
   }
 
-  @Override
   public IntExpression getCreateTimeDay() {
     return this.createTimeDay;
   }
 
-  @Override
   public void setCreateTimeDay(IntExpression createTimeDay) {
-    this.createTimeDay = (IntExpression)createTimeDay;
+    this.createTimeDay = createTimeDay;
   }
 
-  @Override
   public IntExpression getCreateTimeWeek() {
     return this.createTimeWeek;
   }
 
-  @Override
   public void setCreateTimeWeek(IntExpression createTimeWeek) {
-    this.createTimeWeek = (IntExpression)createTimeWeek;
+    this.createTimeWeek = createTimeWeek;
   }
 
-  @Override
   public IntExpression getCreateTimeQuarter() {
     return this.createTimeQuarter;
   }
 
-  @Override
   public void setCreateTimeQuarter(IntExpression createTimeQuarter) {
-    this.createTimeQuarter = (IntExpression)createTimeQuarter;
+    this.createTimeQuarter = createTimeQuarter;
   }
 
-  @Override
   public IntExpression getUpdateTimeYear() {
     return this.updateTimeYear;
   }
 
-  @Override
   public void setUpdateTimeYear(IntExpression updateTimeYear) {
-    this.updateTimeYear = (IntExpression)updateTimeYear;
+    this.updateTimeYear = updateTimeYear;
   }
 
-  @Override
   public IntExpression getUpdateTimeMonth() {
     return this.updateTimeMonth;
   }
 
-  @Override
   public void setUpdateTimeMonth(IntExpression updateTimeMonth) {
-    this.updateTimeMonth = (IntExpression)updateTimeMonth;
+    this.updateTimeMonth = updateTimeMonth;
   }
 
-  @Override
   public IntExpression getUpdateTimeDay() {
     return this.updateTimeDay;
   }
 
-  @Override
   public void setUpdateTimeDay(IntExpression updateTimeDay) {
-    this.updateTimeDay = (IntExpression)updateTimeDay;
+    this.updateTimeDay = updateTimeDay;
   }
 
-  @Override
   public IntExpression getUpdateTimeWeek() {
     return this.updateTimeWeek;
   }
 
-  @Override
   public void setUpdateTimeWeek(IntExpression updateTimeWeek) {
-    this.updateTimeWeek = (IntExpression)updateTimeWeek;
+    this.updateTimeWeek = updateTimeWeek;
   }
 
-  @Override
   public IntExpression getUpdateTimeQuarter() {
     return this.updateTimeQuarter;
   }
 
-  @Override
   public void setUpdateTimeQuarter(IntExpression updateTimeQuarter) {
-    this.updateTimeQuarter = (IntExpression)updateTimeQuarter;
+    this.updateTimeQuarter = updateTimeQuarter;
   }
 
-  @Override
   public Boolean getNot() {
     return this.not;
   }
 
-  @Override
   public void setNot(Boolean not) {
-    this.not = (Boolean)not;
+    this.not = not;
   }
 
-  @Override
   public Conditional getCond() {
     return this.cond;
   }
 
-  @Override
   public void setCond(Conditional cond) {
-    this.cond = (Conditional)cond;
+    this.cond = cond;
   }
 
-  @Override
   public Collection<__EnumValueExpression> getExs() {
     return this.exs;
   }
 
-  @Override
   public void setExs(Collection<__EnumValueExpression> exs) {
-    this.exs = (Collection<__EnumValueExpression>)exs;
+    this.exs = exs;
+  }
+
+  public __EnumValueOrderBy getOrderBy() {
+    return this.orderBy;
+  }
+
+  public void setOrderBy(__EnumValueOrderBy orderBy) {
+    this.orderBy = orderBy;
+  }
+
+  public __EnumValueGroupBy getGroupBy() {
+    return this.groupBy;
+  }
+
+  public void setGroupBy(__EnumValueGroupBy groupBy) {
+    this.groupBy = groupBy;
+  }
+
+  public Integer getFirst() {
+    return this.first;
+  }
+
+  public void setFirst(Integer first) {
+    this.first = first;
+  }
+
+  public Integer getLast() {
+    return this.last;
+  }
+
+  public void setLast(Integer last) {
+    this.last = last;
+  }
+
+  public Integer getOffset() {
+    return this.offset;
+  }
+
+  public void setOffset(Integer offset) {
+    this.offset = offset;
+  }
+
+  public String getAfter() {
+    return this.after;
+  }
+
+  public void setAfter(String after) {
+    this.after = after;
+  }
+
+  public String getBefore() {
+    return this.before;
+  }
+
+  public void setBefore(String before) {
+    this.before = before;
   }
 }

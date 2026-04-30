@@ -17,7 +17,7 @@ import org.eclipse.microprofile.graphql.Description;
 @Target(ElementType.METHOD)
 @Description("Mutation")
 public @interface Mutation {
-  FileMutationArguments file() default @FileMutationArguments;
+  FileInput file() default @FileInput;
 
-  FileListMutationArguments fileList() default @FileListMutationArguments;
+  FileInput fileList() default @FileInput;
 }

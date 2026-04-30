@@ -133,6 +133,18 @@ public @interface __InputValueInput {
   String typeName() default "";
 
   /**
+   * Input
+   */
+  @Description("Input")
+  __InputValueInput1 input() default @__InputValueInput1;
+
+  /**
+   * Input List
+   */
+  @Description("Input List")
+  __InputValueInput1[] list() default {};
+
+  /**
    * Where
    */
   @Description("Where")
@@ -175,6 +187,10 @@ public @interface __InputValueInput {
   String $ofTypeName() default "";
 
   String $typeName() default "";
+
+  String $input() default "";
+
+  String $list() default "";
 
   String $where() default "";
 }

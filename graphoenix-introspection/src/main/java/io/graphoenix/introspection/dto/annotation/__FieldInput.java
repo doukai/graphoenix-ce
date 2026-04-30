@@ -127,6 +127,18 @@ public @interface __FieldInput {
   String typeName() default "";
 
   /**
+   * Input
+   */
+  @Description("Input")
+  __FieldInput1 input() default @__FieldInput1;
+
+  /**
+   * Input List
+   */
+  @Description("Input List")
+  __FieldInput1[] list() default {};
+
+  /**
    * Where
    */
   @Description("Where")
@@ -167,6 +179,10 @@ public @interface __FieldInput {
   String $ofTypeName() default "";
 
   String $typeName() default "";
+
+  String $input() default "";
+
+  String $list() default "";
 
   String $where() default "";
 }

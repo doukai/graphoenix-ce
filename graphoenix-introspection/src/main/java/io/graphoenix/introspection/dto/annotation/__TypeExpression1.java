@@ -243,6 +243,48 @@ public @interface __TypeExpression1 {
   @Description("Expressions")
   __TypeExpression2[] exs() default {};
 
+  /**
+   * Order By
+   */
+  @Description("Order By")
+  __TypeOrderBy2 orderBy() default @__TypeOrderBy2;
+
+  /**
+   * Group By
+   */
+  @Description("Group By")
+  __TypeGroupBy2 groupBy() default @__TypeGroupBy2;
+
+  /**
+   * First
+   */
+  @Description("First")
+  int first() default 0;
+
+  /**
+   * Last
+   */
+  @Description("Last")
+  int last() default 0;
+
+  /**
+   * Offset
+   */
+  @Description("Offset")
+  int offset() default 0;
+
+  /**
+   * After
+   */
+  @Description("After")
+  String after() default "";
+
+  /**
+   * Before
+   */
+  @Description("Before")
+  String before() default "";
+
   String $id() default "";
 
   String $name() default "";
@@ -316,4 +358,18 @@ public @interface __TypeExpression1 {
   String $cond() default "";
 
   String $exs() default "";
+
+  String $orderBy() default "";
+
+  String $groupBy() default "";
+
+  String $first() default "";
+
+  String $last() default "";
+
+  String $offset() default "";
+
+  String $after() default "";
+
+  String $before() default "";
 }

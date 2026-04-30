@@ -9,6 +9,7 @@ import java.lang.Integer;
 import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
@@ -20,7 +21,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Mutation Input for Relationship Object between __Directive and locations")
-public class __DirectiveLocationsRelationInput implements MetaInput, __DirectiveLocationsRelationInputBase {
+public class __DirectiveLocationsRelationInput implements MetaInput {
   /**
    * ID
    */
@@ -102,6 +103,18 @@ public class __DirectiveLocationsRelationInput implements MetaInput, __Directive
   private String __typename = "__DirectiveLocationsRelation";
 
   /**
+   * Input
+   */
+  @Description("Input")
+  private __DirectiveLocationsRelationInput input;
+
+  /**
+   * Input List
+   */
+  @Description("Input List")
+  private Collection<__DirectiveLocationsRelationInput> list;
+
+  /**
    * Where
    */
   @Description("Where")
@@ -117,44 +130,36 @@ public class __DirectiveLocationsRelationInput implements MetaInput, __Directive
     this.id = (String)id;
   }
 
-  @Override
   public String get__directiveRef() {
     return this.__directiveRef;
   }
 
-  @Override
   public void set__directiveRef(String __directiveRef) {
-    this.__directiveRef = (String)__directiveRef;
+    this.__directiveRef = __directiveRef;
   }
 
-  @Override
   public __DirectiveInput get__directive() {
     return this.__directive;
   }
 
-  @Override
   public void set__directive(__DirectiveInput __directive) {
-    this.__directive = (__DirectiveInput)__directive;
+    this.__directive = __directive;
   }
 
-  @Override
   public __DirectiveLocation getLocationsRef() {
     return this.locationsRef;
   }
 
-  @Override
   public void setLocationsRef(__DirectiveLocation locationsRef) {
-    this.locationsRef = (__DirectiveLocation)locationsRef;
+    this.locationsRef = locationsRef;
   }
 
-  @Override
   public Boolean getIsDeprecated() {
     return this.isDeprecated;
   }
 
-  @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean)isDeprecated;
+    this.isDeprecated = isDeprecated;
   }
 
   @Override
@@ -227,23 +232,35 @@ public class __DirectiveLocationsRelationInput implements MetaInput, __Directive
     this.createGroupId = (String)createGroupId;
   }
 
-  @Override
   public String get__typename() {
     return this.__typename;
   }
 
-  @Override
   public void set__typename(String __typename) {
-    this.__typename = (String)__typename;
+    this.__typename = __typename;
   }
 
-  @Override
+  public __DirectiveLocationsRelationInput getInput() {
+    return this.input;
+  }
+
+  public void setInput(__DirectiveLocationsRelationInput input) {
+    this.input = input;
+  }
+
+  public Collection<__DirectiveLocationsRelationInput> getList() {
+    return this.list;
+  }
+
+  public void setList(Collection<__DirectiveLocationsRelationInput> list) {
+    this.list = list;
+  }
+
   public __DirectiveLocationsRelationExpression getWhere() {
     return this.where;
   }
 
-  @Override
   public void setWhere(__DirectiveLocationsRelationExpression where) {
-    this.where = (__DirectiveLocationsRelationExpression)where;
+    this.where = where;
   }
 }

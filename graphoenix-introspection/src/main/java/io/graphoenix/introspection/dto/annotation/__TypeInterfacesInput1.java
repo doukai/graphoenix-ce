@@ -105,6 +105,18 @@ public @interface __TypeInterfacesInput1 {
   String __typename() default "__TypeInterfaces";
 
   /**
+   * Input
+   */
+  @Description("Input")
+  __TypeInterfacesInput2 input() default @__TypeInterfacesInput2;
+
+  /**
+   * Input List
+   */
+  @Description("Input List")
+  __TypeInterfacesInput2[] list() default {};
+
+  /**
    * Where
    */
   @Description("Where")
@@ -137,6 +149,10 @@ public @interface __TypeInterfacesInput1 {
   String $createGroupId() default "";
 
   String $__typename() default "";
+
+  String $input() default "";
+
+  String $list() default "";
 
   String $where() default "";
 }

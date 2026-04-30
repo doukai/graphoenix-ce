@@ -213,6 +213,48 @@ public @interface __InputValueExpression {
   @Description("Expressions")
   __InputValueExpression1[] exs() default {};
 
+  /**
+   * Order By
+   */
+  @Description("Order By")
+  __InputValueOrderBy1 orderBy() default @__InputValueOrderBy1;
+
+  /**
+   * Group By
+   */
+  @Description("Group By")
+  __InputValueGroupBy1 groupBy() default @__InputValueGroupBy1;
+
+  /**
+   * First
+   */
+  @Description("First")
+  int first() default 0;
+
+  /**
+   * Last
+   */
+  @Description("Last")
+  int last() default 0;
+
+  /**
+   * Offset
+   */
+  @Description("Offset")
+  int offset() default 0;
+
+  /**
+   * After
+   */
+  @Description("After")
+  String after() default "";
+
+  /**
+   * Before
+   */
+  @Description("Before")
+  String before() default "";
+
   String $id() default "";
 
   String $name() default "";
@@ -276,4 +318,18 @@ public @interface __InputValueExpression {
   String $cond() default "";
 
   String $exs() default "";
+
+  String $orderBy() default "";
+
+  String $groupBy() default "";
+
+  String $first() default "";
+
+  String $last() default "";
+
+  String $offset() default "";
+
+  String $after() default "";
+
+  String $before() default "";
 }

@@ -8,6 +8,7 @@ import java.lang.Integer;
 import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
@@ -19,7 +20,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Mutation Input for __InputValue")
-public class __InputValueInput implements MetaInput, __InputValueInputBase {
+public class __InputValueInput implements MetaInput {
   /**
    * id
    */
@@ -137,6 +138,18 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
   private String typeName;
 
   /**
+   * Input
+   */
+  @Description("Input")
+  private __InputValueInput input;
+
+  /**
+   * Input List
+   */
+  @Description("Input List")
+  private Collection<__InputValueInput> list;
+
+  /**
    * Where
    */
   @Description("Where")
@@ -152,84 +165,68 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
     this.id = (String)id;
   }
 
-  @Override
   public String getName() {
     return this.name;
   }
 
-  @Override
   public void setName(String name) {
-    this.name = (String)name;
+    this.name = name;
   }
 
-  @Override
   public __TypeInput getOfType() {
     return this.ofType;
   }
 
-  @Override
   public void setOfType(__TypeInput ofType) {
-    this.ofType = (__TypeInput)ofType;
+    this.ofType = ofType;
   }
 
-  @Override
   public Integer getFieldId() {
     return this.fieldId;
   }
 
-  @Override
   public void setFieldId(Integer fieldId) {
-    this.fieldId = (Integer)fieldId;
+    this.fieldId = fieldId;
   }
 
-  @Override
   public String getDirectiveName() {
     return this.directiveName;
   }
 
-  @Override
   public void setDirectiveName(String directiveName) {
-    this.directiveName = (String)directiveName;
+    this.directiveName = directiveName;
   }
 
-  @Override
   public String getDescription() {
     return this.description;
   }
 
-  @Override
   public void setDescription(String description) {
-    this.description = (String)description;
+    this.description = description;
   }
 
-  @Override
   public __TypeInput getType() {
     return this.type;
   }
 
-  @Override
   public void setType(__TypeInput type) {
-    this.type = (__TypeInput)type;
+    this.type = type;
   }
 
-  @Override
   public String getDefaultValue() {
     return this.defaultValue;
   }
 
-  @Override
   public void setDefaultValue(String defaultValue) {
-    this.defaultValue = (String)defaultValue;
+    this.defaultValue = defaultValue;
   }
 
-  @Override
   public Boolean getIsDeprecated() {
     return this.isDeprecated;
   }
 
-  @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean)isDeprecated;
+    this.isDeprecated = isDeprecated;
   }
 
   @Override
@@ -302,43 +299,51 @@ public class __InputValueInput implements MetaInput, __InputValueInputBase {
     this.createGroupId = (String)createGroupId;
   }
 
-  @Override
   public String get__typename() {
     return this.__typename;
   }
 
-  @Override
   public void set__typename(String __typename) {
-    this.__typename = (String)__typename;
+    this.__typename = __typename;
   }
 
-  @Override
   public String getOfTypeName() {
     return this.ofTypeName;
   }
 
-  @Override
   public void setOfTypeName(String ofTypeName) {
-    this.ofTypeName = (String)ofTypeName;
+    this.ofTypeName = ofTypeName;
   }
 
-  @Override
   public String getTypeName() {
     return this.typeName;
   }
 
-  @Override
   public void setTypeName(String typeName) {
-    this.typeName = (String)typeName;
+    this.typeName = typeName;
   }
 
-  @Override
+  public __InputValueInput getInput() {
+    return this.input;
+  }
+
+  public void setInput(__InputValueInput input) {
+    this.input = input;
+  }
+
+  public Collection<__InputValueInput> getList() {
+    return this.list;
+  }
+
+  public void setList(Collection<__InputValueInput> list) {
+    this.list = list;
+  }
+
   public __InputValueExpression getWhere() {
     return this.where;
   }
 
-  @Override
   public void setWhere(__InputValueExpression where) {
-    this.where = (__InputValueExpression)where;
+    this.where = where;
   }
 }

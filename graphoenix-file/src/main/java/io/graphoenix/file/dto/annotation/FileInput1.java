@@ -103,6 +103,18 @@ public @interface FileInput1 {
   String __typename() default "File";
 
   /**
+   * Input
+   */
+  @Description("Input")
+  FileInput2 input() default @FileInput2;
+
+  /**
+   * Input List
+   */
+  @Description("Input List")
+  FileInput2[] list() default {};
+
+  /**
    * Where
    */
   @Description("Where")
@@ -135,6 +147,10 @@ public @interface FileInput1 {
   String $createGroupId() default "";
 
   String $__typename() default "";
+
+  String $input() default "";
+
+  String $list() default "";
 
   String $where() default "";
 }

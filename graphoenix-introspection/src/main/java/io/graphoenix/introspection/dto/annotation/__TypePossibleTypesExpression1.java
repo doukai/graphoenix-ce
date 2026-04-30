@@ -183,6 +183,48 @@ public @interface __TypePossibleTypesExpression1 {
   @Description("Expressions")
   __TypePossibleTypesExpression2[] exs() default {};
 
+  /**
+   * Order By
+   */
+  @Description("Order By")
+  __TypePossibleTypesOrderBy2 orderBy() default @__TypePossibleTypesOrderBy2;
+
+  /**
+   * Group By
+   */
+  @Description("Group By")
+  __TypePossibleTypesGroupBy2 groupBy() default @__TypePossibleTypesGroupBy2;
+
+  /**
+   * First
+   */
+  @Description("First")
+  int first() default 0;
+
+  /**
+   * Last
+   */
+  @Description("Last")
+  int last() default 0;
+
+  /**
+   * Offset
+   */
+  @Description("Offset")
+  int offset() default 0;
+
+  /**
+   * After
+   */
+  @Description("After")
+  String after() default "";
+
+  /**
+   * Before
+   */
+  @Description("Before")
+  String before() default "";
+
   String $id() default "";
 
   String $typeRef() default "";
@@ -236,4 +278,18 @@ public @interface __TypePossibleTypesExpression1 {
   String $cond() default "";
 
   String $exs() default "";
+
+  String $orderBy() default "";
+
+  String $groupBy() default "";
+
+  String $first() default "";
+
+  String $last() default "";
+
+  String $offset() default "";
+
+  String $after() default "";
+
+  String $before() default "";
 }

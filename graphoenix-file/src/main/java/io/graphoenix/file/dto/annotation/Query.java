@@ -17,9 +17,9 @@ import org.eclipse.microprofile.graphql.Description;
 @Target(ElementType.METHOD)
 @Description("Query")
 public @interface Query {
-  FileQueryArguments file() default @FileQueryArguments;
+  FileExpression file() default @FileExpression;
 
-  FileListQueryArguments fileList() default @FileListQueryArguments;
+  FileExpression fileList() default @FileExpression;
 
-  FileConnectionQueryArguments fileConnection() default @FileConnectionQueryArguments;
+  FileExpression fileConnection() default @FileExpression;
 }

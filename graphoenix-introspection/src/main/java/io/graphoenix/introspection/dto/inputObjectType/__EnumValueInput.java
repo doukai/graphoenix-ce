@@ -8,6 +8,7 @@ import java.lang.Integer;
 import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
@@ -19,7 +20,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Mutation Input for __EnumValue")
-public class __EnumValueInput implements MetaInput, __EnumValueInputBase {
+public class __EnumValueInput implements MetaInput {
   /**
    * id
    */
@@ -113,6 +114,18 @@ public class __EnumValueInput implements MetaInput, __EnumValueInputBase {
   private String ofTypeName;
 
   /**
+   * Input
+   */
+  @Description("Input")
+  private __EnumValueInput input;
+
+  /**
+   * Input List
+   */
+  @Description("Input List")
+  private Collection<__EnumValueInput> list;
+
+  /**
    * Where
    */
   @Description("Where")
@@ -128,54 +141,44 @@ public class __EnumValueInput implements MetaInput, __EnumValueInputBase {
     this.id = (String)id;
   }
 
-  @Override
   public String getName() {
     return this.name;
   }
 
-  @Override
   public void setName(String name) {
-    this.name = (String)name;
+    this.name = name;
   }
 
-  @Override
   public __TypeInput getOfType() {
     return this.ofType;
   }
 
-  @Override
   public void setOfType(__TypeInput ofType) {
-    this.ofType = (__TypeInput)ofType;
+    this.ofType = ofType;
   }
 
-  @Override
   public String getDescription() {
     return this.description;
   }
 
-  @Override
   public void setDescription(String description) {
-    this.description = (String)description;
+    this.description = description;
   }
 
-  @Override
   public String getDeprecationReason() {
     return this.deprecationReason;
   }
 
-  @Override
   public void setDeprecationReason(String deprecationReason) {
-    this.deprecationReason = (String)deprecationReason;
+    this.deprecationReason = deprecationReason;
   }
 
-  @Override
   public Boolean getIsDeprecated() {
     return this.isDeprecated;
   }
 
-  @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean)isDeprecated;
+    this.isDeprecated = isDeprecated;
   }
 
   @Override
@@ -248,33 +251,43 @@ public class __EnumValueInput implements MetaInput, __EnumValueInputBase {
     this.createGroupId = (String)createGroupId;
   }
 
-  @Override
   public String get__typename() {
     return this.__typename;
   }
 
-  @Override
   public void set__typename(String __typename) {
-    this.__typename = (String)__typename;
+    this.__typename = __typename;
   }
 
-  @Override
   public String getOfTypeName() {
     return this.ofTypeName;
   }
 
-  @Override
   public void setOfTypeName(String ofTypeName) {
-    this.ofTypeName = (String)ofTypeName;
+    this.ofTypeName = ofTypeName;
   }
 
-  @Override
+  public __EnumValueInput getInput() {
+    return this.input;
+  }
+
+  public void setInput(__EnumValueInput input) {
+    this.input = input;
+  }
+
+  public Collection<__EnumValueInput> getList() {
+    return this.list;
+  }
+
+  public void setList(Collection<__EnumValueInput> list) {
+    this.list = list;
+  }
+
   public __EnumValueExpression getWhere() {
     return this.where;
   }
 
-  @Override
   public void setWhere(__EnumValueExpression where) {
-    this.where = (__EnumValueExpression)where;
+    this.where = where;
   }
 }

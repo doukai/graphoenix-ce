@@ -177,6 +177,48 @@ public @interface __DirectiveLocationsRelationExpression {
   @Description("Expressions")
   __DirectiveLocationsRelationExpression1[] exs() default {};
 
+  /**
+   * Order By
+   */
+  @Description("Order By")
+  __DirectiveLocationsRelationOrderBy1 orderBy() default @__DirectiveLocationsRelationOrderBy1;
+
+  /**
+   * Group By
+   */
+  @Description("Group By")
+  __DirectiveLocationsRelationGroupBy1 groupBy() default @__DirectiveLocationsRelationGroupBy1;
+
+  /**
+   * First
+   */
+  @Description("First")
+  int first() default 0;
+
+  /**
+   * Last
+   */
+  @Description("Last")
+  int last() default 0;
+
+  /**
+   * Offset
+   */
+  @Description("Offset")
+  int offset() default 0;
+
+  /**
+   * After
+   */
+  @Description("After")
+  String after() default "";
+
+  /**
+   * Before
+   */
+  @Description("Before")
+  String before() default "";
+
   String $id() default "";
 
   String $__directiveRef() default "";
@@ -228,4 +270,18 @@ public @interface __DirectiveLocationsRelationExpression {
   String $cond() default "";
 
   String $exs() default "";
+
+  String $orderBy() default "";
+
+  String $groupBy() default "";
+
+  String $first() default "";
+
+  String $last() default "";
+
+  String $offset() default "";
+
+  String $after() default "";
+
+  String $before() default "";
 }

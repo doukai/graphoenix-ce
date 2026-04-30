@@ -21,7 +21,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Mutation Input for __Directive")
-public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
+public class __DirectiveInput implements MetaInput {
   /**
    * id
    */
@@ -133,6 +133,18 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
   private Collection<__DirectiveLocationsRelationInput> __directiveLocationsRelation;
 
   /**
+   * Input
+   */
+  @Description("Input")
+  private __DirectiveInput input;
+
+  /**
+   * Input List
+   */
+  @Description("Input List")
+  private Collection<__DirectiveInput> list;
+
+  /**
    * Where
    */
   @Description("Where")
@@ -148,74 +160,60 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
     this.id = (String)id;
   }
 
-  @Override
   public String getName() {
     return this.name;
   }
 
-  @Override
   public void setName(String name) {
-    this.name = (String)name;
+    this.name = name;
   }
 
-  @Override
   public __SchemaInput getOfSchema() {
     return this.ofSchema;
   }
 
-  @Override
   public void setOfSchema(__SchemaInput ofSchema) {
-    this.ofSchema = (__SchemaInput)ofSchema;
+    this.ofSchema = ofSchema;
   }
 
-  @Override
   public String getDescription() {
     return this.description;
   }
 
-  @Override
   public void setDescription(String description) {
-    this.description = (String)description;
+    this.description = description;
   }
 
-  @Override
   public Collection<__DirectiveLocation> getLocations() {
     return this.locations;
   }
 
-  @Override
   public void setLocations(Collection<__DirectiveLocation> locations) {
-    this.locations = (Collection<__DirectiveLocation>)locations;
+    this.locations = locations;
   }
 
-  @Override
   public Collection<__InputValueInput> getArgs() {
     return this.args;
   }
 
-  @Override
   public void setArgs(Collection<__InputValueInput> args) {
-    this.args = (Collection<__InputValueInput>)args;
+    this.args = args;
   }
 
-  @Override
   public Boolean getIsRepeatable() {
     return this.isRepeatable;
   }
 
-  @Override
   public void setIsRepeatable(Boolean isRepeatable) {
-    this.isRepeatable = (Boolean)isRepeatable;
+    this.isRepeatable = isRepeatable;
   }
 
-  @Override
   public Boolean getIsDeprecated() {
     return this.isDeprecated;
   }
 
-  @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean)isDeprecated;
+    this.isDeprecated = isDeprecated;
   }
 
   @Override
@@ -288,44 +286,52 @@ public class __DirectiveInput implements MetaInput, __DirectiveInputBase {
     this.createGroupId = (String)createGroupId;
   }
 
-  @Override
   public String get__typename() {
     return this.__typename;
   }
 
-  @Override
   public void set__typename(String __typename) {
-    this.__typename = (String)__typename;
+    this.__typename = __typename;
   }
 
-  @Override
   public Integer getSchemaId() {
     return this.schemaId;
   }
 
-  @Override
   public void setSchemaId(Integer schemaId) {
-    this.schemaId = (Integer)schemaId;
+    this.schemaId = schemaId;
   }
 
-  @Override
   public Collection<__DirectiveLocationsRelationInput> get__directiveLocationsRelation() {
     return this.__directiveLocationsRelation;
   }
 
-  @Override
   public void set__directiveLocationsRelation(
       Collection<__DirectiveLocationsRelationInput> __directiveLocationsRelation) {
-    this.__directiveLocationsRelation = (Collection<__DirectiveLocationsRelationInput>)__directiveLocationsRelation;
+    this.__directiveLocationsRelation = __directiveLocationsRelation;
   }
 
-  @Override
+  public __DirectiveInput getInput() {
+    return this.input;
+  }
+
+  public void setInput(__DirectiveInput input) {
+    this.input = input;
+  }
+
+  public Collection<__DirectiveInput> getList() {
+    return this.list;
+  }
+
+  public void setList(Collection<__DirectiveInput> list) {
+    this.list = list;
+  }
+
   public __DirectiveExpression getWhere() {
     return this.where;
   }
 
-  @Override
   public void setWhere(__DirectiveExpression where) {
-    this.where = (__DirectiveExpression)where;
+    this.where = where;
   }
 }

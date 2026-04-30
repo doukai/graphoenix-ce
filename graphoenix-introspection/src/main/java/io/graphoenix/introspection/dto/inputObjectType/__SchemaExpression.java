@@ -7,7 +7,9 @@ import io.graphoenix.core.dto.inputObjectType.MetaExpression;
 import io.graphoenix.core.dto.inputObjectType.StringExpression;
 import jakarta.annotation.Generated;
 import java.lang.Boolean;
+import java.lang.Integer;
 import java.lang.Override;
+import java.lang.String;
 import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
@@ -20,7 +22,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Query Expression Input for __Schema")
-public class __SchemaExpression implements MetaExpression, __SchemaExpressionBase {
+public class __SchemaExpression implements MetaExpression {
   /**
    * id
    */
@@ -210,6 +212,48 @@ public class __SchemaExpression implements MetaExpression, __SchemaExpressionBas
   @Description("Expressions")
   private Collection<__SchemaExpression> exs;
 
+  /**
+   * Order By
+   */
+  @Description("Order By")
+  private __SchemaOrderBy orderBy;
+
+  /**
+   * Group By
+   */
+  @Description("Group By")
+  private __SchemaGroupBy groupBy;
+
+  /**
+   * First
+   */
+  @Description("First")
+  private Integer first;
+
+  /**
+   * Last
+   */
+  @Description("Last")
+  private Integer last;
+
+  /**
+   * Offset
+   */
+  @Description("Offset")
+  private Integer offset;
+
+  /**
+   * After
+   */
+  @Description("After")
+  private String after;
+
+  /**
+   * Before
+   */
+  @Description("Before")
+  private String before;
+
   @Override
   public StringExpression getId() {
     return this.id;
@@ -220,74 +264,60 @@ public class __SchemaExpression implements MetaExpression, __SchemaExpressionBas
     this.id = (StringExpression)id;
   }
 
-  @Override
   public __TypeExpression getTypes() {
     return this.types;
   }
 
-  @Override
   public void setTypes(__TypeExpression types) {
-    this.types = (__TypeExpression)types;
+    this.types = types;
   }
 
-  @Override
   public __TypeExpression getQueryType() {
     return this.queryType;
   }
 
-  @Override
   public void setQueryType(__TypeExpression queryType) {
-    this.queryType = (__TypeExpression)queryType;
+    this.queryType = queryType;
   }
 
-  @Override
   public __TypeExpression getMutationType() {
     return this.mutationType;
   }
 
-  @Override
   public void setMutationType(__TypeExpression mutationType) {
-    this.mutationType = (__TypeExpression)mutationType;
+    this.mutationType = mutationType;
   }
 
-  @Override
   public __TypeExpression getSubscriptionType() {
     return this.subscriptionType;
   }
 
-  @Override
   public void setSubscriptionType(__TypeExpression subscriptionType) {
-    this.subscriptionType = (__TypeExpression)subscriptionType;
+    this.subscriptionType = subscriptionType;
   }
 
-  @Override
   public __DirectiveExpression getDirectives() {
     return this.directives;
   }
 
-  @Override
   public void setDirectives(__DirectiveExpression directives) {
-    this.directives = (__DirectiveExpression)directives;
+    this.directives = directives;
   }
 
-  @Override
   public Boolean getIncludeDeprecated() {
     return this.includeDeprecated;
   }
 
-  @Override
   public void setIncludeDeprecated(Boolean includeDeprecated) {
-    this.includeDeprecated = (Boolean)includeDeprecated;
+    this.includeDeprecated = includeDeprecated;
   }
 
-  @Override
   public IntExpression getVersion() {
     return this.version;
   }
 
-  @Override
   public void setVersion(IntExpression version) {
-    this.version = (IntExpression)version;
+    this.version = version;
   }
 
   @Override
@@ -350,173 +380,195 @@ public class __SchemaExpression implements MetaExpression, __SchemaExpressionBas
     this.createGroupId = (StringExpression)createGroupId;
   }
 
-  @Override
   public StringExpression get__typename() {
     return this.__typename;
   }
 
-  @Override
   public void set__typename(StringExpression __typename) {
-    this.__typename = (StringExpression)__typename;
+    this.__typename = __typename;
   }
 
-  @Override
   public StringExpression getQueryTypeName() {
     return this.queryTypeName;
   }
 
-  @Override
   public void setQueryTypeName(StringExpression queryTypeName) {
-    this.queryTypeName = (StringExpression)queryTypeName;
+    this.queryTypeName = queryTypeName;
   }
 
-  @Override
   public StringExpression getMutationTypeName() {
     return this.mutationTypeName;
   }
 
-  @Override
   public void setMutationTypeName(StringExpression mutationTypeName) {
-    this.mutationTypeName = (StringExpression)mutationTypeName;
+    this.mutationTypeName = mutationTypeName;
   }
 
-  @Override
   public StringExpression getSubscriptionTypeName() {
     return this.subscriptionTypeName;
   }
 
-  @Override
   public void setSubscriptionTypeName(StringExpression subscriptionTypeName) {
-    this.subscriptionTypeName = (StringExpression)subscriptionTypeName;
+    this.subscriptionTypeName = subscriptionTypeName;
   }
 
-  @Override
   public IntExpression getCreateTimeYear() {
     return this.createTimeYear;
   }
 
-  @Override
   public void setCreateTimeYear(IntExpression createTimeYear) {
-    this.createTimeYear = (IntExpression)createTimeYear;
+    this.createTimeYear = createTimeYear;
   }
 
-  @Override
   public IntExpression getCreateTimeMonth() {
     return this.createTimeMonth;
   }
 
-  @Override
   public void setCreateTimeMonth(IntExpression createTimeMonth) {
-    this.createTimeMonth = (IntExpression)createTimeMonth;
+    this.createTimeMonth = createTimeMonth;
   }
 
-  @Override
   public IntExpression getCreateTimeDay() {
     return this.createTimeDay;
   }
 
-  @Override
   public void setCreateTimeDay(IntExpression createTimeDay) {
-    this.createTimeDay = (IntExpression)createTimeDay;
+    this.createTimeDay = createTimeDay;
   }
 
-  @Override
   public IntExpression getCreateTimeWeek() {
     return this.createTimeWeek;
   }
 
-  @Override
   public void setCreateTimeWeek(IntExpression createTimeWeek) {
-    this.createTimeWeek = (IntExpression)createTimeWeek;
+    this.createTimeWeek = createTimeWeek;
   }
 
-  @Override
   public IntExpression getCreateTimeQuarter() {
     return this.createTimeQuarter;
   }
 
-  @Override
   public void setCreateTimeQuarter(IntExpression createTimeQuarter) {
-    this.createTimeQuarter = (IntExpression)createTimeQuarter;
+    this.createTimeQuarter = createTimeQuarter;
   }
 
-  @Override
   public IntExpression getUpdateTimeYear() {
     return this.updateTimeYear;
   }
 
-  @Override
   public void setUpdateTimeYear(IntExpression updateTimeYear) {
-    this.updateTimeYear = (IntExpression)updateTimeYear;
+    this.updateTimeYear = updateTimeYear;
   }
 
-  @Override
   public IntExpression getUpdateTimeMonth() {
     return this.updateTimeMonth;
   }
 
-  @Override
   public void setUpdateTimeMonth(IntExpression updateTimeMonth) {
-    this.updateTimeMonth = (IntExpression)updateTimeMonth;
+    this.updateTimeMonth = updateTimeMonth;
   }
 
-  @Override
   public IntExpression getUpdateTimeDay() {
     return this.updateTimeDay;
   }
 
-  @Override
   public void setUpdateTimeDay(IntExpression updateTimeDay) {
-    this.updateTimeDay = (IntExpression)updateTimeDay;
+    this.updateTimeDay = updateTimeDay;
   }
 
-  @Override
   public IntExpression getUpdateTimeWeek() {
     return this.updateTimeWeek;
   }
 
-  @Override
   public void setUpdateTimeWeek(IntExpression updateTimeWeek) {
-    this.updateTimeWeek = (IntExpression)updateTimeWeek;
+    this.updateTimeWeek = updateTimeWeek;
   }
 
-  @Override
   public IntExpression getUpdateTimeQuarter() {
     return this.updateTimeQuarter;
   }
 
-  @Override
   public void setUpdateTimeQuarter(IntExpression updateTimeQuarter) {
-    this.updateTimeQuarter = (IntExpression)updateTimeQuarter;
+    this.updateTimeQuarter = updateTimeQuarter;
   }
 
-  @Override
   public Boolean getNot() {
     return this.not;
   }
 
-  @Override
   public void setNot(Boolean not) {
-    this.not = (Boolean)not;
+    this.not = not;
   }
 
-  @Override
   public Conditional getCond() {
     return this.cond;
   }
 
-  @Override
   public void setCond(Conditional cond) {
-    this.cond = (Conditional)cond;
+    this.cond = cond;
   }
 
-  @Override
   public Collection<__SchemaExpression> getExs() {
     return this.exs;
   }
 
-  @Override
   public void setExs(Collection<__SchemaExpression> exs) {
-    this.exs = (Collection<__SchemaExpression>)exs;
+    this.exs = exs;
+  }
+
+  public __SchemaOrderBy getOrderBy() {
+    return this.orderBy;
+  }
+
+  public void setOrderBy(__SchemaOrderBy orderBy) {
+    this.orderBy = orderBy;
+  }
+
+  public __SchemaGroupBy getGroupBy() {
+    return this.groupBy;
+  }
+
+  public void setGroupBy(__SchemaGroupBy groupBy) {
+    this.groupBy = groupBy;
+  }
+
+  public Integer getFirst() {
+    return this.first;
+  }
+
+  public void setFirst(Integer first) {
+    this.first = first;
+  }
+
+  public Integer getLast() {
+    return this.last;
+  }
+
+  public void setLast(Integer last) {
+    this.last = last;
+  }
+
+  public Integer getOffset() {
+    return this.offset;
+  }
+
+  public void setOffset(Integer offset) {
+    this.offset = offset;
+  }
+
+  public String getAfter() {
+    return this.after;
+  }
+
+  public void setAfter(String after) {
+    this.after = after;
+  }
+
+  public String getBefore() {
+    return this.before;
+  }
+
+  public void setBefore(String before) {
+    this.before = before;
   }
 }

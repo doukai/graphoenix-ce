@@ -17,68 +17,61 @@ import org.eclipse.microprofile.graphql.Description;
 @Target(ElementType.METHOD)
 @Description("Query")
 public @interface Query {
-  __SchemaQueryArguments __schema() default @__SchemaQueryArguments;
+  __SchemaExpression __schema() default @__SchemaExpression;
 
-  __SchemaListQueryArguments __schemaList() default @__SchemaListQueryArguments;
+  __SchemaExpression __schemaList() default @__SchemaExpression;
 
-  __SchemaConnectionQueryArguments __schemaConnection() default @__SchemaConnectionQueryArguments;
+  __SchemaExpression __schemaConnection() default @__SchemaExpression;
 
-  __TypeQueryArguments __type() default @__TypeQueryArguments;
+  __TypeExpression __type() default @__TypeExpression;
 
-  __TypeListQueryArguments __typeList() default @__TypeListQueryArguments;
+  __TypeExpression __typeList() default @__TypeExpression;
 
-  __TypeConnectionQueryArguments __typeConnection() default @__TypeConnectionQueryArguments;
+  __TypeExpression __typeConnection() default @__TypeExpression;
 
-  __FieldQueryArguments __field() default @__FieldQueryArguments;
+  __FieldExpression __field() default @__FieldExpression;
 
-  __FieldListQueryArguments __fieldList() default @__FieldListQueryArguments;
+  __FieldExpression __fieldList() default @__FieldExpression;
 
-  __FieldConnectionQueryArguments __fieldConnection() default @__FieldConnectionQueryArguments;
+  __FieldExpression __fieldConnection() default @__FieldExpression;
 
-  __InputValueQueryArguments __inputValue() default @__InputValueQueryArguments;
+  __InputValueExpression __inputValue() default @__InputValueExpression;
 
-  __InputValueListQueryArguments __inputValueList() default @__InputValueListQueryArguments;
+  __InputValueExpression __inputValueList() default @__InputValueExpression;
 
-  __InputValueConnectionQueryArguments __inputValueConnection(
-      ) default @__InputValueConnectionQueryArguments;
+  __InputValueExpression __inputValueConnection() default @__InputValueExpression;
 
-  __EnumValueQueryArguments __enumValue() default @__EnumValueQueryArguments;
+  __EnumValueExpression __enumValue() default @__EnumValueExpression;
 
-  __EnumValueListQueryArguments __enumValueList() default @__EnumValueListQueryArguments;
+  __EnumValueExpression __enumValueList() default @__EnumValueExpression;
 
-  __EnumValueConnectionQueryArguments __enumValueConnection(
-      ) default @__EnumValueConnectionQueryArguments;
+  __EnumValueExpression __enumValueConnection() default @__EnumValueExpression;
 
-  __DirectiveQueryArguments __directive() default @__DirectiveQueryArguments;
+  __DirectiveExpression __directive() default @__DirectiveExpression;
 
-  __DirectiveListQueryArguments __directiveList() default @__DirectiveListQueryArguments;
+  __DirectiveExpression __directiveList() default @__DirectiveExpression;
 
-  __DirectiveConnectionQueryArguments __directiveConnection(
-      ) default @__DirectiveConnectionQueryArguments;
+  __DirectiveExpression __directiveConnection() default @__DirectiveExpression;
 
-  __TypeInterfacesQueryArguments __typeInterfaces() default @__TypeInterfacesQueryArguments;
+  __TypeInterfacesExpression __typeInterfaces() default @__TypeInterfacesExpression;
 
-  __TypeInterfacesListQueryArguments __typeInterfacesList(
-      ) default @__TypeInterfacesListQueryArguments;
+  __TypeInterfacesExpression __typeInterfacesList() default @__TypeInterfacesExpression;
 
-  __TypeInterfacesConnectionQueryArguments __typeInterfacesConnection(
-      ) default @__TypeInterfacesConnectionQueryArguments;
+  __TypeInterfacesExpression __typeInterfacesConnection() default @__TypeInterfacesExpression;
 
-  __TypePossibleTypesQueryArguments __typePossibleTypes(
-      ) default @__TypePossibleTypesQueryArguments;
+  __TypePossibleTypesExpression __typePossibleTypes() default @__TypePossibleTypesExpression;
 
-  __TypePossibleTypesListQueryArguments __typePossibleTypesList(
-      ) default @__TypePossibleTypesListQueryArguments;
+  __TypePossibleTypesExpression __typePossibleTypesList() default @__TypePossibleTypesExpression;
 
-  __TypePossibleTypesConnectionQueryArguments __typePossibleTypesConnection(
-      ) default @__TypePossibleTypesConnectionQueryArguments;
+  __TypePossibleTypesExpression __typePossibleTypesConnection(
+      ) default @__TypePossibleTypesExpression;
 
-  __DirectiveLocationsRelationQueryArguments __directiveLocationsRelation(
-      ) default @__DirectiveLocationsRelationQueryArguments;
+  __DirectiveLocationsRelationExpression __directiveLocationsRelation(
+      ) default @__DirectiveLocationsRelationExpression;
 
-  __DirectiveLocationsRelationListQueryArguments __directiveLocationsRelationList(
-      ) default @__DirectiveLocationsRelationListQueryArguments;
+  __DirectiveLocationsRelationExpression __directiveLocationsRelationList(
+      ) default @__DirectiveLocationsRelationExpression;
 
-  __DirectiveLocationsRelationConnectionQueryArguments __directiveLocationsRelationConnection(
-      ) default @__DirectiveLocationsRelationConnectionQueryArguments;
+  __DirectiveLocationsRelationExpression __directiveLocationsRelationConnection(
+      ) default @__DirectiveLocationsRelationExpression;
 }

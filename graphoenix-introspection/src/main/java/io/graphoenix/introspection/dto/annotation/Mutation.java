@@ -17,44 +17,41 @@ import org.eclipse.microprofile.graphql.Description;
 @Target(ElementType.METHOD)
 @Description("Mutation")
 public @interface Mutation {
-  __SchemaMutationArguments __schema() default @__SchemaMutationArguments;
+  __SchemaInput __schema() default @__SchemaInput;
 
-  __SchemaListMutationArguments __schemaList() default @__SchemaListMutationArguments;
+  __SchemaInput __schemaList() default @__SchemaInput;
 
-  __TypeMutationArguments __type() default @__TypeMutationArguments;
+  __TypeInput __type() default @__TypeInput;
 
-  __TypeListMutationArguments __typeList() default @__TypeListMutationArguments;
+  __TypeInput __typeList() default @__TypeInput;
 
-  __FieldMutationArguments __field() default @__FieldMutationArguments;
+  __FieldInput __field() default @__FieldInput;
 
-  __FieldListMutationArguments __fieldList() default @__FieldListMutationArguments;
+  __FieldInput __fieldList() default @__FieldInput;
 
-  __InputValueMutationArguments __inputValue() default @__InputValueMutationArguments;
+  __InputValueInput __inputValue() default @__InputValueInput;
 
-  __InputValueListMutationArguments __inputValueList() default @__InputValueListMutationArguments;
+  __InputValueInput __inputValueList() default @__InputValueInput;
 
-  __EnumValueMutationArguments __enumValue() default @__EnumValueMutationArguments;
+  __EnumValueInput __enumValue() default @__EnumValueInput;
 
-  __EnumValueListMutationArguments __enumValueList() default @__EnumValueListMutationArguments;
+  __EnumValueInput __enumValueList() default @__EnumValueInput;
 
-  __DirectiveMutationArguments __directive() default @__DirectiveMutationArguments;
+  __DirectiveInput __directive() default @__DirectiveInput;
 
-  __DirectiveListMutationArguments __directiveList() default @__DirectiveListMutationArguments;
+  __DirectiveInput __directiveList() default @__DirectiveInput;
 
-  __TypeInterfacesMutationArguments __typeInterfaces() default @__TypeInterfacesMutationArguments;
+  __TypeInterfacesInput __typeInterfaces() default @__TypeInterfacesInput;
 
-  __TypeInterfacesListMutationArguments __typeInterfacesList(
-      ) default @__TypeInterfacesListMutationArguments;
+  __TypeInterfacesInput __typeInterfacesList() default @__TypeInterfacesInput;
 
-  __TypePossibleTypesMutationArguments __typePossibleTypes(
-      ) default @__TypePossibleTypesMutationArguments;
+  __TypePossibleTypesInput __typePossibleTypes() default @__TypePossibleTypesInput;
 
-  __TypePossibleTypesListMutationArguments __typePossibleTypesList(
-      ) default @__TypePossibleTypesListMutationArguments;
+  __TypePossibleTypesInput __typePossibleTypesList() default @__TypePossibleTypesInput;
 
-  __DirectiveLocationsRelationMutationArguments __directiveLocationsRelation(
-      ) default @__DirectiveLocationsRelationMutationArguments;
+  __DirectiveLocationsRelationInput __directiveLocationsRelation(
+      ) default @__DirectiveLocationsRelationInput;
 
-  __DirectiveLocationsRelationListMutationArguments __directiveLocationsRelationList(
-      ) default @__DirectiveLocationsRelationListMutationArguments;
+  __DirectiveLocationsRelationInput __directiveLocationsRelationList(
+      ) default @__DirectiveLocationsRelationInput;
 }

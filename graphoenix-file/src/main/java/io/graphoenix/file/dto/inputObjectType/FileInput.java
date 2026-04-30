@@ -8,6 +8,7 @@ import java.lang.Integer;
 import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
@@ -19,7 +20,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Mutation Input for 文件")
-public class FileInput implements MetaInput, FileInputBase {
+public class FileInput implements MetaInput {
   /**
    * ID
    */
@@ -107,6 +108,18 @@ public class FileInput implements MetaInput, FileInputBase {
   private String __typename = "File";
 
   /**
+   * Input
+   */
+  @Description("Input")
+  private FileInput input;
+
+  /**
+   * Input List
+   */
+  @Description("Input List")
+  private Collection<FileInput> list;
+
+  /**
    * Where
    */
   @Description("Where")
@@ -122,54 +135,44 @@ public class FileInput implements MetaInput, FileInputBase {
     this.id = (String)id;
   }
 
-  @Override
   public String getName() {
     return this.name;
   }
 
-  @Override
   public void setName(String name) {
-    this.name = (String)name;
+    this.name = name;
   }
 
-  @Override
   public String getContentType() {
     return this.contentType;
   }
 
-  @Override
   public void setContentType(String contentType) {
-    this.contentType = (String)contentType;
+    this.contentType = contentType;
   }
 
-  @Override
   public String getContent() {
     return this.content;
   }
 
-  @Override
   public void setContent(String content) {
-    this.content = (String)content;
+    this.content = content;
   }
 
-  @Override
   public String getUrl() {
     return this.url;
   }
 
-  @Override
   public void setUrl(String url) {
-    this.url = (String)url;
+    this.url = url;
   }
 
-  @Override
   public Boolean getIsDeprecated() {
     return this.isDeprecated;
   }
 
-  @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean)isDeprecated;
+    this.isDeprecated = isDeprecated;
   }
 
   @Override
@@ -242,23 +245,35 @@ public class FileInput implements MetaInput, FileInputBase {
     this.createGroupId = (String)createGroupId;
   }
 
-  @Override
   public String get__typename() {
     return this.__typename;
   }
 
-  @Override
   public void set__typename(String __typename) {
-    this.__typename = (String)__typename;
+    this.__typename = __typename;
   }
 
-  @Override
+  public FileInput getInput() {
+    return this.input;
+  }
+
+  public void setInput(FileInput input) {
+    this.input = input;
+  }
+
+  public Collection<FileInput> getList() {
+    return this.list;
+  }
+
+  public void setList(Collection<FileInput> list) {
+    this.list = list;
+  }
+
   public FileExpression getWhere() {
     return this.where;
   }
 
-  @Override
   public void setWhere(FileExpression where) {
-    this.where = (FileExpression)where;
+    this.where = where;
   }
 }

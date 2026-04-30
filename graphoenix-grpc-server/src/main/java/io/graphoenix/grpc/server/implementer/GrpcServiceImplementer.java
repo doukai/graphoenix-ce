@@ -211,6 +211,14 @@ public class GrpcServiceImplementer {
     String grpcResponseClassName =
         operationTypeName + getGrpcServiceRpcName(fieldDefinition.getName()) + "Response";
     Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+    boolean objectOperationRpcRequest =
+        !fieldDefinition.isInvokeField() && fieldTypeDefinition.isObject();
+    String argumentSource =
+        objectOperationRpcRequest
+            ? TYPE_QUERY_NAME.equals(operationTypeName)
+                ? requestParameterName + ".getExpression()"
+                : requestParameterName + ".getInput()"
+            : requestParameterName;
 
     String operationType;
     switch (operationTypeName) {
@@ -250,7 +258,7 @@ public class GrpcServiceImplementer {
                             operationType,
                             ClassName.get(Field.class),
                             fieldDefinition.getName(),
-                            requestParameterName,
+                            argumentSource,
                             ClassName.get(Optional.class),
                             requestParameterName,
                             fieldDefinition.isConnectionField()
@@ -293,7 +301,7 @@ public class GrpcServiceImplementer {
                             operationType,
                             ClassName.get(Field.class),
                             fieldDefinition.getName(),
-                            requestParameterName))
+                            argumentSource))
                 .indent()
                 .add(
                     ".map(jsonValue -> ($T) protobufConverter.fromJsonValue(jsonValue.asJsonObject().get($S), $T.newBuilder(), fieldDefinition))\n",

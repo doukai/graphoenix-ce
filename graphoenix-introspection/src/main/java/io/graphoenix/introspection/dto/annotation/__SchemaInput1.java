@@ -127,6 +127,18 @@ public @interface __SchemaInput1 {
   String subscriptionTypeName() default "";
 
   /**
+   * Input
+   */
+  @Description("Input")
+  __SchemaInput2 input() default @__SchemaInput2;
+
+  /**
+   * Input List
+   */
+  @Description("Input List")
+  __SchemaInput2[] list() default {};
+
+  /**
    * Where
    */
   @Description("Where")
@@ -167,6 +179,10 @@ public @interface __SchemaInput1 {
   String $mutationTypeName() default "";
 
   String $subscriptionTypeName() default "";
+
+  String $input() default "";
+
+  String $list() default "";
 
   String $where() default "";
 }

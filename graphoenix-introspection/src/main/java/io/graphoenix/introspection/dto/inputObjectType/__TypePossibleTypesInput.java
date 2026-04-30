@@ -8,6 +8,7 @@ import java.lang.Integer;
 import java.lang.Override;
 import java.lang.String;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import org.eclipse.microprofile.graphql.DefaultValue;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.Input;
@@ -19,7 +20,7 @@ import org.eclipse.microprofile.graphql.Input;
 @Input
 @Generated("io.graphoenix.java.builder.TypeSpecBuilder")
 @Description("Mutation Input for Relationship Object between __Type and __Type")
-public class __TypePossibleTypesInput implements MetaInput, __TypePossibleTypesInputBase {
+public class __TypePossibleTypesInput implements MetaInput {
   /**
    * ID
    */
@@ -107,6 +108,18 @@ public class __TypePossibleTypesInput implements MetaInput, __TypePossibleTypesI
   private String __typename = "__TypePossibleTypes";
 
   /**
+   * Input
+   */
+  @Description("Input")
+  private __TypePossibleTypesInput input;
+
+  /**
+   * Input List
+   */
+  @Description("Input List")
+  private Collection<__TypePossibleTypesInput> list;
+
+  /**
    * Where
    */
   @Description("Where")
@@ -122,54 +135,44 @@ public class __TypePossibleTypesInput implements MetaInput, __TypePossibleTypesI
     this.id = (String)id;
   }
 
-  @Override
   public String getTypeRef() {
     return this.typeRef;
   }
 
-  @Override
   public void setTypeRef(String typeRef) {
-    this.typeRef = (String)typeRef;
+    this.typeRef = typeRef;
   }
 
-  @Override
   public __TypeInput getType() {
     return this.type;
   }
 
-  @Override
   public void setType(__TypeInput type) {
-    this.type = (__TypeInput)type;
+    this.type = type;
   }
 
-  @Override
   public String getPossibleTypeRef() {
     return this.possibleTypeRef;
   }
 
-  @Override
   public void setPossibleTypeRef(String possibleTypeRef) {
-    this.possibleTypeRef = (String)possibleTypeRef;
+    this.possibleTypeRef = possibleTypeRef;
   }
 
-  @Override
   public __TypeInput getPossibleType() {
     return this.possibleType;
   }
 
-  @Override
   public void setPossibleType(__TypeInput possibleType) {
-    this.possibleType = (__TypeInput)possibleType;
+    this.possibleType = possibleType;
   }
 
-  @Override
   public Boolean getIsDeprecated() {
     return this.isDeprecated;
   }
 
-  @Override
   public void setIsDeprecated(Boolean isDeprecated) {
-    this.isDeprecated = (Boolean)isDeprecated;
+    this.isDeprecated = isDeprecated;
   }
 
   @Override
@@ -242,23 +245,35 @@ public class __TypePossibleTypesInput implements MetaInput, __TypePossibleTypesI
     this.createGroupId = (String)createGroupId;
   }
 
-  @Override
   public String get__typename() {
     return this.__typename;
   }
 
-  @Override
   public void set__typename(String __typename) {
-    this.__typename = (String)__typename;
+    this.__typename = __typename;
   }
 
-  @Override
+  public __TypePossibleTypesInput getInput() {
+    return this.input;
+  }
+
+  public void setInput(__TypePossibleTypesInput input) {
+    this.input = input;
+  }
+
+  public Collection<__TypePossibleTypesInput> getList() {
+    return this.list;
+  }
+
+  public void setList(Collection<__TypePossibleTypesInput> list) {
+    this.list = list;
+  }
+
   public __TypePossibleTypesExpression getWhere() {
     return this.where;
   }
 
-  @Override
   public void setWhere(__TypePossibleTypesExpression where) {
-    this.where = (__TypePossibleTypesExpression)where;
+    this.where = where;
   }
 }

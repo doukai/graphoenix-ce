@@ -16,6 +16,7 @@ import jakarta.annotation.Generated;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import org.eclipse.microprofile.graphql.Enum;
 import org.eclipse.microprofile.graphql.Type;
 import org.eclipse.microprofile.graphql.*;
@@ -53,7 +54,7 @@ public class TypeSpecBuilder {
   private final DocumentManager documentManager;
   private final PackageManager packageManager;
   private final PackageConfig packageConfig;
-  private final GeneratorConfig generatorConfig;
+  private final Provider<GeneratorConfig> generatorConfigProvider;
   private final List<TypeBuilder> typeBuilderList;
 
   @Inject
@@ -61,12 +62,12 @@ public class TypeSpecBuilder {
       DocumentManager documentManager,
       PackageManager packageManager,
       PackageConfig packageConfig,
-      GeneratorConfig generatorConfig,
+      Provider<GeneratorConfig> generatorConfigProvider,
       Instance<TypeBuilder> typeBuilderInstance) {
     this.documentManager = documentManager;
     this.packageManager = packageManager;
     this.packageConfig = packageConfig;
-    this.generatorConfig = generatorConfig;
+    this.generatorConfigProvider = generatorConfigProvider;
     this.typeBuilderList = typeBuilderInstance.stream().collect(Collectors.toList());
   }
 
@@ -302,16 +303,14 @@ public class TypeSpecBuilder {
 
   public InputObjectType getArgumentInput(ObjectType objectType, FieldDefinition fieldDefinition) {
     ObjectType fieldType = documentManager.getFieldTypeDefinition(fieldDefinition).asObject();
-    if (fieldDefinition.getType().hasList()) {
-      return documentManager
-          .getDocument()
-          .getInputObjectTypeOrError(
-              fieldType.getName() + SUFFIX_LIST + objectType.getName() + SUFFIX_ARGUMENTS);
-    } else {
-      return documentManager
-          .getDocument()
-          .getInputObjectTypeOrError(fieldType.getName() + objectType.getName() + SUFFIX_ARGUMENTS);
+    String fieldTypeName = fieldType.getName();
+    if (fieldDefinition.isConnectionField() && fieldTypeName.endsWith(SUFFIX_CONNECTION)) {
+      fieldTypeName =
+          fieldTypeName.substring(0, fieldTypeName.length() - SUFFIX_CONNECTION.length());
     }
+    String inputType =
+        documentManager.isMutationOperationType(objectType) ? SUFFIX_INPUT : SUFFIX_EXPRESSION;
+    return documentManager.getDocument().getInputObjectTypeOrError(fieldTypeName + inputType);
   }
 
   public Stream<TypeSpec> buildAnnotations(InputObjectType inputObjectType) {
@@ -323,7 +322,7 @@ public class TypeSpecBuilder {
               inputValue -> documentManager.getInputValueTypeDefinition(inputValue).isLeaf())) {
         return Stream.of(buildAnnotation(inputObjectType, 0));
       }
-      return IntStream.range(0, generatorConfig.getAnnotationLevel())
+      return IntStream.range(0, generatorConfigProvider.get().getAnnotationLevel())
           .mapToObj(level -> buildAnnotation(inputObjectType, level));
     }
   }
@@ -346,9 +345,18 @@ public class TypeSpecBuilder {
     List<MethodSpec> methodSpecs =
         inputObjectType.getInputValues().stream()
             .filter(
-                inputValue ->
-                    documentManager.getInputValueTypeDefinition(inputValue).isLeaf()
-                        || level < generatorConfig.getAnnotationLevel() - 1)
+                inputValue -> {
+                  Definition inputValueTypeDefinition =
+                      documentManager.getInputValueTypeDefinition(inputValue);
+                  return inputValueTypeDefinition.isLeaf()
+                      || inputValueTypeDefinition.isInputObject()
+                          && inputValueTypeDefinition
+                              .asInputObject()
+                              .getName()
+                              .endsWith(SUFFIX_EXPRESSION)
+                          && documentManager.getInputBelong(inputValueTypeDefinition).isLeaf()
+                      || level < generatorConfigProvider.get().getAnnotationLevel() - 1;
+                })
             .map(
                 inputValue ->
                     buildAnnotationMethod(
@@ -360,9 +368,18 @@ public class TypeSpecBuilder {
     List<MethodSpec> variableMethodSpecs =
         inputObjectType.getInputValues().stream()
             .filter(
-                inputValue ->
-                    documentManager.getInputValueTypeDefinition(inputValue).isLeaf()
-                        || level < generatorConfig.getAnnotationLevel() - 1)
+                inputValue -> {
+                  Definition inputValueTypeDefinition =
+                      documentManager.getInputValueTypeDefinition(inputValue);
+                  return inputValueTypeDefinition.isLeaf()
+                      || inputValueTypeDefinition.isInputObject()
+                          && inputValueTypeDefinition
+                              .asInputObject()
+                              .getName()
+                              .endsWith(SUFFIX_EXPRESSION)
+                          && documentManager.getInputBelong(inputValueTypeDefinition).isLeaf()
+                      || level < generatorConfigProvider.get().getAnnotationLevel() - 1;
+                })
             .map(
                 inputValue ->
                     MethodSpec.methodBuilder("$" + inputValue.getName())

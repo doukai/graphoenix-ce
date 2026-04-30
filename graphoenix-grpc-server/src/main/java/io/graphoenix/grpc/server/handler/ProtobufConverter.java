@@ -80,6 +80,7 @@ public class ProtobufConverter {
     }
     return jsonValue.asJsonObject().entrySet().stream()
         .filter(entry -> !entry.getKey().equals("selectionSet"))
+        .filter(entry -> !entry.getKey().equals("arguments"))
         .map(
             entry ->
                 new AbstractMap.SimpleEntry<>(

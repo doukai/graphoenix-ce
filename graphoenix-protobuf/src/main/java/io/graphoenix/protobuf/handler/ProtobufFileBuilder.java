@@ -39,6 +39,7 @@ public class ProtobufFileBuilder {
 
   public Map<String, String> buildProto3() {
     Map<String, String> protoFileMap = new HashMap<>();
+    List<InputObjectType> grpcInputObjectTypes = getGrpcInputObjectTypes();
     protoFileMap.put(
         "objects",
         new ProtoFile()
@@ -121,19 +122,13 @@ public class ProtobufFileBuilder {
         new ProtoFile()
             .setImports(new Import().setName(getPath("enums.proto")))
             .addImports(
-                documentManager
-                    .getDocument()
-                    .getInputObjectTypes()
-                    .filter(packageManager::isOwnPackage)
+                grpcInputObjectTypes.stream()
                     .flatMap(
                         inputObjectType -> getInputValuesImports(inputObjectType.getInputValues()))
                     .filter(StreamUtil.distinctByKey(Import::getName))
                     .collect(Collectors.toList()))
             .addImports(
-                documentManager
-                    .getDocument()
-                    .getInputObjectTypes()
-                    .filter(packageManager::isOwnPackage)
+                grpcInputObjectTypes.stream()
                     .flatMap(
                         inputObjectType ->
                             getInputValuesScalarImports(inputObjectType.getInputValues()))
@@ -147,11 +142,8 @@ public class ProtobufFileBuilder {
                         .setValue(packageConfig.getGrpcInputObjectTypePackageName())))
             .setPkg(packageConfig.getPackageName())
             .setTopLevelDefs(
-                documentManager
-                    .getDocument()
-                    .getInputObjectTypes()
-                    .filter(packageManager::isOwnPackage)
-                    .map(this::buildMessage)
+                grpcInputObjectTypes.stream()
+                    .map(this::buildGrpcInputObjectMessage)
                     .map(Message::toString)
                     .collect(Collectors.toList()))
             .toString());
@@ -479,59 +471,7 @@ public class ProtobufFileBuilder {
     return documentManager.getDocument().getQueryOperationType().stream()
         .flatMap(objectType -> objectType.getFields().stream())
         .filter(packageManager::isOwnPackage)
-        .map(
-            fieldDefinition ->
-                new Message()
-                    .setName(
-                        TYPE_QUERY_NAME
-                            + getGrpcServiceRpcName(fieldDefinition.getName())
-                            + "Request")
-                    .setFields(
-                        Stream.concat(
-                                Stream.of(
-                                    new Field()
-                                        .setName("selection_set")
-                                        .setOptional(true)
-                                        .setType("string")
-                                        .setNumber(1),
-                                    new Field()
-                                        .setName("arguments")
-                                        .setOptional(true)
-                                        .setType("string")
-                                        .setNumber(2)),
-                                Stream.ofNullable(fieldDefinition.getArguments())
-                                    .flatMap(
-                                        inputValues ->
-                                            IntStream.range(0, inputValues.size())
-                                                .mapToObj(
-                                                    index ->
-                                                        new Field()
-                                                            .setName(
-                                                                getGrpcMessageFiledName(
-                                                                    fieldDefinition
-                                                                        .getArgument(index)
-                                                                        .getName()))
-                                                            .setType(
-                                                                buildType(
-                                                                    fieldDefinition
-                                                                        .getArgument(index)
-                                                                        .getType()))
-                                                            .setOptional(
-                                                                fieldDefinition
-                                                                    .getArgument(index)
-                                                                    .getType()
-                                                                    .isNonNull())
-                                                            .setRepeated(
-                                                                fieldDefinition
-                                                                    .getArgument(index)
-                                                                    .getType()
-                                                                    .hasList())
-                                                            .setNumber(index + 3)
-                                                            .setDescription(
-                                                                fieldDefinition
-                                                                    .getArgument(index)
-                                                                    .getDescription()))))
-                            .collect(Collectors.toList())));
+        .map(fieldDefinition -> buildRpcRequest(fieldDefinition, TYPE_QUERY_NAME));
   }
 
   public Stream<Message> buildQueryRpcResponse() {
@@ -558,59 +498,78 @@ public class ProtobufFileBuilder {
     return documentManager.getDocument().getMutationOperationType().stream()
         .flatMap(objectType -> objectType.getFields().stream())
         .filter(packageManager::isOwnPackage)
-        .map(
-            fieldDefinition ->
-                new Message()
-                    .setName(
-                        TYPE_MUTATION_NAME
-                            + getGrpcServiceRpcName(fieldDefinition.getName())
-                            + "Request")
-                    .setFields(
-                        Stream.concat(
-                                Stream.of(
-                                    new Field()
-                                        .setName("selection_set")
-                                        .setOptional(true)
-                                        .setType("string")
-                                        .setNumber(1),
-                                    new Field()
-                                        .setName("arguments")
-                                        .setOptional(true)
-                                        .setType("string")
-                                        .setNumber(2)),
-                                Stream.ofNullable(fieldDefinition.getArguments())
-                                    .flatMap(
-                                        inputValues ->
-                                            IntStream.range(0, inputValues.size())
-                                                .mapToObj(
-                                                    index ->
-                                                        new Field()
-                                                            .setName(
-                                                                getGrpcMessageFiledName(
-                                                                    fieldDefinition
-                                                                        .getArgument(index)
-                                                                        .getName()))
-                                                            .setType(
-                                                                buildType(
-                                                                    fieldDefinition
-                                                                        .getArgument(index)
-                                                                        .getType()))
-                                                            .setOptional(
-                                                                fieldDefinition
-                                                                    .getArgument(index)
-                                                                    .getType()
-                                                                    .isNonNull())
-                                                            .setRepeated(
-                                                                fieldDefinition
-                                                                    .getArgument(index)
-                                                                    .getType()
-                                                                    .hasList())
-                                                            .setNumber(index + 3)
-                                                            .setDescription(
-                                                                fieldDefinition
-                                                                    .getArgument(index)
-                                                                    .getDescription()))))
-                            .collect(Collectors.toList())));
+        .map(fieldDefinition -> buildRpcRequest(fieldDefinition, TYPE_MUTATION_NAME));
+  }
+
+  private Message buildRpcRequest(FieldDefinition fieldDefinition, String operationTypeName) {
+    Message message =
+        new Message()
+            .setName(
+                operationTypeName + getGrpcServiceRpcName(fieldDefinition.getName()) + "Request");
+    if (isObjectOperationRpcRequest(fieldDefinition)) {
+      return message.setFields(
+          Stream.concat(
+                  buildRpcRequestEnvelopeFields(),
+                  Stream.of(
+                      new Field()
+                          .setName(
+                              TYPE_QUERY_NAME.equals(operationTypeName)
+                                  ? SUFFIX_EXPRESSION.toLowerCase()
+                                  : INPUT_VALUE_INPUT_NAME)
+                          .setType(buildObjectOperationRpcRequestType(fieldDefinition, operationTypeName))
+                          .setNumber(3)))
+              .collect(Collectors.toList()));
+    }
+    return message.setFields(
+        Stream.concat(buildRpcRequestEnvelopeFields(), buildRpcRequestArgumentFields(fieldDefinition))
+            .collect(Collectors.toList()));
+  }
+
+  private Stream<Field> buildRpcRequestEnvelopeFields() {
+    return Stream.of(
+        new Field().setName("selection_set").setOptional(true).setType("string").setNumber(1),
+        new Field().setName("arguments").setOptional(true).setType("string").setNumber(2));
+  }
+
+  private Stream<Field> buildRpcRequestArgumentFields(FieldDefinition fieldDefinition) {
+    return Stream.ofNullable(fieldDefinition.getArguments())
+        .flatMap(
+            inputValues ->
+                IntStream.range(0, inputValues.size())
+                    .mapToObj(
+                        index ->
+                            new Field()
+                                .setName(
+                                    getGrpcMessageFiledName(
+                                        fieldDefinition.getArgument(index).getName()))
+                                .setType(buildType(fieldDefinition.getArgument(index).getType()))
+                                .setOptional(fieldDefinition.getArgument(index).getType().isNonNull())
+                                .setRepeated(fieldDefinition.getArgument(index).getType().hasList())
+                                .setNumber(index + 3)
+                                .setDescription(fieldDefinition.getArgument(index).getDescription())));
+  }
+
+  private boolean isObjectOperationRpcRequest(FieldDefinition fieldDefinition) {
+    return !fieldDefinition.isInvokeField()
+        && documentManager.getFieldTypeDefinition(fieldDefinition).isObject();
+  }
+
+  private String buildObjectOperationRpcRequestType(
+      FieldDefinition fieldDefinition, String operationTypeName) {
+    Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
+    Definition requestTypeDefinition =
+        fieldDefinition.isConnectionField()
+            ? documentManager.getFieldTypeDefinition(
+                documentManager
+                    .getFieldTypeDefinition(
+                        fieldTypeDefinition.asObject().getFieldOrError(FIELD_EDGES_NAME))
+                    .asObject()
+                    .getFieldOrError(FIELD_NODE_NAME))
+            : fieldTypeDefinition;
+    return buildType(
+        Type.of(
+            requestTypeDefinition.getName()
+                + (TYPE_QUERY_NAME.equals(operationTypeName) ? SUFFIX_EXPRESSION : SUFFIX_INPUT)));
   }
 
   public Stream<Message> buildMutationRpcResponse() {
@@ -703,8 +662,17 @@ public class ProtobufFileBuilder {
   }
 
   public Message buildMessage(InputObjectType inputObjectType) {
+    return buildInputObjectMessage(inputObjectType, inputObjectType.getName());
+  }
+
+  public Message buildGrpcInputObjectMessage(InputObjectType inputObjectType) {
+    return buildInputObjectMessage(
+        inputObjectType, getGrpcInputObjectTypeName(inputObjectType.getName()));
+  }
+
+  private Message buildInputObjectMessage(InputObjectType inputObjectType, String name) {
     return new Message()
-        .setName(getGrpcName(inputObjectType.getName()))
+        .setName(getGrpcName(name))
         .setFields(
             IntStream.range(0, inputObjectType.getInputValues().size())
                 .mapToObj(
@@ -720,6 +688,54 @@ public class ProtobufFileBuilder {
                             .setNumber(index + 1))
                 .collect(Collectors.toList()))
         .setDescription(inputObjectType.getDescription());
+  }
+
+  public List<InputObjectType> getGrpcInputObjectTypes() {
+    return documentManager
+        .getDocument()
+        .getInputObjectTypes()
+        .filter(packageManager::isOwnPackage)
+        .filter(this::isGrpcInputObjectType)
+        .filter(
+            StreamUtil.distinctByKey(
+                inputObjectType -> getGrpcInputObjectTypeName(inputObjectType.getName())))
+        .collect(Collectors.toList());
+  }
+
+  private boolean isGrpcInputObjectType(InputObjectType inputObjectType) {
+    String name = inputObjectType.getName();
+    if (name.endsWith(SUFFIX_EXPRESSION + SUFFIX_BASE)
+        || name.endsWith(SUFFIX_INPUT + SUFFIX_BASE)) {
+      return false;
+    }
+    return name.equals(getGrpcInputObjectTypeName(name));
+  }
+
+  private String getGrpcInputObjectTypeName(String name) {
+    if (name.endsWith(SUFFIX_CONNECTION + TYPE_QUERY_NAME + SUFFIX_ARGUMENTS)) {
+      return replaceSuffix(
+          name,
+          SUFFIX_CONNECTION + TYPE_QUERY_NAME + SUFFIX_ARGUMENTS,
+          SUFFIX_LIST + TYPE_QUERY_NAME + SUFFIX_ARGUMENTS);
+    } else if (name.endsWith(SUFFIX_CONNECTION + TYPE_SUBSCRIPTION_NAME + SUFFIX_ARGUMENTS)) {
+      return replaceSuffix(
+          name,
+          SUFFIX_CONNECTION + TYPE_SUBSCRIPTION_NAME + SUFFIX_ARGUMENTS,
+          SUFFIX_LIST + TYPE_QUERY_NAME + SUFFIX_ARGUMENTS);
+    } else if (name.endsWith(SUFFIX_LIST + TYPE_SUBSCRIPTION_NAME + SUFFIX_ARGUMENTS)) {
+      return replaceSuffix(
+          name,
+          SUFFIX_LIST + TYPE_SUBSCRIPTION_NAME + SUFFIX_ARGUMENTS,
+          SUFFIX_LIST + TYPE_QUERY_NAME + SUFFIX_ARGUMENTS);
+    } else if (name.endsWith(TYPE_SUBSCRIPTION_NAME + SUFFIX_ARGUMENTS)) {
+      return replaceSuffix(
+          name, TYPE_SUBSCRIPTION_NAME + SUFFIX_ARGUMENTS, TYPE_QUERY_NAME + SUFFIX_ARGUMENTS);
+    }
+    return name;
+  }
+
+  private String replaceSuffix(String name, String suffix, String replacement) {
+    return name.substring(0, name.length() - suffix.length()) + replacement;
   }
 
   public String buildType(Type type) {
@@ -753,7 +769,9 @@ public class ProtobufFileBuilder {
       }
     } else {
       if (packageManager.isOwnPackage(definition)) {
-        return getGrpcName(definition.getName());
+        return definition.isInputObject()
+            ? getGrpcName(getGrpcInputObjectTypeName(definition.getName()))
+            : getGrpcName(definition.getName());
       } else {
         if (definition.isEnum()) {
           return definition.getPackageNameOrError() + "." + getGrpcName(definition.getName());

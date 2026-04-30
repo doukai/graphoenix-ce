@@ -103,6 +103,18 @@ public @interface __TypePossibleTypesInput1 {
   String __typename() default "__TypePossibleTypes";
 
   /**
+   * Input
+   */
+  @Description("Input")
+  __TypePossibleTypesInput2 input() default @__TypePossibleTypesInput2;
+
+  /**
+   * Input List
+   */
+  @Description("Input List")
+  __TypePossibleTypesInput2[] list() default {};
+
+  /**
    * Where
    */
   @Description("Where")
@@ -135,6 +147,10 @@ public @interface __TypePossibleTypesInput1 {
   String $createGroupId() default "";
 
   String $__typename() default "";
+
+  String $input() default "";
+
+  String $list() default "";
 
   String $where() default "";
 }
