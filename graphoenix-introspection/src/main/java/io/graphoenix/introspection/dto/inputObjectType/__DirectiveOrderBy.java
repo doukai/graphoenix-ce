@@ -166,30 +166,6 @@ public class __DirectiveOrderBy {
   private Sort schemaIdCount;
 
   /**
-   * Max of ofSchema Reference
-   */
-  @Description("Max of ofSchema Reference")
-  private Sort schemaIdMax;
-
-  /**
-   * Min of ofSchema Reference
-   */
-  @Description("Min of ofSchema Reference")
-  private Sort schemaIdMin;
-
-  /**
-   * Sum of ofSchema Reference
-   */
-  @Description("Sum of ofSchema Reference")
-  private Sort schemaIdSum;
-
-  /**
-   * Avg of ofSchema Reference
-   */
-  @Description("Avg of ofSchema Reference")
-  private Sort schemaIdAvg;
-
-  /**
    * Year of Create Time
    */
   @Description("Year of Create Time")
@@ -455,38 +431,6 @@ public class __DirectiveOrderBy {
 
   public void setSchemaIdCount(Sort schemaIdCount) {
     this.schemaIdCount = schemaIdCount;
-  }
-
-  public Sort getSchemaIdMax() {
-    return this.schemaIdMax;
-  }
-
-  public void setSchemaIdMax(Sort schemaIdMax) {
-    this.schemaIdMax = schemaIdMax;
-  }
-
-  public Sort getSchemaIdMin() {
-    return this.schemaIdMin;
-  }
-
-  public void setSchemaIdMin(Sort schemaIdMin) {
-    this.schemaIdMin = schemaIdMin;
-  }
-
-  public Sort getSchemaIdSum() {
-    return this.schemaIdSum;
-  }
-
-  public void setSchemaIdSum(Sort schemaIdSum) {
-    this.schemaIdSum = schemaIdSum;
-  }
-
-  public Sort getSchemaIdAvg() {
-    return this.schemaIdAvg;
-  }
-
-  public void setSchemaIdAvg(Sort schemaIdAvg) {
-    this.schemaIdAvg = schemaIdAvg;
   }
 
   public Sort getCreateTimeYear() {

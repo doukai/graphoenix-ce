@@ -253,21 +253,17 @@ message IntroTypeOrderBy {
     io.graphoenix.core.Sort description_count = 35; /* Count of description */
     io.graphoenix.core.Sort schema_id_count = 36; /* Count of ofSchema Reference */
     io.graphoenix.core.Sort of_type_name_count = 37; /* Count of ofType Reference */
-    io.graphoenix.core.Sort schema_id_max = 38; /* Max of ofSchema Reference */
-    io.graphoenix.core.Sort schema_id_min = 39; /* Min of ofSchema Reference */
-    io.graphoenix.core.Sort schema_id_sum = 40; /* Sum of ofSchema Reference */
-    io.graphoenix.core.Sort schema_id_avg = 41; /* Avg of ofSchema Reference */
-    io.graphoenix.core.Sort create_time_year = 42; /* Year of Create Time */
-    io.graphoenix.core.Sort create_time_month = 43; /* Month of Create Time */
-    io.graphoenix.core.Sort create_time_day = 44; /* Day of Create Time */
-    io.graphoenix.core.Sort create_time_week = 45; /* Week of Create Time */
-    io.graphoenix.core.Sort create_time_quarter = 46; /* Quarter of Create Time */
-    io.graphoenix.core.Sort update_time_year = 47; /* Year of Update Time */
-    io.graphoenix.core.Sort update_time_month = 48; /* Month of Update Time */
-    io.graphoenix.core.Sort update_time_day = 49; /* Day of Update Time */
-    io.graphoenix.core.Sort update_time_week = 50; /* Week of Update Time */
-    io.graphoenix.core.Sort update_time_quarter = 51; /* Quarter of Update Time */
-    repeated IntroTypeOrderBy obs = 52; /* OrderByes */
+    io.graphoenix.core.Sort create_time_year = 38; /* Year of Create Time */
+    io.graphoenix.core.Sort create_time_month = 39; /* Month of Create Time */
+    io.graphoenix.core.Sort create_time_day = 40; /* Day of Create Time */
+    io.graphoenix.core.Sort create_time_week = 41; /* Week of Create Time */
+    io.graphoenix.core.Sort create_time_quarter = 42; /* Quarter of Create Time */
+    io.graphoenix.core.Sort update_time_year = 43; /* Year of Update Time */
+    io.graphoenix.core.Sort update_time_month = 44; /* Month of Update Time */
+    io.graphoenix.core.Sort update_time_day = 45; /* Day of Update Time */
+    io.graphoenix.core.Sort update_time_week = 46; /* Week of Update Time */
+    io.graphoenix.core.Sort update_time_quarter = 47; /* Quarter of Update Time */
+    repeated IntroTypeOrderBy obs = 48; /* OrderByes */
 }
 /**
 * Group Input for __Type
@@ -737,21 +733,17 @@ message IntroDirectiveOrderBy {
     io.graphoenix.core.Sort description_count = 23; /* Count of description */
     io.graphoenix.core.Sort is_repeatable_count = 24; /* Count of isRepeatable */
     io.graphoenix.core.Sort schema_id_count = 25; /* Count of ofSchema Reference */
-    io.graphoenix.core.Sort schema_id_max = 26; /* Max of ofSchema Reference */
-    io.graphoenix.core.Sort schema_id_min = 27; /* Min of ofSchema Reference */
-    io.graphoenix.core.Sort schema_id_sum = 28; /* Sum of ofSchema Reference */
-    io.graphoenix.core.Sort schema_id_avg = 29; /* Avg of ofSchema Reference */
-    io.graphoenix.core.Sort create_time_year = 30; /* Year of Create Time */
-    io.graphoenix.core.Sort create_time_month = 31; /* Month of Create Time */
-    io.graphoenix.core.Sort create_time_day = 32; /* Day of Create Time */
-    io.graphoenix.core.Sort create_time_week = 33; /* Week of Create Time */
-    io.graphoenix.core.Sort create_time_quarter = 34; /* Quarter of Create Time */
-    io.graphoenix.core.Sort update_time_year = 35; /* Year of Update Time */
-    io.graphoenix.core.Sort update_time_month = 36; /* Month of Update Time */
-    io.graphoenix.core.Sort update_time_day = 37; /* Day of Update Time */
-    io.graphoenix.core.Sort update_time_week = 38; /* Week of Update Time */
-    io.graphoenix.core.Sort update_time_quarter = 39; /* Quarter of Update Time */
-    repeated IntroDirectiveOrderBy obs = 40; /* OrderByes */
+    io.graphoenix.core.Sort create_time_year = 26; /* Year of Create Time */
+    io.graphoenix.core.Sort create_time_month = 27; /* Month of Create Time */
+    io.graphoenix.core.Sort create_time_day = 28; /* Day of Create Time */
+    io.graphoenix.core.Sort create_time_week = 29; /* Week of Create Time */
+    io.graphoenix.core.Sort create_time_quarter = 30; /* Quarter of Create Time */
+    io.graphoenix.core.Sort update_time_year = 31; /* Year of Update Time */
+    io.graphoenix.core.Sort update_time_month = 32; /* Month of Update Time */
+    io.graphoenix.core.Sort update_time_day = 33; /* Day of Update Time */
+    io.graphoenix.core.Sort update_time_week = 34; /* Week of Update Time */
+    io.graphoenix.core.Sort update_time_quarter = 35; /* Quarter of Update Time */
+    repeated IntroDirectiveOrderBy obs = 36; /* OrderByes */
 }
 /**
 * Group Input for __Directive

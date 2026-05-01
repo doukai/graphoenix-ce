@@ -161,30 +161,6 @@ public class __Directive implements Meta {
   private Integer schemaIdCount;
 
   /**
-   * Max of ofSchema Reference
-   */
-  @Description("Max of ofSchema Reference")
-  private Integer schemaIdMax;
-
-  /**
-   * Min of ofSchema Reference
-   */
-  @Description("Min of ofSchema Reference")
-  private Integer schemaIdMin;
-
-  /**
-   * Sum of ofSchema Reference
-   */
-  @Description("Sum of ofSchema Reference")
-  private Integer schemaIdSum;
-
-  /**
-   * Avg of ofSchema Reference
-   */
-  @Description("Avg of ofSchema Reference")
-  private Integer schemaIdAvg;
-
-  /**
    * Year of Create Time
    */
   @Description("Year of Create Time")
@@ -479,38 +455,6 @@ public class __Directive implements Meta {
 
   public void setSchemaIdCount(Integer schemaIdCount) {
     this.schemaIdCount = schemaIdCount;
-  }
-
-  public Integer getSchemaIdMax() {
-    return this.schemaIdMax;
-  }
-
-  public void setSchemaIdMax(Integer schemaIdMax) {
-    this.schemaIdMax = schemaIdMax;
-  }
-
-  public Integer getSchemaIdMin() {
-    return this.schemaIdMin;
-  }
-
-  public void setSchemaIdMin(Integer schemaIdMin) {
-    this.schemaIdMin = schemaIdMin;
-  }
-
-  public Integer getSchemaIdSum() {
-    return this.schemaIdSum;
-  }
-
-  public void setSchemaIdSum(Integer schemaIdSum) {
-    this.schemaIdSum = schemaIdSum;
-  }
-
-  public Integer getSchemaIdAvg() {
-    return this.schemaIdAvg;
-  }
-
-  public void setSchemaIdAvg(Integer schemaIdAvg) {
-    this.schemaIdAvg = schemaIdAvg;
   }
 
   public Integer getCreateTimeYear() {

@@ -242,30 +242,6 @@ public @interface __TypeOrderBy {
   Sort ofTypeNameCount() default Sort.ASC;
 
   /**
-   * Max of ofSchema Reference
-   */
-  @Description("Max of ofSchema Reference")
-  Sort schemaIdMax() default Sort.ASC;
-
-  /**
-   * Min of ofSchema Reference
-   */
-  @Description("Min of ofSchema Reference")
-  Sort schemaIdMin() default Sort.ASC;
-
-  /**
-   * Sum of ofSchema Reference
-   */
-  @Description("Sum of ofSchema Reference")
-  Sort schemaIdSum() default Sort.ASC;
-
-  /**
-   * Avg of ofSchema Reference
-   */
-  @Description("Avg of ofSchema Reference")
-  Sort schemaIdAvg() default Sort.ASC;
-
-  /**
    * Year of Create Time
    */
   @Description("Year of Create Time")
@@ -404,14 +380,6 @@ public @interface __TypeOrderBy {
   String $schemaIdCount() default "";
 
   String $ofTypeNameCount() default "";
-
-  String $schemaIdMax() default "";
-
-  String $schemaIdMin() default "";
-
-  String $schemaIdSum() default "";
-
-  String $schemaIdAvg() default "";
 
   String $createTimeYear() default "";
 

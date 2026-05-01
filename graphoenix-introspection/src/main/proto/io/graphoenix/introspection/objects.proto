@@ -92,20 +92,16 @@ message IntroType {
     int32 description_count = 42; /* Count of description */
     int32 schema_id_count = 43; /* Count of ofSchema Reference */
     int32 of_type_name_count = 44; /* Count of ofType Reference */
-    int32 schema_id_max = 45; /* Max of ofSchema Reference */
-    int32 schema_id_min = 46; /* Min of ofSchema Reference */
-    int32 schema_id_sum = 47; /* Sum of ofSchema Reference */
-    int32 schema_id_avg = 48; /* Avg of ofSchema Reference */
-    int32 create_time_year = 49; /* Year of Create Time */
-    int32 create_time_month = 50; /* Month of Create Time */
-    int32 create_time_day = 51; /* Day of Create Time */
-    int32 create_time_week = 52; /* Week of Create Time */
-    int32 create_time_quarter = 53; /* Quarter of Create Time */
-    int32 update_time_year = 54; /* Year of Update Time */
-    int32 update_time_month = 55; /* Month of Update Time */
-    int32 update_time_day = 56; /* Day of Update Time */
-    int32 update_time_week = 57; /* Week of Update Time */
-    int32 update_time_quarter = 58; /* Quarter of Update Time */
+    int32 create_time_year = 45; /* Year of Create Time */
+    int32 create_time_month = 46; /* Month of Create Time */
+    int32 create_time_day = 47; /* Day of Create Time */
+    int32 create_time_week = 48; /* Week of Create Time */
+    int32 create_time_quarter = 49; /* Quarter of Create Time */
+    int32 update_time_year = 50; /* Year of Update Time */
+    int32 update_time_month = 51; /* Month of Update Time */
+    int32 update_time_day = 52; /* Day of Update Time */
+    int32 update_time_week = 53; /* Week of Update Time */
+    int32 update_time_quarter = 54; /* Quarter of Update Time */
 }
 message IntroField {
     string id = 1;
@@ -248,20 +244,16 @@ message IntroDirective {
     int32 description_count = 25; /* Count of description */
     int32 is_repeatable_count = 26; /* Count of isRepeatable */
     int32 schema_id_count = 27; /* Count of ofSchema Reference */
-    int32 schema_id_max = 28; /* Max of ofSchema Reference */
-    int32 schema_id_min = 29; /* Min of ofSchema Reference */
-    int32 schema_id_sum = 30; /* Sum of ofSchema Reference */
-    int32 schema_id_avg = 31; /* Avg of ofSchema Reference */
-    int32 create_time_year = 32; /* Year of Create Time */
-    int32 create_time_month = 33; /* Month of Create Time */
-    int32 create_time_day = 34; /* Day of Create Time */
-    int32 create_time_week = 35; /* Week of Create Time */
-    int32 create_time_quarter = 36; /* Quarter of Create Time */
-    int32 update_time_year = 37; /* Year of Update Time */
-    int32 update_time_month = 38; /* Month of Update Time */
-    int32 update_time_day = 39; /* Day of Update Time */
-    int32 update_time_week = 40; /* Week of Update Time */
-    int32 update_time_quarter = 41; /* Quarter of Update Time */
+    int32 create_time_year = 28; /* Year of Create Time */
+    int32 create_time_month = 29; /* Month of Create Time */
+    int32 create_time_day = 30; /* Day of Create Time */
+    int32 create_time_week = 31; /* Week of Create Time */
+    int32 create_time_quarter = 32; /* Quarter of Create Time */
+    int32 update_time_year = 33; /* Year of Update Time */
+    int32 update_time_month = 34; /* Month of Update Time */
+    int32 update_time_day = 35; /* Day of Update Time */
+    int32 update_time_week = 36; /* Week of Update Time */
+    int32 update_time_quarter = 37; /* Quarter of Update Time */
 }
 /**
 * Relationship Object between __Type and __Type
