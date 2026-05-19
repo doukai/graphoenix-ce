@@ -103,7 +103,16 @@ public class TypeSpecBuilder {
       builder.addSuperinterfaces(
           objectType.getInterfaces().stream()
               .map(name -> documentManager.getDocument().getInterfaceTypeOrError(name))
-              .map(interfaceType -> toClassName(interfaceType.getClassNameOrError()))
+              .map(
+                  interfaceType ->
+                      toClassName(
+                          interfaceType
+                              .getClassName()
+                              .orElseGet(
+                                  () ->
+                                      packageConfig.getInterfaceTypePackageName()
+                                          + "."
+                                          + interfaceType.getName())))
               .collect(Collectors.toList()));
     }
     if (objectType.getDescription() != null) {
@@ -214,7 +223,16 @@ public class TypeSpecBuilder {
       builder.addSuperinterfaces(
           inputObjectType.getInterfaces().stream()
               .map(name -> documentManager.getDocument().getInputObjectTypeOrError(name))
-              .map(inputInterfaceType -> toClassName(inputInterfaceType.getClassNameOrError()))
+              .map(
+                  inputInterfaceType ->
+                      toClassName(
+                          inputInterfaceType
+                              .getClassName()
+                              .orElseGet(
+                                  () ->
+                                      packageConfig.getInputObjectTypePackageName()
+                                          + "."
+                                          + inputInterfaceType.getName())))
               .collect(Collectors.toList()));
     }
     if (inputObjectType.getDescription() != null) {
@@ -460,7 +478,14 @@ public class TypeSpecBuilder {
               .map(name -> documentManager.getDocument().getInterfaceTypeOrError(name))
               .map(
                   implementInterfaceType ->
-                      toClassName(implementInterfaceType.getClassNameOrError()))
+                      toClassName(
+                          implementInterfaceType
+                              .getClassName()
+                              .orElseGet(
+                                  () ->
+                                      packageConfig.getInterfaceTypePackageName()
+                                          + "."
+                                          + implementInterfaceType.getName())))
               .collect(Collectors.toList()));
     }
     if (interfaceType.getDescription() != null) {
@@ -782,7 +807,16 @@ public class TypeSpecBuilder {
       }
     } else if (inputValueTypeDefinition.isEnum()) {
       return CodeBlock.of(
-          "$T.$L", toClassName(inputValueTypeDefinition.getClassNameOrError()), defaultValue);
+          "$T.$L",
+          toClassName(
+              inputValueTypeDefinition
+                  .getClassName()
+                  .orElseGet(
+                      () ->
+                          packageConfig.getEnumTypePackageName()
+                              + "."
+                              + inputValueTypeDefinition.getName())),
+          defaultValue);
     } else {
       throw new GraphQLErrors(UNSUPPORTED_DEFAULT_VALUE.bind(defaultValue));
     }
@@ -808,7 +842,16 @@ public class TypeSpecBuilder {
       }
     } else if (inputValueTypeDefinition.isEnum()) {
       return CodeBlock.of(
-          "$T.$L", toClassName(inputValueTypeDefinition.getClassNameOrError()), defaultValue);
+          "$T.$L",
+          toClassName(
+              inputValueTypeDefinition
+                  .getClassName()
+                  .orElseGet(
+                      () ->
+                          packageConfig.getEnumTypePackageName()
+                              + "."
+                              + inputValueTypeDefinition.getName())),
+          defaultValue);
     } else {
       throw new GraphQLErrors(UNSUPPORTED_DEFAULT_VALUE.bind(defaultValue));
     }
@@ -826,7 +869,11 @@ public class TypeSpecBuilder {
       EnumType enumType = inputValueTypeDefinition.asEnum();
       return CodeBlock.of(
           "$T.$L",
-          toClassName(enumType.getClassNameOrError()),
+          toClassName(
+              enumType
+                  .getClassName()
+                  .orElseGet(
+                      () -> packageConfig.getEnumTypePackageName() + "." + enumType.getName())),
           new ArrayList<>(enumType.getEnumValues()).get(0).getName());
     } else if (inputValueTypeDefinition.isInputObject()) {
       if (inputValueTypeDefinition.asInputObject().getInputValues().stream()
@@ -909,8 +956,36 @@ public class TypeSpecBuilder {
     Definition typeDefinition = documentManager.getDocument().getDefinition(typeName.getName());
     if (typeDefinition.isScalar()) {
       return buildType(typeDefinition.asScalar());
+    } else if (typeDefinition.isEnum()) {
+      return toClassName(
+          typeDefinition
+              .getClassName()
+              .orElseGet(
+                  () -> packageConfig.getEnumTypePackageName() + "." + typeDefinition.getName()));
+    } else if (typeDefinition.isInputObject()) {
+      return toClassName(
+          typeDefinition
+              .getClassName()
+              .orElseGet(
+                  () ->
+                      packageConfig.getInputObjectTypePackageName()
+                          + "."
+                          + typeDefinition.getName()));
+    } else if (typeDefinition.isInterface()) {
+      return toClassName(
+          typeDefinition
+              .getClassName()
+              .orElseGet(
+                  () ->
+                      packageConfig.getInterfaceTypePackageName()
+                          + "."
+                          + typeDefinition.getName()));
     } else {
-      return toClassName(typeDefinition.getClassNameOrError());
+      return toClassName(
+          typeDefinition
+              .getClassName()
+              .orElseGet(
+                  () -> packageConfig.getObjectTypePackageName() + "." + typeDefinition.getName()));
     }
   }
 
@@ -920,7 +995,11 @@ public class TypeSpecBuilder {
     if (typeDefinition.isScalar()) {
       return buildAnnotationType(typeDefinition.asScalar());
     } else if (typeDefinition.isEnum()) {
-      return toClassName(typeDefinition.getClassNameOrError());
+      return toClassName(
+          typeDefinition
+              .getClassName()
+              .orElseGet(
+                  () -> packageConfig.getEnumTypePackageName() + "." + typeDefinition.getName()));
     } else if (typeDefinition.isInputObject()) {
       if (typeDefinition.asInputObject().getInputValues().stream()
           .allMatch(

@@ -61,14 +61,16 @@ public class DownloadRequestHandler extends BaseHandler implements GetHandler {
             fileHandler
                 .getFileInfo(fileId)
                 .doOnSuccess(
-                    fileInfo ->
-                        response.addHeader(
-                            CONTENT_DISPOSITION,
-                            "attachment; filename=\""
-                                + URLEncoder.encode(fileInfo.getFilename(), StandardCharsets.UTF_8)
-                                + "\""))
-                .doOnSuccess(
-                    fileInfo -> response.addHeader(CONTENT_TYPE, fileInfo.getContentType())))
+                    fileInfo -> {
+                      response.addHeader(
+                          CONTENT_DISPOSITION,
+                          "attachment; filename=\""
+                              + URLEncoder.encode(fileInfo.getFilename(), StandardCharsets.UTF_8)
+                              + "\"");
+                      response.addHeader(CONTENT_TYPE, fileInfo.getContentType());
+                      response.addHeader(
+                          CONTENT_LENGTH, String.valueOf(fileInfo.getContentLength()));
+                    }))
         .flatMapMany(
             fileInfo -> {
               try {

@@ -40,6 +40,12 @@ public @interface FileExpression2 {
   StringExpression contentType() default @StringExpression;
 
   /**
+   * 长度
+   */
+  @Description("长度")
+  IntExpression contentLength() default @IntExpression;
+
+  /**
    * 内容
    */
   @Description("内容")
@@ -212,6 +218,8 @@ public @interface FileExpression2 {
   String $name() default "";
 
   String $contentType() default "";
+
+  String $contentLength() default "";
 
   String $content() default "";
 

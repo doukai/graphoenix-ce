@@ -108,7 +108,7 @@ public class GrpcServiceImplementer {
         .getObjectTypes()
         .filter(objectType -> !documentManager.isOperationType(objectType))
         .filter(packageManager::isLocalPackage)
-        .map(AbstractDefinition::getPackageNameOrError)
+        .map(objectType -> objectType.getPackageName().orElseGet(packageConfig::getPackageName))
         .distinct()
         .forEach(
             packageName -> {

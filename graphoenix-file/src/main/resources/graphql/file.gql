@@ -6,6 +6,8 @@ type File {
     name: String
     "类型"
     contentType: String
+    "长度"
+    contentLength: Int
     "内容"
     content: String
     "URL"

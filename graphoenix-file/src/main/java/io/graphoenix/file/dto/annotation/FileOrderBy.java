@@ -38,6 +38,12 @@ public @interface FileOrderBy {
   Sort contentType() default Sort.ASC;
 
   /**
+   * 长度
+   */
+  @Description("长度")
+  Sort contentLength() default Sort.ASC;
+
+  /**
    * 内容
    */
   @Description("内容")
@@ -122,6 +128,12 @@ public @interface FileOrderBy {
   Sort contentTypeCount() default Sort.ASC;
 
   /**
+   * Count of 长度
+   */
+  @Description("Count of 长度")
+  Sort contentLengthCount() default Sort.ASC;
+
+  /**
    * Count of 内容
    */
   @Description("Count of 内容")
@@ -132,6 +144,30 @@ public @interface FileOrderBy {
    */
   @Description("Count of URL")
   Sort urlCount() default Sort.ASC;
+
+  /**
+   * Max of 长度
+   */
+  @Description("Max of 长度")
+  Sort contentLengthMax() default Sort.ASC;
+
+  /**
+   * Min of 长度
+   */
+  @Description("Min of 长度")
+  Sort contentLengthMin() default Sort.ASC;
+
+  /**
+   * Sum of 长度
+   */
+  @Description("Sum of 长度")
+  Sort contentLengthSum() default Sort.ASC;
+
+  /**
+   * Avg of 长度
+   */
+  @Description("Avg of 长度")
+  Sort contentLengthAvg() default Sort.ASC;
 
   /**
    * Year of Create Time
@@ -205,6 +241,8 @@ public @interface FileOrderBy {
 
   String $contentType() default "";
 
+  String $contentLength() default "";
+
   String $content() default "";
 
   String $url() default "";
@@ -233,9 +271,19 @@ public @interface FileOrderBy {
 
   String $contentTypeCount() default "";
 
+  String $contentLengthCount() default "";
+
   String $contentCount() default "";
 
   String $urlCount() default "";
+
+  String $contentLengthMax() default "";
+
+  String $contentLengthMin() default "";
+
+  String $contentLengthSum() default "";
+
+  String $contentLengthAvg() default "";
 
   String $createTimeYear() default "";
 

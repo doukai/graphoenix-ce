@@ -39,6 +39,7 @@ public class LocalFileHandler implements FileHandler {
     FileInput fileInput = new FileInput();
     fileInput.setName(fileInfo.getFilename());
     fileInput.setContentType(fileInfo.getContentType());
+    fileInput.setContentLength(fileInfo.getContentLength());
     return fileRepository
         .insertFile(fileInput)
         .doOnSuccess(
@@ -61,7 +62,7 @@ public class LocalFileHandler implements FileHandler {
   public Mono<FileInfo> getFileInfo(String id) {
     return fileRepository
         .getFileById(id)
-        .map(file -> new FileInfo(file.getName(), file.getContentType()));
+        .map(file -> new FileInfo(file.getName(), file.getContentType(), file.getContentLength()));
   }
 
   @Override

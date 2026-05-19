@@ -41,6 +41,12 @@ public class File implements Meta {
   private String contentType;
 
   /**
+   * 长度
+   */
+  @Description("长度")
+  private Integer contentLength;
+
+  /**
    * 内容
    */
   @Description("内容")
@@ -125,6 +131,12 @@ public class File implements Meta {
   private Integer contentTypeCount;
 
   /**
+   * Count of 长度
+   */
+  @Description("Count of 长度")
+  private Integer contentLengthCount;
+
+  /**
    * Count of 内容
    */
   @Description("Count of 内容")
@@ -135,6 +147,30 @@ public class File implements Meta {
    */
   @Description("Count of URL")
   private Integer urlCount;
+
+  /**
+   * Max of 长度
+   */
+  @Description("Max of 长度")
+  private Integer contentLengthMax;
+
+  /**
+   * Min of 长度
+   */
+  @Description("Min of 长度")
+  private Integer contentLengthMin;
+
+  /**
+   * Sum of 长度
+   */
+  @Description("Sum of 长度")
+  private Integer contentLengthSum;
+
+  /**
+   * Avg of 长度
+   */
+  @Description("Avg of 长度")
+  private Integer contentLengthAvg;
 
   /**
    * Year of Create Time
@@ -220,6 +256,14 @@ public class File implements Meta {
 
   public void setContentType(String contentType) {
     this.contentType = contentType;
+  }
+
+  public Integer getContentLength() {
+    return this.contentLength;
+  }
+
+  public void setContentLength(Integer contentLength) {
+    this.contentLength = contentLength;
   }
 
   public String getContent() {
@@ -350,6 +394,14 @@ public class File implements Meta {
     this.contentTypeCount = contentTypeCount;
   }
 
+  public Integer getContentLengthCount() {
+    return this.contentLengthCount;
+  }
+
+  public void setContentLengthCount(Integer contentLengthCount) {
+    this.contentLengthCount = contentLengthCount;
+  }
+
   public Integer getContentCount() {
     return this.contentCount;
   }
@@ -364,6 +416,38 @@ public class File implements Meta {
 
   public void setUrlCount(Integer urlCount) {
     this.urlCount = urlCount;
+  }
+
+  public Integer getContentLengthMax() {
+    return this.contentLengthMax;
+  }
+
+  public void setContentLengthMax(Integer contentLengthMax) {
+    this.contentLengthMax = contentLengthMax;
+  }
+
+  public Integer getContentLengthMin() {
+    return this.contentLengthMin;
+  }
+
+  public void setContentLengthMin(Integer contentLengthMin) {
+    this.contentLengthMin = contentLengthMin;
+  }
+
+  public Integer getContentLengthSum() {
+    return this.contentLengthSum;
+  }
+
+  public void setContentLengthSum(Integer contentLengthSum) {
+    this.contentLengthSum = contentLengthSum;
+  }
+
+  public Integer getContentLengthAvg() {
+    return this.contentLengthAvg;
+  }
+
+  public void setContentLengthAvg(Integer contentLengthAvg) {
+    this.contentLengthAvg = contentLengthAvg;
   }
 
   public Integer getCreateTimeYear() {
@@ -451,6 +535,7 @@ public class File implements Meta {
     input.setId(this.getId());
     input.setName(this.getName());
     input.setContentType(this.getContentType());
+    input.setContentLength(this.getContentLength());
     input.setContent(this.getContent());
     input.setUrl(this.getUrl());
     input.setIsDeprecated(this.getIsDeprecated());

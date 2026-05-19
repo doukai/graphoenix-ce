@@ -42,6 +42,12 @@ public class FileExpression implements MetaExpression {
   private StringExpression contentType;
 
   /**
+   * 长度
+   */
+  @Description("长度")
+  private IntExpression contentLength;
+
+  /**
    * 内容
    */
   @Description("内容")
@@ -254,6 +260,14 @@ public class FileExpression implements MetaExpression {
 
   public void setContentType(StringExpression contentType) {
     this.contentType = contentType;
+  }
+
+  public IntExpression getContentLength() {
+    return this.contentLength;
+  }
+
+  public void setContentLength(IntExpression contentLength) {
+    this.contentLength = contentLength;
   }
 
   public StringExpression getContent() {

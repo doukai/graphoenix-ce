@@ -34,6 +34,12 @@ public class FileOrderBy {
   private Sort contentType;
 
   /**
+   * 长度
+   */
+  @Description("长度")
+  private Sort contentLength;
+
+  /**
    * 内容
    */
   @Description("内容")
@@ -118,6 +124,12 @@ public class FileOrderBy {
   private Sort contentTypeCount;
 
   /**
+   * Count of 长度
+   */
+  @Description("Count of 长度")
+  private Sort contentLengthCount;
+
+  /**
    * Count of 内容
    */
   @Description("Count of 内容")
@@ -128,6 +140,30 @@ public class FileOrderBy {
    */
   @Description("Count of URL")
   private Sort urlCount;
+
+  /**
+   * Max of 长度
+   */
+  @Description("Max of 长度")
+  private Sort contentLengthMax;
+
+  /**
+   * Min of 长度
+   */
+  @Description("Min of 长度")
+  private Sort contentLengthMin;
+
+  /**
+   * Sum of 长度
+   */
+  @Description("Sum of 长度")
+  private Sort contentLengthSum;
+
+  /**
+   * Avg of 长度
+   */
+  @Description("Avg of 长度")
+  private Sort contentLengthAvg;
 
   /**
    * Year of Create Time
@@ -217,6 +253,14 @@ public class FileOrderBy {
 
   public void setContentType(Sort contentType) {
     this.contentType = contentType;
+  }
+
+  public Sort getContentLength() {
+    return this.contentLength;
+  }
+
+  public void setContentLength(Sort contentLength) {
+    this.contentLength = contentLength;
   }
 
   public Sort getContent() {
@@ -331,6 +375,14 @@ public class FileOrderBy {
     this.contentTypeCount = contentTypeCount;
   }
 
+  public Sort getContentLengthCount() {
+    return this.contentLengthCount;
+  }
+
+  public void setContentLengthCount(Sort contentLengthCount) {
+    this.contentLengthCount = contentLengthCount;
+  }
+
   public Sort getContentCount() {
     return this.contentCount;
   }
@@ -345,6 +397,38 @@ public class FileOrderBy {
 
   public void setUrlCount(Sort urlCount) {
     this.urlCount = urlCount;
+  }
+
+  public Sort getContentLengthMax() {
+    return this.contentLengthMax;
+  }
+
+  public void setContentLengthMax(Sort contentLengthMax) {
+    this.contentLengthMax = contentLengthMax;
+  }
+
+  public Sort getContentLengthMin() {
+    return this.contentLengthMin;
+  }
+
+  public void setContentLengthMin(Sort contentLengthMin) {
+    this.contentLengthMin = contentLengthMin;
+  }
+
+  public Sort getContentLengthSum() {
+    return this.contentLengthSum;
+  }
+
+  public void setContentLengthSum(Sort contentLengthSum) {
+    this.contentLengthSum = contentLengthSum;
+  }
+
+  public Sort getContentLengthAvg() {
+    return this.contentLengthAvg;
+  }
+
+  public void setContentLengthAvg(Sort contentLengthAvg) {
+    this.contentLengthAvg = contentLengthAvg;
   }
 
   public Sort getCreateTimeYear() {

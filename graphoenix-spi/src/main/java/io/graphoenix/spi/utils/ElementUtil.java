@@ -3,6 +3,7 @@ package io.graphoenix.spi.utils;
 import com.google.common.base.CaseFormat;
 import io.graphoenix.spi.graphql.common.Directive;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
+import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.type.InputValue;
 import io.graphoenix.spi.graphql.type.ListType;
 import io.graphoenix.spi.graphql.type.NonNullType;
@@ -264,6 +265,9 @@ public final class ElementUtil {
     if (executableElement.getParameters() != null) {
       return executableElement.getParameters().stream()
           .filter(variableElement -> variableElement.getAnnotation(Source.class) == null)
+          .filter(
+              variableElement ->
+                  !variableElement.asType().toString().equals(Field.class.getCanonicalName()))
           .map(variableElement -> new InputValue(variableElement, types))
           .collect(Collectors.toList());
     } else {

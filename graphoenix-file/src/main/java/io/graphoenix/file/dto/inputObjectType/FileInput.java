@@ -40,6 +40,12 @@ public class FileInput implements MetaInput {
   private String contentType;
 
   /**
+   * 长度
+   */
+  @Description("长度")
+  private Integer contentLength;
+
+  /**
    * 内容
    */
   @Description("内容")
@@ -149,6 +155,14 @@ public class FileInput implements MetaInput {
 
   public void setContentType(String contentType) {
     this.contentType = contentType;
+  }
+
+  public Integer getContentLength() {
+    return this.contentLength;
+  }
+
+  public void setContentLength(Integer contentLength) {
+    this.contentLength = contentLength;
   }
 
   public String getContent() {

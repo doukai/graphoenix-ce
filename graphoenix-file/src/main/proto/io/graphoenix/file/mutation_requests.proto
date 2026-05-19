@@ -24,10 +24,8 @@ message MutationFileListRequest {
 message MutationSingleUploadRequest {
     optional string selection_set = 1;
     optional string arguments = 2;
-    string file = 3;
 }
 message MutationMultipleUploadRequest {
     optional string selection_set = 1;
     optional string arguments = 2;
-    repeated string files = 3;
 }

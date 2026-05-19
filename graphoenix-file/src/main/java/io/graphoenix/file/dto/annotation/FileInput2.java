@@ -37,6 +37,12 @@ public @interface FileInput2 {
   String contentType() default "";
 
   /**
+   * 长度
+   */
+  @Description("长度")
+  int contentLength() default 0;
+
+  /**
    * 内容
    */
   @Description("内容")
@@ -107,6 +113,8 @@ public @interface FileInput2 {
   String $name() default "";
 
   String $contentType() default "";
+
+  String $contentLength() default "";
 
   String $content() default "";
 

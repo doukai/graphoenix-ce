@@ -179,11 +179,14 @@ public class GraphQLPostHandler extends BaseHandler implements PostHandler {
                                   } else if (data instanceof FileUpload
                                       && ((FileUpload) data).getFilename() != null) {
                                     FileUpload fileUpload = (FileUpload) data;
+                                    byte[] fileBytes = fileUpload.get();
                                     FileInfo fileInfo =
                                         new FileInfo(
-                                            fileUpload.getFilename(), fileUpload.getContentType());
+                                            fileUpload.getFilename(),
+                                            fileUpload.getContentType(),
+                                            fileBytes.length);
                                     return fileHandler
-                                        .save(fileUpload.get(), fileInfo)
+                                        .save(fileBytes, fileInfo)
                                         .flatMap(
                                             id ->
                                                 graphQLRequestMono.map(

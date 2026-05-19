@@ -109,6 +109,7 @@ public class QueryTranslator {
       throw new GraphQLErrors(OBJECT_SELECTION_NOT_EXIST.bind(field.toString()));
     }
     PlainSelect plainSelect = new PlainSelect();
+    PlainSelect subSelect = new PlainSelect();
     Expression selectExpression;
     FromItem fromItem;
     ObjectType fieldTypeDefinition =
@@ -119,6 +120,44 @@ public class QueryTranslator {
         field.getFields().stream()
             .anyMatch(
                 item -> fieldTypeDefinition.getFieldOrError(item.getName()).isGroupFunctionField());
+
+    JsonFunction jsonObjectFunction =
+        jsonObjectFunction(
+            field.getFields().stream()
+                .filter(
+                    subField -> {
+                      FieldDefinition subFieldDefinition =
+                          fieldTypeDefinition.asObject().getFieldOrError(subField.getName());
+                      return !subFieldDefinition.isFetchField()
+                          && !subFieldDefinition.isInvokeField()
+                          && !subFieldDefinition.isConnectionField();
+                    })
+                .map(
+                    subField ->
+                        new JsonKeyValuePair(
+                            new StringValue(
+                                    Optional.ofNullable(subField.getAlias())
+                                        .orElseGet(subField::getName))
+                                .toString(),
+                            inGroupBy
+                                ? fieldToExpression(
+                                    fieldTypeDefinition.asObject(),
+                                    fieldTypeDefinition
+                                        .asObject()
+                                        .getFieldOrError(subField.getName()),
+                                    subField,
+                                    level)
+                                : fieldToExpression(
+                                    fieldTypeDefinition.asObject(),
+                                    fieldTypeDefinition
+                                        .asObject()
+                                        .getFieldOrError(subField.getName()),
+                                    subField,
+                                    !fieldDefinition.getType().hasList() && hasGroupBy,
+                                    level),
+                            false,
+                            false))
+                .collect(Collectors.toList()));
     if (!inGroupBy
         && (hasGroupBy || hasGroupFunctionField)
         && fieldDefinition.getType().hasList()) {
@@ -138,51 +177,20 @@ public class QueryTranslator {
                           graphqlTypeNameToTableAliaName(fieldTypeDefinition.getName(), level))));
       return plainSelect.withFromItem(fromItem).addSelectItem(selectExpression);
     } else {
-      JsonFunction jsonObjectFunction =
-          jsonObjectFunction(
-              field.getFields().stream()
-                  .filter(
-                      subField -> {
-                        FieldDefinition subFieldDefinition =
-                            fieldTypeDefinition.asObject().getFieldOrError(subField.getName());
-                        return !subFieldDefinition.isFetchField()
-                            && !subFieldDefinition.isInvokeField()
-                            && !subFieldDefinition.isConnectionField();
-                      })
-                  .map(
-                      subField ->
-                          new JsonKeyValuePair(
-                              new StringValue(
-                                      Optional.ofNullable(subField.getAlias())
-                                          .orElseGet(subField::getName))
-                                  .toString(),
-                              inGroupBy
-                                  ? fieldToExpression(
-                                      fieldTypeDefinition.asObject(),
-                                      fieldTypeDefinition
-                                          .asObject()
-                                          .getFieldOrError(subField.getName()),
-                                      subField,
-                                      level)
-                                  : fieldToExpression(
-                                      fieldTypeDefinition.asObject(),
-                                      fieldTypeDefinition
-                                          .asObject()
-                                          .getFieldOrError(subField.getName()),
-                                      subField,
-                                      !fieldDefinition.getType().hasList() && hasGroupBy,
-                                      level),
-                              false,
-                              false))
-                  .collect(Collectors.toList()));
       if (fieldDefinition.getType().hasList() && !inGroupBy) {
-        selectExpression =
-            jsonExtractFunction(
-                jsonAggregateFunction(
-                    jsonObjectFunction,
-                    argumentsToOrderByStream(fieldDefinition, field, level)
-                        .collect(Collectors.toList()),
-                    argumentsToLimit(fieldDefinition, field)));
+        if (documentManager.isOperationType(objectType)) {
+          Column objectColumn =
+              graphqlFieldToColumn(fieldTypeDefinition.getName(), "object", level);
+          selectExpression = jsonExtractFunction(jsonAggregateFunction(objectColumn, null, null));
+        } else {
+          selectExpression =
+              jsonExtractFunction(
+                  jsonAggregateFunction(
+                      jsonObjectFunction,
+                      argumentsToOrderByStream(fieldDefinition, field, level)
+                          .collect(Collectors.toList()),
+                      argumentsToLimit(fieldDefinition, field)));
+        }
       } else {
         selectExpression = jsonExtractFunction(jsonObjectFunction);
       }
@@ -513,85 +521,96 @@ public class QueryTranslator {
                                       level))
                               .withRightExpression(new LongValue(1))));
 
-      fieldDefinition
-          .getArgumentOrEmpty(INPUT_VALUE_LIST_NAME)
-          .flatMap(
-              inputValue ->
-                  Optional.ofNullable(field.getArguments())
-                      .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
-                      .filter(valueWithVariable -> !valueWithVariable.isNull())
-                      .filter(valueWithVariable -> !valueWithVariable.isVariable())
-                      .filter(ValueWithVariable::isArray)
-                      .map(
-                          valueWithVariable ->
-                              valueWithVariable.asArray().getValueWithVariables().stream()
-                                  .filter(item -> !item.isNull())
-                                  .filter(ValueWithVariable::isObject)
-                                  .filter(
-                                      item ->
-                                          !item.asObject().containsKey(INPUT_VALUE_WHERE_NAME)
-                                              || item.asObject()
-                                                  .getValueWithVariable(INPUT_VALUE_WHERE_NAME)
-                                                  .isNull()
-                                              || !item.asObject()
-                                                  .getValueWithVariable(INPUT_VALUE_WHERE_NAME)
-                                                  .isObject()
-                                              || item.asObject()
-                                                  .getValueWithVariable(INPUT_VALUE_WHERE_NAME)
-                                                  .asObject()
-                                                  .containsKey(idName))
-                                  .collect(Collectors.toList()))
-                      .filter(valueWithVariableList -> !valueWithVariableList.isEmpty())
-                      .map(
-                          valueWithVariableList ->
-                              createIDOrderField(
-                                  graphqlFieldToColumn(table, idName),
-                                  IntStream.range(0, valueWithVariableList.size())
-                                      .mapToObj(
-                                          index -> {
-                                            if (valueWithVariableList.get(index).isVariable()) {
-                                              return createInsertIdUserVariable(
-                                                  fieldTypeDefinition.getName(), idName, 0, index);
-                                            } else {
-                                              return valueWithVariableList
-                                                  .get(index)
-                                                  .asObject()
-                                                  .getValueWithVariableOrEmpty(idName)
-                                                  .flatMap(DBValueUtil::idValueToDBValue)
-                                                  .orElseGet(
-                                                      () ->
-                                                          valueWithVariableList
-                                                              .get(index)
-                                                              .asObject()
-                                                              .getValueWithVariableOrEmpty(
-                                                                  INPUT_VALUE_WHERE_NAME)
-                                                              .filter(ValueWithVariable::isObject)
-                                                              .flatMap(
-                                                                  whereInputValue ->
-                                                                      whereInputValue
-                                                                          .asObject()
-                                                                          .getValueWithVariableOrEmpty(
-                                                                              idName))
-                                                              .flatMap(
-                                                                  idInputValue ->
-                                                                      idInputValue
-                                                                          .asObject()
-                                                                          .getValueWithVariableOrEmpty(
-                                                                              INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
-                                                              .flatMap(
-                                                                  DBValueUtil::idValueToDBValue)
-                                                              .orElseGet(
-                                                                  () ->
-                                                                      createInsertIdUserVariable(
-                                                                          fieldTypeDefinition
-                                                                              .getName(),
-                                                                          idName,
-                                                                          0,
-                                                                          index)));
-                                            }
-                                          })
-                                      .collect(Collectors.toList()))))
-          .ifPresent(plainSelect::addOrderByElements);
+      Optional<OrderByElement> listOrderByElement =
+          fieldDefinition
+              .getArgumentOrEmpty(INPUT_VALUE_LIST_NAME)
+              .flatMap(
+                  inputValue ->
+                      Optional.ofNullable(field.getArguments())
+                          .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
+                          .filter(valueWithVariable -> !valueWithVariable.isNull())
+                          .filter(valueWithVariable -> !valueWithVariable.isVariable())
+                          .filter(ValueWithVariable::isArray)
+                          .map(
+                              valueWithVariable ->
+                                  valueWithVariable.asArray().getValueWithVariables().stream()
+                                      .filter(item -> !item.isNull())
+                                      .filter(ValueWithVariable::isObject)
+                                      .filter(
+                                          item ->
+                                              !item.asObject().containsKey(INPUT_VALUE_WHERE_NAME)
+                                                  || item.asObject()
+                                                      .getValueWithVariable(INPUT_VALUE_WHERE_NAME)
+                                                      .isNull()
+                                                  || !item.asObject()
+                                                      .getValueWithVariable(INPUT_VALUE_WHERE_NAME)
+                                                      .isObject()
+                                                  || item.asObject()
+                                                      .getValueWithVariable(INPUT_VALUE_WHERE_NAME)
+                                                      .asObject()
+                                                      .containsKey(idName))
+                                      .collect(Collectors.toList()))
+                          .filter(valueWithVariableList -> !valueWithVariableList.isEmpty())
+                          .map(
+                              valueWithVariableList ->
+                                  createIDOrderField(
+                                      graphqlFieldToColumn(table, idName),
+                                      IntStream.range(0, valueWithVariableList.size())
+                                          .mapToObj(
+                                              index -> {
+                                                if (valueWithVariableList.get(index).isVariable()) {
+                                                  return createInsertIdUserVariable(
+                                                      fieldTypeDefinition.getName(),
+                                                      idName,
+                                                      0,
+                                                      index);
+                                                } else {
+                                                  return valueWithVariableList
+                                                      .get(index)
+                                                      .asObject()
+                                                      .getValueWithVariableOrEmpty(idName)
+                                                      .flatMap(DBValueUtil::idValueToDBValue)
+                                                      .orElseGet(
+                                                          () ->
+                                                              valueWithVariableList
+                                                                  .get(index)
+                                                                  .asObject()
+                                                                  .getValueWithVariableOrEmpty(
+                                                                      INPUT_VALUE_WHERE_NAME)
+                                                                  .filter(
+                                                                      ValueWithVariable::isObject)
+                                                                  .flatMap(
+                                                                      whereInputValue ->
+                                                                          whereInputValue
+                                                                              .asObject()
+                                                                              .getValueWithVariableOrEmpty(
+                                                                                  idName))
+                                                                  .flatMap(
+                                                                      idInputValue ->
+                                                                          idInputValue
+                                                                              .asObject()
+                                                                              .getValueWithVariableOrEmpty(
+                                                                                  INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
+                                                                  .flatMap(
+                                                                      DBValueUtil::idValueToDBValue)
+                                                                  .orElseGet(
+                                                                      () ->
+                                                                          createInsertIdUserVariable(
+                                                                              fieldTypeDefinition
+                                                                                  .getName(),
+                                                                              idName,
+                                                                              0,
+                                                                              index)));
+                                                }
+                                              })
+                                          .collect(Collectors.toList()))));
+      if (listOrderByElement.isPresent()) {
+        if (documentManager.isOperationType(objectType)) {
+          subSelect.addOrderByElements(listOrderByElement.get());
+        } else {
+          plainSelect.addOrderByElements(listOrderByElement.get());
+        }
+      }
     } else {
       whereExpression =
           argumentsTranslator.argumentsToWhereExpression(objectType, fieldDefinition, field, level);
@@ -652,9 +671,30 @@ public class QueryTranslator {
                         (Expression) new MultiAndExpression(Arrays.asList(expression, equalsTo)))
                 .orElse(equalsTo));
       }
+    } else {
+      if (fieldDefinition.getType().hasList() && !inGroupBy) {
+        subSelect =
+            new PlainSelect()
+                .addSelectItem(
+                    jsonObjectFunction, new Alias(graphqlFieldNameToColumnName("object")))
+                .withFromItem(table);
+        subSelect.addOrderByElements(
+            argumentsToOrderByStream(fieldDefinition, field, level).collect(Collectors.toList()));
+        subSelect.setLimit(argumentsToLimit(fieldDefinition, field));
+        whereExpression.ifPresent(subSelect::setWhere);
+        ParenthesedSelect parenthesedSelect =
+            new ParenthesedSelect()
+                .withSelect(subSelect)
+                .withAlias(
+                    new Alias(
+                        nameToDBEscape(
+                            graphqlTypeNameToTableAliaName(fieldTypeDefinition.getName(), level))));
+        plainSelect.withFromItem(parenthesedSelect);
+      } else {
+        whereExpression.ifPresent(plainSelect::setWhere);
+      }
+      return plainSelect;
     }
-    whereExpression.ifPresent(plainSelect::setWhere);
-    return plainSelect;
   }
 
   protected Stream<Join> groupFieldToJoinStream(

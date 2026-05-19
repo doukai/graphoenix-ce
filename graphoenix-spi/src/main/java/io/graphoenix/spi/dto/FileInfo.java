@@ -6,11 +6,14 @@ public class FileInfo {
 
   private String contentType;
 
+  private Integer contentLength;
+
   public FileInfo() {}
 
-  public FileInfo(String filename, String contentType) {
+  public FileInfo(String filename, String contentType, Integer contentLength) {
     this.filename = filename;
     this.contentType = contentType;
+    this.contentLength = contentLength;
   }
 
   public String getFilename() {
@@ -27,5 +30,13 @@ public class FileInfo {
 
   public void setContentType(String contentType) {
     this.contentType = contentType;
+  }
+
+  public Integer getContentLength() {
+    return contentLength;
+  }
+
+  public void setContentLength(Integer contentLength) {
+    this.contentLength = contentLength;
   }
 }

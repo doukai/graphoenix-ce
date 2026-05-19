@@ -205,7 +205,12 @@ public class InvokeHandlerBuilder {
 
   private MethodSpec buildTypeInvokeMethod(ObjectType objectType) {
     String typeParameterName = typeNameToFieldName(objectType.getName());
-    ClassName typeClassName = toClassName(objectType.getClassNameOrError());
+    ClassName typeClassName =
+        toClassName(
+            objectType
+                .getClassName()
+                .orElseGet(
+                    () -> packageConfig.getObjectTypePackageName() + "." + objectType.getName()));
     String resultParameterName = "result";
 
     return MethodSpec.methodBuilder(typeParameterName)
@@ -442,7 +447,7 @@ public class InvokeHandlerBuilder {
                                                                             methodName,
                                                                             getFieldCodeBlock);
                                                                   }
-                                                                } else {
+                                                                } else if (parametersCount == 2) {
                                                                   CodeBlock argumentsBlock =
                                                                       CodeBlock.of(
                                                                           "documentManager.getDocument().getObjectTypeOrError($S).getField($S).getDirective($S).getArguments()",
@@ -492,6 +497,61 @@ public class InvokeHandlerBuilder {
                                                                             methodName,
                                                                             getFieldCodeBlock,
                                                                             argumentsBlock);
+                                                                  }
+                                                                } else {
+                                                                  CodeBlock argumentsBlock =
+                                                                      CodeBlock.of(
+                                                                          "documentManager.getDocument().getObjectTypeOrError($S).getField($S).getDirective($S).getArguments()",
+                                                                          objectType.getName(),
+                                                                          fieldDefinition.getName(),
+                                                                          directiveName);
+
+                                                                  if (async) {
+                                                                    invokeCodeBlock =
+                                                                        CodeBlock.of(
+                                                                            "$L.get().async($S, $L, $L, $L)",
+                                                                            apiVariableName,
+                                                                            methodName,
+                                                                            getFieldCodeBlock,
+                                                                            argumentsBlock,
+                                                                            resultParameterName);
+                                                                  } else if (returnClassName
+                                                                      .canonicalName()
+                                                                      .equals(
+                                                                          Mono.class
+                                                                              .getCanonicalName())) {
+                                                                    invokeCodeBlock =
+                                                                        CodeBlock.of(
+                                                                            "$L.get().$L($L, $L, $L)",
+                                                                            apiVariableName,
+                                                                            methodName,
+                                                                            getFieldCodeBlock,
+                                                                            argumentsBlock,
+                                                                            resultParameterName);
+                                                                  } else if (returnClassName
+                                                                      .canonicalName()
+                                                                      .equals(
+                                                                          Flux.class
+                                                                              .getCanonicalName())) {
+                                                                    invokeCodeBlock =
+                                                                        CodeBlock.of(
+                                                                            "$L.get().$L($L, $L, $L).last()",
+                                                                            apiVariableName,
+                                                                            methodName,
+                                                                            getFieldCodeBlock,
+                                                                            argumentsBlock,
+                                                                            resultParameterName);
+                                                                  } else {
+                                                                    invokeCodeBlock =
+                                                                        CodeBlock.of(
+                                                                            "$T.justOrEmpty($L.get().$L($L, $L, $L))",
+                                                                            ClassName.get(
+                                                                                Mono.class),
+                                                                            apiVariableName,
+                                                                            methodName,
+                                                                            getFieldCodeBlock,
+                                                                            argumentsBlock,
+                                                                            resultParameterName);
                                                                   }
                                                                 }
                                                                 if (codeBlock.isEmpty()) {
@@ -710,6 +770,12 @@ public class InvokeHandlerBuilder {
                                                           parameters.stream()
                                                               .map(
                                                                   parameter -> {
+                                                                    if (parameter
+                                                                        .getValue()
+                                                                        .equals(
+                                                                            "io.graphoenix.spi.graphql.operation.Field")) {
+                                                                      return CodeBlock.of("field");
+                                                                    }
                                                                     String className =
                                                                         getClassName(
                                                                             parameter.getValue());
@@ -871,7 +937,14 @@ public class InvokeHandlerBuilder {
                                                           methodName,
                                                           toClassName(
                                                               fieldTypeDefinition
-                                                                  .getClassNameOrError()))
+                                                                  .getClassName()
+                                                                  .orElseGet(
+                                                                      () ->
+                                                                          packageConfig
+                                                                                  .getObjectTypePackageName()
+                                                                              + "."
+                                                                              + fieldTypeDefinition
+                                                                                  .getName())))
                                                       .indent()
                                                       .add(
                                                           ".map($L -> new $T<>(selectionName, operationBuilder.updateJsonValue(field, operationType.getField(field.getName()), jsonProvider.createReader(new $T(jsonb.toJson($L))).readValue())))\n",
@@ -924,12 +997,26 @@ public class InvokeHandlerBuilder {
                                                           ClassName.get(List.class),
                                                           toClassName(
                                                               fieldTypeDefinition
-                                                                  .getClassNameOrError()),
+                                                                  .getClassName()
+                                                                  .orElseGet(
+                                                                      () ->
+                                                                          packageConfig
+                                                                                  .getObjectTypePackageName()
+                                                                              + "."
+                                                                              + fieldTypeDefinition
+                                                                                  .getName())),
                                                           ClassName.get(TypeDefinition.class),
                                                           ClassName.get(List.class),
                                                           toClassName(
                                                               fieldTypeDefinition
-                                                                  .getClassNameOrError()))
+                                                                  .getClassName()
+                                                                  .orElseGet(
+                                                                      () ->
+                                                                          packageConfig
+                                                                                  .getObjectTypePackageName()
+                                                                              + "."
+                                                                              + fieldTypeDefinition
+                                                                                  .getName())))
                                                       .indent()
                                                       .add(
                                                           ".flatMapMany($T::fromIterable)\n",

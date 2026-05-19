@@ -97,7 +97,6 @@ public class DocumentBuilder {
         .getObjectTypes()
         .filter(packageManager::isOwnPackage)
         .filter(objectType -> !objectType.isExtension())
-        .filter(objectType -> !objectType.isContainer())
         .filter(objectType -> !documentManager.isOperationType(objectType))
         .forEach(this::buildObject);
 
@@ -105,21 +104,18 @@ public class DocumentBuilder {
         .getInterfaceTypes()
         .filter(packageManager::isOwnPackage)
         .filter(interfaceType -> !interfaceType.isExtension())
-        .filter(interfaceType -> !interfaceType.isContainer())
         .forEach(this::buildInterface);
 
     document
         .getInputObjectTypes()
         .filter(packageManager::isOwnPackage)
         .filter(inputObjectType -> !inputObjectType.isExtension())
-        .filter(inputObjectType -> !inputObjectType.isContainer())
         .forEach(this::buildInputObject);
 
     document
         .getEnums()
         .filter(packageManager::isOwnPackage)
         .filter(enumType -> !enumType.isExtension())
-        .filter(enumType -> !enumType.isContainer())
         .forEach(this::buildEnum);
 
     document
@@ -614,6 +610,10 @@ public class DocumentBuilder {
                       + getGrpcName(objectType.getName())));
     }
 
+    if (objectType.isContainer()) {
+      return objectType;
+    }
+
     objectType
         .getIDField()
         .ifPresent(
@@ -822,14 +822,6 @@ public class DocumentBuilder {
                   packageConfig.getInputObjectTypePackageName() + "." + inputObjectType.getName()));
     }
 
-    if (inputObjectType.getAnnotationName().isEmpty()) {
-      inputObjectType.addDirective(
-          new Directive(DIRECTIVE_ANNOTATION_NAME)
-              .addArgument(
-                  DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME,
-                  packageConfig.getAnnotationPackageName() + "." + inputObjectType.getName()));
-    }
-
     if (inputObjectType.getGrpcName().isEmpty()) {
       inputObjectType.addDirective(
           new Directive(DIRECTIVE_GRPC_NAME)
@@ -838,6 +830,18 @@ public class DocumentBuilder {
                   packageConfig.getGrpcInputObjectTypePackageName()
                       + "."
                       + getGrpcName(inputObjectType.getName())));
+    }
+
+    if (inputObjectType.isContainer()) {
+      return inputObjectType;
+    }
+
+    if (inputObjectType.getAnnotationName().isEmpty()) {
+      inputObjectType.addDirective(
+          new Directive(DIRECTIVE_ANNOTATION_NAME)
+              .addArgument(
+                  DIRECTIVE_ANNOTATION_ARGUMENT_NAME_NAME,
+                  packageConfig.getAnnotationPackageName() + "." + inputObjectType.getName()));
     }
     return inputObjectType;
   }
@@ -2279,6 +2283,8 @@ public class DocumentBuilder {
         .addInputValues(
             Stream.ofNullable(fieldDefinition.getArguments())
                 .flatMap(Collection::stream)
+                .filter(
+                    inputValue -> documentManager.getInputValueTypeDefinition(inputValue) != null)
                 .collect(Collectors.toList()))
         .addDirective(
             new Directive(DIRECTIVE_PACKAGE_NAME)

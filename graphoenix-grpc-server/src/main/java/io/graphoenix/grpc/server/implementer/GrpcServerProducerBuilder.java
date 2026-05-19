@@ -4,7 +4,6 @@ import com.squareup.javapoet.*;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.core.handler.PackageManager;
-import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -47,7 +46,9 @@ public class GrpcServerProducerBuilder {
               .getObjectTypes()
               .filter(objectType -> !documentManager.isOperationType(objectType))
               .filter(packageManager::isLocalPackage)
-              .map(AbstractDefinition::getPackageNameOrError)
+              .map(
+                  objectType ->
+                      objectType.getPackageName().orElseGet(packageConfig::getPackageName))
               .distinct()
               .collect(Collectors.toList());
       this.buildGrpcServerProducerClass(packageConfig.getGrpcPackageName(), packageNameList)
