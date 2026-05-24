@@ -96,25 +96,15 @@ public class QueryTranslator {
 
   protected PlainSelect objectFieldToPlainSelect(
       ObjectType objectType, FieldDefinition fieldDefinition, Field field, int level) {
-    return objectFieldToPlainSelect(objectType, fieldDefinition, field, false, level);
-  }
-
-  protected PlainSelect objectFieldToPlainSelect(
-      ObjectType objectType,
-      FieldDefinition fieldDefinition,
-      Field field,
-      boolean inGroupBy,
-      int level) {
     if (field.getFields() == null || field.getFields().isEmpty()) {
       throw new GraphQLErrors(OBJECT_SELECTION_NOT_EXIST.bind(field.toString()));
     }
     PlainSelect plainSelect = new PlainSelect();
-    PlainSelect subSelect = new PlainSelect();
-    Expression selectExpression;
-    FromItem fromItem;
     ObjectType fieldTypeDefinition =
         documentManager.getFieldTypeDefinition(fieldDefinition).asObject();
     Table table = typeToTable(fieldTypeDefinition, level);
+
+    boolean isListField = fieldDefinition.getType().hasList();
     boolean hasGroupBy = field.hasGroupBy();
     boolean hasGroupFunctionField =
         field.getFields().stream()
@@ -122,115 +112,12 @@ public class QueryTranslator {
                 item -> fieldTypeDefinition.getFieldOrError(item.getName()).isGroupFunctionField());
 
     JsonFunction jsonObjectFunction =
-        jsonObjectFunction(
-            field.getFields().stream()
-                .filter(
-                    subField -> {
-                      FieldDefinition subFieldDefinition =
-                          fieldTypeDefinition.asObject().getFieldOrError(subField.getName());
-                      return !subFieldDefinition.isFetchField()
-                          && !subFieldDefinition.isInvokeField()
-                          && !subFieldDefinition.isConnectionField();
-                    })
-                .map(
-                    subField ->
-                        new JsonKeyValuePair(
-                            new StringValue(
-                                    Optional.ofNullable(subField.getAlias())
-                                        .orElseGet(subField::getName))
-                                .toString(),
-                            inGroupBy
-                                ? fieldToExpression(
-                                    fieldTypeDefinition.asObject(),
-                                    fieldTypeDefinition
-                                        .asObject()
-                                        .getFieldOrError(subField.getName()),
-                                    subField,
-                                    level)
-                                : fieldToExpression(
-                                    fieldTypeDefinition.asObject(),
-                                    fieldTypeDefinition
-                                        .asObject()
-                                        .getFieldOrError(subField.getName()),
-                                    subField,
-                                    !fieldDefinition.getType().hasList() && hasGroupBy,
-                                    level),
-                            false,
-                            false))
-                .collect(Collectors.toList()));
-    if (!inGroupBy
-        && (hasGroupBy || hasGroupFunctionField)
-        && fieldDefinition.getType().hasList()) {
-      Column groupByColumn =
-          graphqlFieldToColumn(fieldTypeDefinition.getName(), INPUT_VALUE_GROUP_BY_NAME, level);
-      if (fieldDefinition.getType().hasList()) {
-        selectExpression = jsonExtractFunction(jsonAggregateFunction(groupByColumn, null, null));
-      } else {
-        selectExpression = jsonExtractFunction(groupByColumn);
-      }
-      fromItem =
-          new ParenthesedSelect()
-              .withSelect(objectFieldToPlainSelect(objectType, fieldDefinition, field, true, level))
-              .withAlias(
-                  new Alias(
-                      nameToDBEscape(
-                          graphqlTypeNameToTableAliaName(fieldTypeDefinition.getName(), level))));
-      return plainSelect.withFromItem(fromItem).addSelectItem(selectExpression);
-    } else {
-      if (fieldDefinition.getType().hasList() && !inGroupBy) {
-        if (documentManager.isOperationType(objectType)) {
-          Column objectColumn =
-              graphqlFieldToColumn(fieldTypeDefinition.getName(), "object", level);
-          selectExpression = jsonExtractFunction(jsonAggregateFunction(objectColumn, null, null));
-        } else {
-          selectExpression =
-              jsonExtractFunction(
-                  jsonAggregateFunction(
-                      jsonObjectFunction,
-                      argumentsToOrderByStream(fieldDefinition, field, level)
-                          .collect(Collectors.toList()),
-                      argumentsToLimit(fieldDefinition, field)));
-        }
-      } else {
-        selectExpression = jsonExtractFunction(jsonObjectFunction);
-      }
-      fromItem = table;
-    }
-
-    if (inGroupBy) {
-      plainSelect.addSelectItem(
-          selectExpression, new Alias(graphqlFieldNameToColumnName(INPUT_VALUE_GROUP_BY_NAME)));
-      plainSelect.setOrderByElements(
-          argumentsToOrderByStream(fieldDefinition, field, level).collect(Collectors.toList()));
-      plainSelect.setLimit(argumentsToLimit(fieldDefinition, field));
-      plainSelect.addJoins(
-          field.getFields().stream()
-              .filter(
-                  subField -> {
-                    FieldDefinition subFieldDefinition =
-                        fieldTypeDefinition.asObject().getFieldOrError(subField.getName());
-                    return !subFieldDefinition.isFetchField()
-                        && !subFieldDefinition.isInvokeField()
-                        && !subFieldDefinition.isConnectionField();
-                  })
-              .flatMap(
-                  subField ->
-                      groupFieldToJoinStream(
-                          fieldTypeDefinition.asObject(),
-                          fieldTypeDefinition.asObject().getFieldOrError(subField.getName()),
-                          subField,
-                          level + 1))
-              .collect(Collectors.toList()));
-    } else {
-      plainSelect.addSelectItem(selectExpression);
-    }
-
-    plainSelect
-        .withFromItem(fromItem)
-        .setGroupByElement(argumentsToGroupBy(fieldDefinition, field, level));
+        fieldToJsonObjectFunction(fieldTypeDefinition, field, !isListField && hasGroupBy, level);
 
     Optional<Expression> whereExpression;
-    if (documentManager.isMutationOperationType(objectType)) {
+    Stream<OrderByElement> orderByElements;
+    boolean isMutationOperationType = documentManager.isMutationOperationType(objectType);
+    if (isMutationOperationType) {
       String idName = fieldTypeDefinition.asObject().getIDFieldOrError().getName();
       whereExpression =
           fieldDefinition
@@ -521,7 +408,7 @@ public class QueryTranslator {
                                       level))
                               .withRightExpression(new LongValue(1))));
 
-      Optional<OrderByElement> listOrderByElement =
+      orderByElements =
           fieldDefinition
               .getArgumentOrEmpty(INPUT_VALUE_LIST_NAME)
               .flatMap(
@@ -531,96 +418,163 @@ public class QueryTranslator {
                           .filter(valueWithVariable -> !valueWithVariable.isNull())
                           .filter(valueWithVariable -> !valueWithVariable.isVariable())
                           .filter(ValueWithVariable::isArray)
-                          .map(
-                              valueWithVariable ->
-                                  valueWithVariable.asArray().getValueWithVariables().stream()
-                                      .filter(item -> !item.isNull())
-                                      .filter(ValueWithVariable::isObject)
-                                      .filter(
-                                          item ->
-                                              !item.asObject().containsKey(INPUT_VALUE_WHERE_NAME)
-                                                  || item.asObject()
-                                                      .getValueWithVariable(INPUT_VALUE_WHERE_NAME)
-                                                      .isNull()
-                                                  || !item.asObject()
-                                                      .getValueWithVariable(INPUT_VALUE_WHERE_NAME)
-                                                      .isObject()
-                                                  || item.asObject()
-                                                      .getValueWithVariable(INPUT_VALUE_WHERE_NAME)
-                                                      .asObject()
-                                                      .containsKey(idName))
-                                      .collect(Collectors.toList()))
-                          .filter(valueWithVariableList -> !valueWithVariableList.isEmpty())
-                          .map(
-                              valueWithVariableList ->
-                                  createIDOrderField(
-                                      graphqlFieldToColumn(table, idName),
-                                      IntStream.range(0, valueWithVariableList.size())
-                                          .mapToObj(
-                                              index -> {
-                                                if (valueWithVariableList.get(index).isVariable()) {
-                                                  return createInsertIdUserVariable(
-                                                      fieldTypeDefinition.getName(),
-                                                      idName,
-                                                      0,
-                                                      index);
-                                                } else {
-                                                  return valueWithVariableList
-                                                      .get(index)
-                                                      .asObject()
-                                                      .getValueWithVariableOrEmpty(idName)
-                                                      .flatMap(DBValueUtil::idValueToDBValue)
-                                                      .orElseGet(
-                                                          () ->
-                                                              valueWithVariableList
-                                                                  .get(index)
-                                                                  .asObject()
-                                                                  .getValueWithVariableOrEmpty(
-                                                                      INPUT_VALUE_WHERE_NAME)
-                                                                  .filter(
-                                                                      ValueWithVariable::isObject)
-                                                                  .flatMap(
-                                                                      whereInputValue ->
-                                                                          whereInputValue
-                                                                              .asObject()
-                                                                              .getValueWithVariableOrEmpty(
-                                                                                  idName))
-                                                                  .flatMap(
-                                                                      idInputValue ->
-                                                                          idInputValue
-                                                                              .asObject()
-                                                                              .getValueWithVariableOrEmpty(
-                                                                                  INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
-                                                                  .flatMap(
-                                                                      DBValueUtil::idValueToDBValue)
-                                                                  .orElseGet(
-                                                                      () ->
-                                                                          createInsertIdUserVariable(
-                                                                              fieldTypeDefinition
-                                                                                  .getName(),
-                                                                              idName,
-                                                                              0,
-                                                                              index)));
-                                                }
-                                              })
-                                          .collect(Collectors.toList()))));
-      if (listOrderByElement.isPresent()) {
-        if (documentManager.isOperationType(objectType)) {
-          subSelect.addOrderByElements(listOrderByElement.get());
-        } else {
-          plainSelect.addOrderByElements(listOrderByElement.get());
-        }
-      }
+                          .flatMap(
+                              valueWithVariable -> {
+                                List<ValueWithVariable> valueWithVariableList =
+                                    valueWithVariable.asArray().getValueWithVariables();
+                                List<Integer> indexList =
+                                    IntStream.range(0, valueWithVariableList.size())
+                                        .filter(index -> !valueWithVariableList.get(index).isNull())
+                                        .filter(
+                                            index -> valueWithVariableList.get(index).isObject())
+                                        .filter(
+                                            index ->
+                                                !valueWithVariableList
+                                                        .get(index)
+                                                        .asObject()
+                                                        .containsKey(INPUT_VALUE_WHERE_NAME)
+                                                    || valueWithVariableList
+                                                        .get(index)
+                                                        .asObject()
+                                                        .getValueWithVariable(
+                                                            INPUT_VALUE_WHERE_NAME)
+                                                        .isNull()
+                                                    || !valueWithVariableList
+                                                        .get(index)
+                                                        .asObject()
+                                                        .getValueWithVariable(
+                                                            INPUT_VALUE_WHERE_NAME)
+                                                        .isObject()
+                                                    || valueWithVariableList
+                                                        .get(index)
+                                                        .asObject()
+                                                        .getValueWithVariable(
+                                                            INPUT_VALUE_WHERE_NAME)
+                                                        .asObject()
+                                                        .containsKey(idName))
+                                        .boxed()
+                                        .collect(Collectors.toList());
+                                if (indexList.isEmpty()) {
+                                  return Optional.empty();
+                                }
+                                return Optional.of(
+                                    createIDOrderField(
+                                        graphqlFieldToColumn(table, idName),
+                                        indexList.stream()
+                                            .map(
+                                                index ->
+                                                    valueWithVariableList
+                                                        .get(index)
+                                                        .asObject()
+                                                        .getValueWithVariableOrEmpty(idName)
+                                                        .flatMap(DBValueUtil::idValueToDBValue)
+                                                        .orElseGet(
+                                                            () ->
+                                                                valueWithVariableList
+                                                                    .get(index)
+                                                                    .asObject()
+                                                                    .getValueWithVariableOrEmpty(
+                                                                        INPUT_VALUE_WHERE_NAME)
+                                                                    .filter(
+                                                                        ValueWithVariable::isObject)
+                                                                    .flatMap(
+                                                                        whereInputValue ->
+                                                                            whereInputValue
+                                                                                .asObject()
+                                                                                .getValueWithVariableOrEmpty(
+                                                                                    idName))
+                                                                    .flatMap(
+                                                                        idInputValue ->
+                                                                            idInputValue
+                                                                                .asObject()
+                                                                                .getValueWithVariableOrEmpty(
+                                                                                    INPUT_OPERATOR_INPUT_VALUE_VAL_NAME))
+                                                                    .flatMap(
+                                                                        DBValueUtil
+                                                                            ::idValueToDBValue)
+                                                                    .orElseGet(
+                                                                        () ->
+                                                                            createInsertIdUserVariable(
+                                                                                fieldTypeDefinition
+                                                                                    .getName(),
+                                                                                idName,
+                                                                                0,
+                                                                                index))))
+                                            .collect(Collectors.toList())));
+                              }))
+              .stream();
     } else {
       whereExpression =
           argumentsTranslator.argumentsToWhereExpression(objectType, fieldDefinition, field, level);
+      orderByElements = argumentsToOrderByStream(fieldDefinition, field, level);
+    }
+    boolean isOperationField = documentManager.isOperationType(objectType);
+
+    if (isOperationField && isListField) {
+      boolean hasGroupedResult = hasGroupBy || hasGroupFunctionField;
+      String subSelectColumnName = "json_object";
+      Column subSelectColumn =
+          graphqlFieldToColumn(fieldTypeDefinition.getName(), subSelectColumnName, level);
+
+      PlainSelect subSelect = new PlainSelect();
+      subSelect.addSelectItem(
+          jsonObjectFunction, new Alias(graphqlFieldNameToColumnName(subSelectColumnName)));
+      if (hasGroupedResult) {
+        subSelect.setGroupByElement(argumentsToGroupBy(fieldDefinition, field, level));
+        fieldDefinition
+            .getArgumentOrEmpty(INPUT_VALUE_ORDER_BY_NAME)
+            .map(
+                inputValue ->
+                    Optional.ofNullable(field.getArguments())
+                        .flatMap(arguments -> arguments.getArgumentOrEmpty(inputValue.getName()))
+                        .or(() -> Optional.ofNullable(inputValue.getDefaultValue()))
+                        .stream()
+                        .filter(ValueWithVariable::isObject)
+                        .flatMap(
+                            valueWithVariable ->
+                                valueWithVariableToOrderByStream(
+                                    fieldTypeDefinition, valueWithVariable, level))
+                        .collect(Collectors.toList()))
+            .ifPresent(subSelect::setOrderByElements);
+      } else {
+        subSelect.addOrderByElements(orderByElements.collect(Collectors.toList()));
+      }
+      subSelect.setLimit(argumentsToLimit(fieldDefinition, field));
+      subSelect.withFromItem(table);
+      whereExpression.ifPresent(subSelect::setWhere);
+
+      ParenthesedSelect parenthesedSelect =
+          new ParenthesedSelect()
+              .withSelect(subSelect)
+              .withAlias(
+                  new Alias(
+                      nameToDBEscape(
+                          graphqlTypeNameToTableAliaName(fieldTypeDefinition.getName(), level))));
+
+      return plainSelect
+          .addSelectItem(jsonExtractFunction(jsonAggregateFunction(subSelectColumn, null, null)))
+          .withFromItem(parenthesedSelect);
     }
 
-    if (!fieldDefinition.getType().hasList()) {
+    Expression selectExpression;
+    if (isListField) {
+      selectExpression =
+          jsonExtractFunction(
+              jsonAggregateFunction(
+                  jsonObjectFunction,
+                  orderByElements.collect(Collectors.toList()),
+                  argumentsToLimit(fieldDefinition, field)));
+    } else {
+      selectExpression = jsonExtractFunction(jsonObjectFunction);
       plainSelect.setLimit(new Limit().withOffset(new LongValue(0)).withRowCount(new LongValue(1)));
     }
 
-    if (!documentManager.isOperationType(objectType)) {
+    plainSelect
+        .addSelectItem(selectExpression)
+        .withFromItem(table)
+        .setGroupByElement(argumentsToGroupBy(fieldDefinition, field, level));
+
+    if (!isOperationField) {
       Table parentTable = typeToTable(objectType, level - 1);
       if (fieldDefinition.hasMapWith()) {
         Table withTable = graphqlTypeToTable(fieldDefinition.getMapWithTypeOrError(), level);
@@ -672,120 +626,39 @@ public class QueryTranslator {
                 .orElse(equalsTo));
       }
     } else {
-      if (fieldDefinition.getType().hasList() && !inGroupBy) {
-        subSelect =
-            new PlainSelect()
-                .addSelectItem(
-                    jsonObjectFunction, new Alias(graphqlFieldNameToColumnName("object")))
-                .withFromItem(table);
-        subSelect.addOrderByElements(
-            argumentsToOrderByStream(fieldDefinition, field, level).collect(Collectors.toList()));
-        subSelect.setLimit(argumentsToLimit(fieldDefinition, field));
-        whereExpression.ifPresent(subSelect::setWhere);
-        ParenthesedSelect parenthesedSelect =
-            new ParenthesedSelect()
-                .withSelect(subSelect)
-                .withAlias(
-                    new Alias(
-                        nameToDBEscape(
-                            graphqlTypeNameToTableAliaName(fieldTypeDefinition.getName(), level))));
-        plainSelect.withFromItem(parenthesedSelect);
-      } else {
-        whereExpression.ifPresent(plainSelect::setWhere);
-      }
+      whereExpression.ifPresent(plainSelect::setWhere);
       return plainSelect;
     }
   }
 
-  protected Stream<Join> groupFieldToJoinStream(
-      ObjectType objectType, FieldDefinition fieldDefinition, Field field, int level) {
-    Definition fieldTypeDefinition = documentManager.getFieldTypeDefinition(fieldDefinition);
-    if (!fieldTypeDefinition.isLeaf()) {
-      if (field.getFields() == null || field.getFields().isEmpty()) {
-        throw new GraphQLErrors(OBJECT_SELECTION_NOT_EXIST.bind(field.toString()));
-      }
-      Stream<Join> subFieldJoinStream =
-          field.getFields().stream()
-              .filter(
-                  subField -> {
-                    FieldDefinition subFieldDefinition =
-                        fieldTypeDefinition.asObject().getFieldOrError(subField.getName());
-                    return !subFieldDefinition.isFetchField()
-                        && !subFieldDefinition.isInvokeField()
-                        && !subFieldDefinition.isConnectionField();
-                  })
-              .flatMap(
-                  subField ->
-                      groupFieldToJoinStream(
-                          fieldTypeDefinition.asObject(),
-                          fieldTypeDefinition.asObject().getFieldOrError(subField.getName()),
-                          subField,
-                          level + 1));
-      Table table = typeToTable(fieldTypeDefinition.asObject(), level);
-      Table parentTable = typeToTable(objectType, level - 1);
-      if (fieldDefinition.hasMapWith()) {
-        Table withTable = graphqlTypeToTable(fieldDefinition.getMapWithTypeOrError(), level);
-        return Stream.concat(
-            Stream.of(
-                new Join()
-                    .withLeft(true)
-                    .setFromItem(withTable)
-                    .addOnExpression(
-                        new MultiAndExpression(
-                            Arrays.asList(
-                                new EqualsTo()
-                                    .withLeftExpression(
-                                        graphqlFieldToColumn(
-                                            withTable, fieldDefinition.getMapWithFromOrError()))
-                                    .withRightExpression(
-                                        graphqlFieldToColumn(
-                                            parentTable, fieldDefinition.getMapFromOrError())),
-                                new NotEqualsTo()
-                                    .withLeftExpression(
-                                        graphqlFieldToColumn(withTable, FIELD_DEPRECATED_NAME))
-                                    .withRightExpression(new LongValue(1))))),
-                new Join()
-                    .withLeft(true)
-                    .setFromItem(table)
-                    .addOnExpression(
-                        new MultiAndExpression(
-                            Arrays.asList(
-                                new EqualsTo()
-                                    .withLeftExpression(
-                                        graphqlFieldToColumn(
-                                            table, fieldDefinition.getMapToOrError()))
-                                    .withRightExpression(
-                                        graphqlFieldToColumn(
-                                            withTable, fieldDefinition.getMapWithToOrError())),
-                                new NotEqualsTo()
-                                    .withLeftExpression(
-                                        graphqlFieldToColumn(table, FIELD_DEPRECATED_NAME))
-                                    .withRightExpression(new LongValue(1)))))),
-            subFieldJoinStream);
-      } else {
-        return Stream.concat(
-            Stream.of(
-                new Join()
-                    .withLeft(true)
-                    .setFromItem(table)
-                    .addOnExpression(
-                        new MultiAndExpression(
-                            Arrays.asList(
-                                new EqualsTo()
-                                    .withLeftExpression(
-                                        graphqlFieldToColumn(
-                                            table, fieldDefinition.getMapToOrError()))
-                                    .withRightExpression(
-                                        graphqlFieldToColumn(
-                                            parentTable, fieldDefinition.getMapFromOrError())),
-                                new NotEqualsTo()
-                                    .withLeftExpression(
-                                        graphqlFieldToColumn(table, FIELD_DEPRECATED_NAME))
-                                    .withRightExpression(new LongValue(1)))))),
-            subFieldJoinStream);
-      }
-    }
-    return Stream.empty();
+  protected JsonFunction fieldToJsonObjectFunction(
+      ObjectType fieldTypeDefinition, Field field, boolean over, int level) {
+    return jsonObjectFunction(
+        field.getFields().stream()
+            .filter(
+                subField -> {
+                  FieldDefinition subFieldDefinition =
+                      fieldTypeDefinition.getFieldOrError(subField.getName());
+                  return !subFieldDefinition.isFetchField()
+                      && !subFieldDefinition.isInvokeField()
+                      && !subFieldDefinition.isConnectionField();
+                })
+            .map(
+                subField ->
+                    new JsonKeyValuePair(
+                        new StringValue(
+                                Optional.ofNullable(subField.getAlias())
+                                    .orElseGet(subField::getName))
+                            .toString(),
+                        fieldToExpression(
+                            fieldTypeDefinition,
+                            fieldTypeDefinition.getFieldOrError(subField.getName()),
+                            subField,
+                            over,
+                            level),
+                        false,
+                        false))
+            .collect(Collectors.toList()));
   }
 
   protected Expression fieldToExpression(

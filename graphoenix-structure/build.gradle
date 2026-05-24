@@ -1,12 +1,12 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        gradlePluginPortal()
-    }
-    dependencies {
-        classpath "org.graphoenix:graphoenix-gradle-plugin:$graphoenixVersion"
-    }
-}
+//buildscript {
+//    repositories {
+//        mavenLocal()
+//        gradlePluginPortal()
+//    }
+//    dependencies {
+//        classpath "org.graphoenix:graphoenix-gradle-plugin:$graphoenixVersion"
+//    }
+//}
 
 plugins {
     id 'java-library'
@@ -14,7 +14,7 @@ plugins {
     id 'maven-publish'
 }
 
-apply plugin: 'io.graphoenix'
+//apply plugin: 'io.graphoenix'
 
 protobuf {
     protoc {
