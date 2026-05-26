@@ -42,6 +42,9 @@ import static io.graphoenix.sql.utils.DBValueUtil.*;
 @ApplicationScoped
 public class MutationTranslator {
 
+  private static final List<String> MAP_WITH_META_FIELD_NAMES =
+      Arrays.asList("createTime", "createUserId", "createGroupId", "realmId");
+
   private final DocumentManager documentManager;
   private final PackageManager packageManager;
   private final ArgumentsTranslator argumentsTranslator;
@@ -927,8 +930,14 @@ public class MutationTranslator {
       Column isDeprecatedColumn = graphqlFieldToColumn(withTable, FIELD_DEPRECATED_NAME);
       return insertExpression(
           withTable,
-          Arrays.asList(withParentColumn, withColumn, isDeprecatedColumn),
-          Arrays.asList(parentColumnExpression, columnExpression, new LongValue(0)));
+          mapWithColumns(withTable, withParentColumn, withColumn, isDeprecatedColumn),
+          mapWithExpressions(
+              parentTable,
+              parentIdColumn,
+              parentIdExpression,
+              parentColumnExpression,
+              columnExpression,
+              new LongValue(0)));
     } else {
       if (documentManager.isMapAnchor(objectType, fieldDefinition)) {
         EqualsTo parentIdEqualsTo =
@@ -977,15 +986,58 @@ public class MutationTranslator {
     if (valueWithVariable.isVariable()) {
       return insertSelectExpression(
           withTable,
-          Arrays.asList(withParentColumn, withColumn, isDeprecatedColumn),
-          selectVariablesFromJsonArray(parentColumnExpression, fieldDefinition, valueWithVariable));
+          mapWithColumns(withTable, withParentColumn, withColumn, isDeprecatedColumn),
+          selectVariablesFromJsonArray(
+              parentTable,
+              parentIdColumn,
+              parentIdExpression,
+              parentColumnExpression,
+              fieldDefinition,
+              valueWithVariable));
     } else {
       return insertExpression(
           withTable,
-          Arrays.asList(withParentColumn, withColumn, isDeprecatedColumn),
-          Arrays.asList(
-              parentColumnExpression, leafValueToDBValue(valueWithVariable), new LongValue(0)));
+          mapWithColumns(withTable, withParentColumn, withColumn, isDeprecatedColumn),
+          mapWithExpressions(
+              parentTable,
+              parentIdColumn,
+              parentIdExpression,
+              parentColumnExpression,
+              leafValueToDBValue(valueWithVariable),
+              new LongValue(0)));
     }
+  }
+
+  protected List<Column> mapWithColumns(
+      Table withTable, Column withParentColumn, Column withColumn, Column isDeprecatedColumn) {
+    return Stream.concat(
+            Stream.of(withParentColumn, withColumn, isDeprecatedColumn),
+            MAP_WITH_META_FIELD_NAMES.stream().map(name -> graphqlFieldToColumn(withTable, name)))
+        .collect(Collectors.toList());
+  }
+
+  protected List<Expression> mapWithExpressions(
+      Table parentTable,
+      Column parentIdColumn,
+      Expression parentIdExpression,
+      Expression parentColumnExpression,
+      Expression columnExpression,
+      Expression isDeprecatedExpression) {
+    return Stream.concat(
+            Stream.of(parentColumnExpression, columnExpression, isDeprecatedExpression),
+            parentMetaExpressions(parentTable, parentIdColumn, parentIdExpression))
+        .collect(Collectors.toList());
+  }
+
+  protected Stream<Expression> parentMetaExpressions(
+      Table parentTable,
+      Column parentIdColumn,
+      Expression parentIdExpression) {
+    return MAP_WITH_META_FIELD_NAMES.stream()
+        .map(name -> graphqlFieldToColumn(parentTable, name))
+        .map(
+            metaColumn ->
+                selectFieldByIdExpression(parentTable, metaColumn, parentIdColumn, parentIdExpression));
   }
 
   protected Insert insertExpression(
@@ -1119,12 +1171,21 @@ public class MutationTranslator {
   }
 
   protected Select selectVariablesFromJsonArray(
+      Table parentTable,
+      Column parentIdColumn,
+      Expression parentIdExpression,
       Expression parentColumnExpression,
       FieldDefinition fieldDefinition,
       ValueWithVariable valueWithVariable) {
     return new PlainSelect()
         .addSelectItems(
-            parentColumnExpression, new Column(fieldDefinition.getName()), new LongValue(0))
+            Streams.concat(
+                    Stream.of(
+                        parentColumnExpression,
+                        new Column(fieldDefinition.getName()),
+                        new LongValue(0)),
+                    parentMetaExpressions(parentTable, parentIdColumn, parentIdExpression))
+                .toArray(Expression[]::new))
         .withFromItem(
             new JsonTableFunction()
                 .withJson(
