@@ -592,12 +592,14 @@ public class __TypeExpression implements MetaExpression {
     this.cond = cond;
   }
 
+  @Override
   public Collection<__TypeExpression> getExs() {
     return this.exs;
   }
 
-  public void setExs(Collection<__TypeExpression> exs) {
-    this.exs = exs;
+  @Override
+  public void setExs(Collection<? extends MetaExpression> exs) {
+    this.exs = (Collection<__TypeExpression>)exs;
   }
 
   public __TypeOrderBy getOrderBy() {

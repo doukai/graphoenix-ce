@@ -27,6 +27,8 @@ public @interface MetaExpression1 {
 
   StringExpression createGroupId() default @StringExpression;
 
+  MetaExpression2[] exs() default {};
+
   String $id() default "";
 
   String $realmId() default "";
@@ -40,4 +42,6 @@ public @interface MetaExpression1 {
   String $updateTime() default "";
 
   String $createGroupId() default "";
+
+  String $exs() default "";
 }

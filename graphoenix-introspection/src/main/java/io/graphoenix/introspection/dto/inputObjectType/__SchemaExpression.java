@@ -508,12 +508,14 @@ public class __SchemaExpression implements MetaExpression {
     this.cond = cond;
   }
 
+  @Override
   public Collection<__SchemaExpression> getExs() {
     return this.exs;
   }
 
-  public void setExs(Collection<__SchemaExpression> exs) {
-    this.exs = exs;
+  @Override
+  public void setExs(Collection<? extends MetaExpression> exs) {
+    this.exs = (Collection<__SchemaExpression>)exs;
   }
 
   public __SchemaOrderBy getOrderBy() {

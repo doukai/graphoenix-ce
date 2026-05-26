@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-public @interface MetaInput {
+public @interface MetaInput1 {
   String id() default "";
 
   int version() default 0;
@@ -29,7 +29,7 @@ public @interface MetaInput {
 
   String createGroupId() default "";
 
-  MetaExpression1 where() default @MetaExpression1;
+  MetaExpression2 where() default @MetaExpression2;
 
   String $id() default "";
 

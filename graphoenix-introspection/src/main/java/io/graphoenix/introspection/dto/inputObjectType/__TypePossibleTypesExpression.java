@@ -452,12 +452,14 @@ public class __TypePossibleTypesExpression implements MetaExpression {
     this.cond = cond;
   }
 
+  @Override
   public Collection<__TypePossibleTypesExpression> getExs() {
     return this.exs;
   }
 
-  public void setExs(Collection<__TypePossibleTypesExpression> exs) {
-    this.exs = exs;
+  @Override
+  public void setExs(Collection<? extends MetaExpression> exs) {
+    this.exs = (Collection<__TypePossibleTypesExpression>)exs;
   }
 
   public __TypePossibleTypesOrderBy getOrderBy() {

@@ -466,12 +466,14 @@ public class FileExpression implements MetaExpression {
     this.cond = cond;
   }
 
+  @Override
   public Collection<FileExpression> getExs() {
     return this.exs;
   }
 
-  public void setExs(Collection<FileExpression> exs) {
-    this.exs = exs;
+  @Override
+  public void setExs(Collection<? extends MetaExpression> exs) {
+    this.exs = (Collection<FileExpression>)exs;
   }
 
   public FileOrderBy getOrderBy() {

@@ -438,12 +438,14 @@ public class __DirectiveLocationsRelationExpression implements MetaExpression {
     this.cond = cond;
   }
 
+  @Override
   public Collection<__DirectiveLocationsRelationExpression> getExs() {
     return this.exs;
   }
 
-  public void setExs(Collection<__DirectiveLocationsRelationExpression> exs) {
-    this.exs = exs;
+  @Override
+  public void setExs(Collection<? extends MetaExpression> exs) {
+    this.exs = (Collection<__DirectiveLocationsRelationExpression>)exs;
   }
 
   public __DirectiveLocationsRelationOrderBy getOrderBy() {

@@ -522,12 +522,14 @@ public class __InputValueExpression implements MetaExpression {
     this.cond = cond;
   }
 
+  @Override
   public Collection<__InputValueExpression> getExs() {
     return this.exs;
   }
 
-  public void setExs(Collection<__InputValueExpression> exs) {
-    this.exs = exs;
+  @Override
+  public void setExs(Collection<? extends MetaExpression> exs) {
+    this.exs = (Collection<__InputValueExpression>)exs;
   }
 
   public __InputValueOrderBy getOrderBy() {

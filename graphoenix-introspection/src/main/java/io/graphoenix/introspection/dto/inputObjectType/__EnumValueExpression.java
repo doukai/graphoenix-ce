@@ -466,12 +466,14 @@ public class __EnumValueExpression implements MetaExpression {
     this.cond = cond;
   }
 
+  @Override
   public Collection<__EnumValueExpression> getExs() {
     return this.exs;
   }
 
-  public void setExs(Collection<__EnumValueExpression> exs) {
-    this.exs = exs;
+  @Override
+  public void setExs(Collection<? extends MetaExpression> exs) {
+    this.exs = (Collection<__EnumValueExpression>)exs;
   }
 
   public __EnumValueOrderBy getOrderBy() {

@@ -25,6 +25,8 @@ public interface MetaInput {
 
   String createGroupId = null;
 
+  MetaExpression where = null;
+
   default String getId() {
     return id;
   }
@@ -72,4 +74,10 @@ public interface MetaInput {
   }
 
   void setCreateGroupId(String createGroupId);
+
+  default MetaExpression getWhere() {
+    return where;
+  }
+
+  void setWhere(MetaExpression where);
 }

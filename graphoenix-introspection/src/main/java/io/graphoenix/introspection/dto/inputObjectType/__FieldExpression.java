@@ -508,12 +508,14 @@ public class __FieldExpression implements MetaExpression {
     this.cond = cond;
   }
 
+  @Override
   public Collection<__FieldExpression> getExs() {
     return this.exs;
   }
 
-  public void setExs(Collection<__FieldExpression> exs) {
-    this.exs = exs;
+  @Override
+  public void setExs(Collection<? extends MetaExpression> exs) {
+    this.exs = (Collection<__FieldExpression>)exs;
   }
 
   public __FieldOrderBy getOrderBy() {

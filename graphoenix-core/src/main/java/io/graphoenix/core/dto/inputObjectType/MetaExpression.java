@@ -1,6 +1,7 @@
 package io.graphoenix.core.dto.inputObjectType;
 
 import jakarta.annotation.Generated;
+import java.util.Collection;
 import org.eclipse.microprofile.graphql.Input;
 
 @Input
@@ -19,6 +20,8 @@ public interface MetaExpression {
   StringExpression updateTime = null;
 
   StringExpression createGroupId = null;
+
+  Collection<? extends MetaExpression> exs = null;
 
   default StringExpression getId() {
     return id;
@@ -61,4 +64,10 @@ public interface MetaExpression {
   }
 
   void setCreateGroupId(StringExpression createGroupId);
+
+  default Collection<? extends MetaExpression> getExs() {
+    return exs;
+  }
+
+  void setExs(Collection<? extends MetaExpression> exs);
 }

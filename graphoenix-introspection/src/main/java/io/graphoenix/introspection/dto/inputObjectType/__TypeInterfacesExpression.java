@@ -454,12 +454,14 @@ public class __TypeInterfacesExpression implements MetaExpression {
     this.cond = cond;
   }
 
+  @Override
   public Collection<__TypeInterfacesExpression> getExs() {
     return this.exs;
   }
 
-  public void setExs(Collection<__TypeInterfacesExpression> exs) {
-    this.exs = exs;
+  @Override
+  public void setExs(Collection<? extends MetaExpression> exs) {
+    this.exs = (Collection<__TypeInterfacesExpression>)exs;
   }
 
   public __TypeInterfacesOrderBy getOrderBy() {

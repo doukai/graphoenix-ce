@@ -510,12 +510,14 @@ public class __DirectiveExpression implements MetaExpression {
     this.cond = cond;
   }
 
+  @Override
   public Collection<__DirectiveExpression> getExs() {
     return this.exs;
   }
 
-  public void setExs(Collection<__DirectiveExpression> exs) {
-    this.exs = exs;
+  @Override
+  public void setExs(Collection<? extends MetaExpression> exs) {
+    this.exs = (Collection<__DirectiveExpression>)exs;
   }
 
   public __DirectiveOrderBy getOrderBy() {

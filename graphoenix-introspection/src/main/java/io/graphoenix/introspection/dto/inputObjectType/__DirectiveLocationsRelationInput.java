@@ -1,6 +1,7 @@
 package io.graphoenix.introspection.dto.inputObjectType;
 
 import com.dslplatform.json.CompiledJson;
+import io.graphoenix.core.dto.inputObjectType.MetaExpression;
 import io.graphoenix.core.dto.inputObjectType.MetaInput;
 import io.graphoenix.introspection.dto.enumType.__DirectiveLocation;
 import jakarta.annotation.Generated;
@@ -256,11 +257,13 @@ public class __DirectiveLocationsRelationInput implements MetaInput {
     this.list = list;
   }
 
+  @Override
   public __DirectiveLocationsRelationExpression getWhere() {
     return this.where;
   }
 
-  public void setWhere(__DirectiveLocationsRelationExpression where) {
-    this.where = where;
+  @Override
+  public void setWhere(MetaExpression where) {
+    this.where = (__DirectiveLocationsRelationExpression)where;
   }
 }

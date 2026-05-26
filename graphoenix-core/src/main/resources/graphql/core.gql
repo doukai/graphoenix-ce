@@ -72,6 +72,7 @@ input MetaInput @interface {
     updateUserId: String
     updateTime: Timestamp
     createGroupId: String
+    where: MetaExpression
 }
 input MetaExpression @interface {
     id: StringExpression
@@ -81,6 +82,7 @@ input MetaExpression @interface {
     updateUserId: StringExpression
     updateTime: StringExpression
     createGroupId: StringExpression
+    exs: [MetaExpression]
 }
 type PageInfo @container {
     hasNextPage: Boolean!
