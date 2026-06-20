@@ -5,6 +5,7 @@ import io.graphoenix.core.handler.DocumentManager;
 import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.AbstractDefinition;
 import io.graphoenix.spi.graphql.Definition;
+import io.graphoenix.spi.graphql.common.Arguments;
 import io.graphoenix.spi.graphql.common.Directive;
 import io.graphoenix.spi.graphql.common.ValueWithVariable;
 import io.graphoenix.spi.graphql.operation.Field;
@@ -29,6 +30,7 @@ import java.util.stream.Stream;
 import static io.graphoenix.core.handler.before.ValueHandler.VALUE_HANDLER_PRIORITY;
 import static io.graphoenix.spi.constant.Hammurabi.*;
 import static io.graphoenix.spi.error.GraphQLErrorType.OBJECT_SELECTION_NOT_EXIST;
+import static io.graphoenix.spi.utils.ValueWithVariableUtil.collectValueWithVariableMap;
 
 @ApplicationScoped
 @Priority(ConnectionSplitter.CONNECTION_SPLITTER_PRIORITY)
@@ -136,23 +138,24 @@ public class ConnectionSplitter implements OperationBeforeHandler {
                       Optional.ofNullable(field.getAlias()).orElseGet(field::getName) + SUFFIX_LIST)
                   .setSelections(fieldStream.collect(Collectors.toList()))
                   .setArguments(
-                      Stream.ofNullable(field.getArguments())
-                          .flatMap(arguments -> arguments.getArguments().entrySet().stream())
-                          .map(
-                              entry -> {
-                                if (entry.getKey().equals(INPUT_VALUE_FIRST_NAME)
-                                    || entry.getKey().equals(INPUT_VALUE_LAST_NAME)
-                                        && !entry.getValue().isNull()) {
-                                  return new AbstractMap.SimpleEntry<>(
-                                      entry.getKey(),
-                                      ValueWithVariable.of(
-                                          entry.getValue().asInt().getIntegerValue() + 1));
-                                } else {
-                                  return new AbstractMap.SimpleEntry<>(
-                                      entry.getKey(), entry.getValue());
-                                }
-                              })
-                          .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)))
+                      new Arguments(
+                          collectValueWithVariableMap(
+                              Stream.ofNullable(field.getArguments())
+                                  .flatMap(arguments -> arguments.getArguments().entrySet().stream())
+                                  .map(
+                                      entry -> {
+                                        if (entry.getKey().equals(INPUT_VALUE_FIRST_NAME)
+                                            || entry.getKey().equals(INPUT_VALUE_LAST_NAME)
+                                                && !entry.getValue().isNull()) {
+                                          return new AbstractMap.SimpleEntry<>(
+                                              entry.getKey(),
+                                              ValueWithVariable.of(
+                                                  entry.getValue().asInt().getIntegerValue() + 1));
+                                        } else {
+                                          return new AbstractMap.SimpleEntry<>(
+                                              entry.getKey(), entry.getValue());
+                                        }
+                                      }))))
                   .addDirective(new Directive(DIRECTIVE_HIDE_NAME));
             });
   }
@@ -176,17 +179,20 @@ public class ConnectionSplitter implements OperationBeforeHandler {
                   .addSelection(
                       new Field(fieldTypeDefinition.getIDFieldOrError().getName() + SUFFIX_COUNT))
                   .setArguments(
-                      Stream.ofNullable(field.getArguments())
-                          .flatMap(arguments -> arguments.getArguments().entrySet().stream())
-                          .filter(
-                              entry ->
-                                  !entry.getKey().equals(INPUT_VALUE_FIRST_NAME)
-                                      && !entry.getKey().equals(INPUT_VALUE_LAST_NAME))
-                          .map(
-                              entry ->
-                                  new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue()))
-                          .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)))
+                      new Arguments(
+                          collectValueWithVariableMap(
+                              Stream.ofNullable(field.getArguments())
+                                  .flatMap(arguments -> arguments.getArguments().entrySet().stream())
+                                  .filter(
+                                      entry ->
+                                          !entry.getKey().equals(INPUT_VALUE_FIRST_NAME)
+                                              && !entry.getKey().equals(INPUT_VALUE_LAST_NAME))
+                                  .map(
+                                      entry ->
+                                          new AbstractMap.SimpleEntry<>(
+                                              entry.getKey(), entry.getValue())))))
                   .addDirective(new Directive(DIRECTIVE_HIDE_NAME));
             });
   }
+
 }

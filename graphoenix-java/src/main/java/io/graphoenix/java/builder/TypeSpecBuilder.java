@@ -1,6 +1,7 @@
 package io.graphoenix.java.builder;
 
 import com.dslplatform.json.CompiledJson;
+import com.dslplatform.json.JsonAttribute;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Streams;
 import com.squareup.javapoet.TypeName;
@@ -97,7 +98,8 @@ public class TypeSpecBuilder {
                   FieldSpec fieldSpec = fieldSpecs.get(index);
                   FieldDefinition fieldDefinition = fieldDefinitions.get(index);
                   return Stream.concat(
-                      Stream.of(buildGetter(fieldSpec, fieldDefinition, objectType.getInterfaces())),
+                      Stream.of(
+                          buildGetter(fieldSpec, fieldDefinition, objectType.getInterfaces())),
                       buildSetterList(fieldSpec, fieldDefinition, objectType.getInterfaces())
                           .stream());
                 })
@@ -215,12 +217,12 @@ public class TypeSpecBuilder {
                     FieldSpec fieldSpec = fieldSpecs.get(index);
                     InputValue inputValue = inputValues.get(index);
                     return Stream.concat(
-                          Stream.of(
-                              buildInputValueGetter(
-                                  fieldSpec, inputValue, inputObjectType.getInterfaces())),
-                          buildInputValueSetterList(
-                                  fieldSpec, inputValue, inputObjectType.getInterfaces())
-                              .stream());
+                        Stream.of(
+                            buildInputValueGetter(
+                                fieldSpec, inputValue, inputObjectType.getInterfaces())),
+                        buildInputValueSetterList(
+                            fieldSpec, inputValue, inputObjectType.getInterfaces())
+                            .stream());
                   })
               .collect(Collectors.toList());
       builder.addFields(fieldSpecs).addMethods(methodSpecs);
@@ -1079,11 +1081,18 @@ public class TypeSpecBuilder {
   }
 
   private List<MethodSpec> buildSetterList(
-      FieldSpec fieldSpec, FieldDefinition fieldDefinition, Collection<String> implementsInterfaces) {
+      FieldSpec fieldSpec,
+      FieldDefinition fieldDefinition,
+      Collection<String> implementsInterfaces) {
     List<TypeName> typeNames =
         getFieldTypeStream(fieldDefinition.getName(), implementsInterfaces)
-            .map(interfaceType -> buildFieldSetterParameterType(fieldDefinition.getType(), interfaceType))
+            .map(
+                interfaceType ->
+                    buildFieldSetterParameterType(fieldDefinition.getType(), interfaceType))
             .collect(Collectors.toList());
+    boolean hasConcreteSetter =
+        shouldBuildConcreteSetter(fieldDefinition.getType(), fieldSpec.type, typeNames);
+    boolean hasExactJsonAccessors = shouldBuildExactJsonAccessors(fieldSpec.type, typeNames);
 
     List<MethodSpec> methodSpecList =
         typeNames.stream()
@@ -1100,13 +1109,16 @@ public class TypeSpecBuilder {
                 })
             .collect(Collectors.toList());
 
-    if (typeNames.isEmpty()) {
+    if (hasConcreteSetter) {
       String setterName = getFieldSetterMethodName(fieldSpec.name);
       MethodSpec.Builder methodBuilder =
           MethodSpec.methodBuilder(setterName).addModifiers(Modifier.PUBLIC);
       methodBuilder.addParameter(fieldSpec.type, fieldSpec.name);
       methodBuilder.addStatement("this." + fieldSpec.name + " = " + fieldSpec.name);
       methodSpecList.add(methodBuilder.build());
+    }
+    if (hasExactJsonAccessors) {
+      methodSpecList.addAll(buildExactJsonAccessorList(fieldSpec, fieldDefinition.getName()));
     }
     return methodSpecList;
   }
@@ -1134,7 +1146,9 @@ public class TypeSpecBuilder {
   }
 
   private MethodSpec buildGetter(
-      FieldSpec fieldSpec, FieldDefinition fieldDefinition, Collection<String> implementsInterfaces) {
+      FieldSpec fieldSpec,
+      FieldDefinition fieldDefinition,
+      Collection<String> implementsInterfaces) {
     String getterName = getFieldGetterMethodName(fieldSpec.name);
     MethodSpec.Builder methodBuilder =
         MethodSpec.methodBuilder(getterName).returns(fieldSpec.type).addModifiers(Modifier.PUBLIC);
@@ -1154,6 +1168,9 @@ public class TypeSpecBuilder {
                 interfaceType ->
                     buildInputValueSetterParameterType(inputValue.getType(), interfaceType))
             .collect(Collectors.toList());
+    boolean hasConcreteSetter =
+        shouldBuildConcreteSetter(inputValue.getType(), fieldSpec.type, typeNames);
+    boolean hasExactJsonAccessors = shouldBuildExactJsonAccessors(fieldSpec.type, typeNames);
 
     List<MethodSpec> methodSpecList =
         typeNames.stream()
@@ -1170,7 +1187,7 @@ public class TypeSpecBuilder {
                 })
             .collect(Collectors.toList());
 
-    if (typeNames.isEmpty()) {
+    if (hasConcreteSetter) {
       String setterName = getFieldSetterMethodName(fieldSpec.name);
       MethodSpec.Builder methodBuilder =
           MethodSpec.methodBuilder(setterName).addModifiers(Modifier.PUBLIC);
@@ -1178,7 +1195,38 @@ public class TypeSpecBuilder {
       methodBuilder.addStatement("this." + fieldSpec.name + " = " + fieldSpec.name);
       methodSpecList.add(methodBuilder.build());
     }
+    if (hasExactJsonAccessors) {
+      methodSpecList.addAll(buildExactJsonAccessorList(fieldSpec, inputValue.getName()));
+    }
     return methodSpecList;
+  }
+
+  private boolean shouldBuildConcreteSetter(
+      io.graphoenix.spi.graphql.type.Type type, TypeName fieldType, List<TypeName> setterTypes) {
+    return setterTypes.isEmpty() || !type.hasList() && !setterTypes.contains(fieldType);
+  }
+
+  private boolean shouldBuildExactJsonAccessors(TypeName fieldType, List<TypeName> setterTypes) {
+    return !setterTypes.isEmpty() && !setterTypes.contains(fieldType);
+  }
+
+  private List<MethodSpec> buildExactJsonAccessorList(FieldSpec fieldSpec, String jsonName) {
+    String jsonAccessorName = "__dslJson_" + fieldSpec.name;
+    MethodSpec.Builder getterBuilder =
+        MethodSpec.methodBuilder(jsonAccessorName)
+            .addModifiers(Modifier.PUBLIC)
+            .returns(fieldSpec.type)
+            .addAnnotation(
+                AnnotationSpec.builder(JsonAttribute.class)
+                    .addMember("name", "$S", jsonName)
+                    .build())
+            .addStatement("return this." + fieldSpec.name);
+    MethodSpec.Builder setterBuilder =
+        MethodSpec.methodBuilder(jsonAccessorName)
+            .addModifiers(Modifier.PUBLIC)
+            .addParameter(fieldSpec.type, fieldSpec.name)
+            .addStatement("this." + fieldSpec.name + " = " + fieldSpec.name);
+    return List.of(getterBuilder.build(), setterBuilder.build());
   }
 
   private TypeName buildInputValueSetterParameterType(

@@ -1,6 +1,7 @@
 package io.graphoenix.file.dto.inputObjectType;
 
 import com.dslplatform.json.CompiledJson;
+import com.dslplatform.json.JsonAttribute;
 import io.graphoenix.core.dto.enumType.Conditional;
 import io.graphoenix.core.dto.inputObjectType.IntExpression;
 import io.graphoenix.core.dto.inputObjectType.MetaExpression;
@@ -474,6 +475,20 @@ public class FileExpression implements MetaExpression {
   @Override
   public void setExs(Collection<? extends MetaExpression> exs) {
     this.exs = (Collection<FileExpression>)exs;
+  }
+
+  @JsonAttribute(
+      name = "exs"
+  )
+  public Collection<FileExpression> __dslJson_exs() {
+    return this.exs;
+  }
+
+  @JsonAttribute(
+      name = "exs"
+  )
+  public void __dslJson_exs(Collection<FileExpression> exs) {
+    this.exs = exs;
   }
 
   public FileOrderBy getOrderBy() {

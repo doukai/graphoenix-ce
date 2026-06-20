@@ -8,6 +8,7 @@ import org.eclipse.microprofile.graphql.GraphQLApi;
 import org.eclipse.microprofile.graphql.Source;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @GraphQLApi
 @ApplicationScoped
@@ -22,17 +23,17 @@ public class MetaInputApi {
 
   public MetaInput invokeMetaInput(@Source MetaInput metaInput) {
     LocalDateTime now = LocalDateTime.now();
-    if (metaInput.getCreateTime() == null) {
+    if (metaInput.getId() == null && metaInput.getWhere() == null) {
       metaInput.setCreateTime(now);
     } else {
       metaInput.setUpdateTime(now);
     }
 
     if (mutationConfig.getOcc()) {
-      if (metaInput.getVersion() != null) {
-        metaInput.setVersion(metaInput.getVersion() + 1);
-      } else {
+      if (metaInput.getId() == null && metaInput.getWhere() == null) {
         metaInput.setVersion(0);
+      } else {
+        metaInput.setVersion(Objects.requireNonNullElse(metaInput.getVersion(), 0) + 1);
       }
     }
     return metaInput;

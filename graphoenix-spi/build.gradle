@@ -33,6 +33,7 @@ dependencies {
     implementation 'org.tinylog:jcl-tinylog'
 
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.eclipse.parsson:jakarta.json'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 

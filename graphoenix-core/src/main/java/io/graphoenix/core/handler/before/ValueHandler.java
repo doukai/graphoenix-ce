@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.graphoenix.core.handler.before.FragmentHandler.FRAGMENT_HANDLER_PRIORITY;
+import static io.graphoenix.spi.utils.ValueWithVariableUtil.collectValueWithVariableMap;
 
 @ApplicationScoped
 @Priority(ValueHandler.VALUE_HANDLER_PRIORITY)
@@ -49,20 +50,21 @@ public class ValueHandler implements OperationBeforeHandler {
             field ->
                 Stream.of(
                     field.setArguments(
-                        Stream.ofNullable(field.getArguments())
-                            .map(Arguments::getArguments)
-                            .flatMap(jsonValues -> jsonValues.entrySet().stream())
-                            .peek(
-                                valueWithVariableEntry -> {
-                                  InputValue inputValue =
-                                      objectType
-                                          .getFieldOrError(field.getName())
-                                          .getArgument(valueWithVariableEntry.getKey());
-                                  valueWithVariableEntry.setValue(
-                                      replaceEnumValue(
-                                          inputValue, valueWithVariableEntry.getValue()));
-                                })
-                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)))));
+                        new Arguments(
+                            collectValueWithVariableMap(
+                                Stream.ofNullable(field.getArguments())
+                                    .map(Arguments::getArguments)
+                                    .flatMap(jsonValues -> jsonValues.entrySet().stream())
+                                    .peek(
+                                        valueWithVariableEntry -> {
+                                          InputValue inputValue =
+                                              objectType
+                                                  .getFieldOrError(field.getName())
+                                                  .getArgument(valueWithVariableEntry.getKey());
+                                          valueWithVariableEntry.setValue(
+                                              replaceEnumValue(
+                                                  inputValue, valueWithVariableEntry.getValue()));
+                                        }))))));
   }
 
   public ValueWithVariable replaceEnumValue(
@@ -74,18 +76,18 @@ public class ValueHandler implements OperationBeforeHandler {
               .collect(Collectors.toList()));
     } else if (valueWithVariable.isObject()) {
       return new ObjectValueWithVariable(
-          valueWithVariable.asObject().getObjectValueWithVariable().entrySet().stream()
-              .peek(
-                  valueWithVariableEntry -> {
-                    InputValue fieldInputValue =
-                        documentManager
-                            .getInputValueTypeDefinition(inputValue)
-                            .asInputObject()
-                            .getInputValue(valueWithVariableEntry.getKey());
-                    valueWithVariableEntry.setValue(
-                        replaceEnumValue(fieldInputValue, valueWithVariableEntry.getValue()));
-                  })
-              .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+          collectValueWithVariableMap(
+              valueWithVariable.asObject().getObjectValueWithVariable().entrySet().stream()
+                  .peek(
+                      valueWithVariableEntry -> {
+                        InputValue fieldInputValue =
+                            documentManager
+                                .getInputValueTypeDefinition(inputValue)
+                                .asInputObject()
+                                .getInputValue(valueWithVariableEntry.getKey());
+                        valueWithVariableEntry.setValue(
+                            replaceEnumValue(fieldInputValue, valueWithVariableEntry.getValue()));
+                      })));
     } else {
       Definition inputValueTypeDefinition = documentManager.getInputValueTypeDefinition(inputValue);
       if (inputValueTypeDefinition.isEnum()
@@ -98,4 +100,5 @@ public class ValueHandler implements OperationBeforeHandler {
       }
     }
   }
+
 }

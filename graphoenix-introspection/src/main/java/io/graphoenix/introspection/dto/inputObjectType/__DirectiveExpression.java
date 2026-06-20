@@ -1,6 +1,7 @@
 package io.graphoenix.introspection.dto.inputObjectType;
 
 import com.dslplatform.json.CompiledJson;
+import com.dslplatform.json.JsonAttribute;
 import io.graphoenix.core.dto.enumType.Conditional;
 import io.graphoenix.core.dto.inputObjectType.BooleanExpression;
 import io.graphoenix.core.dto.inputObjectType.IntExpression;
@@ -518,6 +519,20 @@ public class __DirectiveExpression implements MetaExpression {
   @Override
   public void setExs(Collection<? extends MetaExpression> exs) {
     this.exs = (Collection<__DirectiveExpression>)exs;
+  }
+
+  @JsonAttribute(
+      name = "exs"
+  )
+  public Collection<__DirectiveExpression> __dslJson_exs() {
+    return this.exs;
+  }
+
+  @JsonAttribute(
+      name = "exs"
+  )
+  public void __dslJson_exs(Collection<__DirectiveExpression> exs) {
+    this.exs = exs;
   }
 
   public __DirectiveOrderBy getOrderBy() {

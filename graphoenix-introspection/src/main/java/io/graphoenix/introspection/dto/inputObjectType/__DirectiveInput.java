@@ -1,6 +1,7 @@
 package io.graphoenix.introspection.dto.inputObjectType;
 
 import com.dslplatform.json.CompiledJson;
+import com.dslplatform.json.JsonAttribute;
 import io.graphoenix.core.dto.inputObjectType.MetaExpression;
 import io.graphoenix.core.dto.inputObjectType.MetaInput;
 import io.graphoenix.introspection.dto.enumType.__DirectiveLocation;
@@ -336,5 +337,23 @@ public class __DirectiveInput implements MetaInput {
   @Override
   public void setWhere(MetaExpression where) {
     this.where = (__DirectiveExpression)where;
+  }
+
+  public void setWhere(__DirectiveExpression where) {
+    this.where = where;
+  }
+
+  @JsonAttribute(
+      name = "where"
+  )
+  public __DirectiveExpression __dslJson_where() {
+    return this.where;
+  }
+
+  @JsonAttribute(
+      name = "where"
+  )
+  public void __dslJson_where(__DirectiveExpression where) {
+    this.where = where;
   }
 }

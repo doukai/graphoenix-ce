@@ -50,7 +50,9 @@ public class Arguments extends AbstractMap<String, JsonValue>
             .collect(
                 Collectors.toMap(
                     entry -> (String) entry.getKey(),
-                    entry -> ValueWithVariable.of(entry.getValue())));
+                    entry -> ValueWithVariable.of(entry.getValue()),
+                    (x, y) -> y,
+                    LinkedHashMap::new));
   }
 
   public Arguments(JsonObject jsonObject) {
@@ -67,7 +69,9 @@ public class Arguments extends AbstractMap<String, JsonValue>
             .collect(
                 Collectors.toMap(
                     entry -> getNameFromElement(entry.getKey()),
-                    entry -> ValueWithVariable.of(entry.getValue())));
+                    entry -> ValueWithVariable.of(entry.getValue()),
+                    (x, y) -> y,
+                    LinkedHashMap::new));
   }
 
   public Arguments(Object arguments) {
@@ -77,7 +81,9 @@ public class Arguments extends AbstractMap<String, JsonValue>
             .collect(
                 Collectors.toMap(
                     Field::getName,
-                    field -> ValueWithVariable.of(getFieldValue(arguments, field))));
+                    field -> ValueWithVariable.of(getFieldValue(arguments, field)),
+                    (x, y) -> y,
+                    LinkedHashMap::new));
   }
 
   public Arguments(ExecutableElement executableElement, AnnotationMirror fieldAnnotationMirror) {
@@ -98,7 +104,9 @@ public class Arguments extends AbstractMap<String, JsonValue>
                             annotationValueToValue(executableElement, entry.getValue())));
                   }
                 })
-            .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+            .collect(
+                Collectors.toMap(
+                    Entry::getKey, Entry::getValue, (x, y) -> y, LinkedHashMap::new));
   }
 
   private Object annotationValueToValue(
@@ -161,7 +169,9 @@ public class Arguments extends AbstractMap<String, JsonValue>
                   } else {
                     return annotationValueToValue(executableElement, entry.getValue());
                   }
-                }));
+                },
+                (x, y) -> y,
+                LinkedHashMap::new));
   }
 
   public Map<String, ValueWithVariable> getArguments() {
@@ -194,7 +204,7 @@ public class Arguments extends AbstractMap<String, JsonValue>
   public Set<Entry<String, JsonValue>> entrySet() {
     return arguments.entrySet().stream()
         .map(entry -> new SimpleEntry<>(entry.getKey(), (JsonValue) entry.getValue()))
-        .collect(Collectors.toSet());
+        .collect(Collectors.toCollection(LinkedHashSet::new));
   }
 
   @Override

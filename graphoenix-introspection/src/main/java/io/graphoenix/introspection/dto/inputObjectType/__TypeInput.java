@@ -1,6 +1,7 @@
 package io.graphoenix.introspection.dto.inputObjectType;
 
 import com.dslplatform.json.CompiledJson;
+import com.dslplatform.json.JsonAttribute;
 import io.graphoenix.core.dto.inputObjectType.MetaExpression;
 import io.graphoenix.core.dto.inputObjectType.MetaInput;
 import io.graphoenix.introspection.dto.enumType.__TypeKind;
@@ -419,5 +420,23 @@ public class __TypeInput implements MetaInput {
   @Override
   public void setWhere(MetaExpression where) {
     this.where = (__TypeExpression)where;
+  }
+
+  public void setWhere(__TypeExpression where) {
+    this.where = where;
+  }
+
+  @JsonAttribute(
+      name = "where"
+  )
+  public __TypeExpression __dslJson_where() {
+    return this.where;
+  }
+
+  @JsonAttribute(
+      name = "where"
+  )
+  public void __dslJson_where(__TypeExpression where) {
+    this.where = where;
   }
 }

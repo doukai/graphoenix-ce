@@ -1,6 +1,7 @@
 package io.graphoenix.file.dto.inputObjectType;
 
 import com.dslplatform.json.CompiledJson;
+import com.dslplatform.json.JsonAttribute;
 import io.graphoenix.core.dto.inputObjectType.MetaExpression;
 import io.graphoenix.core.dto.inputObjectType.MetaInput;
 import jakarta.annotation.Generated;
@@ -292,5 +293,23 @@ public class FileInput implements MetaInput {
   @Override
   public void setWhere(MetaExpression where) {
     this.where = (FileExpression)where;
+  }
+
+  public void setWhere(FileExpression where) {
+    this.where = where;
+  }
+
+  @JsonAttribute(
+      name = "where"
+  )
+  public FileExpression __dslJson_where() {
+    return this.where;
+  }
+
+  @JsonAttribute(
+      name = "where"
+  )
+  public void __dslJson_where(FileExpression where) {
+    this.where = where;
   }
 }

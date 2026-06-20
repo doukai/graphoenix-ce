@@ -13,9 +13,12 @@ import reactor.core.publisher.Mono;
 
 import java.util.AbstractMap;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static io.graphoenix.spi.utils.ValueWithVariableUtil.collectValueWithVariableMap;
 
 @ApplicationScoped
 @Priority(VariableHandler.VARIABLE_HANDLER_PRIORITY)
@@ -60,24 +63,26 @@ public class VariableHandler implements OperationBeforeHandler {
             field ->
                 field
                     .setArguments(
-                        Stream.ofNullable(field.getArguments())
-                            .map(Arguments::getArguments)
-                            .flatMap(jsonValues -> jsonValues.entrySet().stream())
-                            .filter(
-                                valueWithVariableEntry ->
-                                    !valueWithVariableEntry.getValue().isVariable()
-                                        || variables.containsKey(
-                                            valueWithVariableEntry
-                                                .getValue()
-                                                .asVariable()
-                                                .getName()))
-                            .map(
-                                valueWithVariableEntry ->
-                                    new AbstractMap.SimpleEntry<>(
-                                        valueWithVariableEntry.getKey(),
-                                        replaceVariables(
-                                            valueWithVariableEntry.getValue(), variables)))
-                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)))
+                        new Arguments(
+                            collectValueWithVariableMap(
+                                Stream.ofNullable(field.getArguments())
+                                    .map(Arguments::getArguments)
+                                    .flatMap(jsonValues -> jsonValues.entrySet().stream())
+                                    .filter(
+                                        valueWithVariableEntry ->
+                                            !valueWithVariableEntry.getValue().isVariable()
+                                                || variables.containsKey(
+                                                    valueWithVariableEntry
+                                                        .getValue()
+                                                        .asVariable()
+                                                        .getName()))
+                                    .map(
+                                        valueWithVariableEntry ->
+                                            new AbstractMap.SimpleEntry<>(
+                                                valueWithVariableEntry.getKey(),
+                                                replaceVariables(
+                                                    valueWithVariableEntry.getValue(),
+                                                    variables))))))
                     .setSelections(
                         Stream.concat(
                                 replaceFieldsVariables(field.getFields(), variables)
@@ -107,20 +112,25 @@ public class VariableHandler implements OperationBeforeHandler {
         .map(
             directive ->
                 directive.setArguments(
-                    Stream.ofNullable(directive.getArguments())
-                        .map(Arguments::getArguments)
-                        .flatMap(jsonValues -> jsonValues.entrySet().stream())
-                        .filter(
-                            valueWithVariableEntry ->
-                                !valueWithVariableEntry.getValue().isVariable()
-                                    || variables.containsKey(
-                                        valueWithVariableEntry.getValue().asVariable().getName()))
-                        .map(
-                            valueWithVariableEntry ->
-                                new AbstractMap.SimpleEntry<>(
-                                    valueWithVariableEntry.getKey(),
-                                    replaceVariables(valueWithVariableEntry.getValue(), variables)))
-                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))));
+                    new Arguments(
+                        collectValueWithVariableMap(
+                            Stream.ofNullable(directive.getArguments())
+                                .map(Arguments::getArguments)
+                                .flatMap(jsonValues -> jsonValues.entrySet().stream())
+                                .filter(
+                                    valueWithVariableEntry ->
+                                        !valueWithVariableEntry.getValue().isVariable()
+                                            || variables.containsKey(
+                                                valueWithVariableEntry
+                                                    .getValue()
+                                                    .asVariable()
+                                                    .getName()))
+                                .map(
+                                    valueWithVariableEntry ->
+                                        new AbstractMap.SimpleEntry<>(
+                                            valueWithVariableEntry.getKey(),
+                                            replaceVariables(
+                                                valueWithVariableEntry.getValue(), variables)))))));
   }
 
   public ValueWithVariable replaceVariables(
@@ -152,7 +162,10 @@ public class VariableHandler implements OperationBeforeHandler {
                 new AbstractMap.SimpleEntry<>(
                     valueWithVariableEntry.getKey(),
                     replaceVariables(valueWithVariableEntry.getValue(), variables)))
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        .collect(
+            LinkedHashMap::new,
+            (map, entry) -> map.put(entry.getKey(), entry.getValue()),
+            LinkedHashMap::putAll);
   }
 
   public Map<String, JsonValue> mergeDefaultValues(
@@ -170,6 +183,10 @@ public class VariableHandler implements OperationBeforeHandler {
                         new AbstractMap.SimpleEntry<>(
                             variableDefinition.getVariable().getName(),
                             variableDefinition.getDefaultValue())))
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> v2));
+        .collect(
+            LinkedHashMap::new,
+            (map, entry) -> map.put(entry.getKey(), entry.getValue()),
+            LinkedHashMap::putAll);
   }
+
 }

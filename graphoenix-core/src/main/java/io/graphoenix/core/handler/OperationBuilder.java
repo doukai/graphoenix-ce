@@ -24,19 +24,22 @@ public class OperationBuilder {
   }
 
   public JsonObject updateJsonObject(JsonObject original, JsonObject jsonObject) {
-    return jsonObject.entrySet().stream()
-        .filter(
-            entry ->
-                !entry.getValue().getValueType().equals(JsonValue.ValueType.NULL)
-                    || entry.getValue().getValueType().equals(JsonValue.ValueType.NULL)
-                        && original != null
-                        && original.containsKey(entry.getKey()))
-        .map(
-            entry ->
-                new AbstractMap.SimpleEntry<>(
-                    entry.getKey(),
-                    updateJsonValue(
-                        original != null ? original.get(entry.getKey()) : null, entry.getValue())))
+    return Stream.concat(
+            Stream.ofNullable(original)
+                .flatMap(item -> item.entrySet().stream())
+                .filter(entry -> jsonObject.containsKey(entry.getKey()))
+                .map(
+                    entry ->
+                        new AbstractMap.SimpleEntry<>(
+                            entry.getKey(),
+                            updateJsonValue(entry.getValue(), jsonObject.get(entry.getKey())))),
+            jsonObject.entrySet().stream()
+                .filter(entry -> original == null || !original.containsKey(entry.getKey()))
+                .filter(entry -> !entry.getValue().getValueType().equals(JsonValue.ValueType.NULL))
+                .map(
+                    entry ->
+                        new AbstractMap.SimpleEntry<>(
+                            entry.getKey(), updateJsonValue(null, entry.getValue()))))
         .collect(JsonCollectors.toJsonObject());
   }
 

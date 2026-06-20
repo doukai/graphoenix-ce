@@ -126,7 +126,7 @@ public class ObjectValueWithVariable extends AbstractMap<String, JsonValue>
   public Set<Entry<String, JsonValue>> entrySet() {
     return objectValueWithVariable.entrySet().stream()
         .map(entry -> new SimpleEntry<>(entry.getKey(), (JsonValue) entry.getValue()))
-        .collect(Collectors.toSet());
+        .collect(Collectors.toCollection(LinkedHashSet::new));
   }
 
   public ValueWithVariable getValueWithVariable(String name) {
